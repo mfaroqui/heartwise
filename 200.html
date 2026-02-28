@@ -1,0 +1,1336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0a0a0f">
+<title>HeartWise — High-Performance Physician Mentorship</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+--bg:#0a0a0f;--bg2:#12121a;--bg3:#1a1a26;--bg4:#22222f;
+--text:#f4f0ed;--text2:#b0adb0;--text3:#706d73;
+--accent:#c8a87c;--accent2:#dfc19f;--accent-dim:rgba(200,168,124,.12);
+--red:#c44d56;--red-dim:rgba(196,77,86,.12);
+--green:#5cb89a;--green-dim:rgba(92,184,154,.12);
+--blue:#6b8fd4;--blue-dim:rgba(107,143,212,.12);
+--border:rgba(255,255,255,.06);--border2:rgba(255,255,255,.1);
+--glass:rgba(10,10,15,.88);
+--r:16px;--r2:12px;--r3:24px;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent}
+.serif{font-family:'Playfair Display',Georgia,serif}
+a{color:var(--accent);text-decoration:none}
+.hidden{display:none!important}
+
+/* Splash */
+#splash{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .6s}
+#splash.out{opacity:0;pointer-events:none}
+.sp-mark{width:72px;height:72px;border-radius:20px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;margin-bottom:24px;box-shadow:0 0 60px rgba(200,168,124,.25)}
+.sp-mark svg{width:36px;height:36px;fill:#0a0a0f}
+.sp-t{font-size:28px;font-weight:600;letter-spacing:-.5px;margin-bottom:6px}
+.sp-s{font-size:12px;color:var(--text3);letter-spacing:2.5px;text-transform:uppercase}
+
+/* Notification */
+.notif{position:fixed;top:20px;left:20px;right:20px;background:var(--bg2);border:1px solid var(--accent);border-radius:var(--r2);padding:16px 20px;z-index:2000;display:flex;align-items:center;gap:12px;transform:translateY(-120%);transition:transform .35s;box-shadow:0 12px 40px rgba(0,0,0,.5);backdrop-filter:blur(12px)}
+.notif.show{transform:translateY(0)}.notif.err{border-color:var(--red)}
+.notif-t{font-size:13px;font-weight:500;flex:1}
+
+/* Buttons */
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;padding:15px;border:none;border-radius:var(--r2);font-size:14px;font-weight:600;font-family:'Inter',sans-serif;cursor:pointer;transition:all .25s;letter-spacing:.3px;width:100%}
+.btn-a{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#0a0a0f}
+.btn-a:hover{transform:translateY(-1px);box-shadow:0 4px 20px rgba(200,168,124,.3)}
+.btn-g{background:transparent;color:var(--text2);border:1px solid var(--border2)}
+.btn-sm{width:auto;padding:10px 22px;font-size:13px}
+.btn-lock{background:var(--bg4);color:var(--text3);cursor:not-allowed}
+
+/* Forms */
+.fg{margin-bottom:20px}
+.fg label{display:block;font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+.fg input,.fg select,.fg textarea{width:100%;padding:14px 16px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r2);color:var(--text);font-size:15px;font-family:'Inter',sans-serif;outline:none;transition:border-color .25s}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-dim)}
+.fg input::placeholder,.fg textarea::placeholder{color:var(--text3)}
+.fg select{appearance:none;cursor:pointer}
+
+/* Nav */
+.nav{position:fixed;bottom:0;left:0;right:0;background:var(--glass);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid var(--border);display:none;justify-content:space-around;padding:6px 0 24px;z-index:100}
+.nav.on{display:flex}
+.ni{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;font-weight:500;color:var(--text3);cursor:pointer;padding:8px 12px;background:none;border:none;transition:color .2s;letter-spacing:.3px;font-family:'Inter',sans-serif}
+.ni.on,.ni:hover{color:var(--accent)}
+.ni svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+
+/* Header */
+.hdr{padding:18px 24px 14px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;background:var(--glass);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
+.hdr-t{font-family:'Playfair Display',serif;font-size:22px;font-weight:600}
+.badge{font-size:10px;padding:5px 12px;border-radius:20px;font-weight:600;letter-spacing:1px;text-transform:uppercase}
+.b-free{background:var(--bg4);color:var(--text3)}
+.b-core{background:var(--blue-dim);color:var(--blue)}
+.b-pro{background:var(--accent-dim);color:var(--accent)}
+.b-ment{background:linear-gradient(135deg,var(--accent-dim),rgba(200,168,124,.2));color:var(--accent2)}
+.b-admin{background:var(--green-dim);color:var(--green)}
+
+/* Cards */
+.card{background:var(--bg2);border-radius:var(--r);padding:22px;margin-bottom:10px;border:1px solid var(--border);transition:all .25s}
+.card:hover{border-color:var(--border2)}
+
+/* Section titles */
+.sec{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:1.5px;padding:24px 24px 14px}
+
+/* Tags */
+.tag{font-size:9px;padding:4px 10px;border-radius:20px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;display:inline-block}
+.t-student{background:var(--green-dim);color:var(--green)}
+.t-resident{background:var(--blue-dim);color:var(--blue)}
+.t-fellow{background:var(--accent-dim);color:var(--accent)}
+.t-cat{background:var(--bg4);color:var(--text3);font-size:10px;letter-spacing:.5px}
+.t-reviewed{background:var(--green-dim);color:var(--green)}
+.t-pending{background:var(--accent-dim);color:var(--accent)}
+
+/* Screens */
+.scr{display:none}.scr.on{display:block}
+
+/* Landing page */
+.lp{overflow-y:auto;min-height:100vh}
+.hero{padding:80px 24px 60px;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-100px;right:-100px;width:400px;height:400px;background:radial-gradient(circle,rgba(200,168,124,.06),transparent 70%);border-radius:50%}
+.hero::after{content:'';position:absolute;bottom:-100px;left:-100px;width:300px;height:300px;background:radial-gradient(circle,rgba(107,143,212,.04),transparent 70%);border-radius:50%}
+.hero *{position:relative}
+.hero-badge{display:inline-block;padding:6px 16px;border-radius:20px;background:var(--accent-dim);color:var(--accent);font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-bottom:20px}
+.hero h1{font-family:'Playfair Display',serif;font-size:36px;font-weight:700;line-height:1.2;margin-bottom:16px;letter-spacing:-.5px}
+.hero h1 em{font-style:normal;color:var(--accent)}
+.hero p{color:var(--text2);font-size:15px;line-height:1.6;max-width:400px;margin:0 auto 32px}
+.hero .btn{max-width:280px;margin:0 auto 12px}
+
+.lp-sec{padding:48px 24px}
+.lp-sec h2{font-family:'Playfair Display',serif;font-size:26px;font-weight:600;margin-bottom:8px;text-align:center}
+.lp-sec .sub{color:var(--text3);font-size:13px;text-align:center;margin-bottom:32px}
+
+.who-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.who-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:20px;text-align:center}
+.who-card .icon{font-size:28px;margin-bottom:10px}
+.who-card h3{font-size:14px;font-weight:600;margin-bottom:4px}
+.who-card p{font-size:11px;color:var(--text3);line-height:1.4}
+
+.master-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.master-item{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:16px;text-align:center}
+.master-item .icon{font-size:24px;margin-bottom:8px}
+.master-item h3{font-size:13px;font-weight:600}
+
+.how-steps{counter-reset:step}
+.how-step{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:20px;margin-bottom:10px;display:flex;gap:16px;align-items:flex-start}
+.how-step .num{width:36px;height:36px;border-radius:50%;background:var(--accent-dim);color:var(--accent);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex-shrink:0}
+.how-step h3{font-size:14px;font-weight:600;margin-bottom:4px}
+.how-step p{font-size:12px;color:var(--text3);line-height:1.5}
+
+/* Pricing */
+.plan{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r3);padding:28px;margin-bottom:12px}
+.plan.ft{border-color:rgba(200,168,124,.3);background:linear-gradient(135deg,var(--bg2),rgba(200,168,124,.03))}
+.plan.pop{border-color:var(--accent);position:relative}
+.plan.pop::before{content:'MOST POPULAR';position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:var(--accent);color:#0a0a0f;font-size:9px;font-weight:700;padding:4px 12px;border-radius:10px;letter-spacing:1px}
+.plan-n{font-size:16px;font-weight:600;margin-bottom:4px}
+.plan-p{font-size:36px;font-weight:700;margin-bottom:2px;letter-spacing:-1px}
+.plan-p span{font-size:13px;font-weight:400;color:var(--text3)}
+.plan-f{list-style:none;padding:0;margin:18px 0}
+.plan-f li{padding:7px 0;font-size:13px;color:var(--text2);display:flex;align-items:flex-start;gap:10px;line-height:1.4}
+.plan-f li::before{content:'✦';color:var(--accent);font-size:10px;margin-top:2px}
+.plan-limit{font-size:11px;color:var(--red);font-weight:500;margin-bottom:12px}
+
+/* Usage bar */
+.usage{background:var(--bg3);border-radius:8px;height:8px;overflow:hidden;margin-top:6px}
+.usage-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:8px;transition:width .5s}
+.usage-label{display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-top:4px}
+
+/* AI Response card */
+.ai-resp{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:22px;margin-bottom:16px}
+.ai-resp h4{font-size:12px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin:16px 0 8px;display:flex;align-items:center;gap:8px}
+.ai-resp h4:first-child{margin-top:0}
+.ai-resp p,.ai-resp li{font-size:14px;color:var(--text2);line-height:1.7}
+.ai-resp ol{padding-left:20px;margin:8px 0}
+.ai-resp .escalate{margin-top:16px;padding:12px 16px;border-radius:var(--r2);background:var(--accent-dim);border:1px solid rgba(200,168,124,.2);font-size:13px;color:var(--accent)}
+
+/* Template vault */
+.vault-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:20px;margin-bottom:10px;display:flex;align-items:center;gap:16px}
+.vault-card .v-icon{width:44px;height:44px;border-radius:12px;background:var(--accent-dim);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.vault-card .v-info{flex:1}
+.vault-card .v-info h3{font-size:14px;font-weight:600;margin-bottom:2px}
+.vault-card .v-info p{font-size:12px;color:var(--text3)}
+.vault-card .v-lock{color:var(--text3);font-size:18px}
+.vault-card.unlocked{border-color:var(--accent);cursor:pointer}
+.vault-card.unlocked .v-lock{color:var(--accent)}
+
+/* Question card (archive) */
+.qc{background:var(--bg2);border-radius:var(--r);padding:22px;margin-bottom:10px;border:1px solid var(--border);transition:all .25s;cursor:pointer}
+.qc:hover{border-color:var(--border2);transform:translateY(-1px)}
+.qc-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.qc-author{font-size:12px;color:var(--text3);font-weight:500}
+.qc-q{font-size:15px;font-weight:500;line-height:1.5;margin-bottom:12px}
+.qc-meta{display:flex;gap:12px;font-size:11px;color:var(--text3);align-items:center;flex-wrap:wrap}
+
+/* Admin */
+.admin-tabs{display:flex;padding:0 24px;gap:4px;border-bottom:1px solid var(--border);overflow-x:auto}
+.atab{padding:14px 16px;font-size:12px;font-weight:600;color:var(--text3);cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;transition:all .2s;letter-spacing:.5px;text-transform:uppercase;font-family:'Inter',sans-serif;white-space:nowrap}
+.atab.on{color:var(--accent);border-bottom-color:var(--accent)}
+.abox{background:var(--bg3);border-radius:var(--r2);padding:16px;margin-top:14px;border:1px solid var(--border)}
+.abox textarea{width:100%;background:transparent;border:none;color:var(--text);font-size:14px;resize:vertical;min-height:100px;outline:none;font-family:'Inter',sans-serif;line-height:1.6}
+
+/* Modal */
+.modal-ov{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:1000;display:flex;align-items:center;justify-content:center;padding:24px;backdrop-filter:blur(8px)}
+.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--r3);padding:32px;max-width:440px;width:100%;max-height:85vh;overflow-y:auto;box-shadow:0 8px 40px rgba(0,0,0,.4)}
+.modal h2{font-family:'Playfair Display',serif;font-size:22px;margin-bottom:16px;font-weight:600}
+.modal p,.modal li{font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:8px}
+.modal ul{padding-left:18px}
+
+/* Chip filters */
+.fc{display:flex;gap:8px;padding:0 24px;margin-bottom:16px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.fc::-webkit-scrollbar{display:none}
+.chip{padding:8px 16px;border-radius:20px;font-size:12px;font-weight:500;background:var(--bg3);border:1px solid var(--border);cursor:pointer;transition:all .2s;color:var(--text2);white-space:nowrap;font-family:'Inter',sans-serif}
+.chip.on{background:var(--accent-dim);border-color:rgba(200,168,124,.3);color:var(--accent)}
+
+/* Search */
+.sbar{margin:20px 24px;position:relative}
+.sbar input{width:100%;padding:14px 16px 14px 44px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);color:var(--text);font-size:14px;font-family:'Inter',sans-serif;outline:none;transition:border-color .25s}
+.sbar input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-dim)}
+.sbar svg{position:absolute;left:16px;top:50%;transform:translateY(-50%);width:16px;height:16px;stroke:var(--text3);fill:none;stroke-width:2}
+
+/* Disclaimer checkbox */
+.check-row{display:flex;align-items:flex-start;gap:12px;padding:12px 0;font-size:13px;color:var(--text2)}
+.check-row input[type=checkbox]{width:20px;height:20px;accent-color:var(--accent);flex-shrink:0;margin-top:2px}
+
+/* Stats grid */
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 24px;margin-bottom:20px}
+.st{background:var(--bg2);border-radius:var(--r);padding:18px 14px;text-align:center;border:1px solid var(--border)}
+.st-n{font-size:22px;font-weight:700;letter-spacing:-.5px}
+.st-l{font-size:10px;color:var(--text3);margin-top:4px;text-transform:uppercase;letter-spacing:1px}
+
+/* Content padding */
+.pad{padding:0 24px 100px}
+
+/* Toggle */
+.tog{width:44px;height:26px;background:var(--bg4);border-radius:13px;position:relative;cursor:pointer;transition:background .25s;border:1px solid var(--border);flex-shrink:0}
+.tog.on{background:var(--accent);border-color:var(--accent)}
+.tog::after{content:'';position:absolute;width:20px;height:20px;background:#fff;border-radius:50%;top:2px;left:2px;transition:transform .25s;box-shadow:0 1px 4px rgba(0,0,0,.2)}
+.tog.on::after{transform:translateX(18px)}
+
+/* Animations */
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.fade-in{animation:fadeUp .4s ease both}
+
+/* Safe areas */
+@supports(padding-top:env(safe-area-inset-top)){
+.hdr{padding-top:calc(18px + env(safe-area-inset-top))}
+.nav{padding-bottom:calc(6px + env(safe-area-inset-bottom))}
+.hero{padding-top:calc(80px + env(safe-area-inset-top))}
+}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:3px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+
+/* Intake form specific */
+.intake-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.intake-grid .fg{margin-bottom:12px}
+.review-banner{background:linear-gradient(135deg,var(--accent-dim),rgba(200,168,124,.06));border:1px solid rgba(200,168,124,.2);border-radius:var(--r2);padding:16px;margin-bottom:20px;display:flex;align-items:center;gap:12px}
+.review-banner .icon{font-size:20px}
+.review-banner .info{flex:1}
+.review-banner .info h4{font-size:13px;font-weight:600;color:var(--accent);margin-bottom:2px}
+.review-banner .info p{font-size:11px;color:var(--text3)}
+
+/* Profile stats */
+.prof-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:20px}
+.prof-stat{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:14px;text-align:center}
+.prof-stat .n{font-size:20px;font-weight:700}
+.prof-stat .l{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
+</style>
+
+<body>
+<svg style="display:none">
+<symbol id="i-heart" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></symbol>
+<symbol id="i-home" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></symbol>
+<symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></symbol>
+<symbol id="i-plus" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></symbol>
+<symbol id="i-user" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></symbol>
+<symbol id="i-archive" viewBox="0 0 24 24"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></symbol>
+<symbol id="i-lock" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
+<symbol id="i-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></symbol>
+<symbol id="i-file" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></symbol>
+</svg>
+
+<div id="splash">
+<div class="sp-mark"><svg><use href="#i-heart"/></svg></div>
+<div class="sp-t">HeartWise</div>
+<div class="sp-s">High-Performance Mentorship</div>
+</div>
+
+<div id="notif" class="notif"><span id="ni-icon">✦</span><span id="ni-text" class="notif-t"></span></div>
+
+<!-- Disclaimer Modal -->
+<div id="modal-disc" class="modal-ov hidden">
+<div class="modal">
+<h2>Educational Disclaimer</h2>
+<p><strong>HeartWise is an educational mentorship platform.</strong></p>
+<p>By using this platform, you acknowledge:</p>
+<ul>
+<li>Content is for <strong>educational and informational purposes only</strong></li>
+<li>Nothing constitutes medical, legal, or tax advice</li>
+<li>Always consult qualified professionals for individualized decisions</li>
+<li>AI-generated responses are frameworks, not personalized advice</li>
+<li>Doctor-reviewed content reflects professional opinion, not clinical recommendations</li>
+<li>This does not create a doctor-patient relationship</li>
+</ul>
+<div class="check-row" style="margin-top:16px">
+<input type="checkbox" id="disc-check">
+<label for="disc-check">I understand that HeartWise provides educational mentorship only and does not provide medical, legal, or tax advice. I will consult appropriate professionals for individualized decisions.</label>
+</div>
+<button class="btn btn-a" id="disc-btn" onclick="acceptDisc()" style="margin-top:16px;opacity:.5;pointer-events:none">I Understand & Agree</button>
+</div>
+</div>
+
+<!-- Question Detail Modal -->
+<div id="modal-q" class="modal-ov hidden">
+<div class="modal" style="max-width:500px">
+<div id="modal-q-content"></div>
+<button class="btn btn-g" onclick="closeModal('modal-q')" style="margin-top:16px">Close</button>
+</div>
+</div>
+
+<!-- ===== LANDING PAGE ===== -->
+<div id="pg-landing" class="lp">
+<div class="hero">
+<div class="hero-badge">Built for Serious Trainees</div>
+<h1 class="serif">High-Performance Mentorship for <em>Ambitious Physicians</em></h1>
+<p>AI-powered guidance. Doctor-curated insights. Structured frameworks for career strategy, fellowship planning, contract negotiation, and physician finance.</p>
+<button class="btn btn-a" onclick="go('pg-signup')" style="max-width:280px;margin:0 auto 12px">Start Free →</button>
+<button class="btn btn-g" onclick="go('pg-login')" style="max-width:280px;margin:0 auto">Sign In</button>
+<p style="margin-top:24px;font-size:12px;color:var(--text3)">Master Your Training. Build Your Career. Control Your Finances.</p>
+</div>
+
+<div class="lp-sec" style="background:var(--bg2)">
+<h2 class="serif">Who It's For</h2>
+<p class="sub">Ambitious physicians who refuse to figure it out alone</p>
+<div class="who-grid">
+<div class="who-card"><div class="icon">🎓</div><h3>Medical Students</h3><p>Specialty strategy & residency positioning</p></div>
+<div class="who-card"><div class="icon">🏥</div><h3>Residents</h3><p>Fellowship prep & career trajectory planning</p></div>
+<div class="who-card"><div class="icon">🫀</div><h3>Fellows</h3><p>Contract negotiation & practice strategy</p></div>
+<div class="who-card"><div class="icon">⚕️</div><h3>Early Career</h3><p>Compensation, finance & productivity systems</p></div>
+</div>
+</div>
+
+<div class="lp-sec">
+<h2 class="serif">What You'll Master</h2>
+<p class="sub">Structured frameworks, not generic advice</p>
+<div class="master-grid">
+<div class="master-item"><div class="icon">🎯</div><h3>Career Strategy</h3></div>
+<div class="master-item"><div class="icon">📋</div><h3>Fellowship Planning</h3></div>
+<div class="master-item"><div class="icon">📝</div><h3>Contract Negotiation</h3></div>
+<div class="master-item"><div class="icon">💰</div><h3>RVUs & Compensation</h3></div>
+<div class="master-item"><div class="icon">📊</div><h3>Physician Finance</h3></div>
+<div class="master-item"><div class="icon">⚡</div><h3>Productivity Systems</h3></div>
+</div>
+</div>
+
+<div class="lp-sec" style="background:var(--bg2)">
+<h2 class="serif">How It Works</h2>
+<p class="sub">Structured process, not a free-for-all Q&A</p>
+<div class="how-steps">
+<div class="how-step"><div class="num">1</div><div><h3>Submit Structured Question</h3><p>Complete the intake form with your training level, specialty, timeline, and specific question. No open-ended rambling.</p></div></div>
+<div class="how-step"><div class="num">2</div><div><h3>Get AI Strategic Plan</h3><p>Receive an instant structured response: situation diagnosis, bottleneck analysis, strategic plan, and 30-day action steps.</p></div></div>
+<div class="how-step"><div class="num">3</div><div><h3>Request Doctor Review</h3><p>Use review credits for physician-curated insight. Selected questions get Dr. Faroqui's personal commentary.</p></div></div>
+<div class="how-step"><div class="num">4</div><div><h3>Learn from the Archive</h3><p>Browse weekly reviewed questions and build on frameworks others have already validated.</p></div></div>
+</div>
+</div>
+
+<div class="lp-sec" id="pricing-sec">
+<h2 class="serif">Choose Your Path</h2>
+<p class="sub">Every tier includes AI-powered mentorship</p>
+
+<div class="plan">
+<div class="plan-n" style="color:var(--text2)">Free</div>
+<div class="plan-p">$0<span> /mo</span></div>
+<ul class="plan-f">
+<li>1 AI mentorship response per month</li>
+<li>Access to public reviewed archive</li>
+<li>Upgrade prompts for deeper guidance</li>
+</ul>
+<button class="btn btn-g" onclick="go('pg-signup')">Start Free</button>
+</div>
+
+<div class="plan">
+<div class="plan-n" style="color:var(--blue)">Core</div>
+<div class="plan-p">$19<span> /mo</span></div>
+<ul class="plan-f">
+<li>20 AI mentorship responses per month</li>
+<li>1 Doctor Review Credit per month</li>
+<li>Weekly reviewed questions archive</li>
+</ul>
+<button class="btn btn-a" onclick="go('pg-signup')">Get Core</button>
+</div>
+
+<div class="plan pop">
+<div class="plan-n" style="color:var(--accent)">Pro</div>
+<div class="plan-p">$39<span> /mo</span></div>
+<ul class="plan-f">
+<li>50 AI mentorship responses per month</li>
+<li>2 Doctor Review Credits per month</li>
+<li>Monthly group Q&A access</li>
+<li>Template Vault (frameworks & checklists)</li>
+</ul>
+<button class="btn btn-a" onclick="go('pg-signup')">Get Pro</button>
+</div>
+
+<div class="plan ft">
+<div class="plan-n" style="color:var(--accent2)">Mentorship</div>
+<div class="plan-p">$249<span> /year</span></div>
+<div class="plan-limit">⚡ Limited to 50 members</div>
+<ul class="plan-f">
+<li>Unlimited AI responses</li>
+<li>6 Guaranteed Doctor Reviews per year</li>
+<li>2 Small-group strategy calls per year</li>
+<li>Contract Negotiation Toolkit</li>
+<li>Fellowship Roadmap Templates</li>
+<li>CV Review Framework</li>
+</ul>
+<button class="btn btn-a" onclick="go('pg-signup')">Apply for Mentorship</button>
+</div>
+</div>
+
+<div style="padding:40px 24px;text-align:center;border-top:1px solid var(--border)">
+<p style="font-size:11px;color:var(--text3);line-height:1.6;max-width:400px;margin:0 auto">HeartWise provides educational mentorship only. It does not provide medical, legal, or tax advice. Users should consult appropriate professionals for individualized decisions.</p>
+<p style="font-size:11px;color:var(--text3);margin-top:12px">© 2026 HeartWise. All rights reserved.</p>
+</div>
+</div>
+
+<!-- ===== AUTH PAGES ===== -->
+<div id="pg-login" class="lp hidden" style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px">
+<div class="sp-mark" style="width:56px;height:56px;border-radius:16px;margin-bottom:28px"><svg style="width:28px;height:28px;fill:#0a0a0f"><use href="#i-heart"/></svg></div>
+<div style="font-family:'Playfair Display',serif;font-size:26px;font-weight:600;margin-bottom:6px">HeartWise</div>
+<div style="color:var(--text3);font-size:13px;margin-bottom:36px;text-align:center;max-width:280px;line-height:1.5">High-performance mentorship for ambitious physicians</div>
+<form style="width:100%;max-width:360px" onsubmit="doLogin(event)">
+<div class="fg"><label>Email</label><input type="email" id="l-email" placeholder="you@example.com" required></div>
+<div class="fg"><label>Password</label><input type="password" id="l-pass" placeholder="••••••••" required></div>
+<button type="submit" class="btn btn-a">Sign In</button>
+</form>
+<div style="margin-top:24px;color:var(--text3);font-size:13px">New here? <a href="#" onclick="go('pg-signup');return false" style="font-weight:500">Create an account</a></div>
+</div>
+
+<div id="pg-signup" class="lp hidden" style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px">
+<div class="sp-mark" style="width:56px;height:56px;border-radius:16px;margin-bottom:28px"><svg style="width:28px;height:28px;fill:#0a0a0f"><use href="#i-heart"/></svg></div>
+<div style="font-family:'Playfair Display',serif;font-size:26px;font-weight:600;margin-bottom:6px">Join HeartWise</div>
+<div style="color:var(--text3);font-size:13px;margin-bottom:36px;text-align:center;max-width:300px;line-height:1.5">Structured mentorship from a seasoned interventional cardiologist</div>
+<form style="width:100%;max-width:360px" onsubmit="doSignup(event)">
+<div class="fg"><label>Full Name</label><input type="text" id="s-name" placeholder="Jane Smith" required></div>
+<div class="fg"><label>Email</label><input type="email" id="s-email" placeholder="you@example.com" required></div>
+<div class="fg"><label>Password</label><input type="password" id="s-pass" placeholder="Min 8 characters" minlength="8" required></div>
+<div class="fg"><label>Training Level</label>
+<select id="s-role" required>
+<option value="">Select your level</option>
+<option value="student">Medical Student</option>
+<option value="resident">Internal Medicine Resident</option>
+<option value="fellow">Cardiology Fellow</option>
+<option value="attending">Early Career Attending</option>
+<option value="other">Other Healthcare Professional</option>
+</select></div>
+<div class="fg"><label>Institution</label><input type="text" id="s-inst" placeholder="Your medical school or hospital"></div>
+<button type="submit" class="btn btn-a">Create Account</button>
+</form>
+<div style="margin-top:24px;color:var(--text3);font-size:13px">Already a member? <a href="#" onclick="go('pg-login');return false" style="font-weight:500">Sign in</a></div>
+</div>
+
+<!-- ===== MAIN APP ===== -->
+<div id="main-app" class="hidden">
+
+<!-- HOME SCREEN -->
+<div id="scr-home" class="scr on">
+<div class="hdr">
+<div class="hdr-t serif">HeartWise</div>
+<span id="user-badge" class="badge b-free">FREE</span>
+</div>
+
+<div style="padding:20px 24px">
+<div style="background:linear-gradient(135deg,#1e1b2e,#1a1626,#221b2e);border:1px solid rgba(200,168,124,.15);border-radius:var(--r3);padding:28px;position:relative;overflow:hidden">
+<div style="position:absolute;top:-50%;right:-30%;width:200px;height:200px;background:radial-gradient(circle,rgba(200,168,124,.08),transparent 70%);border-radius:50%"></div>
+<h2 id="welcome-msg" class="serif" style="font-size:22px;font-weight:600;margin-bottom:6px;position:relative">Welcome 👋</h2>
+<p style="font-size:13px;color:var(--text2);line-height:1.6;position:relative">Master your training. Build your career. Control your finances.</p>
+</div>
+</div>
+
+<!-- Usage Stats -->
+<div style="padding:0 24px 16px">
+<div class="card" style="padding:18px">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+<span style="font-size:12px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:1px">AI Responses</span>
+<span id="usage-ai" style="font-size:12px;color:var(--accent);font-weight:600">0 / 1</span>
+</div>
+<div class="usage"><div class="usage-fill" id="usage-bar" style="width:0%"></div></div>
+<div style="display:flex;justify-content:space-between;margin-top:12px">
+<div><span style="font-size:11px;color:var(--text3)">Review Credits: </span><span id="usage-credits" style="font-size:13px;font-weight:600;color:var(--accent)">0</span></div>
+<span id="usage-tier" style="font-size:11px;color:var(--text3)">Free plan</span>
+</div>
+</div>
+</div>
+
+<div style="padding:0 24px 16px">
+<button class="btn btn-a" onclick="navTo('scr-ask')">Submit a Question →</button>
+</div>
+
+<div id="upgrade-prompt" style="padding:0 24px 16px">
+<div class="card" style="border-color:rgba(200,168,124,.2);cursor:pointer" onclick="navTo('scr-profile');showUpgrade()">
+<div style="display:flex;align-items:center;gap:12px">
+<span style="font-size:20px">⚡</span>
+<div><div style="font-size:13px;font-weight:600;color:var(--accent)">Unlock More Responses</div><div style="font-size:11px;color:var(--text3)">Upgrade to Core for 20 AI responses/month</div></div>
+</div>
+</div>
+</div>
+
+<div class="sec">Reviewed This Week</div>
+<div id="home-feed" class="pad"></div>
+</div>
+
+<!-- ASK SCREEN (Structured Intake) -->
+<div id="scr-ask" class="scr">
+<div class="hdr"><div class="hdr-t serif" style="font-size:20px">Ask HeartWise Mentor</div></div>
+<div style="padding:24px 24px 100px">
+
+<div class="review-banner" id="review-banner">
+<div class="icon">📋</div>
+<div class="info">
+<h4>Doctor Review Credits: <span id="ask-credits">0</span></h4>
+<p>Reviews are limited weekly. Not all submissions are selected.</p>
+</div>
+</div>
+
+<div class="intake-grid">
+<div class="fg"><label>Training Level *</label>
+<select id="q-level" required>
+<option value="">Select</option>
+<option value="MS1-MS2">MS1-MS2</option>
+<option value="MS3-MS4">MS3-MS4</option>
+<option value="PGY-1">PGY-1</option>
+<option value="PGY-2">PGY-2</option>
+<option value="PGY-3">PGY-3</option>
+<option value="Fellow">Fellow</option>
+<option value="Attending">Attending</option>
+</select></div>
+<div class="fg"><label>Intended Specialty *</label>
+<select id="q-spec">
+<option value="">Select</option>
+<option value="Cardiology">Cardiology</option>
+<option value="Interventional Cardiology">Interventional Cardiology</option>
+<option value="Electrophysiology">Electrophysiology</option>
+<option value="Heart Failure">Heart Failure</option>
+<option value="Internal Medicine">Internal Medicine</option>
+<option value="Other">Other</option>
+<option value="Undecided">Undecided</option>
+</select></div>
+</div>
+
+<div class="intake-grid">
+<div class="fg"><label>Timeline</label>
+<select id="q-timeline">
+<option value="">Select</option>
+<option value="Immediate (0-3mo)">Immediate (0-3mo)</option>
+<option value="Near-term (3-12mo)">Near-term (3-12mo)</option>
+<option value="Medium (1-2yr)">Medium (1-2yr)</option>
+<option value="Long-term (2+yr)">Long-term (2+yr)</option>
+</select></div>
+<div class="fg"><label>Category *</label>
+<select id="q-cat" required onchange="toggleFinance()">
+<option value="">Select</option>
+<option value="career">Career Strategy</option>
+<option value="fellowship">Fellowship Planning</option>
+<option value="contract">Contract Negotiation</option>
+<option value="finance">Physician Finance</option>
+<option value="clinical">Clinical Education</option>
+<option value="productivity">Productivity Systems</option>
+<option value="wellness">Wellness</option>
+</select></div>
+</div>
+
+<div class="fg" id="q-finance-box" style="display:none">
+<label>Financial Snapshot (optional)</label>
+<textarea id="q-finance" rows="2" placeholder="e.g., $280K loans, PGY-2 salary $65K, no investments yet..."></textarea>
+</div>
+
+<div class="fg">
+<label>Core Question (one sentence) *</label>
+<input type="text" id="q-core" placeholder="What is the single most important thing you need answered?" required>
+</div>
+
+<div class="fg">
+<label>What constraints are you facing?</label>
+<textarea id="q-constraints" rows="2" placeholder="Time, geography, financial, academic..."></textarea>
+</div>
+
+<div class="fg">
+<label>What have you tried?</label>
+<textarea id="q-tried" rows="2" placeholder="Approaches, resources, conversations..."></textarea>
+</div>
+
+<div class="fg">
+<label>Additional Context (optional)</label>
+<textarea id="q-context" rows="3" placeholder="Any extra details that would help..."></textarea>
+</div>
+
+<div style="display:flex;align-items:center;gap:12px;padding:12px 0;margin-bottom:12px">
+<button class="tog" id="q-review-tog" onclick="togReview()"></button>
+<div><div style="font-size:13px;font-weight:500">Request Doctor Review</div><div style="font-size:11px;color:var(--text3)">Uses 1 review credit. Not all reviews guaranteed.</div></div>
+</div>
+
+<div style="display:flex;align-items:center;gap:12px;padding:0 0 20px">
+<button class="tog" id="q-anon-tog" onclick="this.classList.toggle('on')"></button>
+<span style="font-size:13px">Submit anonymously</span>
+</div>
+
+<button class="btn btn-a" onclick="submitQ()">Submit Question</button>
+</div>
+</div>
+
+<!-- ARCHIVE SCREEN -->
+<div id="scr-archive" class="scr">
+<div class="hdr"><div class="hdr-t serif" style="font-size:20px">Archive</div></div>
+<div class="sbar"><svg><use href="#i-search"/></svg><input type="text" id="search-input" placeholder="Search reviewed questions..." oninput="filterArchive()"></div>
+<div class="fc">
+<button class="chip on" onclick="setFilter('all',this)">All</button>
+<button class="chip" onclick="setFilter('career',this)">Career</button>
+<button class="chip" onclick="setFilter('fellowship',this)">Fellowship</button>
+<button class="chip" onclick="setFilter('contract',this)">Contract</button>
+<button class="chip" onclick="setFilter('finance',this)">Finance</button>
+<button class="chip" onclick="setFilter('clinical',this)">Clinical</button>
+<button class="chip" onclick="setFilter('wellness',this)">Wellness</button>
+</div>
+<div class="sec">Reviewed This Week</div>
+<div id="archive-featured" class="pad"></div>
+<div class="sec">All Reviewed Questions</div>
+<div id="archive-list" class="pad"></div>
+</div>
+
+<!-- VAULT SCREEN -->
+<div id="scr-vault" class="scr">
+<div class="hdr"><div class="hdr-t serif" style="font-size:20px">Template Vault</div><span class="tag" style="background:var(--accent-dim);color:var(--accent)">PRO+</span></div>
+<div style="padding:20px 24px">
+<p style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:24px">Structured frameworks and checklists built from real physician career decisions. Available for Pro and Mentorship members.</p>
+</div>
+<div id="vault-list" class="pad"></div>
+</div>
+
+<!-- PROFILE SCREEN -->
+<div id="scr-profile" class="scr">
+<div class="hdr"><div class="hdr-t serif" style="font-size:20px">Profile</div></div>
+<div style="padding:24px 24px 100px">
+
+<div style="text-align:center;margin-bottom:24px">
+<div id="prof-av" style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:600;color:#0a0a0f;margin:0 auto 14px">M</div>
+<div id="prof-name" class="serif" style="font-size:20px;font-weight:600">User</div>
+<div id="prof-role" style="color:var(--text3);font-size:13px;margin-top:4px">Medical Student</div>
+</div>
+
+<div class="prof-stats">
+<div class="prof-stat"><div class="n" id="ps-used">0</div><div class="l">Used</div></div>
+<div class="prof-stat"><div class="n" id="ps-remain">1</div><div class="l">Remaining</div></div>
+<div class="prof-stat"><div class="n" id="ps-credits">0</div><div class="l">Review Cr.</div></div>
+</div>
+
+<div style="margin-bottom:12px">
+<div class="card" style="cursor:pointer;padding:16px 20px" onclick="showMyQ()">
+<div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:14px">📋 My Questions</span><span style="color:var(--text3)">›</span></div>
+</div>
+</div>
+
+<div style="margin-bottom:12px">
+<div class="card" style="cursor:pointer;padding:16px 20px" onclick="showUpgrade()">
+<div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:14px">⚡ Subscription</span><span id="prof-plan-label" style="font-size:12px;color:var(--accent)">Free</span></div>
+</div>
+</div>
+
+<div style="margin-bottom:12px">
+<div class="card" style="cursor:pointer;padding:16px 20px" onclick="toggleNotifSettings()">
+<div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:14px">🔔 Notifications</span><span style="color:var(--text3)">›</span></div>
+</div>
+</div>
+
+<!-- Notification Settings -->
+<div id="notif-settings" class="hidden" style="margin-bottom:12px">
+<div class="card" style="padding:20px">
+<div style="font-size:13px;font-weight:600;margin-bottom:16px">Email Notifications</div>
+<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)">
+<div><div style="font-size:13px">Doctor Review Published</div><div style="font-size:11px;color:var(--text3)">When your question gets a doctor review</div></div>
+<button class="tog on" onclick="this.classList.toggle('on')"></button>
+</div>
+<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)">
+<div><div style="font-size:13px">Weekly Archive Digest</div><div style="font-size:11px;color:var(--text3)">Top reviewed questions each week</div></div>
+<button class="tog on" onclick="this.classList.toggle('on')"></button>
+</div>
+<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)">
+<div><div style="font-size:13px">New Template Available</div><div style="font-size:11px;color:var(--text3)">When new vault templates are added</div></div>
+<button class="tog" onclick="this.classList.toggle('on')"></button>
+</div>
+<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0">
+<div><div style="font-size:13px">Group Q&A Reminders</div><div style="font-size:11px;color:var(--text3)">Upcoming live sessions (Pro+ only)</div></div>
+<button class="tog on" onclick="this.classList.toggle('on')"></button>
+</div>
+<div style="font-size:11px;color:var(--text3);margin-top:12px;padding-top:12px;border-top:1px solid var(--border)">Email notifications will be sent to your registered email. Real-time delivery requires backend integration.</div>
+</div>
+</div>
+
+<div style="margin-bottom:12px">
+<div class="card" style="cursor:pointer;padding:16px 20px" onclick="showDisc()">
+<div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:14px">⚕️ Disclaimer</span><span style="color:var(--text3)">›</span></div>
+</div>
+</div>
+
+<div style="margin-bottom:24px">
+<div class="card" style="cursor:pointer;padding:16px 20px" onclick="doLogout()">
+<div style="color:var(--red);font-size:14px">Sign Out</div>
+</div>
+</div>
+
+<div id="upgrade-section" class="hidden">
+<div id="sub-manage" class="hidden" style="margin-bottom:16px">
+<div class="card" style="padding:20px;border-color:rgba(200,168,124,.2)">
+<div style="font-size:13px;font-weight:600;margin-bottom:12px">Current Subscription</div>
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+<span style="font-size:14px;font-weight:600;color:var(--accent)" id="sub-plan-name">Free</span>
+<span style="font-size:12px;color:var(--text3)" id="sub-status">Active</span>
+</div>
+<div style="font-size:12px;color:var(--text3);margin-bottom:4px" id="sub-renew">No billing</div>
+<div style="font-size:12px;color:var(--text3);margin-bottom:12px" id="sub-usage-summary">1 AI response / 0 review credits per month</div>
+<div style="display:flex;gap:8px">
+<button class="btn btn-g btn-sm" onclick="notify('Subscription management will be available with Stripe integration')">Manage Billing</button>
+<button class="btn btn-sm" style="background:transparent;color:var(--red);border:1px solid var(--red)" onclick="if(confirm('Cancel subscription? You will keep access until the end of your billing period.')){subPlan('free');notify('Subscription cancelled. Access continues through billing period.')}">Cancel</button>
+</div>
+</div>
+</div>
+<div class="sec" style="padding:16px 0">Choose Your Plan</div>
+<div class="plan"><div class="plan-n" style="color:var(--text2)">Free</div><div class="plan-p">$0<span> /mo</span></div><ul class="plan-f"><li>1 AI mentorship response per month</li><li>Access to public reviewed archive</li></ul><button class="btn btn-g btn-sm" id="plan-free-btn" disabled>Current Plan</button></div>
+<div class="plan"><div class="plan-n" style="color:var(--blue)">Core</div><div class="plan-p">$19<span> /mo</span></div><ul class="plan-f"><li>20 AI responses per month</li><li>1 Doctor Review Credit</li><li>Weekly archive access</li></ul><button class="btn btn-a btn-sm" onclick="subPlan('core')">Upgrade to Core</button></div>
+<div class="plan pop"><div class="plan-n" style="color:var(--accent)">Pro</div><div class="plan-p">$39<span> /mo</span></div><ul class="plan-f"><li>50 AI responses per month</li><li>2 Doctor Review Credits</li><li>Monthly group Q&A</li><li>Template Vault</li></ul><button class="btn btn-a btn-sm" onclick="subPlan('pro')">Upgrade to Pro</button></div>
+<div class="plan ft"><div class="plan-n" style="color:var(--accent2)">Mentorship</div><div class="plan-p">$249<span> /year</span></div><div class="plan-limit">⚡ Limited to 50 members</div><ul class="plan-f"><li>Unlimited AI responses</li><li>6 Doctor Reviews per year</li><li>2 Small-group calls per year</li><li>All toolkits & templates</li></ul><button class="btn btn-a btn-sm" onclick="subPlan('mentorship')">Apply for Mentorship</button></div>
+</div>
+
+</div>
+</div>
+
+<!-- ADMIN SCREEN -->
+<div id="scr-admin" class="scr">
+<div class="hdr"><div class="hdr-t serif" style="font-size:20px">Admin</div><span class="badge b-admin">MENTOR</span></div>
+<div class="admin-tabs">
+<button class="atab on" onclick="adminTab('queue',this)">Review Queue</button>
+<button class="atab" onclick="adminTab('reviewed',this)">Published</button>
+<button class="atab" onclick="adminTab('stats',this)">Stats</button>
+</div>
+<div style="padding:16px 24px">
+<div id="admin-info" style="font-size:12px;color:var(--text3);margin-bottom:12px">Select up to 10 questions per week for review.</div>
+</div>
+<div id="admin-content" class="pad"></div>
+</div>
+
+<!-- NAV -->
+<nav class="nav" id="main-nav">
+<button class="ni on" onclick="navTo('scr-home',this)"><svg><use href="#i-home"/></svg>Home</button>
+<button class="ni" onclick="navTo('scr-ask',this)"><svg><use href="#i-plus"/></svg>Ask</button>
+<button class="ni" onclick="navTo('scr-archive',this)"><svg><use href="#i-archive"/></svg>Archive</button>
+<button class="ni" onclick="navTo('scr-vault',this)"><svg><use href="#i-lock"/></svg>Vault</button>
+<button class="ni" onclick="navTo('scr-profile',this)"><svg><use href="#i-user"/></svg>Profile</button>
+<button class="ni" id="nav-admin" style="display:none" onclick="navTo('scr-admin',this)"><svg><use href="#i-settings"/></svg>Admin</button>
+</nav>
+</div>
+
+
+<script>
+
+// This gets inlined into the HTML via build script
+// ===== CONFIG =====
+const AE='dr.faroqui@heartwise.com';
+const TIERS={free:{name:'Free',ai:1,credits:0},core:{name:'Core',ai:20,credits:1},pro:{name:'Pro',ai:50,credits:2},mentorship:{name:'Mentorship',ai:999,credits:6},admin:{name:'Admin',ai:999,credits:999}};
+const CATS={career:'Career Strategy',fellowship:'Fellowship Planning',contract:'Contract Negotiation',finance:'Physician Finance',clinical:'Clinical Education',productivity:'Productivity Systems',wellness:'Wellness'};
+
+// ===== SEED DATA (Structured AI Format) =====
+const SEED_Q=[
+{id:100,cat:'career',role:'student',q:'How competitive is interventional cardiology fellowship? What should I focus on during residency?',
+ai:{diag:'You are asking about one of the most competitive procedural fellowships in medicine. IC acceptance rates hover around 60-70% of cardiology fellows who apply, but top programs are significantly more selective.',
+bottleneck:'The real bottleneck is not board scores\u2014it is differentiation. Most applicants have similar credentials. What separates winners is a clear procedural identity and relationships with interventional cardiologists who vouch for your hands and judgment.',
+plan:['Build procedural volume early\u2014scrub every cath case starting in general fellowship','Get 2-3 first-author publications in JACC Interventions or CCI','Present at TCT or ACC\u2014poster is fine, oral is better','Develop a niche interest (CTO, structural, peripheral) and go deep','Get letters from interventional attendings who watched you in the lab','Network at TCT and CRT conferences'],
+mistakes:['Focusing on research volume without building procedural skills','Getting letters from non-interventional cardiologists','Applying to too few programs','Ignoring cultural fit\u2014interview performance matters enormously'],
+action:'Month 1-2: Identify 3 IC attendings to work with. Month 3: Start an interventional research project. Month 4: Register for TCT. Month 6: First manuscript draft ready.',
+escalate:false,ereason:'Standard career strategy\u2014AI framework sufficient.'},
+status:'reviewed',date:'2026-02-20',author:'Anonymous',anon:true,
+reviewNote:'Solid framework. The single biggest differentiator I see is genuine enthusiasm in the cath lab. Programs can tell who loves the work vs who wants the title. \u2014 MF'},
+
+{id:101,cat:'finance',role:'fellow',q:'Finishing IC fellowship with $340K in loans. Two offers: academic $480K vs private $650K. How do I decide?',
+ai:{diag:'This is one of the highest-leverage financial decisions of your career. The $170K annual gap seems obvious, but PSLF, tax implications, and career trajectory make the analysis more nuanced.',
+bottleneck:'You are comparing gross salary when you should be comparing 10-year net wealth trajectories. PSLF could make the academic position financially superior despite lower salary.',
+plan:['Calculate PSLF eligibility\u2014if on IDR during training, you may have 7+ qualifying years','Model academic path: $480K + PSLF forgiveness of $340K (tax-free) after 3 more years','Model private path: $650K, aggressive payoff of $340K over 3-4 years','Factor in retirement match differences','Consider non-financial factors: research time, call burden, partnership track'],
+mistakes:['Refinancing before deciding on PSLF\u2014this is irreversible','Ignoring tax-free nature of PSLF forgiveness (worth $100K+ in taxes)','Choosing based on gross salary without full financial modeling','Not hiring a physician contract attorney'],
+action:'Week 1: Verify qualifying payment count. Week 2: Both contracts to attorney. Week 3: Run scenarios with physician financial planner. Week 4: Decide on 10-year net wealth, not year-1 salary.',
+escalate:true,ereason:'High-impact financial decision. Doctor Review recommended.'},
+status:'reviewed',date:'2026-02-22',author:'Anonymous',anon:true,
+reviewNote:'Run both models. With 7 years of IDR, academic + PSLF could net $200K+ more over 10 years despite lower salary. Do not refinance until you decide. \u2014 MF'},
+
+{id:102,cat:'fellowship',role:'resident',q:'PGY-2 at a community program. How do I maximize my chances for competitive cardiology fellowship?',
+ai:{diag:'Community program residents absolutely match cardiology. It requires more intentional effort than university programs, but your individual credentials can overcome institutional name recognition.',
+bottleneck:'Your biggest challenge is access to cardiology research mentors and fellowship PD connections. University residents get this passively. You must create it actively.',
+plan:['Find a cardiology research mentor (at your institution or external)\u2014start NOW','Target 2-3 first-author publications by application time','Do an away rotation at a target program\u2014strongest networking tool','Get ITE above 70th percentile\u2014study MKSAP and UWorld','Build relationships with every cardiologist at your hospital','Attend ACC or AHA, even as poster presenter'],
+mistakes:['Waiting until PGY-3 to start research','Relying on PD to open doors\u2014network independently','Applying to too few programs\u2014apply 25-40','Neglecting clinical evaluations while chasing research'],
+action:'This month: email 5 cardiologists about research collaboration. Next month: start a case series. Month 3: register for ACC. Month 4: plan away rotation.',
+escalate:false,ereason:'Standard fellowship strategy.'},
+status:'reviewed',date:'2026-02-24',author:'Sarah M.',anon:false,
+reviewNote:'Community graduates do great. The away rotation is the great equalizer. \u2014 MF'},
+
+{id:103,cat:'contract',role:'fellow',q:'What red flags should I watch for in my first attending contract? What should I negotiate?',
+ai:{diag:'Most first-year attendings sign contracts that cost them $200-500K over the term because they do not negotiate. The employer expects you to negotiate\u2014a first offer is never the best offer.',
+bottleneck:'You do not know what you do not know. Without a physician contract attorney and MGMA data, you are negotiating blind.',
+plan:['Hire a physician contract attorney\u2014non-negotiable ($2-3K)','Get MGMA compensation data for your specialty and region','Negotiate: base salary, RVU rate, signing bonus, relocation, CME, call schedule','Red flags: restrictive covenant >1yr or >25mi, no tail coverage, termination without cause <90 days','Understand compensation model: salary vs RVU vs hybrid','Negotiate tail coverage\u2014employer should pay it'],
+mistakes:['Signing without attorney review','Focusing only on base salary, ignoring restrictive covenant','Not understanding claims-made vs occurrence malpractice','Accepting verbal promises not in the written contract'],
+action:'Week 1: Find a contract attorney. Week 2: Request MGMA data. Week 3: Send contract for review. Week 4: Prepare counter-offer.',
+escalate:true,ereason:'High-impact. Contract specifics need individualized review.'},
+status:'reviewed',date:'2026-02-25',author:'Anonymous',anon:true,
+reviewNote:'The restrictive covenant is the most dangerous clause. I have seen colleagues trapped. Everything is negotiable. \u2014 MF'},
+
+{id:104,cat:'wellness',role:'resident',q:'PGY-3 considering cardiology but feeling burnt out. How do I know if it is the specialty or the training?',
+ai:{diag:'Burnout during PGY-2/3 is nearly universal. The question is whether burnout is masking genuine disinterest or is the predictable exhaustion of residency.',
+bottleneck:'You are making a career-defining decision in one of the worst mental states for decision-making. Training fatigue distorts your perception of attending life.',
+plan:['Shadow a community cardiologist for a day\u2014NOT academic. See real attending life','Test your curiosity: does an interesting cath case spark curiosity or dread?','Talk to 3 cardiologists at different career stages about their daily schedule','Protect one non-medicine activity per week','Ask: would you feel this way about ANY specialty right now?'],
+mistakes:['Making permanent decisions based on temporary feelings','Confusing residency exhaustion with specialty disinterest','Isolating instead of talking to mentors','Comparing your internal experience to others\' external performance'],
+action:'This week: schedule a shadow day. This month: protect one evening/week as non-negotiable personal time. Revisit in 30 days with more data.',
+escalate:false,ereason:'Common training concern. Seek professional support if symptoms persist.'},
+status:'reviewed',date:'2026-02-21',author:'Anonymous',anon:true,
+reviewNote:'Almost every cardiologist questioned their path during PGY-3. Shadow day advice is critical\u2014attending life vs training life is night and day. \u2014 MF'},
+
+{id:105,cat:'finance',role:'resident',q:'Should I start a Roth IRA during residency? $250K loans, barely covering expenses.',
+ai:{diag:'Yes. A Roth IRA during residency is one of the highest-ROI financial moves available. Your tax bracket (22-24%) will never be this low again\u2014as an attending it is 35-37%.',
+bottleneck:'You think \"I cannot afford to save.\" The real frame: \"I cannot afford NOT to save at this tax rate.\" Even $100/month compounds dramatically over 30 years.',
+plan:['Open Roth IRA at Vanguard or Fidelity (free, 15 minutes)','Start with whatever you can\u2014even $50/month. Automate it','Invest in target-date fund or VTSAX','Max contribution $7,000/year\u2014aim for it but do not stress','Stay on IDR for loans\u2014payments are low during training','Do NOT refinance yet\u2014preserve PSLF option'],
+mistakes:['Waiting for attending salary\u2014you lose the low bracket forever','Aggressively paying loans during residency instead of IDR','Refinancing federal loans during training','Analysis paralysis on fund selection instead of starting'],
+action:'Today: open Roth IRA. This week: set up $100/month auto-contribution into VTSAX. Done. Worth $200K+ over your career.',
+escalate:false,ereason:'Standard resident finance\u2014answer is almost always yes.'},
+status:'reviewed',date:'2026-02-23',author:'Jason W.',anon:false,
+reviewNote:'100% do this. Paying 22% tax now vs 37% later is a guaranteed 15% return before investment gains. \u2014 MF'},
+
+{id:106,cat:'clinical',role:'student',q:'When should you suspect cardiac tamponade and what is the emergency management?',
+ai:{diag:'Cardiac tamponade is a clinical diagnosis requiring rapid recognition. Classic Beck triad (hypotension, muffled sounds, JVD) is only present in ~30% of cases.',
+bottleneck:'Students over-rely on Beck triad. The key is recognizing the hemodynamic pattern: pulsus paradoxus + elevated JVP + tachycardia in the right context.',
+plan:['Triggers: pericardial effusion history, recent surgery, chest trauma, malignancy, uremia','Check pulsus paradoxus >10mmHg on every suspicious case\u2014most sensitive sign','ECG: electrical alternans is highly specific','Bedside echo: look for RV diastolic collapse and plethoric IVC','Confirmed tamponade: emergency pericardiocentesis\u2014do not wait','Temporize with IV fluids while preparing\u2014increases preload'],
+mistakes:['Waiting for all three Beck findings','Ordering formal echo instead of bedside in unstable patient','Forgetting to check pulsus paradoxus','Giving diuretics to tamponade patient (cardiovascular collapse)'],
+action:'Learn focused cardiac ultrasound for effusion. Practice measuring pulsus paradoxus. Review 3 tamponade cases. This is a cannot-miss diagnosis.',
+escalate:false,ereason:'Standard clinical education.'},
+status:'reviewed',date:'2026-02-19',author:'Priya K.',anon:false},
+
+{id:107,cat:'career',role:'fellow',q:'Should I do a structural heart fellowship after IC? Is it worth the extra year?',
+ai:{diag:'Structural heart is the fastest-growing IC subspecialty. TAVR, MitraClip, WATCHMAN are expanding scope. The question is whether YOU need a formal year vs gaining skills on the job.',
+bottleneck:'The real question is opportunity cost: one more training year = $500-700K in lost attending salary. Weigh that against career positioning.',
+plan:['Assess current exposure\u2014if IC fellowship includes significant structural cases, you may not need a separate year','Consider your target: academic centers increasingly want formal training','Job market data: structural-trained ICs command $50-100K salary premium','Alternative: some ICs build skills through proctored cases without fellowship','For TAVR specifically, formal training is becoming the standard'],
+mistakes:['Doing it just for the CV line without genuine interest','Ignoring the $500-700K opportunity cost','Assuming you cannot do structural without formal fellowship','Not researching which programs have best case volume'],
+action:'Month 1: track structural exposure. Month 2: talk to 3 structural attendings. Month 3: research top 10 programs if proceeding.',
+escalate:false,ereason:'Career strategy with clear framework.'},
+status:'reviewed',date:'2026-02-18',author:'Rachel P.',anon:false},
+
+{id:108,cat:'productivity',role:'resident',q:'How do I manage time between clinical duties, research, and fellowship applications without burning out?',
+ai:{diag:'You are running three parallel workstreams on a schedule that barely accommodates one. The answer is not time management\u2014it is ruthless prioritization and systems design.',
+bottleneck:'You are treating all tasks as equally urgent. They are not. Clinical duties are non-negotiable. Everything else needs ruthless time-boxing.',
+plan:['Install time-blocking: clinical blocks, research blocks, admin blocks. Protect research time like a patient appointment','Batch application tasks: personal statement in one sitting, ERAS in one weekend','Research hack: single retrospective study using existing data\u2014no IRB delays','2-hour rule: 2 focused research hours per week. Consistency beats marathons','Automate: template LOR emails, spreadsheet for program tracking','Say no strategically during application season'],
+mistakes:['Doing research in 15-minute gaps\u2014you need uninterrupted blocks','Perfectionism on applications at cost of clinical evaluations','Saying yes to every project','Neglecting sleep and exercise\u2014destroys performance across all domains'],
+action:'This week: create weekly template with 2x 2-hour research blocks. Start a simple retrospective study. Block one weekend for ERAS. Protect 7 hours sleep.',
+escalate:false,ereason:'Standard productivity framework.'},
+status:'reviewed',date:'2026-02-17',author:'Aisha N.',anon:false},
+
+{id:109,cat:'finance',role:'attending',q:'Just started attending. $380K salary, $290K loans. What is my financial priority order?',
+ai:{diag:'Your first 2-3 attending years are the highest-leverage financial period of your career. Decisions now determine your trajectory for decades.',
+bottleneck:'Lifestyle creep. You have lived on $60-70K. The temptation to upgrade everything will destroy wealth-building potential.',
+plan:['Emergency fund: 3-6 months in HYSA. Do this first','Employer match: contribute enough for full 401k/403b match','Max retirement: 401k ($23,500), backdoor Roth ($7,000), HSA ($4,150)','Disability insurance: own-occupation. Guardian or MassMutual. Get it NOW','Term life: 20-30yr, 10-15x income if dependents','Loans: academic = verify PSLF + stay IDR. Private = refinance and pay $8-10K/month','THEN modest lifestyle upgrades'],
+mistakes:['Buying house immediately\u2014rent 1-2 years','Luxury car on physician loan before establishing savings','Financial advisor who sells products instead of fee-only fiduciary','Ignoring disability insurance\u2014$10M+ lifetime earning asset'],
+action:'Week 1: HYSA + emergency fund auto-deposit. Week 2: 401k with match. Week 3: Disability quotes. Month 2: Backdoor Roth. Month 3: Loan strategy. Live on $100K year one.',
+escalate:true,ereason:'High-impact financial inflection point.'},
+status:'reviewed',date:'2026-02-26',author:'Anonymous',anon:true,
+reviewNote:'This is the most important financial year of your life. Live like a resident 2-3 more years. The attendings who do this retire 10 years earlier. \u2014 MF'},
+
+{id:110,cat:'clinical',role:'resident',q:'How do you approach new-onset atrial fibrillation in a hospitalized patient?',
+ai:{diag:'New-onset afib in a hospitalized patient is almost always triggered by something reversible. Your job: control rate and find the trigger.',
+bottleneck:'Residents jump to rhythm control or fixate on the afib. In hospitalized patients, afib is usually a symptom, not the primary problem.',
+plan:['Rate control first: IV metoprolol 5mg q5min (max 3) or IV diltiazem 0.25mg/kg','Find trigger: infection, PE, hyperthyroidism, post-surgical, alcohol, volume overload, pain, hypoxia','Stroke risk: CHA2DS2-VASc. If >=2 men or >=3 women, start DOACs','If hemodynamically unstable: synchronized cardioversion immediately','Cardiology consult if: refractory rate control, instability, unclear etiology','Avoid rhythm control acutely unless symptoms persist despite rate control'],
+mistakes:['IV metoprolol in decompensated HF\u2014use amiodarone','Rhythm control before addressing trigger','Forgetting anticoagulation\u2014stroke risk does not wait','Diltiazem in reduced EF'],
+action:'At bedside: vitals, ECG, TSH/troponin/BNP. Start rate control. Address trigger. Calculate CHA2DS2-VASc. Document anticoagulation decision. Under 30 minutes.',
+escalate:false,ereason:'Core clinical knowledge.'},
+status:'reviewed',date:'2026-02-15',author:'Chris B.',anon:false},
+
+{id:111,cat:'career',role:'student',q:'I am an IMG. Can I realistically become an interventional cardiologist in the US?',
+ai:{diag:'Absolutely. Some of the best ICs are IMGs. The path is harder and longer, but well-established and achievable.',
+bottleneck:'Primary bottleneck is the IM residency match. Once in a good IM program, the playing field levels significantly.',
+plan:['Maximize Step 2 CK\u2014aim 250+','US clinical experience: observerships or rotations are nearly mandatory','US-based research with US co-authors is extremely valuable','Target IM programs with strong cardiology fellowship placement','During residency: perform at top of class\u2014evaluations > background','Attend ACC, connect with IMG cardiologist mentors','Build compelling story: why cardiology, why IC'],
+mistakes:['Applying only to top-tier programs\u2014cast wide net for IM','Underestimating importance of US clinical experience','Not building cardiology relationships early in residency','Giving up after one failed cycle\u2014many succeed on attempt 2-3'],
+action:'Now: register Step 2 CK. This month: apply for US rotations. This quarter: start research with US cardiology mentor. Build 5-year plan.',
+escalate:false,ereason:'Career pathway with clear strategy.'},
+status:'reviewed',date:'2026-02-16',author:'Anonymous',anon:true},
+
+{id:112,cat:'wellness',role:'fellow',q:'How do you handle the stress of a cath lab complication? Had my first perforation last week.',
+ai:{diag:'Every interventional cardiologist has had complications. The first major one is psychologically devastating. This is a normal and important response.',
+bottleneck:'The danger is not the emotional response\u2014it is what you do with it. Suppressing leads to anxiety. Over-dwelling leads to confidence loss. You need structured processing.',
+plan:['Debrief with attending immediately: what happened, preventable, what differently?','Review case objectively: pull angiogram, review wire position, analyze decisions','Talk to senior colleague who has been through it\u2014they all have','Attend M&M conference and participate honestly','Return to the lab\u2014the longer you avoid it, the harder it gets'],
+mistakes:['Pretending you are fine when you are not','Self-isolating instead of debriefing','Avoiding complex cases\u2014avoidance breeds more anxiety','Not distinguishing poor judgment vs inherent procedural risk'],
+action:'Today: debrief with attending. This week: review images with senior fellow. Talk to one IC attending about their first complication. Return to normal caseload. Professional support if anxiety persists >2-3 weeks.',
+escalate:false,ereason:'Common training experience.'},
+status:'reviewed',date:'2026-02-13',author:'Anonymous',anon:true,
+reviewNote:'I remember my first perforation 15 years later. The emotional response means you care. The attendings who scare me are the ones who do not feel it. \u2014 MF'}
+];
+
+const PENDING_Q=[
+{id:200,cat:'career',role:'student',q:'Best strategy for choosing between academic and community IM residency if my goal is cardiology fellowship?',status:'pending',date:'2026-02-27',author:'Marcus T.',anon:false,wantsReview:true},
+{id:201,cat:'finance',role:'fellow',q:'Should I buy a house during fellowship or wait? $50K saved, spouse works.',status:'pending',date:'2026-02-27',author:'Anonymous',anon:true,wantsReview:true},
+{id:202,cat:'contract',role:'fellow',q:'Contract has 2-year restrictive covenant, 30-mile radius. Standard? How to negotiate down?',status:'pending',date:'2026-02-28',author:'Anonymous',anon:true,wantsReview:true},
+{id:203,cat:'wellness',role:'resident',q:'Getting married during PGY-3 while applying for fellowship. How to manage both?',status:'pending',date:'2026-02-28',author:'Jason W.',anon:false,wantsReview:false},
+{id:204,cat:'career',role:'fellow',q:'Should I pursue advanced heart failure fellowship or interventional? Genuinely interested in both.',status:'pending',date:'2026-02-28',author:'Anonymous',anon:true,wantsReview:true},
+{id:205,cat:'finance',role:'attending',q:'First attending year. Wife wants a $600K house, I have $350K in loans. Can we afford this?',status:'pending',date:'2026-02-28',author:'Anonymous',anon:true,wantsReview:true},
+{id:206,cat:'clinical',role:'student',q:'How do you systematically read an ECG? What is your step-by-step approach?',status:'pending',date:'2026-02-27',author:'David L.',anon:false,wantsReview:false},
+{id:207,cat:'productivity',role:'resident',q:'I spend 3 hours on notes every day after rounds. How do attendings chart so fast?',status:'pending',date:'2026-02-27',author:'Anonymous',anon:true,wantsReview:false}
+];
+
+
+// ===== CONVERTED FROM SEED-DATA (109 original Q&As) =====
+const LEGACY_Q=[
+{"id":500,"cat":"clinical","role":"student","q":"What are the highest-yield resources for Step 2 CK if I want to go into cardiology?","ai":{"diag":"First Aid Step 2 CK and UWorld are non-negotiable. For cardiology-specific prep, read the ACC/AHA guidelines for the big conditions.","bottleneck":"Amboss is excellent for quick reference.","plan":["For cardiology-specific prep, read the ACC/AHA guidelines for the big conditions","Amboss is excellent for quick reference","Your clinical rotations will teach you more than any book."],"mistakes":["Not starting early enough","Relying on a single source or mentor"],"action":"Amboss is excellent for quick reference. Your clinical rotations will teach you more than any book..","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2026-02-27","author":"Anonymous","anon":true,"reviewNote":"First Aid Step 2 CK and UWorld are non-negotiable. For cardiology-specific prep, read the ACC/AHA guidelines for the big conditions. — MF"},
+{"id":501,"cat":"fellowship","role":"resident","q":"How important is the cardiology in-training exam (ITE) for fellowship applications?","ai":{"diag":"Programs use it as an objective measure. Aim above 70th percentile.","bottleneck":"Some programs have cutoffs.","plan":["Aim above 70th percentile","Aim above 70th percentile","Some programs have cutoffs","A strong ITE score combined with good letters is a powerful combination."],"mistakes":["Not starting early enough","Relying on a single source or mentor"],"action":"Some programs have cutoffs. A strong ITE score combined with good letters is a powerful combination..","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2026-02-26","author":"Anonymous","anon":true},
+{"id":502,"cat":"clinical","role":"fellow","q":"What resources do you recommend for interventional cardiology boards?","ai":{"diag":"SCAI board review materials, Kern’s Cardiac Catheterization Handbook, and SCAI consensus statements on PCI and complications. Do as many practice questions as you can find.","bottleneck":"Heavy on hemodynamics, complications management, and procedural decision-making.","plan":["Do as many practice questions as you can find","Do as many practice questions as you can find","Heavy on hemodynamics, complications management, and procedural decision-making","Peripheral intervention questions are increasing."],"mistakes":["Not starting early enough","Relying on a single source or mentor"],"action":"Heavy on hemodynamics, complications management, and procedural decision-making. Peripheral intervention questions are increasing..","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2026-02-24","author":"Anonymous","anon":true},
+{"id":503,"cat":"clinical","role":"student","q":"Is it worth doing a research year between MS3 and MS4 if I want cardiology?","ai":{"diag":"Depends on your application. If you have minimal research, a dedicated year can boost your CV.","bottleneck":"But it’s not required.","plan":["If you do one, make sure you’ll get first-author publications — not just data collection","If you have minimal research, a dedicated year can boost your CV","But it’s not required","If you do one, make sure you’ll get first-author publications — not just data collection"],"mistakes":["Not starting early enough","Relying on a single source or mentor"],"action":"A productive year with 2-3 publications is worth it. A year of data collection for someone else’s paper is not..","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2026-02-23","author":"Marcus T.","anon":false,"reviewNote":"Depends on your application. If you have minimal research, a dedicated year can boost your CV. — MF"},
+{"id":504,"cat":"clinical","role":"resident","q":"What’s the best way to learn ECG interpretation beyond the basics?","ai":{"diag":"Start with Dubin’s, then Goldberger. The real learning happens by reading every ECG on service.","bottleneck":"The real learning happens by reading every ECG on service.","plan":["Start with Dubin’s, then Goldberger","The real learning happens by reading every ECG on service","For advanced stuff — Brugada, WPW, fascicular blocks — Life in the Fast Lane is excellent","Read 5 ECGs a day and within a year you’ll be better than most attendings."],"mistakes":["Not starting early enough","Relying on a single source or mentor"],"action":"For advanced stuff — Brugada, WPW, fascicular blocks — Life in the Fast Lane is excellent. Read 5 ECGs a day and within a year you’ll be better than most attendings..","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2026-02-21","author":"Aisha N.","anon":false},
+{"id":505,"cat":"clinical","role":"student","q":"Should I do an away rotation in cardiology as an MS4?","ai":{"diag":"Away rotations matter more for surgical subspecialties. For cardiology fellowship, you apply from residency.","bottleneck":"Focus on getting the best IM residency you can.","plan":["Focus on getting the best IM residency you can","For cardiology fellowship, you apply from residency","Focus on getting the best IM residency you can","That’s the path to cardiology."],"mistakes":["Not starting early enough","Relying on a single source or mentor"],"action":"Focus on getting the best IM residency you can. That’s the path to cardiology..","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2026-02-19","author":"Emily C.","anon":false},
+{"id":506,"cat":"clinical","role":"fellow","q":"How do I get better at reading coronary angiograms?","ai":{"diag":"Takes hundreds of cases. Learn coronary anatomy cold in every view.","bottleneck":"Watch every case in the cath lab.","plan":["Learn coronary anatomy cold in every view","Watch every case in the cath lab","Use ACC angiographic training modules"],"mistakes":["Not starting early enough","Relying on a single source or mentor"],"action":"Review your own cases after the fact. Within 6 months you’ll see dramatic improvement..","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2026-02-18","author":"Anonymous","anon":true,"reviewNote":"Takes hundreds of cases. Learn coronary anatomy cold in every view. — MF"},
+{"id":507,"cat":"fellowship","role":"resident","q":"Is ACCSAP worth the money for cardiology fellowship prep?","ai":{"diag":"It’s the closest thing to the actual board exam. Many programs provide it free.","bottleneck":"If not, split the cost with co-fellows.","plan":["Many programs provide it free","If not, split the cost with co-fellows","Single best investment for cardiology boards."],"mistakes":["Not starting early enough","Relying on a single source or mentor"],"action":"If not, split the cost with co-fellows. Single best investment for cardiology boards..","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2026-02-16","author":"Anonymous","anon":true},
+{"id":508,"cat":"clinical","role":"student","q":"What cardiology electives should I prioritize during medical school?","ai":{"diag":"General cardiology consult rotation first. Then a cath lab elective to see if you like procedures.","bottleneck":"Echo rotation is also high-yield.","plan":["Then a cath lab elective to see if you like procedures","Echo rotation is also high-yield","The consult rotation is king."],"mistakes":["Not starting early enough","Relying on a single source or mentor"],"action":"Echo rotation is also high-yield. The consult rotation is king..","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2026-02-14","author":"Anonymous","anon":true},
+{"id":509,"cat":"clinical","role":"fellow","q":"How should I prepare for complex PCI cases as a first-year interventional fellow?","ai":{"diag":"Before every case, review the prior angiogram, know the anatomy, have plans A, B, and C. Read SCAI expert consensus on complex PCI.","bottleneck":"For CTOs study the hybrid algorithm.","plan":["Read SCAI expert consensus on complex PCI","For CTOs study the hybrid algorithm","Watch TCT and EuroPCR case reviews on YouTube"],"mistakes":["Not starting early enough","Relying on a single source or mentor"],"action":"Watch TCT and EuroPCR case reviews on YouTube. Assist on as many complex cases as possible..","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2026-02-13","author":"Rachel P.","anon":false,"reviewNote":"Before every case, review the prior angiogram, know the anatomy, have plans A, B, and C. Read SCAI expert consensus on complex PCI. — MF"},
+{"id":510,"cat":"clinical","role":"resident","q":"What journals should I be reading regularly?","ai":{"diag":"JACC, Circulation, and European Heart Journal. Follow them on Twitter for highlights.","bottleneck":"NEJM for landmark trials.","plan":["Follow them on Twitter for highlights","NEJM for landmark trials","Read one landmark cardiology trial per week and know the details."],"mistakes":["Not starting early enough","Relying on a single source or mentor"],"action":"NEJM for landmark trials. Read one landmark cardiology trial per week and know the details..","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2026-02-11","author":"Jason W.","anon":false},
+{"id":511,"cat":"clinical","role":"student","q":"How do I decide between cardiology and cardiothoracic surgery?","ai":{"diag":"CT surgery is 7+ years with brutal hours. Cardiology is IM + 3-year fellowship + 1 for interventional.","bottleneck":"IC is increasingly doing what surgeons used to — TAVR, MitraClip, structural interventions.","plan":["Cardiology is IM + 3-year fellowship + 1 for interventional","IC is increasingly doing what surgeons used to — TAVR, MitraClip, structural interventions","Shadow both extensively"],"mistakes":["Not starting early enough","Relying on a single source or mentor"],"action":"Shadow both extensively. The daily life is very different..","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2026-02-09","author":"Marcus T.","anon":false},
+{"id":512,"cat":"fellowship","role":"fellow","q":"Tips for learning transesophageal echo during fellowship?","ai":{"diag":"Get your hands on the probe as much as possible. Volunteer for every TEE case.","bottleneck":"ASE has excellent online training modules.","plan":["Get your hands on the probe as much as possible","Volunteer for every TEE case","ASE has excellent online training modules","Practice the standard 28-view comprehensive exam until it’s muscle memory"],"mistakes":["Not starting early enough","Relying on a single source or mentor"],"action":"Practice the standard 28-view comprehensive exam until it’s muscle memory. Learn to drive the probe yourself from day one..","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2026-02-08","author":"Anonymous","anon":true,"reviewNote":"Get your hands on the probe as much as possible. Volunteer for every TEE case. — MF"},
+{"id":513,"cat":"clinical","role":"resident","q":"Should I pursue an MBA alongside cardiology training?","ai":{"diag":"MBA is practical for practice management and leadership roles. Many programs offer executive MBAs compatible with fellowship.","bottleneck":"A PhD only makes sense for dedicated academic research careers.","plan":["Don’t do either just for credentials","Many programs offer executive MBAs compatible with fellowship","A PhD only makes sense for dedicated academic research careers","Don’t do either just for credentials"],"mistakes":["Not starting early enough","Relying on a single source or mentor"],"action":"A PhD only makes sense for dedicated academic research careers. Don’t do either just for credentials.","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2026-02-06","author":"Anonymous","anon":true},
+{"id":514,"cat":"clinical","role":"student","q":"What’s the most underrated topic in cardiology that students should learn early?","ai":{"diag":"Heart failure management. Most common reason for hospitalization over 65.","bottleneck":"If you understand HFrEF management and GDMT optimization cold, you’ll impress every cardiology attending you work with..","plan":["Most common reason for hospitalization over 65","If you understand HFrEF management and GDMT optimization cold, you’ll impress every cardiology attending you work with."],"mistakes":["Not starting early enough","Relying on a single source or mentor"],"action":"Most common reason for hospitalization over 65. If you understand HFrEF management and GDMT optimization cold, you’ll impress every cardiology attending you work with..","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2026-02-04","author":"Anonymous","anon":true},
+{"id":515,"cat":"clinical","role":"fellow","q":"What conferences should interventional fellows attend?","ai":{"diag":"TCT (Transcatheter Cardiovascular Therapeutics) is the most important for IC. Also CRT (Cardiovascular Research Technologies), ACC Scientific Sessions, and EuroPCR for European data.","bottleneck":"TCT (Transcatheter Cardiovascular Therapeutics) is the most important for IC.","plan":["Also CRT (Cardiovascular Research Technologies), ACC Scientific Sessions, and EuroPCR for European data","Submit abstracts to present — it looks great on your CV and forces you to learn deeply."],"mistakes":["Not starting early enough","Relying on a single source or mentor"],"action":"Also CRT (Cardiovascular Research Technologies), ACC Scientific Sessions, and EuroPCR for European data. Submit abstracts to present — it looks great on your CV and forces you to learn deeply..","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2026-02-03","author":"Kevin D.","anon":false,"reviewNote":"TCT (Transcatheter Cardiovascular Therapeutics) is the most important for IC. Also CRT (Cardiovascular Research Technologies), ACC Scientific Sessions, and EuroPCR for European data. — MF"},
+{"id":516,"cat":"fellowship","role":"resident","q":"How do I build a strong research portfolio for fellowship applications?","ai":{"diag":"Find a cardiology mentor who publishes regularly. Case reports are the easiest entry point.","bottleneck":"Then move to retrospective studies using existing databases.","plan":["Case reports are the easiest entry point","Aim for 2-3 first-author publications by application time","Case reports are the easiest entry point","Then move to retrospective studies using existing databases","Aim for 2-3 first-author publications by application time"],"mistakes":["Not starting early enough","Relying on a single source or mentor"],"action":"Aim for 2-3 first-author publications by application time. Quality over quantity — one JACC paper beats five in low-impact journals..","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2026-02-01","author":"Sarah M.","anon":false},
+{"id":517,"cat":"fellowship","role":"student","q":"Is there a difference between DO and MD applicants for cardiology fellowship?","ai":{"diag":"Historically there was bias, but it’s decreasing. DO applicants match cardiology fellowship regularly now.","bottleneck":"Historically there was bias, but it’s decreasing.","plan":["DO applicants match cardiology fellowship regularly now","DO applicants match cardiology fellowship regularly now","What matters is your residency training, letters, research, and board scores","If you’re at a strong IM program with good mentorship, your degree letters matter less than your performance."],"mistakes":["Not starting early enough","Relying on a single source or mentor"],"action":"What matters is your residency training, letters, research, and board scores. If you’re at a strong IM program with good mentorship, your degree letters matter less than your performance..","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2026-01-30","author":"Priya K.","anon":false},
+{"id":518,"cat":"clinical","role":"fellow","q":"How much simulation training should I do before live CTO cases?","ai":{"diag":"Many programs have sim labs with coronary models. SCAI offers CTO workshops with hands-on simulation.","bottleneck":"The Hybrid CTO course is excellent.","plan":["When you get to your first live case, the fundamentals should be muscle memory.","SCAI offers CTO workshops with hands-on simulation","The Hybrid CTO course is excellent","Practice wire manipulation, microcatheter exchanges, and retrograde techniques"],"mistakes":["Not starting early enough","Relying on a single source or mentor"],"action":"Practice wire manipulation, microcatheter exchanges, and retrograde techniques. When you get to your first live case, the fundamentals should be muscle memory..","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2026-01-29","author":"Anonymous","anon":true,"reviewNote":"As much as possible. Many programs have sim labs with coronary models. — MF"},
+{"id":519,"cat":"clinical","role":"resident","q":"What’s the best way to present at cardiology grand rounds?","ai":{"diag":"Pick a topic your attendings care about. Use real cases to anchor the teaching points.","bottleneck":"Use real cases to anchor the teaching points.","plan":["Use real cases to anchor the teaching points","Keep it to 30-40 minutes","Know the landmark trials relevant to your topic"],"mistakes":["Not starting early enough","Relying on a single source or mentor"],"action":"Make it interactive — ask the audience their approach before revealing the data. Attendings remember residents who present well..","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2026-01-27","author":"Anonymous","anon":true},
+{"id":520,"cat":"clinical","role":"student","q":"How early should I start thinking about cardiology as a career?","ai":{"diag":"You don’t need to decide until PGY-2 at the earliest. During med school, focus on being the best IM student you can be.","bottleneck":"Do a cardiology elective to test your interest.","plan":["During med school, focus on being the best IM student you can be","Do a cardiology elective to test your interest","If you love it, make sure you match at a strong IM program with good cardiology fellowship placement"],"mistakes":["Not starting early enough","Relying on a single source or mentor"],"action":"If you love it, make sure you match at a strong IM program with good cardiology fellowship placement. You don’t need to commit until you’re actually ready to apply..","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2026-01-25","author":"Anonymous","anon":true},
+{"id":521,"cat":"clinical","role":"fellow","q":"Should I learn IVUS or OCT first?","ai":{"diag":"It’s used more widely and most attendings will expect you to interpret it. Learn to identify the vessel wall layers, plaque morphology, and stent apposition.","bottleneck":"Once you’re comfortable with IVUS, OCT is relatively intuitive — it’s higher resolution but has a narrower field of view.","plan":["Learn to identify the vessel wall layers, plaque morphology, and stent apposition","Once you’re comfortable with IVUS, OCT is relatively intuitive — it’s higher resolution but has a narrower field of view","Know the strengths and limitations of each"],"mistakes":["Not starting early enough","Relying on a single source or mentor"],"action":"Know the strengths and limitations of each. IVUS for left main sizing, OCT for stent optimization and thin-cap fibroatheroma..","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2026-01-24","author":"Lisa G.","anon":false,"reviewNote":"IVUS first. It’s used more widely and most attendings will expect you to interpret it. — MF"},
+{"id":522,"cat":"clinical","role":"resident","q":"What’s the value of getting ECMO certified as a cardiology fellow?","ai":{"diag":"Mechanical circulatory support is a rapidly growing field. If you can manage ECMO, Impella, and balloon pumps, you’re significantly more marketable.","bottleneck":"Many programs now expect this.","plan":["Get comfortable with cannulation, circuit management, and weaning protocols","If you can manage ECMO, Impella, and balloon pumps, you’re significantly more marketable","Many programs now expect this","Take the ELSO certification course"],"mistakes":["Not starting early enough","Relying on a single source or mentor"],"action":"Get comfortable with cannulation, circuit management, and weaning protocols. This skill set will define the next generation of cardiologists..","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2026-01-22","author":"Chris B.","anon":false},
+{"id":523,"cat":"clinical","role":"student","q":"When should you suspect cardiac tamponade?","ai":{"diag":"Beck’s triad: hypotension, muffled heart sounds, JVD — but only present in ~30% of cases. Key clues: pulsus paradoxus >10mmHg, electrical alternans on ECG, plethoric IVC on echo.","bottleneck":"Beck’s triad: hypotension, muffled heart sounds, JVD — but only present in ~30% of cases.","plan":["Key clues: pulsus paradoxus >10mmHg, electrical alternans on ECG, plethoric IVC on echo","Treatment is pericardiocentesis","True emergency — don’t wait for formal echo if crashing."],"mistakes":["Not starting early enough","Relying on a single source or mentor"],"action":"Treatment is pericardiocentesis. True emergency — don’t wait for formal echo if crashing..","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2026-01-19","author":"Anonymous","anon":true,"reviewNote":"Beck’s triad: hypotension, muffled heart sounds, JVD — but only present in ~30% of cases. Key clues: pulsus paradoxus >10mmHg, electrical alternans on ECG, plethoric IVC on echo. — MF"},
+{"id":524,"cat":"clinical","role":"fellow","q":"How do you decide between DES and DCB for in-stent restenosis?","ai":{"diag":"DCB is my first choice for focal ISR in a well-expanded stent. Avoids adding more metal.","bottleneck":"But for complex ISR (long segment, recoil, dissection), DES is often better.","plan":["Avoids adding more metal","But for complex ISR (long segment, recoil, dissection), DES is often better","Always optimize with high-pressure NC balloon first before deciding."],"mistakes":["Avoids adding more metal","Not starting early enough","Relying on a single source or mentor"],"action":"But for complex ISR (long segment, recoil, dissection), DES is often better. Always optimize with high-pressure NC balloon first before deciding..","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2026-01-17","author":"Rachel P.","anon":false},
+{"id":525,"cat":"clinical","role":"resident","q":"How do you manage a STEMI patient arriving more than 12 hours after symptom onset?","ai":{"diag":"If ongoing ischemia (persistent ST elevation, chest pain, hemodynamic instability) — cath lab regardless of timing. If stable and pain-free at 12+ hours, data suggests routine PCI of totally occluded artery doesn’t help.","bottleneck":"Medical management and reassess.","plan":["If stable and pain-free at 12+ hours, data suggests routine PCI of totally occluded artery doesn’t help","Medical management and reassess","Clinical judgment matters more than arbitrary time cutoffs."],"mistakes":["Not starting early enough","Relying on a single source or mentor"],"action":"Medical management and reassess. Clinical judgment matters more than arbitrary time cutoffs..","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2026-01-16","author":"Jason W.","anon":false},
+{"id":526,"cat":"clinical","role":"student","q":"How do you differentiate STEMI from benign early repolarization?","ai":{"diag":"BER: concave upward ST (smiley face), V2-V5, normal QTc. STEMI: convex or straight ST (frowny face), vascular distribution, reciprocal changes, evolves over time.","bottleneck":"When in doubt, repeat ECG in 15-20 minutes.","plan":["STEMI: convex or straight ST (frowny face), vascular distribution, reciprocal changes, evolves over time","When in doubt, repeat ECG in 15-20 minutes","Serial troponins help"],"mistakes":["Never feel bad about activating the cath lab if unsure.","Not starting early enough","Relying on a single source or mentor"],"action":"Serial troponins help. Never feel bad about activating the cath lab if unsure..","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2026-01-14","author":"Marcus T.","anon":false,"reviewNote":"BER: concave upward ST (smiley face), V2-V5, normal QTc. STEMI: convex or straight ST (frowny face), vascular distribution, reciprocal changes, evolves over time. — MF"},
+{"id":527,"cat":"clinical","role":"fellow","q":"What’s your wire escalation strategy for CTO PCI?","ai":{"diag":"Start with workhorse wire (Sion, Fielder XT). Escalate to polymer-jacketed (Fielder FC, Pilot 200).","bottleneck":"Harder caps: Confianza Pro 12 or Gaia series.","plan":["Start with workhorse wire (Sion, Fielder XT)","If antegrade fails, consider dissection-reentry or retrograde","The hybrid algorithm should guide strategy based on cap, length, collaterals, and morphology."],"mistakes":["Not starting early enough","Relying on a single source or mentor"],"action":"If antegrade fails, consider dissection-reentry or retrograde. The hybrid algorithm should guide strategy based on cap, length, collaterals, and morphology..","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2026-01-12","author":"Anonymous","anon":true},
+{"id":528,"cat":"clinical","role":"resident","q":"When do you use milrinone vs dobutamine in acute heart failure?","ai":{"diag":"Dobutamine is first-line for low output. Milrinone is better with significant pulmonary hypertension.","bottleneck":"Milrinone causes more hypotension and has a longer half-life.","plan":["Always consider whether they need mechanical support instead.","Milrinone is better with significant pulmonary hypertension","Milrinone causes more hypotension and has a longer half-life","For patients on chronic beta-blockers, milrinone may work better"],"mistakes":["Not starting early enough","Relying on a single source or mentor"],"action":"Renally dose milrinone. Always consider whether they need mechanical support instead..","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2026-01-11","author":"Anonymous","anon":true},
+{"id":529,"cat":"clinical","role":"student","q":"Explain systolic vs diastolic heart failure simply?","ai":{"diag":"Systolic (HFrEF): heart is weak, can’t pump enough blood out. Four pillars of therapy.","bottleneck":"Diastolic (HFpEF): heart is stiff, can’t relax to fill.","plan":["Four pillars of therapy","Diastolic (HFpEF): heart is stiff, can’t relax to fill","Treatment is mostly diuretics, SGLT2i, and managing comorbidities"],"mistakes":["Not starting early enough","Relying on a single source or mentor"],"action":"Treatment is mostly diuretics, SGLT2i, and managing comorbidities. This distinction matters enormously for management..","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2026-01-09","author":"Anonymous","anon":true,"reviewNote":"Systolic (HFrEF): heart is weak, can’t pump enough blood out. EF <40%. — MF"},
+{"id":530,"cat":"clinical","role":"fellow","q":"How do you manage a coronary perforation in the cath lab?","ai":{"diag":"Inflate balloon at perforation to tamponade. Get echo for pericardial effusion.","bottleneck":"Small wire perforation: prolonged balloon inflation.","plan":["Get echo for pericardial effusion","Get echo for pericardial effusion","Small wire perforation: prolonged balloon inflation","Large perforation: covered stent"],"mistakes":["Not starting early enough","Relying on a single source or mentor"],"action":"Pericardiocentesis ready if tamponade develops. Most are manageable if you act quickly..","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2026-01-07","author":"Kevin D.","anon":false},
+{"id":531,"cat":"clinical","role":"resident","q":"What’s the difference between NSTEMI and unstable angina?","ai":{"diag":"The difference is troponin. With high-sensitivity assays, almost every ACS now has detectable troponin.","bottleneck":"True UA is increasingly rare.","plan":["Focus on TIMI or GRACE score, not the label.","With high-sensitivity assays, almost every ACS now has detectable troponin","True UA is increasingly rare","Management is the same: anticoagulation, DAPT, risk stratification, early invasive strategy for high-risk"],"mistakes":["Not starting early enough","Relying on a single source or mentor"],"action":"Management is the same: anticoagulation, DAPT, risk stratification, early invasive strategy for high-risk. Focus on TIMI or GRACE score, not the label..","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2026-01-06","author":"Sarah M.","anon":false},
+{"id":532,"cat":"clinical","role":"student","q":"What complications should I watch for after cardiac catheterization?","ai":{"diag":"Access site: hematoma, pseudoaneurysm, retroperitoneal bleed (watch for unexplained hypotension with back pain). Coronary dissection/perforation during intervention.","bottleneck":"Arrhythmias during right heart cath.","plan":["Coronary dissection/perforation during intervention","Arrhythmias during right heart cath","Radial artery occlusion with radial access."],"mistakes":["Not starting early enough","Relying on a single source or mentor"],"action":"Arrhythmias during right heart cath. Radial artery occlusion with radial access..","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2026-01-04","author":"Priya K.","anon":false,"reviewNote":"Access site: hematoma, pseudoaneurysm, retroperitoneal bleed (watch for unexplained hypotension with back pain). Contrast nephropathy. — MF"},
+{"id":533,"cat":"clinical","role":"fellow","q":"When do you use Impella before high-risk PCI?","ai":{"diag":"Severely depressed EF (<30%), unprotected left main, last remaining vessel, complex multivessel with hemodynamic compromise. PROTECT III data supports it.","bottleneck":"SCAI shock class C or worse — I want support before starting.","plan":["SCAI shock class C or worse — I want support before starting","PROTECT III data supports it","SCAI shock class C or worse — I want support before starting","Don’t wait until they crash"],"mistakes":["Not starting early enough","Relying on a single source or mentor"],"action":"Don’t wait until they crash. Place Impella first, stabilize, then intervene..","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2026-01-02","author":"Anonymous","anon":true},
+{"id":534,"cat":"clinical","role":"resident","q":"How do you anticoagulate a patient with afib and a mechanical valve?","ai":{"diag":"Never DOACs — RE-ALIGN trial was stopped for excess events. Target INR: aortic mechanical 2.5, mitral mechanical 3.0.","bottleneck":"This is a boards question and a real patient safety issue..","plan":["Target INR: aortic mechanical 2.5, mitral mechanical 3.0","Target INR: aortic mechanical 2.5, mitral mechanical 3.0","Add aspirin 81mg if additional risk factors","This is a boards question and a real patient safety issue."],"mistakes":["Never DOACs — RE-ALIGN trial was stopped for excess events","Not starting early enough","Relying on a single source or mentor"],"action":"Add aspirin 81mg if additional risk factors. This is a boards question and a real patient safety issue..","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2026-01-01","author":"Anonymous","anon":true},
+{"id":535,"cat":"clinical","role":"student","q":"How do you differentiate systolic murmurs?","ai":{"diag":"Aortic stenosis: crescendo-decrescendo, right upper sternal border, radiates to carotids. Mitral regurgitation: holosystolic at apex, radiates to axilla.","bottleneck":"Valsalva decreases most murmurs but increases HCM and MVP..","plan":["Mitral regurgitation: holosystolic at apex, radiates to axilla","Tricuspid regurgitation: holosystolic, left lower sternal border, increases with inspiration","Valsalva decreases most murmurs but increases HCM and MVP."],"mistakes":["Not starting early enough","Relying on a single source or mentor"],"action":"Tricuspid regurgitation: holosystolic, left lower sternal border, increases with inspiration. Valsalva decreases most murmurs but increases HCM and MVP..","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2025-12-30","author":"Anonymous","anon":true,"reviewNote":"Aortic stenosis: crescendo-decrescendo, right upper sternal border, radiates to carotids. Mitral regurgitation: holosystolic at apex, radiates to axilla. — MF"},
+{"id":536,"cat":"clinical","role":"fellow","q":"How has your approach to bifurcation PCI evolved?","ai":{"diag":"More conservative with the side branch over time. Provisional stenting is my default.","bottleneck":"POT-SIT-POT is critical regardless.","plan":["Provisional stenting is my default","Only stent side branch if >75% ostial stenosis with TIMI <3 flow","When I need two stents, I prefer DK-crush based on DKCRUSH trials"],"mistakes":["Not starting early enough","Relying on a single source or mentor"],"action":"POT-SIT-POT is critical regardless. Simpler is usually better..","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2025-12-28","author":"Lisa G.","anon":false},
+{"id":537,"cat":"clinical","role":"resident","q":"How do you manage hypertensive emergency vs urgency?","ai":{"diag":"Emergency: end-organ damage present. ICU with IV antihypertensives.","bottleneck":"Reduce MAP 25% in first hour, then gradually to 160/100 over 24h.","plan":["ICU with IV antihypertensives","Reduce MAP 25% in first hour, then gradually to 160/100 over 24h","Aortic dissection exception: SBP <120, HR <60 fast with esmolol + nicardipine"],"mistakes":["Not starting early enough","Relying on a single source or mentor"],"action":"Urgency: no end-organ damage. Adjust oral meds, follow up 24-48h..","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2025-12-27","author":"Chris B.","anon":false},
+{"id":538,"cat":"clinical","role":"student","q":"What is the physiology behind S3 and S4 heart sounds?","ai":{"diag":"S3: rapid passive ventricular filling against a dilated ventricle. Normal in young, pathologic in older adults (volume overload).","bottleneck":"S4: atrial contraction against stiff ventricle.","plan":["Normal in young, pathologic in older adults (volume overload)","S4: atrial contraction against stiff ventricle","Never normal in adults"],"mistakes":["Never normal in adults","Not starting early enough","Relying on a single source or mentor"],"action":"Never normal in adults. Both heard with bell at apex in left lateral decubitus..","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2025-12-25","author":"David L.","anon":false,"reviewNote":"S3: rapid passive ventricular filling against a dilated ventricle. Normal in young, pathologic in older adults (volume overload). — MF"},
+{"id":539,"cat":"clinical","role":"fellow","q":"What’s your femoral access technique?","ai":{"diag":"Fluoroscopy-guided for every case. Common femoral artery over inferior femoral head border.","bottleneck":"Access is the most important part — bad access turns easy cases into disasters..","plan":["Common femoral artery over inferior femoral head border","Micropuncture technique","Pre-close with ProGlide for large bore"],"mistakes":["Not starting early enough","Relying on a single source or mentor"],"action":"Two ProGlides at 10 and 2 o’clock for Impella/large sheaths. Access is the most important part — bad access turns easy cases into disasters..","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2025-12-23","author":"Anonymous","anon":true},
+{"id":540,"cat":"clinical","role":"resident","q":"When should I suspect myocarditis?","ai":{"diag":"Young patient with chest pain, new HF, or arrhythmias after viral illness. Troponin elevated, ST changes not in coronary distribution.","bottleneck":"Workup: ECG, troponin, BNP, echo, cardiac MRI (gold standard).","plan":["Troponin elevated, ST changes not in coronary distribution","Workup: ECG, troponin, BNP, echo, cardiac MRI (gold standard)","Most viral myocarditis resolves with supportive care"],"mistakes":["Avoid exercise 3-6 months.","Not starting early enough","Relying on a single source or mentor"],"action":"Most viral myocarditis resolves with supportive care. Avoid exercise 3-6 months..","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2025-12-22","author":"Anonymous","anon":true},
+{"id":541,"cat":"clinical","role":"student","q":"How do you interpret a right heart catheterization?","ai":{"diag":"Key numbers: RA mean (normal <7), RV (25/5), PA (25/10, mean <20), PCWP (<15). Elevated PCWP = left heart failure.","bottleneck":"Key numbers: RA mean (normal <7), RV (25/5), PA (25/10, mean <20), PCWP (<15).","plan":[", RV (25/5), PA (25/10, mean <20), PCWP (<15)","Elevated PCWP = left heart failure","Elevated PA with normal PCWP = pulmonary arterial hypertension","Cardiac output by thermodilution or Fick"],"mistakes":["Not starting early enough","Relying on a single source or mentor"],"action":"PVR = (mean PA - PCWP) / CO. This is fundamental to cardiology — know these numbers cold..","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2025-12-20","author":"Anonymous","anon":true,"reviewNote":"Key numbers: RA mean (normal <7), RV (25/5), PA (25/10, mean <20), PCWP (<15). Elevated PCWP = left heart failure. — MF"},
+{"id":542,"cat":"clinical","role":"fellow","q":"When do you consider rotational atherectomy vs orbital atherectomy?","ai":{"diag":"Both for heavily calcified lesions. Rotational atherectomy (Rotablator): more experience, better for ostial calcification, requires dedicated system.","bottleneck":"The key is adequate lesion prep before stenting — calcium scoring on IVUS/OCT helps decide..","plan":["Rotational atherectomy (Rotablator): more experience, better for ostial calcification, requires dedicated system","Orbital atherectomy (Diamondback): easier to use, treats eccentric calcium well, can orbit at different speeds for different effects","I use rota more for concentric calcification and orbital for eccentric"],"mistakes":["Not starting early enough","Relying on a single source or mentor"],"action":"I use rota more for concentric calcification and orbital for eccentric. The key is adequate lesion prep before stenting — calcium scoring on IVUS/OCT helps decide..","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2025-12-18","author":"Omar H.","anon":false},
+{"id":543,"cat":"clinical","role":"resident","q":"How do you manage cardiogenic shock?","ai":{"diag":"Identify and treat the cause (MI, myocarditis, PE, arrhythmia). Hemodynamic assessment with PA catheter.","bottleneck":"Start vasopressors (norepinephrine first per SOAP II trial).","plan":["Start vasopressors (norepinephrine first per SOAP II trial)","Hemodynamic assessment with PA catheter","Start vasopressors (norepinephrine first per SOAP II trial)","Evaluate for mechanical circulatory support early — don’t wait"],"mistakes":["Not starting early enough","Relying on a single source or mentor"],"action":"Multidisciplinary shock team approach. Door-to-support time matters as much as door-to-balloon..","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2025-12-17","author":"Aisha N.","anon":false},
+{"id":544,"cat":"clinical","role":"student","q":"What are the classic ECG findings of hyperkalemia?","ai":{"diag":"Progressive with rising K+: peaked T waves (earliest) → PR prolongation → QRS widening → loss of P waves → sine wave pattern → asystole. At K+ >6.5, give IV calcium gluconate immediately (cardioprotective, does not lower K+).","bottleneck":"Then insulin/glucose, kayexalate, and dialysis if needed.","plan":["At K+ >6.5, give IV calcium gluconate immediately (cardioprotective, does not lower K+)","Then insulin/glucose, kayexalate, and dialysis if needed","This is an emergency you must recognize instantly."],"mistakes":["Not starting early enough","Relying on a single source or mentor"],"action":"Then insulin/glucose, kayexalate, and dialysis if needed. This is an emergency you must recognize instantly..","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2025-12-15","author":"Emily C.","anon":false,"reviewNote":"Progressive with rising K+: peaked T waves (earliest) → PR prolongation → QRS widening → loss of P waves → sine wave pattern → asystole. At K+ >6.5, give IV calcium gluconate immediately (cardioprotective, does not lower K+). — MF"},
+{"id":545,"cat":"finance","role":"fellow","q":"Should I refinance student loans during fellowship?","ai":{"diag":"Stay on income-driven repayment. Your payments are low.","bottleneck":"If you refinance, you lose IDR, PSLF, and forbearance protections.","plan":["Your payments are low","If you refinance, you lose IDR, PSLF, and forbearance protections","Decide after fellowship: academic/non-profit → PSLF"],"mistakes":["Not starting early enough","Relying on a single source or mentor"],"action":"Private practice → refinance and pay aggressively. Don’t refinance during training..","escalate":true,"ereason":"High-impact decision may benefit from Doctor Review."},"status":"reviewed","date":"2025-12-14","author":"Anonymous","anon":true},
+{"id":546,"cat":"contract","role":"resident","q":"What percentage of my attending salary should I save?","ai":{"diag":"20% minimum, aim for 30-40% in your first 3-5 years. You’re used to living on $60-70K.","bottleneck":"Keep that lifestyle while your income jumps.","plan":["20% minimum, aim for 30-40% in your first 3-5 years","You’re used to living on $60-70K","Keep that lifestyle while your income jumps","The difference goes to: maxing retirement, aggressive loan payoff, emergency fund"],"mistakes":["Not starting early enough","Relying on a single source or mentor"],"action":"The difference goes to: maxing retirement, aggressive loan payoff, emergency fund. Lifestyle creep is the #1 wealth destroyer for new attendings..","escalate":true,"ereason":"High-impact decision may benefit from Doctor Review."},"status":"reviewed","date":"2025-12-12","author":"Anonymous","anon":true},
+{"id":547,"cat":"finance","role":"fellow","q":"Roth IRA vs Traditional IRA during fellowship?","ai":{"diag":"Your tax bracket as a fellow is 22-24%. As an attending, 35-37%.","bottleneck":"Pay taxes now while the rate is low.","plan":["As an attending, 35-37%","Pay taxes now while the rate is low","Max it out ($7,000/year)"],"mistakes":["Not starting early enough","Relying on a single source or mentor"],"action":"If income is too high, use backdoor Roth. Single best financial move a trainee can make..","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2025-12-10","author":"Anonymous","anon":true,"reviewNote":"Roth IRA, hands down. Your tax bracket as a fellow is 22-24%. — MF"},
+{"id":548,"cat":"finance","role":"student","q":"How much student debt is too much for cardiology?","ai":{"diag":"With IC salaries of $500-700K+, even $400-500K in debt is manageable if you’re disciplined. Income-driven repayment during training, aggressive payoff as attending.","bottleneck":"Don’t let debt scare you away from the specialty — just have a plan..","plan":["Income-driven repayment during training, aggressive payoff as attending","Don’t let debt scare you away from the specialty — just have a plan."],"mistakes":["Not starting early enough","Relying on a single source or mentor"],"action":"Income-driven repayment during training, aggressive payoff as attending. Don’t let debt scare you away from the specialty — just have a plan..","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2025-12-09","author":"Priya K.","anon":false},
+{"id":549,"cat":"finance","role":"resident","q":"Do I need disability insurance during residency?","ai":{"diag":"Buy it now while you’re young and healthy. Get own-occupation policy — pays if you can’t do YOUR job.","bottleneck":"Your earning ability is your biggest asset — protect it..","plan":["Get own-occupation policy — pays if you can’t do YOUR job","Get own-occupation policy — pays if you can’t do YOUR job","Guardian, MassMutual, Principal offer the best physician policies","Residency discounts available"],"mistakes":["Not starting early enough","Relying on a single source or mentor"],"action":"Residency discounts available. Your earning ability is your biggest asset — protect it..","escalate":true,"ereason":"High-impact decision may benefit from Doctor Review."},"status":"reviewed","date":"2025-12-07","author":"Jason W.","anon":false},
+{"id":550,"cat":"finance","role":"fellow","q":"Should I buy a house during fellowship?","ai":{"diag":"Fellowship is 1-3 years. Transaction costs eat equity.","bottleneck":"You don’t know where you’ll end up.","plan":["Transaction costs eat equity","You don’t know where you’ll end up","Rent and save for a down payment"],"mistakes":["Not starting early enough","Relying on a single source or mentor"],"action":"Rent and save for a down payment. Renting is not throwing money away — it’s buying flexibility..","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2025-12-05","author":"Omar H.","anon":false,"reviewNote":"Wait. Fellowship is 1-3 years. — MF"},
+{"id":551,"cat":"finance","role":"resident","q":"What should I do with my first attending paycheck?","ai":{"diag":"In order: 1) Emergency fund (3-6 months). 2) Max retirement accounts (401k, backdoor Roth, HSA).","bottleneck":"3) Aggressive loan payoff or PSLF verification.","plan":["Emergency fund (3-6 months)","Max retirement accounts (401k, backdoor Roth, HSA)","Aggressive loan payoff or PSLF verification","Disability and term life insurance","THEN lifestyle upgrades"],"mistakes":["Not starting early enough","Relying on a single source or mentor"],"action":"Don’t buy house, car, and vacations all at once. First year sets the trajectory..","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2025-12-04","author":"Aisha N.","anon":false},
+{"id":552,"cat":"finance","role":"fellow","q":"What’s a fair signing bonus for a new interventional cardiologist?","ai":{"diag":"$25-100K depending on location and practice type. Hospital-employed in desirable areas: $50-75K.","bottleneck":"Don’t let the signing bonus distract from total compensation.","plan":["Hospital-employed in desirable areas: $50-75K","Don’t let the signing bonus distract from total compensation","Look at total comp over 3-5 years, not upfront cash."],"mistakes":["Not starting early enough","Relying on a single source or mentor"],"action":"Don’t let the signing bonus distract from total compensation. Look at total comp over 3-5 years, not upfront cash..","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2025-12-02","author":"Lisa G.","anon":false},
+{"id":553,"cat":"finance","role":"student","q":"Should I invest during medical school?","ai":{"diag":"That money is borrowed at 6-8%. Investing while paying 6-8% on debt is gambling.","bottleneck":"Keep a 3-month emergency fund in high-yield savings.","plan":["Investing while paying 6-8% on debt is gambling","Keep a 3-month emergency fund in high-yield savings","Every dollar you don’t borrow is a dollar you don’t pay interest on for 10-15 years."],"mistakes":["Not starting early enough","Relying on a single source or mentor"],"action":"Keep a 3-month emergency fund in high-yield savings. Every dollar you don’t borrow is a dollar you don’t pay interest on for 10-15 years..","escalate":true,"ereason":"High-impact decision may benefit from Doctor Review."},"status":"reviewed","date":"2025-11-30","author":"Anonymous","anon":true,"reviewNote":"No. That money is borrowed at 6-8%. — MF"},
+{"id":554,"cat":"finance","role":"resident","q":"What tax deductions should physicians know about?","ai":{"diag":"Student loan interest (up to $2,500). 401k/403b contributions.","bottleneck":"HSA contributions (triple tax-advantaged).","plan":["Get a CPA who specializes in physicians — they pay for themselves.","401k/403b contributions","HSA contributions (triple tax-advantaged)","If moonlighting as contractor, many more deductions available"],"mistakes":["Not starting early enough","Relying on a single source or mentor"],"action":"If moonlighting as contractor, many more deductions available. Get a CPA who specializes in physicians — they pay for themselves..","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2025-11-29","author":"Anonymous","anon":true},
+{"id":555,"cat":"contract","role":"fellow","q":"How do I negotiate my first attending contract?","ai":{"diag":"Three rules: 1) Never accept the first offer. 2) Get a physician contract attorney ($2-3K).","bottleneck":"3) Know the market (MGMA data).","plan":["Never accept the first offer","Get a physician contract attorney ($2-3K)","Know the market (MGMA data)"],"mistakes":["Three rules: 1) Never accept the first offer","Not starting early enough","Relying on a single source or mentor"],"action":"Everything is negotiable. They expect you to negotiate..","escalate":true,"ereason":"High-impact decision may benefit from Doctor Review."},"status":"reviewed","date":"2025-11-27","author":"Anonymous","anon":true},
+{"id":556,"cat":"finance","role":"resident","q":"Is whole life insurance a good idea for doctors?","ai":{"diag":"What you need: term life insurance (20-30 year, 10-15x income if you have dependents). It’s 90% cheaper than whole life.","bottleneck":"Invest the difference in index funds.","plan":["It’s 90% cheaper than whole life","Invest the difference in index funds","Only exception might be estate planning for very high net worth individuals"],"mistakes":["Not starting early enough","Relying on a single source or mentor"],"action":"Only exception might be estate planning for very high net worth individuals. For 99% of physicians, term is the answer..","escalate":true,"ereason":"High-impact decision may benefit from Doctor Review."},"status":"reviewed","date":"2025-11-25","author":"Anonymous","anon":true,"reviewNote":"Almost never. What you need: term life insurance (20-30 year, 10-15x income if you have dependents). — MF"},
+{"id":557,"cat":"finance","role":"fellow","q":"Academic vs private practice — what’s the real income difference?","ai":{"diag":"In IC, academic salary typically $400-550K. Private practice/hospital-employed $550-800K+.","bottleneck":"Private offers: higher income, more autonomy, but more volume pressure.","plan":["The gap has been narrowing as academic centers try to retain proceduralists","Private practice/hospital-employed $550-800K+","Academic offers: research time, teaching, prestige, PSLF eligibility, slower pace","Private offers: higher income, more autonomy, but more volume pressure"],"mistakes":["Not starting early enough","Relying on a single source or mentor"],"action":"The gap has been narrowing as academic centers try to retain proceduralists. Factor in PSLF — if you have $300K in loans, PSLF could be worth $200K+ in tax-free forgiveness..","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2025-11-24","author":"Anonymous","anon":true},
+{"id":558,"cat":"finance","role":"student","q":"What’s the best bank account for medical students?","ai":{"diag":"High-yield savings account for your emergency fund (Ally, Marcus, Discover — around 4-5% APY). Free checking with no minimum balance.","bottleneck":"The most important financial move in med school is minimizing how much you borrow, not optimizing your bank account..","plan":["Free checking with no minimum balance","You don’t need anything fancy","The most important financial move in med school is minimizing how much you borrow, not optimizing your bank account."],"mistakes":["Not starting early enough","Relying on a single source or mentor"],"action":"You don’t need anything fancy. The most important financial move in med school is minimizing how much you borrow, not optimizing your bank account..","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2025-11-22","author":"Marcus T.","anon":false},
+{"id":559,"cat":"finance","role":"resident","q":"Should I moonlight during residency?","ai":{"diag":"If your program allows it and it doesn’t affect your training, yes. The extra income can go to Roth IRA, disability insurance premiums, or emergency savings.","bottleneck":"But don’t moonlight so much that you burn out or your evaluations suffer.","plan":["The extra income can go to Roth IRA, disability insurance premiums, or emergency savings","But don’t moonlight so much that you burn out or your evaluations suffer","Your career trajectory is worth more than the moonlighting income."],"mistakes":["Not starting early enough","Relying on a single source or mentor"],"action":"But don’t moonlight so much that you burn out or your evaluations suffer. Your career trajectory is worth more than the moonlighting income..","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2025-11-20","author":"Aisha N.","anon":false,"reviewNote":"If your program allows it and it doesn’t affect your training, yes. The extra income can go to Roth IRA, disability insurance premiums, or emergency savings. — MF"},
+{"id":560,"cat":"contract","role":"fellow","q":"What should I know about restrictive covenants in physician contracts?","ai":{"diag":"Most contracts have non-compete clauses. Negotiate: shorter duration (1 year max), smaller geographic radius (15-25 miles), carve-outs for academic/VA work, and clear definitions of “competing.” Some states don’t enforce non-competes (California).","bottleneck":"Your attorney should focus on this clause — it can limit your career more than any other contract term..","plan":["Your attorney should focus on this clause — it can limit your career more than any other contract term.","Negotiate: shorter duration (1 year max), smaller geographic radius (15-25 miles), carve-outs for academic/VA work, and clear definitions of “competing.” Some states don’t enforce non-competes (California)","Your attorney should focus on this clause — it can limit your career more than any other contract term."],"mistakes":["Not starting early enough","Relying on a single source or mentor"],"action":"Negotiate: shorter duration (1 year max), smaller geographic radius (15-25 miles), carve-outs for academic/VA work, and clear definitions of “competing.” Some states don’t enforce non-competes (California). Your attorney should focus on this clause — it can limit your career more than any other contract term..","escalate":true,"ereason":"High-impact decision may benefit from Doctor Review."},"status":"reviewed","date":"2025-11-19","author":"Lisa G.","anon":false},
+{"id":561,"cat":"finance","role":"student","q":"Is it worth doing MD/MBA?","ai":{"diag":"Only if you want hospital administration, healthcare consulting, or medical device industry. For clinical practice, an MBA won’t significantly increase your income.","bottleneck":"The opportunity cost (extra 1-2 years of training vs attending salary) is $500K-1M+.","plan":["Only if you want hospital administration, healthcare consulting, or medical device industry","Do it for the right reasons, not as a resume line.","For clinical practice, an MBA won’t significantly increase your income","The opportunity cost (extra 1-2 years of training vs attending salary) is $500K-1M+","Do it for the right reasons, not as a resume line."],"mistakes":["Not starting early enough","Relying on a single source or mentor"],"action":"The opportunity cost (extra 1-2 years of training vs attending salary) is $500K-1M+. Do it for the right reasons, not as a resume line..","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2025-11-17","author":"Anonymous","anon":true},
+{"id":562,"cat":"finance","role":"resident","q":"How do I start investing as a resident?","ai":{"diag":"Start with Roth IRA (max it out). If your program has a 403b with match, contribute enough to get the full match (free money).","bottleneck":"After that, taxable brokerage account with low-cost index funds (Vanguard VTSAX, Fidelity FSKAX).","plan":["Start with Roth IRA (max it out)","If your program has a 403b with match, contribute enough to get the full match (free money)","Don’t try to pick stocks"],"mistakes":["Not starting early enough","Relying on a single source or mentor"],"action":"Automate contributions. Time in market beats timing the market..","escalate":true,"ereason":"High-impact decision may benefit from Doctor Review."},"status":"reviewed","date":"2025-11-15","author":"Anonymous","anon":true,"reviewNote":"Start with Roth IRA (max it out). If your program has a 403b with match, contribute enough to get the full match (free money). — MF"},
+{"id":563,"cat":"finance","role":"fellow","q":"What’s tail coverage and why does it matter?","ai":{"diag":"Tail coverage pays for malpractice claims filed after you leave a practice, for events that occurred while you were there. It’s typically 2-3x your annual malpractice premium ($20-50K for IC).","bottleneck":"Negotiate for your employer to pay it.","plan":["Tail coverage pays for malpractice claims filed after you leave a practice, for events that occurred while you were there","If they won’t, get it in writing that you’re responsible and budget for it","It’s typically 2-3x your annual malpractice premium ($20-50K for IC)","Negotiate for your employer to pay it","If they won’t, get it in writing that you’re responsible and budget for it"],"mistakes":["Not starting early enough","Relying on a single source or mentor"],"action":"If they won’t, get it in writing that you’re responsible and budget for it. Leaving without tail coverage exposes you to significant liability..","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2025-11-14","author":"Anonymous","anon":true},
+{"id":564,"cat":"finance","role":"resident","q":"How do you handle student loans and planning a wedding during residency?","ai":{"diag":"Be honest with your partner about debt. Set a realistic wedding budget — don’t borrow for it.","bottleneck":"Remember your attending income is coming.","plan":["Set a realistic wedding budget — don’t borrow for it","Set a realistic wedding budget — don’t borrow for it","Remember your attending income is coming","Keep wedding spending separate from loan strategy"],"mistakes":["Not starting early enough","Relying on a single source or mentor"],"action":"Use savings for the wedding, not borrowed money. Financial transparency early in a relationship prevents bigger problems later..","escalate":true,"ereason":"High-impact decision may benefit from Doctor Review."},"status":"reviewed","date":"2025-11-12","author":"Anonymous","anon":true},
+{"id":565,"cat":"fellowship","role":"resident","q":"How many programs should I apply to for cardiology fellowship?","ai":{"diag":"25-40 programs is typical. Apply broadly, especially if you’re at a community program or have a less competitive application.","bottleneck":"If you’re at a top academic center with strong letters and publications, 20-25 may suffice.","plan":["Apply broadly, especially if you’re at a community program or have a less competitive application","If you’re at a top academic center with strong letters and publications, 20-25 may suffice","Better to over-apply than under-apply."],"mistakes":["Not starting early enough","Relying on a single source or mentor"],"action":"If you’re at a top academic center with strong letters and publications, 20-25 may suffice. Better to over-apply than under-apply..","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2025-11-09","author":"Anonymous","anon":true},
+{"id":566,"cat":"career","role":"fellow","q":"What’s the job market like for new interventional cardiologists?","ai":{"diag":"Most fellows have multiple offers before graduation. The shortage is especially acute in non-coastal areas.","bottleneck":"Hospital-employed positions are most common, but private practice opportunities exist.","plan":["The shortage is especially acute in non-coastal areas","You’ll have leverage in negotiation","Hospital-employed positions are most common, but private practice opportunities exist"],"mistakes":["Not starting early enough","Relying on a single source or mentor"],"action":"Hospital-employed positions are most common, but private practice opportunities exist. Structural heart skills (TAVR) make you even more marketable..","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2025-11-07","author":"Anonymous","anon":true},
+{"id":567,"cat":"fellowship","role":"student","q":"Do I need to go to a top residency program to match into cardiology?","ai":{"diag":"Many excellent cardiologists trained at community programs. What matters: strong performance on rotations, good letters from cardiologists who know you, research productivity, and board scores.","bottleneck":"A strong applicant from a community program beats a mediocre applicant from a brand-name program every time..","plan":["What matters: strong performance on rotations, good letters from cardiologists who know you, research productivity, and board scores","A strong applicant from a community program beats a mediocre applicant from a brand-name program every time."],"mistakes":["Not starting early enough","Relying on a single source or mentor"],"action":"What matters: strong performance on rotations, good letters from cardiologists who know you, research productivity, and board scores. A strong applicant from a community program beats a mediocre applicant from a brand-name program every time..","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2025-11-06","author":"Emily C.","anon":false,"reviewNote":"No. Many excellent cardiologists trained at community programs. — MF"},
+{"id":568,"cat":"fellowship","role":"resident","q":"How do I get strong letters of recommendation for fellowship?","ai":{"diag":"Work with your letter writers on clinical rotations — not just research. They need to speak to your clinical skills, work ethic, and personality.","bottleneck":"Ask early (6+ months before applications).","plan":["They need to speak to your clinical skills, work ethic, and personality","Ask early (6+ months before applications)","Choose writers who are known in cardiology and can write detailed, personal letters"],"mistakes":["Not starting early enough","Relying on a single source or mentor"],"action":"Choose writers who are known in cardiology and can write detailed, personal letters. A lukewarm letter from a famous person is worse than a strong letter from someone less known..","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2025-11-04","author":"Chris B.","anon":false},
+{"id":569,"cat":"fellowship","role":"student","q":"What kind of research impresses cardiology fellowship programs most?","ai":{"diag":"First-author clinical publications in cardiology journals (JACC, Circulation, Heart). Presentations at ACC or AHA.","bottleneck":"Meaningful involvement — not just name on a paper.","plan":["Presentations at ACC or AHA","Meaningful involvement — not just name on a paper","Programs can tell the difference between someone who did the work and someone who just collected data"],"mistakes":["Not starting early enough","Relying on a single source or mentor"],"action":"Programs can tell the difference between someone who did the work and someone who just collected data. One thoughtful first-author paper > five middle-author papers..","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2025-11-01","author":"Anonymous","anon":true,"reviewNote":"First-author clinical publications in cardiology journals (JACC, Circulation, Heart). Presentations at ACC or AHA. — MF"},
+{"id":570,"cat":"fellowship","role":"resident","q":"Is it better to do cardiology fellowship at the same institution as residency?","ai":{"diag":"There’s no penalty for staying. If your program has a strong cardiology division and you’re competitive, it can actually help — they know you, you know the system.","bottleneck":"But if the program is weak in cardiology or you want different training, absolutely look elsewhere.","plan":["Match where you’ll get the best training.","If your program has a strong cardiology division and you’re competitive, it can actually help — they know you, you know the system","But if the program is weak in cardiology or you want different training, absolutely look elsewhere","Match where you’ll get the best training."],"mistakes":["Not starting early enough","Relying on a single source or mentor"],"action":"But if the program is weak in cardiology or you want different training, absolutely look elsewhere. Match where you’ll get the best training..","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2025-10-30","author":"Anonymous","anon":true},
+{"id":571,"cat":"career","role":"fellow","q":"How do I evaluate whether a practice is a good fit during the job search?","ai":{"diag":"Visit for at least a full day. Scrub cases with the IC team.","bottleneck":"Talk to the junior partners separately from senior partners.","plan":["Scrub cases with the IC team","Talk to the junior partners separately from senior partners","Ask about: call schedule, volume trends, relationship with hospital administration, support staff quality, equipment/technology, and the unspoken culture"],"mistakes":["Not starting early enough","Relying on a single source or mentor"],"action":"Ask about: call schedule, volume trends, relationship with hospital administration, support staff quality, equipment/technology, and the unspoken culture. Talk to the recently hired attendings — were promises kept?.","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2025-10-28","author":"Anonymous","anon":true},
+{"id":572,"cat":"career","role":"student","q":"What makes a good personal statement for residency if I’m interested in cardiology?","ai":{"diag":"Don’t write about cardiology specifically in your IM residency personal statement. Write about why you love internal medicine.","bottleneck":"Mention an experience that shows curiosity, dedication, and empathy.","plan":["If you’re too narrowly focused on cardiology, some programs worry you won’t engage with non-cardiology rotations.","Write about why you love internal medicine","Mention an experience that shows curiosity, dedication, and empathy","Program directors are selecting residents, not cardiologists"],"mistakes":["Not starting early enough","Relying on a single source or mentor"],"action":"Program directors are selecting residents, not cardiologists. If you’re too narrowly focused on cardiology, some programs worry you won’t engage with non-cardiology rotations..","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2025-10-27","author":"Marcus T.","anon":false,"reviewNote":"Don’t write about cardiology specifically in your IM residency personal statement. Write about why you love internal medicine. — MF"},
+{"id":573,"cat":"fellowship","role":"resident","q":"When should I start networking for fellowship applications?","ai":{"diag":"PGY-2, ideally the fall. Attend ACC or AHA if possible.","bottleneck":"Reach out to fellows at programs you like and ask about their experience.","plan":["Attend ACC or AHA if possible","Reach out to fellows at programs you like and ask about their experience","Introduce yourself to visiting speakers"],"mistakes":["Not starting early enough","Relying on a single source or mentor"],"action":"Your PD’s connections matter — ask them to make introductions. Networking isn’t schmoozing, it’s building genuine professional relationships..","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2025-10-25","author":"Aisha N.","anon":false},
+{"id":574,"cat":"fellowship","role":"fellow","q":"Is it worth doing a year as a cardiology hospitalist before IC fellowship?","ai":{"diag":"It can help if you need more clinical experience or research time. Some people use the gap year to bolster their IC application.","bottleneck":"But it’s not necessary if you’re competitive.","plan":["Some people use the gap year to bolster their IC application","But it’s not necessary if you’re competitive","If you’re matched at a strong program already, go straight to IC fellowship"],"mistakes":["Not starting early enough","Relying on a single source or mentor"],"action":"If you’re matched at a strong program already, go straight to IC fellowship. Don’t delay if you don’t need to..","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2025-10-23","author":"Lisa G.","anon":false},
+{"id":575,"cat":"fellowship","role":"student","q":"How important are board scores for cardiology fellowship?","ai":{"diag":"Step 1 is now pass/fail so it matters less. Step 2 CK score still matters — aim for 250+.","bottleneck":"But scores are just one factor.","plan":["Step 2 CK score still matters — aim for 250+","Step 2 CK score still matters — aim for 250+","But scores are just one factor","Programs weight clinical evaluations, letters, and research heavily too"],"mistakes":["Not starting early enough","Relying on a single source or mentor"],"action":"Programs weight clinical evaluations, letters, and research heavily too. A great clinical reputation can compensate for average scores, but not vice versa..","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2025-10-22","author":"Anonymous","anon":true,"reviewNote":"Step 1 is now pass/fail so it matters less. Step 2 CK score still matters — aim for 250+. — MF"},
+{"id":576,"cat":"fellowship","role":"resident","q":"Should I do an IM chief year before applying to cardiology?","ai":{"diag":"It can strengthen your application — shows leadership, commitment, maturity. Many successful cardiology fellows did chief year.","bottleneck":"But it adds a year to your training timeline.","plan":["Many successful cardiology fellows did chief year","But it adds a year to your training timeline","If your application is already strong, you don’t need it"],"mistakes":["Not starting early enough","Relying on a single source or mentor"],"action":"If you’re borderline, it can be the differentiator. I did it and it helped me tremendously..","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2025-10-20","author":"Anonymous","anon":true},
+{"id":577,"cat":"career","role":"fellow","q":"How do I build a clinical niche as a new attending?","ai":{"diag":"Pick 1-2 areas of expertise and become the go-to person. CTO PCI, structural heart, peripheral interventions, cardiogenic shock — whatever you’re passionate about.","bottleneck":"Attend specialized conferences, get extra training, publish in that area.","plan":["Attend specialized conferences, get extra training, publish in that area","CTO PCI, structural heart, peripheral interventions, cardiogenic shock — whatever you’re passionate about","Attend specialized conferences, get extra training, publish in that area","Your referral base grows when other doctors know you for something specific."],"mistakes":["Not starting early enough","Relying on a single source or mentor"],"action":"Attend specialized conferences, get extra training, publish in that area. Your referral base grows when other doctors know you for something specific..","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2025-10-18","author":"Anonymous","anon":true},
+{"id":578,"cat":"career","role":"student","q":"What lifestyle can I expect as an interventional cardiologist?","ai":{"diag":"Honest answer: it’s demanding. You take STEMI call (middle-of-the-night cases).","bottleneck":"But the work is incredibly rewarding — you save lives in real-time.","plan":["You take STEMI call (middle-of-the-night cases)","Weekday schedule is clinic + cath lab + consults","Typical week is 50-60 hours when not on call"],"mistakes":["Not starting early enough","Relying on a single source or mentor"],"action":"Compensation is among the highest in medicine. Work-life balance is achievable in the right practice..","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2025-10-17","author":"Priya K.","anon":false,"reviewNote":"Honest answer: it’s demanding. You take STEMI call (middle-of-the-night cases). — MF"},
+{"id":579,"cat":"fellowship","role":"resident","q":"How do I handle rejection from fellowship programs?","ai":{"diag":"Even strong applicants get rejected. Don’t take it personally — programs have idiosyncratic preferences.","bottleneck":"If you don’t match, regroup: talk to your PD, identify weaknesses, strengthen your application.","plan":["Even strong applicants get rejected","Don’t take it personally — programs have idiosyncratic preferences","If you don’t match, regroup: talk to your PD, identify weaknesses, strengthen your application","Many excellent cardiologists matched on their second attempt"],"mistakes":["Not starting early enough","Relying on a single source or mentor"],"action":"The year in between is often used productively for research and clinical experience. Persistence matters more than perfection..","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2025-10-15","author":"Jason W.","anon":false},
+{"id":580,"cat":"career","role":"fellow","q":"What’s the difference between working for a hospital system vs private group?","ai":{"diag":"Hospital-employed: guaranteed salary, less business risk, benefits package, but less autonomy and income ceiling. Private group: higher earning potential, more autonomy, but you share in business risk, overhead, and partner dynamics.","bottleneck":"Hospital-employed: guaranteed salary, less business risk, benefits package, but less autonomy and income ceiling.","plan":["The ideal depends on your risk tolerance and whether you want to focus purely on medicine or also run a business.","Private group: higher earning potential, more autonomy, but you share in business risk, overhead, and partner dynamics","Hospital employment is increasingly common","The ideal depends on your risk tolerance and whether you want to focus purely on medicine or also run a business."],"mistakes":["Not starting early enough","Relying on a single source or mentor"],"action":"Hospital employment is increasingly common. The ideal depends on your risk tolerance and whether you want to focus purely on medicine or also run a business..","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2025-10-13","author":"Omar H.","anon":false},
+{"id":581,"cat":"career","role":"student","q":"Can international medical graduates (IMGs) become interventional cardiologists?","ai":{"diag":"I’ve worked with excellent IC attendings who are IMGs. The path is harder — you need to match IM residency first (often at community programs), then prove yourself for cardiology fellowship.","bottleneck":"It takes more intentional effort, but it’s very achievable..","plan":["The path is harder — you need to match IM residency first (often at community programs), then prove yourself for cardiology fellowship","Strong board scores, research, and letters are essential","It takes more intentional effort, but it’s very achievable."],"mistakes":["Not starting early enough","Relying on a single source or mentor"],"action":"Strong board scores, research, and letters are essential. It takes more intentional effort, but it’s very achievable..","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2025-10-12","author":"Anonymous","anon":true,"reviewNote":"Absolutely. I’ve worked with excellent IC attendings who are IMGs. — MF"},
+{"id":582,"cat":"fellowship","role":"resident","q":"How do you manage work-life balance during fellowship?","ai":{"diag":"Honestly, fellowship isn’t balanced. But you can be intentional: protect one evening per week for family/friends, exercise regularly (even 30 minutes makes a difference), set boundaries on non-essential tasks, and communicate with your partner about expectations.","bottleneck":"But you can be intentional: protect one evening per week for family/friends, exercise regularly (even 30 minutes makes a difference), set boundaries on non-essential tasks, and communicate with your partner about expectations.","plan":["But you can be intentional: protect one evening per week for family/friends, exercise regularly (even 30 minutes makes a difference), set boundaries on non-essential tasks, and communicate with your partner about expectations","It’s a temporary sacrifice for a career you’ll love","But if you’re burning out, talk to someone — that’s not weakness, it’s wisdom."],"mistakes":["Not starting early enough","Relying on a single source or mentor"],"action":"It’s a temporary sacrifice for a career you’ll love. But if you’re burning out, talk to someone — that’s not weakness, it’s wisdom..","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2025-10-10","author":"Anonymous","anon":true},
+{"id":583,"cat":"career","role":"fellow","q":"Should I join a practice with partners or start solo?","ai":{"diag":"Join an established group. Starting solo as an IC is extremely difficult — you need cath lab privileges, hospital relationships, referral networks, and support staff.","bottleneck":"It takes years to build volume.","plan":["Starting solo as an IC is extremely difficult — you need cath lab privileges, hospital relationships, referral networks, and support staff","Starting solo as an IC is extremely difficult — you need cath lab privileges, hospital relationships, referral networks, and support staff","It takes years to build volume","Joining a group gives you instant infrastructure, mentorship from senior partners, and shared call"],"mistakes":["Not starting early enough","Relying on a single source or mentor"],"action":"Joining a group gives you instant infrastructure, mentorship from senior partners, and shared call. You can always transition later once you’re established..","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2025-10-08","author":"Anonymous","anon":true},
+{"id":584,"cat":"fellowship","role":"student","q":"What’s the match rate for cardiology fellowship?","ai":{"diag":"Around 70-75% of applicants match. It’s competitive but not impossible.","bottleneck":"It’s competitive but not impossible.","plan":["It’s competitive but not impossible","The key is realistic expectations about which tier of program you’re competitive for, and applying broadly enough","Programs have expanded spots in recent years due to demand"],"mistakes":["Not starting early enough","Relying on a single source or mentor"],"action":"Programs have expanded spots in recent years due to demand. If you’re a solid applicant with good letters, research, and clinical skills, your chances are good..","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2025-10-07","author":"David L.","anon":false,"reviewNote":"Around 70-75% of applicants match. It’s competitive but not impossible. — MF"},
+{"id":585,"cat":"fellowship","role":"resident","q":"How important is the program’s cath lab volume for IC fellowship training?","ai":{"diag":"You want a program where you’ll get at least 250+ interventional cases in your year. Higher volume means more complex cases, more variety, and better procedural skills.","bottleneck":"Ask for the fellow case log numbers.","plan":["You want a program where you’ll get at least 250+ interventional cases in your year","Also look at the case mix — do they do CTOs, peripheral, structural? Volume + variety is the ideal combination.","Higher volume means more complex cases, more variety, and better procedural skills","Ask for the fellow case log numbers","Also look at the case mix — do they do CTOs, peripheral, structural? Volume + variety is the ideal combination."],"mistakes":["Not starting early enough","Relying on a single source or mentor"],"action":"Ask for the fellow case log numbers. Also look at the case mix — do they do CTOs, peripheral, structural? Volume + variety is the ideal combination..","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2025-10-05","author":"Sarah M.","anon":false},
+{"id":586,"cat":"wellness","role":"resident","q":"How do you deal with burnout during fellowship?","ai":{"diag":"First, acknowledge it. You’re not weak for feeling burned out.","bottleneck":"The hours are real and the pressure is immense.","plan":["You’re not weak for feeling burned out","The hours are real and the pressure is immense","What helped me: exercise (even short walks), maintaining one non-medicine interest, talking to co-fellows (they’re feeling it too), and remembering this is temporary"],"mistakes":["Not starting early enough","Relying on a single source or mentor"],"action":"If it’s severe, use your program’s mental health resources. Your future patients need you healthy..","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2025-10-04","author":"Anonymous","anon":true},
+{"id":587,"cat":"wellness","role":"student","q":"How do you maintain relationships during medical school?","ai":{"diag":"Communication and realistic expectations. Your partner/friends need to understand that your schedule is unpredictable.","bottleneck":"Protect quality time — even 30 minutes of focused attention is better than hours of distracted presence.","plan":["Protect quality time — even 30 minutes of focused attention is better than hours of distracted presence","Your partner/friends need to understand that your schedule is unpredictable","Protect quality time — even 30 minutes of focused attention is better than hours of distracted presence","Be honest about your limitations"],"mistakes":["Not starting early enough","Relying on a single source or mentor"],"action":"Be honest about your limitations. The people who stick around during training are your people for life..","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2025-10-02","author":"Anonymous","anon":true,"reviewNote":"Communication and realistic expectations. Your partner/friends need to understand that your schedule is unpredictable. — MF"},
+{"id":588,"cat":"wellness","role":"fellow","q":"How do you handle the stress of a bad outcome in the cath lab?","ai":{"diag":"Every interventional cardiologist has had complications. The first one is devastating.","bottleneck":"What helps: debrief with your attending immediately, review what happened objectively (was it preventable? what would you do differently?), talk to a senior colleague who’s been through it.","plan":["What helps: debrief with your attending immediately, review what happened objectively (was it preventable? what would you do differently?), talk to a senior colleague who’s been through it","The worst thing you can do is pretend you’re fine when you’re not.","The first one is devastating","What helps: debrief with your attending immediately, review what happened objectively (was it preventable? what would you do differently?), talk to a senior colleague who’s been through it","M&M conferences exist for a reason"],"mistakes":["The worst thing you can do is pretend you’re fine when you’re not.","Not starting early enough","Relying on a single source or mentor"],"action":"M&M conferences exist for a reason. The worst thing you can do is pretend you’re fine when you’re not..","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2025-09-30","author":"Omar H.","anon":false},
+{"id":589,"cat":"wellness","role":"resident","q":"I’m an IM resident and I’m not sure if I want to do cardiology anymore. Is that normal?","ai":{"diag":"Training fatigue can make you question everything. Take a step back — is it the specialty or the training environment? Shadow in a cardiology practice (not the hospital) to see what attending life actually looks like.","bottleneck":"But if you genuinely lost interest, that’s okay too.","plan":["Take a step back — is it the specialty or the training environment? Shadow in a cardiology practice (not the hospital) to see what attending life actually looks like","Many residents feel this way in PGY-2/3 and go on to love cardiology","But if you genuinely lost interest, that’s okay too"],"mistakes":["Not starting early enough","Relying on a single source or mentor"],"action":"Many residents feel this way in PGY-2/3 and go on to love cardiology. But if you genuinely lost interest, that’s okay too.","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2025-09-29","author":"Aisha N.","anon":false},
+{"id":590,"cat":"wellness","role":"student","q":"How do you not feel overwhelmed by how much there is to learn in cardiology?","ai":{"diag":"You’re not supposed to know everything. Even attendings are constantly learning.","bottleneck":"Focus on the fundamentals first: heart failure, ACS, arrhythmias, valvular disease.","plan":["Focus on the fundamentals first: heart failure, ACS, arrhythmias, valvular disease","Even attendings are constantly learning","Focus on the fundamentals first: heart failure, ACS, arrhythmias, valvular disease","Everything else builds on that foundation"],"mistakes":["Not starting early enough","Relying on a single source or mentor"],"action":"In a year, you’ll be amazed at how much you know. Compare yourself to yourself, not to the person next to you..","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2025-09-27","author":"Emily C.","anon":false,"reviewNote":"You’re not supposed to know everything. Even attendings are constantly learning. — MF"},
+{"id":591,"cat":"wellness","role":"fellow","q":"How do you manage call nights without destroying your sleep schedule?","ai":{"diag":"On call: sleep when you can, caffeine strategically (not after midnight), and have a system for triaging consults quickly. Post-call: go home immediately, darken your room, nap for 4-5 hours (not 8, or you’ll wreck the next night).","bottleneck":"Then get sunlight and exercise in the afternoon.","plan":["Then get sunlight and exercise in the afternoon","Post-call: go home immediately, darken your room, nap for 4-5 hours (not 8, or you’ll wreck the next night)","Then get sunlight and exercise in the afternoon","Back to normal bedtime that night"],"mistakes":["Not starting early enough","Relying on a single source or mentor"],"action":"Back to normal bedtime that night. Consistency matters more than perfection..","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2025-09-25","author":"Anonymous","anon":true},
+{"id":592,"cat":"wellness","role":"resident","q":"My co-residents seem more prepared than me. Am I falling behind?","ai":{"diag":"Imposter syndrome is rampant in medicine. They’re probably thinking the same thing about you.","bottleneck":"Focus on your own growth trajectory.","plan":["Focus on your own growth trajectory","They’re probably thinking the same thing about you","Focus on your own growth trajectory","If you’re improving month over month, you’re on track"],"mistakes":["Not starting early enough","Relying on a single source or mentor"],"action":"Ask for specific feedback from attendings — don’t rely on your own anxious self-assessment. You matched for a reason..","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2025-09-24","author":"Anonymous","anon":true},
+{"id":593,"cat":"wellness","role":"student","q":"Is it okay to have a life outside of medicine?","ai":{"diag":"Not just okay — essential. The best physicians I know have rich lives outside the hospital.","bottleneck":"Hobbies, relationships, travel, interests.","plan":["The best physicians I know have rich lives outside the hospital","Hobbies, relationships, travel, interests","It makes you more empathetic, more resilient, and frankly more interesting"],"mistakes":["Not starting early enough","Relying on a single source or mentor"],"action":"Medicine will consume you if you let it. You’re a person first, a doctor second..","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2025-09-22","author":"Anonymous","anon":true,"reviewNote":"Not just okay — essential. The best physicians I know have rich lives outside the hospital. — MF"},
+{"id":594,"cat":"wellness","role":"fellow","q":"How do you decompress after a long week in the cath lab?","ai":{"diag":"I exercise — it’s non-negotiable for me. Also: time with family where I’m fully present (phone away), cooking (meditative and you eat well), and occasionally doing absolutely nothing productive.","bottleneck":"The worst thing is scrolling work emails all weekend.","plan":["Also: time with family where I’m fully present (phone away), cooking (meditative and you eat well), and occasionally doing absolutely nothing productive","The worst thing is scrolling work emails all weekend","You need mental separation from the hospital or you’ll burn out."],"mistakes":["The worst thing is scrolling work emails all weekend","Not starting early enough","Relying on a single source or mentor"],"action":"The worst thing is scrolling work emails all weekend. You need mental separation from the hospital or you’ll burn out..","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2025-09-20","author":"Rachel P.","anon":false},
+{"id":595,"cat":"wellness","role":"resident","q":"How do you handle difficult attendings during training?","ai":{"diag":"Document everything professionally. Stay calm and objective.","bottleneck":"But abuse is never acceptable..","plan":["Don’t gossip — it always gets back to them","Stay calm and objective","Don’t gossip — it always gets back to them","If it’s truly malignant behavior, report it to your PD"],"mistakes":["But abuse is never acceptable.","Not starting early enough","Relying on a single source or mentor"],"action":"Some of the hardest attendings teach you the most. But abuse is never acceptable..","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2025-09-19","author":"Jason W.","anon":false},
+{"id":596,"cat":"wellness","role":"student","q":"I’m drowning in debt and it’s affecting my mental health. Any advice?","ai":{"diag":"Your debt feels crushing now, but remember: you’re investing in one of the highest-earning careers that exists. A cardiology attending earns enough to eliminate even $500K in debt within 5-7 years.","bottleneck":"Your debt feels crushing now, but remember: you’re investing in one of the highest-earning careers that exists.","plan":["Right now, focus on your training","A cardiology attending earns enough to eliminate even $500K in debt within 5-7 years","Right now, focus on your training","Use income-driven repayment so payments are manageable"],"mistakes":["Not starting early enough","Relying on a single source or mentor"],"action":"Talk to a financial advisor (many offer free initial consultations for trainees). And if the anxiety is severe, your school has counseling resources.","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2025-09-17","author":"Marcus T.","anon":false,"reviewNote":"Your debt feels crushing now, but remember: you’re investing in one of the highest-earning careers that exists. A cardiology attending earns enough to eliminate even $500K in debt within 5-7 years. — MF"},
+{"id":597,"cat":"wellness","role":"fellow","q":"How do you maintain your marriage or relationship during IC fellowship?","ai":{"diag":"My spouse and I had a weekly date night that was sacred — even if it was just dinner at home. Communicate about call schedules in advance.","bottleneck":"Acknowledge that you’re going to miss things.","plan":["Consider couples counseling proactively, not reactively.","Communicate about call schedules in advance","Acknowledge that you’re going to miss things","Express gratitude often"],"mistakes":["Not starting early enough","Relying on a single source or mentor"],"action":"Your partner needs to understand what they’re signing up for. Consider couples counseling proactively, not reactively..","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2025-09-15","author":"Anonymous","anon":true},
+{"id":598,"cat":"wellness","role":"resident","q":"Do you regret going into interventional cardiology?","ai":{"diag":"The training was brutal. The call is demanding.","bottleneck":"But I get to save lives in real-time.","plan":["But I get to save lives in real-time","Would I do it again? Absolutely","The call is demanding","But I get to save lives in real-time","I open blocked arteries and see immediate results"],"mistakes":["And the intellectual challenge never ends","Not starting early enough","Relying on a single source or mentor"],"action":"Would I do it again? Absolutely. The sacrifice is real, but so is the reward..","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2025-09-14","author":"Anonymous","anon":true},
+{"id":599,"cat":"wellness","role":"student","q":"How do you deal with watching patients die?","ai":{"diag":"It never gets easy, and if it does, something’s wrong. What changes is your ability to process it.","bottleneck":"Early on, every death hits hard.","plan":["It never gets easy, and if it does, something’s wrong","What changes is your ability to process it","Early on, every death hits hard","Over time, you learn to compartmentalize during the moment and process it later"],"mistakes":["It never gets easy, and if it does, something’s wrong","Not starting early enough","Relying on a single source or mentor"],"action":"Some deaths are preventable and those require honest review. Most are not, and accepting that is part of becoming a physician..","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2025-09-12","author":"Anonymous","anon":true,"reviewNote":"It never gets easy, and if it does, something’s wrong. What changes is your ability to process it. — MF"},
+{"id":600,"cat":"wellness","role":"fellow","q":"I’m a female fellow in IC and sometimes feel like I don’t belong. How do you address gender bias?","ai":{"diag":"First: you absolutely belong. IC needs more women and the field is better for it.","bottleneck":"The bias is real — I’ve seen it.","plan":["IC needs more women and the field is better for it","The bias is real — I’ve seen it","Combat it by being excellent at what you do, finding female mentors in IC (they exist and are growing in number), connecting with WIC (Women in Interventional Cardiology) through SCAI, and not accepting behavior that wouldn’t be directed at a male fellow"],"mistakes":["Not starting early enough","Relying on a single source or mentor"],"action":"Combat it by being excellent at what you do, finding female mentors in IC (they exist and are growing in number), connecting with WIC (Women in Interventional Cardiology) through SCAI, and not accepting behavior that wouldn’t be directed at a male fellow. And know that you’re paving the way for the next generation..","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2025-09-10","author":"Kevin D.","anon":false},
+{"id":601,"cat":"wellness","role":"resident","q":"How do I know if I need professional help for my mental health?","ai":{"diag":"If you’re asking this question, it’s worth exploring. Signs: persistent sadness, inability to enjoy things you used to, changes in sleep/appetite, difficulty concentrating, feelings of hopelessness, increased substance use, thoughts of self-harm.","bottleneck":"You don’t need to be in crisis to seek help.","plan":["Most state medical boards do not ask about voluntary mental health treatment.","Signs: persistent sadness, inability to enjoy things you used to, changes in sleep/appetite, difficulty concentrating, feelings of hopelessness, increased substance use, thoughts of self-harm","You don’t need to be in crisis to seek help","Many physicians benefit from therapy during training"],"mistakes":["Not starting early enough","Relying on a single source or mentor"],"action":"It’s not weakness — it’s self-awareness. Most state medical boards do not ask about voluntary mental health treatment..","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2025-09-09","author":"Sarah M.","anon":false},
+{"id":602,"cat":"wellness","role":"student","q":"How do you stay physically healthy during medical school?","ai":{"diag":"Schedule exercise like you schedule studying — it’s non-negotiable. Even 20-30 minutes, 4x/week makes a dramatic difference.","bottleneck":"Sleep 7 hours minimum (your retention improves).","plan":["Even 20-30 minutes, 4x/week makes a dramatic difference","Sleep 7 hours minimum (your retention improves)","Limit caffeine after 2pm"],"mistakes":["Not starting early enough","Relying on a single source or mentor"],"action":"Take breaks during study sessions. Your body is the vehicle for your career — treat it like one..","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2025-09-07","author":"Priya K.","anon":false,"reviewNote":"Schedule exercise like you schedule studying — it’s non-negotiable. Even 20-30 minutes, 4x/week makes a dramatic difference. — MF"},
+{"id":603,"cat":"wellness","role":"fellow","q":"What do you wish you knew about work-life balance before becoming an attending?","ai":{"diag":"That it doesn’t magically get better when you finish training. You have to actively create boundaries.","bottleneck":"Set your clinic schedule intentionally.","plan":["That it doesn’t magically get better when you finish training","Start practicing now.","You have to actively create boundaries","Set your clinic schedule intentionally","Don’t say yes to every committee"],"mistakes":["The attendings who burn out are the ones who never learned to say no","Not starting early enough","Relying on a single source or mentor"],"action":"The attendings who burn out are the ones who never learned to say no. Start practicing now..","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2025-09-05","author":"Anonymous","anon":true},
+{"id":604,"cat":"wellness","role":"resident","q":"How do you cope with making a medical error?","ai":{"diag":"Disclose it (ethically required and practically important). Debrief with your team.","bottleneck":"Report it through your institution’s safety system.","plan":["Reflect on what happened and what you’d do differently","Debrief with your team","Report it through your institution’s safety system","Reflect on what happened and what you’d do differently"],"mistakes":["Not starting early enough","Relying on a single source or mentor"],"action":"Every physician makes errors. What defines you is how you respond: honestly, humbly, and with a commitment to learning..","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2025-09-04","author":"Anonymous","anon":true},
+{"id":605,"cat":"wellness","role":"student","q":"Is it normal to feel like I chose the wrong career in medicine?","ai":{"diag":"Yes — almost every medical student and resident has this thought at some point. It usually happens during the hardest rotations or when you’re sleep-deprived.","bottleneck":"But don’t make permanent decisions based on temporary feelings..","plan":["It usually happens during the hardest rotations or when you’re sleep-deprived","It’s rarely about the career itself and more about the temporary misery of training","Talk to attendings who love their work — their perspective helps"],"mistakes":["Not starting early enough","Relying on a single source or mentor"],"action":"If the feeling persists beyond a bad rotation, explore it honestly. But don’t make permanent decisions based on temporary feelings..","escalate":false,"ereason":"AI framework covers this topic."},"status":"reviewed","date":"2025-09-02","author":"Anonymous","anon":true,"reviewNote":"Yes — almost every medical student and resident has this thought at some point. It usually happens during the hardest rotations or when you’re sleep-deprived. — MF"}
+];
+
+const VAULT_ITEMS=[
+{id:'v1',title:'Fellowship Roadmap Framework',desc:'Step-by-step timeline from PGY-1 to match',icon:'\ud83d\uddfa\ufe0f',tier:'pro'},
+{id:'v2',title:'CV Optimization Template',desc:'What programs actually look for, by priority',icon:'\ud83d\udcc4',tier:'pro'},
+{id:'v3',title:'RVU Explanation Guide',desc:'How RVUs work, benchmarks, compensation models',icon:'\ud83d\udcb0',tier:'pro'},
+{id:'v4',title:'Contract Red Flag Checklist',desc:'25 red flags before signing any physician contract',icon:'\ud83d\udea9',tier:'pro'},
+{id:'v5',title:'Resident Finance Starter Plan',desc:'Month-by-month plan from PGY-1 to attending year 1',icon:'\ud83d\udcca',tier:'pro'},
+{id:'v6',title:'Time Blocking System',desc:'Weekly template: clinical, research, personal',icon:'\u23f0',tier:'pro'},
+{id:'v7',title:'Contract Negotiation Toolkit',desc:'Scripts, templates, and MGMA benchmarks',icon:'\ud83d\udcdd',tier:'mentorship'},
+{id:'v8',title:'Fellowship Roadmap Templates',desc:'Customizable plans for each training year',icon:'\ud83c\udfaf',tier:'mentorship'}
+];
+
+
+
+// ===== APP STATE =====
+let DB,U=null,curFilter='all',curAdminTab='queue';
+
+function initDB(){
+  const seed={
+    users:[{id:'admin',name:'Dr. Mouzam Faroqui',email:AE,pass:'admin123',role:'admin',tier:'admin',institution:'Houston Medical Center'}],
+    questions:SEED_Q.concat(LEGACY_Q).concat(PENDING_Q),
+    nextId:300,nextUserId:2
+  };
+  const saved=localStorage.getItem('hw_db');
+  if(saved){const old=JSON.parse(saved);if(old.questions&&old.questions.length>=seed.questions.length){DB=old;return}}
+  DB=seed;saveDB();
+}
+function saveDB(){localStorage.setItem('hw_db',JSON.stringify(DB))}
+
+window.onload=function(){
+  initDB();
+  document.getElementById('disc-check').addEventListener('change',function(){
+    const b=document.getElementById('disc-btn');
+    b.style.opacity=this.checked?'1':'.5';
+    b.style.pointerEvents=this.checked?'auto':'none';
+  });
+  setTimeout(()=>{
+    document.getElementById('splash').classList.add('out');
+    setTimeout(()=>{
+      document.getElementById('splash').style.display='none';
+      const s=localStorage.getItem('hw_session');
+      if(s){U=JSON.parse(s);enterApp()}else{go('pg-landing')}
+    },500);
+  },1600);
+};
+
+// ===== NAV =====
+function go(id){
+  ['pg-landing','pg-login','pg-signup','main-app'].forEach(p=>{
+    const el=document.getElementById(p);if(el){el.classList.add('hidden');el.style.display=''}
+  });
+  const el=document.getElementById(id);if(el){el.classList.remove('hidden');el.style.display=''}
+  document.getElementById('main-nav').classList.remove('on');
+}
+
+function navTo(scr,btn){
+  document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));
+  document.getElementById(scr).classList.add('on');
+  if(btn){document.querySelectorAll('.ni').forEach(n=>n.classList.remove('on'));btn.classList.add('on')}
+  else{
+    const map={home:0,ask:1,archive:2,vault:3,profile:4,admin:5};
+    const key=scr.replace('scr-','');
+    const btns=document.querySelectorAll('.ni');
+    btns.forEach(n=>n.classList.remove('on'));
+    if(map[key]!==undefined&&btns[map[key]])btns[map[key]].classList.add('on');
+  }
+  if(scr==='scr-home')renderHome();
+  if(scr==='scr-archive')renderArchive();
+  if(scr==='scr-vault')renderVault();
+  if(scr==='scr-admin')renderAdmin();
+  if(scr==='scr-ask')updateAskScreen();
+  if(scr==='scr-profile')renderProfile();
+}
+
+// ===== AUTH =====
+function doLogin(e){
+  e.preventDefault();
+  const email=document.getElementById('l-email').value.trim().toLowerCase();
+  const pass=document.getElementById('l-pass').value;
+  const user=DB.users.find(u=>u.email.toLowerCase()===email&&u.pass===pass);
+  if(!user){notify('Invalid email or password',1);return}
+  U=user;if(!U.usage)U.usage={ai:0,credits:TIERS[U.tier]?.credits||0,month:new Date().getMonth()};
+  localStorage.setItem('hw_session',JSON.stringify(U));
+  if(!localStorage.getItem('hw_disc_'+U.id)){enterApp();showDisc()}else{enterApp()}
+}
+
+function doSignup(e){
+  e.preventDefault();
+  const name=document.getElementById('s-name').value.trim();
+  const email=document.getElementById('s-email').value.trim().toLowerCase();
+  const pass=document.getElementById('s-pass').value;
+  const role=document.getElementById('s-role').value;
+  const inst=document.getElementById('s-inst').value.trim();
+  if(DB.users.find(u=>u.email.toLowerCase()===email)){notify('Email already registered',1);return}
+  const user={id:'u'+DB.nextUserId++,name,email,pass,role,tier:'free',institution:inst,usage:{ai:0,credits:0,month:new Date().getMonth()}};
+  DB.users.push(user);saveDB();
+  U=user;localStorage.setItem('hw_session',JSON.stringify(U));
+  enterApp();showDisc();
+}
+
+function doLogout(){U=null;localStorage.removeItem('hw_session');go('pg-landing')}
+
+function enterApp(){
+  go('main-app');
+  document.getElementById('main-nav').classList.add('on');
+  if(!U.usage)U.usage={ai:0,credits:TIERS[U.tier]?.credits||0,month:new Date().getMonth()};
+  if(U.usage.month!==new Date().getMonth()){U.usage.ai=0;U.usage.credits=TIERS[U.tier]?.credits||0;U.usage.month=new Date().getMonth()}
+  const b=document.getElementById('user-badge');
+  const bc={free:'b-free',core:'b-core',pro:'b-pro',mentorship:'b-ment',admin:'b-admin'};
+  b.className='badge '+(bc[U.tier]||'b-free');
+  b.textContent=U.tier==='admin'?'MENTOR':TIERS[U.tier]?.name?.toUpperCase()||'FREE';
+  document.getElementById('welcome-msg').textContent='Welcome, '+U.name.split(' ')[0]+' \ud83d\udc4b';
+  document.getElementById('nav-admin').style.display=U.tier==='admin'?'':'none';
+  document.getElementById('upgrade-prompt').style.display=U.tier==='free'?'':'none';
+  renderHome();
+}
+
+// ===== RENDER HOME =====
+function renderHome(){
+  if(!U)return;
+  const t=TIERS[U.tier]||TIERS.free;
+  const used=U.usage?.ai||0;const max=t.ai;
+  const pct=max===999?0:Math.min(100,Math.round(used/max*100));
+  document.getElementById('usage-ai').textContent=max===999?used+' / \u221e':used+' / '+max;
+  document.getElementById('usage-bar').style.width=max===999?'0%':pct+'%';
+  document.getElementById('usage-credits').textContent=U.usage?.credits||0;
+  document.getElementById('usage-tier').textContent=t.name+' plan';
+  // Reviewed This Week = reviewed in last 7 days (or latest 5 if none recent)
+  const now=new Date();const weekAgo=new Date(now);weekAgo.setDate(weekAgo.getDate()-7);const weekStr=weekAgo.toISOString().split('T')[0];
+  let reviewed=DB.questions.filter(q=>q.status==='reviewed'&&q.reviewNote).sort((a,b)=>b.date.localeCompare(a.date));
+  const thisWeek=reviewed.filter(q=>(q.reviewDate||q.date)>=weekStr);
+  const featured=thisWeek.length>=3?thisWeek.slice(0,5):reviewed.slice(0,5);
+  document.getElementById('home-feed').innerHTML=featured.length?featured.map(renderQCard).join(''):'<div style="text-align:center;padding:40px;color:var(--text3)"><p>No reviewed questions yet.</p></div>';
+}
+
+function renderQCard(q){
+  const rc={student:'t-student',resident:'t-resident',fellow:'t-fellow',attending:'t-fellow'};
+  const cat=CATS[q.cat]||q.cat;
+  const st=q.status==='reviewed'?'t-reviewed':'t-pending';
+  return '<div class="qc" onclick="showQuestion('+q.id+')"><div class="qc-top"><span class="qc-author">'+(q.anon?'Anonymous':q.author)+'</span><span class="tag '+(rc[q.role]||'')+'">'+q.role+'</span></div><span class="tag t-cat" style="margin-bottom:10px">'+cat+'</span><div class="qc-q">'+q.q+'</div><div class="qc-meta"><span>'+q.date+'</span><span class="tag '+st+'">'+q.status+'</span>'+(q.reviewNote?' <span class="tag t-reviewed">DR. REVIEWED</span>':'')+'</div></div>';
+}
+
+function showQuestion(id){
+  const q=DB.questions.find(x=>x.id===id);if(!q)return;
+  let h='<span class="tag t-cat" style="margin-bottom:12px;display:inline-block">'+(CATS[q.cat]||q.cat)+'</span>';
+  h+='<h2 style="font-family:Playfair Display,serif;font-size:20px;margin-bottom:8px">'+q.q+'</h2>';
+  h+='<div style="font-size:12px;color:var(--text3);margin-bottom:20px">'+(q.anon?'Anonymous':q.author)+' \u00b7 '+q.role+' \u00b7 '+q.date+'</div>';
+  if(q.ai){
+    h+='<div class="ai-resp">';
+    h+='<h4>\ud83c\udfaf Situation Diagnosis</h4><p>'+q.ai.diag+'</p>';
+    h+='<h4>\ud83d\udd0d The Real Bottleneck</h4><p>'+q.ai.bottleneck+'</p>';
+    h+='<h4>\ud83d\udcdd Strategic Plan</h4><ol>'+q.ai.plan.map(s=>'<li>'+s+'</li>').join('')+'</ol>';
+    h+='<h4>\u26a0\ufe0f Common Mistakes</h4><ul style="list-style:none;padding:0">'+q.ai.mistakes.map(m=>'<li style="padding:4px 0;color:var(--red)">\u2022 '+m+'</li>').join('')+'</ul>';
+    h+='<h4>\ud83d\udcc5 30-Day Action Plan</h4><p>'+q.ai.action+'</p>';
+    h+='<div class="escalate">'+(q.ai.escalate?'\u2705 Recommended for Doctor Review: ':'\u2796 Doctor Review: ')+(q.ai.ereason||'')+'</div>';
+    h+='</div>';
+  }
+  if(q.reviewNote){
+    h+='<div style="margin-top:16px;padding:16px;border-radius:var(--r2);background:var(--green-dim);border:1px solid rgba(92,184,154,.2)">';
+    h+='<div style="font-size:11px;font-weight:600;color:var(--green);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">\ud83e\uddd1\u200d\u2695\ufe0f Doctor\'s Review</div>';
+    h+='<p style="font-size:14px;color:var(--text2);line-height:1.7">'+q.reviewNote+'</p></div>';
+  }
+  // Upgrade prompt for free users
+  if(U&&U.tier==='free'){
+    h+='<div style="margin-top:20px;padding:18px;border-radius:var(--r2);background:linear-gradient(135deg,var(--accent-dim),rgba(200,168,124,.06));border:1px solid rgba(200,168,124,.2)">';
+    h+='<div style="font-size:14px;font-weight:600;color:var(--accent);margin-bottom:6px">\u26a1 Want deeper analysis?</div>';
+    h+='<p style="font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.5">Upgrade to Core for 20 AI responses/month and Doctor Review credits. Pro members get 50 responses + Template Vault access.</p>';
+    h+='<button class="btn btn-a btn-sm" onclick="closeModal(\'modal-q\');navTo(\'scr-profile\');showUpgrade()" style="max-width:200px">View Plans \u2192</button></div>';
+  }
+  document.getElementById('modal-q-content').innerHTML=h;
+  document.getElementById('modal-q').classList.remove('hidden');
+}
+function closeModal(id){document.getElementById(id).classList.add('hidden')}
+
+// ===== ASK =====
+function toggleFinance(){document.getElementById('q-finance-box').style.display=document.getElementById('q-cat').value==='finance'?'':'none'}
+function togReview(){
+  const t=document.getElementById('q-review-tog');
+  if(!t.classList.contains('on')&&(U.usage?.credits||0)<=0){notify('No review credits. Upgrade your plan.',1);return}
+  t.classList.toggle('on');
+}
+function updateAskScreen(){document.getElementById('ask-credits').textContent=U.usage?.credits||0}
+
+function submitQ(){
+  const level=document.getElementById('q-level').value;
+  const cat=document.getElementById('q-cat').value;
+  const core=document.getElementById('q-core').value.trim();
+  if(!level){notify('Select your training level',1);return}
+  if(!cat){notify('Select a category',1);return}
+  if(!core||core.length<10){notify('Enter your core question (min 10 chars)',1);return}
+  const t=TIERS[U.tier]||TIERS.free;
+  if(U.usage.ai>=t.ai&&t.ai!==999){notify('AI responses used up this month. Upgrade for more.',1);return}
+  const anon=document.getElementById('q-anon-tog').classList.contains('on');
+  const wantsReview=document.getElementById('q-review-tog').classList.contains('on');
+  const context=document.getElementById('q-context').value.trim();
+  let fullQ=core;if(context)fullQ+=' '+context;
+  const aiResp=genAI(cat,core,level);
+  const q={id:DB.nextId++,userId:U.id,cat,role:U.role||'student',q:fullQ,author:anon?'Anonymous':U.name,anon,date:new Date().toISOString().split('T')[0],status:wantsReview?'pending':'answered',ai:aiResp,wantsReview};
+  if(wantsReview&&U.usage.credits>0)U.usage.credits--;
+  U.usage.ai++;
+  DB.questions.push(q);saveDB();localStorage.setItem('hw_session',JSON.stringify(U));
+  ['q-level','q-cat','q-core','q-constraints','q-tried','q-context'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=''});
+  document.getElementById('q-review-tog').classList.remove('on');
+  document.getElementById('q-anon-tog').classList.remove('on');
+  notify(wantsReview?'Submitted for Doctor Review':'AI response generated!');
+  if(!wantsReview)showQuestion(q.id);else navTo('scr-home');
+}
+
+function genAI(cat,core,level){
+  const T={
+    career:{diag:'Based on your '+level+' training level, this is a strategic career positioning question requiring structured analysis.',bottleneck:'The real constraint is not qualifications\u2014it is strategic positioning. Differentiation comes from intentional career design.',plan:['Audit CV against successful applicants','Identify 2-3 strategic relationships to build','Start one research project this month','Submit abstract to next major conference','Develop a clear narrative for your application'],mistakes:['Waiting too long to build application','Relying on single mentor','Chasing prestige over fit','Not asking for specific feedback'],action:'Week 1: CV audit. Week 2: Target mentors. Week 3: Start research. Month 2: Conference abstract. Month 3: Feedback from 3 attendings.',escalate:false,ereason:'Career strategy covered by AI.'},
+    fellowship:{diag:'Fellowship planning requires systematic approach to timeline, credentials, and networking at the '+level+' level.',bottleneck:'Most underestimate early preparation. The match is decided 12-18 months before application.',plan:['Map timeline backward from target match year','Identify top 15-20 programs','Target 2-3 first-author publications','Secure strong specialty-specific letters','Plan 1-2 away rotations'],mistakes:['Starting too late','Not applying broadly','Weak letters from distant attendings','Ignoring program culture'],action:'This month: program list. Next month: research project. Month 3: letter writers. Month 6: manuscript in progress.',escalate:false,ereason:'Standard fellowship planning.'},
+    contract:{diag:'Contract evaluation requires understanding both explicit terms and implicit business model.',bottleneck:'Information asymmetry between you and employer is the primary risk.',plan:['Hire physician contract attorney ($2-3K)','Get MGMA benchmarks','Evaluate: salary, RVU rate, benefits, call','Scrutinize: restrictive covenant, tail coverage, termination','Model total comp over 3-5 years'],mistakes:['Signing without attorney','Focusing on salary, ignoring covenant','Accepting verbal promises','Not understanding comp model'],action:'Week 1: Attorney. Week 2: MGMA data. Week 3: Contract review. Week 4: Counter-offer.',escalate:true,ereason:'Contract specifics need individualized review.'},
+    finance:{diag:'Physician finance decisions have outsized impact due to unique income trajectory.',bottleneck:'Primary wealth destroyer: lifestyle inflation during trainee-to-attending transition.',plan:['Emergency fund (3-6 months)','Max tax-advantaged accounts','Determine loan strategy: PSLF vs refinance','Own-occupation disability insurance','Maintain near-resident lifestyle 2-3 years'],mistakes:['Refinancing before PSLF decision','Buying house + car simultaneously','Commission-based financial advisor','Ignoring disability insurance'],action:'This week: HYSA. This month: employer match. Next month: disability quotes. Quarter 1: loan strategy.',escalate:true,ereason:'Financial decisions benefit from personalized analysis.'},
+    clinical:{diag:'Clinical mastery requires pattern recognition and systematic decision-making through deliberate practice.',bottleneck:'You need a system for learning from every case, not passive exposure.',plan:['Review relevant ACC/AHA guidelines','Study 3-5 landmark trials','Practice algorithm with real cases','Teach the topic to a peer','Create bedside reference card'],mistakes:['Memorizing without understanding pathophysiology','Not reviewing own cases','Relying on single resource','Not updating as guidelines change'],action:'This week: read guideline. Review 3 cases. Create reference card. Teach within 30 days.',escalate:false,ereason:'Clinical education covered by AI.'},
+    productivity:{diag:'Productivity in medicine is about systems design, not working harder.',bottleneck:'You are optimizing tasks when the leverage is in workflow architecture.',plan:['5-day time audit','Identify top 3 time drains','Install time-blocking for deep work','Batch similar tasks','Create templates for recurring work'],mistakes:['Optimizing without auditing','Multitasking','Not protecting deep work blocks','Saying yes to low-leverage requests'],action:'Week 1: time audit. Week 2: identify drains. Week 3: time-blocking. Week 4: create 3 templates.',escalate:false,ereason:'Productivity framework is comprehensive.'},
+    wellness:{diag:'Physician wellness is a prerequisite for sustained high performance, not a luxury.',bottleneck:'Treating symptoms instead of root causes: unsustainable workload, lack of boundaries, isolation.',plan:['Identify specific burnout drivers','Protect one non-negotiable personal activity','Build support network','Set boundaries on low-impact obligations','Consider professional support'],mistakes:['Pushing through without addressing root causes','Isolating','Making career decisions while burned out','Comparing internal experience to external appearance'],action:'This week: top 2 burnout drivers. Protect one personal evening. Talk to one peer. Professional support if severe.',escalate:false,ereason:'Wellness framework provided.'}
+  };
+  return T[cat]||T.career;
+}
+
+// ===== ARCHIVE =====
+function renderArchive(){
+  const reviewed=DB.questions.filter(q=>q.status==='reviewed').sort((a,b)=>b.date.localeCompare(a.date));
+  const search=document.getElementById('search-input').value.toLowerCase();
+  let filtered=reviewed;
+  if(search)filtered=filtered.filter(q=>q.q.toLowerCase().includes(search));
+  if(curFilter!=='all')filtered=filtered.filter(q=>q.cat===curFilter);
+  const featured=reviewed.filter(q=>q.reviewNote).slice(0,3);
+  document.getElementById('archive-featured').innerHTML=featured.length?featured.map(renderQCard).join(''):'<div style="text-align:center;padding:20px;color:var(--text3);font-size:13px">No featured reviews this week.</div>';
+  document.getElementById('archive-list').innerHTML=filtered.length?filtered.map(renderQCard).join(''):'<div style="text-align:center;padding:40px;color:var(--text3)">No questions found.</div>';
+}
+function filterArchive(){renderArchive()}
+function setFilter(f,btn){curFilter=f;document.querySelectorAll('.fc .chip').forEach(c=>c.classList.remove('on'));btn.classList.add('on');renderArchive()}
+
+// ===== VAULT =====
+function renderVault(){
+  const canAccess=U.tier==='pro'||U.tier==='mentorship'||U.tier==='admin';
+  document.getElementById('vault-list').innerHTML=VAULT_ITEMS.map(v=>{
+    const mentOnly=v.tier==='mentorship'&&U.tier!=='mentorship'&&U.tier!=='admin';
+    const locked=!canAccess||mentOnly;
+    return '<div class="vault-card '+(locked?'':'unlocked')+'" '+(locked?'':'onclick="notify(\'Template downloaded! (Demo)\')"')+'><div class="v-icon">'+v.icon+'</div><div class="v-info"><h3>'+v.title+'</h3><p>'+v.desc+(mentOnly?' \u2022 Mentorship only':'')+'</p></div><div class="v-lock">'+(locked?'\ud83d\udd12':'\u2b07\ufe0f')+'</div></div>';
+  }).join('');
+}
+
+// ===== PROFILE =====
+function renderProfile(){
+  if(!U)return;
+  document.getElementById('prof-av').textContent=U.name.charAt(0).toUpperCase();
+  document.getElementById('prof-name').textContent=U.name;
+  const rl={student:'Medical Student',resident:'IM Resident',fellow:'Cardiology Fellow',attending:'Early Career Attending',admin:'Interventional Cardiologist',other:'Member'};
+  document.getElementById('prof-role').textContent=rl[U.role]||'Member';
+  const t=TIERS[U.tier]||TIERS.free;
+  document.getElementById('ps-used').textContent=U.usage?.ai||0;
+  document.getElementById('ps-remain').textContent=t.ai===999?'\u221e':Math.max(0,t.ai-(U.usage?.ai||0));
+  document.getElementById('ps-credits').textContent=U.usage?.credits||0;
+  document.getElementById('prof-plan-label').textContent=t.name+(U.tier==='free'?'':' \u2022 Active');
+  document.getElementById('prof-plan-label').style.color=U.tier==='free'?'var(--text3)':'var(--accent)';
+}
+function showMyQ(){
+  navTo('scr-archive');
+  const mine=DB.questions.filter(q=>q.userId===U.id);
+  document.getElementById('archive-featured').innerHTML='';
+  document.getElementById('archive-list').innerHTML=mine.length?mine.map(renderQCard).join(''):'<div style="text-align:center;padding:40px;color:var(--text3)">No questions yet.</div>';
+}
+function showUpgrade(){
+  document.getElementById('upgrade-section').classList.toggle('hidden');
+  // Update subscription management display
+  if(U&&U.tier!=='free'&&U.tier!=='admin'){
+    const m=document.getElementById('sub-manage');m.classList.remove('hidden');
+    const t=TIERS[U.tier];
+    document.getElementById('sub-plan-name').textContent=t.name;
+    document.getElementById('sub-status').textContent='Active';
+    const renew=U.tier==='mentorship'?'Renews annually':'Renews monthly';
+    document.getElementById('sub-renew').textContent=renew+' \u2022 Auto-renewal on';
+    document.getElementById('sub-usage-summary').textContent=t.ai+(t.ai===999?' unlimited':'')+' AI responses / '+t.credits+' review credits per '+(U.tier==='mentorship'?'year':'month');
+  }else{document.getElementById('sub-manage').classList.add('hidden')}
+}
+function toggleNotifSettings(){document.getElementById('notif-settings').classList.toggle('hidden')}
+function subPlan(plan){
+  U.tier=plan;U.usage.credits=TIERS[plan]?.credits||0;
+  const u=DB.users.find(u=>u.id===U.id);if(u)u.tier=plan;
+  saveDB();localStorage.setItem('hw_session',JSON.stringify(U));
+  notify(plan==='mentorship'?'Mentorship application submitted!':'Upgraded to '+TIERS[plan].name+'! \u2728');
+  enterApp();
+}
+
+// ===== ADMIN =====
+function renderAdmin(){
+  const c=document.getElementById('admin-content');
+  const reviewedThisWeek=DB.questions.filter(q=>q.status==='reviewed'&&q.reviewDate).length;
+  document.getElementById('admin-info').innerHTML='<div style="display:flex;justify-content:space-between;align-items:center"><span>Select up to 10 questions per week for review.</span><span style="color:var(--accent);font-weight:600">'+reviewedThisWeek+' / 10 this week</span></div>';
+  if(curAdminTab==='queue'){
+    const pending=DB.questions.filter(q=>q.status==='pending');
+    c.innerHTML=pending.length?pending.map(q=>'<div class="card" style="margin-bottom:12px"><div class="qc-top"><span class="qc-author">'+(q.anon?'Anonymous':q.author)+'</span><span class="tag '+(({student:'t-student',resident:'t-resident',fellow:'t-fellow'})[q.role]||'')+'">'+q.role+'</span></div><span class="tag t-cat">'+q.cat+'</span><div class="qc-q" style="margin:10px 0">'+q.q+'</div><div style="font-size:11px;color:var(--text3);margin-bottom:12px">'+q.date+(q.wantsReview?' \u2022 \u2b50 Review Requested':'')+'</div>'+(q.ai?'<details style="margin-bottom:12px"><summary style="font-size:12px;color:var(--accent);cursor:pointer">View AI Draft</summary><div class="ai-resp" style="margin-top:8px;font-size:13px"><p>'+q.ai.diag+'</p></div></details>':'')+'<div class="abox"><textarea id="rev-'+q.id+'" placeholder="Add review commentary..."></textarea><div style="display:flex;align-items:center;gap:12px;margin-top:12px"><label style="font-size:12px;color:var(--text2);display:flex;align-items:center;gap:6px"><input type="checkbox" id="share-'+q.id+'" checked> Share in archive</label><div style="flex:1"></div><button class="btn btn-a btn-sm" onclick="publishReview('+q.id+')">Publish</button></div></div></div>').join(''):'<div style="text-align:center;padding:40px;color:var(--text3)">\u2705 All caught up!</div>';
+  }else if(curAdminTab==='reviewed'){
+    const reviewed=DB.questions.filter(q=>q.status==='reviewed').sort((a,b)=>b.date.localeCompare(a.date));
+    c.innerHTML=reviewed.length?reviewed.map(renderQCard).join(''):'<div style="text-align:center;padding:40px;color:var(--text3)">No reviewed questions.</div>';
+  }else{
+    const total=DB.questions.length,ans=DB.questions.filter(q=>q.status==='reviewed').length,pend=DB.questions.filter(q=>q.status==='pending').length;
+    const cats={};DB.questions.forEach(q=>{cats[q.cat]=(cats[q.cat]||0)+1});
+    c.innerHTML='<div class="stats" style="padding:0"><div class="st"><div class="st-n">'+total+'</div><div class="st-l">Total</div></div><div class="st"><div class="st-n">'+ans+'</div><div class="st-l">Reviewed</div></div><div class="st"><div class="st-n">'+pend+'</div><div class="st-l">Pending</div></div><div class="st"><div class="st-n">'+DB.users.length+'</div><div class="st-l">Members</div></div></div><div class="sec" style="padding:20px 0 14px">By Category</div>'+Object.entries(cats).map(([k,v])=>'<div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px"><span>'+(CATS[k]||k)+'</span><span style="color:var(--text3)">'+v+'</span></div>').join('');
+  }
+}
+function adminTab(tab,btn){curAdminTab=tab;document.querySelectorAll('.atab').forEach(t=>t.classList.remove('on'));btn.classList.add('on');renderAdmin()}
+
+function publishReview(id){
+  const ta=document.getElementById('rev-'+id);
+  if(!ta||!ta.value.trim()){notify('Add review commentary',1);return}
+  const q=DB.questions.find(q=>q.id===id);
+  if(q){
+    q.reviewNote=ta.value.trim();
+    q.status='reviewed';
+    q.reviewDate=new Date().toISOString().split('T')[0];
+    // Content flywheel: check share toggle
+    const shareBox=document.getElementById('share-'+id);
+    q.shareInArchive=shareBox?shareBox.checked:true;
+    saveDB();notify('Review published! \u2728');renderAdmin();
+  }
+}
+
+// ===== DISCLAIMER =====
+function showDisc(){document.getElementById('modal-disc').classList.remove('hidden')}
+function acceptDisc(){document.getElementById('modal-disc').classList.add('hidden');if(U)localStorage.setItem('hw_disc_'+U.id,'1')}
+
+// ===== NOTIFY =====
+function notify(msg,err){
+  const el=document.getElementById('notif');
+  document.getElementById('ni-icon').textContent=err?'\u2715':'\u2726';
+  document.getElementById('ni-text').textContent=msg;
+  el.className='notif show'+(err?' err':'');
+  setTimeout(()=>el.classList.remove('show'),3000);
+}
+
+
+</script>
+</body>
+</html>

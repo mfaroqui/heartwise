@@ -16,6 +16,8 @@ const html = [
   '\n<script>\n',
   read('js-data.js'),
   '\n',
+  read('js-vault.js'),
+  '\n',
   read('js-app.js'),
   '\n<\/script>\n<\/body>\n<\/html>\n'
 ].join('\n');

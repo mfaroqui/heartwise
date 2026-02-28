@@ -127,6 +127,22 @@ a{color:var(--accent);text-decoration:none}
 .how-step h3{font-size:14px;font-weight:600;margin-bottom:4px}
 .how-step p{font-size:12px;color:var(--text3);line-height:1.5}
 
+/* Visual Flow Roadmap */
+.flow-road{display:flex;align-items:flex-start;justify-content:center;gap:0;padding:8px 12px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.flow-node{display:flex;flex-direction:column;align-items:center;text-align:center;min-width:80px;max-width:100px;flex-shrink:0}
+.flow-icon{width:52px;height:52px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:8px;border:1px solid var(--border)}
+.flow-label{font-size:12px;font-weight:700;color:var(--text1);margin-bottom:4px;white-space:nowrap}
+.flow-desc{font-size:10px;color:var(--text3);line-height:1.4}
+.flow-arrow{display:flex;align-items:center;padding-top:14px;flex-shrink:0}
+@media(max-width:520px){
+  .flow-road{gap:0;padding:8px 4px}
+  .flow-node{min-width:64px;max-width:72px}
+  .flow-icon{width:44px;height:44px;border-radius:12px;font-size:20px}
+  .flow-label{font-size:10px}
+  .flow-desc{font-size:9px}
+  .flow-arrow svg{width:28px;height:20px}
+}
+
 /* Pricing */
 .plan{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r3);padding:28px;margin-bottom:12px}
 .plan.ft{border-color:rgba(200,168,124,.3);background:linear-gradient(135deg,var(--bg2),rgba(200,168,124,.03))}
@@ -301,9 +317,8 @@ a{color:var(--accent);text-decoration:none}
 <div id="pg-landing" class="lp">
 <div class="hero">
 <div class="hero-badge">Physician-Built Mentorship Platform</div>
-<h1 class="serif">Education. Career. Lifestyle. Growth. <em>Financial Clarity.</em></h1>
-<p>A transparent, physician-built mentorship platform focused on long-term education, career, lifestyle, growth, and financial clarity.</p>
-<p style="font-size:13px;color:var(--text3);margin-top:-8px;margin-bottom:24px">HeartWise is a new mentorship platform built by physicians to provide structured, ethical guidance across education, career, lifestyle, and financial decision-making.</p>
+<h1 class="serif">Make Confident Career, Lifestyle & <em>Financial Decisions.</em></h1>
+<p>Structured mentorship for physicians and trainees — make confident career, lifestyle, and financial decisions with AI-guided frameworks and physician insight.</p>
 <button class="btn btn-a" onclick="go('pg-signup')" style="max-width:280px;margin:0 auto 12px">Join as Founding Member →</button>
 <button class="btn btn-g" onclick="go('pg-login')" style="max-width:280px;margin:0 auto">Sign In</button>
 </div>
@@ -335,11 +350,64 @@ a{color:var(--accent);text-decoration:none}
 <div class="lp-sec" style="background:var(--bg2)">
 <h2 class="serif">How It Works</h2>
 <p class="sub">A structured process — not a free-for-all Q&A.</p>
-<div class="how-steps">
-<div class="how-step"><div class="num">1</div><div><h3>Submit a Structured Question</h3><p>Complete the intake form: training level, specialty, timeline, and constraints. Structured input produces structured guidance.</p></div></div>
-<div class="how-step"><div class="num">2</div><div><h3>Receive an AI-Generated Framework</h3><p>Get a structured response: situation analysis, key considerations, action steps, common pitfalls, and a 30-day plan. AI provides the framework — not final advice.</p></div></div>
-<div class="how-step"><div class="num">3</div><div><h3>Request Physician Review</h3><p>Use review credits for physician insight. Selected questions receive Dr. Faroqui's direct commentary, adding clinical experience to the AI framework.</p></div></div>
-<div class="how-step"><div class="num">4</div><div><h3>Learn from the Archive</h3><p>Browse reviewed questions from other members. Build on frameworks that have been refined by physician oversight.</p></div></div>
+
+<!-- Visual Flow Roadmap -->
+<div class="flow-road">
+<div class="flow-node">
+<div class="flow-icon" style="background:var(--accent-dim);color:var(--accent)">📝</div>
+<div class="flow-label">Submit</div>
+<div class="flow-desc">Structured intake: training level, specialty, timeline, constraints</div>
+</div>
+<div class="flow-arrow">
+<svg width="40" height="24" viewBox="0 0 40 24"><path d="M0 12h32M26 4l8 8-8 8" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+</div>
+<div class="flow-node">
+<div class="flow-icon" style="background:rgba(100,149,237,.12);color:var(--blue)">🤖</div>
+<div class="flow-label">AI Framework</div>
+<div class="flow-desc">Evidence-based analysis, action steps, pitfalls, 30-day plan</div>
+</div>
+<div class="flow-arrow">
+<svg width="40" height="24" viewBox="0 0 40 24"><path d="M0 12h32M26 4l8 8-8 8" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+</div>
+<div class="flow-node">
+<div class="flow-icon" style="background:rgba(92,184,154,.12);color:var(--green)">🧑‍⚕️</div>
+<div class="flow-label">Physician Review</div>
+<div class="flow-desc">Dr. Faroqui adds clinical insight and real-world experience</div>
+</div>
+<div class="flow-arrow">
+<svg width="40" height="24" viewBox="0 0 40 24"><path d="M0 12h32M26 4l8 8-8 8" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+</div>
+<div class="flow-node">
+<div class="flow-icon" style="background:rgba(200,168,124,.12);color:var(--accent)">🚀</div>
+<div class="flow-label">Take Action</div>
+<div class="flow-desc">Execute with clarity — structured plan, not guesswork</div>
+</div>
+</div>
+
+<!-- Detail cards below the flow -->
+<div style="max-width:520px;margin:24px auto 0;padding:0 16px">
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+<div style="padding:16px;background:var(--bg);border:1px solid var(--border);border-radius:var(--r)">
+<div style="font-size:20px;margin-bottom:6px">📝</div>
+<div style="font-size:12px;font-weight:600;margin-bottom:4px">Structured Input</div>
+<div style="font-size:11px;color:var(--text3);line-height:1.5">Training level, specialty, timeline, constraints. Structured input → structured output.</div>
+</div>
+<div style="padding:16px;background:var(--bg);border:1px solid var(--border);border-radius:var(--r)">
+<div style="font-size:20px;margin-bottom:6px">🤖</div>
+<div style="font-size:12px;font-weight:600;margin-bottom:4px">AI-Guided Framework</div>
+<div style="font-size:11px;color:var(--text3);line-height:1.5">Assessment, key considerations, action plan, common pitfalls, references. AI provides the framework — not final advice.</div>
+</div>
+<div style="padding:16px;background:var(--bg);border:1px solid var(--border);border-radius:var(--r)">
+<div style="font-size:20px;margin-bottom:6px">🧑‍⚕️</div>
+<div style="font-size:12px;font-weight:600;margin-bottom:4px">Physician Insight</div>
+<div style="font-size:11px;color:var(--text3);line-height:1.5">Use review credits for Dr. Faroqui's direct commentary. Clinical experience layered on AI frameworks.</div>
+</div>
+<div style="padding:16px;background:var(--bg);border:1px solid var(--border);border-radius:var(--r)">
+<div style="font-size:20px;margin-bottom:6px">📚</div>
+<div style="font-size:12px;font-weight:600;margin-bottom:4px">Growing Archive</div>
+<div style="font-size:11px;color:var(--text3);line-height:1.5">Browse reviewed questions from other members. Learn from frameworks refined by physician oversight.</div>
+</div>
+</div>
 </div>
 </div>
 

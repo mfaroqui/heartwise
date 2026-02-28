@@ -1055,7 +1055,7 @@ window.onload=function(){
     setTimeout(()=>{
       document.getElementById('splash').style.display='none';
       const s=localStorage.getItem('hw_session');
-      if(s){U=JSON.parse(s);enterApp()}else{go('pg-landing')}
+      if(s){U=JSON.parse(s);handleCheckoutReturn();enterApp()}else{go('pg-landing')}
     },500);
   },1600);
 };
@@ -1293,12 +1293,96 @@ function showUpgrade(){
   }else{document.getElementById('sub-manage').classList.add('hidden')}
 }
 function toggleNotifSettings(){document.getElementById('notif-settings').classList.toggle('hidden')}
+// ===== STRIPE CONFIG =====
+const STRIPE_PK='pk_test_51T5mX3PXNQA0ks87KmMtyTYTQZKBLJ6dE5U15eSBf97sK2ecqdU1DYjcJYpevRpdJnE1Xyi0Uow6PG2J8b4A8UCq004h8agh3H';
+const STRIPE_PRICES={
+  core:'price_1T5rG5PXNQA0ks87NtjJVnYi',
+  pro:'price_1T5rGQPXNQA0ks87WdzaewtE',
+  audit:'AUDIT_PRICE_PLACEHOLDER',
+  intensive:'price_1T5rHJPXNQA0ks87dGsOMuWM'
+};
+let stripeLoaded=false,stripeObj=null;
+
+function loadStripe(){
+  if(stripeLoaded)return Promise.resolve(stripeObj);
+  return new Promise((resolve)=>{
+    const s=document.createElement('script');
+    s.src='https://js.stripe.com/v3/';
+    s.onload=()=>{stripeObj=Stripe(STRIPE_PK);stripeLoaded=true;resolve(stripeObj)};
+    s.onerror=()=>{notify('Failed to load payment system. Try again.',1);resolve(null)};
+    document.head.appendChild(s);
+  });
+}
+
+async function startCheckout(priceId,mode){
+  const stripe=await loadStripe();
+  if(!stripe){notify('Payment system unavailable.',1);return}
+  const {error}=await stripe.redirectToCheckout({
+    lineItems:[{price:priceId,quantity:1}],
+    mode:mode||'subscription',
+    successUrl:window.location.origin+'?checkout=success&plan='+encodeURIComponent(priceId),
+    cancelUrl:window.location.origin+'?checkout=cancel',
+    customerEmail:U?.email||undefined
+  });
+  if(error)notify(error.message,1);
+}
+
 function subPlan(plan){
-  U.tier=plan;U.usage.credits=TIERS[plan]?.credits||0;
-  const u=DB.users.find(u=>u.id===U.id);if(u)u.tier=plan;
-  saveDB();localStorage.setItem('hw_session',JSON.stringify(U));
-  notify(plan==='mentorship'?'Mentorship application submitted!':'Upgraded to '+TIERS[plan].name+'! \u2728');
-  enterApp();
+  if(!U){notify('Please sign in first.',1);return}
+  if(plan==='core'){
+    startCheckout(STRIPE_PRICES.core,'subscription');
+  }else if(plan==='pro'){
+    startCheckout(STRIPE_PRICES.pro,'subscription');
+  }else if(plan==='mentorship'){
+    // Private Strategy - show options
+    showPrivateStrategyModal();
+  }else if(plan==='audit'){
+    startCheckout(STRIPE_PRICES.audit,'payment');
+  }else if(plan==='intensive'){
+    startCheckout(STRIPE_PRICES.intensive,'payment');
+  }else{
+    // Free plan or fallback
+    U.tier='free';U.usage.credits=0;
+    const u=DB.users.find(u=>u.id===U.id);if(u)u.tier='free';
+    saveDB();localStorage.setItem('hw_session',JSON.stringify(U));
+    notify('Switched to Free plan.');enterApp();
+  }
+}
+
+function showPrivateStrategyModal(){
+  const html='<h2 class="serif" style="font-size:20px;margin-bottom:16px">Private Strategy</h2>'+
+    '<p style="font-size:13px;color:var(--text2);margin-bottom:20px;line-height:1.6">High-stakes, structured intervention during major career decisions. Select your engagement:</p>'+
+    '<div class="card" style="cursor:pointer;margin-bottom:12px;padding:20px" onclick="closeModal(\'modal-q\');startCheckout(STRIPE_PRICES.audit,\'payment\')">'+
+    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><span style="font-size:14px;font-weight:600;color:var(--accent)">Strategic Audit</span><span style="font-size:16px;font-weight:700">$1,250\u2013$1,750</span></div>'+
+    '<p style="font-size:12px;color:var(--text3);line-height:1.5">Structured intake, CV/offer review, 20-30 min recorded strategic breakdown, written execution roadmap. Delivered within 7 days. No live call.</p></div>'+
+    '<div class="card" style="cursor:pointer;margin-bottom:12px;padding:20px" onclick="closeModal(\'modal-q\');startCheckout(STRIPE_PRICES.intensive,\'payment\')">'+
+    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><span style="font-size:14px;font-weight:600;color:var(--accent2)">Strategic Intensive</span><span style="font-size:16px;font-weight:700">$2,500</span></div>'+
+    '<p style="font-size:12px;color:var(--text3);line-height:1.5">Structured intake, 30-60 min focused strategy session, written roadmap, 14-day limited follow-up window. Capped monthly.</p></div>'+
+    '<p style="font-size:10px;color:var(--text3);margin-top:12px;font-style:italic">Not ongoing mentorship, contract legal markup, tax planning, or unlimited messaging. Defined strategic intervention.</p>';
+  document.getElementById('modal-q-content').innerHTML=html;
+  document.getElementById('modal-q').classList.remove('hidden');
+}
+
+// Handle checkout return
+function handleCheckoutReturn(){
+  const params=new URLSearchParams(window.location.search);
+  const checkout=params.get('checkout');
+  if(checkout==='success'){
+    const priceId=params.get('plan');
+    // Map price back to tier
+    if(priceId===STRIPE_PRICES.core){if(U){U.tier='core';U.usage.credits=TIERS.core.credits}}
+    else if(priceId===STRIPE_PRICES.pro){if(U){U.tier='pro';U.usage.credits=TIERS.pro.credits}}
+    else{if(U)notify('Payment received! We will be in touch within 48 hours to begin your strategic engagement.')}
+    if(U){
+      const u=DB.users.find(u=>u.id===U.id);if(u)u.tier=U.tier;
+      saveDB();localStorage.setItem('hw_session',JSON.stringify(U));
+    }
+    notify('Payment successful! \u2728');
+    window.history.replaceState({},'',window.location.pathname);
+  }else if(checkout==='cancel'){
+    notify('Checkout cancelled.',1);
+    window.history.replaceState({},'',window.location.pathname);
+  }
 }
 
 // ===== ADMIN =====

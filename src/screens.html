@@ -1,0 +1,298 @@
+<!-- ===== MAIN APP ===== -->
+<div id="main-app" class="hidden">
+
+<!-- HOME SCREEN -->
+<div id="scr-home" class="scr on">
+<div class="hdr">
+<div class="hdr-t serif">HeartWise</div>
+<span id="user-badge" class="badge b-free">FREE</span>
+</div>
+
+<div style="padding:20px 24px">
+<div style="background:linear-gradient(135deg,#1e1b2e,#1a1626,#221b2e);border:1px solid rgba(200,168,124,.15);border-radius:var(--r3);padding:28px;position:relative;overflow:hidden">
+<div style="position:absolute;top:-50%;right:-30%;width:200px;height:200px;background:radial-gradient(circle,rgba(200,168,124,.08),transparent 70%);border-radius:50%"></div>
+<h2 id="welcome-msg" class="serif" style="font-size:22px;font-weight:600;margin-bottom:6px;position:relative">Welcome 👋</h2>
+<p style="font-size:13px;color:var(--text2);line-height:1.6;position:relative">Clarity. Positioning. Contract literacy. Income intelligence.</p>
+</div>
+</div>
+
+<!-- Usage Stats -->
+<div style="padding:0 24px 16px">
+<div class="card" style="padding:18px">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+<span style="font-size:12px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:1px">AI Responses</span>
+<span id="usage-ai" style="font-size:12px;color:var(--accent);font-weight:600">0 / 1</span>
+</div>
+<div class="usage"><div class="usage-fill" id="usage-bar" style="width:0%"></div></div>
+<div style="display:flex;justify-content:space-between;margin-top:12px">
+<div><span style="font-size:11px;color:var(--text3)">Review Credits: </span><span id="usage-credits" style="font-size:13px;font-weight:600;color:var(--accent)">0</span></div>
+<span id="usage-tier" style="font-size:11px;color:var(--text3)">Free plan</span>
+</div>
+</div>
+</div>
+
+<div style="padding:0 24px 16px">
+<button class="btn btn-a" onclick="navTo('scr-ask')">Submit a Question →</button>
+</div>
+
+<div id="upgrade-prompt" style="padding:0 24px 16px">
+<div class="card" style="border-color:rgba(200,168,124,.2);cursor:pointer" onclick="navTo('scr-profile');showUpgrade()">
+<div style="display:flex;align-items:center;gap:12px">
+<span style="font-size:20px">⚡</span>
+<div><div style="font-size:13px;font-weight:600;color:var(--accent)">Get More Structured Guidance</div><div style="font-size:11px;color:var(--text3)">Upgrade to Core for 20 AI-guided mentorship responses per month</div></div>
+</div>
+</div>
+</div>
+
+<div class="sec">Reviewed This Week</div>
+<div id="home-feed" class="pad"></div>
+</div>
+
+<!-- ASK SCREEN (Structured Intake) -->
+<div id="scr-ask" class="scr">
+<div class="hdr"><div class="hdr-t serif" style="font-size:20px">Strategic Intake</div></div>
+<div style="padding:24px 24px 100px">
+
+<div class="review-banner" id="review-banner">
+<div class="icon">📋</div>
+<div class="info">
+<h4>Physician Review Credits: <span id="ask-credits">0</span></h4>
+<p>Reviews are limited weekly. Not all submissions are selected. Strategic priority given to high-leverage questions.</p>
+</div>
+</div>
+
+<div class="intake-grid">
+<div class="fg"><label>Training Level *</label>
+<select id="q-level" required>
+<option value="">Select</option>
+<option value="MS1-MS2">MS1-MS2</option>
+<option value="MS3-MS4">MS3-MS4</option>
+<option value="PGY-1">PGY-1</option>
+<option value="PGY-2">PGY-2</option>
+<option value="PGY-3">PGY-3</option>
+<option value="Fellow">Fellow</option>
+<option value="Attending">Attending</option>
+</select></div>
+<div class="fg"><label>Intended Specialty *</label>
+<select id="q-spec">
+<option value="">Select</option>
+<option value="Cardiology">Cardiology</option>
+<option value="Interventional Cardiology">Interventional Cardiology</option>
+<option value="Electrophysiology">Electrophysiology</option>
+<option value="Heart Failure">Heart Failure</option>
+<option value="Internal Medicine">Internal Medicine</option>
+<option value="Other">Other</option>
+<option value="Undecided">Undecided</option>
+</select></div>
+</div>
+
+<div class="intake-grid">
+<div class="fg"><label>Timeline</label>
+<select id="q-timeline">
+<option value="">Select</option>
+<option value="Immediate (0-3mo)">Immediate (0-3mo)</option>
+<option value="Near-term (3-12mo)">Near-term (3-12mo)</option>
+<option value="Medium (1-2yr)">Medium (1-2yr)</option>
+<option value="Long-term (2+yr)">Long-term (2+yr)</option>
+</select></div>
+<div class="fg"><label>Category *</label>
+<select id="q-cat" required onchange="toggleFinance()">
+<option value="">Select</option>
+<option value="career">Career Strategy</option>
+<option value="fellowship">Fellowship Positioning</option>
+<option value="contract">Contract Negotiation</option>
+<option value="finance">Income & Financial Leverage</option>
+<option value="clinical">Clinical Education</option>
+<option value="productivity">Productivity Systems</option>
+<option value="wellness">Performance Sustainability</option>
+</select></div>
+</div>
+
+<div class="fg" id="q-finance-box" style="display:none">
+<label>Financial Snapshot (optional)</label>
+<textarea id="q-finance" rows="2" placeholder="e.g., $280K loans, PGY-2 salary $65K, no investments yet..."></textarea>
+</div>
+
+<div class="fg">
+<label>Core Question (one sentence) *</label>
+<input type="text" id="q-core" placeholder="What is the single most important thing you need answered?" required>
+</div>
+
+<div class="fg">
+<label>What constraints are you facing?</label>
+<textarea id="q-constraints" rows="2" placeholder="Time, geography, financial, academic..."></textarea>
+</div>
+
+<div class="fg">
+<label>What have you tried?</label>
+<textarea id="q-tried" rows="2" placeholder="Approaches, resources, conversations..."></textarea>
+</div>
+
+<div class="fg">
+<label>Additional Context (optional)</label>
+<textarea id="q-context" rows="3" placeholder="Any extra details that would help..."></textarea>
+</div>
+
+<div style="display:flex;align-items:center;gap:12px;padding:12px 0;margin-bottom:12px">
+<button class="tog" id="q-review-tog" onclick="togReview()"></button>
+<div><div style="font-size:13px;font-weight:500">Request Doctor Review</div><div style="font-size:11px;color:var(--text3)">Uses 1 review credit. Not all reviews guaranteed.</div></div>
+</div>
+
+<div style="display:flex;align-items:center;gap:12px;padding:0 0 20px">
+<button class="tog" id="q-anon-tog" onclick="this.classList.toggle('on')"></button>
+<span style="font-size:13px">Submit anonymously</span>
+</div>
+
+<button class="btn btn-a" onclick="submitQ()">Submit for Strategic Analysis</button>
+</div>
+</div>
+
+<!-- ARCHIVE SCREEN -->
+<div id="scr-archive" class="scr">
+<div class="hdr"><div class="hdr-t serif" style="font-size:20px">Archive</div></div>
+<div class="sbar"><svg><use href="#i-search"/></svg><input type="text" id="search-input" placeholder="Search reviewed questions..." oninput="filterArchive()"></div>
+<div class="fc">
+<button class="chip on" onclick="setFilter('all',this)">All</button>
+<button class="chip" onclick="setFilter('career',this)">Career</button>
+<button class="chip" onclick="setFilter('fellowship',this)">Fellowship</button>
+<button class="chip" onclick="setFilter('contract',this)">Contract</button>
+<button class="chip" onclick="setFilter('finance',this)">Finance</button>
+<button class="chip" onclick="setFilter('clinical',this)">Clinical</button>
+<button class="chip" onclick="setFilter('wellness',this)">Wellness</button>
+</div>
+<div class="sec">Reviewed This Week</div>
+<div id="archive-featured" class="pad"></div>
+<div class="sec">All Reviewed Questions</div>
+<div id="archive-list" class="pad"></div>
+</div>
+
+<!-- VAULT SCREEN -->
+<div id="scr-vault" class="scr">
+<div class="hdr"><div class="hdr-t serif" style="font-size:20px">Framework Library</div><span class="tag" style="background:var(--accent-dim);color:var(--accent)">HIGH PERFORMER+</span></div>
+<div style="padding:20px 24px">
+<p style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:24px">Structured frameworks, worksheets, and checklists for career decisions. Process-driven tools — not shortcuts. Available for High Performer and Private Strategy members.</p>
+</div>
+<div id="vault-list" class="pad"></div>
+</div>
+
+<!-- PROFILE SCREEN -->
+<div id="scr-profile" class="scr">
+<div class="hdr"><div class="hdr-t serif" style="font-size:20px">Profile</div></div>
+<div style="padding:24px 24px 100px">
+
+<div style="text-align:center;margin-bottom:24px">
+<div id="prof-av" style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:600;color:#0a0a0f;margin:0 auto 14px">M</div>
+<div id="prof-name" class="serif" style="font-size:20px;font-weight:600">User</div>
+<div id="prof-role" style="color:var(--text3);font-size:13px;margin-top:4px">Medical Student</div>
+</div>
+
+<div class="prof-stats">
+<div class="prof-stat"><div class="n" id="ps-used">0</div><div class="l">Used</div></div>
+<div class="prof-stat"><div class="n" id="ps-remain">1</div><div class="l">Remaining</div></div>
+<div class="prof-stat"><div class="n" id="ps-credits">0</div><div class="l">Review Cr.</div></div>
+</div>
+
+<div style="margin-bottom:12px">
+<div class="card" style="cursor:pointer;padding:16px 20px" onclick="showMyQ()">
+<div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:14px">📋 My Questions</span><span style="color:var(--text3)">›</span></div>
+</div>
+</div>
+
+<div style="margin-bottom:12px">
+<div class="card" style="cursor:pointer;padding:16px 20px" onclick="showUpgrade()">
+<div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:14px">⚡ Subscription</span><span id="prof-plan-label" style="font-size:12px;color:var(--accent)">Free</span></div>
+</div>
+</div>
+
+<div style="margin-bottom:12px">
+<div class="card" style="cursor:pointer;padding:16px 20px" onclick="toggleNotifSettings()">
+<div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:14px">🔔 Notifications</span><span style="color:var(--text3)">›</span></div>
+</div>
+</div>
+
+<!-- Notification Settings -->
+<div id="notif-settings" class="hidden" style="margin-bottom:12px">
+<div class="card" style="padding:20px">
+<div style="font-size:13px;font-weight:600;margin-bottom:16px">Email Notifications</div>
+<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)">
+<div><div style="font-size:13px">Doctor Review Published</div><div style="font-size:11px;color:var(--text3)">When your question gets a doctor review</div></div>
+<button class="tog on" onclick="this.classList.toggle('on')"></button>
+</div>
+<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)">
+<div><div style="font-size:13px">Weekly Archive Digest</div><div style="font-size:11px;color:var(--text3)">Top reviewed questions each week</div></div>
+<button class="tog on" onclick="this.classList.toggle('on')"></button>
+</div>
+<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)">
+<div><div style="font-size:13px">New Template Available</div><div style="font-size:11px;color:var(--text3)">When new vault templates are added</div></div>
+<button class="tog" onclick="this.classList.toggle('on')"></button>
+</div>
+<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0">
+<div><div style="font-size:13px">Group Q&A Reminders</div><div style="font-size:11px;color:var(--text3)">Upcoming live sessions (Pro+ only)</div></div>
+<button class="tog on" onclick="this.classList.toggle('on')"></button>
+</div>
+<div style="font-size:11px;color:var(--text3);margin-top:12px;padding-top:12px;border-top:1px solid var(--border)">Email notifications will be sent to your registered email. Real-time delivery requires backend integration.</div>
+</div>
+</div>
+
+<div style="margin-bottom:12px">
+<div class="card" style="cursor:pointer;padding:16px 20px" onclick="showDisc()">
+<div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:14px">⚕️ Disclaimer</span><span style="color:var(--text3)">›</span></div>
+</div>
+</div>
+
+<div style="margin-bottom:24px">
+<div class="card" style="cursor:pointer;padding:16px 20px" onclick="doLogout()">
+<div style="color:var(--red);font-size:14px">Sign Out</div>
+</div>
+</div>
+
+<div id="upgrade-section" class="hidden">
+<div id="sub-manage" class="hidden" style="margin-bottom:16px">
+<div class="card" style="padding:20px;border-color:rgba(200,168,124,.2)">
+<div style="font-size:13px;font-weight:600;margin-bottom:12px">Current Subscription</div>
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+<span style="font-size:14px;font-weight:600;color:var(--accent)" id="sub-plan-name">Free</span>
+<span style="font-size:12px;color:var(--text3)" id="sub-status">Active</span>
+</div>
+<div style="font-size:12px;color:var(--text3);margin-bottom:4px" id="sub-renew">No billing</div>
+<div style="font-size:12px;color:var(--text3);margin-bottom:12px" id="sub-usage-summary">1 AI response / 0 review credits per month</div>
+<div style="display:flex;gap:8px">
+<button class="btn btn-g btn-sm" onclick="notify('Subscription management will be available with Stripe integration')">Manage Billing</button>
+<button class="btn btn-sm" style="background:transparent;color:var(--red);border:1px solid var(--red)" onclick="if(confirm('Cancel subscription? You will keep access until the end of your billing period.')){subPlan('free');notify('Subscription cancelled. Access continues through billing period.')}">Cancel</button>
+</div>
+</div>
+</div>
+<div class="sec" style="padding:16px 0">Choose Your Plan</div>
+<div class="plan"><div class="plan-n" style="color:var(--text2)">Free</div><div style="font-size:12px;color:var(--text3);margin-bottom:4px">Observe the Framework</div><div class="plan-p">$0<span> /mo</span></div><ul class="plan-f"><li>1 AI-guided response per month</li><li>Public reviewed archive</li></ul><button class="btn btn-g btn-sm" id="plan-free-btn" disabled>Current Plan</button></div>
+<div class="plan"><div class="plan-n" style="color:var(--blue)">Core</div><div style="font-size:12px;color:var(--blue);margin-bottom:4px">Structured Mentorship</div><div class="plan-p">$19<span> /mo</span></div><ul class="plan-f"><li>20 AI-guided responses per month</li><li>1 Physician Review Credit</li><li>Full archive + guidance prompts</li></ul><button class="btn btn-a btn-sm" onclick="subPlan('core')">Get Core</button></div>
+<div class="plan pop"><div class="plan-n" style="color:var(--accent)">High Performer</div><div style="font-size:12px;color:var(--accent);margin-bottom:4px">Structured Guidance System</div><div class="plan-p">$59<span> /mo</span></div><ul class="plan-f"><li>Monthly Guidance Module (recorded)</li><li>Structured Decision Engine (4 tracks)</li><li>Framework Library (worksheets, checklists, templates)</li><li>Quarterly Q&A Forum</li><li>Limited physician review credits</li></ul><p style="font-size:10px;color:var(--text3);margin-bottom:12px">Structured career guidance. Not 1:1 coaching or guaranteed outcomes.</p><button class="btn btn-a btn-sm" onclick="subPlan('pro')">Get High Performer</button></div>
+<div class="plan ft"><div class="plan-n" style="color:var(--accent2)">Private Strategy</div><div style="font-size:12px;color:var(--accent2);margin-bottom:4px">Strategic Career Structuring</div><div class="plan-p" style="font-size:28px">From $1,250</div><ul class="plan-f"><li>Strategic Audit ($1,250-$1,750): structured intake, CV/offer review, recorded breakdown, written roadmap</li><li>Strategic Intensive ($2,500): focused session, written roadmap, 14-day follow-up</li></ul><p style="font-size:10px;color:var(--text3);margin-bottom:12px">High-stakes structured intervention. Not ongoing mentorship.</p><button class="btn btn-a btn-sm" onclick="subPlan('mentorship')">Apply to Book</button></div>
+</div>
+
+</div>
+</div>
+
+<!-- ADMIN SCREEN -->
+<div id="scr-admin" class="scr">
+<div class="hdr"><div class="hdr-t serif" style="font-size:20px">Admin</div><span class="badge b-admin">MENTOR</span></div>
+<div class="admin-tabs">
+<button class="atab on" onclick="adminTab('queue',this)">Review Queue</button>
+<button class="atab" onclick="adminTab('reviewed',this)">Published</button>
+<button class="atab" onclick="adminTab('stats',this)">Stats</button>
+</div>
+<div style="padding:16px 24px">
+<div id="admin-info" style="font-size:12px;color:var(--text3);margin-bottom:12px">Select up to 10 questions per week for review.</div>
+</div>
+<div id="admin-content" class="pad"></div>
+</div>
+
+<!-- NAV -->
+<nav class="nav" id="main-nav">
+<button class="ni on" onclick="navTo('scr-home',this)"><svg><use href="#i-home"/></svg>Home</button>
+<button class="ni" onclick="navTo('scr-ask',this)"><svg><use href="#i-plus"/></svg>Ask</button>
+<button class="ni" onclick="navTo('scr-archive',this)"><svg><use href="#i-archive"/></svg>Archive</button>
+<button class="ni" onclick="navTo('scr-vault',this)"><svg><use href="#i-lock"/></svg>Frameworks</button>
+<button class="ni" onclick="navTo('scr-profile',this)"><svg><use href="#i-user"/></svg>Profile</button>
+<button class="ni" id="nav-admin" style="display:none" onclick="navTo('scr-admin',this)"><svg><use href="#i-settings"/></svg>Admin</button>
+</nav>
+</div>

@@ -1,3 +1,18 @@
+<!-- Top Navigation Bar (landing only) -->
+<nav class="topbar" id="topbar">
+<div class="topbar-logo" onclick="document.getElementById('pg-landing').scrollTo({top:0,behavior:'smooth'})">
+<div class="logo-mark"><svg><use href="#i-heart"/></svg></div>
+HeartWise
+</div>
+<div class="topbar-links">
+<a href="#" class="tb-link" onclick="event.preventDefault();document.getElementById('pricing-sec').scrollIntoView({behavior:'smooth'})">Services</a>
+<a href="#" class="tb-link" onclick="event.preventDefault();document.getElementById('about-sec').scrollIntoView({behavior:'smooth'})">About</a>
+<a href="#" class="tb-link" onclick="event.preventDefault();document.getElementById('pricing-sec').scrollIntoView({behavior:'smooth'})">Pricing</a>
+<a href="#" class="tb-link" onclick="event.preventDefault();go('pg-login')">Sign In</a>
+<a href="#" class="tb-cta" onclick="event.preventDefault();go('pg-signup')">Get Started</a>
+</div>
+</nav>
+
 <!-- ===== LANDING PAGE ===== -->
 <div id="pg-landing" class="lp">
 <div class="hero">
@@ -96,7 +111,7 @@
 </div>
 </div>
 
-<div class="lp-sec">
+<div class="lp-sec" id="about-sec">
 <h2 class="serif">Why We Built This</h2>
 <p class="sub">Honest context about where HeartWise is today.</p>
 <div style="max-width:520px;margin:0 auto;padding:0 16px">

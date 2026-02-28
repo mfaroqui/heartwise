@@ -1,3 +1,13 @@
+// ===== TOPBAR SCROLL EFFECT =====
+(function(){
+  const lp=document.getElementById('pg-landing');
+  const tb=document.getElementById('topbar');
+  if(lp&&tb){
+    lp.addEventListener('scroll',function(){tb.classList.toggle('solid',lp.scrollTop>60)});
+    window.addEventListener('scroll',function(){tb.classList.toggle('solid',window.scrollY>60)});
+  }
+})();
+
 // ===== APP STATE =====
 let DB,U=null,curFilter='all',curAdminTab='queue';
 
@@ -37,6 +47,9 @@ function go(id){
   });
   const el=document.getElementById(id);if(el){el.classList.remove('hidden');el.style.display=''}
   document.getElementById('main-nav').classList.remove('on');
+  // Show/hide topbar
+  const tb=document.getElementById('topbar');
+  if(tb)tb.style.display=(id==='pg-landing')?'':'none';
 }
 
 function navTo(scr,btn){

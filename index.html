@@ -7,232 +7,250 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#0a0a0f">
 <title>HeartWise — Physician-Built Mentorship Platform</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Montserrat:wght@500;600;700;800&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet">
 </head>
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{
---bg:#0a0a0f;--bg2:#12121a;--bg3:#1a1a26;--bg4:#22222f;
---text:#f4f0ed;--text1:#f4f0ed;--text2:#b0adb0;--text3:#706d73;
---accent:#00BFA5;--accent2:#26D9C0;--accent-dim:rgba(0,191,165,.10);
---gold:#c8a87c;--gold2:#dfc19f;--gold-dim:rgba(200,168,124,.12);
---red:#c44d56;--red-dim:rgba(196,77,86,.12);
---green:#5cb89a;--green-dim:rgba(92,184,154,.12);
---blue:#6b8fd4;--blue-dim:rgba(107,143,212,.12);
---border:rgba(255,255,255,.06);--border2:rgba(255,255,255,.1);
---glass:rgba(10,10,15,.88);
---r:16px;--r2:12px;--r3:24px;
+--bg:#09090e;--bg2:#0f0f16;--bg3:#16161f;--bg4:#1e1e29;
+--text:#f0ece6;--text1:#f0ece6;--text2:#b8b3ac;--text3:#7a756e;
+--accent:#c8a87c;--accent2:#dfc19f;--accent-dim:rgba(200,168,124,.10);
+--rose:#c4929a;--rose-dim:rgba(196,146,154,.10);
+--champagne:#e8d5b7;
+--red:#c44d56;--red-dim:rgba(196,77,86,.10);
+--green:#8bb8a0;--green-dim:rgba(139,184,160,.10);
+--blue:#8badc4;--blue-dim:rgba(139,173,196,.10);
+--border:rgba(200,168,124,.08);--border2:rgba(200,168,124,.15);
+--glass:rgba(9,9,14,.92);
+--r:12px;--r2:10px;--r3:20px;
 }
 html{scroll-behavior:smooth}
-body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;font-size:15px;line-height:1.5}
-.serif{font-family:'Montserrat',sans-serif;font-weight:700}
-a{color:var(--accent);text-decoration:none}
+body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;font-size:15px;line-height:1.6}
+.serif{font-family:'Cormorant Garamond',Georgia,'Times New Roman',serif;font-weight:600}
+a{color:var(--accent);text-decoration:none;transition:color .2s}
+a:hover{color:var(--accent2)}
 .hidden{display:none!important}
 
-/* ===== TOP NAV BAR ===== */
-.topbar{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:14px 24px;background:rgba(10,10,15,.5);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid transparent;transition:all .35s}
-.topbar.solid{background:rgba(10,10,15,.95);border-bottom-color:var(--border)}
-.topbar-logo{display:flex;align-items:center;gap:10px;font-family:'Montserrat',sans-serif;font-weight:700;font-size:18px;letter-spacing:-.3px;color:var(--text);cursor:pointer}
-.topbar-logo .logo-mark{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center}
-.topbar-logo .logo-mark svg{width:18px;height:18px;fill:#0a0a0f}
-.topbar-links{display:flex;gap:20px;align-items:center}
-.topbar-links a{font-size:13px;font-weight:500;color:var(--text2);transition:color .2s;letter-spacing:.2px}
+/* ===== TOP NAV ===== */
+.topbar{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:20px 32px;background:transparent;backdrop-filter:blur(0px);-webkit-backdrop-filter:blur(0px);border-bottom:1px solid transparent;transition:all .5s ease}
+.topbar.solid{background:rgba(9,9,14,.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom-color:var(--border)}
+.topbar-logo{display:flex;align-items:center;gap:12px;cursor:pointer}
+.topbar-logo .logo-mark{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;transition:transform .3s}
+.topbar-logo:hover .logo-mark{transform:scale(1.05)}
+.topbar-logo .logo-mark svg{width:18px;height:18px;fill:#09090e}
+.topbar-logo .logo-text{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;color:var(--text);letter-spacing:.5px}
+.topbar-links{display:flex;gap:28px;align-items:center}
+.topbar-links a{font-size:13px;font-weight:400;color:var(--text2);transition:color .3s;letter-spacing:.5px}
 .topbar-links a:hover{color:var(--accent)}
-.topbar-links .tb-cta{background:var(--accent);color:#0a0a0f;padding:8px 18px;border-radius:8px;font-weight:600;font-size:12px;transition:all .25s;box-shadow:0 2px 8px rgba(0,191,165,.15)}
-.topbar-links .tb-cta:hover{background:var(--accent2);box-shadow:0 4px 16px rgba(0,191,165,.3)}
-@media(max-width:600px){
+.topbar-links .tb-cta{background:transparent;color:var(--accent);padding:9px 22px;border-radius:100px;font-weight:500;font-size:11px;letter-spacing:1px;text-transform:uppercase;transition:all .35s;border:1px solid var(--accent)}
+.topbar-links .tb-cta:hover{background:var(--accent);color:#09090e}
+@media(max-width:640px){
+  .topbar{padding:16px 20px}
   .topbar-links a.tb-link{display:none}
-  .topbar-links .tb-cta{padding:8px 14px;font-size:11px}
+  .topbar-links .tb-cta{padding:8px 16px;font-size:10px}
 }
 
-/* Splash */
-#splash{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .6s}
+/* ===== SPLASH ===== */
+#splash{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .8s ease}
 #splash.out{opacity:0;pointer-events:none}
-.sp-mark{width:72px;height:72px;border-radius:20px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;margin-bottom:24px;box-shadow:0 0 60px rgba(0,191,165,.25)}
-.sp-mark svg{width:36px;height:36px;fill:#0a0a0f}
-.sp-t{font-size:28px;font-weight:700;letter-spacing:-.5px;margin-bottom:6px;font-family:'Montserrat',sans-serif}
-.sp-s{font-size:12px;color:var(--text3);letter-spacing:2.5px;text-transform:uppercase}
+.sp-mark{width:64px;height:64px;border-radius:18px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;margin-bottom:24px;box-shadow:0 0 80px rgba(200,168,124,.12)}
+.sp-mark svg{width:32px;height:32px;fill:#09090e}
+.sp-t{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:600;letter-spacing:1px;margin-bottom:8px}
+.sp-s{font-size:11px;color:var(--text3);letter-spacing:3px;text-transform:uppercase;font-weight:300}
 
-/* Notification */
-.notif{position:fixed;top:20px;left:20px;right:20px;background:var(--bg2);border:1px solid var(--accent);border-radius:var(--r2);padding:16px 20px;z-index:2000;display:flex;align-items:center;gap:12px;transform:translateY(-120%);transition:transform .35s;box-shadow:0 12px 40px rgba(0,0,0,.5);backdrop-filter:blur(12px)}
+/* ===== NOTIFICATION ===== */
+.notif{position:fixed;top:20px;left:20px;right:20px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--r2);padding:16px 20px;z-index:2000;display:flex;align-items:center;gap:12px;transform:translateY(-120%);transition:transform .4s ease;box-shadow:0 16px 48px rgba(0,0,0,.4);backdrop-filter:blur(16px)}
 .notif.show{transform:translateY(0)}.notif.err{border-color:var(--red)}
-.notif-t{font-size:13px;font-weight:500;flex:1}
+.notif-t{font-size:13px;font-weight:400;flex:1}
 
-/* Buttons */
-.btn{display:flex;align-items:center;justify-content:center;gap:8px;padding:15px;border:none;border-radius:var(--r2);font-size:14px;font-weight:600;font-family:'Inter',sans-serif;cursor:pointer;transition:all .25s;letter-spacing:.3px;width:100%}
-.btn-a{background:var(--accent);color:#0a0a0f;box-shadow:0 4px 16px rgba(0,191,165,.2)}
-.btn-a:hover{background:var(--accent2);transform:translateY(-1px);box-shadow:0 6px 24px rgba(0,191,165,.3)}
+/* ===== BUTTONS ===== */
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;padding:16px;border:none;border-radius:100px;font-size:13px;font-weight:500;font-family:'Inter',sans-serif;cursor:pointer;transition:all .35s ease;letter-spacing:.8px;text-transform:uppercase;width:100%}
+.btn-a{background:var(--accent);color:#09090e;box-shadow:0 4px 20px rgba(200,168,124,.12)}
+.btn-a:hover{background:var(--accent2);transform:translateY(-2px);box-shadow:0 8px 32px rgba(200,168,124,.2)}
 .btn-g{background:transparent;color:var(--text2);border:1px solid var(--border2)}
 .btn-g:hover{border-color:var(--accent);color:var(--accent)}
-.btn-sm{width:auto;padding:10px 22px;font-size:13px}
-.btn-lock{background:var(--bg4);color:var(--text3);cursor:not-allowed}
+.btn-sm{width:auto;padding:10px 24px;font-size:12px}
+.btn-lock{background:var(--bg4);color:var(--text3);cursor:not-allowed;box-shadow:none}
 
-/* Forms */
-.fg{margin-bottom:20px}
-.fg label{display:block;font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
-.fg input,.fg select,.fg textarea{width:100%;padding:14px 16px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r2);color:var(--text);font-size:15px;font-family:'Inter',sans-serif;outline:none;transition:border-color .25s}
+/* ===== FORMS ===== */
+.fg{margin-bottom:22px}
+.fg label{display:block;font-size:10px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px}
+.fg input,.fg select,.fg textarea{width:100%;padding:14px 18px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r2);color:var(--text);font-size:15px;font-family:'Inter',sans-serif;outline:none;transition:all .3s}
 .fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-dim)}
-.fg input::placeholder,.fg textarea::placeholder{color:var(--text3)}
+.fg input::placeholder,.fg textarea::placeholder{color:var(--text3);font-weight:300}
 .fg select{appearance:none;cursor:pointer}
 
-/* Bottom Nav (app) */
-.nav{position:fixed;bottom:0;left:0;right:0;background:var(--glass);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid var(--border);display:none;justify-content:space-around;padding:6px 0 24px;z-index:100}
+/* ===== BOTTOM NAV ===== */
+.nav{position:fixed;bottom:0;left:0;right:0;background:var(--glass);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-top:1px solid var(--border);display:none;justify-content:space-around;padding:8px 0 26px;z-index:100}
 .nav.on{display:flex}
-.ni{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;font-weight:500;color:var(--text3);cursor:pointer;padding:8px 12px;background:none;border:none;transition:color .2s;letter-spacing:.3px;font-family:'Inter',sans-serif}
+.ni{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:9px;font-weight:400;color:var(--text3);cursor:pointer;padding:8px 12px;background:none;border:none;transition:color .25s;letter-spacing:.8px;text-transform:uppercase;font-family:'Inter',sans-serif}
 .ni.on,.ni:hover{color:var(--accent)}
-.ni svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.ni svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
 
-/* Header (app) */
-.hdr{padding:18px 24px 14px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;background:var(--glass);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
-.hdr-t{font-family:'Montserrat',sans-serif;font-size:22px;font-weight:700}
-.badge{font-size:10px;padding:5px 12px;border-radius:20px;font-weight:600;letter-spacing:1px;text-transform:uppercase}
-.b-free{background:var(--bg4);color:var(--text3)}.b-core{background:var(--blue-dim);color:var(--blue)}.b-pro{background:var(--accent-dim);color:var(--accent)}.b-ment{background:var(--gold-dim);color:var(--gold2)}.b-admin{background:var(--green-dim);color:var(--green)}
+/* ===== HEADER (app) ===== */
+.hdr{padding:20px 24px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;background:var(--glass);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid var(--border)}
+.hdr-t{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:600;letter-spacing:.3px}
+.badge{font-size:9px;padding:5px 14px;border-radius:100px;font-weight:500;letter-spacing:1.2px;text-transform:uppercase}
+.b-free{background:var(--bg4);color:var(--text3)}.b-core{background:var(--blue-dim);color:var(--blue)}.b-pro{background:var(--accent-dim);color:var(--accent)}.b-ment{background:var(--accent-dim);color:var(--accent2)}.b-admin{background:var(--green-dim);color:var(--green)}
 
-/* Cards */
-.card{background:var(--bg2);border-radius:var(--r);padding:22px;margin-bottom:10px;border:1px solid var(--border);transition:all .25s}
+/* ===== CARDS ===== */
+.card{background:var(--bg2);border-radius:var(--r);padding:24px;margin-bottom:12px;border:1px solid var(--border);transition:all .35s ease}
 .card:hover{border-color:var(--border2)}
-.sec{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:1.5px;padding:24px 24px 14px}
+.sec{font-size:10px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:2px;padding:28px 24px 14px}
 
-/* Tags */
-.tag{font-size:9px;padding:4px 10px;border-radius:20px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;display:inline-block}
+/* ===== TAGS ===== */
+.tag{font-size:9px;padding:4px 12px;border-radius:100px;font-weight:500;letter-spacing:1px;text-transform:uppercase;display:inline-block}
 .t-student{background:var(--green-dim);color:var(--green)}.t-resident{background:var(--blue-dim);color:var(--blue)}.t-fellow{background:var(--accent-dim);color:var(--accent)}.t-cat{background:var(--bg4);color:var(--text3);font-size:10px;letter-spacing:.5px}.t-reviewed{background:var(--green-dim);color:var(--green)}.t-pending{background:var(--accent-dim);color:var(--accent)}
 
 .scr{display:none}.scr.on{display:block}
 
-/* ===== LANDING ===== */
+/* ========== LANDING ========== */
 .lp{overflow-y:auto;min-height:100vh}
-.hero{padding:140px 24px 80px;text-align:center;position:relative;overflow:hidden;background:linear-gradient(180deg,rgba(10,10,15,.2) 0%,rgba(10,10,15,.85) 50%,var(--bg) 100%),linear-gradient(135deg,#0d2137 0%,#0a1628 30%,#0f1f2e 60%,#0a0a0f 100%)}
-.hero::before{content:'';position:absolute;top:-60px;right:-60px;width:500px;height:500px;background:radial-gradient(circle,rgba(0,191,165,.08),transparent 70%);border-radius:50%}
-.hero::after{content:'';position:absolute;bottom:-80px;left:-80px;width:400px;height:400px;background:radial-gradient(circle,rgba(107,143,212,.05),transparent 70%);border-radius:50%}
+
+/* Hero */
+.hero{padding:160px 32px 100px;text-align:center;position:relative;overflow:hidden;background:linear-gradient(180deg,rgba(9,9,14,.1) 0%,rgba(9,9,14,.55) 40%,rgba(9,9,14,.92) 70%,var(--bg) 100%),linear-gradient(160deg,#1a1520 0%,#12101a 30%,#0e0f18 60%,#09090e 100%)}
+.hero::before{content:'';position:absolute;top:-120px;right:-80px;width:600px;height:600px;background:radial-gradient(ellipse,rgba(200,168,124,.06),transparent 70%);border-radius:50%;pointer-events:none}
+.hero::after{content:'';position:absolute;bottom:-150px;left:-100px;width:500px;height:500px;background:radial-gradient(ellipse,rgba(196,146,154,.04),transparent 70%);border-radius:50%;pointer-events:none}
 .hero *{position:relative}
-.hero-badge{display:inline-block;padding:6px 16px;border-radius:20px;background:var(--accent-dim);color:var(--accent);font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-bottom:20px;border:1px solid rgba(0,191,165,.2)}
-.hero h1{font-family:'Montserrat',sans-serif;font-size:38px;font-weight:800;line-height:1.15;margin-bottom:20px;letter-spacing:-.8px}
-@media(min-width:600px){.hero h1{font-size:48px}}
-.hero h1 em{font-style:normal;color:var(--accent)}
-.hero p{color:var(--text2);font-size:16px;line-height:1.6;max-width:480px;margin:0 auto 36px}
+.hero-badge{display:inline-block;padding:8px 20px;border-radius:100px;background:transparent;color:var(--accent);font-size:10px;font-weight:500;letter-spacing:2px;text-transform:uppercase;margin-bottom:28px;border:1px solid var(--border2)}
+.hero h1{font-family:'Cormorant Garamond',serif;font-size:40px;font-weight:600;line-height:1.2;margin-bottom:24px;letter-spacing:.5px}
+@media(min-width:600px){.hero h1{font-size:52px}}
+.hero h1 em{font-style:italic;color:var(--accent)}
+.hero p{color:var(--text2);font-size:16px;line-height:1.7;max-width:460px;margin:0 auto 44px;font-weight:300}
 
-.lp-sec{padding:80px 24px}
-.lp-sec h2{font-family:'Montserrat',sans-serif;font-size:32px;font-weight:700;margin-bottom:12px;text-align:center;letter-spacing:-.5px}
-@media(max-width:480px){.lp-sec h2{font-size:26px}}
-.lp-sec .sub{color:var(--text3);font-size:14px;text-align:center;margin-bottom:40px;line-height:1.6;max-width:480px;margin-left:auto;margin-right:auto}
+/* Landing sections */
+.lp-sec{padding:80px 32px}
+@media(max-width:480px){.lp-sec{padding:60px 20px}}
+.lp-sec h2{font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:600;margin-bottom:14px;text-align:center;letter-spacing:.3px}
+@media(max-width:480px){.lp-sec h2{font-size:28px}}
+.lp-sec .sub{color:var(--text3);font-size:14px;text-align:center;margin-bottom:44px;line-height:1.7;max-width:440px;margin-left:auto;margin-right:auto;font-weight:300}
 
-.who-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:520px;margin:0 auto}
-.who-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:24px;text-align:center;transition:all .3s}
-.who-card:hover{border-color:var(--accent);transform:translateY(-2px)}
-.who-card .icon{font-size:28px;margin-bottom:10px}
-.who-card h3{font-size:15px;font-weight:600;margin-bottom:6px}
-.who-card p{font-size:12px;color:var(--text3);line-height:1.5}
+/* Divider */
+.lp-divider{width:48px;height:1px;background:var(--accent);margin:0 auto 44px;opacity:.4}
 
-.master-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;max-width:520px;margin:0 auto}
-.master-item{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:20px;text-align:center;transition:all .3s}
-.master-item:hover{border-color:var(--accent)}
-.master-item .icon{font-size:24px;margin-bottom:8px}
-.master-item h3{font-size:13px;font-weight:600}
+.who-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;max-width:500px;margin:0 auto}
+.who-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:28px 20px;text-align:center;transition:all .4s ease}
+.who-card:hover{border-color:var(--accent);transform:translateY(-3px);box-shadow:0 12px 40px rgba(200,168,124,.06)}
+.who-card .icon{font-size:28px;margin-bottom:12px}
+.who-card h3{font-size:14px;font-weight:600;margin-bottom:8px;letter-spacing:.2px}
+.who-card p{font-size:12px;color:var(--text3);line-height:1.6;font-weight:300}
+
+.master-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;max-width:500px;margin:0 auto}
+@media(max-width:400px){.master-grid{grid-template-columns:1fr 1fr;gap:10px}}
+.master-item{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:22px;text-align:center;transition:all .4s ease}
+.master-item:hover{border-color:var(--accent);transform:translateY(-2px)}
+.master-item .icon{font-size:22px;margin-bottom:10px}
+.master-item h3{font-size:12px;font-weight:500;letter-spacing:.3px}
 
 /* Flow Roadmap */
-.flow-road{display:flex;align-items:flex-start;justify-content:center;gap:0;padding:8px 12px;overflow-x:auto;-webkit-overflow-scrolling:touch}
-.flow-node{display:flex;flex-direction:column;align-items:center;text-align:center;min-width:80px;max-width:100px;flex-shrink:0}
-.flow-icon{width:56px;height:56px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:26px;margin-bottom:10px;border:1px solid var(--border);transition:all .3s}
-.flow-node:hover .flow-icon{border-color:var(--accent);transform:scale(1.05)}
-.flow-label{font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px;white-space:nowrap}
-.flow-desc{font-size:10px;color:var(--text3);line-height:1.4}
-.flow-arrow{display:flex;align-items:center;padding-top:16px;flex-shrink:0}
-@media(max-width:520px){.flow-road{padding:8px 4px}.flow-node{min-width:64px;max-width:72px}.flow-icon{width:46px;height:46px;border-radius:12px;font-size:20px}.flow-label{font-size:10px}.flow-desc{font-size:9px}.flow-arrow svg{width:28px;height:20px}}
+.flow-road{display:flex;align-items:flex-start;justify-content:center;gap:0;padding:12px 16px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.flow-node{display:flex;flex-direction:column;align-items:center;text-align:center;min-width:85px;max-width:105px;flex-shrink:0}
+.flow-icon{width:56px;height:56px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:12px;border:1px solid var(--border);transition:all .4s ease;background:var(--bg3)}
+.flow-node:hover .flow-icon{border-color:var(--accent);transform:translateY(-3px);box-shadow:0 8px 24px rgba(200,168,124,.08)}
+.flow-label{font-size:11px;font-weight:600;color:var(--text);margin-bottom:5px;white-space:nowrap;letter-spacing:.3px}
+.flow-desc{font-size:10px;color:var(--text3);line-height:1.5;font-weight:300}
+.flow-arrow{display:flex;align-items:center;padding-top:18px;flex-shrink:0}
+@media(max-width:520px){.flow-road{padding:8px 4px}.flow-node{min-width:64px;max-width:75px}.flow-icon{width:44px;height:44px;border-radius:11px;font-size:18px}.flow-label{font-size:10px}.flow-desc{font-size:9px}.flow-arrow svg{width:26px;height:18px}}
 
-/* Pricing */
-.plan{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r3);padding:32px;margin-bottom:16px;transition:all .3s}
-.plan:hover{transform:translateY(-2px);border-color:var(--border2)}
-.plan.ft{border-color:rgba(0,191,165,.3);background:linear-gradient(135deg,var(--bg2),rgba(0,191,165,.03))}
+/* ===== PRICING ===== */
+.plan{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r3);padding:36px 32px;margin-bottom:16px;transition:all .4s ease}
+.plan:hover{border-color:var(--border2);transform:translateY(-2px);box-shadow:0 12px 48px rgba(0,0,0,.2)}
+.plan.ft{border-color:var(--border2);background:linear-gradient(160deg,var(--bg2),rgba(200,168,124,.03))}
 .plan.pop{border-color:var(--accent);position:relative}
-.plan.pop::before{content:'MOST POPULAR';position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:var(--accent);color:#0a0a0f;font-size:9px;font-weight:700;padding:4px 12px;border-radius:10px;letter-spacing:1px}
-.plan-n{font-size:18px;font-weight:700;margin-bottom:4px;font-family:'Montserrat',sans-serif}
-.plan-p{font-size:40px;font-weight:800;margin-bottom:2px;letter-spacing:-1px;font-family:'Montserrat',sans-serif}
-.plan-p span{font-size:14px;font-weight:400;color:var(--text3)}
-.plan-f{list-style:none;padding:0;margin:20px 0}
-.plan-f li{padding:8px 0;font-size:13px;color:var(--text2);display:flex;align-items:flex-start;gap:10px;line-height:1.5}
-.plan-f li::before{content:'✦';color:var(--accent);font-size:10px;margin-top:3px}
+.plan.pop::before{content:'RECOMMENDED';position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:var(--accent);color:#09090e;font-size:9px;font-weight:600;padding:4px 16px;border-radius:100px;letter-spacing:1.5px}
+.plan-n{font-size:16px;font-weight:600;margin-bottom:6px;letter-spacing:.3px}
+.plan-p{font-family:'Cormorant Garamond',serif;font-size:44px;font-weight:600;margin-bottom:4px;letter-spacing:-1px}
+.plan-p span{font-size:14px;font-weight:400;color:var(--text3);font-family:'Inter',sans-serif}
+.plan-f{list-style:none;padding:0;margin:22px 0}
+.plan-f li{padding:8px 0;font-size:13px;color:var(--text2);display:flex;align-items:flex-start;gap:12px;line-height:1.6;font-weight:300}
+.plan-f li::before{content:'✦';color:var(--accent);font-size:9px;margin-top:4px;flex-shrink:0}
 
 /* Usage */
-.usage{background:var(--bg3);border-radius:8px;height:8px;overflow:hidden;margin-top:6px}
-.usage-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:8px;transition:width .5s}
-.usage-label{display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-top:4px}
+.usage{background:var(--bg3);border-radius:6px;height:6px;overflow:hidden;margin-top:6px}
+.usage-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:6px;transition:width .6s ease}
+.usage-label{display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-top:5px}
 
 /* AI Response */
-.ai-resp{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:22px;margin-bottom:16px}
-.ai-resp h4{font-size:12px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin:16px 0 8px;display:flex;align-items:center;gap:8px}
+.ai-resp{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:24px;margin-bottom:16px}
+.ai-resp h4{font-size:11px;font-weight:500;color:var(--accent);text-transform:uppercase;letter-spacing:1.5px;margin:18px 0 10px;display:flex;align-items:center;gap:8px}
 .ai-resp h4:first-child{margin-top:0}
-.ai-resp p,.ai-resp li{font-size:14px;color:var(--text2);line-height:1.7}
+.ai-resp p,.ai-resp li{font-size:14px;color:var(--text2);line-height:1.7;font-weight:300}
 .ai-resp ol{padding-left:20px;margin:8px 0}
-.ai-resp .escalate{margin-top:16px;padding:12px 16px;border-radius:var(--r2);background:var(--accent-dim);border:1px solid rgba(0,191,165,.2);font-size:13px;color:var(--accent)}
+.ai-resp .escalate{margin-top:18px;padding:14px 18px;border-radius:var(--r2);background:var(--accent-dim);border:1px solid rgba(200,168,124,.12);font-size:13px;color:var(--accent)}
 
 /* Vault */
-.vault-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:20px;margin-bottom:10px;display:flex;align-items:center;gap:16px;transition:all .3s}
+.vault-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:22px;margin-bottom:12px;display:flex;align-items:center;gap:16px;transition:all .35s ease}
 .vault-card .v-icon{width:44px;height:44px;border-radius:12px;background:var(--accent-dim);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
-.vault-card .v-info{flex:1}.vault-card .v-info h3{font-size:14px;font-weight:600;margin-bottom:2px}.vault-card .v-info p{font-size:12px;color:var(--text3)}
+.vault-card .v-info{flex:1}.vault-card .v-info h3{font-size:14px;font-weight:500;margin-bottom:3px}.vault-card .v-info p{font-size:12px;color:var(--text3);font-weight:300}
 .vault-card .v-lock{color:var(--text3);font-size:18px}
 .vault-card.unlocked{border-color:var(--accent);cursor:pointer}
-.vault-card.unlocked:hover{transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,191,165,.1)}
+.vault-card.unlocked:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(200,168,124,.08)}
 .vault-card.unlocked .v-lock{color:var(--accent)}
 
 /* Question cards */
-.qc{background:var(--bg2);border-radius:var(--r);padding:22px;margin-bottom:10px;border:1px solid var(--border);transition:all .25s;cursor:pointer}
-.qc:hover{border-color:var(--border2);transform:translateY(-1px)}
-.qc-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
-.qc-author{font-size:12px;color:var(--text3);font-weight:500}
-.qc-q{font-size:15px;font-weight:500;line-height:1.5;margin-bottom:12px}
+.qc{background:var(--bg2);border-radius:var(--r);padding:24px;margin-bottom:12px;border:1px solid var(--border);transition:all .35s ease;cursor:pointer}
+.qc:hover{border-color:var(--border2);transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,.15)}
+.qc-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.qc-author{font-size:11px;color:var(--text3);font-weight:400;letter-spacing:.3px}
+.qc-q{font-size:15px;font-weight:400;line-height:1.6;margin-bottom:14px}
 .qc-meta{display:flex;gap:12px;font-size:11px;color:var(--text3);align-items:center;flex-wrap:wrap}
 
 /* Admin */
-.admin-tabs{display:flex;padding:0 24px;gap:4px;border-bottom:1px solid var(--border);overflow-x:auto}
-.atab{padding:14px 16px;font-size:12px;font-weight:600;color:var(--text3);cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;transition:all .2s;letter-spacing:.5px;text-transform:uppercase;font-family:'Inter',sans-serif;white-space:nowrap}
+.admin-tabs{display:flex;padding:0 24px;gap:6px;border-bottom:1px solid var(--border);overflow-x:auto}
+.atab{padding:14px 16px;font-size:10px;font-weight:500;color:var(--text3);cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;transition:all .25s;letter-spacing:1px;text-transform:uppercase;font-family:'Inter',sans-serif;white-space:nowrap}
 .atab.on{color:var(--accent);border-bottom-color:var(--accent)}
-.abox{background:var(--bg3);border-radius:var(--r2);padding:16px;margin-top:14px;border:1px solid var(--border)}
+.abox{background:var(--bg3);border-radius:var(--r2);padding:18px;margin-top:14px;border:1px solid var(--border)}
 .abox textarea{width:100%;background:transparent;border:none;color:var(--text);font-size:14px;resize:vertical;min-height:100px;outline:none;font-family:'Inter',sans-serif;line-height:1.6}
 
 /* Modal */
-.modal-ov{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:1000;display:flex;align-items:center;justify-content:center;padding:24px;backdrop-filter:blur(8px)}
-.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--r3);padding:32px;max-width:440px;width:100%;max-height:85vh;overflow-y:auto;box-shadow:0 8px 40px rgba(0,0,0,.4)}
-.modal h2{font-family:'Montserrat',sans-serif;font-size:22px;margin-bottom:16px;font-weight:700}
-.modal p,.modal li{font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:8px}
+.modal-ov{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:1000;display:flex;align-items:center;justify-content:center;padding:24px;backdrop-filter:blur(12px)}
+.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--r3);padding:36px;max-width:440px;width:100%;max-height:85vh;overflow-y:auto;box-shadow:0 12px 60px rgba(0,0,0,.4)}
+.modal h2{font-family:'Cormorant Garamond',serif;font-size:24px;margin-bottom:18px;font-weight:600}
+.modal p,.modal li{font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:8px;font-weight:300}
 .modal ul{padding-left:18px}
 
 /* Chips */
 .fc{display:flex;gap:8px;padding:0 24px;margin-bottom:16px;overflow-x:auto;-webkit-overflow-scrolling:touch}
 .fc::-webkit-scrollbar{display:none}
-.chip{padding:8px 16px;border-radius:20px;font-size:12px;font-weight:500;background:var(--bg3);border:1px solid var(--border);cursor:pointer;transition:all .2s;color:var(--text2);white-space:nowrap;font-family:'Inter',sans-serif}
-.chip.on{background:var(--accent-dim);border-color:rgba(0,191,165,.3);color:var(--accent)}
+.chip{padding:8px 18px;border-radius:100px;font-size:11px;font-weight:400;background:var(--bg3);border:1px solid var(--border);cursor:pointer;transition:all .25s;color:var(--text2);white-space:nowrap;font-family:'Inter',sans-serif;letter-spacing:.3px}
+.chip.on{background:var(--accent-dim);border-color:var(--border2);color:var(--accent)}
 
 /* Search */
 .sbar{margin:20px 24px;position:relative}
-.sbar input{width:100%;padding:14px 16px 14px 44px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);color:var(--text);font-size:14px;font-family:'Inter',sans-serif;outline:none;transition:border-color .25s}
+.sbar input{width:100%;padding:14px 18px 14px 46px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);color:var(--text);font-size:14px;font-family:'Inter',sans-serif;outline:none;transition:all .3s}
 .sbar input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-dim)}
-.sbar svg{position:absolute;left:16px;top:50%;transform:translateY(-50%);width:16px;height:16px;stroke:var(--text3);fill:none;stroke-width:2}
+.sbar svg{position:absolute;left:16px;top:50%;transform:translateY(-50%);width:16px;height:16px;stroke:var(--text3);fill:none;stroke-width:1.5}
 
 /* Misc */
-.check-row{display:flex;align-items:flex-start;gap:12px;padding:12px 0;font-size:13px;color:var(--text2)}
-.check-row input[type=checkbox]{width:20px;height:20px;accent-color:var(--accent);flex-shrink:0;margin-top:2px}
+.check-row{display:flex;align-items:flex-start;gap:12px;padding:12px 0;font-size:13px;color:var(--text2);font-weight:300}
+.check-row input[type=checkbox]{width:18px;height:18px;accent-color:var(--accent);flex-shrink:0;margin-top:2px}
 .stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 24px;margin-bottom:20px}
-.st{background:var(--bg2);border-radius:var(--r);padding:18px 14px;text-align:center;border:1px solid var(--border)}
-.st-n{font-size:22px;font-weight:700;letter-spacing:-.5px}
-.st-l{font-size:10px;color:var(--text3);margin-top:4px;text-transform:uppercase;letter-spacing:1px}
+.st{background:var(--bg2);border-radius:var(--r);padding:20px 14px;text-align:center;border:1px solid var(--border)}
+.st-n{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:600;letter-spacing:-.5px}
+.st-l{font-size:9px;color:var(--text3);margin-top:6px;text-transform:uppercase;letter-spacing:1.5px;font-weight:400}
 .pad{padding:0 24px 100px}
-.tog{width:44px;height:26px;background:var(--bg4);border-radius:13px;position:relative;cursor:pointer;transition:background .25s;border:1px solid var(--border);flex-shrink:0}
+.tog{width:44px;height:24px;background:var(--bg4);border-radius:12px;position:relative;cursor:pointer;transition:background .3s;border:1px solid var(--border);flex-shrink:0}
 .tog.on{background:var(--accent);border-color:var(--accent)}
-.tog::after{content:'';position:absolute;width:20px;height:20px;background:#fff;border-radius:50%;top:2px;left:2px;transition:transform .25s;box-shadow:0 1px 4px rgba(0,0,0,.2)}
-.tog.on::after{transform:translateX(18px)}
-@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
-.fade-in{animation:fadeUp .4s ease both}
-@supports(padding-top:env(safe-area-inset-top)){.hdr{padding-top:calc(18px + env(safe-area-inset-top))}.nav{padding-bottom:calc(6px + env(safe-area-inset-bottom))}.hero{padding-top:calc(140px + env(safe-area-inset-top))}.topbar{padding-top:calc(14px + env(safe-area-inset-top))}}
-::-webkit-scrollbar{width:3px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
-.intake-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.intake-grid .fg{margin-bottom:12px}
-.review-banner{background:linear-gradient(135deg,var(--accent-dim),rgba(0,191,165,.06));border:1px solid rgba(0,191,165,.2);border-radius:var(--r2);padding:16px;margin-bottom:20px;display:flex;align-items:center;gap:12px}
-.review-banner .icon{font-size:20px}.review-banner .info{flex:1}.review-banner .info h4{font-size:13px;font-weight:600;color:var(--accent);margin-bottom:2px}.review-banner .info p{font-size:11px;color:var(--text3)}
-.prof-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:20px}
-.prof-stat{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:14px;text-align:center}
-.prof-stat .n{font-size:20px;font-weight:700}.prof-stat .l{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
-</style>
+.tog::after{content:'';position:absolute;width:18px;height:18px;background:#fff;border-radius:50%;top:2px;left:2px;transition:transform .3s ease;box-shadow:0 1px 4px rgba(0,0,0,.15)}
+.tog.on::after{transform:translateX(20px)}
 
+/* Animations */
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.fade-in{animation:fadeUp .5s ease both}
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .7s ease,transform .7s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+
+/* Safe areas */
+@supports(padding-top:env(safe-area-inset-top)){.hdr{padding-top:calc(20px + env(safe-area-inset-top))}.nav{padding-bottom:calc(8px + env(safe-area-inset-bottom))}.hero{padding-top:calc(160px + env(safe-area-inset-top))}.topbar{padding-top:calc(20px + env(safe-area-inset-top))}}
+::-webkit-scrollbar{width:3px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:rgba(200,168,124,.15);border-radius:3px}
+.intake-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.intake-grid .fg{margin-bottom:12px}
+.review-banner{background:var(--accent-dim);border:1px solid rgba(200,168,124,.12);border-radius:var(--r2);padding:18px;margin-bottom:22px;display:flex;align-items:center;gap:14px}
+.review-banner .icon{font-size:20px}.review-banner .info{flex:1}.review-banner .info h4{font-size:12px;font-weight:500;color:var(--accent);margin-bottom:3px;letter-spacing:.3px}.review-banner .info p{font-size:11px;color:var(--text3);font-weight:300}
+.prof-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:20px}
+.prof-stat{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:16px;text-align:center}
+.prof-stat .n{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:600}.prof-stat .l{font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-top:3px;font-weight:400}
+</style>
 <body>
 <svg style="display:none">
 <symbol id="i-heart" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></symbol>
@@ -288,12 +306,12 @@ a{color:var(--accent);text-decoration:none}
 <nav class="topbar" id="topbar">
 <div class="topbar-logo" onclick="document.getElementById('pg-landing').scrollTo({top:0,behavior:'smooth'})">
 <div class="logo-mark"><svg><use href="#i-heart"/></svg></div>
-HeartWise
+<span class="logo-text">HeartWise</span>
 </div>
 <div class="topbar-links">
-<a href="#" class="tb-link" onclick="event.preventDefault();document.getElementById('pricing-sec').scrollIntoView({behavior:'smooth'})">Services</a>
+<a href="#" class="tb-link" onclick="event.preventDefault();document.getElementById('how-sec').scrollIntoView({behavior:'smooth'})">How It Works</a>
 <a href="#" class="tb-link" onclick="event.preventDefault();document.getElementById('about-sec').scrollIntoView({behavior:'smooth'})">About</a>
-<a href="#" class="tb-link" onclick="event.preventDefault();document.getElementById('pricing-sec').scrollIntoView({behavior:'smooth'})">Pricing</a>
+<a href="#" class="tb-link" onclick="event.preventDefault();document.getElementById('pricing-sec').scrollIntoView({behavior:'smooth'})">Membership</a>
 <a href="#" class="tb-link" onclick="event.preventDefault();go('pg-login')">Sign In</a>
 <a href="#" class="tb-cta" onclick="event.preventDefault();go('pg-signup')">Get Started</a>
 </div>
@@ -302,145 +320,152 @@ HeartWise
 <!-- ===== LANDING PAGE ===== -->
 <div id="pg-landing" class="lp">
 <div class="hero">
-<div class="hero-badge">Physician-Built Mentorship Platform</div>
-<h1 class="serif">Make Confident Career, Lifestyle & <em>Financial Decisions.</em></h1>
-<p>Structured mentorship for physicians and trainees — make confident career, lifestyle, and financial decisions with AI-guided frameworks and physician insight.</p>
-<button class="btn btn-a" onclick="go('pg-signup')" style="max-width:280px;margin:0 auto 12px">Join as Founding Member →</button>
-<button class="btn btn-g" onclick="go('pg-login')" style="max-width:280px;margin:0 auto">Sign In</button>
+<div class="hero-badge">Physician-Built Mentorship</div>
+<h1 class="serif">Make Confident Career, Lifestyle &amp; <em>Financial Decisions.</em></h1>
+<p>Structured mentorship for physicians and trainees — evidence-based frameworks, physician insight, and clarity for the decisions that shape your career.</p>
+<button class="btn btn-a" onclick="go('pg-signup')" style="max-width:260px;margin:0 auto 14px">Join as Founding Member</button>
+<button class="btn btn-g" onclick="go('pg-login')" style="max-width:260px;margin:0 auto">Sign In</button>
 </div>
 
+<!-- Who It's For -->
 <div class="lp-sec" style="background:var(--bg2)">
 <h2 class="serif">Who This Is For</h2>
+<div class="lp-divider"></div>
 <p class="sub">Structured guidance for physicians at every stage of training and early career.</p>
-<div class="who-grid">
-<div class="who-card"><div class="icon">🎯</div><h3>Medical Students</h3><p>Specialty selection, residency preparation, and early career planning</p></div>
-<div class="who-card"><div class="icon">📈</div><h3>Residents</h3><p>Fellowship planning, research strategy, and professional development</p></div>
-<div class="who-card"><div class="icon">⚡</div><h3>Fellows</h3><p>Contract education, practice models, and career transition guidance</p></div>
-<div class="who-card"><div class="icon">💰</div><h3>Early Attendings</h3><p>Compensation literacy, financial planning, and long-term career design</p></div>
+<div class="who-grid reveal">
+<div class="who-card"><div class="icon">🎓</div><h3>Medical Students</h3><p>Specialty selection, residency preparation, and early career planning</p></div>
+<div class="who-card"><div class="icon">📋</div><h3>Residents</h3><p>Fellowship planning, research strategy, and professional development</p></div>
+<div class="who-card"><div class="icon">🫀</div><h3>Fellows</h3><p>Contract education, practice models, and career transition guidance</p></div>
+<div class="who-card"><div class="icon">🏥</div><h3>Early Attendings</h3><p>Compensation literacy, financial planning, and long-term career design</p></div>
 </div>
 </div>
 
+<!-- What We Cover -->
 <div class="lp-sec">
 <h2 class="serif">What We Cover</h2>
+<div class="lp-divider"></div>
 <p class="sub">Mentorship across six domains — structured, not scattered.</p>
-<div class="master-grid">
-<div class="master-item"><div class="icon">🎯</div><h3>Career Strategy</h3></div>
+<div class="master-grid reveal">
+<div class="master-item"><div class="icon">🧭</div><h3>Career Strategy</h3></div>
 <div class="master-item"><div class="icon">📋</div><h3>Fellowship Planning</h3></div>
 <div class="master-item"><div class="icon">📝</div><h3>Contract Education</h3></div>
 <div class="master-item"><div class="icon">💰</div><h3>Financial Literacy</h3></div>
 <div class="master-item"><div class="icon">📊</div><h3>Professional Growth</h3></div>
-<div class="master-item"><div class="icon">⚡</div><h3>Lifestyle Design</h3></div>
+<div class="master-item"><div class="icon">⚖️</div><h3>Lifestyle Design</h3></div>
 </div>
 </div>
 
-<div class="lp-sec" style="background:var(--bg2)">
+<!-- How It Works -->
+<div class="lp-sec" id="how-sec" style="background:var(--bg2)">
 <h2 class="serif">How It Works</h2>
+<div class="lp-divider"></div>
 <p class="sub">A structured process — not a free-for-all Q&A.</p>
 
-<!-- Visual Flow Roadmap -->
-<div class="flow-road">
+<div class="flow-road reveal">
 <div class="flow-node">
-<div class="flow-icon" style="background:var(--accent-dim);color:var(--accent)">📝</div>
+<div class="flow-icon">📝</div>
 <div class="flow-label">Submit</div>
-<div class="flow-desc">Structured intake: training level, specialty, timeline, constraints</div>
+<div class="flow-desc">Structured intake — training level, specialty, timeline, constraints</div>
 </div>
 <div class="flow-arrow">
-<svg width="40" height="24" viewBox="0 0 40 24"><path d="M0 12h32M26 4l8 8-8 8" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+<svg width="40" height="24" viewBox="0 0 40 24"><path d="M0 12h32M26 4l8 8-8 8" fill="none" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity=".5"/></svg>
 </div>
 <div class="flow-node">
-<div class="flow-icon" style="background:rgba(100,149,237,.12);color:var(--blue)">🤖</div>
+<div class="flow-icon">🤖</div>
 <div class="flow-label">AI Framework</div>
 <div class="flow-desc">Evidence-based analysis, action steps, pitfalls, 30-day plan</div>
 </div>
 <div class="flow-arrow">
-<svg width="40" height="24" viewBox="0 0 40 24"><path d="M0 12h32M26 4l8 8-8 8" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+<svg width="40" height="24" viewBox="0 0 40 24"><path d="M0 12h32M26 4l8 8-8 8" fill="none" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity=".5"/></svg>
 </div>
 <div class="flow-node">
-<div class="flow-icon" style="background:rgba(92,184,154,.12);color:var(--green)">🧑‍⚕️</div>
+<div class="flow-icon">🧑‍⚕️</div>
 <div class="flow-label">Physician Review</div>
 <div class="flow-desc">Dr. Faroqui adds clinical insight and real-world experience</div>
 </div>
 <div class="flow-arrow">
-<svg width="40" height="24" viewBox="0 0 40 24"><path d="M0 12h32M26 4l8 8-8 8" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+<svg width="40" height="24" viewBox="0 0 40 24"><path d="M0 12h32M26 4l8 8-8 8" fill="none" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity=".5"/></svg>
 </div>
 <div class="flow-node">
-<div class="flow-icon" style="background:rgba(200,168,124,.12);color:var(--accent)">🚀</div>
+<div class="flow-icon">✦</div>
 <div class="flow-label">Take Action</div>
 <div class="flow-desc">Execute with clarity — structured plan, not guesswork</div>
 </div>
 </div>
 
-<!-- Detail cards below the flow -->
-<div style="max-width:520px;margin:24px auto 0;padding:0 16px">
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-<div style="padding:16px;background:var(--bg);border:1px solid var(--border);border-radius:var(--r)">
-<div style="font-size:20px;margin-bottom:6px">📝</div>
-<div style="font-size:12px;font-weight:600;margin-bottom:4px">Structured Input</div>
-<div style="font-size:11px;color:var(--text3);line-height:1.5">Training level, specialty, timeline, constraints. Structured input → structured output.</div>
+<div class="reveal" style="max-width:500px;margin:32px auto 0;padding:0 16px">
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+<div style="padding:20px;background:var(--bg);border:1px solid var(--border);border-radius:var(--r)">
+<div style="font-size:11px;font-weight:500;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Structured Input</div>
+<div style="font-size:12px;color:var(--text3);line-height:1.6;font-weight:300">Training level, specialty, timeline, constraints. Structured input produces structured output.</div>
 </div>
-<div style="padding:16px;background:var(--bg);border:1px solid var(--border);border-radius:var(--r)">
-<div style="font-size:20px;margin-bottom:6px">🤖</div>
-<div style="font-size:12px;font-weight:600;margin-bottom:4px">AI-Guided Framework</div>
-<div style="font-size:11px;color:var(--text3);line-height:1.5">Assessment, key considerations, action plan, common pitfalls, references. AI provides the framework — not final advice.</div>
+<div style="padding:20px;background:var(--bg);border:1px solid var(--border);border-radius:var(--r)">
+<div style="font-size:11px;font-weight:500;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">AI Framework</div>
+<div style="font-size:12px;color:var(--text3);line-height:1.6;font-weight:300">Assessment, key considerations, action plan, common pitfalls, references. AI provides the framework — not final advice.</div>
 </div>
-<div style="padding:16px;background:var(--bg);border:1px solid var(--border);border-radius:var(--r)">
-<div style="font-size:20px;margin-bottom:6px">🧑‍⚕️</div>
-<div style="font-size:12px;font-weight:600;margin-bottom:4px">Physician Insight</div>
-<div style="font-size:11px;color:var(--text3);line-height:1.5">Use review credits for Dr. Faroqui's direct commentary. Clinical experience layered on AI frameworks.</div>
+<div style="padding:20px;background:var(--bg);border:1px solid var(--border);border-radius:var(--r)">
+<div style="font-size:11px;font-weight:500;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Physician Insight</div>
+<div style="font-size:12px;color:var(--text3);line-height:1.6;font-weight:300">Use review credits for Dr. Faroqui's direct commentary. Clinical experience layered on AI frameworks.</div>
 </div>
-<div style="padding:16px;background:var(--bg);border:1px solid var(--border);border-radius:var(--r)">
-<div style="font-size:20px;margin-bottom:6px">📚</div>
-<div style="font-size:12px;font-weight:600;margin-bottom:4px">Growing Archive</div>
-<div style="font-size:11px;color:var(--text3);line-height:1.5">Browse reviewed questions from other members. Learn from frameworks refined by physician oversight.</div>
+<div style="padding:20px;background:var(--bg);border:1px solid var(--border);border-radius:var(--r)">
+<div style="font-size:11px;font-weight:500;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Growing Archive</div>
+<div style="font-size:12px;color:var(--text3);line-height:1.6;font-weight:300">Browse reviewed questions from other members. Learn from frameworks refined by physician oversight.</div>
 </div>
 </div>
 </div>
 </div>
 
+<!-- Why We Built This -->
 <div class="lp-sec" id="about-sec">
 <h2 class="serif">Why We Built This</h2>
+<div class="lp-divider"></div>
 <p class="sub">Honest context about where HeartWise is today.</p>
-<div style="max-width:520px;margin:0 auto;padding:0 16px">
-<div class="card" style="padding:24px;margin-bottom:16px">
-<div style="font-size:14px;font-weight:600;color:var(--accent);margin-bottom:12px">🧑‍⚕️ Built by a Physician</div>
-<p style="font-size:13px;color:var(--text2);line-height:1.7">HeartWise was created by Dr. Mouzam Faroqui, an interventional cardiologist in Houston, TX. The platform reflects real experience navigating training, contracts, and career decisions — not theoretical advice.</p>
+<div class="reveal" style="max-width:500px;margin:0 auto">
+<div class="card" style="padding:28px;margin-bottom:14px">
+<div style="font-size:12px;font-weight:500;color:var(--accent);margin-bottom:14px;text-transform:uppercase;letter-spacing:1px">Built by a Physician</div>
+<p style="font-size:14px;color:var(--text2);line-height:1.7;font-weight:300">HeartWise was created by Dr. Mouzam Faroqui, an interventional cardiologist in Houston, TX. The platform reflects real experience navigating training, contracts, and career decisions — not theoretical advice.</p>
 </div>
-<div class="card" style="padding:24px;margin-bottom:16px">
-<div style="font-size:14px;font-weight:600;color:var(--accent);margin-bottom:12px">🔍 Transparent Limitations</div>
-<p style="font-size:13px;color:var(--text2);line-height:1.7">This is a new platform. We don't have hundreds of success stories yet. What we do have: a structured methodology, physician oversight, and a commitment to honest, ethical guidance. We'll earn trust through process, not promises.</p>
+<div class="card" style="padding:28px;margin-bottom:14px">
+<div style="font-size:12px;font-weight:500;color:var(--accent);margin-bottom:14px;text-transform:uppercase;letter-spacing:1px">Transparent Limitations</div>
+<p style="font-size:14px;color:var(--text2);line-height:1.7;font-weight:300">This is a new platform. We don't have hundreds of success stories yet. What we do have: a structured methodology, physician oversight, and a commitment to honest, ethical guidance. We'll earn trust through process, not promises.</p>
 </div>
-<div class="card" style="padding:24px;margin-bottom:16px">
-<div style="font-size:14px;font-weight:600;color:var(--accent);margin-bottom:12px">📐 Process Over Promises</div>
-<p style="font-size:13px;color:var(--text2);line-height:1.7">We sell structured thinking — not guaranteed outcomes. Every question goes through a defined intake process. AI provides frameworks. Physician review adds experience. You make the decisions.</p>
+<div class="card" style="padding:28px;margin-bottom:14px">
+<div style="font-size:12px;font-weight:500;color:var(--accent);margin-bottom:14px;text-transform:uppercase;letter-spacing:1px">Process Over Promises</div>
+<p style="font-size:14px;color:var(--text2);line-height:1.7;font-weight:300">We sell structured thinking — not guaranteed outcomes. Every question goes through a defined intake process. AI provides frameworks. Physician review adds experience. You make the decisions.</p>
 </div>
 </div>
 </div>
 
+<!-- Not For -->
 <div class="lp-sec" style="background:var(--bg2)">
 <h2 class="serif">Who This Is <em>Not</em> For</h2>
-<p class="sub" style="max-width:440px;margin:0 auto 24px;line-height:1.7">HeartWise is not a replacement for legal counsel, financial advisors, or medical advice. It is educational mentorship only. If you need contract legal review, tax planning, or clinical decision-making — please consult the appropriate professional.</p>
+<div class="lp-divider"></div>
+<p class="sub" style="max-width:420px;line-height:1.8;font-weight:300">HeartWise is not a replacement for legal counsel, financial advisors, or medical advice. It is educational mentorship only. If you need contract legal review, tax planning, or clinical decision-making — please consult the appropriate professional.</p>
 </div>
 
+<!-- Pricing -->
 <div class="lp-sec" id="pricing-sec">
 <h2 class="serif">Membership</h2>
+<div class="lp-divider"></div>
 <p class="sub">Start free. Upgrade when the structure proves useful to you.</p>
 
+<div class="reveal" style="max-width:500px;margin:0 auto">
 <div class="plan">
 <div class="plan-n" style="color:var(--text2)">Free</div>
-<div style="font-size:13px;color:var(--accent);font-weight:500;margin-bottom:4px">Explore the Platform</div>
+<div style="font-size:12px;color:var(--accent);font-weight:400;margin-bottom:6px;letter-spacing:.3px">Explore the Platform</div>
 <div class="plan-p">$0<span> /mo</span></div>
 <ul class="plan-f">
 <li>1 AI-guided mentorship response per month</li>
 <li>Access to public reviewed archive</li>
 <li>Structured career prompts</li>
 </ul>
-<p style="font-size:11px;color:var(--text3);margin-bottom:16px">See if the process works for you — no commitment.</p>
+<p style="font-size:12px;color:var(--text3);margin-bottom:18px;font-weight:300">See if the process works for you — no commitment.</p>
 <button class="btn btn-g" onclick="go('pg-signup')">Start Free</button>
 </div>
 
 <div class="plan">
 <div class="plan-n" style="color:var(--blue)">Core</div>
-<div style="font-size:13px;color:var(--blue);font-weight:500;margin-bottom:4px">Structured Mentorship</div>
+<div style="font-size:12px;color:var(--blue);font-weight:400;margin-bottom:6px;letter-spacing:.3px">Structured Mentorship</div>
 <div class="plan-p">$19<span> /mo</span></div>
 <ul class="plan-f">
 <li>20 AI-guided mentorship responses per month</li>
@@ -448,74 +473,78 @@ HeartWise
 <li>Full reviewed question archive</li>
 <li>Structured career guidance prompts</li>
 </ul>
-<p style="font-size:11px;color:var(--text3);margin-bottom:16px">For students and residents who want consistent, structured career guidance.</p>
+<p style="font-size:12px;color:var(--text3);margin-bottom:18px;font-weight:300">For students and residents who want consistent, structured career guidance.</p>
 <button class="btn btn-a" onclick="go('pg-signup')">Get Core</button>
 </div>
 
 <div class="plan pop">
 <div class="plan-n" style="color:var(--accent)">High Performer</div>
-<div style="font-size:13px;color:var(--accent);font-weight:500;margin-bottom:4px">Structured Guidance System</div>
+<div style="font-size:12px;color:var(--accent);font-weight:400;margin-bottom:6px;letter-spacing:.3px">Structured Guidance System</div>
 <div class="plan-p">$59<span> /mo</span></div>
 <ul class="plan-f">
-<li>Monthly Guidance Module (30-45 min recorded deep dive)</li>
-<li>Structured Decision Engine — choose Fellowship, Contract, Income, or Career Pivot track</li>
-<li>Framework Library — Career Position Worksheet, Contract Review Checklist, Offer Comparison Matrix, RVU Reference Sheet, 3-Year Planning Template</li>
-<li>Quarterly Q&A Forum (pre-submitted questions, recorded)</li>
+<li>Monthly Guidance Module — 30–45 min recorded deep dive</li>
+<li>Structured Decision Engine — Fellowship, Contract, Income, or Career Pivot track</li>
+<li>Framework Library — worksheets, checklists, comparison matrices</li>
+<li>Quarterly Q&A Forum — pre-submitted questions, recorded</li>
 <li>Limited physician review credits (batch reviewed)</li>
 </ul>
-<p style="font-size:11px;color:var(--text3);margin-bottom:6px">Structured career architecture. Not 1:1 coaching or guaranteed outcomes.</p>
-<p style="font-size:10px;color:var(--text3);margin-bottom:16px;font-style:italic">Frameworks and process — not promises.</p>
+<p style="font-size:11px;color:var(--text3);margin-bottom:6px;font-weight:300">Structured career architecture. Not 1:1 coaching or guaranteed outcomes.</p>
+<p style="font-size:10px;color:var(--text3);margin-bottom:18px;font-style:italic;font-weight:300">Frameworks and process — not promises.</p>
 <button class="btn btn-a" onclick="go('pg-signup')">Get High Performer</button>
 </div>
 
 <div class="plan ft">
 <div class="plan-n" style="color:var(--accent2)">Private Strategy</div>
-<div style="font-size:13px;color:var(--accent2);font-weight:500;margin-bottom:4px">Structured Career Review</div>
-<div class="plan-p" style="font-size:28px">From $1,250</div>
-<div style="font-size:12px;color:var(--text3);margin-bottom:12px">Structured, one-time engagement during major career decisions.</div>
-<div style="font-size:11px;font-weight:600;color:var(--accent);margin-bottom:8px">Strategic Audit — $1,250–$1,750</div>
+<div style="font-size:12px;color:var(--accent2);font-weight:400;margin-bottom:6px;letter-spacing:.3px">Structured Career Review</div>
+<div class="plan-p" style="font-size:32px">From $1,250</div>
+<div style="font-size:12px;color:var(--text3);margin-bottom:16px;font-weight:300">Structured, one-time engagement during major career decisions.</div>
+<div style="font-size:11px;font-weight:500;color:var(--accent);margin-bottom:10px;letter-spacing:.5px">Strategic Audit — $1,250–$1,750</div>
 <ul class="plan-f">
 <li>Structured intake + CV or offer review</li>
-<li>20-30 min recorded strategic breakdown</li>
+<li>20–30 min recorded strategic breakdown</li>
 <li>Written action plan</li>
 <li>Delivered within 7 days. No live call.</li>
 </ul>
-<div style="font-size:11px;font-weight:600;color:var(--accent);margin:12px 0 8px">Strategic Intensive — $2,500</div>
+<div style="font-size:11px;font-weight:500;color:var(--accent);margin:14px 0 10px;letter-spacing:.5px">Strategic Intensive — $2,500</div>
 <ul class="plan-f">
-<li>Structured intake + 30-60 min focused session</li>
+<li>Structured intake + 30–60 min focused session</li>
 <li>Written action plan + 14-day follow-up window</li>
 <li>Limited availability to maintain quality</li>
 </ul>
-<p style="font-size:10px;color:var(--text3);margin:12px 0 16px;font-style:italic">For fellowship application year, first attending contract, multi-offer comparison, or practice model decisions. Not ongoing mentorship or legal review.</p>
+<p style="font-size:11px;color:var(--text3);margin:14px 0 18px;font-style:italic;font-weight:300">For fellowship application year, first attending contract, multi-offer comparison, or practice model decisions.</p>
 <button class="btn btn-a" onclick="go('pg-signup')">Apply to Book</button>
 </div>
 </div>
+</div>
 
-<div style="padding:48px 24px;text-align:center;border-top:1px solid var(--border)">
-<div style="font-size:12px;color:var(--text2);margin-bottom:16px;max-width:360px;margin-left:auto;margin-right:auto;line-height:1.6"><strong>Core</strong> = structured AI mentorship. <strong>High Performer</strong> = frameworks + guidance system. <strong>Private Strategy</strong> = focused career review.<br>AI provides frameworks. Physicians add experience. You make decisions.</div>
-<p style="font-size:11px;color:var(--text3);line-height:1.6;max-width:400px;margin:0 auto">HeartWise provides structured educational mentorship only. It does not provide medical, legal, financial, or tax advice. Users should consult appropriate professionals for individualized decisions.</p>
-<p style="font-size:11px;color:var(--text3);margin-top:12px">© 2026 HeartWise. All rights reserved.</p>
+<!-- Footer -->
+<div style="padding:60px 32px 48px;text-align:center;border-top:1px solid var(--border)">
+<div style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;margin-bottom:16px;color:var(--text)">HeartWise</div>
+<div style="font-size:12px;color:var(--text3);max-width:380px;margin:0 auto 24px;line-height:1.7;font-weight:300">AI provides frameworks. Physicians add experience. You make decisions.</div>
+<div style="width:32px;height:1px;background:var(--accent);margin:0 auto 24px;opacity:.3"></div>
+<p style="font-size:11px;color:var(--text3);line-height:1.7;max-width:400px;margin:0 auto;font-weight:300">HeartWise provides structured educational mentorship only. It does not provide medical, legal, financial, or tax advice. Users should consult appropriate professionals for individualized decisions.</p>
+<p style="font-size:11px;color:var(--text3);margin-top:16px;font-weight:300">© 2026 HeartWise. All rights reserved.</p>
 </div>
 </div>
 
 <!-- ===== AUTH PAGES ===== -->
 <div id="pg-login" class="lp hidden" style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px">
-<div class="sp-mark" style="width:56px;height:56px;border-radius:16px;margin-bottom:28px"><svg style="width:28px;height:28px;fill:#0a0a0f"><use href="#i-heart"/></svg></div>
-<div style="font-family:'Playfair Display',serif;font-size:26px;font-weight:600;margin-bottom:6px">HeartWise</div>
-<div style="color:var(--text3);font-size:13px;margin-bottom:36px;text-align:center;max-width:280px;line-height:1.5">Structured mentorship for physicians</div>
-<form style="width:100%;max-width:360px" onsubmit="doLogin(event)">
+<div class="sp-mark" style="width:52px;height:52px;border-radius:14px;margin-bottom:28px"><svg style="width:26px;height:26px;fill:#09090e"><use href="#i-heart"/></svg></div>
+<div style="font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:600;margin-bottom:6px;letter-spacing:.5px">HeartWise</div>
+<div style="color:var(--text3);font-size:13px;margin-bottom:40px;text-align:center;max-width:280px;line-height:1.6;font-weight:300">Structured mentorship for physicians</div>
+<form style="width:100%;max-width:340px" onsubmit="doLogin(event)">
 <div class="fg"><label>Email</label><input type="email" id="l-email" placeholder="you@example.com" required></div>
 <div class="fg"><label>Password</label><input type="password" id="l-pass" placeholder="••••••••" required></div>
 <button type="submit" class="btn btn-a">Sign In</button>
 </form>
-<div style="margin-top:24px;color:var(--text3);font-size:13px">New here? <a href="#" onclick="go('pg-signup');return false" style="font-weight:500">Create an account</a></div>
+<div style="margin-top:28px;color:var(--text3);font-size:13px;font-weight:300">New here? <a href="#" onclick="go('pg-signup');return false" style="font-weight:500">Create an account</a></div>
 </div>
 
 <div id="pg-signup" class="lp hidden" style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px">
-<div class="sp-mark" style="width:56px;height:56px;border-radius:16px;margin-bottom:28px"><svg style="width:28px;height:28px;fill:#0a0a0f"><use href="#i-heart"/></svg></div>
-<div style="font-family:'Playfair Display',serif;font-size:26px;font-weight:600;margin-bottom:6px">Join HeartWise</div>
-<div style="color:var(--text3);font-size:13px;margin-bottom:36px;text-align:center;max-width:300px;line-height:1.5">Structured strategy from a seasoned interventional cardiologist. Built for competitors.</div>
-<form style="width:100%;max-width:360px" onsubmit="doSignup(event)">
+<div class="sp-mark" style="width:52px;height:52px;border-radius:14px;margin-bottom:28px"><svg style="width:26px;height:26px;fill:#09090e"><use href="#i-heart"/></svg></div>
+<div style="font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:600;margin-bottom:6px;letter-spacing:.5px">Join HeartWise</div>
+<div style="color:var(--text3);font-size:13px;margin-bottom:40px;text-align:center;max-width:300px;line-height:1.6;font-weight:300">Structured mentorship from a physician who's been there. Join as a founding member.</div>
+<form style="width:100%;max-width:340px" onsubmit="doSignup(event)">
 <div class="fg"><label>Full Name</label><input type="text" id="s-name" placeholder="Jane Smith" required></div>
 <div class="fg"><label>Email</label><input type="email" id="s-email" placeholder="you@example.com" required></div>
 <div class="fg"><label>Password</label><input type="password" id="s-pass" placeholder="Min 8 characters" minlength="8" required></div>
@@ -531,7 +560,7 @@ HeartWise
 <div class="fg"><label>Institution</label><input type="text" id="s-inst" placeholder="Your medical school or hospital"></div>
 <button type="submit" class="btn btn-a">Create Account</button>
 </form>
-<div style="margin-top:24px;color:var(--text3);font-size:13px">Already a member? <a href="#" onclick="go('pg-login');return false" style="font-weight:500">Sign in</a></div>
+<div style="margin-top:28px;color:var(--text3);font-size:13px;font-weight:300">Already a member? <a href="#" onclick="go('pg-login');return false" style="font-weight:500">Sign in</a></div>
 </div>
 
 <!-- ===== MAIN APP ===== -->
@@ -1270,6 +1299,18 @@ v10:`<h3>Career Pivot Decision Engine</h3>
     lp.addEventListener('scroll',function(){tb.classList.toggle('solid',lp.scrollTop>60)});
     window.addEventListener('scroll',function(){tb.classList.toggle('solid',window.scrollY>60)});
   }
+})();
+
+// ===== SCROLL REVEAL =====
+(function(){
+  const obs=new IntersectionObserver(function(entries){
+    entries.forEach(function(e){if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target)}})
+  },{threshold:0.12,rootMargin:'0px 0px -40px 0px'});
+  document.addEventListener('DOMContentLoaded',function(){
+    document.querySelectorAll('.reveal').forEach(function(el){obs.observe(el)});
+  });
+  // Also observe after page navigations
+  window._observeReveals=function(){document.querySelectorAll('.reveal:not(.visible)').forEach(function(el){obs.observe(el)})};
 })();
 
 // ===== APP STATE =====

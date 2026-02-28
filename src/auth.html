@@ -1,21 +1,21 @@
 <!-- ===== AUTH PAGES ===== -->
 <div id="pg-login" class="lp hidden" style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px">
-<div class="sp-mark" style="width:56px;height:56px;border-radius:16px;margin-bottom:28px"><svg style="width:28px;height:28px;fill:#0a0a0f"><use href="#i-heart"/></svg></div>
-<div style="font-family:'Playfair Display',serif;font-size:26px;font-weight:600;margin-bottom:6px">HeartWise</div>
-<div style="color:var(--text3);font-size:13px;margin-bottom:36px;text-align:center;max-width:280px;line-height:1.5">Structured mentorship for physicians</div>
-<form style="width:100%;max-width:360px" onsubmit="doLogin(event)">
+<div class="sp-mark" style="width:52px;height:52px;border-radius:14px;margin-bottom:28px"><svg style="width:26px;height:26px;fill:#09090e"><use href="#i-heart"/></svg></div>
+<div style="font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:600;margin-bottom:6px;letter-spacing:.5px">HeartWise</div>
+<div style="color:var(--text3);font-size:13px;margin-bottom:40px;text-align:center;max-width:280px;line-height:1.6;font-weight:300">Structured mentorship for physicians</div>
+<form style="width:100%;max-width:340px" onsubmit="doLogin(event)">
 <div class="fg"><label>Email</label><input type="email" id="l-email" placeholder="you@example.com" required></div>
 <div class="fg"><label>Password</label><input type="password" id="l-pass" placeholder="••••••••" required></div>
 <button type="submit" class="btn btn-a">Sign In</button>
 </form>
-<div style="margin-top:24px;color:var(--text3);font-size:13px">New here? <a href="#" onclick="go('pg-signup');return false" style="font-weight:500">Create an account</a></div>
+<div style="margin-top:28px;color:var(--text3);font-size:13px;font-weight:300">New here? <a href="#" onclick="go('pg-signup');return false" style="font-weight:500">Create an account</a></div>
 </div>
 
 <div id="pg-signup" class="lp hidden" style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px">
-<div class="sp-mark" style="width:56px;height:56px;border-radius:16px;margin-bottom:28px"><svg style="width:28px;height:28px;fill:#0a0a0f"><use href="#i-heart"/></svg></div>
-<div style="font-family:'Playfair Display',serif;font-size:26px;font-weight:600;margin-bottom:6px">Join HeartWise</div>
-<div style="color:var(--text3);font-size:13px;margin-bottom:36px;text-align:center;max-width:300px;line-height:1.5">Structured strategy from a seasoned interventional cardiologist. Built for competitors.</div>
-<form style="width:100%;max-width:360px" onsubmit="doSignup(event)">
+<div class="sp-mark" style="width:52px;height:52px;border-radius:14px;margin-bottom:28px"><svg style="width:26px;height:26px;fill:#09090e"><use href="#i-heart"/></svg></div>
+<div style="font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:600;margin-bottom:6px;letter-spacing:.5px">Join HeartWise</div>
+<div style="color:var(--text3);font-size:13px;margin-bottom:40px;text-align:center;max-width:300px;line-height:1.6;font-weight:300">Structured mentorship from a physician who's been there. Join as a founding member.</div>
+<form style="width:100%;max-width:340px" onsubmit="doSignup(event)">
 <div class="fg"><label>Full Name</label><input type="text" id="s-name" placeholder="Jane Smith" required></div>
 <div class="fg"><label>Email</label><input type="email" id="s-email" placeholder="you@example.com" required></div>
 <div class="fg"><label>Password</label><input type="password" id="s-pass" placeholder="Min 8 characters" minlength="8" required></div>
@@ -31,5 +31,5 @@
 <div class="fg"><label>Institution</label><input type="text" id="s-inst" placeholder="Your medical school or hospital"></div>
 <button type="submit" class="btn btn-a">Create Account</button>
 </form>
-<div style="margin-top:24px;color:var(--text3);font-size:13px">Already a member? <a href="#" onclick="go('pg-login');return false" style="font-weight:500">Sign in</a></div>
+<div style="margin-top:28px;color:var(--text3);font-size:13px;font-weight:300">Already a member? <a href="#" onclick="go('pg-login');return false" style="font-weight:500">Sign in</a></div>
 </div>

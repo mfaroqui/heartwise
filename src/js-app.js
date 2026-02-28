@@ -8,6 +8,18 @@
   }
 })();
 
+// ===== SCROLL REVEAL =====
+(function(){
+  const obs=new IntersectionObserver(function(entries){
+    entries.forEach(function(e){if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target)}})
+  },{threshold:0.12,rootMargin:'0px 0px -40px 0px'});
+  document.addEventListener('DOMContentLoaded',function(){
+    document.querySelectorAll('.reveal').forEach(function(el){obs.observe(el)});
+  });
+  // Also observe after page navigations
+  window._observeReveals=function(){document.querySelectorAll('.reveal:not(.visible)').forEach(function(el){obs.observe(el)})};
+})();
+
 // ===== APP STATE =====
 let DB,U=null,curFilter='all',curAdminTab='queue';
 

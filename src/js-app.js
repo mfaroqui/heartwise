@@ -30,7 +30,7 @@ function initDB(){
     nextId:300,nextUserId:2
   };
   const saved=localStorage.getItem('hw_db');
-  if(saved){const old=JSON.parse(saved);if(old.questions&&old.questions.length>=seed.questions.length){DB=old;return}}
+  if(saved){const old=JSON.parse(saved);if(old.questions&&old.questions.length===seed.questions.length){DB=old;return}}
   DB=seed;saveDB();
 }
 function saveDB(){localStorage.setItem('hw_db',JSON.stringify(DB))}

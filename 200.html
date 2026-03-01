@@ -1100,16 +1100,7 @@ status:'reviewed',date:'2026-02-13',author:'Anonymous',anon:true,
 reviewNote:'I remember my first perforation 15 years later. The emotional response means you care. The attendings who scare me are the ones who do not feel it. \u2014 MF'}
 ];
 
-const PENDING_Q=[
-{id:200,cat:'career',role:'student',q:'Best strategy for choosing between academic and community IM residency if my goal is cardiology fellowship?',status:'pending',date:'2026-02-27',author:'Marcus T.',anon:false,wantsReview:true},
-{id:201,cat:'finance',role:'fellow',q:'Should I buy a house during fellowship or wait? $50K saved, spouse works.',status:'pending',date:'2026-02-27',author:'Anonymous',anon:true,wantsReview:true},
-{id:202,cat:'contract',role:'fellow',q:'Contract has 2-year restrictive covenant, 30-mile radius. Standard? How to negotiate down?',status:'pending',date:'2026-02-28',author:'Anonymous',anon:true,wantsReview:true},
-{id:203,cat:'wellness',role:'resident',q:'Getting married during PGY-3 while applying for fellowship. How to manage both?',status:'pending',date:'2026-02-28',author:'Jason W.',anon:false,wantsReview:false},
-{id:204,cat:'career',role:'fellow',q:'Should I pursue advanced heart failure fellowship or interventional? Genuinely interested in both.',status:'pending',date:'2026-02-28',author:'Anonymous',anon:true,wantsReview:true},
-{id:205,cat:'finance',role:'attending',q:'First attending year. Wife wants a $600K house, I have $350K in loans. Can we afford this?',status:'pending',date:'2026-02-28',author:'Anonymous',anon:true,wantsReview:true},
-{id:206,cat:'clinical',role:'student',q:'How do you systematically read an ECG? What is your step-by-step approach?',status:'pending',date:'2026-02-27',author:'David L.',anon:false,wantsReview:false},
-{id:207,cat:'productivity',role:'resident',q:'I spend 3 hours on notes every day after rounds. How do attendings chart so fast?',status:'pending',date:'2026-02-27',author:'Anonymous',anon:true,wantsReview:false}
-];
+const PENDING_Q=[];
 
 
 // ===== CONVERTED FROM SEED-DATA (109 original Q&As) =====
@@ -1223,16 +1214,16 @@ const LEGACY_Q=[
 ];
 
 const VAULT_ITEMS=[
-{id:'v1',title:'Fellowship Readiness Worksheet',desc:'Evaluate your application against successful fellowship profiles',icon:'\ud83c\udfaf',tier:'pro'},
-{id:'v2',title:'Contract Risk Scorecard',desc:'Identify red flags and leverage points in any physician contract',icon:'\ud83d\udea9',tier:'pro'},
-{id:'v3',title:'Offer Comparison Matrix',desc:'Side-by-side analysis framework for multiple job offers',icon:'\ud83d\udcca',tier:'pro'},
-{id:'v4',title:'RVU Modeling Sheet',desc:'Model compensation scenarios by volume, rate, and practice type',icon:'\ud83d\udcb0',tier:'pro'},
-{id:'v5',title:'3-Year Leverage Planner',desc:'Map your income trajectory from training exit through year 3',icon:'\ud83d\udcc8',tier:'pro'},
-{id:'v6',title:'Fellowship Positioning Roadmap',desc:'Month-by-month timeline from PGY-2 to match day',icon:'\ud83d\uddfa\ufe0f',tier:'pro'},
-{id:'v7',title:'Research ROI Calculator',desc:'Evaluate which projects give maximum application leverage',icon:'\u2696\ufe0f',tier:'pro'},
-{id:'v8',title:'Income Leverage Playbook',desc:'PSLF vs refinance modeling, tax strategy, disability planning',icon:'\ud83d\udcb5',tier:'pro'},
-{id:'v9',title:'Strategic Audit Template',desc:'The exact intake framework used in Private Strategy sessions',icon:'\ud83d\udcdd',tier:'mentorship'},
-{id:'v10',title:'Career Pivot Decision Engine',desc:'Structured framework for specialty switches and practice model changes',icon:'\u26a1',tier:'mentorship'}
+{id:'v1',title:'Fellowship Readiness Worksheet',desc:'Evaluate your application against successful fellowship profiles',icon:'\ud83c\udfaf',tier:'core'},
+{id:'v2',title:'Contract Risk Scorecard',desc:'Identify red flags and leverage points in any physician contract',icon:'\ud83d\udea9',tier:'core'},
+{id:'v3',title:'Offer Comparison Matrix',desc:'Side-by-side analysis framework for multiple job offers',icon:'\ud83d\udcca',tier:'core'},
+{id:'v4',title:'RVU Modeling Sheet',desc:'Model compensation scenarios by volume, rate, and practice type',icon:'\ud83d\udcb0',tier:'core'},
+{id:'v5',title:'3-Year Leverage Planner',desc:'Map your income trajectory from training exit through year 3',icon:'\ud83d\udcc8',tier:'core'},
+{id:'v6',title:'Fellowship Positioning Roadmap',desc:'Month-by-month timeline from PGY-2 to match day',icon:'\ud83d\uddfa\ufe0f',tier:'core'},
+{id:'v7',title:'Research ROI Calculator',desc:'Evaluate which projects give maximum application leverage',icon:'\u2696\ufe0f',tier:'core'},
+{id:'v8',title:'Income Leverage Playbook',desc:'PSLF vs refinance modeling, tax strategy, disability planning',icon:'\ud83d\udcb5',tier:'core'},
+{id:'v9',title:'Strategic Audit Template',desc:'The exact intake framework used in Elite Strategy sessions',icon:'\ud83d\udcdd',tier:'elite'},
+{id:'v10',title:'Career Pivot Decision Engine',desc:'Structured framework for specialty switches and practice model changes',icon:'\u26a1',tier:'elite'}
 ];
 
 
@@ -1424,7 +1415,7 @@ function initDB(){
     nextId:300,nextUserId:2
   };
   const saved=localStorage.getItem('hw_db');
-  if(saved){const old=JSON.parse(saved);if(old.questions&&old.questions.length>=seed.questions.length){DB=old;return}}
+  if(saved){const old=JSON.parse(saved);if(old.questions&&old.questions.length===seed.questions.length){DB=old;return}}
   DB=seed;saveDB();
 }
 function saveDB(){localStorage.setItem('hw_db',JSON.stringify(DB))}

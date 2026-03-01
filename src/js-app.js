@@ -54,10 +54,11 @@ window.onload=function(){
 
 // ===== NAV =====
 function go(id){
-  ['pg-landing','pg-login','pg-signup','main-app'].forEach(p=>{
+  ['pg-landing','pg-login','pg-signup','pg-onboard','main-app'].forEach(p=>{
     const el=document.getElementById(p);if(el){el.classList.add('hidden');el.style.display=''}
   });
   const el=document.getElementById(id);if(el){el.classList.remove('hidden');el.style.display=''}
+  if(id==='pg-signup'){go('pg-onboard');return}
   document.getElementById('main-nav').classList.remove('on');
   // Show/hide topbar
   const tb=document.getElementById('topbar');
@@ -117,7 +118,7 @@ function enterApp(){
   if(!U.usage)U.usage={ai:0,credits:TIERS[U.tier]?.credits||0,month:new Date().getMonth()};
   if(U.usage.month!==new Date().getMonth()){U.usage.ai=0;U.usage.credits=TIERS[U.tier]?.credits||0;U.usage.month=new Date().getMonth()}
   const b=document.getElementById('user-badge');
-  const bc={free:'b-free',core:'b-core',pro:'b-pro',mentorship:'b-ment',admin:'b-admin'};
+  const bc={free:'b-free',core:'b-core',elite:'b-pro',admin:'b-admin'};
   b.className='badge '+(bc[U.tier]||'b-free');
   b.textContent=U.tier==='admin'?'MENTOR':TIERS[U.tier]?.name?.toUpperCase()||'FREE';
   document.getElementById('welcome-msg').textContent='Welcome, '+U.name.split(' ')[0]+' \ud83d\udc4b';
@@ -154,7 +155,7 @@ function renderQCard(q){
 function showQuestion(id){
   const q=DB.questions.find(x=>x.id===id);if(!q)return;
   let h='<span class="tag t-cat" style="margin-bottom:12px;display:inline-block">'+(CATS[q.cat]||q.cat)+'</span>';
-  h+='<h2 style="font-family:Playfair Display,serif;font-size:20px;margin-bottom:8px">'+q.q+'</h2>';
+  h+='<h2 style="font-family:Cormorant Garamond,serif;font-size:20px;margin-bottom:8px">'+q.q+'</h2>';
   h+='<div style="font-size:12px;color:var(--text3);margin-bottom:20px">'+(q.anon?'Anonymous':q.author)+' \u00b7 '+q.role+' \u00b7 '+q.date+'</div>';
   if(q.ai){
     h+='<div class="ai-resp">';
@@ -178,7 +179,7 @@ function showQuestion(id){
   if(U&&U.tier==='free'){
     h+='<div style="margin-top:20px;padding:18px;border-radius:var(--r2);background:linear-gradient(135deg,var(--accent-dim),rgba(200,168,124,.06));border:1px solid rgba(200,168,124,.2)">';
     h+='<div style="font-size:14px;font-weight:600;color:var(--accent);margin-bottom:6px">⚡ Want more structured guidance?</div>';
-    h+='<p style="font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.5">Upgrade to Core for 20 AI-guided mentorship responses per month and Physician Review credits. High Performer members get monthly guidance modules + framework library.</p>';
+    h+='<p style="font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.5">Upgrade to Core for unlimited strategic assessments, financial modeling tools, and scenario simulations.</p>';
     h+='<button class="btn btn-a btn-sm" onclick="closeModal(\'modal-q\');navTo(\'scr-profile\');showUpgrade()" style="max-width:200px">View Plans \u2192</button></div>';
   }
   document.getElementById('modal-q-content').innerHTML=h;
@@ -298,9 +299,9 @@ function setFilter(f,btn){curFilter=f;document.querySelectorAll('.fc .chip').for
 
 // ===== VAULT =====
 function renderVault(){
-  const canAccess=U.tier==='pro'||U.tier==='mentorship'||U.tier==='admin';
+  const canAccess=U.tier==='core'||U.tier==='elite'||U.tier==='admin';
   document.getElementById('vault-list').innerHTML=VAULT_ITEMS.map(v=>{
-    const mentOnly=v.tier==='mentorship'&&U.tier!=='mentorship'&&U.tier!=='admin';
+    const mentOnly=v.tier==='elite'&&U.tier!=='elite'&&U.tier!=='admin';
     const locked=!canAccess||mentOnly;
     return '<div class="vault-card '+(locked?'':'unlocked')+'" '+(locked?'onclick="notify(\'Upgrade to access this framework\',1)"':'onclick="openFramework(\''+v.id+'\')"')+'><div class="v-icon">'+v.icon+'</div><div class="v-info"><h3>'+v.title+'</h3><p>'+v.desc+(mentOnly?' \u2022 Private Strategy only':'')+'</p></div><div class="v-lock">'+(locked?'\ud83d\udd12':'\ud83d\udcc4')+'</div></div>';
   }).join('');
@@ -340,9 +341,9 @@ function showUpgrade(){
     const t=TIERS[U.tier];
     document.getElementById('sub-plan-name').textContent=t.name;
     document.getElementById('sub-status').textContent='Active';
-    const renew=U.tier==='mentorship'?'Renews annually':'Renews monthly';
+    const renew=U.tier==='elite'?'Renews monthly':'Renews monthly';
     document.getElementById('sub-renew').textContent=renew+' \u2022 Auto-renewal on';
-    document.getElementById('sub-usage-summary').textContent=t.ai+(t.ai===999?' unlimited':'')+' AI responses / '+t.credits+' review credits per '+(U.tier==='mentorship'?'year':'month');
+    document.getElementById('sub-usage-summary').textContent='Unlimited AI assessments / '+t.credits+' review credits per month';
   }else{document.getElementById('sub-manage').classList.add('hidden')}
 }
 function toggleNotifSettings(){document.getElementById('notif-settings').classList.toggle('hidden')}
@@ -386,7 +387,7 @@ function subPlan(plan){
     startCheckout(STRIPE_PRICES.core,'subscription');
   }else if(plan==='pro'){
     startCheckout(STRIPE_PRICES.pro,'subscription');
-  }else if(plan==='mentorship'){
+  }else if(plan==='elite'){
     // Private Strategy - show options
     showPrivateStrategyModal();
   }else if(plan==='audit'){
@@ -470,6 +471,139 @@ function publishReview(id){
     q.shareInArchive=shareBox?shareBox.checked:true;
     saveDB();notify('Review published! \u2728');renderAdmin();
   }
+}
+
+// ===== ONBOARDING =====
+let obStage='',obProfile={};
+function obSelectStage(el,stage){
+  obStage=stage;
+  document.querySelectorAll('#ob-step1 .ob-opt').forEach(o=>o.classList.remove('sel'));
+  el.classList.add('sel');
+  const b=document.getElementById('ob-next1');b.style.opacity='1';b.style.pointerEvents='auto';
+}
+function obToStep2(){
+  if(!obStage){notify('Select your stage',1);return}
+  document.getElementById('ob-step1').classList.add('hidden');
+  document.getElementById('ob-step2').classList.remove('hidden');
+  // Dynamic fields based on stage
+  const df=document.getElementById('ob-dynamic-fields');
+  let h='';
+  if(obStage==='student'){
+    h+='<div class="fg"><label>USMLE Step 1 Score (or Pass/Fail)</label><input type="text" id="ob-score1" placeholder="e.g., 245 or Pass"></div>';
+    h+='<div class="fg"><label>Research Publications</label><input type="number" id="ob-pubs" placeholder="0" min="0"></div>';
+    h+='<div class="fg"><label>Leadership Roles</label><input type="number" id="ob-lead" placeholder="0" min="0"></div>';
+  }else if(obStage==='resident'){
+    h+='<div class="fg"><label>Step 2 CK Score</label><input type="text" id="ob-score2" placeholder="e.g., 255"></div>';
+    h+='<div class="fg"><label>Publications / Abstracts</label><input type="number" id="ob-pubs" placeholder="0" min="0"></div>';
+    h+='<div class="fg"><label>PGY Year</label><select id="ob-pgy"><option value="1">PGY-1</option><option value="2">PGY-2</option><option value="3">PGY-3</option></select></div>';
+  }else if(obStage==='fellow'){
+    h+='<div class="fg"><label>Publications (First Author)</label><input type="number" id="ob-pubs" placeholder="0" min="0"></div>';
+    h+='<div class="fg"><label>Presentations (ACC/AHA/TCT)</label><input type="number" id="ob-present" placeholder="0" min="0"></div>';
+  }else if(obStage==='attending'){
+    h+='<div class="fg"><label>Current Compensation</label><input type="text" id="ob-comp" placeholder="e.g., $350,000"></div>';
+    h+='<div class="fg"><label>Student Loan Balance</label><input type="text" id="ob-debt" placeholder="e.g., $280,000"></div>';
+    h+='<div class="fg"><label>Practice Model</label><select id="ob-practice"><option value="">Select</option><option value="academic">Academic</option><option value="private">Private</option><option value="employed">Hospital Employed</option><option value="unsure">Unsure/Exploring</option></select></div>';
+  }
+  df.innerHTML=h;
+}
+function obToStep3(){
+  const name=document.getElementById('ob-name').value.trim();
+  const email=document.getElementById('ob-email').value.trim();
+  const pass=document.getElementById('ob-pass').value;
+  if(!name||!email||!pass){notify('Fill in name, email, and password.',1);return}
+  if(pass.length<8){notify('Password must be at least 8 characters.',1);return}
+  if(DB.users.find(u=>u.email.toLowerCase()===email.toLowerCase())){notify('Email already registered. Sign in instead.',1);return}
+  obProfile={name,email,pass,stage:obStage,spec:document.getElementById('ob-spec').value,inst:document.getElementById('ob-inst').value.trim(),goal:document.getElementById('ob-goal').value};
+  // Collect dynamic fields
+  const df=['ob-score1','ob-score2','ob-pubs','ob-lead','ob-pgy','ob-present','ob-comp','ob-debt','ob-practice'];
+  df.forEach(id=>{const el=document.getElementById(id);if(el)obProfile[id.replace('ob-','')]=el.value});
+  // Generate report
+  genReport();
+  document.getElementById('ob-step2').classList.add('hidden');
+  document.getElementById('ob-step3').classList.remove('hidden');
+}
+function genReport(){
+  const p=obProfile;
+  // Calculate competitiveness score (0-100)
+  let score=50;
+  const pubs=parseInt(p.pubs)||0;
+  const lead=parseInt(p.lead)||0;
+  if(pubs>=3)score+=15;else if(pubs>=1)score+=8;
+  if(lead>=2)score+=10;else if(lead>=1)score+=5;
+  if(p.spec&&p.spec!=='Undecided')score+=5;
+  if(p.goal)score+=5;
+  if(p.score1){const s=parseInt(p.score1);if(s>=250)score+=15;else if(s>=240)score+=10;else if(s>=230)score+=5}
+  if(p.score2){const s=parseInt(p.score2);if(s>=260)score+=15;else if(s>=250)score+=10;else if(s>=240)score+=5}
+  score=Math.min(95,Math.max(20,score));
+  // Score color
+  const sc=score>=70?'var(--green)':score>=45?'var(--accent)':'var(--red)';
+  const sl=score>=70?'Strong':score>=45?'Developing':'Needs Focus';
+  // Gaps
+  let gaps=[],strengths=[];
+  if(pubs<2)gaps.push({label:'Research Output',val:pubs<1?20:45,note:'Aim for 2+ publications before application'});
+  else strengths.push({label:'Research Output',val:Math.min(85,40+pubs*15),note:pubs+' publications — solid foundation'});
+  if(lead<1)gaps.push({label:'Leadership',val:15,note:'One meaningful leadership role changes your narrative'});
+  else strengths.push({label:'Leadership',val:Math.min(80,30+lead*20),note:lead+' role(s) — demonstrates initiative'});
+  if(!p.spec||p.spec==='Undecided')gaps.push({label:'Specialty Clarity',val:25,note:'Narrowing focus allows targeted positioning'});
+  else strengths.push({label:'Specialty Clarity',val:70,note:p.spec+' — clear direction'});
+  if(!p.goal)gaps.push({label:'Strategic Goal',val:20,note:'Define a specific 12-month objective'});
+  else strengths.push({label:'Strategic Goal',val:65,note:'Goal identified — framework can optimize execution'});
+  // Plan
+  const plans={
+    student:['Map target programs and required credentials (this month)','Start or join a research project with publication potential','Secure a meaningful leadership role or community engagement position','Request informational meetings with 2 attendings in your target specialty','Draft a personal narrative that connects your background to your specialty choice'],
+    resident:['Compare your CV against 3 successful fellowship applicants','Identify letter writers who can speak to your clinical skills specifically','Submit an abstract to a national meeting within 90 days','Schedule 1-2 away rotations at target programs','Build relationships with attendings in your subspecialty of interest'],
+    fellow:['Map your post-fellowship job market: academic vs. private vs. employed','Start networking at conferences with potential future employers','Review 3 recent contracts in your specialty to understand market terms','Begin financial modeling: PSLF eligibility, loan repayment timeline','Identify your clinical niche and start building that reputation now'],
+    attending:['Get your current contract reviewed by a physician contract attorney','Run PSLF vs. refinance calculations with actual numbers','Compare your compensation against MGMA benchmarks for your specialty/region','Establish disability insurance if not already in place','Model your 5-year financial trajectory under current terms'],
+    premed:['Identify 3-5 specialties that align with your interests and lifestyle goals','Build meaningful clinical exposure — quality over quantity','Start a research project or get involved in scholarly activity','Develop your narrative: what drives you toward medicine specifically?','Talk to physicians in specialties you\'re considering — book informational conversations'],
+    switching:['Research the feasibility and timeline of your target specialty','Identify bridge programs, additional training, or experience requirements','Connect with physicians who have successfully made a similar switch','Model the financial impact: retraining cost, income gap, long-term ROI','Document transferable skills that make your transition logical']
+  };
+  const myPlan=plans[p.stage]||plans.student;
+
+  let h='';
+  // Score ring
+  h+='<div style="text-align:center;margin-bottom:32px">';
+  h+='<div class="score-ring" style="border-color:'+sc+'"><div class="score-val" style="color:'+sc+'">'+score+'</div><div class="score-label">'+sl+'</div></div>';
+  h+='<p style="font-size:13px;color:var(--text2);font-weight:300">Competitive Position Score</p>';
+  h+='</div>';
+  // Strengths
+  if(strengths.length){
+    h+='<div class="report-sec" style="border-color:rgba(139,184,160,.15)"><h4 style="color:var(--green)">✦ Strengths</h4>';
+    strengths.forEach(s=>{h+='<div class="metric-bar"><div class="mb-top"><span class="mb-label">'+s.label+'</span><span class="mb-val" style="color:var(--green)">'+s.val+'%</span></div><div class="mb-track"><div class="mb-fill" style="width:'+s.val+'%;background:var(--green)"></div></div><p style="font-size:11px;color:var(--text3);margin-top:3px">'+s.note+'</p></div>'});
+    h+='</div>';
+  }
+  // Gaps
+  if(gaps.length){
+    h+='<div class="report-sec" style="border-color:rgba(196,77,86,.15)"><h4 style="color:var(--red)">⚡ Gap Analysis</h4>';
+    gaps.forEach(g=>{h+='<div class="metric-bar"><div class="mb-top"><span class="mb-label">'+g.label+'</span><span class="mb-val" style="color:var(--red)">'+g.val+'%</span></div><div class="mb-track"><div class="mb-fill" style="width:'+g.val+'%;background:var(--red)"></div></div><p style="font-size:11px;color:var(--text3);margin-top:3px">'+g.note+'</p></div>'});
+    h+='</div>';
+  }
+  // 6-month plan
+  h+='<div class="report-sec"><h4>📅 6-Month Strategic Focus</h4><ol style="padding-left:18px">';
+  myPlan.forEach(step=>{h+='<li style="padding:4px 0">'+step+'</li>'});
+  h+='</ol></div>';
+  // Risk
+  h+='<div class="report-sec" style="border-color:rgba(200,168,124,.15)"><h4>⚠️ Key Risk Areas</h4>';
+  if(pubs<2)h+='<p>• Low research output limits competitiveness for selective programs</p>';
+  if(!p.goal)h+='<p>• No defined strategic goal — decisions without direction lead to drift</p>';
+  if(p.stage==='attending'&&!p.debt)h+='<p>• Loan strategy undefined — every month of delay has compounding cost</p>';
+  if(p.stage==='fellow'&&pubs<3)h+='<p>• Below median publication count for competitive fellowship tracks</p>';
+  h+='<p>• Without structured follow-through, initial assessment loses value within 30 days</p>';
+  h+='</div>';
+
+  document.getElementById('ob-report').innerHTML=h;
+  // Animate bars after render
+  setTimeout(()=>{document.querySelectorAll('.mb-fill').forEach(b=>{const w=b.style.width;b.style.width='0%';setTimeout(()=>b.style.width=w,50)})},100);
+}
+function obComplete(){
+  const p=obProfile;
+  // Create user with trial
+  const roleMap={premed:'student',student:'student',resident:'resident',fellow:'fellow',attending:'attending',switching:'other'};
+  const trialEnd=new Date();trialEnd.setDate(trialEnd.getDate()+7);
+  const user={id:'u'+DB.nextUserId++,name:p.name,email:p.email.toLowerCase(),pass:p.pass,role:roleMap[p.stage]||'student',tier:'core',trialEnd:trialEnd.toISOString().split('T')[0],institution:p.inst,usage:{ai:0,credits:0,month:new Date().getMonth()},profile:p};
+  DB.users.push(user);saveDB();
+  U=user;localStorage.setItem('hw_session',JSON.stringify(U));
+  enterApp();showDisc();
+  notify('Welcome! Your 7-day strategic access is active. ⚡');
 }
 
 // ===== DISCLAIMER =====

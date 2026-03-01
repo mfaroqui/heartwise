@@ -5,220 +5,229 @@
 <span class="logo-text">HeartWise</span>
 </div>
 <div class="topbar-links">
-<a href="#" class="tb-link" onclick="event.preventDefault();document.getElementById('how-sec').scrollIntoView({behavior:'smooth'})">How It Works</a>
-<a href="#" class="tb-link" onclick="event.preventDefault();document.getElementById('about-sec').scrollIntoView({behavior:'smooth'})">About</a>
-<a href="#" class="tb-link" onclick="event.preventDefault();document.getElementById('pricing-sec').scrollIntoView({behavior:'smooth'})">Membership</a>
+<a href="#" class="tb-link" onclick="event.preventDefault();document.getElementById('tools-sec').scrollIntoView({behavior:'smooth'})">Tools</a>
+<a href="#" class="tb-link" onclick="event.preventDefault();document.getElementById('diff-sec').scrollIntoView({behavior:'smooth'})">Why HeartWise</a>
+<a href="#" class="tb-link" onclick="event.preventDefault();document.getElementById('pricing-sec').scrollIntoView({behavior:'smooth'})">Pricing</a>
 <a href="#" class="tb-link" onclick="event.preventDefault();go('pg-login')">Sign In</a>
-<a href="#" class="tb-cta" onclick="event.preventDefault();go('pg-signup')">Get Started</a>
+<a href="#" class="tb-cta" onclick="event.preventDefault();go('pg-onboard')">Start Free Trial</a>
 </div>
 </nav>
 
 <!-- ===== LANDING PAGE ===== -->
 <div id="pg-landing" class="lp">
+
+<!-- HERO -->
 <div class="hero">
-<div class="hero-badge">Physician-Built Mentorship</div>
-<h1 class="serif">Make Confident Career, Lifestyle &amp; <em>Financial Decisions.</em></h1>
-<p>Structured mentorship for physicians and trainees — evidence-based frameworks, physician insight, and clarity for the decisions that shape your career.</p>
-<button class="btn btn-a" onclick="go('pg-signup')" style="max-width:260px;margin:0 auto 14px">Join as Founding Member</button>
-<button class="btn btn-g" onclick="go('pg-login')" style="max-width:260px;margin:0 auto">Sign In</button>
+<div class="hero-badge">Strategic Intelligence Platform</div>
+<h1 class="serif">Strategic Intelligence for <em>Competitive Physicians.</em></h1>
+<p>Stop guessing. Start positioning. HeartWise gives you structured career and financial leverage — built by a practicing interventional cardiologist.</p>
+<button class="btn btn-a" onclick="go('pg-onboard')" style="max-width:300px;margin:0 auto 14px">Start 7-Day Strategic Access →</button>
+<p style="font-size:12px;color:var(--text3);font-weight:300;margin-top:8px">No credit card required. Full access for 7 days.</p>
 </div>
 
-<!-- Who It's For -->
-<div class="lp-sec" style="background:var(--bg2)">
-<h2 class="serif">Who This Is For</h2>
+<!-- WHAT YOU GET -->
+<div class="lp-sec" id="tools-sec" style="background:var(--bg2)">
+<h2 class="serif">Your Strategic Toolkit</h2>
 <div class="lp-divider"></div>
-<p class="sub">Structured guidance for physicians at every stage of training and early career.</p>
-<div class="who-grid reveal">
-<div class="who-card"><div class="icon">🎓</div><h3>Medical Students</h3><p>Specialty selection, residency preparation, and early career planning</p></div>
-<div class="who-card"><div class="icon">📋</div><h3>Residents</h3><p>Fellowship planning, research strategy, and professional development</p></div>
-<div class="who-card"><div class="icon">🫀</div><h3>Fellows</h3><p>Contract education, practice models, and career transition guidance</p></div>
-<div class="who-card"><div class="icon">🏥</div><h3>Early Attendings</h3><p>Compensation literacy, financial planning, and long-term career design</p></div>
+<p class="sub">Not generic answers. Structured tools that reveal gaps, model outcomes, and build strategy.</p>
+<div class="reveal" style="max-width:520px;margin:0 auto">
+<div class="tool-grid">
+<div class="tool-card">
+<div class="tool-icon">📊</div>
+<div class="tool-info">
+<h3>Competitiveness Analyzer</h3>
+<p>Input your scores, research, and profile — get a competitiveness score, gap analysis, and strategic focus areas.</p>
+</div>
+</div>
+<div class="tool-card">
+<div class="tool-icon">🔄</div>
+<div class="tool-info">
+<h3>Specialty Switch Simulator</h3>
+<p>Model what happens if you change specialty. Timeline, feasibility, and steps to bridge the gap.</p>
+</div>
+</div>
+<div class="tool-card">
+<div class="tool-icon">💰</div>
+<div class="tool-info">
+<h3>Financial Trajectory Model</h3>
+<p>PSLF vs. refinance. Academic vs. private. See your 10-year net wealth under different scenarios.</p>
+</div>
+</div>
+<div class="tool-card">
+<div class="tool-icon">📋</div>
+<div class="tool-info">
+<h3>Contract Leverage Tool</h3>
+<p>Evaluate compensation, non-competes, tail coverage, and RVU models against MGMA benchmarks.</p>
+</div>
+</div>
+<div class="tool-card">
+<div class="tool-icon">🧠</div>
+<div class="tool-info">
+<h3>Burnout Risk Assessment</h3>
+<p>Identify your specific burnout drivers and get an evidence-based prevention framework.</p>
+</div>
+</div>
+<div class="tool-card">
+<div class="tool-icon">🧭</div>
+<div class="tool-info">
+<h3>Strategic Decision Frameworks</h3>
+<p>Structured thinking tools for fellowship, career pivots, contract decisions, and income optimization.</p>
+</div>
+</div>
+</div>
 </div>
 </div>
 
-<!-- What We Cover -->
-<div class="lp-sec">
-<h2 class="serif">What We Cover</h2>
-<div class="lp-divider"></div>
-<p class="sub">Mentorship across six domains — structured, not scattered.</p>
-<div class="master-grid reveal">
-<div class="master-item"><div class="icon">🧭</div><h3>Career Strategy</h3></div>
-<div class="master-item"><div class="icon">📋</div><h3>Fellowship Planning</h3></div>
-<div class="master-item"><div class="icon">📝</div><h3>Contract Education</h3></div>
-<div class="master-item"><div class="icon">💰</div><h3>Financial Literacy</h3></div>
-<div class="master-item"><div class="icon">📊</div><h3>Professional Growth</h3></div>
-<div class="master-item"><div class="icon">⚖️</div><h3>Lifestyle Design</h3></div>
-</div>
-</div>
-
-<!-- How It Works -->
-<div class="lp-sec" id="how-sec" style="background:var(--bg2)">
+<!-- HOW IT WORKS -->
+<div class="lp-sec" id="how-sec">
 <h2 class="serif">How It Works</h2>
 <div class="lp-divider"></div>
-<p class="sub">A structured process — not a free-for-all Q&A.</p>
+<p class="sub">Build your profile. Get immediate insights. Use tools to model decisions.</p>
 
 <div class="flow-road reveal">
 <div class="flow-node">
-<div class="flow-icon">📝</div>
-<div class="flow-label">Submit</div>
-<div class="flow-desc">Structured intake — training level, specialty, timeline, constraints</div>
+<div class="flow-icon">👤</div>
+<div class="flow-label">Your Stage</div>
+<div class="flow-desc">Select your training level — system personalizes automatically</div>
 </div>
 <div class="flow-arrow">
 <svg width="40" height="24" viewBox="0 0 40 24"><path d="M0 12h32M26 4l8 8-8 8" fill="none" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity=".5"/></svg>
 </div>
 <div class="flow-node">
-<div class="flow-icon">🤖</div>
-<div class="flow-label">AI Framework</div>
-<div class="flow-desc">Evidence-based analysis, action steps, pitfalls, 30-day plan</div>
+<div class="flow-icon">📋</div>
+<div class="flow-label">Your Profile</div>
+<div class="flow-desc">Scores, research, goals — your competitive baseline</div>
 </div>
 <div class="flow-arrow">
 <svg width="40" height="24" viewBox="0 0 40 24"><path d="M0 12h32M26 4l8 8-8 8" fill="none" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity=".5"/></svg>
 </div>
 <div class="flow-node">
-<div class="flow-icon">🧑‍⚕️</div>
-<div class="flow-label">Physician Review</div>
-<div class="flow-desc">Dr. Faroqui adds clinical insight and real-world experience</div>
+<div class="flow-icon">📊</div>
+<div class="flow-label">Your Report</div>
+<div class="flow-desc">Competitiveness score, gaps, 6-month strategic plan</div>
 </div>
 <div class="flow-arrow">
 <svg width="40" height="24" viewBox="0 0 40 24"><path d="M0 12h32M26 4l8 8-8 8" fill="none" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity=".5"/></svg>
 </div>
 <div class="flow-node">
-<div class="flow-icon">✦</div>
+<div class="flow-icon">⚡</div>
 <div class="flow-label">Take Action</div>
-<div class="flow-desc">Execute with clarity — structured plan, not guesswork</div>
-</div>
-</div>
-
-<div class="reveal" style="max-width:500px;margin:32px auto 0;padding:0 16px">
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-<div style="padding:20px;background:var(--bg);border:1px solid var(--border);border-radius:var(--r)">
-<div style="font-size:11px;font-weight:500;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Structured Input</div>
-<div style="font-size:12px;color:var(--text3);line-height:1.6;font-weight:300">Training level, specialty, timeline, constraints. Structured input produces structured output.</div>
-</div>
-<div style="padding:20px;background:var(--bg);border:1px solid var(--border);border-radius:var(--r)">
-<div style="font-size:11px;font-weight:500;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">AI Framework</div>
-<div style="font-size:12px;color:var(--text3);line-height:1.6;font-weight:300">Assessment, key considerations, action plan, common pitfalls, references. AI provides the framework — not final advice.</div>
-</div>
-<div style="padding:20px;background:var(--bg);border:1px solid var(--border);border-radius:var(--r)">
-<div style="font-size:11px;font-weight:500;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Physician Insight</div>
-<div style="font-size:12px;color:var(--text3);line-height:1.6;font-weight:300">Use review credits for Dr. Faroqui's direct commentary. Clinical experience layered on AI frameworks.</div>
-</div>
-<div style="padding:20px;background:var(--bg);border:1px solid var(--border);border-radius:var(--r)">
-<div style="font-size:11px;font-weight:500;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Growing Archive</div>
-<div style="font-size:12px;color:var(--text3);line-height:1.6;font-weight:300">Browse reviewed questions from other members. Learn from frameworks refined by physician oversight.</div>
-</div>
+<div class="flow-desc">Model scenarios, compare options, optimize decisions</div>
 </div>
 </div>
 </div>
 
-<!-- Why We Built This -->
-<div class="lp-sec" id="about-sec">
-<h2 class="serif">Why We Built This</h2>
+<!-- WHY NOT CHATGPT -->
+<div class="lp-sec" id="diff-sec" style="background:var(--bg2)">
+<h2 class="serif">Why Not ChatGPT?</h2>
 <div class="lp-divider"></div>
-<p class="sub">Honest context about where HeartWise is today.</p>
 <div class="reveal" style="max-width:500px;margin:0 auto">
-<div class="card" style="padding:28px;margin-bottom:14px">
-<div style="font-size:12px;font-weight:500;color:var(--accent);margin-bottom:14px;text-transform:uppercase;letter-spacing:1px">Built by a Physician</div>
-<p style="font-size:14px;color:var(--text2);line-height:1.7;font-weight:300">HeartWise was created by Dr. Mouzam Faroqui, an interventional cardiologist in Houston, TX. The platform reflects real experience navigating training, contracts, and career decisions — not theoretical advice.</p>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:32px">
+<div class="card" style="padding:24px;border-color:rgba(196,77,86,.15)">
+<div style="font-size:12px;font-weight:500;color:var(--red);margin-bottom:12px;text-transform:uppercase;letter-spacing:1px">Generic AI</div>
+<ul style="list-style:none;padding:0;margin:0">
+<li style="font-size:12px;color:var(--text3);padding:5px 0;line-height:1.5">✗ Generic information</li>
+<li style="font-size:12px;color:var(--text3);padding:5px 0;line-height:1.5">✗ No physician context</li>
+<li style="font-size:12px;color:var(--text3);padding:5px 0;line-height:1.5">✗ Can't model your scenarios</li>
+<li style="font-size:12px;color:var(--text3);padding:5px 0;line-height:1.5">✗ No competitive benchmarking</li>
+<li style="font-size:12px;color:var(--text3);padding:5px 0;line-height:1.5">✗ No saved progress</li>
+</ul>
 </div>
-<div class="card" style="padding:28px;margin-bottom:14px">
-<div style="font-size:12px;font-weight:500;color:var(--accent);margin-bottom:14px;text-transform:uppercase;letter-spacing:1px">Transparent Limitations</div>
-<p style="font-size:14px;color:var(--text2);line-height:1.7;font-weight:300">This is a new platform. We don't have hundreds of success stories yet. What we do have: a structured methodology, physician oversight, and a commitment to honest, ethical guidance. We'll earn trust through process, not promises.</p>
+<div class="card" style="padding:24px;border-color:rgba(200,168,124,.2)">
+<div style="font-size:12px;font-weight:500;color:var(--accent);margin-bottom:12px;text-transform:uppercase;letter-spacing:1px">HeartWise</div>
+<ul style="list-style:none;padding:0;margin:0">
+<li style="font-size:12px;color:var(--text);padding:5px 0;line-height:1.5">✦ Competitive positioning</li>
+<li style="font-size:12px;color:var(--text);padding:5px 0;line-height:1.5">✦ Career simulation tools</li>
+<li style="font-size:12px;color:var(--text);padding:5px 0;line-height:1.5">✦ Physician-specific financial modeling</li>
+<li style="font-size:12px;color:var(--text);padding:5px 0;line-height:1.5">✦ Decision frameworks from real experience</li>
+<li style="font-size:12px;color:var(--text);padding:5px 0;line-height:1.5">✦ Track and compare over time</li>
+</ul>
 </div>
-<div class="card" style="padding:28px;margin-bottom:14px">
-<div style="font-size:12px;font-weight:500;color:var(--accent);margin-bottom:14px;text-transform:uppercase;letter-spacing:1px">Process Over Promises</div>
-<p style="font-size:14px;color:var(--text2);line-height:1.7;font-weight:300">We sell structured thinking — not guaranteed outcomes. Every question goes through a defined intake process. AI provides frameworks. Physician review adds experience. You make the decisions.</p>
 </div>
+<p style="font-size:14px;color:var(--text2);text-align:center;font-weight:300;line-height:1.7">You don't need more answers.<br><strong style="color:var(--accent);font-weight:500">You need better strategy.</strong></p>
 </div>
 </div>
 
-<!-- Not For -->
-<div class="lp-sec" style="background:var(--bg2)">
-<h2 class="serif">Who This Is <em>Not</em> For</h2>
+<!-- ABOUT -->
+<div class="lp-sec" id="about-sec">
+<h2 class="serif">Built by a Physician Who's Been There</h2>
 <div class="lp-divider"></div>
-<p class="sub" style="max-width:420px;line-height:1.8;font-weight:300">HeartWise is not a replacement for legal counsel, financial advisors, or medical advice. It is educational mentorship only. If you need contract legal review, tax planning, or clinical decision-making — please consult the appropriate professional.</p>
+<div class="reveal" style="max-width:500px;margin:0 auto">
+<div class="card" style="padding:28px">
+<p style="font-size:14px;color:var(--text2);line-height:1.8;font-weight:300;margin-bottom:16px">HeartWise was created by <strong style="font-weight:500;color:var(--text)">Dr. Mouzam Faroqui</strong>, a practicing interventional cardiologist in Houston, TX. The platform reflects real experience navigating training, fellowship, contracts, and career decisions.</p>
+<p style="font-size:14px;color:var(--text2);line-height:1.8;font-weight:300">Every tool and framework comes from patterns observed across hundreds of physician career decisions — not theoretical advice from people who've never been in your position.</p>
+</div>
+</div>
 </div>
 
-<!-- Pricing -->
-<div class="lp-sec" id="pricing-sec">
+<!-- PRICING -->
+<div class="lp-sec" id="pricing-sec" style="background:var(--bg2)">
 <h2 class="serif">Membership</h2>
 <div class="lp-divider"></div>
-<p class="sub">Start free. Upgrade when the structure proves useful to you.</p>
+<p class="sub">Start with 7 days of full access. Keep what works.</p>
 
 <div class="reveal" style="max-width:500px;margin:0 auto">
-<div class="plan">
-<div class="plan-n" style="color:var(--text2)">Free</div>
-<div style="font-size:12px;color:var(--accent);font-weight:400;margin-bottom:6px;letter-spacing:.3px">Explore the Platform</div>
-<div class="plan-p">$0<span> /mo</span></div>
-<ul class="plan-f">
-<li>1 AI-guided mentorship response per month</li>
-<li>Access to public reviewed archive</li>
-<li>Structured career prompts</li>
-</ul>
-<p style="font-size:12px;color:var(--text3);margin-bottom:18px;font-weight:300">See if the process works for you — no commitment.</p>
-<button class="btn btn-g" onclick="go('pg-signup')">Start Free</button>
+
+<!-- Trial CTA -->
+<div style="padding:24px;border-radius:var(--r3);background:linear-gradient(160deg,rgba(200,168,124,.06),rgba(200,168,124,.02));border:1px solid var(--border2);margin-bottom:20px;text-align:center">
+<div style="font-size:18px;font-family:'Cormorant Garamond',serif;font-weight:600;margin-bottom:8px">7-Day Strategic Access</div>
+<p style="font-size:13px;color:var(--text2);font-weight:300;line-height:1.6;margin-bottom:16px">Unlimited access to every tool. No credit card. See if the system works for you.</p>
+<button class="btn btn-a" onclick="go('pg-onboard')" style="max-width:260px;margin:0 auto">Start Free Trial</button>
 </div>
 
 <div class="plan">
-<div class="plan-n" style="color:var(--blue)">Core</div>
-<div style="font-size:12px;color:var(--blue);font-weight:400;margin-bottom:6px;letter-spacing:.3px">Structured Mentorship</div>
-<div class="plan-p">$19<span> /mo</span></div>
+<div class="plan-n" style="color:var(--text3)">Explorer</div>
+<div style="font-size:12px;color:var(--text3);font-weight:400;margin-bottom:6px;letter-spacing:.3px">After Trial</div>
+<div class="plan-p">$0<span> /mo</span></div>
 <ul class="plan-f">
-<li>20 AI-guided mentorship responses per month</li>
-<li>1 Physician Review Credit per month</li>
-<li>Full reviewed question archive</li>
-<li>Structured career guidance prompts</li>
+<li>Limited access to archived strategy library</li>
+<li>1 structured analysis per month</li>
+<li>No saved progress</li>
 </ul>
-<p style="font-size:12px;color:var(--text3);margin-bottom:18px;font-weight:300">For students and residents who want consistent, structured career guidance.</p>
-<button class="btn btn-a" onclick="go('pg-signup')">Get Core</button>
+<p style="font-size:12px;color:var(--text3);margin-bottom:18px;font-weight:300">Designed to sample the system.</p>
+<button class="btn btn-g" onclick="go('pg-onboard')">Start Free</button>
 </div>
 
 <div class="plan pop">
-<div class="plan-n" style="color:var(--accent)">High Performer</div>
-<div style="font-size:12px;color:var(--accent);font-weight:400;margin-bottom:6px;letter-spacing:.3px">Structured Guidance System</div>
-<div class="plan-p">$59<span> /mo</span></div>
+<div class="plan-n" style="color:var(--accent)">Core</div>
+<div style="font-size:12px;color:var(--accent);font-weight:400;margin-bottom:6px;letter-spacing:.3px">Your Strategic Engine</div>
+<div class="plan-p">$15<span> /mo</span></div>
 <ul class="plan-f">
-<li>Monthly Guidance Module — 30–45 min recorded deep dive</li>
-<li>Structured Decision Engine — Fellowship, Contract, Income, or Career Pivot track</li>
-<li>Framework Library — worksheets, checklists, comparison matrices</li>
-<li>Quarterly Q&A Forum — pre-submitted questions, recorded</li>
-<li>Limited physician review credits (batch reviewed)</li>
+<li>Unlimited structured strategic assessments</li>
+<li>Save &amp; track progress over time</li>
+<li>Career and financial modeling tools</li>
+<li>Scenario simulations</li>
+<li>Full strategy archive</li>
+<li>Quarterly strategy updates</li>
 </ul>
-<p style="font-size:11px;color:var(--text3);margin-bottom:6px;font-weight:300">Structured career architecture. Not 1:1 coaching or guaranteed outcomes.</p>
-<p style="font-size:10px;color:var(--text3);margin-bottom:18px;font-style:italic;font-weight:300">Frameworks and process — not promises.</p>
-<button class="btn btn-a" onclick="go('pg-signup')">Get High Performer</button>
+<p style="font-size:12px;color:var(--text3);margin-bottom:18px;font-weight:300">No physician time required. This is your scalable intelligence tier.</p>
+<button class="btn btn-a" onclick="go('pg-onboard')">Get Core</button>
 </div>
 
 <div class="plan ft">
-<div class="plan-n" style="color:var(--accent2)">Private Strategy</div>
-<div style="font-size:12px;color:var(--accent2);font-weight:400;margin-bottom:6px;letter-spacing:.3px">Structured Career Review</div>
-<div class="plan-p" style="font-size:32px">From $1,250</div>
-<div style="font-size:12px;color:var(--text3);margin-bottom:16px;font-weight:300">Structured, one-time engagement during major career decisions.</div>
-<div style="font-size:11px;font-weight:500;color:var(--accent);margin-bottom:10px;letter-spacing:.5px">Strategic Audit — $1,250–$1,750</div>
+<div class="plan-n" style="color:var(--accent2)">Elite Strategy</div>
+<div style="font-size:12px;color:var(--accent2);font-weight:400;margin-bottom:6px;letter-spacing:.3px">Limited Enrollment</div>
+<div class="plan-p">$99<span> /mo</span></div>
 <ul class="plan-f">
-<li>Structured intake + CV or offer review</li>
-<li>20–30 min recorded strategic breakdown</li>
-<li>Written action plan</li>
-<li>Delivered within 7 days. No live call.</li>
+<li>Everything in Core</li>
+<li>1 Physician Review Credit per month</li>
+<li>CV or contract review by Dr. Faroqui</li>
+<li>Custom roadmap feedback</li>
+<li>Priority responses</li>
 </ul>
-<div style="font-size:11px;font-weight:500;color:var(--accent);margin:14px 0 10px;letter-spacing:.5px">Strategic Intensive — $2,500</div>
-<ul class="plan-f">
-<li>Structured intake + 30–60 min focused session</li>
-<li>Written action plan + 14-day follow-up window</li>
-<li>Limited availability to maintain quality</li>
-</ul>
-<p style="font-size:11px;color:var(--text3);margin:14px 0 18px;font-style:italic;font-weight:300">For fellowship application year, first attending contract, multi-offer comparison, or practice model decisions.</p>
-<button class="btn btn-a" onclick="go('pg-signup')">Apply to Book</button>
+<p style="font-size:12px;color:var(--text3);margin-bottom:18px;font-weight:300">Intentionally scarce. Direct physician access layered on the full platform.</p>
+<button class="btn btn-a" onclick="go('pg-onboard')">Apply for Elite</button>
 </div>
+
 </div>
 </div>
 
 <!-- Footer -->
 <div style="padding:60px 32px 48px;text-align:center;border-top:1px solid var(--border)">
 <div style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;margin-bottom:16px;color:var(--text)">HeartWise</div>
-<div style="font-size:12px;color:var(--text3);max-width:380px;margin:0 auto 24px;line-height:1.7;font-weight:300">AI provides frameworks. Physicians add experience. You make decisions.</div>
+<div style="font-size:12px;color:var(--text3);max-width:380px;margin:0 auto 24px;line-height:1.7;font-weight:300">Strategic intelligence. Not generic answers.</div>
 <div style="width:32px;height:1px;background:var(--accent);margin:0 auto 24px;opacity:.3"></div>
-<p style="font-size:11px;color:var(--text3);line-height:1.7;max-width:400px;margin:0 auto;font-weight:300">HeartWise provides structured educational mentorship only. It does not provide medical, legal, financial, or tax advice. Users should consult appropriate professionals for individualized decisions.</p>
+<p style="font-size:11px;color:var(--text3);line-height:1.7;max-width:400px;margin:0 auto;font-weight:300">HeartWise provides structured educational strategy. It does not provide medical, legal, financial, or tax advice. AI outputs are frameworks, not personalized recommendations. Users should consult appropriate professionals for individualized decisions.</p>
 <p style="font-size:11px;color:var(--text3);margin-top:16px;font-weight:300">© 2026 HeartWise. All rights reserved.</p>
 </div>
 </div>

@@ -8,6 +8,29 @@
   }
 })();
 
+// ===== LANDING MENU =====
+function toggleLandingMenu(e){
+  e.stopPropagation();
+  const m=document.getElementById('landing-menu');
+  m.classList.toggle('hidden');
+}
+function closeLandingMenu(){
+  const m=document.getElementById('landing-menu');
+  if(m)m.classList.add('hidden');
+}
+function landingNav(id){
+  closeLandingMenu();
+  if(id==='pg-landing'){document.getElementById('pg-landing').scrollTo({top:0,behavior:'smooth'});return}
+  const el=document.getElementById(id);
+  if(el)el.scrollIntoView({behavior:'smooth'});
+}
+document.addEventListener('click',function(e){
+  const m=document.getElementById('landing-menu');
+  if(m&&!m.classList.contains('hidden')){
+    if(!e.target.closest('.topbar-logo'))closeLandingMenu();
+  }
+});
+
 // ===== SCROLL REVEAL =====
 (function(){
   const obs=new IntersectionObserver(function(entries){

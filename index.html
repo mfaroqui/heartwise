@@ -45,6 +45,10 @@ a:hover{color:var(--accent2)}
 .topbar-links a:hover{color:var(--accent)}
 .topbar-links .tb-cta{background:transparent;color:var(--accent);padding:9px 22px;border-radius:100px;font-weight:500;font-size:11px;letter-spacing:1px;text-transform:uppercase;transition:all .35s;border:1px solid var(--accent)}
 .topbar-links .tb-cta:hover{background:var(--accent);color:#09090e}
+.landing-menu{position:absolute;top:calc(100% + 12px);left:0;background:rgba(9,9,14,.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid var(--border2);border-radius:12px;padding:8px 0;min-width:200px;box-shadow:0 12px 40px rgba(0,0,0,.4);z-index:300}
+.landing-menu a{display:block;padding:10px 20px;font-size:13px;color:var(--text2);font-weight:400;transition:all .2s;letter-spacing:.3px}
+.landing-menu a:hover{background:var(--accent-dim);color:var(--accent)}
+.topbar-logo .logo-mark{cursor:pointer}
 @media(max-width:640px){
   .topbar{padding:16px 20px}
   .topbar-links a.tb-link{display:none}
@@ -342,9 +346,18 @@ a:hover{color:var(--accent2)}
 
 <!-- Top Navigation Bar (landing only) -->
 <nav class="topbar" id="topbar">
-<div class="topbar-logo" onclick="document.getElementById('pg-landing').scrollTo({top:0,behavior:'smooth'})">
-<div class="logo-mark"><svg><use href="#i-heart"/></svg></div>
-<span class="logo-text">HeartWise</span>
+<div class="topbar-logo" style="position:relative">
+<div class="logo-mark" onclick="toggleLandingMenu(event)"><svg><use href="#i-heart"/></svg></div>
+<span class="logo-text" onclick="document.getElementById('pg-landing').scrollTo({top:0,behavior:'smooth'})">HeartWise</span>
+<div id="landing-menu" class="landing-menu hidden">
+<a href="#" onclick="landingNav('pg-landing');return false">Home</a>
+<a href="#" onclick="landingNav('tools-sec');return false">Tools</a>
+<a href="#" onclick="landingNav('how-sec');return false">How It Works</a>
+<a href="#" onclick="landingNav('diff-sec');return false">Why HeartWise</a>
+<a href="#" onclick="landingNav('founder-sec');return false">Founder</a>
+<a href="#" onclick="landingNav('pricing-sec');return false">Pricing</a>
+<a href="#" onclick="event.preventDefault();go('pg-login');closeLandingMenu()">Sign In</a>
+</div>
 </div>
 <div class="topbar-links">
 <a href="#" class="tb-link" onclick="event.preventDefault();document.getElementById('tools-sec').scrollIntoView({behavior:'smooth'})">Tools</a>
@@ -1521,6 +1534,29 @@ v10:`<h3>Career Pivot Decision Engine</h3>
     window.addEventListener('scroll',function(){tb.classList.toggle('solid',window.scrollY>60)});
   }
 })();
+
+// ===== LANDING MENU =====
+function toggleLandingMenu(e){
+  e.stopPropagation();
+  const m=document.getElementById('landing-menu');
+  m.classList.toggle('hidden');
+}
+function closeLandingMenu(){
+  const m=document.getElementById('landing-menu');
+  if(m)m.classList.add('hidden');
+}
+function landingNav(id){
+  closeLandingMenu();
+  if(id==='pg-landing'){document.getElementById('pg-landing').scrollTo({top:0,behavior:'smooth'});return}
+  const el=document.getElementById(id);
+  if(el)el.scrollIntoView({behavior:'smooth'});
+}
+document.addEventListener('click',function(e){
+  const m=document.getElementById('landing-menu');
+  if(m&&!m.classList.contains('hidden')){
+    if(!e.target.closest('.topbar-logo'))closeLandingMenu();
+  }
+});
 
 // ===== SCROLL REVEAL =====
 (function(){

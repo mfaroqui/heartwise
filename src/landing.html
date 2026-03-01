@@ -1,8 +1,17 @@
 <!-- Top Navigation Bar (landing only) -->
 <nav class="topbar" id="topbar">
-<div class="topbar-logo" onclick="document.getElementById('pg-landing').scrollTo({top:0,behavior:'smooth'})">
-<div class="logo-mark"><svg><use href="#i-heart"/></svg></div>
-<span class="logo-text">HeartWise</span>
+<div class="topbar-logo" style="position:relative">
+<div class="logo-mark" onclick="toggleLandingMenu(event)"><svg><use href="#i-heart"/></svg></div>
+<span class="logo-text" onclick="document.getElementById('pg-landing').scrollTo({top:0,behavior:'smooth'})">HeartWise</span>
+<div id="landing-menu" class="landing-menu hidden">
+<a href="#" onclick="landingNav('pg-landing');return false">Home</a>
+<a href="#" onclick="landingNav('tools-sec');return false">Tools</a>
+<a href="#" onclick="landingNav('how-sec');return false">How It Works</a>
+<a href="#" onclick="landingNav('diff-sec');return false">Why HeartWise</a>
+<a href="#" onclick="landingNav('founder-sec');return false">Founder</a>
+<a href="#" onclick="landingNav('pricing-sec');return false">Pricing</a>
+<a href="#" onclick="event.preventDefault();go('pg-login');closeLandingMenu()">Sign In</a>
+</div>
 </div>
 <div class="topbar-links">
 <a href="#" class="tb-link" onclick="event.preventDefault();document.getElementById('tools-sec').scrollIntoView({behavior:'smooth'})">Tools</a>

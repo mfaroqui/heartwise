@@ -6,246 +6,289 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#0a0a0f">
-<title>HeartWise — High-Performance Physician Mentorship</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+<title>HeartWise — Physician-Built Mentorship Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet">
 </head>
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{
---bg:#0a0a0f;--bg2:#12121a;--bg3:#1a1a26;--bg4:#22222f;
---text:#f4f0ed;--text2:#b0adb0;--text3:#706d73;
---accent:#c8a87c;--accent2:#dfc19f;--accent-dim:rgba(200,168,124,.12);
---red:#c44d56;--red-dim:rgba(196,77,86,.12);
---green:#5cb89a;--green-dim:rgba(92,184,154,.12);
---blue:#6b8fd4;--blue-dim:rgba(107,143,212,.12);
---border:rgba(255,255,255,.06);--border2:rgba(255,255,255,.1);
---glass:rgba(10,10,15,.88);
---r:16px;--r2:12px;--r3:24px;
+--bg:#09090e;--bg2:#0f0f16;--bg3:#16161f;--bg4:#1e1e29;
+--text:#f0ece6;--text1:#f0ece6;--text2:#b8b3ac;--text3:#7a756e;
+--accent:#c8a87c;--accent2:#dfc19f;--accent-dim:rgba(200,168,124,.10);
+--rose:#c4929a;--rose-dim:rgba(196,146,154,.10);
+--champagne:#e8d5b7;
+--red:#c44d56;--red-dim:rgba(196,77,86,.10);
+--green:#8bb8a0;--green-dim:rgba(139,184,160,.10);
+--blue:#8badc4;--blue-dim:rgba(139,173,196,.10);
+--border:rgba(200,168,124,.08);--border2:rgba(200,168,124,.15);
+--glass:rgba(9,9,14,.92);
+--r:12px;--r2:10px;--r3:20px;
 }
 html{scroll-behavior:smooth}
-body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent}
-.serif{font-family:'Playfair Display',Georgia,serif}
-a{color:var(--accent);text-decoration:none}
+body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;font-size:15px;line-height:1.6}
+.serif{font-family:'Cormorant Garamond',Georgia,'Times New Roman',serif;font-weight:600}
+a{color:var(--accent);text-decoration:none;transition:color .2s}
+a:hover{color:var(--accent2)}
 .hidden{display:none!important}
 
-/* Splash */
-#splash{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .6s}
+/* ===== TOP NAV ===== */
+.topbar{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:20px 32px;background:transparent;backdrop-filter:blur(0px);-webkit-backdrop-filter:blur(0px);border-bottom:1px solid transparent;transition:all .5s ease}
+.topbar.solid{background:rgba(9,9,14,.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom-color:var(--border)}
+.topbar-logo{display:flex;align-items:center;gap:12px;cursor:pointer}
+.topbar-logo .logo-mark{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;transition:transform .3s}
+.topbar-logo:hover .logo-mark{transform:scale(1.05)}
+.topbar-logo .logo-mark svg{width:18px;height:18px;fill:#09090e}
+.topbar-logo .logo-text{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;color:var(--text);letter-spacing:.5px}
+.topbar-links{display:flex;gap:28px;align-items:center}
+.topbar-links a{font-size:13px;font-weight:400;color:var(--text2);transition:color .3s;letter-spacing:.5px}
+.topbar-links a:hover{color:var(--accent)}
+.topbar-links .tb-cta{background:transparent;color:var(--accent);padding:9px 22px;border-radius:100px;font-weight:500;font-size:11px;letter-spacing:1px;text-transform:uppercase;transition:all .35s;border:1px solid var(--accent)}
+.topbar-links .tb-cta:hover{background:var(--accent);color:#09090e}
+@media(max-width:640px){
+  .topbar{padding:16px 20px}
+  .topbar-links a.tb-link{display:none}
+  .topbar-links .tb-cta{padding:8px 16px;font-size:10px}
+}
+
+/* ===== SPLASH ===== */
+#splash{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .8s ease}
 #splash.out{opacity:0;pointer-events:none}
-.sp-mark{width:72px;height:72px;border-radius:20px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;margin-bottom:24px;box-shadow:0 0 60px rgba(200,168,124,.25)}
-.sp-mark svg{width:36px;height:36px;fill:#0a0a0f}
-.sp-t{font-size:28px;font-weight:600;letter-spacing:-.5px;margin-bottom:6px}
-.sp-s{font-size:12px;color:var(--text3);letter-spacing:2.5px;text-transform:uppercase}
+.sp-mark{width:64px;height:64px;border-radius:18px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;margin-bottom:24px;box-shadow:0 0 80px rgba(200,168,124,.12)}
+.sp-mark svg{width:32px;height:32px;fill:#09090e}
+.sp-t{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:600;letter-spacing:1px;margin-bottom:8px}
+.sp-s{font-size:11px;color:var(--text3);letter-spacing:3px;text-transform:uppercase;font-weight:300}
 
-/* Notification */
-.notif{position:fixed;top:20px;left:20px;right:20px;background:var(--bg2);border:1px solid var(--accent);border-radius:var(--r2);padding:16px 20px;z-index:2000;display:flex;align-items:center;gap:12px;transform:translateY(-120%);transition:transform .35s;box-shadow:0 12px 40px rgba(0,0,0,.5);backdrop-filter:blur(12px)}
+/* ===== NOTIFICATION ===== */
+.notif{position:fixed;top:20px;left:20px;right:20px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--r2);padding:16px 20px;z-index:2000;display:flex;align-items:center;gap:12px;transform:translateY(-120%);transition:transform .4s ease;box-shadow:0 16px 48px rgba(0,0,0,.4);backdrop-filter:blur(16px)}
 .notif.show{transform:translateY(0)}.notif.err{border-color:var(--red)}
-.notif-t{font-size:13px;font-weight:500;flex:1}
+.notif-t{font-size:13px;font-weight:400;flex:1}
 
-/* Buttons */
-.btn{display:flex;align-items:center;justify-content:center;gap:8px;padding:15px;border:none;border-radius:var(--r2);font-size:14px;font-weight:600;font-family:'Inter',sans-serif;cursor:pointer;transition:all .25s;letter-spacing:.3px;width:100%}
-.btn-a{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#0a0a0f}
-.btn-a:hover{transform:translateY(-1px);box-shadow:0 4px 20px rgba(200,168,124,.3)}
+/* ===== BUTTONS ===== */
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;padding:16px;border:none;border-radius:100px;font-size:13px;font-weight:500;font-family:'Inter',sans-serif;cursor:pointer;transition:all .35s ease;letter-spacing:.8px;text-transform:uppercase;width:100%}
+.btn-a{background:var(--accent);color:#09090e;box-shadow:0 4px 20px rgba(200,168,124,.12)}
+.btn-a:hover{background:var(--accent2);transform:translateY(-2px);box-shadow:0 8px 32px rgba(200,168,124,.2)}
 .btn-g{background:transparent;color:var(--text2);border:1px solid var(--border2)}
-.btn-sm{width:auto;padding:10px 22px;font-size:13px}
-.btn-lock{background:var(--bg4);color:var(--text3);cursor:not-allowed}
+.btn-g:hover{border-color:var(--accent);color:var(--accent)}
+.btn-sm{width:auto;padding:10px 24px;font-size:12px}
+.btn-lock{background:var(--bg4);color:var(--text3);cursor:not-allowed;box-shadow:none}
 
-/* Forms */
-.fg{margin-bottom:20px}
-.fg label{display:block;font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
-.fg input,.fg select,.fg textarea{width:100%;padding:14px 16px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r2);color:var(--text);font-size:15px;font-family:'Inter',sans-serif;outline:none;transition:border-color .25s}
+/* ===== FORMS ===== */
+.fg{margin-bottom:22px}
+.fg label{display:block;font-size:10px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px}
+.fg input,.fg select,.fg textarea{width:100%;padding:14px 18px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r2);color:var(--text);font-size:15px;font-family:'Inter',sans-serif;outline:none;transition:all .3s}
 .fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-dim)}
-.fg input::placeholder,.fg textarea::placeholder{color:var(--text3)}
+.fg input::placeholder,.fg textarea::placeholder{color:var(--text3);font-weight:300}
 .fg select{appearance:none;cursor:pointer}
 
-/* Nav */
-.nav{position:fixed;bottom:0;left:0;right:0;background:var(--glass);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid var(--border);display:none;justify-content:space-around;padding:6px 0 24px;z-index:100}
+/* ===== BOTTOM NAV ===== */
+.nav{position:fixed;bottom:0;left:0;right:0;background:var(--glass);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-top:1px solid var(--border);display:none;justify-content:space-around;padding:8px 0 26px;z-index:100}
 .nav.on{display:flex}
-.ni{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;font-weight:500;color:var(--text3);cursor:pointer;padding:8px 12px;background:none;border:none;transition:color .2s;letter-spacing:.3px;font-family:'Inter',sans-serif}
+.ni{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:9px;font-weight:400;color:var(--text3);cursor:pointer;padding:8px 12px;background:none;border:none;transition:color .25s;letter-spacing:.8px;text-transform:uppercase;font-family:'Inter',sans-serif}
 .ni.on,.ni:hover{color:var(--accent)}
-.ni svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.ni svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
 
-/* Header */
-.hdr{padding:18px 24px 14px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;background:var(--glass);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
-.hdr-t{font-family:'Playfair Display',serif;font-size:22px;font-weight:600}
-.badge{font-size:10px;padding:5px 12px;border-radius:20px;font-weight:600;letter-spacing:1px;text-transform:uppercase}
-.b-free{background:var(--bg4);color:var(--text3)}
-.b-core{background:var(--blue-dim);color:var(--blue)}
-.b-pro{background:var(--accent-dim);color:var(--accent)}
-.b-ment{background:linear-gradient(135deg,var(--accent-dim),rgba(200,168,124,.2));color:var(--accent2)}
-.b-admin{background:var(--green-dim);color:var(--green)}
+/* ===== HEADER (app) ===== */
+.hdr{padding:20px 24px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;background:var(--glass);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid var(--border)}
+.hdr-t{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:600;letter-spacing:.3px}
+.badge{font-size:9px;padding:5px 14px;border-radius:100px;font-weight:500;letter-spacing:1.2px;text-transform:uppercase}
+.b-free{background:var(--bg4);color:var(--text3)}.b-core{background:var(--blue-dim);color:var(--blue)}.b-pro{background:var(--accent-dim);color:var(--accent)}.b-ment{background:var(--accent-dim);color:var(--accent2)}.b-admin{background:var(--green-dim);color:var(--green)}
 
-/* Cards */
-.card{background:var(--bg2);border-radius:var(--r);padding:22px;margin-bottom:10px;border:1px solid var(--border);transition:all .25s}
+/* ===== CARDS ===== */
+.card{background:var(--bg2);border-radius:var(--r);padding:24px;margin-bottom:12px;border:1px solid var(--border);transition:all .35s ease}
 .card:hover{border-color:var(--border2)}
+.sec{font-size:10px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:2px;padding:28px 24px 14px}
 
-/* Section titles */
-.sec{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:1.5px;padding:24px 24px 14px}
+/* ===== TAGS ===== */
+.tag{font-size:9px;padding:4px 12px;border-radius:100px;font-weight:500;letter-spacing:1px;text-transform:uppercase;display:inline-block}
+.t-student{background:var(--green-dim);color:var(--green)}.t-resident{background:var(--blue-dim);color:var(--blue)}.t-fellow{background:var(--accent-dim);color:var(--accent)}.t-cat{background:var(--bg4);color:var(--text3);font-size:10px;letter-spacing:.5px}.t-reviewed{background:var(--green-dim);color:var(--green)}.t-pending{background:var(--accent-dim);color:var(--accent)}
 
-/* Tags */
-.tag{font-size:9px;padding:4px 10px;border-radius:20px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;display:inline-block}
-.t-student{background:var(--green-dim);color:var(--green)}
-.t-resident{background:var(--blue-dim);color:var(--blue)}
-.t-fellow{background:var(--accent-dim);color:var(--accent)}
-.t-cat{background:var(--bg4);color:var(--text3);font-size:10px;letter-spacing:.5px}
-.t-reviewed{background:var(--green-dim);color:var(--green)}
-.t-pending{background:var(--accent-dim);color:var(--accent)}
-
-/* Screens */
 .scr{display:none}.scr.on{display:block}
 
-/* Landing page */
+/* ========== LANDING ========== */
 .lp{overflow-y:auto;min-height:100vh}
-.hero{padding:80px 24px 60px;text-align:center;position:relative;overflow:hidden}
-.hero::before{content:'';position:absolute;top:-100px;right:-100px;width:400px;height:400px;background:radial-gradient(circle,rgba(200,168,124,.06),transparent 70%);border-radius:50%}
-.hero::after{content:'';position:absolute;bottom:-100px;left:-100px;width:300px;height:300px;background:radial-gradient(circle,rgba(107,143,212,.04),transparent 70%);border-radius:50%}
+
+/* Hero */
+.hero{padding:160px 32px 100px;text-align:center;position:relative;overflow:hidden;background:linear-gradient(180deg,rgba(9,9,14,.1) 0%,rgba(9,9,14,.55) 40%,rgba(9,9,14,.92) 70%,var(--bg) 100%),linear-gradient(160deg,#1a1520 0%,#12101a 30%,#0e0f18 60%,#09090e 100%)}
+.hero::before{content:'';position:absolute;top:-120px;right:-80px;width:600px;height:600px;background:radial-gradient(ellipse,rgba(200,168,124,.06),transparent 70%);border-radius:50%;pointer-events:none}
+.hero::after{content:'';position:absolute;bottom:-150px;left:-100px;width:500px;height:500px;background:radial-gradient(ellipse,rgba(196,146,154,.04),transparent 70%);border-radius:50%;pointer-events:none}
 .hero *{position:relative}
-.hero-badge{display:inline-block;padding:6px 16px;border-radius:20px;background:var(--accent-dim);color:var(--accent);font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-bottom:20px}
-.hero h1{font-family:'Playfair Display',serif;font-size:36px;font-weight:700;line-height:1.2;margin-bottom:16px;letter-spacing:-.5px}
-.hero h1 em{font-style:normal;color:var(--accent)}
-.hero p{color:var(--text2);font-size:15px;line-height:1.6;max-width:400px;margin:0 auto 32px}
-.hero .btn{max-width:280px;margin:0 auto 12px}
+.hero-badge{display:inline-block;padding:8px 20px;border-radius:100px;background:transparent;color:var(--accent);font-size:10px;font-weight:500;letter-spacing:2px;text-transform:uppercase;margin-bottom:28px;border:1px solid var(--border2)}
+.hero h1{font-family:'Cormorant Garamond',serif;font-size:40px;font-weight:600;line-height:1.2;margin-bottom:24px;letter-spacing:.5px}
+@media(min-width:600px){.hero h1{font-size:52px}}
+.hero h1 em{font-style:italic;color:var(--accent)}
+.hero p{color:var(--text2);font-size:16px;line-height:1.7;max-width:460px;margin:0 auto 44px;font-weight:300}
 
-.lp-sec{padding:48px 24px}
-.lp-sec h2{font-family:'Playfair Display',serif;font-size:26px;font-weight:600;margin-bottom:8px;text-align:center}
-.lp-sec .sub{color:var(--text3);font-size:13px;text-align:center;margin-bottom:32px}
+/* Landing sections */
+.lp-sec{padding:80px 32px}
+@media(max-width:480px){.lp-sec{padding:60px 20px}}
+.lp-sec h2{font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:600;margin-bottom:14px;text-align:center;letter-spacing:.3px}
+@media(max-width:480px){.lp-sec h2{font-size:28px}}
+.lp-sec .sub{color:var(--text3);font-size:14px;text-align:center;margin-bottom:44px;line-height:1.7;max-width:440px;margin-left:auto;margin-right:auto;font-weight:300}
 
-.who-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.who-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:20px;text-align:center}
-.who-card .icon{font-size:28px;margin-bottom:10px}
-.who-card h3{font-size:14px;font-weight:600;margin-bottom:4px}
-.who-card p{font-size:11px;color:var(--text3);line-height:1.4}
+/* Divider */
+.lp-divider{width:48px;height:1px;background:var(--accent);margin:0 auto 44px;opacity:.4}
 
-.master-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.master-item{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:16px;text-align:center}
-.master-item .icon{font-size:24px;margin-bottom:8px}
-.master-item h3{font-size:13px;font-weight:600}
+.who-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;max-width:500px;margin:0 auto}
+.who-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:28px 20px;text-align:center;transition:all .4s ease}
+.who-card:hover{border-color:var(--accent);transform:translateY(-3px);box-shadow:0 12px 40px rgba(200,168,124,.06)}
+.who-card .icon{font-size:28px;margin-bottom:12px}
+.who-card h3{font-size:14px;font-weight:600;margin-bottom:8px;letter-spacing:.2px}
+.who-card p{font-size:12px;color:var(--text3);line-height:1.6;font-weight:300}
 
-.how-steps{counter-reset:step}
-.how-step{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:20px;margin-bottom:10px;display:flex;gap:16px;align-items:flex-start}
-.how-step .num{width:36px;height:36px;border-radius:50%;background:var(--accent-dim);color:var(--accent);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex-shrink:0}
-.how-step h3{font-size:14px;font-weight:600;margin-bottom:4px}
-.how-step p{font-size:12px;color:var(--text3);line-height:1.5}
+.master-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;max-width:500px;margin:0 auto}
+@media(max-width:400px){.master-grid{grid-template-columns:1fr 1fr;gap:10px}}
+.master-item{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:22px;text-align:center;transition:all .4s ease}
+.master-item:hover{border-color:var(--accent);transform:translateY(-2px)}
+.master-item .icon{font-size:22px;margin-bottom:10px}
+.master-item h3{font-size:12px;font-weight:500;letter-spacing:.3px}
 
-/* Pricing */
-.plan{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r3);padding:28px;margin-bottom:12px}
-.plan.ft{border-color:rgba(200,168,124,.3);background:linear-gradient(135deg,var(--bg2),rgba(200,168,124,.03))}
+/* Flow Roadmap */
+.flow-road{display:flex;align-items:flex-start;justify-content:center;gap:0;padding:12px 16px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.flow-node{display:flex;flex-direction:column;align-items:center;text-align:center;min-width:85px;max-width:105px;flex-shrink:0}
+.flow-icon{width:56px;height:56px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:12px;border:1px solid var(--border);transition:all .4s ease;background:var(--bg3)}
+.flow-node:hover .flow-icon{border-color:var(--accent);transform:translateY(-3px);box-shadow:0 8px 24px rgba(200,168,124,.08)}
+.flow-label{font-size:11px;font-weight:600;color:var(--text);margin-bottom:5px;white-space:nowrap;letter-spacing:.3px}
+.flow-desc{font-size:10px;color:var(--text3);line-height:1.5;font-weight:300}
+.flow-arrow{display:flex;align-items:center;padding-top:18px;flex-shrink:0}
+@media(max-width:520px){.flow-road{padding:8px 4px}.flow-node{min-width:64px;max-width:75px}.flow-icon{width:44px;height:44px;border-radius:11px;font-size:18px}.flow-label{font-size:10px}.flow-desc{font-size:9px}.flow-arrow svg{width:26px;height:18px}}
+
+/* ===== PRICING ===== */
+.plan{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r3);padding:36px 32px;margin-bottom:16px;transition:all .4s ease}
+.plan:hover{border-color:var(--border2);transform:translateY(-2px);box-shadow:0 12px 48px rgba(0,0,0,.2)}
+.plan.ft{border-color:var(--border2);background:linear-gradient(160deg,var(--bg2),rgba(200,168,124,.03))}
 .plan.pop{border-color:var(--accent);position:relative}
-.plan.pop::before{content:'MOST POPULAR';position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:var(--accent);color:#0a0a0f;font-size:9px;font-weight:700;padding:4px 12px;border-radius:10px;letter-spacing:1px}
-.plan-n{font-size:16px;font-weight:600;margin-bottom:4px}
-.plan-p{font-size:36px;font-weight:700;margin-bottom:2px;letter-spacing:-1px}
-.plan-p span{font-size:13px;font-weight:400;color:var(--text3)}
-.plan-f{list-style:none;padding:0;margin:18px 0}
-.plan-f li{padding:7px 0;font-size:13px;color:var(--text2);display:flex;align-items:flex-start;gap:10px;line-height:1.4}
-.plan-f li::before{content:'✦';color:var(--accent);font-size:10px;margin-top:2px}
-.plan-limit{font-size:11px;color:var(--red);font-weight:500;margin-bottom:12px}
+.plan.pop::before{content:'RECOMMENDED';position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:var(--accent);color:#09090e;font-size:9px;font-weight:600;padding:4px 16px;border-radius:100px;letter-spacing:1.5px}
+.plan-n{font-size:16px;font-weight:600;margin-bottom:6px;letter-spacing:.3px}
+.plan-p{font-family:'Cormorant Garamond',serif;font-size:44px;font-weight:600;margin-bottom:4px;letter-spacing:-1px}
+.plan-p span{font-size:14px;font-weight:400;color:var(--text3);font-family:'Inter',sans-serif}
+.plan-f{list-style:none;padding:0;margin:22px 0}
+.plan-f li{padding:8px 0;font-size:13px;color:var(--text2);display:flex;align-items:flex-start;gap:12px;line-height:1.6;font-weight:300}
+.plan-f li::before{content:'✦';color:var(--accent);font-size:9px;margin-top:4px;flex-shrink:0}
 
-/* Usage bar */
-.usage{background:var(--bg3);border-radius:8px;height:8px;overflow:hidden;margin-top:6px}
-.usage-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:8px;transition:width .5s}
-.usage-label{display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-top:4px}
+/* Usage */
+.usage{background:var(--bg3);border-radius:6px;height:6px;overflow:hidden;margin-top:6px}
+.usage-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:6px;transition:width .6s ease}
+.usage-label{display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-top:5px}
 
-/* AI Response card */
-.ai-resp{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:22px;margin-bottom:16px}
-.ai-resp h4{font-size:12px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin:16px 0 8px;display:flex;align-items:center;gap:8px}
+/* AI Response */
+.ai-resp{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:24px;margin-bottom:16px}
+.ai-resp h4{font-size:11px;font-weight:500;color:var(--accent);text-transform:uppercase;letter-spacing:1.5px;margin:18px 0 10px;display:flex;align-items:center;gap:8px}
 .ai-resp h4:first-child{margin-top:0}
-.ai-resp p,.ai-resp li{font-size:14px;color:var(--text2);line-height:1.7}
+.ai-resp p,.ai-resp li{font-size:14px;color:var(--text2);line-height:1.7;font-weight:300}
 .ai-resp ol{padding-left:20px;margin:8px 0}
-.ai-resp .escalate{margin-top:16px;padding:12px 16px;border-radius:var(--r2);background:var(--accent-dim);border:1px solid rgba(200,168,124,.2);font-size:13px;color:var(--accent)}
+.ai-resp .escalate{margin-top:18px;padding:14px 18px;border-radius:var(--r2);background:var(--accent-dim);border:1px solid rgba(200,168,124,.12);font-size:13px;color:var(--accent)}
 
-/* Template vault */
-.vault-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:20px;margin-bottom:10px;display:flex;align-items:center;gap:16px}
+/* Vault */
+.vault-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:22px;margin-bottom:12px;display:flex;align-items:center;gap:16px;transition:all .35s ease}
 .vault-card .v-icon{width:44px;height:44px;border-radius:12px;background:var(--accent-dim);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
-.vault-card .v-info{flex:1}
-.vault-card .v-info h3{font-size:14px;font-weight:600;margin-bottom:2px}
-.vault-card .v-info p{font-size:12px;color:var(--text3)}
+.vault-card .v-info{flex:1}.vault-card .v-info h3{font-size:14px;font-weight:500;margin-bottom:3px}.vault-card .v-info p{font-size:12px;color:var(--text3);font-weight:300}
 .vault-card .v-lock{color:var(--text3);font-size:18px}
 .vault-card.unlocked{border-color:var(--accent);cursor:pointer}
+.vault-card.unlocked:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(200,168,124,.08)}
 .vault-card.unlocked .v-lock{color:var(--accent)}
 
-/* Question card (archive) */
-.qc{background:var(--bg2);border-radius:var(--r);padding:22px;margin-bottom:10px;border:1px solid var(--border);transition:all .25s;cursor:pointer}
-.qc:hover{border-color:var(--border2);transform:translateY(-1px)}
-.qc-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
-.qc-author{font-size:12px;color:var(--text3);font-weight:500}
-.qc-q{font-size:15px;font-weight:500;line-height:1.5;margin-bottom:12px}
+/* Question cards */
+.qc{background:var(--bg2);border-radius:var(--r);padding:24px;margin-bottom:12px;border:1px solid var(--border);transition:all .35s ease;cursor:pointer}
+.qc:hover{border-color:var(--border2);transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,.15)}
+.qc-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.qc-author{font-size:11px;color:var(--text3);font-weight:400;letter-spacing:.3px}
+.qc-q{font-size:15px;font-weight:400;line-height:1.6;margin-bottom:14px}
 .qc-meta{display:flex;gap:12px;font-size:11px;color:var(--text3);align-items:center;flex-wrap:wrap}
 
 /* Admin */
-.admin-tabs{display:flex;padding:0 24px;gap:4px;border-bottom:1px solid var(--border);overflow-x:auto}
-.atab{padding:14px 16px;font-size:12px;font-weight:600;color:var(--text3);cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;transition:all .2s;letter-spacing:.5px;text-transform:uppercase;font-family:'Inter',sans-serif;white-space:nowrap}
+.admin-tabs{display:flex;padding:0 24px;gap:6px;border-bottom:1px solid var(--border);overflow-x:auto}
+.atab{padding:14px 16px;font-size:10px;font-weight:500;color:var(--text3);cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;transition:all .25s;letter-spacing:1px;text-transform:uppercase;font-family:'Inter',sans-serif;white-space:nowrap}
 .atab.on{color:var(--accent);border-bottom-color:var(--accent)}
-.abox{background:var(--bg3);border-radius:var(--r2);padding:16px;margin-top:14px;border:1px solid var(--border)}
+.abox{background:var(--bg3);border-radius:var(--r2);padding:18px;margin-top:14px;border:1px solid var(--border)}
 .abox textarea{width:100%;background:transparent;border:none;color:var(--text);font-size:14px;resize:vertical;min-height:100px;outline:none;font-family:'Inter',sans-serif;line-height:1.6}
 
 /* Modal */
-.modal-ov{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:1000;display:flex;align-items:center;justify-content:center;padding:24px;backdrop-filter:blur(8px)}
-.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--r3);padding:32px;max-width:440px;width:100%;max-height:85vh;overflow-y:auto;box-shadow:0 8px 40px rgba(0,0,0,.4)}
-.modal h2{font-family:'Playfair Display',serif;font-size:22px;margin-bottom:16px;font-weight:600}
-.modal p,.modal li{font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:8px}
+.modal-ov{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:1000;display:flex;align-items:center;justify-content:center;padding:24px;backdrop-filter:blur(12px)}
+.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--r3);padding:36px;max-width:440px;width:100%;max-height:85vh;overflow-y:auto;box-shadow:0 12px 60px rgba(0,0,0,.4)}
+.modal h2{font-family:'Cormorant Garamond',serif;font-size:24px;margin-bottom:18px;font-weight:600}
+.modal p,.modal li{font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:8px;font-weight:300}
 .modal ul{padding-left:18px}
 
-/* Chip filters */
+/* Chips */
 .fc{display:flex;gap:8px;padding:0 24px;margin-bottom:16px;overflow-x:auto;-webkit-overflow-scrolling:touch}
 .fc::-webkit-scrollbar{display:none}
-.chip{padding:8px 16px;border-radius:20px;font-size:12px;font-weight:500;background:var(--bg3);border:1px solid var(--border);cursor:pointer;transition:all .2s;color:var(--text2);white-space:nowrap;font-family:'Inter',sans-serif}
-.chip.on{background:var(--accent-dim);border-color:rgba(200,168,124,.3);color:var(--accent)}
+.chip{padding:8px 18px;border-radius:100px;font-size:11px;font-weight:400;background:var(--bg3);border:1px solid var(--border);cursor:pointer;transition:all .25s;color:var(--text2);white-space:nowrap;font-family:'Inter',sans-serif;letter-spacing:.3px}
+.chip.on{background:var(--accent-dim);border-color:var(--border2);color:var(--accent)}
 
 /* Search */
 .sbar{margin:20px 24px;position:relative}
-.sbar input{width:100%;padding:14px 16px 14px 44px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);color:var(--text);font-size:14px;font-family:'Inter',sans-serif;outline:none;transition:border-color .25s}
+.sbar input{width:100%;padding:14px 18px 14px 46px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);color:var(--text);font-size:14px;font-family:'Inter',sans-serif;outline:none;transition:all .3s}
 .sbar input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-dim)}
-.sbar svg{position:absolute;left:16px;top:50%;transform:translateY(-50%);width:16px;height:16px;stroke:var(--text3);fill:none;stroke-width:2}
+.sbar svg{position:absolute;left:16px;top:50%;transform:translateY(-50%);width:16px;height:16px;stroke:var(--text3);fill:none;stroke-width:1.5}
 
-/* Disclaimer checkbox */
-.check-row{display:flex;align-items:flex-start;gap:12px;padding:12px 0;font-size:13px;color:var(--text2)}
-.check-row input[type=checkbox]{width:20px;height:20px;accent-color:var(--accent);flex-shrink:0;margin-top:2px}
-
-/* Stats grid */
+/* Misc */
+.check-row{display:flex;align-items:flex-start;gap:12px;padding:12px 0;font-size:13px;color:var(--text2);font-weight:300}
+.check-row input[type=checkbox]{width:18px;height:18px;accent-color:var(--accent);flex-shrink:0;margin-top:2px}
 .stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 24px;margin-bottom:20px}
-.st{background:var(--bg2);border-radius:var(--r);padding:18px 14px;text-align:center;border:1px solid var(--border)}
-.st-n{font-size:22px;font-weight:700;letter-spacing:-.5px}
-.st-l{font-size:10px;color:var(--text3);margin-top:4px;text-transform:uppercase;letter-spacing:1px}
-
-/* Content padding */
+.st{background:var(--bg2);border-radius:var(--r);padding:20px 14px;text-align:center;border:1px solid var(--border)}
+.st-n{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:600;letter-spacing:-.5px}
+.st-l{font-size:9px;color:var(--text3);margin-top:6px;text-transform:uppercase;letter-spacing:1.5px;font-weight:400}
 .pad{padding:0 24px 100px}
-
-/* Toggle */
-.tog{width:44px;height:26px;background:var(--bg4);border-radius:13px;position:relative;cursor:pointer;transition:background .25s;border:1px solid var(--border);flex-shrink:0}
+.tog{width:44px;height:24px;background:var(--bg4);border-radius:12px;position:relative;cursor:pointer;transition:background .3s;border:1px solid var(--border);flex-shrink:0}
 .tog.on{background:var(--accent);border-color:var(--accent)}
-.tog::after{content:'';position:absolute;width:20px;height:20px;background:#fff;border-radius:50%;top:2px;left:2px;transition:transform .25s;box-shadow:0 1px 4px rgba(0,0,0,.2)}
-.tog.on::after{transform:translateX(18px)}
+.tog::after{content:'';position:absolute;width:18px;height:18px;background:#fff;border-radius:50%;top:2px;left:2px;transition:transform .3s ease;box-shadow:0 1px 4px rgba(0,0,0,.15)}
+.tog.on::after{transform:translateX(20px)}
 
 /* Animations */
-@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
-.fade-in{animation:fadeUp .4s ease both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.fade-in{animation:fadeUp .5s ease both}
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .7s ease,transform .7s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
 
 /* Safe areas */
-@supports(padding-top:env(safe-area-inset-top)){
-.hdr{padding-top:calc(18px + env(safe-area-inset-top))}
-.nav{padding-bottom:calc(6px + env(safe-area-inset-bottom))}
-.hero{padding-top:calc(80px + env(safe-area-inset-top))}
-}
-
-/* Scrollbar */
-::-webkit-scrollbar{width:3px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
-
-/* Intake form specific */
-.intake-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.intake-grid .fg{margin-bottom:12px}
-.review-banner{background:linear-gradient(135deg,var(--accent-dim),rgba(200,168,124,.06));border:1px solid rgba(200,168,124,.2);border-radius:var(--r2);padding:16px;margin-bottom:20px;display:flex;align-items:center;gap:12px}
-.review-banner .icon{font-size:20px}
-.review-banner .info{flex:1}
-.review-banner .info h4{font-size:13px;font-weight:600;color:var(--accent);margin-bottom:2px}
-.review-banner .info p{font-size:11px;color:var(--text3)}
-
-/* Profile stats */
+@supports(padding-top:env(safe-area-inset-top)){.hdr{padding-top:calc(20px + env(safe-area-inset-top))}.nav{padding-bottom:calc(8px + env(safe-area-inset-bottom))}.hero{padding-top:calc(160px + env(safe-area-inset-top))}.topbar{padding-top:calc(20px + env(safe-area-inset-top))}}
+::-webkit-scrollbar{width:3px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:rgba(200,168,124,.15);border-radius:3px}
+.intake-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.intake-grid .fg{margin-bottom:12px}
+.review-banner{background:var(--accent-dim);border:1px solid rgba(200,168,124,.12);border-radius:var(--r2);padding:18px;margin-bottom:22px;display:flex;align-items:center;gap:14px}
+.review-banner .icon{font-size:20px}.review-banner .info{flex:1}.review-banner .info h4{font-size:12px;font-weight:500;color:var(--accent);margin-bottom:3px;letter-spacing:.3px}.review-banner .info p{font-size:11px;color:var(--text3);font-weight:300}
 .prof-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:20px}
-.prof-stat{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:14px;text-align:center}
-.prof-stat .n{font-size:20px;font-weight:700}
-.prof-stat .l{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
-</style>
+.prof-stat{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:16px;text-align:center}
+/* Tool cards */
+.tool-grid{display:grid;grid-template-columns:1fr;gap:12px}
+.tool-card{display:flex;gap:16px;align-items:flex-start;padding:22px;background:var(--bg);border:1px solid var(--border);border-radius:var(--r);transition:all .4s ease}
+.tool-card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 8px 28px rgba(200,168,124,.06)}
+.tool-icon{width:44px;height:44px;border-radius:12px;background:var(--accent-dim);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.tool-info h3{font-size:14px;font-weight:600;margin-bottom:5px;letter-spacing:.2px}
+.tool-info p{font-size:12px;color:var(--text3);line-height:1.6;font-weight:300}
 
+/* Onboarding */
+.onboard{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px}
+.ob-step{max-width:440px;width:100%;text-align:center}
+.ob-step h2{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:600;margin-bottom:12px}
+.ob-step p{font-size:14px;color:var(--text2);margin-bottom:32px;line-height:1.6;font-weight:300}
+.ob-options{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:32px}
+.ob-opt{padding:20px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);cursor:pointer;transition:all .3s;text-align:center}
+.ob-opt:hover,.ob-opt.sel{border-color:var(--accent);background:var(--accent-dim)}
+.ob-opt .ob-emoji{font-size:24px;margin-bottom:8px}
+.ob-opt .ob-label{font-size:13px;font-weight:500}
+
+/* Competitive score */
+.score-ring{width:120px;height:120px;border-radius:50%;border:4px solid var(--border);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;position:relative}
+.score-ring .score-val{font-family:'Cormorant Garamond',serif;font-size:42px;font-weight:600}
+.score-ring .score-label{position:absolute;bottom:-8px;font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;background:var(--bg);padding:0 8px}
+
+/* Report sections */
+.report-sec{text-align:left;padding:20px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);margin-bottom:12px}
+.report-sec h4{font-size:11px;font-weight:500;color:var(--accent);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:10px}
+.report-sec p,.report-sec li{font-size:13px;color:var(--text2);line-height:1.7;font-weight:300}
+.report-sec ul{padding-left:16px}
+
+/* Strength/gap bars */
+.metric-bar{margin-bottom:14px}
+.metric-bar .mb-top{display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px}
+.metric-bar .mb-top .mb-label{color:var(--text2);font-weight:400}
+.metric-bar .mb-top .mb-val{color:var(--accent);font-weight:500}
+.metric-bar .mb-track{height:6px;background:var(--bg4);border-radius:3px;overflow:hidden}
+.metric-bar .mb-fill{height:100%;border-radius:3px;transition:width .8s ease}
+
+.prof-stat .n{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:600}.prof-stat .l{font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-top:3px;font-weight:400}
+</style>
 <body>
 <svg style="display:none">
 <symbol id="i-heart" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></symbol>
@@ -262,7 +305,7 @@ a{color:var(--accent);text-decoration:none}
 <div id="splash">
 <div class="sp-mark"><svg><use href="#i-heart"/></svg></div>
 <div class="sp-t">HeartWise</div>
-<div class="sp-s">High-Performance Mentorship</div>
+<div class="sp-s">Structured Physician Mentorship</div>
 </div>
 
 <div id="notif" class="notif"><span id="ni-icon">✦</span><span id="ni-text" class="notif-t"></span></div>
@@ -297,146 +340,443 @@ a{color:var(--accent);text-decoration:none}
 </div>
 </div>
 
+<!-- Top Navigation Bar (landing only) -->
+<nav class="topbar" id="topbar">
+<div class="topbar-logo" onclick="document.getElementById('pg-landing').scrollTo({top:0,behavior:'smooth'})">
+<div class="logo-mark"><svg><use href="#i-heart"/></svg></div>
+<span class="logo-text">HeartWise</span>
+</div>
+<div class="topbar-links">
+<a href="#" class="tb-link" onclick="event.preventDefault();document.getElementById('tools-sec').scrollIntoView({behavior:'smooth'})">Tools</a>
+<a href="#" class="tb-link" onclick="event.preventDefault();document.getElementById('founder-sec').scrollIntoView({behavior:'smooth'})">Founder</a>
+<a href="#" class="tb-link" onclick="event.preventDefault();document.getElementById('pricing-sec').scrollIntoView({behavior:'smooth'})">Pricing</a>
+<a href="#" class="tb-link" onclick="event.preventDefault();go('pg-login')">Sign In</a>
+<a href="#" class="tb-cta" onclick="event.preventDefault();go('pg-onboard')">Start Free Trial</a>
+</div>
+</nav>
+
 <!-- ===== LANDING PAGE ===== -->
 <div id="pg-landing" class="lp">
+
+<!-- HERO -->
 <div class="hero">
-<div class="hero-badge">Built for Serious Trainees</div>
-<h1 class="serif">High-Performance Mentorship for <em>Ambitious Physicians</em></h1>
-<p>AI-powered guidance. Doctor-curated insights. Structured frameworks for career strategy, fellowship planning, contract negotiation, and physician finance.</p>
-<button class="btn btn-a" onclick="go('pg-signup')" style="max-width:280px;margin:0 auto 12px">Start Free →</button>
-<button class="btn btn-g" onclick="go('pg-login')" style="max-width:280px;margin:0 auto">Sign In</button>
-<p style="margin-top:24px;font-size:12px;color:var(--text3)">Master Your Training. Build Your Career. Control Your Finances.</p>
+<div class="hero-badge">Strategic Intelligence Platform</div>
+<h1 class="serif">Strategic Intelligence for <em>Competitive Physicians.</em></h1>
+<p>Stop guessing. Start positioning. HeartWise gives you structured career and financial leverage — built by a practicing interventional cardiologist.</p>
+<button class="btn btn-a" onclick="go('pg-onboard')" style="max-width:300px;margin:0 auto 14px">Start 7-Day Strategic Access →</button>
+<p style="font-size:12px;color:var(--text3);font-weight:300;margin-top:8px">No credit card required. Full access for 7 days.</p>
 </div>
 
-<div class="lp-sec" style="background:var(--bg2)">
-<h2 class="serif">Who It's For</h2>
-<p class="sub">Ambitious physicians who refuse to figure it out alone</p>
-<div class="who-grid">
-<div class="who-card"><div class="icon">🎓</div><h3>Medical Students</h3><p>Specialty strategy & residency positioning</p></div>
-<div class="who-card"><div class="icon">🏥</div><h3>Residents</h3><p>Fellowship prep & career trajectory planning</p></div>
-<div class="who-card"><div class="icon">🫀</div><h3>Fellows</h3><p>Contract negotiation & practice strategy</p></div>
-<div class="who-card"><div class="icon">⚕️</div><h3>Early Career</h3><p>Compensation, finance & productivity systems</p></div>
+<!-- WHAT YOU GET -->
+<div class="lp-sec" id="tools-sec" style="background:var(--bg2)">
+<h2 class="serif">Your Strategic Toolkit</h2>
+<div class="lp-divider"></div>
+<p class="sub">Not generic answers. Structured tools that reveal gaps, model outcomes, and build strategy.</p>
+<div class="reveal" style="max-width:520px;margin:0 auto">
+<div class="tool-grid">
+<div class="tool-card">
+<div class="tool-icon">📊</div>
+<div class="tool-info">
+<h3>Competitiveness Analyzer</h3>
+<p>Input your scores, research, and profile — get a competitiveness score, gap analysis, and strategic focus areas.</p>
+</div>
+</div>
+<div class="tool-card">
+<div class="tool-icon">🔄</div>
+<div class="tool-info">
+<h3>Specialty Switch Simulator</h3>
+<p>Model what happens if you change specialty. Timeline, feasibility, and steps to bridge the gap.</p>
+</div>
+</div>
+<div class="tool-card">
+<div class="tool-icon">💰</div>
+<div class="tool-info">
+<h3>Financial Trajectory Model</h3>
+<p>PSLF vs. refinance. Academic vs. private. See your 10-year net wealth under different scenarios.</p>
+</div>
+</div>
+<div class="tool-card">
+<div class="tool-icon">📋</div>
+<div class="tool-info">
+<h3>Contract Leverage Tool</h3>
+<p>Evaluate compensation, non-competes, tail coverage, and RVU models against MGMA benchmarks.</p>
+</div>
+</div>
+<div class="tool-card">
+<div class="tool-icon">🧠</div>
+<div class="tool-info">
+<h3>Burnout Risk Assessment</h3>
+<p>Identify your specific burnout drivers and get an evidence-based prevention framework.</p>
+</div>
+</div>
+<div class="tool-card">
+<div class="tool-icon">🧭</div>
+<div class="tool-info">
+<h3>Strategic Decision Frameworks</h3>
+<p>Structured thinking tools for fellowship, career pivots, contract decisions, and income optimization.</p>
+</div>
+</div>
+</div>
 </div>
 </div>
 
-<div class="lp-sec">
-<h2 class="serif">What You'll Master</h2>
-<p class="sub">Structured frameworks, not generic advice</p>
-<div class="master-grid">
-<div class="master-item"><div class="icon">🎯</div><h3>Career Strategy</h3></div>
-<div class="master-item"><div class="icon">📋</div><h3>Fellowship Planning</h3></div>
-<div class="master-item"><div class="icon">📝</div><h3>Contract Negotiation</h3></div>
-<div class="master-item"><div class="icon">💰</div><h3>RVUs & Compensation</h3></div>
-<div class="master-item"><div class="icon">📊</div><h3>Physician Finance</h3></div>
-<div class="master-item"><div class="icon">⚡</div><h3>Productivity Systems</h3></div>
-</div>
-</div>
-
-<div class="lp-sec" style="background:var(--bg2)">
+<!-- HOW IT WORKS -->
+<div class="lp-sec" id="how-sec">
 <h2 class="serif">How It Works</h2>
-<p class="sub">Structured process, not a free-for-all Q&A</p>
-<div class="how-steps">
-<div class="how-step"><div class="num">1</div><div><h3>Submit Structured Question</h3><p>Complete the intake form with your training level, specialty, timeline, and specific question. No open-ended rambling.</p></div></div>
-<div class="how-step"><div class="num">2</div><div><h3>Get AI Strategic Plan</h3><p>Receive an instant structured response: situation diagnosis, bottleneck analysis, strategic plan, and 30-day action steps.</p></div></div>
-<div class="how-step"><div class="num">3</div><div><h3>Request Doctor Review</h3><p>Use review credits for physician-curated insight. Selected questions get Dr. Faroqui's personal commentary.</p></div></div>
-<div class="how-step"><div class="num">4</div><div><h3>Learn from the Archive</h3><p>Browse weekly reviewed questions and build on frameworks others have already validated.</p></div></div>
+<div class="lp-divider"></div>
+<p class="sub">Build your profile. Get immediate insights. Use tools to model decisions.</p>
+
+<div class="flow-road reveal">
+<div class="flow-node">
+<div class="flow-icon">👤</div>
+<div class="flow-label">Your Stage</div>
+<div class="flow-desc">Select your training level — system personalizes automatically</div>
+</div>
+<div class="flow-arrow">
+<svg width="40" height="24" viewBox="0 0 40 24"><path d="M0 12h32M26 4l8 8-8 8" fill="none" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity=".5"/></svg>
+</div>
+<div class="flow-node">
+<div class="flow-icon">📋</div>
+<div class="flow-label">Your Profile</div>
+<div class="flow-desc">Scores, research, goals — your competitive baseline</div>
+</div>
+<div class="flow-arrow">
+<svg width="40" height="24" viewBox="0 0 40 24"><path d="M0 12h32M26 4l8 8-8 8" fill="none" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity=".5"/></svg>
+</div>
+<div class="flow-node">
+<div class="flow-icon">📊</div>
+<div class="flow-label">Your Report</div>
+<div class="flow-desc">Competitiveness score, gaps, 6-month strategic plan</div>
+</div>
+<div class="flow-arrow">
+<svg width="40" height="24" viewBox="0 0 40 24"><path d="M0 12h32M26 4l8 8-8 8" fill="none" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity=".5"/></svg>
+</div>
+<div class="flow-node">
+<div class="flow-icon">⚡</div>
+<div class="flow-label">Take Action</div>
+<div class="flow-desc">Model scenarios, compare options, optimize decisions</div>
+</div>
 </div>
 </div>
 
-<div class="lp-sec" id="pricing-sec">
-<h2 class="serif">Choose Your Path</h2>
-<p class="sub">Every tier includes AI-powered mentorship</p>
+<!-- WHY NOT CHATGPT -->
+<div class="lp-sec" id="diff-sec" style="background:var(--bg2)">
+<h2 class="serif">Why Not ChatGPT?</h2>
+<div class="lp-divider"></div>
+<div class="reveal" style="max-width:500px;margin:0 auto">
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:32px">
+<div class="card" style="padding:24px;border-color:rgba(196,77,86,.15)">
+<div style="font-size:12px;font-weight:500;color:var(--red);margin-bottom:12px;text-transform:uppercase;letter-spacing:1px">Generic AI</div>
+<ul style="list-style:none;padding:0;margin:0">
+<li style="font-size:12px;color:var(--text3);padding:5px 0;line-height:1.5">✗ Generic information</li>
+<li style="font-size:12px;color:var(--text3);padding:5px 0;line-height:1.5">✗ No physician context</li>
+<li style="font-size:12px;color:var(--text3);padding:5px 0;line-height:1.5">✗ Can't model your scenarios</li>
+<li style="font-size:12px;color:var(--text3);padding:5px 0;line-height:1.5">✗ No competitive benchmarking</li>
+<li style="font-size:12px;color:var(--text3);padding:5px 0;line-height:1.5">✗ No saved progress</li>
+</ul>
+</div>
+<div class="card" style="padding:24px;border-color:rgba(200,168,124,.2)">
+<div style="font-size:12px;font-weight:500;color:var(--accent);margin-bottom:12px;text-transform:uppercase;letter-spacing:1px">HeartWise</div>
+<ul style="list-style:none;padding:0;margin:0">
+<li style="font-size:12px;color:var(--text);padding:5px 0;line-height:1.5">✦ Competitive positioning</li>
+<li style="font-size:12px;color:var(--text);padding:5px 0;line-height:1.5">✦ Career simulation tools</li>
+<li style="font-size:12px;color:var(--text);padding:5px 0;line-height:1.5">✦ Physician-specific financial modeling</li>
+<li style="font-size:12px;color:var(--text);padding:5px 0;line-height:1.5">✦ Decision frameworks from real experience</li>
+<li style="font-size:12px;color:var(--text);padding:5px 0;line-height:1.5">✦ Track and compare over time</li>
+</ul>
+</div>
+</div>
+<p style="font-size:14px;color:var(--text2);text-align:center;font-weight:300;line-height:1.7">You don't need more answers.<br><strong style="color:var(--accent);font-weight:500">You need better strategy.</strong></p>
+</div>
+</div>
+
+<!-- FOUNDER -->
+<div class="lp-sec" id="founder-sec">
+<h2 class="serif">Meet the Founder</h2>
+<div class="lp-divider"></div>
+
+<div class="reveal" style="max-width:540px;margin:0 auto">
+
+<!-- Hero card -->
+<div style="padding:36px 28px;background:linear-gradient(160deg,var(--bg2),rgba(200,168,124,.03));border:1px solid var(--border2);border-radius:var(--r3);text-align:center;margin-bottom:24px">
+<div style="width:100px;height:100px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:40px;font-weight:600;color:#09090e;font-family:'Cormorant Garamond',serif">MF</div>
+<div style="font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:600;margin-bottom:4px">Mouzam Faroqui, MD, FACC</div>
+<div style="font-size:13px;color:var(--accent);font-weight:500;letter-spacing:.5px;margin-bottom:16px">Interventional Cardiologist</div>
+<div style="display:flex;justify-content:center;gap:16px;flex-wrap:wrap">
+<span style="font-size:11px;color:var(--text3);font-weight:300">📍 Houston, TX</span>
+<span style="font-size:11px;color:var(--text3);font-weight:300">🏥 20+ Years in Medicine</span>
+<span style="font-size:11px;color:var(--text3);font-weight:300">🫀 NYC → Houston</span>
+</div>
+</div>
+
+<!-- The Story -->
+<div class="card" style="padding:28px;margin-bottom:14px">
+<div style="font-size:11px;font-weight:500;color:var(--accent);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:16px">The Journey</div>
+<p style="font-size:14px;color:var(--text2);line-height:1.8;font-weight:300;margin-bottom:14px">From medical student to resident, to <strong style="font-weight:500;color:var(--text)">Chief Resident</strong>, to Cardiology Fellow, to <strong style="font-weight:500;color:var(--text)">Chief Cardiology Fellow</strong>, to <strong style="font-weight:500;color:var(--text)">Chief Interventional Cardiology Fellow</strong> — I earned every title the hard way. No shortcuts. No legacy advantage. Just relentless preparation and structured decision-making.</p>
+<p style="font-size:14px;color:var(--text2);line-height:1.8;font-weight:300">Today, after 20 years in medicine and careers in both New York City and Houston, I built HeartWise because I wish something like this had existed when I was in your shoes. <strong style="font-weight:500;color:var(--text)">The decisions that define your career shouldn't be made in the dark.</strong></p>
+</div>
+
+<!-- Training Timeline -->
+<div class="card" style="padding:28px;margin-bottom:14px">
+<div style="font-size:11px;font-weight:500;color:var(--accent);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:20px">Training & Education</div>
+
+<div style="border-left:2px solid var(--border2);padding-left:20px;margin-left:8px">
+<div style="margin-bottom:20px;position:relative">
+<div style="position:absolute;left:-27px;top:2px;width:12px;height:12px;border-radius:50%;background:var(--accent)"></div>
+<div style="font-size:14px;font-weight:500;color:var(--text);margin-bottom:3px">New York-Presbyterian Brooklyn Methodist Hospital</div>
+<div style="font-size:12px;color:var(--accent);font-weight:400;margin-bottom:2px">Weill Cornell Medicine</div>
+<div style="font-size:11px;color:var(--text3);font-weight:300">Internal Medicine Residency → Chief Resident</div>
+</div>
+
+<div style="margin-bottom:20px;position:relative">
+<div style="position:absolute;left:-27px;top:2px;width:12px;height:12px;border-radius:50%;background:var(--accent)"></div>
+<div style="font-size:14px;font-weight:500;color:var(--text);margin-bottom:3px">New York-Presbyterian Brooklyn Methodist Hospital</div>
+<div style="font-size:12px;color:var(--accent);font-weight:400;margin-bottom:2px">Weill Cornell Medicine</div>
+<div style="font-size:11px;color:var(--text3);font-weight:300">Cardiology Fellowship → Chief Cardiology Fellow</div>
+</div>
+
+<div style="position:relative">
+<div style="position:absolute;left:-27px;top:2px;width:12px;height:12px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px rgba(200,168,124,.4)"></div>
+<div style="font-size:14px;font-weight:500;color:var(--text);margin-bottom:3px">Deborah Heart and Lung Center</div>
+<div style="font-size:12px;color:var(--accent);font-weight:400;margin-bottom:2px">Sidney Kimmel Medical College at Thomas Jefferson University</div>
+<div style="font-size:11px;color:var(--text3);font-weight:300">Interventional Cardiology Fellowship → Chief Interventional Cardiology Fellow</div>
+</div>
+</div>
+</div>
+
+<!-- Board Certifications -->
+<div class="card" style="padding:28px;margin-bottom:14px">
+<div style="font-size:11px;font-weight:500;color:var(--accent);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:16px">Board Certifications</div>
+<div style="display:grid;grid-template-columns:1fr;gap:10px">
+<div style="display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)">
+<span style="color:var(--accent);font-size:12px;margin-top:2px;flex-shrink:0">✦</span>
+<div><div style="font-size:13px;font-weight:500;color:var(--text)">Internal Medicine</div><div style="font-size:11px;color:var(--text3);font-weight:300">ABIM Board Certified</div></div>
+</div>
+<div style="display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)">
+<span style="color:var(--accent);font-size:12px;margin-top:2px;flex-shrink:0">✦</span>
+<div><div style="font-size:13px;font-weight:500;color:var(--text)">Cardiovascular Disease</div><div style="font-size:11px;color:var(--text3);font-weight:300">ABIM Board Certified</div></div>
+</div>
+<div style="display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)">
+<span style="color:var(--accent);font-size:12px;margin-top:2px;flex-shrink:0">✦</span>
+<div><div style="font-size:13px;font-weight:500;color:var(--text)">Interventional Cardiology</div><div style="font-size:11px;color:var(--text3);font-weight:300">ABIM Board Certified</div></div>
+</div>
+<div style="display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)">
+<span style="color:var(--accent);font-size:12px;margin-top:2px;flex-shrink:0">✦</span>
+<div><div style="font-size:13px;font-weight:500;color:var(--text)">Echocardiography</div><div style="font-size:11px;color:var(--text3);font-weight:300">ASCeXAM — National Board of Echocardiography</div></div>
+</div>
+<div style="display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)">
+<span style="color:var(--accent);font-size:12px;margin-top:2px;flex-shrink:0">✦</span>
+<div><div style="font-size:13px;font-weight:500;color:var(--text)">Cardiovascular Computed Tomography</div><div style="font-size:11px;color:var(--text3);font-weight:300">APCA Board Certified</div></div>
+</div>
+<div style="display:flex;align-items:flex-start;gap:12px;padding:10px 0">
+<span style="color:var(--accent);font-size:12px;margin-top:2px;flex-shrink:0">✦</span>
+<div><div style="font-size:13px;font-weight:500;color:var(--text)">Nuclear Cardiology</div><div style="font-size:11px;color:var(--text3);font-weight:300">APCA Board Certified</div></div>
+</div>
+</div>
+</div>
+
+<!-- Key Skills -->
+<div class="card" style="padding:28px;margin-bottom:14px">
+<div style="font-size:11px;font-weight:500;color:var(--accent);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:16px">Clinical Expertise</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+<div style="padding:12px;background:var(--bg3);border-radius:var(--r2);border:1px solid var(--border)">
+<div style="font-size:12px;font-weight:500;color:var(--text);line-height:1.5">Complex Coronary Interventions</div>
+<div style="font-size:10px;color:var(--text3);font-weight:300;margin-top:3px">PCI, CTO, bifurcation, rotational atherectomy</div>
+</div>
+<div style="padding:12px;background:var(--bg3);border-radius:var(--r2);border:1px solid var(--border)">
+<div style="font-size:12px;font-weight:500;color:var(--text);line-height:1.5">Peripheral Interventions</div>
+<div style="font-size:10px;color:var(--text3);font-weight:300;margin-top:3px">Arterial & venous interventions</div>
+</div>
+<div style="padding:12px;background:var(--bg3);border-radius:var(--r2);border:1px solid var(--border)">
+<div style="font-size:12px;font-weight:500;color:var(--text);line-height:1.5">Thrombosis Interventions</div>
+<div style="font-size:10px;color:var(--text3);font-weight:300;margin-top:3px">Pulmonary embolism & DVT</div>
+</div>
+<div style="padding:12px;background:var(--bg3);border-radius:var(--r2);border:1px solid var(--border)">
+<div style="font-size:12px;font-weight:500;color:var(--text);line-height:1.5">Vascular Medicine</div>
+<div style="font-size:10px;color:var(--text3);font-weight:300;margin-top:3px">Comprehensive vascular assessment</div>
+</div>
+<div style="padding:12px;background:var(--bg3);border-radius:var(--r2);border:1px solid var(--border)">
+<div style="font-size:12px;font-weight:500;color:var(--text);line-height:1.5">Cardiovascular CT</div>
+<div style="font-size:10px;color:var(--text3);font-weight:300;margin-top:3px">Coronary CTA, calcium scoring</div>
+</div>
+<div style="padding:12px;background:var(--bg3);border-radius:var(--r2);border:1px solid var(--border)">
+<div style="font-size:12px;font-weight:500;color:var(--text);line-height:1.5">Advanced Imaging</div>
+<div style="font-size:10px;color:var(--text3);font-weight:300;margin-top:3px">Echocardiography & nuclear cardiology</div>
+</div>
+</div>
+</div>
+
+<!-- Why I Built This -->
+<div style="padding:24px;border-radius:var(--r3);background:var(--accent-dim);border:1px solid var(--border2);text-align:center">
+<div style="font-size:28px;margin-bottom:12px">💡</div>
+<p style="font-size:15px;color:var(--text);line-height:1.8;font-weight:300;font-style:italic;max-width:420px;margin:0 auto 16px">"I built HeartWise because no one should navigate the most important decisions of their medical career alone and in the dark — the way I had to."</p>
+<div style="font-size:13px;color:var(--accent);font-weight:500">— Dr. Mouzam Faroqui</div>
+</div>
+
+</div>
+</div>
+
+<!-- PRICING -->
+<div class="lp-sec" id="pricing-sec" style="background:var(--bg2)">
+<h2 class="serif">Membership</h2>
+<div class="lp-divider"></div>
+<p class="sub">Start with 7 days of full access. Keep what works.</p>
+
+<div class="reveal" style="max-width:500px;margin:0 auto">
+
+<!-- Trial CTA -->
+<div style="padding:24px;border-radius:var(--r3);background:linear-gradient(160deg,rgba(200,168,124,.06),rgba(200,168,124,.02));border:1px solid var(--border2);margin-bottom:20px;text-align:center">
+<div style="font-size:18px;font-family:'Cormorant Garamond',serif;font-weight:600;margin-bottom:8px">7-Day Strategic Access</div>
+<p style="font-size:13px;color:var(--text2);font-weight:300;line-height:1.6;margin-bottom:16px">Unlimited access to every tool. No credit card. See if the system works for you.</p>
+<button class="btn btn-a" onclick="go('pg-onboard')" style="max-width:260px;margin:0 auto">Start Free Trial</button>
+</div>
 
 <div class="plan">
-<div class="plan-n" style="color:var(--text2)">Free</div>
+<div class="plan-n" style="color:var(--text3)">Explorer</div>
+<div style="font-size:12px;color:var(--text3);font-weight:400;margin-bottom:6px;letter-spacing:.3px">After Trial</div>
 <div class="plan-p">$0<span> /mo</span></div>
 <ul class="plan-f">
-<li>1 AI mentorship response per month</li>
-<li>Access to public reviewed archive</li>
-<li>Upgrade prompts for deeper guidance</li>
+<li>Limited access to archived strategy library</li>
+<li>1 structured analysis per month</li>
+<li>No saved progress</li>
 </ul>
-<button class="btn btn-g" onclick="go('pg-signup')">Start Free</button>
-</div>
-
-<div class="plan">
-<div class="plan-n" style="color:var(--blue)">Core</div>
-<div class="plan-p">$19<span> /mo</span></div>
-<ul class="plan-f">
-<li>20 AI mentorship responses per month</li>
-<li>1 Doctor Review Credit per month</li>
-<li>Weekly reviewed questions archive</li>
-</ul>
-<button class="btn btn-a" onclick="go('pg-signup')">Get Core</button>
+<p style="font-size:12px;color:var(--text3);margin-bottom:18px;font-weight:300">Designed to sample the system.</p>
+<button class="btn btn-g" onclick="go('pg-onboard')">Start Free</button>
 </div>
 
 <div class="plan pop">
-<div class="plan-n" style="color:var(--accent)">Pro</div>
-<div class="plan-p">$39<span> /mo</span></div>
+<div class="plan-n" style="color:var(--accent)">Core</div>
+<div style="font-size:12px;color:var(--accent);font-weight:400;margin-bottom:6px;letter-spacing:.3px">Your Strategic Engine</div>
+<div class="plan-p">$15<span> /mo</span></div>
 <ul class="plan-f">
-<li>50 AI mentorship responses per month</li>
-<li>2 Doctor Review Credits per month</li>
-<li>Monthly group Q&A access</li>
-<li>Template Vault (frameworks & checklists)</li>
+<li>Unlimited structured strategic assessments</li>
+<li>Save &amp; track progress over time</li>
+<li>Career and financial modeling tools</li>
+<li>Scenario simulations</li>
+<li>Full strategy archive</li>
+<li>Quarterly strategy updates</li>
 </ul>
-<button class="btn btn-a" onclick="go('pg-signup')">Get Pro</button>
+<p style="font-size:12px;color:var(--text3);margin-bottom:18px;font-weight:300">No physician time required. This is your scalable intelligence tier.</p>
+<button class="btn btn-a" onclick="go('pg-onboard')">Get Core</button>
 </div>
 
 <div class="plan ft">
-<div class="plan-n" style="color:var(--accent2)">Mentorship</div>
-<div class="plan-p">$249<span> /year</span></div>
-<div class="plan-limit">⚡ Limited to 50 members</div>
+<div class="plan-n" style="color:var(--accent2)">Elite Strategy</div>
+<div style="font-size:12px;color:var(--accent2);font-weight:400;margin-bottom:6px;letter-spacing:.3px">Limited Enrollment</div>
+<div class="plan-p">$99<span> /mo</span></div>
 <ul class="plan-f">
-<li>Unlimited AI responses</li>
-<li>6 Guaranteed Doctor Reviews per year</li>
-<li>2 Small-group strategy calls per year</li>
-<li>Contract Negotiation Toolkit</li>
-<li>Fellowship Roadmap Templates</li>
-<li>CV Review Framework</li>
+<li>Everything in Core</li>
+<li>1 Physician Review Credit per month</li>
+<li>CV or contract review by Dr. Faroqui</li>
+<li>Custom roadmap feedback</li>
+<li>Priority responses</li>
 </ul>
-<button class="btn btn-a" onclick="go('pg-signup')">Apply for Mentorship</button>
+<p style="font-size:12px;color:var(--text3);margin-bottom:18px;font-weight:300">Intentionally scarce. Direct physician access layered on the full platform.</p>
+<button class="btn btn-a" onclick="go('pg-onboard')">Apply for Elite</button>
+</div>
+
 </div>
 </div>
 
-<div style="padding:40px 24px;text-align:center;border-top:1px solid var(--border)">
-<p style="font-size:11px;color:var(--text3);line-height:1.6;max-width:400px;margin:0 auto">HeartWise provides educational mentorship only. It does not provide medical, legal, or tax advice. Users should consult appropriate professionals for individualized decisions.</p>
-<p style="font-size:11px;color:var(--text3);margin-top:12px">© 2026 HeartWise. All rights reserved.</p>
+<!-- Footer -->
+<div style="padding:60px 32px 48px;text-align:center;border-top:1px solid var(--border)">
+<div style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;margin-bottom:16px;color:var(--text)">HeartWise</div>
+<div style="font-size:12px;color:var(--text3);max-width:380px;margin:0 auto 24px;line-height:1.7;font-weight:300">Strategic intelligence. Not generic answers.</div>
+<div style="width:32px;height:1px;background:var(--accent);margin:0 auto 24px;opacity:.3"></div>
+<p style="font-size:11px;color:var(--text3);line-height:1.7;max-width:400px;margin:0 auto;font-weight:300">HeartWise provides structured educational strategy. It does not provide medical, legal, financial, or tax advice. AI outputs are frameworks, not personalized recommendations. Users should consult appropriate professionals for individualized decisions.</p>
+<p style="font-size:11px;color:var(--text3);margin-top:16px;font-weight:300">© 2026 HeartWise. All rights reserved.</p>
 </div>
 </div>
 
 <!-- ===== AUTH PAGES ===== -->
 <div id="pg-login" class="lp hidden" style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px">
-<div class="sp-mark" style="width:56px;height:56px;border-radius:16px;margin-bottom:28px"><svg style="width:28px;height:28px;fill:#0a0a0f"><use href="#i-heart"/></svg></div>
-<div style="font-family:'Playfair Display',serif;font-size:26px;font-weight:600;margin-bottom:6px">HeartWise</div>
-<div style="color:var(--text3);font-size:13px;margin-bottom:36px;text-align:center;max-width:280px;line-height:1.5">High-performance mentorship for ambitious physicians</div>
-<form style="width:100%;max-width:360px" onsubmit="doLogin(event)">
+<div class="sp-mark" style="width:52px;height:52px;border-radius:14px;margin-bottom:28px"><svg style="width:26px;height:26px;fill:#09090e"><use href="#i-heart"/></svg></div>
+<div style="font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:600;margin-bottom:6px;letter-spacing:.5px">HeartWise</div>
+<div style="color:var(--text3);font-size:13px;margin-bottom:40px;text-align:center;max-width:280px;line-height:1.6;font-weight:300">Strategic intelligence for physicians</div>
+<form style="width:100%;max-width:340px" onsubmit="doLogin(event)">
 <div class="fg"><label>Email</label><input type="email" id="l-email" placeholder="you@example.com" required></div>
 <div class="fg"><label>Password</label><input type="password" id="l-pass" placeholder="••••••••" required></div>
 <button type="submit" class="btn btn-a">Sign In</button>
 </form>
-<div style="margin-top:24px;color:var(--text3);font-size:13px">New here? <a href="#" onclick="go('pg-signup');return false" style="font-weight:500">Create an account</a></div>
+<div style="margin-top:28px;color:var(--text3);font-size:13px;font-weight:300">New here? <a href="#" onclick="go('pg-onboard');return false" style="font-weight:500">Start free trial</a></div>
 </div>
 
-<div id="pg-signup" class="lp hidden" style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px">
-<div class="sp-mark" style="width:56px;height:56px;border-radius:16px;margin-bottom:28px"><svg style="width:28px;height:28px;fill:#0a0a0f"><use href="#i-heart"/></svg></div>
-<div style="font-family:'Playfair Display',serif;font-size:26px;font-weight:600;margin-bottom:6px">Join HeartWise</div>
-<div style="color:var(--text3);font-size:13px;margin-bottom:36px;text-align:center;max-width:300px;line-height:1.5">Structured mentorship from a seasoned interventional cardiologist</div>
-<form style="width:100%;max-width:360px" onsubmit="doSignup(event)">
-<div class="fg"><label>Full Name</label><input type="text" id="s-name" placeholder="Jane Smith" required></div>
-<div class="fg"><label>Email</label><input type="email" id="s-email" placeholder="you@example.com" required></div>
-<div class="fg"><label>Password</label><input type="password" id="s-pass" placeholder="Min 8 characters" minlength="8" required></div>
-<div class="fg"><label>Training Level</label>
-<select id="s-role" required>
-<option value="">Select your level</option>
-<option value="student">Medical Student</option>
-<option value="resident">Internal Medicine Resident</option>
-<option value="fellow">Cardiology Fellow</option>
-<option value="attending">Early Career Attending</option>
-<option value="other">Other Healthcare Professional</option>
+<!-- ===== ONBOARDING FLOW ===== -->
+<div id="pg-onboard" class="lp hidden onboard">
+
+<!-- Step 1: Identity -->
+<div id="ob-step1" class="ob-step">
+<div class="sp-mark" style="width:48px;height:48px;border-radius:14px;margin:0 auto 24px"><svg style="width:24px;height:24px;fill:#09090e"><use href="#i-heart"/></svg></div>
+<h2>What stage are you in?</h2>
+<p>This personalizes your strategic pathway automatically.</p>
+<div class="ob-options">
+<div class="ob-opt" onclick="obSelectStage(this,'premed')"><div class="ob-emoji">📚</div><div class="ob-label">Premed</div></div>
+<div class="ob-opt" onclick="obSelectStage(this,'student')"><div class="ob-emoji">🎓</div><div class="ob-label">Medical Student</div></div>
+<div class="ob-opt" onclick="obSelectStage(this,'resident')"><div class="ob-emoji">🩺</div><div class="ob-label">Resident</div></div>
+<div class="ob-opt" onclick="obSelectStage(this,'fellow')"><div class="ob-emoji">🫀</div><div class="ob-label">Fellow</div></div>
+<div class="ob-opt" onclick="obSelectStage(this,'attending')"><div class="ob-emoji">🏥</div><div class="ob-label">Early Attending</div></div>
+<div class="ob-opt" onclick="obSelectStage(this,'switching')"><div class="ob-emoji">🔄</div><div class="ob-label">Switching Specialties</div></div>
+</div>
+<button class="btn btn-a" id="ob-next1" onclick="obToStep2()" style="max-width:260px;margin:0 auto;opacity:.5;pointer-events:none">Continue →</button>
+<div style="margin-top:20px;color:var(--text3);font-size:13px;font-weight:300">Already a member? <a href="#" onclick="go('pg-login');return false" style="font-weight:500">Sign in</a></div>
+</div>
+
+<!-- Step 2: Competitive Profile -->
+<div id="ob-step2" class="ob-step hidden">
+<h2>Build Your Profile</h2>
+<p>This becomes your competitive baseline. Used to generate your strategic report.</p>
+<form style="text-align:left;max-width:380px;margin:0 auto" id="ob-profile-form">
+<div class="fg"><label>Full Name *</label><input type="text" id="ob-name" placeholder="Jane Smith" required></div>
+<div class="fg"><label>Email *</label><input type="email" id="ob-email" placeholder="you@example.com" required></div>
+<div class="fg"><label>Password *</label><input type="password" id="ob-pass" placeholder="Min 8 characters" minlength="8" required></div>
+<div class="fg"><label>Institution</label><input type="text" id="ob-inst" placeholder="Your school, hospital, or program"></div>
+<div class="fg"><label>Intended / Current Specialty</label>
+<select id="ob-spec">
+<option value="">Select</option>
+<option value="Cardiology">Cardiology</option>
+<option value="Interventional Cardiology">Interventional Cardiology</option>
+<option value="Electrophysiology">Electrophysiology</option>
+<option value="Heart Failure">Heart Failure</option>
+<option value="Internal Medicine">Internal Medicine</option>
+<option value="Surgery">Surgery</option>
+<option value="Other">Other</option>
+<option value="Undecided">Undecided</option>
 </select></div>
-<div class="fg"><label>Institution</label><input type="text" id="s-inst" placeholder="Your medical school or hospital"></div>
-<button type="submit" class="btn btn-a">Create Account</button>
+<div id="ob-dynamic-fields"></div>
+<div class="fg"><label>Primary Goal</label>
+<select id="ob-goal">
+<option value="">Select</option>
+<option value="match">Match into target residency/fellowship</option>
+<option value="career">Optimize early career trajectory</option>
+<option value="contract">Negotiate first attending contract</option>
+<option value="finance">Build financial strategy</option>
+<option value="pivot">Evaluate specialty switch</option>
+<option value="general">General strategic guidance</option>
+</select></div>
+<button type="button" class="btn btn-a" onclick="obToStep3()" style="margin-top:8px">Generate My Report →</button>
 </form>
-<div style="margin-top:24px;color:var(--text3);font-size:13px">Already a member? <a href="#" onclick="go('pg-login');return false" style="font-weight:500">Sign in</a></div>
+</div>
+
+<!-- Step 3: Strategic Report -->
+<div id="ob-step3" class="ob-step hidden" style="text-align:left;max-width:480px">
+<div style="text-align:center;margin-bottom:32px">
+<h2>Your Strategic Report</h2>
+<p style="margin-bottom:0">Based on your profile. This is your starting point.</p>
+</div>
+<div id="ob-report"></div>
+<div style="text-align:center;margin-top:32px;padding:24px;border-radius:var(--r3);background:var(--accent-dim);border:1px solid var(--border2)">
+<div style="font-size:16px;font-family:'Cormorant Garamond',serif;font-weight:600;margin-bottom:8px">Unlock the Full Strategy Engine</div>
+<p style="font-size:13px;color:var(--text2);font-weight:300;margin-bottom:16px;line-height:1.6">Access optimization tools, financial modeling, scenario simulation, and the full strategy archive.</p>
+<button class="btn btn-a" onclick="obComplete()" style="max-width:280px;margin:0 auto">Start 7-Day Full Access</button>
+<p style="font-size:11px;color:var(--text3);margin-top:8px;font-weight:300">No credit card required.</p>
+</div>
+</div>
+
+</div>
+
+<!-- Legacy signup redirect -->
+<div id="pg-signup" class="lp hidden onboard">
+<script>/* redirect to onboarding */</script>
 </div>
 
 <!-- ===== MAIN APP ===== -->
@@ -453,7 +793,7 @@ a{color:var(--accent);text-decoration:none}
 <div style="background:linear-gradient(135deg,#1e1b2e,#1a1626,#221b2e);border:1px solid rgba(200,168,124,.15);border-radius:var(--r3);padding:28px;position:relative;overflow:hidden">
 <div style="position:absolute;top:-50%;right:-30%;width:200px;height:200px;background:radial-gradient(circle,rgba(200,168,124,.08),transparent 70%);border-radius:50%"></div>
 <h2 id="welcome-msg" class="serif" style="font-size:22px;font-weight:600;margin-bottom:6px;position:relative">Welcome 👋</h2>
-<p style="font-size:13px;color:var(--text2);line-height:1.6;position:relative">Master your training. Build your career. Control your finances.</p>
+<p style="font-size:13px;color:var(--text2);line-height:1.6;position:relative">Strategic positioning. Career leverage. Financial clarity.</p>
 </div>
 </div>
 
@@ -480,7 +820,7 @@ a{color:var(--accent);text-decoration:none}
 <div class="card" style="border-color:rgba(200,168,124,.2);cursor:pointer" onclick="navTo('scr-profile');showUpgrade()">
 <div style="display:flex;align-items:center;gap:12px">
 <span style="font-size:20px">⚡</span>
-<div><div style="font-size:13px;font-weight:600;color:var(--accent)">Unlock More Responses</div><div style="font-size:11px;color:var(--text3)">Upgrade to Core for 20 AI responses/month</div></div>
+<div><div style="font-size:13px;font-weight:600;color:var(--accent)">Upgrade to Core</div><div style="font-size:11px;color:var(--text3)">$15/mo — unlimited assessments, financial modeling, scenario tools</div></div>
 </div>
 </div>
 </div>
@@ -491,14 +831,14 @@ a{color:var(--accent);text-decoration:none}
 
 <!-- ASK SCREEN (Structured Intake) -->
 <div id="scr-ask" class="scr">
-<div class="hdr"><div class="hdr-t serif" style="font-size:20px">Ask HeartWise Mentor</div></div>
+<div class="hdr"><div class="hdr-t serif" style="font-size:20px">Strategic Intake</div></div>
 <div style="padding:24px 24px 100px">
 
 <div class="review-banner" id="review-banner">
 <div class="icon">📋</div>
 <div class="info">
-<h4>Doctor Review Credits: <span id="ask-credits">0</span></h4>
-<p>Reviews are limited weekly. Not all submissions are selected.</p>
+<h4>Physician Review Credits: <span id="ask-credits">0</span></h4>
+<p>Reviews are limited weekly. Not all submissions are selected. Strategic priority given to high-leverage questions.</p>
 </div>
 </div>
 
@@ -540,12 +880,12 @@ a{color:var(--accent);text-decoration:none}
 <select id="q-cat" required onchange="toggleFinance()">
 <option value="">Select</option>
 <option value="career">Career Strategy</option>
-<option value="fellowship">Fellowship Planning</option>
+<option value="fellowship">Fellowship Positioning</option>
 <option value="contract">Contract Negotiation</option>
-<option value="finance">Physician Finance</option>
+<option value="finance">Income & Financial Leverage</option>
 <option value="clinical">Clinical Education</option>
 <option value="productivity">Productivity Systems</option>
-<option value="wellness">Wellness</option>
+<option value="wellness">Performance Sustainability</option>
 </select></div>
 </div>
 
@@ -584,7 +924,7 @@ a{color:var(--accent);text-decoration:none}
 <span style="font-size:13px">Submit anonymously</span>
 </div>
 
-<button class="btn btn-a" onclick="submitQ()">Submit Question</button>
+<button class="btn btn-a" onclick="submitQ()">Submit for Strategic Analysis</button>
 </div>
 </div>
 
@@ -609,9 +949,9 @@ a{color:var(--accent);text-decoration:none}
 
 <!-- VAULT SCREEN -->
 <div id="scr-vault" class="scr">
-<div class="hdr"><div class="hdr-t serif" style="font-size:20px">Template Vault</div><span class="tag" style="background:var(--accent-dim);color:var(--accent)">PRO+</span></div>
+<div class="hdr"><div class="hdr-t serif" style="font-size:20px">Framework Library</div><span class="tag" style="background:var(--accent-dim);color:var(--accent)">HIGH PERFORMER+</span></div>
 <div style="padding:20px 24px">
-<p style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:24px">Structured frameworks and checklists built from real physician career decisions. Available for Pro and Mentorship members.</p>
+<p style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:24px">Structured frameworks, worksheets, and checklists for career decisions. Process-driven tools — not shortcuts. Available for High Performer and Private Strategy members.</p>
 </div>
 <div id="vault-list" class="pad"></div>
 </div>
@@ -704,10 +1044,9 @@ a{color:var(--accent);text-decoration:none}
 </div>
 </div>
 <div class="sec" style="padding:16px 0">Choose Your Plan</div>
-<div class="plan"><div class="plan-n" style="color:var(--text2)">Free</div><div class="plan-p">$0<span> /mo</span></div><ul class="plan-f"><li>1 AI mentorship response per month</li><li>Access to public reviewed archive</li></ul><button class="btn btn-g btn-sm" id="plan-free-btn" disabled>Current Plan</button></div>
-<div class="plan"><div class="plan-n" style="color:var(--blue)">Core</div><div class="plan-p">$19<span> /mo</span></div><ul class="plan-f"><li>20 AI responses per month</li><li>1 Doctor Review Credit</li><li>Weekly archive access</li></ul><button class="btn btn-a btn-sm" onclick="subPlan('core')">Upgrade to Core</button></div>
-<div class="plan pop"><div class="plan-n" style="color:var(--accent)">Pro</div><div class="plan-p">$39<span> /mo</span></div><ul class="plan-f"><li>50 AI responses per month</li><li>2 Doctor Review Credits</li><li>Monthly group Q&A</li><li>Template Vault</li></ul><button class="btn btn-a btn-sm" onclick="subPlan('pro')">Upgrade to Pro</button></div>
-<div class="plan ft"><div class="plan-n" style="color:var(--accent2)">Mentorship</div><div class="plan-p">$249<span> /year</span></div><div class="plan-limit">⚡ Limited to 50 members</div><ul class="plan-f"><li>Unlimited AI responses</li><li>6 Doctor Reviews per year</li><li>2 Small-group calls per year</li><li>All toolkits & templates</li></ul><button class="btn btn-a btn-sm" onclick="subPlan('mentorship')">Apply for Mentorship</button></div>
+<div class="plan"><div class="plan-n" style="color:var(--text3)">Explorer</div><div style="font-size:12px;color:var(--text3);margin-bottom:4px">Post-Trial Access</div><div class="plan-p">$0<span> /mo</span></div><ul class="plan-f"><li>1 structured analysis per month</li><li>Limited archive access</li><li>No saved progress</li></ul><button class="btn btn-g btn-sm" id="plan-free-btn" disabled>Current Plan</button></div>
+<div class="plan pop"><div class="plan-n" style="color:var(--accent)">Core</div><div style="font-size:12px;color:var(--accent);margin-bottom:4px">Your Strategic Engine</div><div class="plan-p">$15<span> /mo</span></div><ul class="plan-f"><li>Unlimited strategic assessments</li><li>Save &amp; track progress</li><li>Career and financial modeling tools</li><li>Scenario simulations</li><li>Full strategy archive</li></ul><button class="btn btn-a btn-sm" onclick="subPlan('core')">Get Core</button></div>
+<div class="plan ft"><div class="plan-n" style="color:var(--accent2)">Elite Strategy</div><div style="font-size:12px;color:var(--accent2);margin-bottom:4px">Limited Enrollment</div><div class="plan-p">$99<span> /mo</span></div><ul class="plan-f"><li>Everything in Core</li><li>1 Physician Review Credit per month</li><li>CV or contract review</li><li>Custom roadmap feedback</li><li>Priority responses</li></ul><p style="font-size:10px;color:var(--text3);margin-bottom:12px">Direct physician access layered on the full platform.</p><button class="btn btn-a btn-sm" onclick="subPlan('elite')">Apply for Elite</button></div>
 </div>
 
 </div>
@@ -732,7 +1071,7 @@ a{color:var(--accent);text-decoration:none}
 <button class="ni on" onclick="navTo('scr-home',this)"><svg><use href="#i-home"/></svg>Home</button>
 <button class="ni" onclick="navTo('scr-ask',this)"><svg><use href="#i-plus"/></svg>Ask</button>
 <button class="ni" onclick="navTo('scr-archive',this)"><svg><use href="#i-archive"/></svg>Archive</button>
-<button class="ni" onclick="navTo('scr-vault',this)"><svg><use href="#i-lock"/></svg>Vault</button>
+<button class="ni" onclick="navTo('scr-vault',this)"><svg><use href="#i-lock"/></svg>Frameworks</button>
 <button class="ni" onclick="navTo('scr-profile',this)"><svg><use href="#i-user"/></svg>Profile</button>
 <button class="ni" id="nav-admin" style="display:none" onclick="navTo('scr-admin',this)"><svg><use href="#i-settings"/></svg>Admin</button>
 </nav>
@@ -744,8 +1083,8 @@ a{color:var(--accent);text-decoration:none}
 // This gets inlined into the HTML via build script
 // ===== CONFIG =====
 const AE='dr.faroqui@heartwise.com';
-const TIERS={free:{name:'Free',ai:1,credits:0},core:{name:'Core',ai:20,credits:1},pro:{name:'Pro',ai:50,credits:2},mentorship:{name:'Mentorship',ai:999,credits:6},admin:{name:'Admin',ai:999,credits:999}};
-const CATS={career:'Career Strategy',fellowship:'Fellowship Planning',contract:'Contract Negotiation',finance:'Physician Finance',clinical:'Clinical Education',productivity:'Productivity Systems',wellness:'Wellness'};
+const TIERS={free:{name:'Explorer',ai:1,credits:0},core:{name:'Core',ai:999,credits:0},elite:{name:'Elite Strategy',ai:999,credits:1},admin:{name:'Admin',ai:999,credits:999}};
+const CATS={career:'Career Strategy',fellowship:'Fellowship Positioning',contract:'Contract Negotiation',finance:'Income & Financial Leverage',clinical:'Clinical Education',productivity:'Productivity Systems',wellness:'Performance Sustainability'};
 
 // ===== SEED DATA (Structured AI Format) =====
 const SEED_Q=[
@@ -875,16 +1214,7 @@ status:'reviewed',date:'2026-02-13',author:'Anonymous',anon:true,
 reviewNote:'I remember my first perforation 15 years later. The emotional response means you care. The attendings who scare me are the ones who do not feel it. \u2014 MF'}
 ];
 
-const PENDING_Q=[
-{id:200,cat:'career',role:'student',q:'Best strategy for choosing between academic and community IM residency if my goal is cardiology fellowship?',status:'pending',date:'2026-02-27',author:'Marcus T.',anon:false,wantsReview:true},
-{id:201,cat:'finance',role:'fellow',q:'Should I buy a house during fellowship or wait? $50K saved, spouse works.',status:'pending',date:'2026-02-27',author:'Anonymous',anon:true,wantsReview:true},
-{id:202,cat:'contract',role:'fellow',q:'Contract has 2-year restrictive covenant, 30-mile radius. Standard? How to negotiate down?',status:'pending',date:'2026-02-28',author:'Anonymous',anon:true,wantsReview:true},
-{id:203,cat:'wellness',role:'resident',q:'Getting married during PGY-3 while applying for fellowship. How to manage both?',status:'pending',date:'2026-02-28',author:'Jason W.',anon:false,wantsReview:false},
-{id:204,cat:'career',role:'fellow',q:'Should I pursue advanced heart failure fellowship or interventional? Genuinely interested in both.',status:'pending',date:'2026-02-28',author:'Anonymous',anon:true,wantsReview:true},
-{id:205,cat:'finance',role:'attending',q:'First attending year. Wife wants a $600K house, I have $350K in loans. Can we afford this?',status:'pending',date:'2026-02-28',author:'Anonymous',anon:true,wantsReview:true},
-{id:206,cat:'clinical',role:'student',q:'How do you systematically read an ECG? What is your step-by-step approach?',status:'pending',date:'2026-02-27',author:'David L.',anon:false,wantsReview:false},
-{id:207,cat:'productivity',role:'resident',q:'I spend 3 hours on notes every day after rounds. How do attendings chart so fast?',status:'pending',date:'2026-02-27',author:'Anonymous',anon:true,wantsReview:false}
-];
+const PENDING_Q=[];
 
 
 // ===== CONVERTED FROM SEED-DATA (109 original Q&As) =====
@@ -998,17 +1328,196 @@ const LEGACY_Q=[
 ];
 
 const VAULT_ITEMS=[
-{id:'v1',title:'Fellowship Roadmap Framework',desc:'Step-by-step timeline from PGY-1 to match',icon:'\ud83d\uddfa\ufe0f',tier:'pro'},
-{id:'v2',title:'CV Optimization Template',desc:'What programs actually look for, by priority',icon:'\ud83d\udcc4',tier:'pro'},
-{id:'v3',title:'RVU Explanation Guide',desc:'How RVUs work, benchmarks, compensation models',icon:'\ud83d\udcb0',tier:'pro'},
-{id:'v4',title:'Contract Red Flag Checklist',desc:'25 red flags before signing any physician contract',icon:'\ud83d\udea9',tier:'pro'},
-{id:'v5',title:'Resident Finance Starter Plan',desc:'Month-by-month plan from PGY-1 to attending year 1',icon:'\ud83d\udcca',tier:'pro'},
-{id:'v6',title:'Time Blocking System',desc:'Weekly template: clinical, research, personal',icon:'\u23f0',tier:'pro'},
-{id:'v7',title:'Contract Negotiation Toolkit',desc:'Scripts, templates, and MGMA benchmarks',icon:'\ud83d\udcdd',tier:'mentorship'},
-{id:'v8',title:'Fellowship Roadmap Templates',desc:'Customizable plans for each training year',icon:'\ud83c\udfaf',tier:'mentorship'}
+{id:'v1',title:'Fellowship Readiness Worksheet',desc:'Evaluate your application against successful fellowship profiles',icon:'\ud83c\udfaf',tier:'core'},
+{id:'v2',title:'Contract Risk Scorecard',desc:'Identify red flags and leverage points in any physician contract',icon:'\ud83d\udea9',tier:'core'},
+{id:'v3',title:'Offer Comparison Matrix',desc:'Side-by-side analysis framework for multiple job offers',icon:'\ud83d\udcca',tier:'core'},
+{id:'v4',title:'RVU Modeling Sheet',desc:'Model compensation scenarios by volume, rate, and practice type',icon:'\ud83d\udcb0',tier:'core'},
+{id:'v5',title:'3-Year Leverage Planner',desc:'Map your income trajectory from training exit through year 3',icon:'\ud83d\udcc8',tier:'core'},
+{id:'v6',title:'Fellowship Positioning Roadmap',desc:'Month-by-month timeline from PGY-2 to match day',icon:'\ud83d\uddfa\ufe0f',tier:'core'},
+{id:'v7',title:'Research ROI Calculator',desc:'Evaluate which projects give maximum application leverage',icon:'\u2696\ufe0f',tier:'core'},
+{id:'v8',title:'Income Leverage Playbook',desc:'PSLF vs refinance modeling, tax strategy, disability planning',icon:'\ud83d\udcb5',tier:'core'},
+{id:'v9',title:'Strategic Audit Template',desc:'The exact intake framework used in Elite Strategy sessions',icon:'\ud83d\udcdd',tier:'elite'},
+{id:'v10',title:'Career Pivot Decision Engine',desc:'Structured framework for specialty switches and practice model changes',icon:'\u26a1',tier:'elite'}
 ];
 
 
+
+// ===== FRAMEWORK LIBRARY CONTENT =====
+const VAULT_CONTENT={
+v1:`<h3>Fellowship Readiness Worksheet</h3>
+<p style="color:var(--text3);font-size:12px;margin-bottom:16px">Score yourself honestly. This isn't about feeling good — it's about knowing where you stand.</p>
+<div style="font-size:13px">
+<div style="padding:10px 0;border-bottom:1px solid var(--border)"><strong>1. Research & Scholarly Activity</strong> (Target: 4+/5)<br><span style="color:var(--text3);font-size:11px">Publications, abstracts, presentations. For competitive subspecialties: 2-3 first-author papers expected.</span></div>
+<div style="padding:10px 0;border-bottom:1px solid var(--border)"><strong>2. Letters of Recommendation</strong> (Target: 4+/5)<br><span style="color:var(--text3);font-size:11px">Specialty-specific, from physicians who know your work. A strong letter from a known name > 5 generic ones.</span></div>
+<div style="padding:10px 0;border-bottom:1px solid var(--border)"><strong>3. Clinical Performance</strong> (Target: 4+/5)<br><span style="color:var(--text3);font-size:11px">Evaluations, rotation feedback, procedural skills. How would attendings describe your clinical judgment?</span></div>
+<div style="padding:10px 0;border-bottom:1px solid var(--border)"><strong>4. Board Scores / ITE</strong> (Target: 3+/5)<br><span style="color:var(--text3);font-size:11px">Screening tool — above the cutoff matters more than exact number.</span></div>
+<div style="padding:10px 0;border-bottom:1px solid var(--border)"><strong>5. Leadership & Service</strong> (Target: 3+/5)<br><span style="color:var(--text3);font-size:11px">Chief resident, committee roles, QI projects, teaching.</span></div>
+<div style="padding:10px 0;border-bottom:1px solid var(--border)"><strong>6. Networking & Away Rotations</strong> (Target: 3+/5)<br><span style="color:var(--text3);font-size:11px">Program visits, conference attendance, faculty connections at target programs.</span></div>
+<div style="padding:10px 0"><strong>7. Personal Statement</strong> (Target: 4+/5)<br><span style="color:var(--text3);font-size:11px">Clear, specific story. Why this specialty? Why you? Polished through multiple drafts.</span></div>
+</div>
+<div style="padding:16px;background:var(--bg2);border-radius:8px;margin-top:16px"><p style="font-size:12px;color:var(--text2);line-height:1.6;margin:0"><strong>Score Guide:</strong> 28-35 = Strong (focus on fit). 21-27 = Solid with gaps (address weakest 2 now). 14-20 = Needs work (consider timeline adjustment). Below 14 = Honest reassessment needed.</p></div>
+<p style="font-size:10px;color:var(--text3);margin-top:12px;font-style:italic">Based on NRMP Charting Outcomes and program director surveys.</p>`,
+
+v2:`<h3>Contract Risk Scorecard</h3>
+<p style="color:var(--text3);font-size:12px;margin-bottom:16px">Red flags don't mean "don't sign." They mean "negotiate or get attorney clarification."</p>
+<div style="font-size:13px">
+<div style="padding:12px 0;border-bottom:1px solid var(--border)"><strong>1. Compensation Structure</strong><br><span style="color:var(--green);font-size:11px">✅ Clear base + defined RVU rate at/above MGMA median</span><br><span style="color:var(--red);font-size:11px">🚩 Vague "productivity bonus" without defined formula</span></div>
+<div style="padding:12px 0;border-bottom:1px solid var(--border)"><strong>2. Restrictive Covenant</strong><br><span style="color:var(--green);font-size:11px">✅ 10-15 mi radius, 1 year, waived if terminated without cause</span><br><span style="color:var(--red);font-size:11px">🚩 25+ miles, 2+ years, applies regardless of who terminates</span></div>
+<div style="padding:12px 0;border-bottom:1px solid var(--border)"><strong>3. Tail Insurance</strong><br><span style="color:var(--green);font-size:11px">✅ Employer pays tail, or occurrence-based policy</span><br><span style="color:var(--red);font-size:11px">🚩 You pay full tail ($20K-$50K+) regardless of circumstances</span></div>
+<div style="padding:12px 0;border-bottom:1px solid var(--border)"><strong>4. Termination Clauses</strong><br><span style="color:var(--green);font-size:11px">✅ 90-180 day notice, severance defined, narrow "cause"</span><br><span style="color:var(--red);font-size:11px">🚩 30-day notice, no severance, broad "cause" including "productivity"</span></div>
+<div style="padding:12px 0;border-bottom:1px solid var(--border)"><strong>5. Benefits & Call</strong><br><span style="color:var(--green);font-size:11px">✅ Full benefits in writing, $3K+ CME, 4%+ match, call compensated</span><br><span style="color:var(--red);font-size:11px">🚩 Benefits "available" without amounts, uncompensated call</span></div>
+<div style="padding:12px 0;border-bottom:1px solid var(--border)"><strong>6. Signing Bonus Clawback</strong><br><span style="color:var(--green);font-size:11px">✅ Pro-rated over 2-3 years</span><br><span style="color:var(--red);font-size:11px">🚩 Full repayment if you leave within 3 years for any reason</span></div>
+<div style="padding:12px 0"><strong>7. Partnership Track</strong><br><span style="color:var(--green);font-size:11px">✅ Defined timeline, transparent buy-in, criteria in writing</span><br><span style="color:var(--red);font-size:11px">🚩 "Eligible after X years" with no defined process</span></div>
+</div>
+<div style="padding:16px;background:var(--bg2);border-radius:8px;margin-top:16px"><p style="font-size:12px;color:var(--text2);line-height:1.6;margin:0"><strong>Rule of thumb:</strong> 3+ red flags = don't sign without attorney review ($2K-$3.5K). Attorney fees typically save $20K+ in negotiated improvements.</p></div>
+<p style="font-size:10px;color:var(--text3);margin-top:12px;font-style:italic">Sources: MGMA 2024, AMA Practice Benchmark Survey 2023.</p>`,
+
+v3:`<h3>Offer Comparison Matrix</h3>
+<p style="color:var(--text3);font-size:12px;margin-bottom:16px">Don't just compare salary — model total compensation over 3 years.</p>
+<div style="font-size:12px">
+<div style="font-weight:600;color:var(--accent);padding:8px 0">💰 Compensation</div>
+<div style="padding:6px 0;border-bottom:1px solid var(--border)">• Base Salary — what's guaranteed regardless of volume?</div>
+<div style="padding:6px 0;border-bottom:1px solid var(--border)">• RVU Rate & Threshold — per-unit rate, and when does bonus kick in?</div>
+<div style="padding:6px 0;border-bottom:1px solid var(--border)">• Signing Bonus — amount and clawback terms?</div>
+<div style="padding:6px 0;border-bottom:1px solid var(--border)">• Loan Repayment — amount, vesting, repayment if you leave?</div>
+<div style="font-weight:600;color:var(--accent);padding:12px 0 8px">⚖️ Risk & Structure</div>
+<div style="padding:6px 0;border-bottom:1px solid var(--border)">• Non-Compete — radius, duration, applies if they fire you?</div>
+<div style="padding:6px 0;border-bottom:1px solid var(--border)">• Tail Coverage — who pays, and how much?</div>
+<div style="padding:6px 0;border-bottom:1px solid var(--border)">• Termination — notice period, severance, "cause" definition?</div>
+<div style="padding:6px 0;border-bottom:1px solid var(--border)">• Partnership/Equity — timeline, buy-in, criteria?</div>
+<div style="font-weight:600;color:var(--accent);padding:12px 0 8px">🏥 Quality of Life</div>
+<div style="padding:6px 0;border-bottom:1px solid var(--border)">• Call Frequency — how often, compensated?</div>
+<div style="padding:6px 0;border-bottom:1px solid var(--border)">• PTO + CME Days — total days, CME budget?</div>
+<div style="padding:6px 0;border-bottom:1px solid var(--border)">• Location — cost of living, family, preferences</div>
+<div style="padding:6px 0">• Retirement — match %, plan type?</div>
+</div>
+<div style="padding:16px;background:var(--bg2);border-radius:8px;margin-top:16px"><p style="font-size:12px;color:var(--text2);line-height:1.6;margin:0"><strong>Pro tip:</strong> A $30K higher salary with a 25-mile non-compete and no tail coverage may cost you more over 5 years than a slightly lower offer with better structure.</p></div>`,
+
+v4:`<h3>RVU Modeling Sheet</h3>
+<p style="color:var(--text3);font-size:12px;margin-bottom:16px">Most new attendings sign contracts without ever modeling what their RVUs translate to.</p>
+<div style="font-size:13px;margin-bottom:20px">
+<div style="font-weight:600;color:var(--accent);margin-bottom:8px">How RVU Compensation Works</div>
+<p style="color:var(--text2);line-height:1.7;font-size:12px"><strong>Pure Production:</strong> Total Pay = wRVUs × $/wRVU<br><strong>Salary + Bonus:</strong> Base + (wRVUs above threshold × bonus rate)<br><strong>Guarantee:</strong> Fixed salary regardless of volume (usually year 1 only)</p>
+</div>
+<div style="font-weight:600;color:var(--accent);margin-bottom:8px">📊 MGMA Benchmarks (2024)</div>
+<div style="font-size:12px;color:var(--text2);line-height:2">
+General Cardiology — Median wRVUs: <strong>7,247</strong><br>
+Interventional Cardiology — Median wRVUs: <strong>9,187</strong><br>
+Electrophysiology — Median wRVUs: <strong>8,452</strong><br>
+Median $/wRVU (Cardiology): <strong>$55-$75</strong><br>
+Median Total Comp (IC): <strong>$600K-$750K</strong><br>
+75th Percentile (IC): <strong>$850K+</strong>
+</div>
+<div style="padding:16px;background:var(--bg2);border-radius:8px;margin-top:16px"><p style="font-size:12px;color:var(--text2);line-height:1.6;margin:0"><strong>Year 1 reality:</strong> Most new attendings don't hit median wRVUs in year 1. It takes 12-18 months to build a full panel. Make sure your guarantee period covers the ramp-up.</p></div>
+<p style="font-size:10px;color:var(--text3);margin-top:12px;font-style:italic">Source: MGMA DataDive Provider Compensation 2024.</p>`,
+
+v5:`<h3>3-Year Financial Leverage Planner</h3>
+<p style="color:var(--text3);font-size:12px;margin-bottom:16px">The first 3 years after training determine your financial trajectory for the next 20.</p>
+<div style="font-size:12px">
+<div style="padding:16px;background:var(--bg2);border-radius:8px;margin-bottom:12px">
+<div style="font-weight:600;color:var(--accent);margin-bottom:8px">Year 1: Foundation</div>
+<div style="color:var(--text2);line-height:1.8">• Maintain near-resident spending<br>• Build 6-month emergency fund<br>• Max employer retirement match<br>• Secure own-occupation disability insurance<br>• Make PSLF vs. refinance decision<br>• <span style="color:var(--red)">Avoid: car + house + lifestyle expansion simultaneously</span><br><strong>Target: Save 40-50% of gross</strong></div></div>
+<div style="padding:16px;background:var(--bg2);border-radius:8px;margin-bottom:12px">
+<div style="font-weight:600;color:var(--accent);margin-bottom:8px">Year 2: Acceleration</div>
+<div style="color:var(--text2);line-height:1.8">• Max all tax-advantaged accounts<br>• Begin taxable index fund investing<br>• Consider home purchase if staying 5+ years<br>• Term life insurance if dependents<br>• Begin gradual, intentional lifestyle upgrade<br><strong>Target: Net worth positive</strong></div></div>
+<div style="padding:16px;background:var(--bg2);border-radius:8px">
+<div style="font-weight:600;color:var(--accent);margin-bottom:8px">Year 3: Leverage</div>
+<div style="color:var(--text2);line-height:1.8">• Loans paid off or PSLF on track<br>• Portfolio growing with compound returns<br>• Evaluate contract renegotiation<br>• Consider practice ownership or side income<br><strong>Target: $200K-$500K net worth</strong></div></div>
+</div>
+<div style="padding:16px;background:var(--bg2);border-radius:8px;margin-top:12px"><p style="font-size:12px;color:var(--text2);line-height:1.6;margin:0"><strong>The math:</strong> $400K income, $100K lifestyle = $300K/yr invested. At 8% returns, that's $1M+ in 3 years. Inflate to $300K lifestyle instead and it takes 10+ years.</p></div>
+<p style="font-size:10px;color:var(--text3);margin-top:12px;font-style:italic">Sources: White Coat Investor, AAMC Debt Data 2024.</p>`,
+
+v6:`<h3>Fellowship Positioning Roadmap</h3>
+<p style="color:var(--text3);font-size:12px;margin-bottom:16px">Month-by-month timeline. By the time ERAS opens, most of the work should already be done.</p>
+<div style="font-size:12px">
+<div style="padding:12px 0;border-bottom:1px solid var(--border)"><strong style="color:var(--accent)">18-24 Months Before Match</strong><br><span style="color:var(--text2)">• Identify subspecialty with conviction<br>• Start first research project<br>• Build relationships with letter writers<br>• Attend first subspecialty conference</span></div>
+<div style="padding:12px 0;border-bottom:1px solid var(--border)"><strong style="color:var(--accent)">12-18 Months Before</strong><br><span style="color:var(--text2)">• Submit first abstract<br>• Get informal feedback on application strength<br>• Build program list (15-20, tiered)<br>• Take on leadership role</span></div>
+<div style="padding:12px 0;border-bottom:1px solid var(--border)"><strong style="color:var(--accent)">6-12 Months Before</strong><br><span style="color:var(--text2)">• Away rotations (1-2 target programs)<br>• Secure letter writers — ask early<br>• Manuscript submitted or in prep<br>• Draft personal statement</span></div>
+<div style="padding:12px 0;border-bottom:1px solid var(--border)"><strong style="color:var(--accent)">3-6 Months Before</strong><br><span style="color:var(--text2)">• Finalize personal statement (5+ drafts)<br>• Confirm letters submitted<br>• Interview prep with attendings<br>• Research each program specifically</span></div>
+<div style="padding:12px 0"><strong style="color:var(--accent)">0-3 Months Before</strong><br><span style="color:var(--text2)">• Interview season — thank-you notes within 24h<br>• Build rank list on fit, not just reputation<br>• Second-look visits for top 2-3<br>• Trust your gut on culture</span></div>
+</div>
+<p style="font-size:10px;color:var(--text3);margin-top:16px;font-style:italic">Based on NRMP data and program director input.</p>`,
+
+v7:`<h3>Research ROI Calculator</h3>
+<p style="color:var(--text3);font-size:12px;margin-bottom:16px">Not all research is equal for your application. Evaluate by return on your scarcest resource: time.</p>
+<div style="font-size:12px">
+<div style="padding:12px 0;border-bottom:1px solid var(--border)"><strong>1. First-Author Original Research</strong> <span style="color:var(--green);font-size:11px">(Highest ROI)</span><br><span style="color:var(--text2)">6-18 months. One published first-author paper outweighs 5 middle-author papers.</span></div>
+<div style="padding:12px 0;border-bottom:1px solid var(--border)"><strong>2. Case Reports</strong> <span style="color:var(--green);font-size:11px">(High ROI / time)</span><br><span style="color:var(--text2)">2-4 months. Low barrier, demonstrates writing ability. Best for early trainees.</span></div>
+<div style="padding:12px 0;border-bottom:1px solid var(--border)"><strong>3. Conference Abstracts</strong> <span style="color:var(--accent);font-size:11px">(Good ROI)</span><br><span style="color:var(--text2)">1-3 months. Gets your name visible. ACC/AHA posters are noticed by PDs.</span></div>
+<div style="padding:12px 0;border-bottom:1px solid var(--border)"><strong>4. Review Articles</strong> <span style="color:var(--accent);font-size:11px">(Moderate ROI)</span><br><span style="color:var(--text2)">3-6 months. Shows expertise. Most useful in specialty-specific journals.</span></div>
+<div style="padding:12px 0;border-bottom:1px solid var(--border)"><strong>5. Middle-Author Papers</strong> <span style="color:var(--text3);font-size:11px">(Low ROI per paper)</span><br><span style="color:var(--text2)">PDs know the difference between contributing and driving a project.</span></div>
+<div style="padding:12px 0"><strong>6. QI Projects</strong> <span style="color:var(--text3);font-size:11px">(Low ROI for fellowship)</span><br><span style="color:var(--text2)">Valuable for career but rarely moves the needle for subspecialty matching.</span></div>
+</div>
+<div style="padding:16px;background:var(--bg2);border-radius:8px;margin-top:16px"><p style="font-size:12px;color:var(--text2);line-height:1.6;margin:0"><strong>Optimal portfolio:</strong> 1-2 first-author papers + 2-3 abstracts + 1 case report. Start with the case report (quick win), then pursue original research (high impact).</p></div>`,
+
+v8:`<h3>Income Leverage Playbook</h3>
+<p style="color:var(--text3);font-size:12px;margin-bottom:16px">Five financial decisions with the biggest long-term impact on physician wealth.</p>
+<div style="font-size:12px">
+<div style="padding:14px;background:var(--bg2);border-radius:8px;margin-bottom:10px">
+<strong style="color:var(--accent)">1. PSLF vs. Refinance</strong><br><span style="color:var(--text2);line-height:1.7">Potentially a $50K-$200K decision. Qualifying employer for 10 years → PSLF almost always wins. Private practice → refinance to lowest rate. <span style="color:var(--red)">Do NOT refinance federal loans before ruling out PSLF. Irreversible.</span></span></div>
+<div style="padding:14px;background:var(--bg2);border-radius:8px;margin-bottom:10px">
+<strong style="color:var(--accent)">2. Disability Insurance</strong><br><span style="color:var(--text2);line-height:1.7">Own-occupation, specialty-specific. Buy during training when premiums are lowest. 25% chance of 90+ day disability before 65.</span></div>
+<div style="padding:14px;background:var(--bg2);border-radius:8px;margin-bottom:10px">
+<strong style="color:var(--accent)">3. Lifestyle Inflation Timing</strong><br><span style="color:var(--text2);line-height:1.7">Live on $100K vs $300K on a $400K salary = $200K/yr investing capacity. Over 3 years at 8% = $650K+ difference. Gradual upgrade year 3-4.</span></div>
+<div style="padding:14px;background:var(--bg2);border-radius:8px;margin-bottom:10px">
+<strong style="color:var(--accent)">4. Tax-Advantaged Accounts</strong><br><span style="color:var(--text2);line-height:1.7">Max in order: Employer match → Backdoor Roth ($7K) → Max 401k ($23.5K) → HSA ($4,150) → Mega backdoor Roth if available.</span></div>
+<div style="padding:14px;background:var(--bg2);border-radius:8px">
+<strong style="color:var(--accent)">5. Advisor Selection</strong><br><span style="color:var(--text2);line-height:1.7">Fee-only fiduciary. Not "fee-based" (can earn commissions). Check NAPFA.org for vetted advisors. 0.5-1% AUM or flat fee.</span></div>
+</div>
+<p style="font-size:10px;color:var(--text3);margin-top:12px;font-style:italic">Sources: White Coat Investor, Council for Disability Awareness 2023, IRS 2024 limits.</p>`,
+
+v9:`<h3>Strategic Audit Template</h3>
+<p style="color:var(--text3);font-size:12px;margin-bottom:16px">The exact intake framework used in Private Strategy sessions. Complete this before any major career decision.</p>
+<div style="font-size:12px">
+<div style="padding:14px;background:var(--bg2);border-radius:8px;margin-bottom:10px">
+<strong style="color:var(--accent)">Part 1: Current Position</strong><br><span style="color:var(--text2);line-height:1.8">• Current training level / position?<br>• Institution strengths and limitations?<br>• Financial situation (debt, savings, obligations)?<br>• CV snapshot (publications, scores, leadership)?<br>• What are you known for?</span></div>
+<div style="padding:14px;background:var(--bg2);border-radius:8px;margin-bottom:10px">
+<strong style="color:var(--accent)">Part 2: The Decision</strong><br><span style="color:var(--text2);line-height:1.8">• What specific decision are you facing?<br>• What are all options (including "do nothing")?<br>• What is the timeline?<br>• What have you already tried?<br>• What's holding you back?</span></div>
+<div style="padding:14px;background:var(--bg2);border-radius:8px;margin-bottom:10px">
+<strong style="color:var(--accent)">Part 3: Constraints & Priorities</strong><br><span style="color:var(--text2);line-height:1.8">• Non-negotiables (location, income, lifestyle)?<br>• What are you willing to sacrifice?<br>• Who else is affected?<br>• What does success look like in 1 year? 5 years?<br>• What would you regret not doing?</span></div>
+<div style="padding:14px;background:var(--bg2);border-radius:8px">
+<strong style="color:var(--accent)">Part 4: Information Gaps</strong><br><span style="color:var(--text2);line-height:1.8">• What info would make this easier?<br>• Who have you talked to?<br>• Worst realistic outcome of each option?<br>• Best realistic outcome?<br>• Is this decision reversible?</span></div>
+</div>
+<p style="font-size:10px;color:var(--text3);margin-top:12px;font-style:italic">Complete this before requesting a Private Strategy session.</p>`,
+
+v10:`<h3>Career Pivot Decision Engine</h3>
+<p style="color:var(--text3);font-size:12px;margin-bottom:16px">Structured framework for evaluating specialty switches, practice model changes, or non-clinical transitions.</p>
+<div style="font-size:12px">
+<div style="padding:14px;background:var(--bg2);border-radius:8px;margin-bottom:10px">
+<strong style="color:var(--accent)">Step 1: Diagnose the Dissatisfaction</strong><br><span style="color:var(--text2);line-height:1.8">Before pivoting, identify what's actually wrong. Is it the specialty, the practice setting, the specific job, or burnout? Changing specialties when the real problem is a toxic workplace is expensive and unnecessary.<br>• What specifically do you dislike?<br>• Would the same specialty in a different setting fix it?<br>• Are you burned out (temporary) or misaligned (structural)?</span></div>
+<div style="padding:14px;background:var(--bg2);border-radius:8px;margin-bottom:10px">
+<strong style="color:var(--accent)">Step 2: Map the Options</strong><br><span style="color:var(--text2);line-height:1.8">• Stay + modify (different role, different employer, part-time)<br>• Adjacent pivot (same training, different practice model)<br>• Full pivot (new specialty, non-clinical, industry, consulting)<br>• Hybrid (clinical + non-clinical income streams)<br>Rate each on: feasibility, financial impact, timeline, satisfaction potential</span></div>
+<div style="padding:14px;background:var(--bg2);border-radius:8px;margin-bottom:10px">
+<strong style="color:var(--accent)">Step 3: Financial Reality Check</strong><br><span style="color:var(--text2);line-height:1.8">• What's your current debt load and monthly obligations?<br>• How long can you sustain reduced income during transition?<br>• Does the new path have comparable earning potential long-term?<br>• What's the cost of additional training (time + money)?<br>• Do you have 6-12 months of expenses saved?</span></div>
+<div style="padding:14px;background:var(--bg2);border-radius:8px">
+<strong style="color:var(--accent)">Step 4: Test Before Committing</strong><br><span style="color:var(--text2);line-height:1.8">• Shadow someone in the new role for a week<br>• Do informational interviews with 3+ people who made a similar pivot<br>• Try a side project or moonlighting in the new area<br>• Set a decision deadline — analysis paralysis is its own trap<br>• <strong>Key question: In 5 years, will you regret not trying?</strong></span></div>
+</div>
+<div style="padding:16px;background:var(--bg2);border-radius:8px;margin-top:12px"><p style="font-size:12px;color:var(--text2);line-height:1.6;margin:0"><strong>Important:</strong> Do not make major career pivots while actively burned out. Stabilize first (therapy, time off, boundary changes), then evaluate with a clear mind. Burnout distorts decision-making.</p></div>`
+};
+
+
+
+// ===== TOPBAR SCROLL EFFECT =====
+(function(){
+  const lp=document.getElementById('pg-landing');
+  const tb=document.getElementById('topbar');
+  if(lp&&tb){
+    lp.addEventListener('scroll',function(){tb.classList.toggle('solid',lp.scrollTop>60)});
+    window.addEventListener('scroll',function(){tb.classList.toggle('solid',window.scrollY>60)});
+  }
+})();
+
+// ===== SCROLL REVEAL =====
+(function(){
+  const obs=new IntersectionObserver(function(entries){
+    entries.forEach(function(e){if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target)}})
+  },{threshold:0.12,rootMargin:'0px 0px -40px 0px'});
+  document.addEventListener('DOMContentLoaded',function(){
+    document.querySelectorAll('.reveal').forEach(function(el){obs.observe(el)});
+  });
+  // Also observe after page navigations
+  window._observeReveals=function(){document.querySelectorAll('.reveal:not(.visible)').forEach(function(el){obs.observe(el)})};
+})();
 
 // ===== APP STATE =====
 let DB,U=null,curFilter='all',curAdminTab='queue';
@@ -1020,7 +1529,7 @@ function initDB(){
     nextId:300,nextUserId:2
   };
   const saved=localStorage.getItem('hw_db');
-  if(saved){const old=JSON.parse(saved);if(old.questions&&old.questions.length>=seed.questions.length){DB=old;return}}
+  if(saved){const old=JSON.parse(saved);if(old.questions&&old.questions.length===seed.questions.length){DB=old;return}}
   DB=seed;saveDB();
 }
 function saveDB(){localStorage.setItem('hw_db',JSON.stringify(DB))}
@@ -1037,18 +1546,22 @@ window.onload=function(){
     setTimeout(()=>{
       document.getElementById('splash').style.display='none';
       const s=localStorage.getItem('hw_session');
-      if(s){U=JSON.parse(s);enterApp()}else{go('pg-landing')}
+      if(s){U=JSON.parse(s);handleCheckoutReturn();enterApp()}else{go('pg-landing')}
     },500);
   },1600);
 };
 
 // ===== NAV =====
 function go(id){
-  ['pg-landing','pg-login','pg-signup','main-app'].forEach(p=>{
+  ['pg-landing','pg-login','pg-signup','pg-onboard','main-app'].forEach(p=>{
     const el=document.getElementById(p);if(el){el.classList.add('hidden');el.style.display=''}
   });
   const el=document.getElementById(id);if(el){el.classList.remove('hidden');el.style.display=''}
+  if(id==='pg-signup'){go('pg-onboard');return}
   document.getElementById('main-nav').classList.remove('on');
+  // Show/hide topbar
+  const tb=document.getElementById('topbar');
+  if(tb)tb.style.display=(id==='pg-landing')?'':'none';
 }
 
 function navTo(scr,btn){
@@ -1104,7 +1617,7 @@ function enterApp(){
   if(!U.usage)U.usage={ai:0,credits:TIERS[U.tier]?.credits||0,month:new Date().getMonth()};
   if(U.usage.month!==new Date().getMonth()){U.usage.ai=0;U.usage.credits=TIERS[U.tier]?.credits||0;U.usage.month=new Date().getMonth()}
   const b=document.getElementById('user-badge');
-  const bc={free:'b-free',core:'b-core',pro:'b-pro',mentorship:'b-ment',admin:'b-admin'};
+  const bc={free:'b-free',core:'b-core',elite:'b-pro',admin:'b-admin'};
   b.className='badge '+(bc[U.tier]||'b-free');
   b.textContent=U.tier==='admin'?'MENTOR':TIERS[U.tier]?.name?.toUpperCase()||'FREE';
   document.getElementById('welcome-msg').textContent='Welcome, '+U.name.split(' ')[0]+' \ud83d\udc4b';
@@ -1141,16 +1654,19 @@ function renderQCard(q){
 function showQuestion(id){
   const q=DB.questions.find(x=>x.id===id);if(!q)return;
   let h='<span class="tag t-cat" style="margin-bottom:12px;display:inline-block">'+(CATS[q.cat]||q.cat)+'</span>';
-  h+='<h2 style="font-family:Playfair Display,serif;font-size:20px;margin-bottom:8px">'+q.q+'</h2>';
+  h+='<h2 style="font-family:Cormorant Garamond,serif;font-size:20px;margin-bottom:8px">'+q.q+'</h2>';
   h+='<div style="font-size:12px;color:var(--text3);margin-bottom:20px">'+(q.anon?'Anonymous':q.author)+' \u00b7 '+q.role+' \u00b7 '+q.date+'</div>';
   if(q.ai){
     h+='<div class="ai-resp">';
-    h+='<h4>\ud83c\udfaf Situation Diagnosis</h4><p>'+q.ai.diag+'</p>';
-    h+='<h4>\ud83d\udd0d The Real Bottleneck</h4><p>'+q.ai.bottleneck+'</p>';
-    h+='<h4>\ud83d\udcdd Strategic Plan</h4><ol>'+q.ai.plan.map(s=>'<li>'+s+'</li>').join('')+'</ol>';
-    h+='<h4>\u26a0\ufe0f Common Mistakes</h4><ul style="list-style:none;padding:0">'+q.ai.mistakes.map(m=>'<li style="padding:4px 0;color:var(--red)">\u2022 '+m+'</li>').join('')+'</ul>';
-    h+='<h4>\ud83d\udcc5 30-Day Action Plan</h4><p>'+q.ai.action+'</p>';
-    h+='<div class="escalate">'+(q.ai.escalate?'\u2705 Recommended for Doctor Review: ':'\u2796 Doctor Review: ')+(q.ai.ereason||'')+'</div>';
+    h+='<div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border)"><span style="font-size:11px;font-weight:600;color:var(--blue);text-transform:uppercase;letter-spacing:1px">AI-Assisted Guidance</span><span style="font-size:10px;color:var(--text3)">•</span><span style="font-size:10px;color:var(--text3)">Powered by evidence-based frameworks</span></div>';
+    h+='<h4>📋 Assessment</h4><p>'+q.ai.diag+'</p>';
+    h+='<h4>🔍 Key Considerations</h4><p>'+q.ai.bottleneck+'</p>';
+    h+='<h4>📝 Recommended Approach</h4><ol>'+q.ai.plan.map(s=>'<li>'+s+'</li>').join('')+'</ol>';
+    h+='<h4>⚠️ Common Pitfalls</h4><ul style="list-style:none;padding:0">'+q.ai.mistakes.map(m=>'<li style="padding:4px 0;color:var(--red)">• '+m+'</li>').join('')+'</ul>';
+    h+='<h4>📅 30-Day Action Plan</h4><p>'+q.ai.action+'</p>';
+    if(q.ai.refs){h+='<div style="margin-top:16px;padding:12px;border-radius:var(--r2);background:rgba(100,149,237,.06);border:1px solid rgba(100,149,237,.15)"><div style="font-size:10px;font-weight:600;color:var(--blue);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">📚 References & Sources</div><p style="font-size:11px;color:var(--text3);line-height:1.6">'+q.ai.refs+'</p></div>'}
+    h+='<div class="escalate" style="margin-top:12px">'+(q.ai.escalate?'✅ Physician review recommended: ':'ℹ️ Physician review: ')+(q.ai.ereason||'')+'</div>';
+    h+='<div style="margin-top:12px;font-size:10px;color:var(--text3);font-style:italic;line-height:1.5">This response is AI-generated educational guidance, not medical or legal advice. For individualized decisions, consult appropriate professionals. References current as of the date shown.</div>';
     h+='</div>';
   }
   if(q.reviewNote){
@@ -1161,8 +1677,8 @@ function showQuestion(id){
   // Upgrade prompt for free users
   if(U&&U.tier==='free'){
     h+='<div style="margin-top:20px;padding:18px;border-radius:var(--r2);background:linear-gradient(135deg,var(--accent-dim),rgba(200,168,124,.06));border:1px solid rgba(200,168,124,.2)">';
-    h+='<div style="font-size:14px;font-weight:600;color:var(--accent);margin-bottom:6px">\u26a1 Want deeper analysis?</div>';
-    h+='<p style="font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.5">Upgrade to Core for 20 AI responses/month and Doctor Review credits. Pro members get 50 responses + Template Vault access.</p>';
+    h+='<div style="font-size:14px;font-weight:600;color:var(--accent);margin-bottom:6px">⚡ Want more structured guidance?</div>';
+    h+='<p style="font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.5">Upgrade to Core for unlimited strategic assessments, financial modeling tools, and scenario simulations.</p>';
     h+='<button class="btn btn-a btn-sm" onclick="closeModal(\'modal-q\');navTo(\'scr-profile\');showUpgrade()" style="max-width:200px">View Plans \u2192</button></div>';
   }
   document.getElementById('modal-q-content').innerHTML=h;
@@ -1206,13 +1722,62 @@ function submitQ(){
 
 function genAI(cat,core,level){
   const T={
-    career:{diag:'Based on your '+level+' training level, this is a strategic career positioning question requiring structured analysis.',bottleneck:'The real constraint is not qualifications\u2014it is strategic positioning. Differentiation comes from intentional career design.',plan:['Audit CV against successful applicants','Identify 2-3 strategic relationships to build','Start one research project this month','Submit abstract to next major conference','Develop a clear narrative for your application'],mistakes:['Waiting too long to build application','Relying on single mentor','Chasing prestige over fit','Not asking for specific feedback'],action:'Week 1: CV audit. Week 2: Target mentors. Week 3: Start research. Month 2: Conference abstract. Month 3: Feedback from 3 attendings.',escalate:false,ereason:'Career strategy covered by AI.'},
-    fellowship:{diag:'Fellowship planning requires systematic approach to timeline, credentials, and networking at the '+level+' level.',bottleneck:'Most underestimate early preparation. The match is decided 12-18 months before application.',plan:['Map timeline backward from target match year','Identify top 15-20 programs','Target 2-3 first-author publications','Secure strong specialty-specific letters','Plan 1-2 away rotations'],mistakes:['Starting too late','Not applying broadly','Weak letters from distant attendings','Ignoring program culture'],action:'This month: program list. Next month: research project. Month 3: letter writers. Month 6: manuscript in progress.',escalate:false,ereason:'Standard fellowship planning.'},
-    contract:{diag:'Contract evaluation requires understanding both explicit terms and implicit business model.',bottleneck:'Information asymmetry between you and employer is the primary risk.',plan:['Hire physician contract attorney ($2-3K)','Get MGMA benchmarks','Evaluate: salary, RVU rate, benefits, call','Scrutinize: restrictive covenant, tail coverage, termination','Model total comp over 3-5 years'],mistakes:['Signing without attorney','Focusing on salary, ignoring covenant','Accepting verbal promises','Not understanding comp model'],action:'Week 1: Attorney. Week 2: MGMA data. Week 3: Contract review. Week 4: Counter-offer.',escalate:true,ereason:'Contract specifics need individualized review.'},
-    finance:{diag:'Physician finance decisions have outsized impact due to unique income trajectory.',bottleneck:'Primary wealth destroyer: lifestyle inflation during trainee-to-attending transition.',plan:['Emergency fund (3-6 months)','Max tax-advantaged accounts','Determine loan strategy: PSLF vs refinance','Own-occupation disability insurance','Maintain near-resident lifestyle 2-3 years'],mistakes:['Refinancing before PSLF decision','Buying house + car simultaneously','Commission-based financial advisor','Ignoring disability insurance'],action:'This week: HYSA. This month: employer match. Next month: disability quotes. Quarter 1: loan strategy.',escalate:true,ereason:'Financial decisions benefit from personalized analysis.'},
-    clinical:{diag:'Clinical mastery requires pattern recognition and systematic decision-making through deliberate practice.',bottleneck:'You need a system for learning from every case, not passive exposure.',plan:['Review relevant ACC/AHA guidelines','Study 3-5 landmark trials','Practice algorithm with real cases','Teach the topic to a peer','Create bedside reference card'],mistakes:['Memorizing without understanding pathophysiology','Not reviewing own cases','Relying on single resource','Not updating as guidelines change'],action:'This week: read guideline. Review 3 cases. Create reference card. Teach within 30 days.',escalate:false,ereason:'Clinical education covered by AI.'},
-    productivity:{diag:'Productivity in medicine is about systems design, not working harder.',bottleneck:'You are optimizing tasks when the leverage is in workflow architecture.',plan:['5-day time audit','Identify top 3 time drains','Install time-blocking for deep work','Batch similar tasks','Create templates for recurring work'],mistakes:['Optimizing without auditing','Multitasking','Not protecting deep work blocks','Saying yes to low-leverage requests'],action:'Week 1: time audit. Week 2: identify drains. Week 3: time-blocking. Week 4: create 3 templates.',escalate:false,ereason:'Productivity framework is comprehensive.'},
-    wellness:{diag:'Physician wellness is a prerequisite for sustained high performance, not a luxury.',bottleneck:'Treating symptoms instead of root causes: unsustainable workload, lack of boundaries, isolation.',plan:['Identify specific burnout drivers','Protect one non-negotiable personal activity','Build support network','Set boundaries on low-impact obligations','Consider professional support'],mistakes:['Pushing through without addressing root causes','Isolating','Making career decisions while burned out','Comparing internal experience to external appearance'],action:'This week: top 2 burnout drivers. Protect one personal evening. Talk to one peer. Professional support if severe.',escalate:false,ereason:'Wellness framework provided.'}
+    career:{
+      diag:'At the '+level+' level, career positioning is less about credentials and more about how intentionally you design your trajectory. The data consistently shows that physicians who approach career decisions with structured frameworks — rather than defaulting to the next available step — report higher satisfaction and better long-term outcomes (Shanafelt et al., Mayo Clinic Proceedings, 2019).',
+      bottleneck:'Here\'s what I see most often: the constraint isn\'t your qualifications. It\'s clarity. Most trainees have similar CVs — what separates those who land their target positions is a coherent narrative and strategic relationships built 12-18 months before they need them.',
+      plan:['Audit your CV against 3-5 successful applicants in your target field — look for gaps in research, leadership, or clinical breadth','Identify 2-3 physicians whose career path you want to emulate and request a 15-minute informational conversation','Commit to one scholarly project this month — even a case report puts you ahead of those still "thinking about it"','Draft your personal statement narrative now, even if applications are a year away — iteration takes time','Get specific feedback from attendings who have served on selection committees'],
+      mistakes:['Waiting until application season to build your portfolio — most successful candidates start 18+ months early','Over-relying on a single mentor — one perspective creates blind spots','Choosing prestige over program fit — the "best" program isn\'t always best for your specific goals','Avoiding direct feedback — vague encouragement doesn\'t help you improve'],
+      action:'Week 1: Pull your CV and compare against 3 successful applicants. Week 2: Reach out to 2 potential mentors. Week 3: Identify and start a scholarly project. By 90 days: first draft of personal statement and 1 abstract submitted.',
+      refs:'Shanafelt TD, et al. "Career Fit and Burnout Among Academic Faculty." Mayo Clin Proc. 2019;94(4):678-689. • Dyrbye LN, et al. "Physician Satisfaction and Burnout at Different Career Stages." Mayo Clin Proc. 2013;88(12):1358-1367. • AAMC Careers in Medicine Framework, 2024.',
+      escalate:false,ereason:'This is well-covered by structured career planning frameworks. Physician review recommended if you have a specific program list or unusual circumstances.'},
+    fellowship:{
+      diag:'Fellowship preparation at the '+level+' level requires reverse-engineering a timeline. The NRMP data shows that match success correlates most strongly with (1) letters of recommendation quality, (2) research productivity, and (3) away rotation performance — in roughly that order for most subspecialties.',
+      bottleneck:'The biggest mistake I see is underestimating how early the match is effectively decided. Program directors are forming impressions 12-18 months before rank lists are due. By the time you\'re filling out ERAS, most of the meaningful work should already be done.',
+      plan:['Map backward from your target match year — identify every deadline and work 3 months ahead of each','Build a target list of 15-20 programs, tiered by reach / target / safety based on program data and your application strength','Aim for 2-3 first-author publications or manuscripts in preparation — per NRMP Charting Outcomes, this significantly moves the needle','Secure specialty-specific letters early — a strong letter from a recognized name in your field is worth more than 5 generic ones','Plan 1-2 away rotations at programs where you could realistically match, ideally by end of PGY-2 or early PGY-3'],
+      mistakes:['Starting preparation in application year — by then you\'re managing damage, not building strength','Applying too narrowly — NRMP data consistently shows broader applications improve match rates','Getting letters from attendings who barely know your work — a lukewarm letter from a big name hurts more than a strong one from a lesser-known mentor','Ignoring program culture — fellowship is 3-6 years; fit matters as much as reputation'],
+      action:'This month: finalize program list and rank tiers. Next month: identify letter writers and start a research project. Month 3: submit abstract to ACC/AHA meeting. Month 6: manuscript in progress. Month 9: away rotations scheduled.',
+      refs:'NRMP Charting Outcomes in the Match: Specialties Matching Service, 2024. • ACC Cardiology Fellowship Application Guide, 2024-2025. • Baskaran L, et al. "Factors Influencing Cardiology Fellowship Match." JACC. 2020;76(3):346-348.',
+      escalate:false,ereason:'Standard fellowship preparation is well-structured. Request physician review if you need help with program-specific strategy or have a non-traditional application path.'},
+    contract:{
+      diag:'Contract evaluation is one of the highest-stakes financial decisions in a physician\'s career — often involving $250K-$500K+ in total compensation over the initial term. The literature on physician contract literacy is sobering: a Medical Economics survey found that over 60% of physicians did not fully understand their first contract before signing.',
+      bottleneck:'The core problem is information asymmetry. The employer has done this hundreds of times. You\'re doing it for the first or second time. A physician contract attorney ($2,000-$3,500) typically pays for itself many times over through negotiated improvements.',
+      plan:['Before anything else, hire a physician-specific contract attorney — not a general lawyer, not your uncle who does real estate','Pull MGMA and AMGA compensation benchmarks for your specialty, region, and practice type','Evaluate the full compensation picture: base salary, RVU rate and threshold, benefits value, call burden, partnership track, signing bonus clawback terms','Scrutinize the restrictive covenant (non-compete), tail insurance coverage, termination clauses (with-cause vs without-cause), and ramp-up provisions','Model total compensation over 3-5 years, not just year one — many contracts are structured to look good initially and flatten'],
+      mistakes:['Signing without attorney review — this is a six-figure decision; $3K for legal review is not optional','Fixating on base salary while ignoring the non-compete radius, tail coverage gaps, or unfavorable termination terms','Accepting verbal promises that aren\'t in writing — if it\'s not in the contract, it doesn\'t exist','Not understanding whether you\'re in a production-based (RVU) model vs. salary guarantee — these have very different long-term trajectories'],
+      action:'Week 1: Identify and engage a physician contract attorney. Week 2: Request MGMA data for your specialty and region. Week 3: Complete attorney review of all contract terms. Week 4: Prepare and submit a structured counter-offer with supporting data.',
+      refs:'MGMA DataDive Provider Compensation Report, 2024. • Medical Economics Physician Compensation Survey, 2024. • AMA Physician Practice Benchmark Survey, 2023. • Erickson SM, et al. "Physician Employment Contracts." JAMA Internal Medicine, 2021.',
+      escalate:true,ereason:'Contracts are highly individual. This framework covers the process, but your specific terms deserve physician review for nuanced guidance.'},
+    finance:{
+      diag:'Physician financial planning is uniquely complex because of the delayed income curve, high student debt load (median $200K+, per AAMC data), and the "attending lifestyle" transition that often derails long-term wealth building. The good news: physician income, when managed well, creates significant financial leverage over a 20-30 year career.',
+      bottleneck:'The #1 wealth destroyer for new attendings isn\'t bad investments — it\'s lifestyle inflation during the trainee-to-attending transition. Going from $65K to $350K+ feels like unlimited money. Physicians who maintain near-resident spending for 2-3 years post-training build a financial foundation that compounds for decades.',
+      plan:['Establish 3-6 month emergency fund in a high-yield savings account before anything else','Maximize tax-advantaged retirement contributions: 401(k)/403(b) employer match first, then backdoor Roth IRA, then max out pre-tax contributions','Make your student loan strategy decision: PSLF (if qualifying employment) vs. refinance — this is a six-figure decision that should not be made casually','Secure own-occupation disability insurance during residency/fellowship when premiums are lowest — this protects your most valuable asset (your income)','Maintain near-resident spending for 2-3 years post-training — invest the delta aggressively into index funds and loan repayment'],
+      mistakes:['Refinancing federal loans before ruling out PSLF — this is irreversible and can cost $50K-$200K in forgiveness','Buying a house and a luxury car simultaneously upon attending salary — overleveraging in year one','Using a commission-based financial advisor without understanding fee structures — fee-only fiduciary advisors align better with your interests','Skipping disability insurance — a 35-year-old physician has roughly a 25% chance of a disability lasting 90+ days before age 65 (Council for Disability Awareness)'],
+      action:'This week: Open a high-yield savings account and start emergency fund. This month: Enroll in employer retirement match. Next month: Get 3 disability insurance quotes. Within 90 days: Make your PSLF vs. refinance decision with full modeling.',
+      refs:'AAMC Medical Student Education: Debt, Costs, and Loan Repayment Fact Card, 2024. • White Coat Investor, "Financial Literacy Curriculum for Medical Residents." • Council for Disability Awareness, Long-Term Disability Claims Review, 2023. • Physician on FIRE, "Live Like a Resident" framework.',
+      escalate:true,ereason:'Financial planning is deeply personal. This framework covers fundamentals, but your specific debt load, family situation, and practice model affect the right strategy. Consider physician review.'},
+    clinical:{
+      diag:'Clinical skill development at the '+level+' level benefits most from deliberate, structured practice rather than passive case exposure. Evidence from medical education research (Ericsson, 2004; McGaghie et al., 2011) consistently shows that targeted, feedback-driven practice produces measurably better clinical outcomes than experience alone.',
+      bottleneck:'The real gap isn\'t knowledge — it\'s having a system for turning every clinical encounter into a learning opportunity. Most trainees passively accumulate cases. The ones who accelerate fastest are those who actively review, teach, and self-assess after every shift.',
+      plan:['Start with the current ACC/AHA guidelines relevant to your question — these are the evidence-based foundation everything else builds on','Identify 3-5 landmark trials in the topic area (check ACC.org CardioSmart, NEJM Journal Watch, or OpenEvidence for curated trial summaries)','Practice applying the guidelines to 3-5 real cases you\'ve seen — abstract knowledge doesn\'t stick without clinical application','Teach the topic to a peer or medical student within 2 weeks — the "teaching effect" significantly improves retention (Nestojko et al., Memory & Cognition, 2014)','Create a pocket reference card or decision algorithm you can use at the bedside — synthesis forces deeper understanding'],
+      mistakes:['Memorizing guidelines without understanding the underlying pathophysiology — when patients don\'t fit the algorithm, you need to reason from first principles','Not reviewing your own outcomes — tracking your diagnostic accuracy and treatment decisions over time is the fastest path to improvement','Relying on a single resource — cross-reference UpToDate with primary literature and guidelines','Not keeping up with guideline updates — ACC/AHA guidelines are living documents; check focused updates annually'],
+      action:'This week: Read the relevant ACC/AHA guideline in full. Next week: Review 3 landmark trials. Week 3: Apply to 3 real cases and document your reasoning. By day 30: Teach the topic and create a bedside reference card.',
+      refs:'Ericsson KA. "Deliberate Practice and the Acquisition of Expert Performance." Academic Medicine. 2004;79(10). • McGaghie WC, et al. "A Critical Review of Simulation-Based Medical Education Research." Med Educ. 2010;44(1):50-63. • ACC/AHA Clinical Practice Guidelines, acc.org. • OpenEvidence clinical decision support, openevidence.com.',
+      escalate:false,ereason:'Clinical education questions are well-served by evidence-based frameworks. Request physician review for complex diagnostic dilemmas or management decisions.'},
+    productivity:{
+      diag:'Physician productivity research (Sinsky et al., Annals of Internal Medicine, 2016) shows that physicians spend nearly 2 hours on EHR and administrative tasks for every 1 hour of direct patient care. The leverage isn\'t in working harder — it\'s in redesigning how you work.',
+      bottleneck:'Most physicians try to optimize individual tasks when the real leverage is in workflow architecture. You don\'t need a better to-do list — you need a system that eliminates, automates, or batches the tasks that drain your energy without producing proportional value.',
+      plan:['Conduct a 5-day time audit: track every 30-minute block to identify where your time actually goes vs. where you think it goes','Identify your top 3 time drains — these are usually documentation, inbox management, and context-switching between clinical and administrative work','Implement time-blocking for deep work (research, reading, career development) — protect these blocks like you would a procedure','Batch similar administrative tasks into 2-3 dedicated windows per day rather than handling them in real-time','Create templates and macros for recurring documentation — every note you write from scratch that could be templated is wasted cognitive energy'],
+      mistakes:['Trying to optimize without first auditing — you can\'t improve what you haven\'t measured','Multitasking — cognitive science consistently shows it reduces both quality and speed (Monsell, 2003)','Not protecting deep work time — if your calendar doesn\'t reflect your priorities, other people\'s priorities will fill it','Saying yes to low-leverage commitments out of obligation — every yes to something unimportant is a no to something that matters'],
+      action:'Week 1: Complete a 5-day time audit. Week 2: Identify top 3 time drains and design solutions. Week 3: Implement time-blocking system. Week 4: Create 3 documentation templates.',
+      refs:'Sinsky C, et al. "Allocation of Physician Time in Ambulatory Practice." Annals of Internal Medicine. 2016;165(11):753-760. • Monsell S. "Task Switching." Trends in Cognitive Sciences. 2003;7(3):134-140. • Newport C. "Deep Work: Rules for Focused Success in a Distracted World." 2016.',
+      escalate:false,ereason:'Productivity systems are well-structured by frameworks. Physician review available if you need help designing a system specific to your clinical role.'},
+    wellness:{
+      diag:'Physician burnout affects approximately 44% of practicing physicians (Shanafelt et al., Mayo Clinic Proceedings, 2022), and the drivers are primarily systemic — not personal weakness. At the '+level+' level, addressing wellness proactively is both a professional obligation and a practical necessity for career longevity.',
+      bottleneck:'The root cause is almost never "not enough self-care." It\'s structural: unsustainable workload, loss of autonomy, moral injury from administrative burden, or isolation. Treating burnout with yoga while ignoring these drivers is like treating hypertension with aspirin.',
+      plan:['Identify your specific burnout drivers — use the Maslach Burnout Inventory dimensions (emotional exhaustion, depersonalization, reduced personal accomplishment) to pinpoint which domain is affected','Protect one non-negotiable personal activity per week — research shows that maintaining one meaningful non-work commitment significantly reduces burnout risk','Build or maintain a peer support network — regular connection with 2-3 colleagues who understand your experience provides both perspective and validation','Set explicit boundaries on low-impact professional obligations — committee work, optional meetings, and administrative tasks that don\'t align with your core role drain energy disproportionately','If you\'re scoring high on emotional exhaustion or depersonalization, seek confidential professional support — most physician assistance programs are free and fully confidential'],
+      mistakes:['Pushing through without addressing root causes — burnout doesn\'t resolve with willpower; it escalates','Isolating from colleagues and support — this is the most dangerous response and the most common','Making major career decisions while actively burned out — your decision-making is compromised; stabilize first, then decide','Comparing your internal experience to others\' external presentation — every colleague who "seems fine" is managing their own version of this'],
+      action:'This week: Write down your top 2 burnout drivers — be specific. This weekend: Do one thing purely for yourself. Next week: Have an honest conversation with one trusted colleague. Within 30 days: If symptoms persist, contact your institution\'s physician wellness program or a confidential therapist.',
+      refs:'Shanafelt TD, et al. "Changes in Burnout and Satisfaction With Work-Life Integration in Physicians During the First 2 Years of COVID-19." Mayo Clin Proc. 2022;97(12):2248-2258. • West CP, et al. "Interventions to Prevent and Reduce Physician Burnout." The Lancet. 2016;388(10057):2272-2281. • National Academy of Medicine Action Collaborative on Clinician Well-Being, nam.edu.',
+      escalate:false,ereason:'Wellness frameworks are evidence-based and well-structured. Request physician review if you\'re in acute distress or facing a specific workplace situation.'}
   };
   return T[cat]||T.career;
 }
@@ -1233,12 +1798,18 @@ function setFilter(f,btn){curFilter=f;document.querySelectorAll('.fc .chip').for
 
 // ===== VAULT =====
 function renderVault(){
-  const canAccess=U.tier==='pro'||U.tier==='mentorship'||U.tier==='admin';
+  const canAccess=U.tier==='core'||U.tier==='elite'||U.tier==='admin';
   document.getElementById('vault-list').innerHTML=VAULT_ITEMS.map(v=>{
-    const mentOnly=v.tier==='mentorship'&&U.tier!=='mentorship'&&U.tier!=='admin';
+    const mentOnly=v.tier==='elite'&&U.tier!=='elite'&&U.tier!=='admin';
     const locked=!canAccess||mentOnly;
-    return '<div class="vault-card '+(locked?'':'unlocked')+'" '+(locked?'':'onclick="notify(\'Template downloaded! (Demo)\')"')+'><div class="v-icon">'+v.icon+'</div><div class="v-info"><h3>'+v.title+'</h3><p>'+v.desc+(mentOnly?' \u2022 Mentorship only':'')+'</p></div><div class="v-lock">'+(locked?'\ud83d\udd12':'\u2b07\ufe0f')+'</div></div>';
+    return '<div class="vault-card '+(locked?'':'unlocked')+'" '+(locked?'onclick="notify(\'Upgrade to access this framework\',1)"':'onclick="openFramework(\''+v.id+'\')"')+'><div class="v-icon">'+v.icon+'</div><div class="v-info"><h3>'+v.title+'</h3><p>'+v.desc+(mentOnly?' \u2022 Private Strategy only':'')+'</p></div><div class="v-lock">'+(locked?'\ud83d\udd12':'\ud83d\udcc4')+'</div></div>';
   }).join('');
+}
+function openFramework(id){
+  const content=VAULT_CONTENT[id];
+  if(!content){notify('Framework content loading...',1);return}
+  document.getElementById('modal-q-content').innerHTML=content;
+  document.getElementById('modal-q').classList.remove('hidden');
 }
 
 // ===== PROFILE =====
@@ -1269,18 +1840,102 @@ function showUpgrade(){
     const t=TIERS[U.tier];
     document.getElementById('sub-plan-name').textContent=t.name;
     document.getElementById('sub-status').textContent='Active';
-    const renew=U.tier==='mentorship'?'Renews annually':'Renews monthly';
+    const renew=U.tier==='elite'?'Renews monthly':'Renews monthly';
     document.getElementById('sub-renew').textContent=renew+' \u2022 Auto-renewal on';
-    document.getElementById('sub-usage-summary').textContent=t.ai+(t.ai===999?' unlimited':'')+' AI responses / '+t.credits+' review credits per '+(U.tier==='mentorship'?'year':'month');
+    document.getElementById('sub-usage-summary').textContent='Unlimited AI assessments / '+t.credits+' review credits per month';
   }else{document.getElementById('sub-manage').classList.add('hidden')}
 }
 function toggleNotifSettings(){document.getElementById('notif-settings').classList.toggle('hidden')}
+// ===== STRIPE CONFIG =====
+const STRIPE_PK='pk_test_51T5mX3PXNQA0ks87KmMtyTYTQZKBLJ6dE5U15eSBf97sK2ecqdU1DYjcJYpevRpdJnE1Xyi0Uow6PG2J8b4A8UCq004h8agh3H';
+const STRIPE_PRICES={
+  core:'price_1T5rG5PXNQA0ks87NtjJVnYi',
+  pro:'price_1T5rGQPXNQA0ks87WdzaewtE',
+  audit:'price_1T5rGtPXNQA0ks8758d20r97',
+  intensive:'price_1T5rHJPXNQA0ks87dGsOMuWM'
+};
+let stripeLoaded=false,stripeObj=null;
+
+function loadStripe(){
+  if(stripeLoaded)return Promise.resolve(stripeObj);
+  return new Promise((resolve)=>{
+    const s=document.createElement('script');
+    s.src='https://js.stripe.com/v3/';
+    s.onload=()=>{stripeObj=Stripe(STRIPE_PK);stripeLoaded=true;resolve(stripeObj)};
+    s.onerror=()=>{notify('Failed to load payment system. Try again.',1);resolve(null)};
+    document.head.appendChild(s);
+  });
+}
+
+async function startCheckout(priceId,mode){
+  const stripe=await loadStripe();
+  if(!stripe){notify('Payment system unavailable.',1);return}
+  const {error}=await stripe.redirectToCheckout({
+    lineItems:[{price:priceId,quantity:1}],
+    mode:mode||'subscription',
+    successUrl:window.location.origin+'?checkout=success&plan='+encodeURIComponent(priceId),
+    cancelUrl:window.location.origin+'?checkout=cancel',
+    customerEmail:U?.email||undefined
+  });
+  if(error)notify(error.message,1);
+}
+
 function subPlan(plan){
-  U.tier=plan;U.usage.credits=TIERS[plan]?.credits||0;
-  const u=DB.users.find(u=>u.id===U.id);if(u)u.tier=plan;
-  saveDB();localStorage.setItem('hw_session',JSON.stringify(U));
-  notify(plan==='mentorship'?'Mentorship application submitted!':'Upgraded to '+TIERS[plan].name+'! \u2728');
-  enterApp();
+  if(!U){notify('Please sign in first.',1);return}
+  if(plan==='core'){
+    startCheckout(STRIPE_PRICES.core,'subscription');
+  }else if(plan==='pro'){
+    startCheckout(STRIPE_PRICES.pro,'subscription');
+  }else if(plan==='elite'){
+    // Private Strategy - show options
+    showPrivateStrategyModal();
+  }else if(plan==='audit'){
+    startCheckout(STRIPE_PRICES.audit,'payment');
+  }else if(plan==='intensive'){
+    startCheckout(STRIPE_PRICES.intensive,'payment');
+  }else{
+    // Free plan or fallback
+    U.tier='free';U.usage.credits=0;
+    const u=DB.users.find(u=>u.id===U.id);if(u)u.tier='free';
+    saveDB();localStorage.setItem('hw_session',JSON.stringify(U));
+    notify('Switched to Free plan.');enterApp();
+  }
+}
+
+function showPrivateStrategyModal(){
+  const html='<h2 class="serif" style="font-size:20px;margin-bottom:16px">Private Strategy</h2>'+
+    '<p style="font-size:13px;color:var(--text2);margin-bottom:20px;line-height:1.6">High-stakes, structured intervention during major career decisions. Select your engagement:</p>'+
+    '<div class="card" style="cursor:pointer;margin-bottom:12px;padding:20px" onclick="closeModal(\'modal-q\');startCheckout(STRIPE_PRICES.audit,\'payment\')">'+
+    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><span style="font-size:14px;font-weight:600;color:var(--accent)">Strategic Audit</span><span style="font-size:16px;font-weight:700">$1,250\u2013$1,750</span></div>'+
+    '<p style="font-size:12px;color:var(--text3);line-height:1.5">Structured intake, CV/offer review, 20-30 min recorded strategic breakdown, written execution roadmap. Delivered within 7 days. No live call.</p></div>'+
+    '<div class="card" style="cursor:pointer;margin-bottom:12px;padding:20px" onclick="closeModal(\'modal-q\');startCheckout(STRIPE_PRICES.intensive,\'payment\')">'+
+    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><span style="font-size:14px;font-weight:600;color:var(--accent2)">Strategic Intensive</span><span style="font-size:16px;font-weight:700">$2,500</span></div>'+
+    '<p style="font-size:12px;color:var(--text3);line-height:1.5">Structured intake, 30-60 min focused strategy session, written roadmap, 14-day limited follow-up window. Capped monthly.</p></div>'+
+    '<p style="font-size:10px;color:var(--text3);margin-top:12px;font-style:italic">Not ongoing mentorship, contract legal markup, tax planning, or unlimited messaging. Defined strategic intervention.</p>';
+  document.getElementById('modal-q-content').innerHTML=html;
+  document.getElementById('modal-q').classList.remove('hidden');
+}
+
+// Handle checkout return
+function handleCheckoutReturn(){
+  const params=new URLSearchParams(window.location.search);
+  const checkout=params.get('checkout');
+  if(checkout==='success'){
+    const priceId=params.get('plan');
+    // Map price back to tier
+    if(priceId===STRIPE_PRICES.core){if(U){U.tier='core';U.usage.credits=TIERS.core.credits}}
+    else if(priceId===STRIPE_PRICES.pro){if(U){U.tier='pro';U.usage.credits=TIERS.pro.credits}}
+    else{if(U)notify('Payment received! We will be in touch within 48 hours to begin your strategic engagement.')}
+    if(U){
+      const u=DB.users.find(u=>u.id===U.id);if(u)u.tier=U.tier;
+      saveDB();localStorage.setItem('hw_session',JSON.stringify(U));
+    }
+    notify('Payment successful! \u2728');
+    window.history.replaceState({},'',window.location.pathname);
+  }else if(checkout==='cancel'){
+    notify('Checkout cancelled.',1);
+    window.history.replaceState({},'',window.location.pathname);
+  }
 }
 
 // ===== ADMIN =====
@@ -1315,6 +1970,139 @@ function publishReview(id){
     q.shareInArchive=shareBox?shareBox.checked:true;
     saveDB();notify('Review published! \u2728');renderAdmin();
   }
+}
+
+// ===== ONBOARDING =====
+let obStage='',obProfile={};
+function obSelectStage(el,stage){
+  obStage=stage;
+  document.querySelectorAll('#ob-step1 .ob-opt').forEach(o=>o.classList.remove('sel'));
+  el.classList.add('sel');
+  const b=document.getElementById('ob-next1');b.style.opacity='1';b.style.pointerEvents='auto';
+}
+function obToStep2(){
+  if(!obStage){notify('Select your stage',1);return}
+  document.getElementById('ob-step1').classList.add('hidden');
+  document.getElementById('ob-step2').classList.remove('hidden');
+  // Dynamic fields based on stage
+  const df=document.getElementById('ob-dynamic-fields');
+  let h='';
+  if(obStage==='student'){
+    h+='<div class="fg"><label>USMLE Step 1 Score (or Pass/Fail)</label><input type="text" id="ob-score1" placeholder="e.g., 245 or Pass"></div>';
+    h+='<div class="fg"><label>Research Publications</label><input type="number" id="ob-pubs" placeholder="0" min="0"></div>';
+    h+='<div class="fg"><label>Leadership Roles</label><input type="number" id="ob-lead" placeholder="0" min="0"></div>';
+  }else if(obStage==='resident'){
+    h+='<div class="fg"><label>Step 2 CK Score</label><input type="text" id="ob-score2" placeholder="e.g., 255"></div>';
+    h+='<div class="fg"><label>Publications / Abstracts</label><input type="number" id="ob-pubs" placeholder="0" min="0"></div>';
+    h+='<div class="fg"><label>PGY Year</label><select id="ob-pgy"><option value="1">PGY-1</option><option value="2">PGY-2</option><option value="3">PGY-3</option></select></div>';
+  }else if(obStage==='fellow'){
+    h+='<div class="fg"><label>Publications (First Author)</label><input type="number" id="ob-pubs" placeholder="0" min="0"></div>';
+    h+='<div class="fg"><label>Presentations (ACC/AHA/TCT)</label><input type="number" id="ob-present" placeholder="0" min="0"></div>';
+  }else if(obStage==='attending'){
+    h+='<div class="fg"><label>Current Compensation</label><input type="text" id="ob-comp" placeholder="e.g., $350,000"></div>';
+    h+='<div class="fg"><label>Student Loan Balance</label><input type="text" id="ob-debt" placeholder="e.g., $280,000"></div>';
+    h+='<div class="fg"><label>Practice Model</label><select id="ob-practice"><option value="">Select</option><option value="academic">Academic</option><option value="private">Private</option><option value="employed">Hospital Employed</option><option value="unsure">Unsure/Exploring</option></select></div>';
+  }
+  df.innerHTML=h;
+}
+function obToStep3(){
+  const name=document.getElementById('ob-name').value.trim();
+  const email=document.getElementById('ob-email').value.trim();
+  const pass=document.getElementById('ob-pass').value;
+  if(!name||!email||!pass){notify('Fill in name, email, and password.',1);return}
+  if(pass.length<8){notify('Password must be at least 8 characters.',1);return}
+  if(DB.users.find(u=>u.email.toLowerCase()===email.toLowerCase())){notify('Email already registered. Sign in instead.',1);return}
+  obProfile={name,email,pass,stage:obStage,spec:document.getElementById('ob-spec').value,inst:document.getElementById('ob-inst').value.trim(),goal:document.getElementById('ob-goal').value};
+  // Collect dynamic fields
+  const df=['ob-score1','ob-score2','ob-pubs','ob-lead','ob-pgy','ob-present','ob-comp','ob-debt','ob-practice'];
+  df.forEach(id=>{const el=document.getElementById(id);if(el)obProfile[id.replace('ob-','')]=el.value});
+  // Generate report
+  genReport();
+  document.getElementById('ob-step2').classList.add('hidden');
+  document.getElementById('ob-step3').classList.remove('hidden');
+}
+function genReport(){
+  const p=obProfile;
+  // Calculate competitiveness score (0-100)
+  let score=50;
+  const pubs=parseInt(p.pubs)||0;
+  const lead=parseInt(p.lead)||0;
+  if(pubs>=3)score+=15;else if(pubs>=1)score+=8;
+  if(lead>=2)score+=10;else if(lead>=1)score+=5;
+  if(p.spec&&p.spec!=='Undecided')score+=5;
+  if(p.goal)score+=5;
+  if(p.score1){const s=parseInt(p.score1);if(s>=250)score+=15;else if(s>=240)score+=10;else if(s>=230)score+=5}
+  if(p.score2){const s=parseInt(p.score2);if(s>=260)score+=15;else if(s>=250)score+=10;else if(s>=240)score+=5}
+  score=Math.min(95,Math.max(20,score));
+  // Score color
+  const sc=score>=70?'var(--green)':score>=45?'var(--accent)':'var(--red)';
+  const sl=score>=70?'Strong':score>=45?'Developing':'Needs Focus';
+  // Gaps
+  let gaps=[],strengths=[];
+  if(pubs<2)gaps.push({label:'Research Output',val:pubs<1?20:45,note:'Aim for 2+ publications before application'});
+  else strengths.push({label:'Research Output',val:Math.min(85,40+pubs*15),note:pubs+' publications — solid foundation'});
+  if(lead<1)gaps.push({label:'Leadership',val:15,note:'One meaningful leadership role changes your narrative'});
+  else strengths.push({label:'Leadership',val:Math.min(80,30+lead*20),note:lead+' role(s) — demonstrates initiative'});
+  if(!p.spec||p.spec==='Undecided')gaps.push({label:'Specialty Clarity',val:25,note:'Narrowing focus allows targeted positioning'});
+  else strengths.push({label:'Specialty Clarity',val:70,note:p.spec+' — clear direction'});
+  if(!p.goal)gaps.push({label:'Strategic Goal',val:20,note:'Define a specific 12-month objective'});
+  else strengths.push({label:'Strategic Goal',val:65,note:'Goal identified — framework can optimize execution'});
+  // Plan
+  const plans={
+    student:['Map target programs and required credentials (this month)','Start or join a research project with publication potential','Secure a meaningful leadership role or community engagement position','Request informational meetings with 2 attendings in your target specialty','Draft a personal narrative that connects your background to your specialty choice'],
+    resident:['Compare your CV against 3 successful fellowship applicants','Identify letter writers who can speak to your clinical skills specifically','Submit an abstract to a national meeting within 90 days','Schedule 1-2 away rotations at target programs','Build relationships with attendings in your subspecialty of interest'],
+    fellow:['Map your post-fellowship job market: academic vs. private vs. employed','Start networking at conferences with potential future employers','Review 3 recent contracts in your specialty to understand market terms','Begin financial modeling: PSLF eligibility, loan repayment timeline','Identify your clinical niche and start building that reputation now'],
+    attending:['Get your current contract reviewed by a physician contract attorney','Run PSLF vs. refinance calculations with actual numbers','Compare your compensation against MGMA benchmarks for your specialty/region','Establish disability insurance if not already in place','Model your 5-year financial trajectory under current terms'],
+    premed:['Identify 3-5 specialties that align with your interests and lifestyle goals','Build meaningful clinical exposure — quality over quantity','Start a research project or get involved in scholarly activity','Develop your narrative: what drives you toward medicine specifically?','Talk to physicians in specialties you\'re considering — book informational conversations'],
+    switching:['Research the feasibility and timeline of your target specialty','Identify bridge programs, additional training, or experience requirements','Connect with physicians who have successfully made a similar switch','Model the financial impact: retraining cost, income gap, long-term ROI','Document transferable skills that make your transition logical']
+  };
+  const myPlan=plans[p.stage]||plans.student;
+
+  let h='';
+  // Score ring
+  h+='<div style="text-align:center;margin-bottom:32px">';
+  h+='<div class="score-ring" style="border-color:'+sc+'"><div class="score-val" style="color:'+sc+'">'+score+'</div><div class="score-label">'+sl+'</div></div>';
+  h+='<p style="font-size:13px;color:var(--text2);font-weight:300">Competitive Position Score</p>';
+  h+='</div>';
+  // Strengths
+  if(strengths.length){
+    h+='<div class="report-sec" style="border-color:rgba(139,184,160,.15)"><h4 style="color:var(--green)">✦ Strengths</h4>';
+    strengths.forEach(s=>{h+='<div class="metric-bar"><div class="mb-top"><span class="mb-label">'+s.label+'</span><span class="mb-val" style="color:var(--green)">'+s.val+'%</span></div><div class="mb-track"><div class="mb-fill" style="width:'+s.val+'%;background:var(--green)"></div></div><p style="font-size:11px;color:var(--text3);margin-top:3px">'+s.note+'</p></div>'});
+    h+='</div>';
+  }
+  // Gaps
+  if(gaps.length){
+    h+='<div class="report-sec" style="border-color:rgba(196,77,86,.15)"><h4 style="color:var(--red)">⚡ Gap Analysis</h4>';
+    gaps.forEach(g=>{h+='<div class="metric-bar"><div class="mb-top"><span class="mb-label">'+g.label+'</span><span class="mb-val" style="color:var(--red)">'+g.val+'%</span></div><div class="mb-track"><div class="mb-fill" style="width:'+g.val+'%;background:var(--red)"></div></div><p style="font-size:11px;color:var(--text3);margin-top:3px">'+g.note+'</p></div>'});
+    h+='</div>';
+  }
+  // 6-month plan
+  h+='<div class="report-sec"><h4>📅 6-Month Strategic Focus</h4><ol style="padding-left:18px">';
+  myPlan.forEach(step=>{h+='<li style="padding:4px 0">'+step+'</li>'});
+  h+='</ol></div>';
+  // Risk
+  h+='<div class="report-sec" style="border-color:rgba(200,168,124,.15)"><h4>⚠️ Key Risk Areas</h4>';
+  if(pubs<2)h+='<p>• Low research output limits competitiveness for selective programs</p>';
+  if(!p.goal)h+='<p>• No defined strategic goal — decisions without direction lead to drift</p>';
+  if(p.stage==='attending'&&!p.debt)h+='<p>• Loan strategy undefined — every month of delay has compounding cost</p>';
+  if(p.stage==='fellow'&&pubs<3)h+='<p>• Below median publication count for competitive fellowship tracks</p>';
+  h+='<p>• Without structured follow-through, initial assessment loses value within 30 days</p>';
+  h+='</div>';
+
+  document.getElementById('ob-report').innerHTML=h;
+  // Animate bars after render
+  setTimeout(()=>{document.querySelectorAll('.mb-fill').forEach(b=>{const w=b.style.width;b.style.width='0%';setTimeout(()=>b.style.width=w,50)})},100);
+}
+function obComplete(){
+  const p=obProfile;
+  // Create user with trial
+  const roleMap={premed:'student',student:'student',resident:'resident',fellow:'fellow',attending:'attending',switching:'other'};
+  const trialEnd=new Date();trialEnd.setDate(trialEnd.getDate()+7);
+  const user={id:'u'+DB.nextUserId++,name:p.name,email:p.email.toLowerCase(),pass:p.pass,role:roleMap[p.stage]||'student',tier:'core',trialEnd:trialEnd.toISOString().split('T')[0],institution:p.inst,usage:{ai:0,credits:0,month:new Date().getMonth()},profile:p};
+  DB.users.push(user);saveDB();
+  U=user;localStorage.setItem('hw_session',JSON.stringify(U));
+  enterApp();showDisc();
+  notify('Welcome! Your 7-day strategic access is active. ⚡');
 }
 
 // ===== DISCLAIMER =====

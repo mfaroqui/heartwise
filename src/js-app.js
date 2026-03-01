@@ -54,7 +54,7 @@ window.onload=function(){
 
 // ===== NAV =====
 function go(id){
-  ['pg-landing','pg-login','pg-signup','pg-onboard','main-app'].forEach(p=>{
+  ['pg-landing','pg-login','pg-signup','pg-onboard','pg-forgot','main-app'].forEach(p=>{
     const el=document.getElementById(p);if(el){el.classList.add('hidden');el.style.display=''}
   });
   const el=document.getElementById(id);if(el){el.classList.remove('hidden');el.style.display=''}
@@ -111,6 +111,20 @@ function doSignup(e){
 }
 
 function doLogout(){U=null;localStorage.removeItem('hw_session');go('pg-landing')}
+
+function doResetPassword(e){
+  e.preventDefault();
+  const email=document.getElementById('r-email').value.trim().toLowerCase();
+  const pass=document.getElementById('r-pass').value;
+  const pass2=document.getElementById('r-pass2').value;
+  if(pass!==pass2){notify('Passwords do not match',1);return}
+  if(pass.length<8){notify('Password must be at least 8 characters',1);return}
+  const user=DB.users.find(u=>u.email.toLowerCase()===email);
+  if(!user){notify('No account found with that email',1);return}
+  user.pass=pass;saveDB();
+  notify('Password updated! You can now sign in.');
+  go('pg-login');
+}
 
 function enterApp(){
   go('main-app');

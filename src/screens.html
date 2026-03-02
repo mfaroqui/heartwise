@@ -306,6 +306,32 @@
 </div>
 
 <div style="margin-bottom:12px">
+<div class="card" style="cursor:pointer;padding:16px 20px" onclick="toggleContactForm()">
+<div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:14px">💬 Contact / Report Issue</span><span style="color:var(--text3)">›</span></div>
+</div>
+</div>
+
+<!-- Contact Form -->
+<div id="contact-form" class="hidden" style="margin-bottom:12px">
+<div class="card" style="padding:20px">
+<div style="font-size:13px;font-weight:600;margin-bottom:4px">Send a Message</div>
+<p style="font-size:11px;color:var(--text3);margin-bottom:16px;line-height:1.5">Found a bug, have a suggestion, or need help? Send me a message directly.</p>
+<form onsubmit="sendContactMessage(event)">
+<div class="fg"><label>Subject</label>
+<select id="contact-type">
+<option value="bug">Bug / Something Broken</option>
+<option value="suggestion">Feature Suggestion</option>
+<option value="question">General Question</option>
+<option value="feedback">Feedback</option>
+<option value="other">Other</option>
+</select></div>
+<div class="fg"><label>Message *</label><textarea id="contact-msg" rows="4" placeholder="Describe the issue or share your thoughts..." required style="width:100%;resize:vertical;font-family:inherit;font-size:13px;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text)"></textarea></div>
+<button type="submit" class="btn btn-a" style="margin-top:8px">Send Message</button>
+</form>
+</div>
+</div>
+
+<div style="margin-bottom:12px">
 <div class="card" style="cursor:pointer;padding:16px 20px" onclick="showDisc()">
 <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:14px">⚕️ Disclaimer</span><span style="color:var(--text3)">›</span></div>
 </div>

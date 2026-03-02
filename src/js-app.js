@@ -592,6 +592,34 @@ function showUpgrade(){
 }
 function toggleNotifSettings(){document.getElementById('notif-settings').classList.toggle('hidden')}
 
+function toggleContactForm(){document.getElementById('contact-form').classList.toggle('hidden')}
+
+async function sendContactMessage(e){
+  e.preventDefault();
+  var type=document.getElementById('contact-type').value;
+  var msg=document.getElementById('contact-msg').value.trim();
+  if(!msg){notify('Please enter a message',1);return}
+  var payload={
+    user_name:U?U.name:'Unknown',
+    user_email:U?U.email:'Unknown',
+    type:type,
+    message:msg,
+    date:new Date().toISOString()
+  };
+  // Store in Supabase if available
+  if(_supaClient){
+    try{
+      await _supaClient.from('messages').insert([payload]);
+    }catch(ex){console.warn('Message store failed',ex)}
+  }
+  // Also store locally as fallback
+  if(!DB.messages)DB.messages=[];
+  DB.messages.push(payload);saveDB();
+  document.getElementById('contact-msg').value='';
+  document.getElementById('contact-form').classList.add('hidden');
+  notify('Message sent! Thank you for your feedback. 🙏');
+}
+
 function toggleAccountSettings(){
   const s=document.getElementById('account-settings');
   s.classList.toggle('hidden');

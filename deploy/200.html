@@ -315,25 +315,55 @@ a:hover{color:var(--accent2)}
 
 <div id="notif" class="notif"><span id="ni-icon">✦</span><span id="ni-text" class="notif-t"></span></div>
 
-<!-- Disclaimer Modal -->
+<!-- Welcome + Disclaimer Modal -->
 <div id="modal-disc" class="modal-ov hidden">
-<div class="modal">
-<h2>Educational Disclaimer</h2>
-<p><strong>HeartWise is an educational mentorship platform.</strong></p>
-<p>By using this platform, you acknowledge:</p>
-<ul>
-<li>Content is for <strong>educational and informational purposes only</strong></li>
-<li>Nothing constitutes medical, legal, or tax advice</li>
-<li>Always consult qualified professionals for individualized decisions</li>
-<li>AI-generated responses are frameworks, not personalized advice</li>
-<li>Doctor-reviewed content reflects professional opinion, not clinical recommendations</li>
-<li>This does not create a doctor-patient relationship</li>
-</ul>
-<div class="check-row" style="margin-top:16px">
-<input type="checkbox" id="disc-check">
-<label for="disc-check">I understand that HeartWise provides educational mentorship only and does not provide medical, legal, or tax advice. I will consult appropriate professionals for individualized decisions.</label>
+<div class="modal" style="max-width:420px">
+
+<!-- Step 1: Value Summary -->
+<div id="disc-welcome">
+<div style="text-align:center;margin-bottom:24px">
+<div class="sp-mark" style="width:48px;height:48px;border-radius:14px;margin:0 auto 16px"><svg style="width:24px;height:24px;fill:#09090e"><use href="#i-heart"/></svg></div>
+<h2 class="serif" style="font-size:22px;font-weight:600;margin-bottom:8px">Welcome to HeartWise</h2>
+<p style="font-size:14px;color:var(--text2);line-height:1.6;font-weight:300">Evidence-based strategic tools built for every stage of your medical career.</p>
 </div>
-<button class="btn btn-a" id="disc-btn" onclick="acceptDisc()" style="margin-top:16px;opacity:.5;pointer-events:none">I Understand & Agree</button>
+
+<div style="margin-bottom:24px">
+<div style="display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid var(--border)">
+<span style="font-size:20px;width:32px;text-align:center">🎯</span>
+<div><div style="font-size:13px;font-weight:500;color:var(--text)">Career Strategy</div><div style="font-size:11px;color:var(--text3);font-weight:300">Fellowship positioning, residency planning, job search</div></div>
+</div>
+<div style="display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid var(--border)">
+<span style="font-size:20px;width:32px;text-align:center">📋</span>
+<div><div style="font-size:13px;font-weight:500;color:var(--text)">Contract & Compensation</div><div style="font-size:11px;color:var(--text3);font-weight:300">RVU modeling, offer comparison, risk analysis</div></div>
+</div>
+<div style="display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid var(--border)">
+<span style="font-size:20px;width:32px;text-align:center">💰</span>
+<div><div style="font-size:13px;font-weight:500;color:var(--text)">Financial Planning</div><div style="font-size:11px;color:var(--text3);font-weight:300">Loan strategy, income leverage, wealth building</div></div>
+</div>
+<div style="display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid var(--border)">
+<span style="font-size:20px;width:32px;text-align:center">🧠</span>
+<div><div style="font-size:13px;font-weight:500;color:var(--text)">Clinical Education</div><div style="font-size:11px;color:var(--text3);font-weight:300">Evidence-based learning frameworks, board prep</div></div>
+</div>
+<div style="display:flex;align-items:center;gap:14px;padding:12px 0">
+<span style="font-size:20px;width:32px;text-align:center">⚡</span>
+<div><div style="font-size:13px;font-weight:500;color:var(--text)">Physician-Reviewed Guidance</div><div style="font-size:11px;color:var(--text3);font-weight:300">Direct feedback from Dr. Faroqui on high-stakes decisions</div></div>
+</div>
+</div>
+
+<button class="btn btn-a" onclick="document.getElementById('disc-welcome').classList.add('hidden');document.getElementById('disc-agree').classList.remove('hidden')" style="width:100%">Get Started →</button>
+</div>
+
+<!-- Step 2: Disclaimer -->
+<div id="disc-agree" class="hidden">
+<h2 style="font-size:16px;margin-bottom:12px">One Quick Note</h2>
+<p style="font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:16px">HeartWise is an educational mentorship platform. Content is for informational purposes — not medical, legal, or tax advice. Always consult qualified professionals for individualized decisions.</p>
+<div class="check-row" style="margin-top:12px">
+<input type="checkbox" id="disc-check">
+<label for="disc-check" style="font-size:12px;line-height:1.6">I understand and agree.</label>
+</div>
+<button class="btn btn-a" id="disc-btn" onclick="acceptDisc()" style="margin-top:16px;width:100%;opacity:.5;pointer-events:none">Continue</button>
+</div>
+
 </div>
 </div>
 
@@ -691,8 +721,38 @@ a:hover{color:var(--accent2)}
 <li>Career Pivot Decision Engine</li>
 <li>Priority responses from Dr. Faroqui</li>
 </ul>
-<p style="font-size:12px;color:var(--text3);margin-bottom:18px;font-weight:300">The complete strategic toolkit plus direct physician access. Everything you need to make high-stakes career decisions with confidence.</p>
+<p style="font-size:12px;color:var(--text3);margin-bottom:18px;font-weight:300">The complete strategic toolkit plus direct physician access.</p>
 <button class="btn btn-a" onclick="go('pg-onboard')">Apply for Elite</button>
+</div>
+
+<div class="plan">
+<div class="plan-n" style="color:var(--accent)">Strategic Audit</div>
+<div style="font-size:12px;color:var(--accent);font-weight:400;margin-bottom:6px;letter-spacing:.3px">One-Time Engagement</div>
+<div class="plan-p">$1,250<span> – $1,750</span></div>
+<ul class="plan-f">
+<li>Structured intake & detailed questionnaire</li>
+<li>CV or offer review by Dr. Faroqui</li>
+<li>20-30 min recorded strategic breakdown</li>
+<li>Written execution roadmap</li>
+<li>Delivered within 7 days</li>
+</ul>
+<p style="font-size:12px;color:var(--text3);margin-bottom:18px;font-weight:300">A defined, high-impact intervention for a specific career decision. No live call required.</p>
+<button class="btn btn-a" onclick="go('pg-onboard')">Request Audit</button>
+</div>
+
+<div class="plan">
+<div class="plan-n" style="color:var(--accent2)">Strategic Intensive</div>
+<div style="font-size:12px;color:var(--accent2);font-weight:400;margin-bottom:6px;letter-spacing:.3px">One-Time Engagement · Capped Monthly</div>
+<div class="plan-p">$2,500</div>
+<ul class="plan-f">
+<li>Structured intake & detailed questionnaire</li>
+<li>30-60 min focused strategy session</li>
+<li>Written execution roadmap</li>
+<li>14-day follow-up window</li>
+<li>Direct access to Dr. Faroqui during window</li>
+</ul>
+<p style="font-size:12px;color:var(--text3);margin-bottom:18px;font-weight:300">The most comprehensive engagement. For fellowship match strategy, contract negotiation, or career-defining transitions.</p>
+<button class="btn btn-a" onclick="go('pg-onboard')">Request Intensive</button>
 </div>
 
 </div>
@@ -1244,6 +1304,10 @@ a:hover{color:var(--accent2)}
 <div class="plan"><div class="plan-n" style="color:var(--text3)">Explorer</div><div style="font-size:12px;color:var(--text3);margin-bottom:4px">Post-Trial Access</div><div class="plan-p">$0<span> /mo</span></div><ul class="plan-f"><li>1 structured analysis per month</li><li>Limited archive access</li><li>No saved progress</li></ul><button class="btn btn-g btn-sm" id="plan-free-btn" disabled>Current Plan</button></div>
 <div class="plan pop"><div class="plan-n" style="color:var(--accent)">Core</div><div style="font-size:12px;color:var(--accent);margin-bottom:4px">Your Strategic Engine</div><div class="plan-p">$15<span> /mo</span></div><ul class="plan-f"><li>Unlimited strategic assessments</li><li>Save &amp; track progress</li><li>Career and financial modeling tools</li><li>Scenario simulations</li><li>Full strategy archive</li></ul><button class="btn btn-a btn-sm" onclick="subPlan('core')">Get Core</button></div>
 <div class="plan ft"><div class="plan-n" style="color:var(--accent2)">Elite Strategy</div><div style="font-size:12px;color:var(--accent2);margin-bottom:4px">Limited Enrollment</div><div class="plan-p">$99<span> /mo</span></div><ul class="plan-f"><li>Everything in Core</li><li>2 Physician Review Credits per month</li><li>Fellowship Readiness Assessment</li><li>Contract Risk Scorecard Review</li><li>Offer Comparison & RVU Modeling</li><li>Fellowship Positioning Roadmap</li><li>Strategic Audit Template</li><li>Financial Planning Framework</li><li>Career Pivot Decision Engine</li><li>Priority responses from Dr. Faroqui</li></ul><p style="font-size:10px;color:var(--text3);margin-bottom:12px">The complete strategic toolkit plus direct physician access.</p><button class="btn btn-a btn-sm" onclick="subPlan('elite')">Apply for Elite</button></div>
+
+<div class="plan"><div class="plan-n" style="color:var(--accent)">Strategic Audit</div><div style="font-size:12px;color:var(--accent);margin-bottom:4px">One-Time Engagement</div><div class="plan-p">$1,250<span> – $1,750</span></div><ul class="plan-f"><li>Structured intake & questionnaire</li><li>CV or offer review by Dr. Faroqui</li><li>20-30 min recorded strategic breakdown</li><li>Written execution roadmap</li><li>Delivered within 7 days</li></ul><p style="font-size:10px;color:var(--text3);margin-bottom:12px">High-impact intervention for a specific career decision.</p><button class="btn btn-a btn-sm" onclick="subPlan('audit')">Request Audit</button></div>
+
+<div class="plan"><div class="plan-n" style="color:var(--accent2)">Strategic Intensive</div><div style="font-size:12px;color:var(--accent2);margin-bottom:4px">One-Time · Capped Monthly</div><div class="plan-p">$2,500</div><ul class="plan-f"><li>Structured intake & questionnaire</li><li>30-60 min focused strategy session</li><li>Written execution roadmap</li><li>14-day follow-up window</li><li>Direct access to Dr. Faroqui</li></ul><p style="font-size:10px;color:var(--text3);margin-bottom:12px">The most comprehensive engagement for career-defining decisions.</p><button class="btn btn-a btn-sm" onclick="subPlan('intensive')">Request Intensive</button></div>
 </div>
 
 </div>
@@ -2595,8 +2659,7 @@ function subPlan(plan){
   }else if(plan==='pro'){
     startCheckout(STRIPE_PRICES.pro,'subscription');
   }else if(plan==='elite'){
-    // Private Strategy - show options
-    showPrivateStrategyModal();
+    startCheckout(STRIPE_PRICES.elite||STRIPE_PRICES.pro,'subscription');
   }else if(plan==='audit'){
     startCheckout(STRIPE_PRICES.audit,'payment');
   }else if(plan==='intensive'){
@@ -3178,7 +3241,11 @@ function captureReportData(p){
 }
 
 // ===== DISCLAIMER =====
-function showDisc(){document.getElementById('modal-disc').classList.remove('hidden')}
+function showDisc(){
+  document.getElementById('disc-welcome').classList.remove('hidden');
+  document.getElementById('disc-agree').classList.add('hidden');
+  document.getElementById('modal-disc').classList.remove('hidden');
+}
 function acceptDisc(){document.getElementById('modal-disc').classList.add('hidden');if(U)localStorage.setItem('hw_disc_'+U.id,'1')}
 
 // ===== NOTIFY =====

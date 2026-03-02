@@ -19,25 +19,55 @@
 
 <div id="notif" class="notif"><span id="ni-icon">✦</span><span id="ni-text" class="notif-t"></span></div>
 
-<!-- Disclaimer Modal -->
+<!-- Welcome + Disclaimer Modal -->
 <div id="modal-disc" class="modal-ov hidden">
-<div class="modal">
-<h2>Educational Disclaimer</h2>
-<p><strong>HeartWise is an educational mentorship platform.</strong></p>
-<p>By using this platform, you acknowledge:</p>
-<ul>
-<li>Content is for <strong>educational and informational purposes only</strong></li>
-<li>Nothing constitutes medical, legal, or tax advice</li>
-<li>Always consult qualified professionals for individualized decisions</li>
-<li>AI-generated responses are frameworks, not personalized advice</li>
-<li>Doctor-reviewed content reflects professional opinion, not clinical recommendations</li>
-<li>This does not create a doctor-patient relationship</li>
-</ul>
-<div class="check-row" style="margin-top:16px">
-<input type="checkbox" id="disc-check">
-<label for="disc-check">I understand that HeartWise provides educational mentorship only and does not provide medical, legal, or tax advice. I will consult appropriate professionals for individualized decisions.</label>
+<div class="modal" style="max-width:420px">
+
+<!-- Step 1: Value Summary -->
+<div id="disc-welcome">
+<div style="text-align:center;margin-bottom:24px">
+<div class="sp-mark" style="width:48px;height:48px;border-radius:14px;margin:0 auto 16px"><svg style="width:24px;height:24px;fill:#09090e"><use href="#i-heart"/></svg></div>
+<h2 class="serif" style="font-size:22px;font-weight:600;margin-bottom:8px">Welcome to HeartWise</h2>
+<p style="font-size:14px;color:var(--text2);line-height:1.6;font-weight:300">Evidence-based strategic tools built for every stage of your medical career.</p>
 </div>
-<button class="btn btn-a" id="disc-btn" onclick="acceptDisc()" style="margin-top:16px;opacity:.5;pointer-events:none">I Understand & Agree</button>
+
+<div style="margin-bottom:24px">
+<div style="display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid var(--border)">
+<span style="font-size:20px;width:32px;text-align:center">🎯</span>
+<div><div style="font-size:13px;font-weight:500;color:var(--text)">Career Strategy</div><div style="font-size:11px;color:var(--text3);font-weight:300">Fellowship positioning, residency planning, job search</div></div>
+</div>
+<div style="display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid var(--border)">
+<span style="font-size:20px;width:32px;text-align:center">📋</span>
+<div><div style="font-size:13px;font-weight:500;color:var(--text)">Contract & Compensation</div><div style="font-size:11px;color:var(--text3);font-weight:300">RVU modeling, offer comparison, risk analysis</div></div>
+</div>
+<div style="display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid var(--border)">
+<span style="font-size:20px;width:32px;text-align:center">💰</span>
+<div><div style="font-size:13px;font-weight:500;color:var(--text)">Financial Planning</div><div style="font-size:11px;color:var(--text3);font-weight:300">Loan strategy, income leverage, wealth building</div></div>
+</div>
+<div style="display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid var(--border)">
+<span style="font-size:20px;width:32px;text-align:center">🧠</span>
+<div><div style="font-size:13px;font-weight:500;color:var(--text)">Clinical Education</div><div style="font-size:11px;color:var(--text3);font-weight:300">Evidence-based learning frameworks, board prep</div></div>
+</div>
+<div style="display:flex;align-items:center;gap:14px;padding:12px 0">
+<span style="font-size:20px;width:32px;text-align:center">⚡</span>
+<div><div style="font-size:13px;font-weight:500;color:var(--text)">Physician-Reviewed Guidance</div><div style="font-size:11px;color:var(--text3);font-weight:300">Direct feedback from Dr. Faroqui on high-stakes decisions</div></div>
+</div>
+</div>
+
+<button class="btn btn-a" onclick="document.getElementById('disc-welcome').classList.add('hidden');document.getElementById('disc-agree').classList.remove('hidden')" style="width:100%">Get Started →</button>
+</div>
+
+<!-- Step 2: Disclaimer -->
+<div id="disc-agree" class="hidden">
+<h2 style="font-size:16px;margin-bottom:12px">One Quick Note</h2>
+<p style="font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:16px">HeartWise is an educational mentorship platform. Content is for informational purposes — not medical, legal, or tax advice. Always consult qualified professionals for individualized decisions.</p>
+<div class="check-row" style="margin-top:12px">
+<input type="checkbox" id="disc-check">
+<label for="disc-check" style="font-size:12px;line-height:1.6">I understand and agree.</label>
+</div>
+<button class="btn btn-a" id="disc-btn" onclick="acceptDisc()" style="margin-top:16px;width:100%;opacity:.5;pointer-events:none">Continue</button>
+</div>
+
 </div>
 </div>
 

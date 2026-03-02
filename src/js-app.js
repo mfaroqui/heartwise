@@ -720,8 +720,7 @@ function subPlan(plan){
   }else if(plan==='pro'){
     startCheckout(STRIPE_PRICES.pro,'subscription');
   }else if(plan==='elite'){
-    // Private Strategy - show options
-    showPrivateStrategyModal();
+    startCheckout(STRIPE_PRICES.elite||STRIPE_PRICES.pro,'subscription');
   }else if(plan==='audit'){
     startCheckout(STRIPE_PRICES.audit,'payment');
   }else if(plan==='intensive'){
@@ -1303,7 +1302,11 @@ function captureReportData(p){
 }
 
 // ===== DISCLAIMER =====
-function showDisc(){document.getElementById('modal-disc').classList.remove('hidden')}
+function showDisc(){
+  document.getElementById('disc-welcome').classList.remove('hidden');
+  document.getElementById('disc-agree').classList.add('hidden');
+  document.getElementById('modal-disc').classList.remove('hidden');
+}
 function acceptDisc(){document.getElementById('modal-disc').classList.add('hidden');if(U)localStorage.setItem('hw_disc_'+U.id,'1')}
 
 // ===== NOTIFY =====

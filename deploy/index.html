@@ -2217,30 +2217,46 @@ function obToStep3(){
 }
 function genReport(){
   const p=obProfile;
+  const hasPubsField=p.stage==='student'||p.stage==='resident'||p.stage==='fellow';
+  const hasLeadField=p.stage==='student';
   // Calculate competitiveness score (0-100)
   let score=50;
   const pubs=parseInt(p.pubs)||0;
   const lead=parseInt(p.lead)||0;
-  if(pubs>=3)score+=15;else if(pubs>=1)score+=8;
-  if(lead>=2)score+=10;else if(lead>=1)score+=5;
+  if(hasPubsField){if(pubs>=3)score+=15;else if(pubs>=1)score+=8}
+  if(hasLeadField){if(lead>=2)score+=10;else if(lead>=1)score+=5}
   if(p.spec&&p.spec!=='Undecided')score+=5;
   if(p.goal)score+=5;
   if(p.score1){const s=parseInt(p.score1);if(s>=250)score+=15;else if(s>=240)score+=10;else if(s>=230)score+=5}
   if(p.score2){const s=parseInt(p.score2);if(s>=260)score+=15;else if(s>=250)score+=10;else if(s>=240)score+=5}
+  if(p.comp){score+=10}
+  if(p.practice){score+=5}
   score=Math.min(95,Math.max(20,score));
   // Score color
   const sc=score>=70?'var(--green)':score>=45?'var(--accent)':'var(--red)';
   const sl=score>=70?'Strong':score>=45?'Developing':'Needs Focus';
   // Gaps
   let gaps=[],strengths=[];
-  if(pubs<2)gaps.push({label:'Research Output',val:pubs<1?20:45,note:'Aim for 2+ publications before application'});
-  else strengths.push({label:'Research Output',val:Math.min(85,40+pubs*15),note:pubs+' publications — solid foundation'});
-  if(lead<1)gaps.push({label:'Leadership',val:15,note:'One meaningful leadership role changes your narrative'});
-  else strengths.push({label:'Leadership',val:Math.min(80,30+lead*20),note:lead+' role(s) — demonstrates initiative'});
+  if(hasPubsField){
+    if(pubs<2)gaps.push({label:'Research Output',val:pubs<1?20:45,note:'Aim for 2+ publications before application'});
+    else strengths.push({label:'Research Output',val:Math.min(85,40+pubs*15),note:pubs+' publications — solid foundation'});
+  }
+  if(hasLeadField){
+    if(lead<1)gaps.push({label:'Leadership',val:15,note:'One meaningful leadership role changes your narrative'});
+    else strengths.push({label:'Leadership',val:Math.min(80,30+lead*20),note:lead+' role(s) — demonstrates initiative'});
+  }
   if(!p.spec||p.spec==='Undecided')gaps.push({label:'Specialty Clarity',val:25,note:'Narrowing focus allows targeted positioning'});
   else strengths.push({label:'Specialty Clarity',val:70,note:p.spec+' — clear direction'});
   if(!p.goal)gaps.push({label:'Strategic Goal',val:20,note:'Define a specific 12-month objective'});
   else strengths.push({label:'Strategic Goal',val:65,note:'Goal identified — framework can optimize execution'});
+  if(p.stage==='attending'){
+    if(p.comp)strengths.push({label:'Compensation Baseline',val:70,note:'Baseline documented — enables benchmarking and negotiation'});
+    else gaps.push({label:'Compensation Baseline',val:30,note:'Knowing your market value is the first step to optimizing it'});
+    if(p.practice)strengths.push({label:'Practice Model',val:65,note:p.practice+' — clear practice context'});
+    else gaps.push({label:'Practice Model',val:25,note:'Understanding your practice model affects every financial decision'});
+    if(p.debt)strengths.push({label:'Loan Awareness',val:60,note:'Loan balance documented — enables strategic repayment planning'});
+    else gaps.push({label:'Loan Strategy',val:30,note:'Every month without a loan strategy has compounding cost'});
+  }
   // Plan
   const plans={
     student:['Map target programs and required credentials (this month)','Start or join a research project with publication potential','Secure a meaningful leadership role or community engagement position','Request informational meetings with 2 attendings in your target specialty','Draft a personal narrative that connects your background to your specialty choice'],
@@ -2276,10 +2292,11 @@ function genReport(){
   h+='</ol></div>';
   // Risk
   h+='<div class="report-sec" style="border-color:rgba(200,168,124,.15)"><h4>⚠️ Key Risk Areas</h4>';
-  if(pubs<2)h+='<p>• Low research output limits competitiveness for selective programs</p>';
+  if(hasPubsField&&pubs<2)h+='<p>• Low research output limits competitiveness for selective programs</p>';
   if(!p.goal)h+='<p>• No defined strategic goal — decisions without direction lead to drift</p>';
   if(p.stage==='attending'&&!p.debt)h+='<p>• Loan strategy undefined — every month of delay has compounding cost</p>';
-  if(p.stage==='fellow'&&pubs<3)h+='<p>• Below median publication count for competitive fellowship tracks</p>';
+  if(p.stage==='attending'&&!p.comp)h+='<p>• Compensation baseline unknown — you can\'t negotiate what you can\'t benchmark</p>';
+  if(p.stage==='fellow'&&hasPubsField&&pubs<3)h+='<p>• Below median publication count for competitive fellowship tracks</p>';
   h+='<p>• Without structured follow-through, initial assessment loses value within 30 days</p>';
   h+='</div>';
 

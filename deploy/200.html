@@ -1191,6 +1191,15 @@ a:hover{color:var(--accent2)}
 </div>
 
 <div style="margin-bottom:12px">
+<div class="card" style="cursor:pointer;padding:16px 20px" onclick="showMyReport()">
+<div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:14px">📊 My Strategic Report</span><span style="color:var(--text3)">›</span></div>
+</div>
+</div>
+
+<!-- Progress Dashboard -->
+<div id="progress-dashboard" style="margin-bottom:16px"></div>
+
+<div style="margin-bottom:12px">
 <div class="card" style="cursor:pointer;padding:16px 20px" onclick="toggleAccountSettings()">
 <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:14px">👤 Account Settings</span><span style="color:var(--text3)">›</span></div>
 </div>
@@ -2523,12 +2532,172 @@ function renderProfile(){
   document.getElementById('ps-credits').textContent=U.usage?.credits||0;
   document.getElementById('prof-plan-label').textContent=t.name+(U.tier==='free'?'':' \u2022 Active');
   document.getElementById('prof-plan-label').style.color=U.tier==='free'?'var(--text3)':'var(--accent)';
+  renderProgressDashboard();
 }
 function showMyQ(){
-  navTo('scr-archive');
-  const mine=DB.questions.filter(q=>q.userId===U.id);
-  document.getElementById('archive-featured').innerHTML='';
-  document.getElementById('archive-list').innerHTML=mine.length?mine.map(renderQCard).join(''):'<div style="text-align:center;padding:40px;color:var(--text3)">No questions yet.</div>';
+  const mine=DB.questions.filter(q=>q.userId===U.id).slice().reverse();
+  if(!mine.length){
+    var h='<div class="hdr"><button class="hdr-back" onclick="navTo(\'scr-profile\')">← Profile</button><div class="hdr-t serif" style="font-size:18px">My Questions</div></div>';
+    h+='<div style="padding:40px 24px;text-align:center;color:var(--text3)"><p style="font-size:40px;margin-bottom:12px">📋</p><p style="font-size:14px">No questions yet.</p><p style="font-size:12px;margin-top:8px">Submit your first question to start building your history.</p></div>';
+    document.getElementById('modal-q-content').innerHTML=h;
+    document.getElementById('modal-q').classList.remove('hidden');
+    return;
+  }
+  var cats={};
+  mine.forEach(function(q){cats[q.cat]=(cats[q.cat]||0)+1});
+  var h='<div style="margin-bottom:16px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><span class="serif" style="font-size:18px;font-weight:600">My Questions</span><span style="font-size:12px;color:var(--text3)">'+mine.length+' total</span></div>';
+  // Category filter pills
+  h+='<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px">';
+  h+='<span class="tag t-cat" style="cursor:pointer;font-size:10px" onclick="filterMyQ(\'all\')">All ('+mine.length+')</span>';
+  var CATS_MAP={career:'Career',fellowship:'Fellowship',finance:'Finance',contract:'Contracts',research:'Research',clinical:'Clinical',wellness:'Wellness'};
+  Object.keys(cats).forEach(function(c){
+    h+='<span class="tag" style="cursor:pointer;font-size:10px" onclick="filterMyQ(\''+c+'\')">'+((CATS_MAP[c])||c)+' ('+cats[c]+')</span>';
+  });
+  h+='</div></div>';
+  h+='<div id="myq-list">';
+  mine.forEach(function(q){
+    var catLabel=(CATS_MAP[q.cat])||q.cat;
+    h+='<div class="card myq-item" data-cat="'+q.cat+'" style="margin-bottom:10px;padding:16px;cursor:pointer" onclick="showQDetail('+q.id+')">';
+    h+='<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">';
+    h+='<span class="tag t-cat" style="font-size:10px">'+catLabel+'</span>';
+    h+='<span style="font-size:10px;color:var(--text3)">'+q.date+'</span></div>';
+    h+='<p style="font-size:13px;color:var(--text);line-height:1.5;margin:0">'+q.q.substring(0,120)+(q.q.length>120?'...':'')+'</p>';
+    if(q.ai){h+='<p style="font-size:11px;color:var(--text3);margin:6px 0 0;line-height:1.5">'+q.ai.diag.substring(0,80)+'...</p>'}
+    if(q.status==='reviewed'){h+='<span style="font-size:10px;color:var(--green);margin-top:6px;display:inline-block">✓ Physician Reviewed</span>'}
+    else if(q.wantsReview&&q.status==='pending'){h+='<span style="font-size:10px;color:var(--accent);margin-top:6px;display:inline-block">⏳ Review Pending</span>'}
+    h+='</div>';
+  });
+  h+='</div>';
+  document.getElementById('modal-q-content').innerHTML=h;
+  document.getElementById('modal-q').classList.remove('hidden');
+}
+
+function filterMyQ(cat){
+  var items=document.querySelectorAll('.myq-item');
+  items.forEach(function(el){
+    if(cat==='all'||el.dataset.cat===cat){el.style.display=''}
+    else{el.style.display='none'}
+  });
+}
+
+function showQDetail(qid){
+  var q=DB.questions.find(function(x){return x.id===qid});
+  if(!q)return;
+  var h='<div style="margin-bottom:16px"><button class="btn btn-sm" onclick="showMyQ()" style="font-size:11px;padding:6px 12px;border:1px solid var(--border);border-radius:6px;color:var(--text3);margin-bottom:12px">← Back to Questions</button></div>';
+  h+='<span class="tag t-cat" style="margin-bottom:8px;display:inline-block">'+q.cat+'</span>';
+  h+='<span style="font-size:10px;color:var(--text3);margin-left:8px">'+q.date+'</span>';
+  h+='<p style="font-size:14px;font-weight:500;color:var(--text);line-height:1.6;margin:12px 0">'+q.q+'</p>';
+  if(q.ai){
+    h+='<div style="border-top:1px solid var(--border);padding-top:16px;margin-top:16px">';
+    h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">AI Strategic Assessment</div>';
+    h+='<h4 style="font-size:12px;color:var(--text3);margin-bottom:6px">📋 Assessment</h4><p style="font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:14px">'+q.ai.diag+'</p>';
+    h+='<h4 style="font-size:12px;color:var(--text3);margin-bottom:6px">🔍 Key Considerations</h4><p style="font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:14px">'+q.ai.bottleneck+'</p>';
+    h+='<h4 style="font-size:12px;color:var(--text3);margin-bottom:6px">📝 Recommended Approach</h4><ol style="padding-left:20px;margin-bottom:14px">'+q.ai.plan.map(function(s){return '<li style="font-size:13px;color:var(--text2);line-height:1.7;padding:2px 0">'+s+'</li>'}).join('')+'</ol>';
+    h+='<h4 style="font-size:12px;color:var(--text3);margin-bottom:6px">⚠️ Common Pitfalls</h4><ul style="list-style:none;padding:0;margin-bottom:14px">'+q.ai.mistakes.map(function(m){return '<li style="padding:3px 0;color:var(--red);font-size:13px">• '+m+'</li>'}).join('')+'</ul>';
+    h+='<h4 style="font-size:12px;color:var(--text3);margin-bottom:6px">📅 30-Day Action Plan</h4><p style="font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:14px">'+q.ai.action+'</p>';
+    if(q.ai.refs){h+='<div style="margin-top:12px;padding:12px;border-radius:var(--r2);background:rgba(100,149,237,.06);border:1px solid rgba(100,149,237,.15)"><div style="font-size:10px;font-weight:600;color:var(--blue);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">📚 References</div><p style="font-size:11px;color:var(--text3);line-height:1.6">'+q.ai.refs+'</p></div>'}
+    h+='</div>';
+  }
+  if(q.review){
+    h+='<div style="margin-top:16px;padding:16px;border-radius:var(--r2);background:rgba(106,191,75,.06);border:1px solid rgba(106,191,75,.15)">';
+    h+='<div style="font-size:10px;font-weight:600;color:var(--green);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">✓ Physician Review</div>';
+    h+='<p style="font-size:13px;color:var(--text2);line-height:1.7">'+q.review+'</p></div>';
+  }
+  document.getElementById('modal-q-content').innerHTML=h;
+}
+
+function showMyReport(){
+  var user=DB.users.find(function(u){return u.id===U.id});
+  var report=user?user.report:null;
+  var profile=user?user.profile:null;
+  var h='<div style="margin-bottom:16px"><span class="serif" style="font-size:18px;font-weight:600">My Strategic Report</span></div>';
+  if(!report){
+    h+='<div style="text-align:center;padding:40px;color:var(--text3)"><p style="font-size:40px;margin-bottom:12px">📊</p><p style="font-size:14px">No report available yet.</p><p style="font-size:12px;margin-top:8px">Your strategic assessment is generated during signup.</p></div>';
+    document.getElementById('modal-q-content').innerHTML=h;
+    document.getElementById('modal-q').classList.remove('hidden');
+    return;
+  }
+  // Score display
+  var sc=report.score>=70?'var(--green)':report.score>=45?'var(--accent)':'var(--red)';
+  h+='<div style="text-align:center;margin-bottom:24px">';
+  h+='<div style="width:100px;height:100px;border-radius:50%;border:3px solid '+sc+';display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto 12px">';
+  h+='<div style="font-size:28px;font-weight:700;color:'+sc+'">'+report.score+'</div>';
+  h+='<div style="font-size:10px;color:var(--text3)">/95</div></div>';
+  h+='<div style="font-size:16px;font-weight:600;color:'+sc+'">'+report.grade+'</div>';
+  h+='<div style="font-size:11px;color:var(--text3);margin-top:4px">Captured '+new Date(report.capturedAt).toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})+'</div>';
+  h+='</div>';
+  // Strengths & Gaps
+  if(report.strengths&&report.strengths.length){
+    h+='<div style="margin-bottom:16px"><div style="font-size:12px;font-weight:600;color:var(--green);margin-bottom:8px">✦ STRENGTHS</div>';
+    report.strengths.forEach(function(s){
+      h+='<div style="padding:8px 12px;background:rgba(106,191,75,.06);border-radius:6px;margin-bottom:4px;font-size:12px;color:var(--text2)">'+s+'</div>';
+    });
+    h+='</div>';
+  }
+  if(report.gaps&&report.gaps.length){
+    h+='<div style="margin-bottom:16px"><div style="font-size:12px;font-weight:600;color:var(--red);margin-bottom:8px">⚡ GAPS TO ADDRESS</div>';
+    report.gaps.forEach(function(g){
+      h+='<div style="padding:8px 12px;background:rgba(239,68,68,.06);border-radius:6px;margin-bottom:4px;font-size:12px;color:var(--text2)">'+g+'</div>';
+    });
+    h+='</div>';
+  }
+  // Profile snapshot
+  if(profile){
+    h+='<details style="margin-top:16px"><summary style="font-size:12px;color:var(--accent);cursor:pointer">Profile Snapshot</summary>';
+    h+='<div style="margin-top:10px;padding:14px;background:var(--bg2);border-radius:8px;font-size:12px;color:var(--text2);line-height:1.8">';
+    if(profile.stage)h+='<div><strong>Stage:</strong> '+profile.stage+'</div>';
+    if(profile.spec)h+='<div><strong>Specialty:</strong> '+profile.spec+'</div>';
+    if(profile.goal)h+='<div><strong>Goal:</strong> '+profile.goal+'</div>';
+    if(profile.inst)h+='<div><strong>Institution:</strong> '+profile.inst+'</div>';
+    if(profile.pubs)h+='<div><strong>Publications:</strong> '+profile.pubs+'</div>';
+    if(profile.lead)h+='<div><strong>Leadership Roles:</strong> '+profile.lead+'</div>';
+    if(profile.comp)h+='<div><strong>Compensation:</strong> '+profile.comp+'</div>';
+    if(profile.practice)h+='<div><strong>Practice Model:</strong> '+profile.practice+'</div>';
+    if(profile.debt)h+='<div><strong>Loan Balance:</strong> '+profile.debt+'</div>';
+    h+='</div></details>';
+  }
+  document.getElementById('modal-q-content').innerHTML=h;
+  document.getElementById('modal-q').classList.remove('hidden');
+}
+
+function renderProgressDashboard(){
+  var el=document.getElementById('progress-dashboard');
+  if(!el||!U)return;
+  var mine=DB.questions.filter(function(q){return q.userId===U.id});
+  if(mine.length<1){el.innerHTML='';return}
+  var cats={};var reviewed=0;var total=mine.length;
+  mine.forEach(function(q){
+    cats[q.cat]=(cats[q.cat]||0)+1;
+    if(q.status==='reviewed')reviewed++;
+  });
+  var CATS_MAP={career:'Career Strategy',fellowship:'Fellowship',finance:'Financial Planning',contract:'Contracts',research:'Research',clinical:'Clinical',wellness:'Wellness'};
+  var CATS_ICON={career:'🎯',fellowship:'🏥',finance:'💰',contract:'📄',research:'🔬',clinical:'🧠',wellness:'🌿'};
+  // Sort by count descending
+  var sorted=Object.entries(cats).sort(function(a,b){return b[1]-a[1]});
+  var maxCount=sorted[0]?sorted[0][1]:1;
+  var h='<div class="card" style="padding:18px">';
+  h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">';
+  h+='<span style="font-size:12px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:1px">Progress Tracker</span>';
+  h+='<span style="font-size:11px;color:var(--text3)">'+total+' question'+(total!==1?'s':'')+'</span></div>';
+  // Category breakdown bars
+  sorted.forEach(function(pair){
+    var cat=pair[0],cnt=pair[1];
+    var pct=Math.round((cnt/maxCount)*100);
+    h+='<div style="margin-bottom:10px">';
+    h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">';
+    h+='<span style="font-size:12px;color:var(--text2)">'+(CATS_ICON[cat]||'📌')+' '+(CATS_MAP[cat]||cat)+'</span>';
+    h+='<span style="font-size:11px;color:var(--accent);font-weight:600">'+cnt+'</span></div>';
+    h+='<div style="height:4px;background:var(--bg2);border-radius:2px;overflow:hidden">';
+    h+='<div style="height:100%;width:'+pct+'%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:2px;transition:width .3s"></div>';
+    h+='</div></div>';
+  });
+  // Stats row
+  h+='<div style="display:flex;gap:12px;margin-top:14px;padding-top:14px;border-top:1px solid var(--border)">';
+  h+='<div style="flex:1;text-align:center"><div style="font-size:18px;font-weight:700;color:var(--accent)">'+total+'</div><div style="font-size:10px;color:var(--text3)">Asked</div></div>';
+  h+='<div style="flex:1;text-align:center"><div style="font-size:18px;font-weight:700;color:var(--green)">'+reviewed+'</div><div style="font-size:10px;color:var(--text3)">Reviewed</div></div>';
+  h+='<div style="flex:1;text-align:center"><div style="font-size:18px;font-weight:700;color:var(--text2)">'+Object.keys(cats).length+'</div><div style="font-size:10px;color:var(--text3)">Categories</div></div>';
+  h+='</div></div>';
+  el.innerHTML=h;
 }
 function showUpgrade(){
   document.getElementById('upgrade-section').classList.toggle('hidden');

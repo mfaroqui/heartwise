@@ -476,6 +476,7 @@ function openFramework(id){
   document.getElementById('modal-q').classList.remove('hidden');
   if(id==='v1')setTimeout(frcUpdate,50);
   if(id==='v4')setTimeout(function(){rvuModelChange();rvuUpdate()},50);
+  if(id==='v7')setTimeout(roiUpdate,50);
 }
 
 // ===== FELLOWSHIP READINESS CALCULATOR =====
@@ -1605,4 +1606,93 @@ function rvuUpdate(){
     });
     document.getElementById('rvu-scenarios').innerHTML=scenarios;
   }
+}
+
+// ===== RESEARCH ROI CALCULATOR =====
+function roiUpdate(){
+  var first=parseInt(document.getElementById('roi-first').value)||0;
+  var cases=parseInt(document.getElementById('roi-case').value)||0;
+  var abstracts=parseInt(document.getElementById('roi-abstract').value)||0;
+  var reviews=parseInt(document.getElementById('roi-review').value)||0;
+  var middle=parseInt(document.getElementById('roi-middle').value)||0;
+  var qi=parseInt(document.getElementById('roi-qi').value)||0;
+
+  // Update value displays
+  document.getElementById('roi-first-v').textContent=first;
+  document.getElementById('roi-case-v').textContent=cases;
+  document.getElementById('roi-abstract-v').textContent=abstracts;
+  document.getElementById('roi-review-v').textContent=reviews;
+  document.getElementById('roi-middle-v').textContent=middle;
+  document.getElementById('roi-qi-v').textContent=qi;
+
+  // Point values per item
+  var pts={first:15,cases:8,abstracts:5,reviews:6,middle:3,qi:2};
+  var userScore=first*pts.first+cases*pts.cases+abstracts*pts.abstracts+reviews*pts.reviews+middle*pts.middle+qi*pts.qi;
+
+  // Optimal benchmark: 2 first-author (30) + 1 case (8) + 3 abstracts (15) + 0 reviews + 0 middle + 0 QI = 53
+  var optimalScore=53;
+  var pct=Math.min(100,Math.round((userScore/optimalScore)*100));
+
+  // Grade
+  var grade,gradeColor;
+  if(pct>=90){grade='Excellent — Exceeds Optimal';gradeColor='var(--green)'}
+  else if(pct>=70){grade='Strong — Competitive Portfolio';gradeColor='var(--green)'}
+  else if(pct>=50){grade='Building — On Track';gradeColor='var(--accent)'}
+  else if(pct>=25){grade='Early — Needs More High-Impact Work';gradeColor='var(--accent)'}
+  else if(pct>0){grade='Just Starting — Focus on Quick Wins';gradeColor='var(--red)'}
+  else{grade='Add your research to begin';gradeColor='var(--text3)'}
+
+  document.getElementById('roi-score').textContent=pct+'%';
+  document.getElementById('roi-score').style.color=gradeColor;
+  document.getElementById('roi-grade').textContent=grade;
+  document.getElementById('roi-grade').style.color=gradeColor;
+  document.getElementById('roi-bar').style.width=pct+'%';
+
+  // Breakdown
+  var totalItems=first+cases+abstracts+reviews+middle+qi;
+  var bd='';
+  if(totalItems>0){
+    bd+='<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border)"><span>Total Items</span><strong>'+totalItems+'</strong></div>';
+    bd+='<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border)"><span>Portfolio Score</span><strong>'+userScore+' pts</strong></div>';
+    bd+='<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border)"><span>Optimal Benchmark</span><strong>'+optimalScore+' pts</strong></div>';
+
+    // Weighted contribution breakdown
+    var contribs=[];
+    if(first)contribs.push({name:'First-Author',pts:first*pts.first,color:'var(--green)'});
+    if(cases)contribs.push({name:'Case Reports',pts:cases*pts.cases,color:'var(--green)'});
+    if(abstracts)contribs.push({name:'Abstracts',pts:abstracts*pts.abstracts,color:'var(--accent)'});
+    if(reviews)contribs.push({name:'Reviews',pts:reviews*pts.reviews,color:'var(--accent)'});
+    if(middle)contribs.push({name:'Middle-Author',pts:middle*pts.middle,color:'var(--text3)'});
+    if(qi)contribs.push({name:'QI Projects',pts:qi*pts.qi,color:'var(--text3)'});
+    contribs.sort(function(a,b){return b.pts-a.pts});
+
+    bd+='<div style="margin-top:10px;font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Contribution by Type</div>';
+    contribs.forEach(function(c){
+      var w=Math.round((c.pts/userScore)*100);
+      bd+='<div style="margin-bottom:6px"><div style="display:flex;justify-content:space-between;margin-bottom:2px"><span>'+c.name+'</span><span style="color:'+c.color+'">'+c.pts+' pts ('+w+'%)</span></div>';
+      bd+='<div style="height:3px;background:var(--bg);border-radius:2px;overflow:hidden"><div style="height:100%;width:'+w+'%;background:'+c.color+';border-radius:2px"></div></div></div>';
+    });
+  }
+  document.getElementById('roi-breakdown').innerHTML=bd;
+
+  // Advice
+  var advice='';
+  if(totalItems===0){
+    advice='Start with a case report — it\'s the fastest path to your first publication (2-4 months). Then pursue a first-author original research project.';
+  }else if(first===0&&pct<50){
+    advice='Your most impactful next move: start a first-author original research project. One first-author paper outweighs 5 middle-author papers on your application.';
+  }else if(first===1&&abstracts<2){
+    advice='Good foundation with your first-author paper. Now submit 2-3 conference abstracts (ACC, AHA, or your specialty meeting) to build visibility with program directors.';
+  }else if(first>=2&&cases===0){
+    advice='Strong first-author output. Add a case report for portfolio diversity — it shows clinical observation skills and is a quick win (2-4 months).';
+  }else if(pct>=70&&pct<90){
+    advice='Competitive portfolio. To push to excellent: aim for one more first-author paper or target a higher-impact journal for your next submission.';
+  }else if(pct>=90){
+    advice='Outstanding research portfolio. You exceed the optimal benchmark. Focus your energy on strong letters of recommendation and interview preparation.';
+  }else if(middle>first*2){
+    advice='You have more middle-author than first-author papers. PDs weigh first-author work much more heavily. Prioritize driving your own project over contributing to others.';
+  }else{
+    advice='Keep building. Prioritize first-author work and conference abstracts — these have the highest ROI for your time investment.';
+  }
+  document.getElementById('roi-next').textContent=advice;
 }

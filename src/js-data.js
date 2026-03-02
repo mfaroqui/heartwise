@@ -252,7 +252,7 @@ const VAULT_ITEMS=[
 {id:'v4',title:'RVU Modeling Sheet',desc:'Model compensation scenarios by volume, rate, and practice type',icon:'\ud83d\udcb0',tier:'core'},
 {id:'v5',title:'3-Year Leverage Planner',desc:'Map your income trajectory from training exit through year 3',icon:'\ud83d\udcc8',tier:'core'},
 {id:'v6',title:'Fellowship Positioning Roadmap',desc:'Month-by-month timeline from PGY-2 to match day',icon:'\ud83d\uddfa\ufe0f',tier:'core'},
-{id:'v7',title:'Research ROI Calculator',desc:'Evaluate which projects give maximum application leverage',icon:'\u2696\ufe0f',tier:'core'},
+{id:'v7',title:'Research ROI Calculator',desc:'Calculate your research portfolio strength and see how close you are to optimal',icon:'\u2696\ufe0f',tier:'core'},
 {id:'v8',title:'Income Leverage Playbook',desc:'PSLF vs refinance modeling, tax strategy, disability planning',icon:'\ud83d\udcb5',tier:'core'},
 {id:'v9',title:'Strategic Audit Template',desc:'The exact intake framework used in Elite Strategy sessions',icon:'\ud83d\udcdd',tier:'elite'},
 {id:'v10',title:'Career Pivot Decision Engine',desc:'Structured framework for specialty switches and practice model changes',icon:'\u26a1',tier:'elite'}

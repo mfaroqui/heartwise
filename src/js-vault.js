@@ -272,16 +272,94 @@ v6:`<h3>Fellowship Positioning Roadmap</h3>
 <p style="font-size:10px;color:var(--text3);margin-top:16px;font-style:italic">Based on NRMP data and program director input.</p>`,
 
 v7:`<h3>Research ROI Calculator</h3>
-<p style="color:var(--text3);font-size:12px;margin-bottom:16px">Not all research is equal for your application. Evaluate by return on your scarcest resource: time.</p>
+<p style="color:var(--text3);font-size:12px;margin-bottom:20px">Enter your current research portfolio. The calculator scores each item by application impact per time invested and shows how close you are to optimal.</p>
+
 <div style="font-size:12px">
-<div style="padding:12px 0;border-bottom:1px solid var(--border)"><strong>1. First-Author Original Research</strong> <span style="color:var(--green);font-size:11px">(Highest ROI)</span><br><span style="color:var(--text2)">6-18 months. One published first-author paper outweighs 5 middle-author papers.</span></div>
-<div style="padding:12px 0;border-bottom:1px solid var(--border)"><strong>2. Case Reports</strong> <span style="color:var(--green);font-size:11px">(High ROI / time)</span><br><span style="color:var(--text2)">2-4 months. Low barrier, demonstrates writing ability. Best for early trainees.</span></div>
-<div style="padding:12px 0;border-bottom:1px solid var(--border)"><strong>3. Conference Abstracts</strong> <span style="color:var(--accent);font-size:11px">(Good ROI)</span><br><span style="color:var(--text2)">1-3 months. Gets your name visible. ACC/AHA posters are noticed by PDs.</span></div>
-<div style="padding:12px 0;border-bottom:1px solid var(--border)"><strong>4. Review Articles</strong> <span style="color:var(--accent);font-size:11px">(Moderate ROI)</span><br><span style="color:var(--text2)">3-6 months. Shows expertise. Most useful in specialty-specific journals.</span></div>
-<div style="padding:12px 0;border-bottom:1px solid var(--border)"><strong>5. Middle-Author Papers</strong> <span style="color:var(--text3);font-size:11px">(Low ROI per paper)</span><br><span style="color:var(--text2)">PDs know the difference between contributing and driving a project.</span></div>
-<div style="padding:12px 0"><strong>6. QI Projects</strong> <span style="color:var(--text3);font-size:11px">(Low ROI for fellowship)</span><br><span style="color:var(--text2)">Valuable for career but rarely moves the needle for subspecialty matching.</span></div>
+
+<div style="margin-bottom:14px">
+<label style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><span style="font-weight:600">First-Author Original Research</span><span style="color:var(--green);font-size:10px">15 pts each</span></label>
+<div style="display:flex;align-items:center;gap:12px">
+<input type="range" min="0" max="5" value="0" id="roi-first" oninput="roiUpdate()" style="flex:1">
+<span id="roi-first-v" style="font-size:14px;font-weight:600;color:var(--accent);min-width:20px;text-align:center">0</span>
 </div>
-<div style="padding:16px;background:var(--bg2);border-radius:8px;margin-top:16px"><p style="font-size:12px;color:var(--text2);line-height:1.6;margin:0"><strong>Optimal portfolio:</strong> 1-2 first-author papers + 2-3 abstracts + 1 case report. Start with the case report (quick win), then pursue original research (high impact).</p></div>`,
+<div style="font-size:10px;color:var(--text3);margin-top:2px">6-18 months each. Highest impact per paper.</div>
+</div>
+
+<div style="margin-bottom:14px">
+<label style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><span style="font-weight:600">Case Reports / Series</span><span style="color:var(--green);font-size:10px">8 pts each</span></label>
+<div style="display:flex;align-items:center;gap:12px">
+<input type="range" min="0" max="8" value="0" id="roi-case" oninput="roiUpdate()" style="flex:1">
+<span id="roi-case-v" style="font-size:14px;font-weight:600;color:var(--accent);min-width:20px;text-align:center">0</span>
+</div>
+<div style="font-size:10px;color:var(--text3);margin-top:2px">2-4 months. Low barrier, demonstrates writing ability.</div>
+</div>
+
+<div style="margin-bottom:14px">
+<label style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><span style="font-weight:600">Conference Abstracts / Posters</span><span style="color:var(--accent);font-size:10px">5 pts each</span></label>
+<div style="display:flex;align-items:center;gap:12px">
+<input type="range" min="0" max="10" value="0" id="roi-abstract" oninput="roiUpdate()" style="flex:1">
+<span id="roi-abstract-v" style="font-size:14px;font-weight:600;color:var(--accent);min-width:20px;text-align:center">0</span>
+</div>
+<div style="font-size:10px;color:var(--text3);margin-top:2px">1-3 months. Gets your name visible at national meetings.</div>
+</div>
+
+<div style="margin-bottom:14px">
+<label style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><span style="font-weight:600">Review Articles</span><span style="color:var(--accent);font-size:10px">6 pts each</span></label>
+<div style="display:flex;align-items:center;gap:12px">
+<input type="range" min="0" max="5" value="0" id="roi-review" oninput="roiUpdate()" style="flex:1">
+<span id="roi-review-v" style="font-size:14px;font-weight:600;color:var(--accent);min-width:20px;text-align:center">0</span>
+</div>
+<div style="font-size:10px;color:var(--text3);margin-top:2px">3-6 months. Shows domain expertise in specialty journals.</div>
+</div>
+
+<div style="margin-bottom:14px">
+<label style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><span style="font-weight:600">Middle-Author Papers</span><span style="color:var(--text3);font-size:10px">3 pts each</span></label>
+<div style="display:flex;align-items:center;gap:12px">
+<input type="range" min="0" max="10" value="0" id="roi-middle" oninput="roiUpdate()" style="flex:1">
+<span id="roi-middle-v" style="font-size:14px;font-weight:600;color:var(--accent);min-width:20px;text-align:center">0</span>
+</div>
+<div style="font-size:10px;color:var(--text3);margin-top:2px">PDs know the difference. Counts, but at a discount.</div>
+</div>
+
+<div style="margin-bottom:14px">
+<label style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><span style="font-weight:600">QI / Other Projects</span><span style="color:var(--text3);font-size:10px">2 pts each</span></label>
+<div style="display:flex;align-items:center;gap:12px">
+<input type="range" min="0" max="5" value="0" id="roi-qi" oninput="roiUpdate()" style="flex:1">
+<span id="roi-qi-v" style="font-size:14px;font-weight:600;color:var(--accent);min-width:20px;text-align:center">0</span>
+</div>
+<div style="font-size:10px;color:var(--text3);margin-top:2px">Valuable for career growth, rarely moves the fellowship needle.</div>
+</div>
+
+</div>
+
+<!-- Results Panel -->
+<div id="roi-results" style="margin-top:20px">
+<div style="padding:20px;background:var(--bg2);border-radius:12px;border:1px solid var(--border)">
+
+<div style="text-align:center;margin-bottom:16px">
+<div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Portfolio Strength</div>
+<div id="roi-score" style="font-size:42px;font-weight:700;color:var(--accent)">0%</div>
+<div id="roi-grade" style="font-size:13px;font-weight:500;margin-top:4px;color:var(--text3)">Add your research to begin</div>
+</div>
+
+<div style="height:8px;background:var(--bg);border-radius:4px;overflow:hidden;margin-bottom:16px">
+<div id="roi-bar" style="height:100%;width:0%;background:linear-gradient(90deg,var(--red),var(--accent),var(--green));border-radius:4px;transition:width .4s ease"></div>
+</div>
+
+<div id="roi-breakdown" style="font-size:12px;color:var(--text2);line-height:1.8"></div>
+
+<div id="roi-advice" style="margin-top:14px;padding:14px;border-radius:8px;border-left:3px solid var(--accent);background:rgba(200,168,124,.04)">
+<div style="font-size:11px;font-weight:600;color:var(--accent);margin-bottom:6px">NEXT MOVE</div>
+<p id="roi-next" style="font-size:12px;color:var(--text2);line-height:1.6;margin:0">Start by entering your current research.</p>
+</div>
+
+</div>
+
+<div style="margin-top:14px;padding:14px;background:var(--bg2);border-radius:8px">
+<div style="font-size:11px;font-weight:600;color:var(--text3);margin-bottom:6px">OPTIMAL PORTFOLIO BENCHMARK</div>
+<p style="font-size:12px;color:var(--text2);line-height:1.7;margin:0">1-2 first-author papers + 2-3 abstracts + 1 case report = competitive applicant. Based on NRMP Charting Outcomes data for subspecialty fellowship matching.</p>
+</div>
+</div>`,
 
 v8:`<h3>Income Leverage Playbook</h3>
 <p style="color:var(--text3);font-size:12px;margin-bottom:16px">Five financial decisions with the biggest long-term impact on physician wealth.</p>

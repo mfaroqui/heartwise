@@ -1621,7 +1621,7 @@ const VAULT_ITEMS=[
 {id:'v4',title:'RVU Modeling Sheet',desc:'Model compensation scenarios by volume, rate, and practice type',icon:'\ud83d\udcb0',tier:'core'},
 {id:'v5',title:'3-Year Leverage Planner',desc:'Map your income trajectory from training exit through year 3',icon:'\ud83d\udcc8',tier:'core'},
 {id:'v6',title:'Fellowship Positioning Roadmap',desc:'Month-by-month timeline from PGY-2 to match day',icon:'\ud83d\uddfa\ufe0f',tier:'core'},
-{id:'v7',title:'Research ROI Calculator',desc:'Evaluate which projects give maximum application leverage',icon:'\u2696\ufe0f',tier:'core'},
+{id:'v7',title:'Research ROI Calculator',desc:'Calculate your research portfolio strength and see how close you are to optimal',icon:'\u2696\ufe0f',tier:'core'},
 {id:'v8',title:'Income Leverage Playbook',desc:'PSLF vs refinance modeling, tax strategy, disability planning',icon:'\ud83d\udcb5',tier:'core'},
 {id:'v9',title:'Strategic Audit Template',desc:'The exact intake framework used in Elite Strategy sessions',icon:'\ud83d\udcdd',tier:'elite'},
 {id:'v10',title:'Career Pivot Decision Engine',desc:'Structured framework for specialty switches and practice model changes',icon:'\u26a1',tier:'elite'}
@@ -1903,16 +1903,94 @@ v6:`<h3>Fellowship Positioning Roadmap</h3>
 <p style="font-size:10px;color:var(--text3);margin-top:16px;font-style:italic">Based on NRMP data and program director input.</p>`,
 
 v7:`<h3>Research ROI Calculator</h3>
-<p style="color:var(--text3);font-size:12px;margin-bottom:16px">Not all research is equal for your application. Evaluate by return on your scarcest resource: time.</p>
+<p style="color:var(--text3);font-size:12px;margin-bottom:20px">Enter your current research portfolio. The calculator scores each item by application impact per time invested and shows how close you are to optimal.</p>
+
 <div style="font-size:12px">
-<div style="padding:12px 0;border-bottom:1px solid var(--border)"><strong>1. First-Author Original Research</strong> <span style="color:var(--green);font-size:11px">(Highest ROI)</span><br><span style="color:var(--text2)">6-18 months. One published first-author paper outweighs 5 middle-author papers.</span></div>
-<div style="padding:12px 0;border-bottom:1px solid var(--border)"><strong>2. Case Reports</strong> <span style="color:var(--green);font-size:11px">(High ROI / time)</span><br><span style="color:var(--text2)">2-4 months. Low barrier, demonstrates writing ability. Best for early trainees.</span></div>
-<div style="padding:12px 0;border-bottom:1px solid var(--border)"><strong>3. Conference Abstracts</strong> <span style="color:var(--accent);font-size:11px">(Good ROI)</span><br><span style="color:var(--text2)">1-3 months. Gets your name visible. ACC/AHA posters are noticed by PDs.</span></div>
-<div style="padding:12px 0;border-bottom:1px solid var(--border)"><strong>4. Review Articles</strong> <span style="color:var(--accent);font-size:11px">(Moderate ROI)</span><br><span style="color:var(--text2)">3-6 months. Shows expertise. Most useful in specialty-specific journals.</span></div>
-<div style="padding:12px 0;border-bottom:1px solid var(--border)"><strong>5. Middle-Author Papers</strong> <span style="color:var(--text3);font-size:11px">(Low ROI per paper)</span><br><span style="color:var(--text2)">PDs know the difference between contributing and driving a project.</span></div>
-<div style="padding:12px 0"><strong>6. QI Projects</strong> <span style="color:var(--text3);font-size:11px">(Low ROI for fellowship)</span><br><span style="color:var(--text2)">Valuable for career but rarely moves the needle for subspecialty matching.</span></div>
+
+<div style="margin-bottom:14px">
+<label style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><span style="font-weight:600">First-Author Original Research</span><span style="color:var(--green);font-size:10px">15 pts each</span></label>
+<div style="display:flex;align-items:center;gap:12px">
+<input type="range" min="0" max="5" value="0" id="roi-first" oninput="roiUpdate()" style="flex:1">
+<span id="roi-first-v" style="font-size:14px;font-weight:600;color:var(--accent);min-width:20px;text-align:center">0</span>
 </div>
-<div style="padding:16px;background:var(--bg2);border-radius:8px;margin-top:16px"><p style="font-size:12px;color:var(--text2);line-height:1.6;margin:0"><strong>Optimal portfolio:</strong> 1-2 first-author papers + 2-3 abstracts + 1 case report. Start with the case report (quick win), then pursue original research (high impact).</p></div>`,
+<div style="font-size:10px;color:var(--text3);margin-top:2px">6-18 months each. Highest impact per paper.</div>
+</div>
+
+<div style="margin-bottom:14px">
+<label style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><span style="font-weight:600">Case Reports / Series</span><span style="color:var(--green);font-size:10px">8 pts each</span></label>
+<div style="display:flex;align-items:center;gap:12px">
+<input type="range" min="0" max="8" value="0" id="roi-case" oninput="roiUpdate()" style="flex:1">
+<span id="roi-case-v" style="font-size:14px;font-weight:600;color:var(--accent);min-width:20px;text-align:center">0</span>
+</div>
+<div style="font-size:10px;color:var(--text3);margin-top:2px">2-4 months. Low barrier, demonstrates writing ability.</div>
+</div>
+
+<div style="margin-bottom:14px">
+<label style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><span style="font-weight:600">Conference Abstracts / Posters</span><span style="color:var(--accent);font-size:10px">5 pts each</span></label>
+<div style="display:flex;align-items:center;gap:12px">
+<input type="range" min="0" max="10" value="0" id="roi-abstract" oninput="roiUpdate()" style="flex:1">
+<span id="roi-abstract-v" style="font-size:14px;font-weight:600;color:var(--accent);min-width:20px;text-align:center">0</span>
+</div>
+<div style="font-size:10px;color:var(--text3);margin-top:2px">1-3 months. Gets your name visible at national meetings.</div>
+</div>
+
+<div style="margin-bottom:14px">
+<label style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><span style="font-weight:600">Review Articles</span><span style="color:var(--accent);font-size:10px">6 pts each</span></label>
+<div style="display:flex;align-items:center;gap:12px">
+<input type="range" min="0" max="5" value="0" id="roi-review" oninput="roiUpdate()" style="flex:1">
+<span id="roi-review-v" style="font-size:14px;font-weight:600;color:var(--accent);min-width:20px;text-align:center">0</span>
+</div>
+<div style="font-size:10px;color:var(--text3);margin-top:2px">3-6 months. Shows domain expertise in specialty journals.</div>
+</div>
+
+<div style="margin-bottom:14px">
+<label style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><span style="font-weight:600">Middle-Author Papers</span><span style="color:var(--text3);font-size:10px">3 pts each</span></label>
+<div style="display:flex;align-items:center;gap:12px">
+<input type="range" min="0" max="10" value="0" id="roi-middle" oninput="roiUpdate()" style="flex:1">
+<span id="roi-middle-v" style="font-size:14px;font-weight:600;color:var(--accent);min-width:20px;text-align:center">0</span>
+</div>
+<div style="font-size:10px;color:var(--text3);margin-top:2px">PDs know the difference. Counts, but at a discount.</div>
+</div>
+
+<div style="margin-bottom:14px">
+<label style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><span style="font-weight:600">QI / Other Projects</span><span style="color:var(--text3);font-size:10px">2 pts each</span></label>
+<div style="display:flex;align-items:center;gap:12px">
+<input type="range" min="0" max="5" value="0" id="roi-qi" oninput="roiUpdate()" style="flex:1">
+<span id="roi-qi-v" style="font-size:14px;font-weight:600;color:var(--accent);min-width:20px;text-align:center">0</span>
+</div>
+<div style="font-size:10px;color:var(--text3);margin-top:2px">Valuable for career growth, rarely moves the fellowship needle.</div>
+</div>
+
+</div>
+
+<!-- Results Panel -->
+<div id="roi-results" style="margin-top:20px">
+<div style="padding:20px;background:var(--bg2);border-radius:12px;border:1px solid var(--border)">
+
+<div style="text-align:center;margin-bottom:16px">
+<div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Portfolio Strength</div>
+<div id="roi-score" style="font-size:42px;font-weight:700;color:var(--accent)">0%</div>
+<div id="roi-grade" style="font-size:13px;font-weight:500;margin-top:4px;color:var(--text3)">Add your research to begin</div>
+</div>
+
+<div style="height:8px;background:var(--bg);border-radius:4px;overflow:hidden;margin-bottom:16px">
+<div id="roi-bar" style="height:100%;width:0%;background:linear-gradient(90deg,var(--red),var(--accent),var(--green));border-radius:4px;transition:width .4s ease"></div>
+</div>
+
+<div id="roi-breakdown" style="font-size:12px;color:var(--text2);line-height:1.8"></div>
+
+<div id="roi-advice" style="margin-top:14px;padding:14px;border-radius:8px;border-left:3px solid var(--accent);background:rgba(200,168,124,.04)">
+<div style="font-size:11px;font-weight:600;color:var(--accent);margin-bottom:6px">NEXT MOVE</div>
+<p id="roi-next" style="font-size:12px;color:var(--text2);line-height:1.6;margin:0">Start by entering your current research.</p>
+</div>
+
+</div>
+
+<div style="margin-top:14px;padding:14px;background:var(--bg2);border-radius:8px">
+<div style="font-size:11px;font-weight:600;color:var(--text3);margin-bottom:6px">OPTIMAL PORTFOLIO BENCHMARK</div>
+<p style="font-size:12px;color:var(--text2);line-height:1.7;margin:0">1-2 first-author papers + 2-3 abstracts + 1 case report = competitive applicant. Based on NRMP Charting Outcomes data for subspecialty fellowship matching.</p>
+</div>
+</div>`,
 
 v8:`<h3>Income Leverage Playbook</h3>
 <p style="color:var(--text3);font-size:12px;margin-bottom:16px">Five financial decisions with the biggest long-term impact on physician wealth.</p>
@@ -2439,6 +2517,7 @@ function openFramework(id){
   document.getElementById('modal-q').classList.remove('hidden');
   if(id==='v1')setTimeout(frcUpdate,50);
   if(id==='v4')setTimeout(function(){rvuModelChange();rvuUpdate()},50);
+  if(id==='v7')setTimeout(roiUpdate,50);
 }
 
 // ===== FELLOWSHIP READINESS CALCULATOR =====
@@ -3568,6 +3647,95 @@ function rvuUpdate(){
     });
     document.getElementById('rvu-scenarios').innerHTML=scenarios;
   }
+}
+
+// ===== RESEARCH ROI CALCULATOR =====
+function roiUpdate(){
+  var first=parseInt(document.getElementById('roi-first').value)||0;
+  var cases=parseInt(document.getElementById('roi-case').value)||0;
+  var abstracts=parseInt(document.getElementById('roi-abstract').value)||0;
+  var reviews=parseInt(document.getElementById('roi-review').value)||0;
+  var middle=parseInt(document.getElementById('roi-middle').value)||0;
+  var qi=parseInt(document.getElementById('roi-qi').value)||0;
+
+  // Update value displays
+  document.getElementById('roi-first-v').textContent=first;
+  document.getElementById('roi-case-v').textContent=cases;
+  document.getElementById('roi-abstract-v').textContent=abstracts;
+  document.getElementById('roi-review-v').textContent=reviews;
+  document.getElementById('roi-middle-v').textContent=middle;
+  document.getElementById('roi-qi-v').textContent=qi;
+
+  // Point values per item
+  var pts={first:15,cases:8,abstracts:5,reviews:6,middle:3,qi:2};
+  var userScore=first*pts.first+cases*pts.cases+abstracts*pts.abstracts+reviews*pts.reviews+middle*pts.middle+qi*pts.qi;
+
+  // Optimal benchmark: 2 first-author (30) + 1 case (8) + 3 abstracts (15) + 0 reviews + 0 middle + 0 QI = 53
+  var optimalScore=53;
+  var pct=Math.min(100,Math.round((userScore/optimalScore)*100));
+
+  // Grade
+  var grade,gradeColor;
+  if(pct>=90){grade='Excellent — Exceeds Optimal';gradeColor='var(--green)'}
+  else if(pct>=70){grade='Strong — Competitive Portfolio';gradeColor='var(--green)'}
+  else if(pct>=50){grade='Building — On Track';gradeColor='var(--accent)'}
+  else if(pct>=25){grade='Early — Needs More High-Impact Work';gradeColor='var(--accent)'}
+  else if(pct>0){grade='Just Starting — Focus on Quick Wins';gradeColor='var(--red)'}
+  else{grade='Add your research to begin';gradeColor='var(--text3)'}
+
+  document.getElementById('roi-score').textContent=pct+'%';
+  document.getElementById('roi-score').style.color=gradeColor;
+  document.getElementById('roi-grade').textContent=grade;
+  document.getElementById('roi-grade').style.color=gradeColor;
+  document.getElementById('roi-bar').style.width=pct+'%';
+
+  // Breakdown
+  var totalItems=first+cases+abstracts+reviews+middle+qi;
+  var bd='';
+  if(totalItems>0){
+    bd+='<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border)"><span>Total Items</span><strong>'+totalItems+'</strong></div>';
+    bd+='<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border)"><span>Portfolio Score</span><strong>'+userScore+' pts</strong></div>';
+    bd+='<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border)"><span>Optimal Benchmark</span><strong>'+optimalScore+' pts</strong></div>';
+
+    // Weighted contribution breakdown
+    var contribs=[];
+    if(first)contribs.push({name:'First-Author',pts:first*pts.first,color:'var(--green)'});
+    if(cases)contribs.push({name:'Case Reports',pts:cases*pts.cases,color:'var(--green)'});
+    if(abstracts)contribs.push({name:'Abstracts',pts:abstracts*pts.abstracts,color:'var(--accent)'});
+    if(reviews)contribs.push({name:'Reviews',pts:reviews*pts.reviews,color:'var(--accent)'});
+    if(middle)contribs.push({name:'Middle-Author',pts:middle*pts.middle,color:'var(--text3)'});
+    if(qi)contribs.push({name:'QI Projects',pts:qi*pts.qi,color:'var(--text3)'});
+    contribs.sort(function(a,b){return b.pts-a.pts});
+
+    bd+='<div style="margin-top:10px;font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Contribution by Type</div>';
+    contribs.forEach(function(c){
+      var w=Math.round((c.pts/userScore)*100);
+      bd+='<div style="margin-bottom:6px"><div style="display:flex;justify-content:space-between;margin-bottom:2px"><span>'+c.name+'</span><span style="color:'+c.color+'">'+c.pts+' pts ('+w+'%)</span></div>';
+      bd+='<div style="height:3px;background:var(--bg);border-radius:2px;overflow:hidden"><div style="height:100%;width:'+w+'%;background:'+c.color+';border-radius:2px"></div></div></div>';
+    });
+  }
+  document.getElementById('roi-breakdown').innerHTML=bd;
+
+  // Advice
+  var advice='';
+  if(totalItems===0){
+    advice='Start with a case report — it\'s the fastest path to your first publication (2-4 months). Then pursue a first-author original research project.';
+  }else if(first===0&&pct<50){
+    advice='Your most impactful next move: start a first-author original research project. One first-author paper outweighs 5 middle-author papers on your application.';
+  }else if(first===1&&abstracts<2){
+    advice='Good foundation with your first-author paper. Now submit 2-3 conference abstracts (ACC, AHA, or your specialty meeting) to build visibility with program directors.';
+  }else if(first>=2&&cases===0){
+    advice='Strong first-author output. Add a case report for portfolio diversity — it shows clinical observation skills and is a quick win (2-4 months).';
+  }else if(pct>=70&&pct<90){
+    advice='Competitive portfolio. To push to excellent: aim for one more first-author paper or target a higher-impact journal for your next submission.';
+  }else if(pct>=90){
+    advice='Outstanding research portfolio. You exceed the optimal benchmark. Focus your energy on strong letters of recommendation and interview preparation.';
+  }else if(middle>first*2){
+    advice='You have more middle-author than first-author papers. PDs weigh first-author work much more heavily. Prioritize driving your own project over contributing to others.';
+  }else{
+    advice='Keep building. Prioritize first-author work and conference abstracts — these have the highest ROI for your time investment.';
+  }
+  document.getElementById('roi-next').textContent=advice;
 }
 
 

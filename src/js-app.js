@@ -447,6 +447,52 @@ function showUpgrade(){
   }else{document.getElementById('sub-manage').classList.add('hidden')}
 }
 function toggleNotifSettings(){document.getElementById('notif-settings').classList.toggle('hidden')}
+
+function toggleAccountSettings(){
+  const s=document.getElementById('account-settings');
+  s.classList.toggle('hidden');
+  if(!s.classList.contains('hidden')&&U){
+    document.getElementById('acc-name').value=U.name||'';
+    document.getElementById('acc-email').value=U.email||'';
+    document.getElementById('acc-pass').value='';
+    document.getElementById('acc-pass2').value='';
+  }
+}
+
+async function saveAccountSettings(e){
+  e.preventDefault();
+  const name=document.getElementById('acc-name').value.trim();
+  const email=document.getElementById('acc-email').value.trim().toLowerCase();
+  const pass=document.getElementById('acc-pass').value;
+  const pass2=document.getElementById('acc-pass2').value;
+  if(!name){notify('Name cannot be empty',1);return}
+  if(!email){notify('Email cannot be empty',1);return}
+  if(pass&&pass!==pass2){notify('Passwords do not match',1);return}
+  if(pass&&pass.length<8){notify('Password must be at least 8 characters',1);return}
+  // Check if email changed and not taken by another user
+  if(email!==U.email.toLowerCase()){
+    const taken=DB.users.find(u=>u.email.toLowerCase()===email&&u.id!==U.id);
+    if(taken){notify('Email already in use',1);return}
+  }
+  // Update local DB
+  U.name=name;
+  U.email=email;
+  if(pass)U.pass=pass;
+  saveDB();localStorage.setItem('hw_session',JSON.stringify(U));
+  // Update Supabase if available
+  if(_supaClient){
+    try{
+      const updates={};
+      if(email!==U.email)updates.email=email;
+      if(pass)updates.password=pass;
+      updates.data={name};
+      await _supaClient.auth.updateUser(updates);
+    }catch(ex){}
+  }
+  renderProfile();
+  notify('Account updated!');
+  document.getElementById('account-settings').classList.add('hidden');
+}
 // ===== STRIPE CONFIG =====
 const STRIPE_PK='pk_test_51T5mX3PXNQA0ks87KmMtyTYTQZKBLJ6dE5U15eSBf97sK2ecqdU1DYjcJYpevRpdJnE1Xyi0Uow6PG2J8b4A8UCq004h8agh3H';
 const STRIPE_PRICES={

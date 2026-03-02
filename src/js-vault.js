@@ -378,18 +378,58 @@ v8:`<h3>Income Leverage Playbook</h3>
 <p style="font-size:10px;color:var(--text3);margin-top:12px;font-style:italic">Sources: White Coat Investor, Council for Disability Awareness 2023, IRS 2024 limits.</p>`,
 
 v9:`<h3>Strategic Audit Template</h3>
-<p style="color:var(--text3);font-size:12px;margin-bottom:16px">The exact intake framework used in Private Strategy sessions. Complete this before any major career decision.</p>
-<div style="font-size:12px">
-<div style="padding:14px;background:var(--bg2);border-radius:8px;margin-bottom:10px">
-<strong style="color:var(--accent)">Part 1: Current Position</strong><br><span style="color:var(--text2);line-height:1.8">• Current training level / position?<br>• Institution strengths and limitations?<br>• Financial situation (debt, savings, obligations)?<br>• CV snapshot (publications, scores, leadership)?<br>• What are you known for?</span></div>
-<div style="padding:14px;background:var(--bg2);border-radius:8px;margin-bottom:10px">
-<strong style="color:var(--accent)">Part 2: The Decision</strong><br><span style="color:var(--text2);line-height:1.8">• What specific decision are you facing?<br>• What are all options (including "do nothing")?<br>• What is the timeline?<br>• What have you already tried?<br>• What's holding you back?</span></div>
-<div style="padding:14px;background:var(--bg2);border-radius:8px;margin-bottom:10px">
-<strong style="color:var(--accent)">Part 3: Constraints & Priorities</strong><br><span style="color:var(--text2);line-height:1.8">• Non-negotiables (location, income, lifestyle)?<br>• What are you willing to sacrifice?<br>• Who else is affected?<br>• What does success look like in 1 year? 5 years?<br>• What would you regret not doing?</span></div>
-<div style="padding:14px;background:var(--bg2);border-radius:8px">
-<strong style="color:var(--accent)">Part 4: Information Gaps</strong><br><span style="color:var(--text2);line-height:1.8">• What info would make this easier?<br>• Who have you talked to?<br>• Worst realistic outcome of each option?<br>• Best realistic outcome?<br>• Is this decision reversible?</span></div>
+<p style="color:var(--text3);font-size:12px;margin-bottom:20px">Complete this intake form and submit it directly to Dr. Faroqui for review. Be thorough — the more detail you provide, the more targeted the strategic guidance.</p>
+
+<div style="font-size:12px" id="audit-form">
+
+<div style="margin-bottom:20px">
+<div style="font-size:13px;font-weight:600;color:var(--accent);margin-bottom:12px">Part 1: Current Position</div>
+<div style="margin-bottom:10px"><label style="display:block;font-size:11px;color:var(--text3);margin-bottom:4px">Current training level / position</label><textarea id="audit-1a" rows="2" placeholder="e.g. PGY-3 IM Resident at..." style="width:100%;font-family:inherit;font-size:12px;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);resize:vertical"></textarea></div>
+<div style="margin-bottom:10px"><label style="display:block;font-size:11px;color:var(--text3);margin-bottom:4px">Institution strengths and limitations</label><textarea id="audit-1b" rows="2" placeholder="What does your program do well? Where does it fall short?" style="width:100%;font-family:inherit;font-size:12px;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);resize:vertical"></textarea></div>
+<div style="margin-bottom:10px"><label style="display:block;font-size:11px;color:var(--text3);margin-bottom:4px">Financial situation (debt, savings, obligations)</label><textarea id="audit-1c" rows="2" placeholder="Approximate loan balance, savings, dependents..." style="width:100%;font-family:inherit;font-size:12px;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);resize:vertical"></textarea></div>
+<div style="margin-bottom:10px"><label style="display:block;font-size:11px;color:var(--text3);margin-bottom:4px">CV snapshot (publications, scores, leadership)</label><textarea id="audit-1d" rows="2" placeholder="# of pubs, board scores, leadership roles..." style="width:100%;font-family:inherit;font-size:12px;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);resize:vertical"></textarea></div>
+<div style="margin-bottom:10px"><label style="display:block;font-size:11px;color:var(--text3);margin-bottom:4px">What are you known for?</label><textarea id="audit-1e" rows="2" placeholder="Your reputation, differentiator, niche..." style="width:100%;font-family:inherit;font-size:12px;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);resize:vertical"></textarea></div>
 </div>
-<p style="font-size:10px;color:var(--text3);margin-top:12px;font-style:italic">Complete this before requesting a Private Strategy session.</p>`,
+
+<div style="margin-bottom:20px">
+<div style="font-size:13px;font-weight:600;color:var(--accent);margin-bottom:12px">Part 2: The Decision</div>
+<div style="margin-bottom:10px"><label style="display:block;font-size:11px;color:var(--text3);margin-bottom:4px">What specific decision are you facing?</label><textarea id="audit-2a" rows="2" placeholder="The core question or crossroad..." style="width:100%;font-family:inherit;font-size:12px;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);resize:vertical"></textarea></div>
+<div style="margin-bottom:10px"><label style="display:block;font-size:11px;color:var(--text3);margin-bottom:4px">What are all your options (including "do nothing")?</label><textarea id="audit-2b" rows="2" placeholder="List every option you're considering..." style="width:100%;font-family:inherit;font-size:12px;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);resize:vertical"></textarea></div>
+<div style="margin-bottom:10px"><label style="display:block;font-size:11px;color:var(--text3);margin-bottom:4px">What is the timeline?</label><textarea id="audit-2c" rows="1" placeholder="When does this decision need to be made?" style="width:100%;font-family:inherit;font-size:12px;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);resize:vertical"></textarea></div>
+<div style="margin-bottom:10px"><label style="display:block;font-size:11px;color:var(--text3);margin-bottom:4px">What have you already tried?</label><textarea id="audit-2d" rows="2" placeholder="Steps taken, people consulted..." style="width:100%;font-family:inherit;font-size:12px;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);resize:vertical"></textarea></div>
+<div style="margin-bottom:10px"><label style="display:block;font-size:11px;color:var(--text3);margin-bottom:4px">What's holding you back?</label><textarea id="audit-2e" rows="2" placeholder="Fears, uncertainties, constraints..." style="width:100%;font-family:inherit;font-size:12px;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);resize:vertical"></textarea></div>
+</div>
+
+<div style="margin-bottom:20px">
+<div style="font-size:13px;font-weight:600;color:var(--accent);margin-bottom:12px">Part 3: Constraints & Priorities</div>
+<div style="margin-bottom:10px"><label style="display:block;font-size:11px;color:var(--text3);margin-bottom:4px">Non-negotiables (location, income, lifestyle)</label><textarea id="audit-3a" rows="2" placeholder="What can't you compromise on?" style="width:100%;font-family:inherit;font-size:12px;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);resize:vertical"></textarea></div>
+<div style="margin-bottom:10px"><label style="display:block;font-size:11px;color:var(--text3);margin-bottom:4px">What are you willing to sacrifice?</label><textarea id="audit-3b" rows="2" placeholder="Tradeoffs you'd accept..." style="width:100%;font-family:inherit;font-size:12px;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);resize:vertical"></textarea></div>
+<div style="margin-bottom:10px"><label style="display:block;font-size:11px;color:var(--text3);margin-bottom:4px">Who else is affected by this decision?</label><textarea id="audit-3c" rows="1" placeholder="Family, partner, dependents..." style="width:100%;font-family:inherit;font-size:12px;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);resize:vertical"></textarea></div>
+<div style="margin-bottom:10px"><label style="display:block;font-size:11px;color:var(--text3);margin-bottom:4px">What does success look like in 1 year? 5 years?</label><textarea id="audit-3d" rows="2" placeholder="Your vision for the outcome..." style="width:100%;font-family:inherit;font-size:12px;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);resize:vertical"></textarea></div>
+<div style="margin-bottom:10px"><label style="display:block;font-size:11px;color:var(--text3);margin-bottom:4px">What would you regret not doing?</label><textarea id="audit-3e" rows="2" placeholder="The regret test..." style="width:100%;font-family:inherit;font-size:12px;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);resize:vertical"></textarea></div>
+</div>
+
+<div style="margin-bottom:20px">
+<div style="font-size:13px;font-weight:600;color:var(--accent);margin-bottom:12px">Part 4: Information Gaps</div>
+<div style="margin-bottom:10px"><label style="display:block;font-size:11px;color:var(--text3);margin-bottom:4px">What information would make this decision easier?</label><textarea id="audit-4a" rows="2" placeholder="What do you wish you knew?" style="width:100%;font-family:inherit;font-size:12px;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);resize:vertical"></textarea></div>
+<div style="margin-bottom:10px"><label style="display:block;font-size:11px;color:var(--text3);margin-bottom:4px">Who have you talked to about this?</label><textarea id="audit-4b" rows="2" placeholder="Mentors, colleagues, advisors..." style="width:100%;font-family:inherit;font-size:12px;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);resize:vertical"></textarea></div>
+<div style="margin-bottom:10px"><label style="display:block;font-size:11px;color:var(--text3);margin-bottom:4px">Worst realistic outcome of each option?</label><textarea id="audit-4c" rows="2" placeholder="Be honest with the downside..." style="width:100%;font-family:inherit;font-size:12px;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);resize:vertical"></textarea></div>
+<div style="margin-bottom:10px"><label style="display:block;font-size:11px;color:var(--text3);margin-bottom:4px">Best realistic outcome of each option?</label><textarea id="audit-4d" rows="2" placeholder="The upside if it works..." style="width:100%;font-family:inherit;font-size:12px;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);resize:vertical"></textarea></div>
+<div style="margin-bottom:10px"><label style="display:block;font-size:11px;color:var(--text3);margin-bottom:4px">Is this decision reversible?</label><textarea id="audit-4e" rows="1" placeholder="Can you course-correct if needed?" style="width:100%;font-family:inherit;font-size:12px;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);resize:vertical"></textarea></div>
+</div>
+
+<div style="margin-top:24px;padding-top:20px;border-top:1px solid var(--border)">
+<button class="btn btn-a" onclick="submitAudit()" style="width:100%;padding:14px">Submit Audit to Dr. Faroqui →</button>
+<p style="font-size:10px;color:var(--text3);margin-top:10px;text-align:center">Your responses will be sent directly to Dr. Faroqui for review. Expect a response within 7 business days.</p>
+</div>
+
+</div>
+
+<div id="audit-success" class="hidden" style="text-align:center;padding:40px 20px">
+<div style="font-size:48px;margin-bottom:16px">✓</div>
+<h3 class="serif" style="font-size:20px;margin-bottom:8px">Audit Submitted</h3>
+<p style="font-size:13px;color:var(--text2);line-height:1.6">Your strategic audit has been sent to Dr. Faroqui. You'll receive a response within 7 business days.</p>
+</div>`,
 
 v10:`<h3>Career Pivot Decision Engine</h3>
 <p style="color:var(--text3);font-size:12px;margin-bottom:16px">Structured framework for evaluating specialty switches, practice model changes, or non-clinical transitions.</p>

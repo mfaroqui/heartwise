@@ -1696,3 +1696,63 @@ function roiUpdate(){
   }
   document.getElementById('roi-next').textContent=advice;
 }
+
+// ===== STRATEGIC AUDIT SUBMISSION =====
+async function submitAudit(){
+  var fields=[
+    {id:'audit-1a',label:'Current Position'},
+    {id:'audit-1b',label:'Institution Strengths/Limitations'},
+    {id:'audit-1c',label:'Financial Situation'},
+    {id:'audit-1d',label:'CV Snapshot'},
+    {id:'audit-1e',label:'Known For'},
+    {id:'audit-2a',label:'Decision Facing'},
+    {id:'audit-2b',label:'All Options'},
+    {id:'audit-2c',label:'Timeline'},
+    {id:'audit-2d',label:'Already Tried'},
+    {id:'audit-2e',label:'Holding Back'},
+    {id:'audit-3a',label:'Non-Negotiables'},
+    {id:'audit-3b',label:'Willing to Sacrifice'},
+    {id:'audit-3c',label:'Who Else Affected'},
+    {id:'audit-3d',label:'Success in 1yr/5yr'},
+    {id:'audit-3e',label:'Regret Not Doing'},
+    {id:'audit-4a',label:'Info Gaps'},
+    {id:'audit-4b',label:'Who Consulted'},
+    {id:'audit-4c',label:'Worst Outcome'},
+    {id:'audit-4d',label:'Best Outcome'},
+    {id:'audit-4e',label:'Reversible?'}
+  ];
+  // Validate — at least 3 fields filled
+  var filled=0;var auditText='';
+  fields.forEach(function(f){
+    var el=document.getElementById(f.id);
+    var val=el?el.value.trim():'';
+    if(val){
+      filled++;
+      auditText+=f.label+':\n'+val+'\n\n';
+    }
+  });
+  if(filled<3){notify('Please fill out at least a few sections before submitting.',1);return}
+  var payload={
+    user_name:U?U.name:'Unknown',
+    user_email:U?U.email:'Unknown',
+    type:'audit',
+    message:auditText,
+    date:new Date().toISOString(),
+    read:false,
+    replies:[]
+  };
+  // Save to local DB
+  if(!DB.messages)DB.messages=[];
+  DB.messages.push(payload);
+  saveDB();
+  // Sync to Supabase
+  if(_supaClient){
+    try{
+      await _supaClient.from('messages').insert([payload]);
+    }catch(ex){console.warn('Audit sync error',ex)}
+  }
+  // Show success
+  document.getElementById('audit-form').classList.add('hidden');
+  document.getElementById('audit-success').classList.remove('hidden');
+  notify('Strategic audit submitted!');
+}

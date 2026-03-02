@@ -412,6 +412,7 @@ function openFramework(id){
   document.getElementById('modal-q-content').innerHTML=content;
   document.getElementById('modal-q').classList.remove('hidden');
   if(id==='v1')setTimeout(frcUpdate,50);
+  if(id==='v4')setTimeout(function(){rvuModelChange();rvuUpdate()},50);
 }
 
 // ===== FELLOWSHIP READINESS CALCULATOR =====
@@ -876,4 +877,113 @@ function notify(msg,err){
   document.getElementById('ni-text').textContent=msg;
   el.className='notif show'+(err?' err':'');
   setTimeout(()=>el.classList.remove('show'),3000);
+}
+
+// ===== RVU CALCULATOR =====
+var _rvuBenchmarks={
+  fm:{name:'Family Medicine',wrvu:4608,rate:52,comp:275000},
+  im:{name:'Internal Medicine',wrvu:4824,rate:55,comp:300000},
+  hosp:{name:'Hospitalist',wrvu:4252,rate:65,comp:335000},
+  gc:{name:'General Cardiology',wrvu:7247,rate:65,comp:550000},
+  ic:{name:'Interventional Cardiology',wrvu:9187,rate:70,comp:700000},
+  ep:{name:'Electrophysiology',wrvu:8452,rate:68,comp:600000},
+  gi:{name:'Gastroenterology',wrvu:7592,rate:62,comp:530000},
+  pulm:{name:'Pulm / Critical Care',wrvu:5986,rate:58,comp:430000},
+  neph:{name:'Nephrology',wrvu:5124,rate:54,comp:340000},
+  endo:{name:'Endocrinology',wrvu:4512,rate:56,comp:295000},
+  rheum:{name:'Rheumatology',wrvu:4368,rate:58,comp:310000},
+  ortho:{name:'Orthopedic Surgery',wrvu:8684,rate:72,comp:680000},
+  gensurg:{name:'General Surgery',wrvu:6853,rate:60,comp:450000},
+  uro:{name:'Urology',wrvu:7845,rate:65,comp:530000},
+  em:{name:'Emergency Medicine',wrvu:5148,rate:68,comp:385000},
+  anes:{name:'Anesthesiology',wrvu:6012,rate:70,comp:465000},
+  derm:{name:'Dermatology',wrvu:6378,rate:68,comp:500000},
+  psych:{name:'Psychiatry',wrvu:3824,rate:72,comp:310000}
+};
+
+function rvuFillBenchmark(){
+  var spec=document.getElementById('rvu-spec');
+  if(!spec)return;
+  var key=spec.value;
+  var b=_rvuBenchmarks[key];
+  if(b){
+    document.getElementById('rvu-vol').value=b.wrvu;
+    document.getElementById('rvu-rate').value=b.rate;
+  }
+}
+
+function rvuModelChange(){
+  var model=document.getElementById('rvu-model');
+  var baseFields=document.getElementById('rvu-base-fields');
+  if(!model||!baseFields)return;
+  baseFields.style.display=(model.value==='base_bonus')?'grid':'none';
+}
+
+function rvuUpdate(){
+  var modelEl=document.getElementById('rvu-model');
+  if(!modelEl)return;
+  rvuModelChange();
+  var model=modelEl.value;
+  var vol=parseFloat(document.getElementById('rvu-vol').value)||0;
+  var rate=parseFloat(document.getElementById('rvu-rate').value)||0;
+  var base=parseFloat(document.getElementById('rvu-base').value)||0;
+  var thresh=parseFloat(document.getElementById('rvu-thresh').value)||0;
+  var total=0;
+  var breakdown='';
+
+  if(model==='production'){
+    total=vol*rate;
+    breakdown='<strong>'+vol.toLocaleString()+'</strong> wRVUs × <strong>$'+rate+'</strong>/wRVU';
+  }else if(model==='base_bonus'){
+    var bonus=Math.max(0,vol-thresh)*rate;
+    total=base+bonus;
+    breakdown='Base: <strong>$'+base.toLocaleString()+'</strong>';
+    if(vol>thresh){
+      breakdown+=' + Bonus: <strong>$'+Math.round(bonus).toLocaleString()+'</strong>';
+      breakdown+='<br><span style="font-size:11px;color:var(--text3)">('+(vol-thresh).toLocaleString()+' wRVUs above threshold × $'+rate+')</span>';
+    }else{
+      breakdown+='<br><span style="font-size:11px;color:var(--text3)">Below bonus threshold by '+(thresh-vol).toLocaleString()+' wRVUs</span>';
+    }
+  }else{
+    total=base||vol*rate;
+    breakdown='Guaranteed salary (volume-independent year 1)';
+  }
+
+  document.getElementById('rvu-total-comp').textContent='$'+Math.round(total).toLocaleString();
+  document.getElementById('rvu-breakdown').innerHTML=breakdown;
+
+  // Compare to MGMA
+  var specKey=document.getElementById('rvu-spec').value;
+  var b=_rvuBenchmarks[specKey];
+  var mgmaHtml='';
+  if(b&&total>0){
+    var diff=total-b.comp;
+    var pct=Math.round((diff/b.comp)*100);
+    var color=diff>=0?'var(--green)':'var(--red)';
+    var arrow=diff>=0?'↑':'↓';
+    mgmaHtml='<span style="color:'+color+';font-weight:600">'+arrow+' $'+Math.abs(Math.round(diff)).toLocaleString()+' ('+Math.abs(pct)+'%) '+(diff>=0?'above':'below')+'</span> MGMA median for '+b.name;
+    if(vol>0&&b.wrvu>0){
+      var volDiff=vol-b.wrvu;
+      var volColor=volDiff>=0?'var(--green)':'var(--red)';
+      mgmaHtml+='<br><span style="font-size:11px;color:'+volColor+'">Your volume: '+vol.toLocaleString()+' vs median '+b.wrvu.toLocaleString()+' wRVUs</span>';
+    }
+  }
+  document.getElementById('rvu-vs-mgma').innerHTML=mgmaHtml;
+
+  // Scenarios
+  if(vol>0&&rate>0){
+    var scenarios='';
+    var pcts=[0.75,0.9,1.0,1.1,1.25];
+    var labels=['75% volume','90% volume','Current','110% volume','125% volume'];
+    pcts.forEach(function(p,i){
+      var sv=Math.round(vol*p);
+      var sc;
+      if(model==='production')sc=sv*rate;
+      else if(model==='base_bonus')sc=base+Math.max(0,sv-thresh)*rate;
+      else sc=total;
+      var isCurrent=p===1.0;
+      scenarios+='<div style="display:flex;justify-content:space-between;padding:4px 0;'+(isCurrent?'font-weight:600;color:var(--accent)':'')+'"><span>'+labels[i]+' ('+sv.toLocaleString()+' wRVUs)</span><span>$'+Math.round(sc).toLocaleString()+'</span></div>';
+    });
+    document.getElementById('rvu-scenarios').innerHTML=scenarios;
+  }
 }

@@ -106,23 +106,143 @@ v3:`<h3>Offer Comparison Matrix</h3>
 </div>
 <div style="padding:16px;background:var(--bg2);border-radius:8px;margin-top:16px"><p style="font-size:12px;color:var(--text2);line-height:1.6;margin:0"><strong>Pro tip:</strong> A $30K higher salary with a 25-mile non-compete and no tail coverage may cost you more over 5 years than a slightly lower offer with better structure.</p></div>`,
 
-v4:`<h3>RVU Modeling Sheet</h3>
-<p style="color:var(--text3);font-size:12px;margin-bottom:16px">Most new attendings sign contracts without ever modeling what their RVUs translate to.</p>
+v4:`<h3>RVU Compensation Calculator</h3>
+<p style="color:var(--text3);font-size:12px;margin-bottom:20px">Model your actual take-home based on your contract structure. Adjust the inputs to see how volume changes your pay.</p>
+
 <div style="font-size:13px;margin-bottom:20px">
-<div style="font-weight:600;color:var(--accent);margin-bottom:8px">How RVU Compensation Works</div>
-<p style="color:var(--text2);line-height:1.7;font-size:12px"><strong>Pure Production:</strong> Total Pay = wRVUs × $/wRVU<br><strong>Salary + Bonus:</strong> Base + (wRVUs above threshold × bonus rate)<br><strong>Guarantee:</strong> Fixed salary regardless of volume (usually year 1 only)</p>
+<div style="font-weight:600;color:var(--accent);margin-bottom:12px">Your Contract Details</div>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
+<div class="fg"><label>Compensation Model</label>
+<select id="rvu-model" onchange="rvuUpdate()" style="width:100%">
+<option value="production">Pure Production (wRVU × rate)</option>
+<option value="base_bonus">Base Salary + Bonus</option>
+<option value="guarantee">Guarantee (fixed)</option>
+</select></div>
+<div class="fg"><label>Your Specialty</label>
+<select id="rvu-spec" onchange="rvuFillBenchmark();rvuUpdate()" style="width:100%">
+<option value="custom">Custom / Other</option>
+<option value="fm">Family Medicine</option>
+<option value="im">Internal Medicine (General)</option>
+<option value="hosp">Hospitalist</option>
+<option value="gc">General Cardiology</option>
+<option value="ic">Interventional Cardiology</option>
+<option value="ep">Electrophysiology</option>
+<option value="gi">Gastroenterology</option>
+<option value="pulm">Pulmonology / Critical Care</option>
+<option value="neph">Nephrology</option>
+<option value="endo">Endocrinology</option>
+<option value="rheum">Rheumatology</option>
+<option value="ortho">Orthopedic Surgery</option>
+<option value="gensurg">General Surgery</option>
+<option value="uro">Urology</option>
+<option value="em">Emergency Medicine</option>
+<option value="anes">Anesthesiology</option>
+<option value="derm">Dermatology</option>
+<option value="psych">Psychiatry</option>
+</select></div>
 </div>
-<div style="font-weight:600;color:var(--accent);margin-bottom:8px">📊 MGMA Benchmarks (2024)</div>
-<div style="font-size:12px;color:var(--text2);line-height:2">
-General Cardiology — Median wRVUs: <strong>7,247</strong><br>
-Interventional Cardiology — Median wRVUs: <strong>9,187</strong><br>
-Electrophysiology — Median wRVUs: <strong>8,452</strong><br>
-Median $/wRVU (Cardiology): <strong>$55-$75</strong><br>
-Median Total Comp (IC): <strong>$600K-$750K</strong><br>
-75th Percentile (IC): <strong>$850K+</strong>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
+<div class="fg"><label>Annual wRVUs</label><input type="number" id="rvu-vol" placeholder="e.g., 5000" oninput="rvuUpdate()"></div>
+<div class="fg"><label>$/wRVU Rate</label><input type="number" id="rvu-rate" placeholder="e.g., 55" step="0.5" oninput="rvuUpdate()"></div>
 </div>
+
+<div id="rvu-base-fields" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
+<div class="fg"><label>Base Salary ($)</label><input type="number" id="rvu-base" placeholder="e.g., 250000" oninput="rvuUpdate()"></div>
+<div class="fg"><label>Bonus Threshold (wRVUs)</label><input type="number" id="rvu-thresh" placeholder="e.g., 4500" oninput="rvuUpdate()"></div>
+</div>
+</div>
+
+<div id="rvu-result" style="padding:24px;background:var(--bg2);border-radius:12px;margin-bottom:20px;text-align:center">
+<div style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--text3);margin-bottom:8px">Estimated Annual Compensation</div>
+<div id="rvu-total-comp" style="font-size:42px;font-weight:700;font-family:'Cormorant Garamond',serif;color:var(--accent)">$0</div>
+<div id="rvu-breakdown" style="font-size:12px;color:var(--text2);margin-top:8px;line-height:1.8"></div>
+<div id="rvu-vs-mgma" style="font-size:12px;margin-top:12px;padding-top:12px;border-top:1px solid var(--border)"></div>
+</div>
+
+<div style="margin-bottom:20px">
+<div style="font-weight:600;color:var(--accent);margin-bottom:8px">What If? — Volume Scenarios</div>
+<div id="rvu-scenarios" style="font-size:12px;color:var(--text2);line-height:1.8"></div>
+</div>
+
+<div style="font-weight:600;color:var(--accent);margin-bottom:12px">📊 MGMA Benchmarks by Specialty (2024)</div>
+<div style="font-size:11px;overflow-x:auto">
+<div style="display:grid;grid-template-columns:1fr 90px 80px 100px;gap:0;border:1px solid var(--border);border-radius:8px;overflow:hidden">
+<div style="padding:8px 10px;font-weight:600;background:var(--bg2);border-bottom:1px solid var(--border)">Specialty</div>
+<div style="padding:8px 10px;font-weight:600;background:var(--bg2);border-bottom:1px solid var(--border);text-align:right">Med wRVUs</div>
+<div style="padding:8px 10px;font-weight:600;background:var(--bg2);border-bottom:1px solid var(--border);text-align:right">$/wRVU</div>
+<div style="padding:8px 10px;font-weight:600;background:var(--bg2);border-bottom:1px solid var(--border);text-align:right">Med Comp</div>
+
+<div style="padding:6px 10px;border-bottom:1px solid var(--border)">Family Medicine</div>
+<div style="padding:6px 10px;border-bottom:1px solid var(--border);text-align:right">4,608</div>
+<div style="padding:6px 10px;border-bottom:1px solid var(--border);text-align:right">$52</div>
+<div style="padding:6px 10px;border-bottom:1px solid var(--border);text-align:right">$275K</div>
+
+<div style="padding:6px 10px;border-bottom:1px solid var(--border)">Internal Medicine</div>
+<div style="padding:6px 10px;border-bottom:1px solid var(--border);text-align:right">4,824</div>
+<div style="padding:6px 10px;border-bottom:1px solid var(--border);text-align:right">$55</div>
+<div style="padding:6px 10px;border-bottom:1px solid var(--border);text-align:right">$300K</div>
+
+<div style="padding:6px 10px;border-bottom:1px solid var(--border)">Hospitalist</div>
+<div style="padding:6px 10px;border-bottom:1px solid var(--border);text-align:right">4,252</div>
+<div style="padding:6px 10px;border-bottom:1px solid var(--border);text-align:right">$65</div>
+<div style="padding:6px 10px;border-bottom:1px solid var(--border);text-align:right">$335K</div>
+
+<div style="padding:6px 10px;border-bottom:1px solid var(--border)">General Cardiology</div>
+<div style="padding:6px 10px;border-bottom:1px solid var(--border);text-align:right">7,247</div>
+<div style="padding:6px 10px;border-bottom:1px solid var(--border);text-align:right">$65</div>
+<div style="padding:6px 10px;border-bottom:1px solid var(--border);text-align:right">$550K</div>
+
+<div style="padding:6px 10px;border-bottom:1px solid var(--border)">Interventional Cardiology</div>
+<div style="padding:6px 10px;border-bottom:1px solid var(--border);text-align:right">9,187</div>
+<div style="padding:6px 10px;border-bottom:1px solid var(--border);text-align:right">$70</div>
+<div style="padding:6px 10px;border-bottom:1px solid var(--border);text-align:right">$700K</div>
+
+<div style="padding:6px 10px;border-bottom:1px solid var(--border)">Gastroenterology</div>
+<div style="padding:6px 10px;border-bottom:1px solid var(--border);text-align:right">7,592</div>
+<div style="padding:6px 10px;border-bottom:1px solid var(--border);text-align:right">$62</div>
+<div style="padding:6px 10px;border-bottom:1px solid var(--border);text-align:right">$530K</div>
+
+<div style="padding:6px 10px;border-bottom:1px solid var(--border)">Pulm / Critical Care</div>
+<div style="padding:6px 10px;border-bottom:1px solid var(--border);text-align:right">5,986</div>
+<div style="padding:6px 10px;border-bottom:1px solid var(--border);text-align:right">$58</div>
+<div style="padding:6px 10px;border-bottom:1px solid var(--border);text-align:right">$430K</div>
+
+<div style="padding:6px 10px;border-bottom:1px solid var(--border)">Orthopedic Surgery</div>
+<div style="padding:6px 10px;border-bottom:1px solid var(--border);text-align:right">8,684</div>
+<div style="padding:6px 10px;border-bottom:1px solid var(--border);text-align:right">$72</div>
+<div style="padding:6px 10px;border-bottom:1px solid var(--border);text-align:right">$680K</div>
+
+<div style="padding:6px 10px;border-bottom:1px solid var(--border)">General Surgery</div>
+<div style="padding:6px 10px;border-bottom:1px solid var(--border);text-align:right">6,853</div>
+<div style="padding:6px 10px;border-bottom:1px solid var(--border);text-align:right">$60</div>
+<div style="padding:6px 10px;border-bottom:1px solid var(--border);text-align:right">$450K</div>
+
+<div style="padding:6px 10px;border-bottom:1px solid var(--border)">Emergency Medicine</div>
+<div style="padding:6px 10px;border-bottom:1px solid var(--border);text-align:right">5,148</div>
+<div style="padding:6px 10px;border-bottom:1px solid var(--border);text-align:right">$68</div>
+<div style="padding:6px 10px;border-bottom:1px solid var(--border);text-align:right">$385K</div>
+
+<div style="padding:6px 10px;border-bottom:1px solid var(--border)">Dermatology</div>
+<div style="padding:6px 10px;border-bottom:1px solid var(--border);text-align:right">6,378</div>
+<div style="padding:6px 10px;border-bottom:1px solid var(--border);text-align:right">$68</div>
+<div style="padding:6px 10px;border-bottom:1px solid var(--border);text-align:right">$500K</div>
+
+<div style="padding:6px 10px;border-bottom:1px solid var(--border)">Psychiatry</div>
+<div style="padding:6px 10px;border-bottom:1px solid var(--border);text-align:right">3,824</div>
+<div style="padding:6px 10px;border-bottom:1px solid var(--border);text-align:right">$72</div>
+<div style="padding:6px 10px;border-bottom:1px solid var(--border);text-align:right">$310K</div>
+
+<div style="padding:6px 10px">Anesthesiology</div>
+<div style="padding:6px 10px;text-align:right">6,012</div>
+<div style="padding:6px 10px;text-align:right">$70</div>
+<div style="padding:6px 10px;text-align:right">$465K</div>
+</div>
+</div>
+
 <div style="padding:16px;background:var(--bg2);border-radius:8px;margin-top:16px"><p style="font-size:12px;color:var(--text2);line-height:1.6;margin:0"><strong>Year 1 reality:</strong> Most new attendings don't hit median wRVUs in year 1. It takes 12-18 months to build a full panel. Make sure your guarantee period covers the ramp-up.</p></div>
-<p style="font-size:10px;color:var(--text3);margin-top:12px;font-style:italic">Source: MGMA DataDive Provider Compensation 2024.</p>`,
+<p style="font-size:10px;color:var(--text3);margin-top:12px;font-style:italic">Source: MGMA DataDive Provider Compensation 2024. Figures are approximate medians and vary by region, practice type, and payer mix.</p>`,
 
 v5:`<h3>3-Year Financial Leverage Planner</h3>
 <p style="color:var(--text3);font-size:12px;margin-bottom:16px">The first 3 years after training determine your financial trajectory for the next 20.</p>

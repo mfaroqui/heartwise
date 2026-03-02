@@ -2011,9 +2011,12 @@ async function doLogin(e){
         const sbUser=data.user;
         let user=DB.users.find(u=>u.email.toLowerCase()===email);
         if(!user){
-          user={id:'u'+DB.nextUserId++,name:sbUser.user_metadata?.name||email.split('@')[0],email,pass:'__supabase__',role:'student',tier:'free',institution:'',usage:{ai:0,credits:0,month:new Date().getMonth()}};
+          const isAdmin=email===AE.toLowerCase();
+          user={id:isAdmin?'admin':'u'+DB.nextUserId++,name:sbUser.user_metadata?.name||email.split('@')[0],email,pass:'__supabase__',role:isAdmin?'admin':'student',tier:isAdmin?'admin':'free',institution:'',usage:{ai:0,credits:isAdmin?999:0,month:new Date().getMonth()}};
           DB.users.push(user);saveDB();
         }
+        // Ensure admin tier is always set for admin email
+        if(email===AE.toLowerCase()&&user.tier!=='admin'){user.tier='admin';user.role='admin';saveDB()}
         U=user;if(!U.usage)U.usage={ai:0,credits:TIERS[U.tier]?.credits||0,month:new Date().getMonth()};
         localStorage.setItem('hw_session',JSON.stringify(U));
         if(!localStorage.getItem('hw_disc_'+U.id)){enterApp();showDisc()}else{enterApp()}
@@ -2025,6 +2028,8 @@ async function doLogin(e){
   const user=DB.users.find(u=>u.email.toLowerCase()===email&&u.pass===pass);
   if(!user){notify('Invalid email or password',1);return}
   if(_supaClient){_supaClient.auth.signUp({email,password:pass,options:{data:{name:user.name}}}).catch(()=>{})}
+  // Ensure admin tier
+  if(email===AE.toLowerCase()&&user.tier!=='admin'){user.tier='admin';user.role='admin';saveDB()}
   U=user;if(!U.usage)U.usage={ai:0,credits:TIERS[U.tier]?.credits||0,month:new Date().getMonth()};
   localStorage.setItem('hw_session',JSON.stringify(U));
   if(!localStorage.getItem('hw_disc_'+U.id)){enterApp();showDisc()}else{enterApp()}

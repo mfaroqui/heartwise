@@ -1,7 +1,7 @@
 // This gets inlined into the HTML via build script
 // ===== CONFIG =====
 const AE='mfaroqui@gmail.com';
-const TIERS={free:{name:'Explorer',ai:1,credits:0},core:{name:'Core',ai:999,credits:0},elite:{name:'Elite Strategy',ai:999,credits:1},admin:{name:'Admin',ai:999,credits:999}};
+const TIERS={free:{name:'Explorer',ai:1,credits:0},core:{name:'Core',ai:999,credits:0},elite:{name:'Elite Strategy',ai:999,credits:2},admin:{name:'Admin',ai:999,credits:999}};
 const CATS={career:'Career Strategy',fellowship:'Fellowship Positioning',contract:'Contract Negotiation',finance:'Income & Financial Leverage',clinical:'Clinical Education',productivity:'Productivity Systems',wellness:'Performance Sustainability'};
 
 // ===== SEED DATA (Structured AI Format) =====

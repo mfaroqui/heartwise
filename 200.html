@@ -1527,99 +1527,7 @@ v1:`<h3>Fellowship Readiness Calculator</h3>
 <div id="frc-grade" style="font-size:16px;font-weight:600;margin-top:8px"></div>
 <div id="frc-interp" style="font-size:13px;color:var(--text2);margin-top:12px;line-height:1.7;text-align:left"></div>
 </div>
-<p style="font-size:10px;color:var(--text3);margin-top:12px;font-style:italic">Based on NRMP Charting Outcomes and program director surveys. Weighted scoring reflects relative importance per PD surveys.</p>
-<script>
-function frcUpdate(){
-  var fb={
-    1:[
-      'No research yet. This is your biggest gap — start a case report or abstract this month.',
-      'You have 1 abstract — good start, but competitive programs expect publications. Aim for a manuscript.',
-      'Solid start with 1-2 publications. For most programs, this puts you in the running.',
-      '3+ publications is above the median applicant. You\\'re competitive for most programs.',
-      'Strong research portfolio. This is a genuine differentiator — make sure your LORs highlight it.',
-      'Exceptional scholarly output. You\\'re in the top tier of applicants by research alone.'
-    ],
-    2:[
-      'No letter writers identified yet — this should be your top priority. Start building relationships now.',
-      'Generic letters won\\'t cut it for competitive programs. You need specialty-specific writers who know your clinical work.',
-      'One strong letter is a start. Aim for 2-3 specialty-specific writers who can speak to your skills in detail.',
-      'Two strong letters puts you in solid shape. Focus on making sure at least one is from a well-known name.',
-      '3 specialty-specific letters is the sweet spot. Make sure writers know your target programs.',
-      'Outstanding letter support. This is often the #1 factor in competitive matches — you\\'re well-positioned.'
-    ],
-    3:[
-      'Clinical performance concerns will flag your application. Seek honest feedback and address gaps urgently.',
-      'Average clinical evals are a baseline, not a strength. Ask attendings for specific improvement feedback.',
-      'Good clinical performance — solid but won\\'t differentiate you. Look for ways to stand out on rotations.',
-      'Very good clinical reviews are a real asset. Make sure your letter writers can speak to specific examples.',
-      'Outstanding clinical performance makes you memorable. This is what programs remember at rank meetings.',
-      'Top of your class clinically — this is your strongest asset. Programs will fight over you.'
-    ],
-    4:[
-      'Board score concerns may limit your program list. Focus on strengthening every other category.',
-      'Below average scores are a screening risk. Some programs have hard cutoffs — research which ones.',
-      'Average scores won\\'t help or hurt. They get you past the screen — your other factors do the rest.',
-      'Above average boards give you a comfortable buffer. No program will screen you out.',
-      'High scores open doors at any program. This is a clear strength on your application.',
-      'Top decile scores are a significant competitive advantage, especially at academic programs.'
-    ],
-    5:[
-      'No leadership roles yet. Even one meaningful role changes your narrative — volunteer for a committee or QI project.',
-      'A minor role is better than nothing, but programs want to see initiative. Seek something with visible impact.',
-      'One meaningful leadership role is solid. It shows initiative and separates you from passive applicants.',
-      '2+ roles demonstrate a pattern of leadership. This reads well on applications and in interviews.',
-      'Chief residency or equivalent is a major differentiator. Programs view this as a mark of trust from your program.',
-      'Multiple leadership roles at a high level — this is exceptional and tells a clear story of leadership.'
-    ],
-    6:[
-      'No networking yet. This is how programs put a face to your application — start attending conferences.',
-      'One conference is a start. But relationships are built over time — plan your next interaction.',
-      'One away rotation gives you insider knowledge and face time. Make it count — treat every day like an interview.',
-      'Two away rotations significantly improve your chances at those programs. Follow up with thank-you emails.',
-      '2+ aways with real faculty connections — you\\'re doing this right. These relationships become your advocates.',
-      'Strong network across programs. This is the hidden advantage that most applicants underestimate.'
-    ],
-    7:[
-      'Haven\\'t started your personal statement. Block 2 hours this week and write the worst first draft you can. Just start.',
-      'First draft done — good. It\\'s probably not great yet. Get 2-3 people to read it and give honest feedback.',
-      'Reviewed once — you\\'re on the right track. Most great statements go through 5+ revisions.',
-      'Multiple drafts means you\\'re taking this seriously. Have someone outside medicine read it for clarity.',
-      'Polished statement — you\\'re in great shape. Read it one more time for any clichés or generic phrases.',
-      'Exceptional personal statement. This will make readers want to meet you. Don\\'t touch it anymore.'
-    ]
-  };
-  var total=0;
-  for(var i=1;i<=7;i++){
-    var v=parseInt(document.getElementById('frc-r'+i).value);
-    total+=v;
-    var c=v>=4?'var(--green)':v>=2?'var(--accent)':'var(--red)';
-    document.getElementById('frc-s'+i).textContent=v+'/5';
-    document.getElementById('frc-s'+i).style.color=c;
-    document.getElementById('frc-f'+i).innerHTML=fb[i][v];
-    document.getElementById('frc-f'+i).style.borderLeft='3px solid '+c;
-  }
-  document.getElementById('frc-total').textContent=total;
-  var gc,gl,gi;
-  if(total>=28){
-    gc='var(--green)';gl='Strong Candidate';
-    gi='<strong style="color:var(--green)">You\\'re in a strong position.</strong> Your application is competitive for most programs. Focus now on program fit, interview prep, and strategic rank list building. Don\\'t coast — but you\\'ve done the hard work. Make sure your weakest 1-2 areas don\\'t become the reason a program passes.';
-  }else if(total>=21){
-    gc='var(--accent)';gl='Solid With Gaps';
-    gi='<strong style="color:var(--accent)">You have a solid foundation but clear gaps.</strong> Look at your lowest 2 scores — those are where your time should go right now. The difference between a 22 and a 28 is often just 2-3 months of focused effort in the right areas. You have the raw material; now it\\'s about execution.';
-  }else if(total>=14){
-    gc='var(--red)';gl='Needs Significant Work';
-    gi='<strong style="color:var(--red)">Honest assessment: you have significant gaps.</strong> This isn\\'t a death sentence — but it requires urgency and a realistic timeline. Consider whether your current match timeline is feasible, or if an extra year of preparation would dramatically improve your chances. Focus on the categories where you scored 0-1 first.';
-  }else{
-    gc='var(--red)';gl='Reassess Timeline';
-    gi='<strong style="color:var(--red)">You need to reassess your timeline.</strong> Applying with this profile puts you at high risk of not matching. That\\'s not a judgment — it\\'s data. Talk honestly with a mentor about whether to delay and build a stronger application, or adjust your program targets. A strategic delay is not failure — it\\'s wisdom.';
-  }
-  document.getElementById('frc-total').style.color=gc;
-  document.getElementById('frc-grade').textContent=gl;
-  document.getElementById('frc-grade').style.color=gc;
-  document.getElementById('frc-interp').innerHTML=gi;
-}
-frcUpdate();
-<\\/script>`,
+<p style="font-size:10px;color:var(--text3);margin-top:12px;font-style:italic">Based on NRMP Charting Outcomes and program director surveys. Weighted scoring reflects relative importance per PD surveys.</p>`,
 
 v2:`<h3>Contract Risk Scorecard</h3>
 <p style="color:var(--text3);font-size:12px;margin-bottom:16px">Red flags don't mean "don't sign." They mean "negotiate or get attorney clarification."</p>
@@ -2173,10 +2081,100 @@ function openFramework(id){
   if(!content){notify('Framework content loading...',1);return}
   document.getElementById('modal-q-content').innerHTML=content;
   document.getElementById('modal-q').classList.remove('hidden');
-  // Execute any inline scripts in the content
-  document.getElementById('modal-q-content').querySelectorAll('script').forEach(function(s){
-    try{eval(s.textContent)}catch(e){console.warn('Framework script error',e)}
-  });
+  if(id==='v1')setTimeout(frcUpdate,50);
+}
+
+// ===== FELLOWSHIP READINESS CALCULATOR =====
+function frcUpdate(){
+  var fb={
+    1:[
+      'No research yet. This is your biggest gap — start a case report or abstract this month.',
+      'You have 1 abstract — good start, but competitive programs expect publications. Aim for a manuscript.',
+      'Solid start with 1-2 publications. For most programs, this puts you in the running.',
+      '3+ publications is above the median applicant. You\'re competitive for most programs.',
+      'Strong research portfolio. This is a genuine differentiator — make sure your LORs highlight it.',
+      'Exceptional scholarly output. You\'re in the top tier of applicants by research alone.'
+    ],
+    2:[
+      'No letter writers identified yet — this should be your top priority. Start building relationships now.',
+      'Generic letters won\'t cut it for competitive programs. You need specialty-specific writers who know your clinical work.',
+      'One strong letter is a start. Aim for 2-3 specialty-specific writers who can speak to your skills in detail.',
+      'Two strong letters puts you in solid shape. Focus on making sure at least one is from a well-known name.',
+      '3 specialty-specific letters is the sweet spot. Make sure writers know your target programs.',
+      'Outstanding letter support. This is often the #1 factor in competitive matches — you\'re well-positioned.'
+    ],
+    3:[
+      'Clinical performance concerns will flag your application. Seek honest feedback and address gaps urgently.',
+      'Average clinical evals are a baseline, not a strength. Ask attendings for specific improvement feedback.',
+      'Good clinical performance — solid but won\'t differentiate you. Look for ways to stand out on rotations.',
+      'Very good clinical reviews are a real asset. Make sure your letter writers can speak to specific examples.',
+      'Outstanding clinical performance makes you memorable. This is what programs remember at rank meetings.',
+      'Top of your class clinically — this is your strongest asset. Programs will fight over you.'
+    ],
+    4:[
+      'Board score concerns may limit your program list. Focus on strengthening every other category.',
+      'Below average scores are a screening risk. Some programs have hard cutoffs — research which ones.',
+      'Average scores won\'t help or hurt. They get you past the screen — your other factors do the rest.',
+      'Above average boards give you a comfortable buffer. No program will screen you out.',
+      'High scores open doors at any program. This is a clear strength on your application.',
+      'Top decile scores are a significant competitive advantage, especially at academic programs.'
+    ],
+    5:[
+      'No leadership roles yet. Even one meaningful role changes your narrative — volunteer for a committee or QI project.',
+      'A minor role is better than nothing, but programs want to see initiative. Seek something with visible impact.',
+      'One meaningful leadership role is solid. It shows initiative and separates you from passive applicants.',
+      '2+ roles demonstrate a pattern of leadership. This reads well on applications and in interviews.',
+      'Chief residency or equivalent is a major differentiator. Programs view this as a mark of trust from your program.',
+      'Multiple leadership roles at a high level — this is exceptional and tells a clear story of leadership.'
+    ],
+    6:[
+      'No networking yet. This is how programs put a face to your application — start attending conferences.',
+      'One conference is a start. But relationships are built over time — plan your next interaction.',
+      'One away rotation gives you insider knowledge and face time. Make it count — treat every day like an interview.',
+      'Two away rotations significantly improve your chances at those programs. Follow up with thank-you emails.',
+      '2+ aways with real faculty connections — you\'re doing this right. These relationships become your advocates.',
+      'Strong network across programs. This is the hidden advantage that most applicants underestimate.'
+    ],
+    7:[
+      'Haven\'t started your personal statement. Block 2 hours this week and write the worst first draft you can. Just start.',
+      'First draft done — good. It\'s probably not great yet. Get 2-3 people to read it and give honest feedback.',
+      'Reviewed once — you\'re on the right track. Most great statements go through 5+ revisions.',
+      'Multiple drafts means you\'re taking this seriously. Have someone outside medicine read it for clarity.',
+      'Polished statement — you\'re in great shape. Read it one more time for any clichés or generic phrases.',
+      'Exceptional personal statement. This will make readers want to meet you. Don\'t touch it anymore.'
+    ]
+  };
+  var total=0;
+  for(var i=1;i<=7;i++){
+    var el=document.getElementById('frc-r'+i);
+    if(!el)return;
+    var v=parseInt(el.value);
+    total+=v;
+    var c=v>=4?'var(--green)':v>=2?'var(--accent)':'var(--red)';
+    document.getElementById('frc-s'+i).textContent=v+'/5';
+    document.getElementById('frc-s'+i).style.color=c;
+    document.getElementById('frc-f'+i).innerHTML=fb[i][v];
+    document.getElementById('frc-f'+i).style.borderLeft='3px solid '+c;
+  }
+  document.getElementById('frc-total').textContent=total;
+  var gc,gl,gi;
+  if(total>=28){
+    gc='var(--green)';gl='Strong Candidate';
+    gi='<strong style="color:var(--green)">You\'re in a strong position.</strong> Your application is competitive for most programs. Focus now on program fit, interview prep, and strategic rank list building. Don\'t coast — but you\'ve done the hard work. Make sure your weakest 1-2 areas don\'t become the reason a program passes.';
+  }else if(total>=21){
+    gc='var(--accent)';gl='Solid With Gaps';
+    gi='<strong style="color:var(--accent)">You have a solid foundation but clear gaps.</strong> Look at your lowest 2 scores — those are where your time should go right now. The difference between a 22 and a 28 is often just 2-3 months of focused effort in the right areas. You have the raw material; now it\'s about execution.';
+  }else if(total>=14){
+    gc='var(--red)';gl='Needs Significant Work';
+    gi='<strong style="color:var(--red)">Honest assessment: you have significant gaps.</strong> This isn\'t a death sentence — but it requires urgency and a realistic timeline. Consider whether your current match timeline is feasible, or if an extra year of preparation would dramatically improve your chances. Focus on the categories where you scored 0-1 first.';
+  }else{
+    gc='var(--red)';gl='Reassess Timeline';
+    gi='<strong style="color:var(--red)">You need to reassess your timeline.</strong> Applying with this profile puts you at high risk of not matching. That\'s not a judgment — it\'s data. Talk honestly with a mentor about whether to delay and build a stronger application, or adjust your program targets. A strategic delay is not failure — it\'s wisdom.';
+  }
+  document.getElementById('frc-total').style.color=gc;
+  document.getElementById('frc-grade').textContent=gl;
+  document.getElementById('frc-grade').style.color=gc;
+  document.getElementById('frc-interp').innerHTML=gi;
 }
 
 // ===== PROFILE =====

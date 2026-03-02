@@ -46,7 +46,7 @@ document.addEventListener('click',function(e){
 // ===== SUPABASE INIT =====
 const SUPABASE_URL='https://kqyvfykbnboesskxovtw.supabase.co';
 const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtxeXZmeWtibmJvZXNza3hvdnR3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI0MTQ2MjMsImV4cCI6MjA4Nzk5MDYyM30.OknOG2sY9Z9a6SVwPpqA55oHwgZ5mnRyDwfLrTRFxn0';
-const supabase=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+const _supaClient=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 
 // ===== APP STATE =====
 let DB,U=null,curFilter='all',curAdminTab='queue';
@@ -78,7 +78,7 @@ window.onload=async function(){
     const accessToken=params.get('access_token');
     const refreshToken=params.get('refresh_token');
     if(accessToken){
-      await supabase.auth.setSession({access_token:accessToken,refresh_token:refreshToken});
+      await _supaClient.auth.setSession({access_token:accessToken,refresh_token:refreshToken});
     }
     // Clean up URL
     history.replaceState(null,'',window.location.pathname);
@@ -134,13 +134,13 @@ async function doLogin(e){
   const email=document.getElementById('l-email').value.trim().toLowerCase();
   const pass=document.getElementById('l-pass').value;
   // Try Supabase auth first
-  const{data,error}=await supabase.auth.signInWithPassword({email,password:pass});
+  const{data,error}=await _supaClient.auth.signInWithPassword({email,password:pass});
   if(error){
     // Fallback: check local DB for legacy users
     const user=DB.users.find(u=>u.email.toLowerCase()===email&&u.pass===pass);
     if(!user){notify('Invalid email or password',1);return}
     // Migrate legacy user to Supabase in background
-    supabase.auth.signUp({email,password:pass,options:{data:{name:user.name}}}).catch(()=>{});
+    _supaClient.auth.signUp({email,password:pass,options:{data:{name:user.name}}}).catch(()=>{});
     U=user;if(!U.usage)U.usage={ai:0,credits:TIERS[U.tier]?.credits||0,month:new Date().getMonth()};
     localStorage.setItem('hw_session',JSON.stringify(U));
     if(!localStorage.getItem('hw_disc_'+U.id)){enterApp();showDisc()}else{enterApp()}
@@ -169,13 +169,13 @@ function doSignup(e){
   const user={id:'u'+DB.nextUserId++,name,email,pass,role,tier:'free',institution:inst,usage:{ai:0,credits:0,month:new Date().getMonth()}};
   DB.users.push(user);saveDB();
   // Also create in Supabase
-  supabase.auth.signUp({email,password:pass,options:{data:{name}}}).catch(()=>{});
+  _supaClient.auth.signUp({email,password:pass,options:{data:{name}}}).catch(()=>{});
   U=user;localStorage.setItem('hw_session',JSON.stringify(U));
   enterApp();showDisc();
 }
 
 function doLogout(){
-  supabase.auth.signOut().catch(()=>{});
+  _supaClient.auth.signOut().catch(()=>{});
   U=null;localStorage.removeItem('hw_session');go('pg-landing');
 }
 
@@ -183,7 +183,7 @@ async function doForgotPassword(e){
   e.preventDefault();
   const email=document.getElementById('r-email').value.trim().toLowerCase();
   const siteUrl=window.location.origin+window.location.pathname;
-  const{error}=await supabase.auth.resetPasswordForEmail(email,{redirectTo:siteUrl+'#reset-password'});
+  const{error}=await _supaClient.auth.resetPasswordForEmail(email,{redirectTo:siteUrl+'#reset-password'});
   if(error){notify('Error sending reset email. Please try again.',1);return}
   document.getElementById('reset-sent').classList.remove('hidden');
   notify('Reset link sent! Check your email.');
@@ -195,10 +195,10 @@ async function doNewPassword(e){
   const pass2=document.getElementById('rp-pass2').value;
   if(pass!==pass2){notify('Passwords do not match',1);return}
   if(pass.length<8){notify('Password must be at least 8 characters',1);return}
-  const{error}=await supabase.auth.updateUser({password:pass});
+  const{error}=await _supaClient.auth.updateUser({password:pass});
   if(error){notify('Error updating password. Link may have expired.',1);return}
   // Also update local DB
-  const{data:{user}}=await supabase.auth.getUser();
+  const{data:{user}}=await _supaClient.auth.getUser();
   if(user){
     const local=DB.users.find(u=>u.email.toLowerCase()===user.email.toLowerCase());
     if(local){local.pass=pass;saveDB()}
@@ -697,7 +697,7 @@ function obComplete(){
   const user={id:'u'+DB.nextUserId++,name:p.name,email:p.email.toLowerCase(),pass:p.pass,role:roleMap[p.stage]||'student',tier:'core',trialEnd:trialEnd.toISOString().split('T')[0],institution:p.inst,usage:{ai:0,credits:0,month:new Date().getMonth()},profile:p};
   DB.users.push(user);saveDB();
   // Also create in Supabase
-  supabase.auth.signUp({email:p.email.toLowerCase(),password:p.pass,options:{data:{name:p.name}}}).catch(()=>{});
+  _supaClient.auth.signUp({email:p.email.toLowerCase(),password:p.pass,options:{data:{name:p.name}}}).catch(()=>{});
   U=user;localStorage.setItem('hw_session',JSON.stringify(U));
   enterApp();showDisc();
   notify('Welcome! Your 7-day strategic access is active. ⚡');

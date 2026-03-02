@@ -363,6 +363,15 @@ function submitQ(){
   if(wantsReview&&U.usage.credits>0)U.usage.credits--;
   U.usage.ai++;
   DB.questions.push(q);saveDB();localStorage.setItem('hw_session',JSON.stringify(U));
+  // Sync to Supabase
+  if(_supaClient){
+    _supaClient.from('questions').insert([{
+      user_id:U.id,user_email:U.email,author:anon?'Anonymous':U.name,
+      role:U.role||'student',cat:cat,question:fullQ,
+      ai_response:aiResp,status:wantsReview?'pending':'answered',
+      wants_review:wantsReview,anon:anon
+    }]).then(function(res){if(res.error)console.warn('Question sync error',res.error)});
+  }
   ['q-level','q-cat','q-core','q-constraints','q-tried','q-context'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=''});
   document.getElementById('q-review-tog').classList.remove('on');
   document.getElementById('q-anon-tog').classList.remove('on');
@@ -606,13 +615,13 @@ async function sendContactMessage(e){
     message:msg,
     date:new Date().toISOString()
   };
-  // Store in Supabase if available
+  // Store in Supabase
   if(_supaClient){
     try{
       await _supaClient.from('messages').insert([payload]);
     }catch(ex){console.warn('Message store failed',ex)}
   }
-  // Also store locally as fallback
+  // Also store locally
   if(!DB.messages)DB.messages=[];
   DB.messages.push(payload);saveDB();
   document.getElementById('contact-msg').value='';
@@ -763,6 +772,8 @@ function renderAdmin(){
   const reviewedThisWeek=DB.questions.filter(q=>q.status==='reviewed'&&q.reviewDate).length;
   if(curAdminTab==='messages'){
     document.getElementById('admin-info').innerHTML='<div style="display:flex;justify-content:space-between;align-items:center"><span>User messages and feedback.</span><span style="color:var(--accent);font-weight:600">'+(DB.messages?DB.messages.filter(m=>!m.read).length:0)+' unread</span></div>';
+  }else if(curAdminTab==='users'){
+    document.getElementById('admin-info').innerHTML='<div style="display:flex;justify-content:space-between;align-items:center"><span>All registered users and their strategic reports.</span><span style="color:var(--accent);font-weight:600">'+DB.users.length+' total</span></div>';
   }else{
     document.getElementById('admin-info').innerHTML='<div style="display:flex;justify-content:space-between;align-items:center"><span>Select up to 10 questions per week for review.</span><span style="color:var(--accent);font-weight:600">'+reviewedThisWeek+' / 10 this week</span></div>';
   }
@@ -773,7 +784,71 @@ function renderAdmin(){
     const reviewed=DB.questions.filter(q=>q.status==='reviewed').sort((a,b)=>b.date.localeCompare(a.date));
     c.innerHTML=reviewed.length?reviewed.map(renderQCard).join(''):'<div style="text-align:center;padding:40px;color:var(--text3)">No reviewed questions.</div>';
   }else if(curAdminTab==='users'){
-    const users=DB.users.filter(u=>u.id!=='admin').sort((a,b)=>(b.signupDate||'').localeCompare(a.signupDate||''));
+    // Use Supabase profiles if available, otherwise local
+    var users;
+    if(_sbProfiles&&_sbProfiles.length){
+      users=_sbProfiles;
+      c.innerHTML=users.map(function(u){
+        var h='<div class="card" style="margin-bottom:14px;padding:18px">';
+        var signDate=u.signup_date?new Date(u.signup_date).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}):u.created_at?new Date(u.created_at).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}):'—';
+        var tierColor=u.tier==='core'?'var(--accent)':u.tier==='elite'?'var(--green)':'var(--text3)';
+        h+='<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">';
+        h+='<div><div style="font-weight:600;font-size:14px">'+(u.name||'Unknown')+'</div>';
+        h+='<div style="font-size:11px;color:var(--text3)">'+(u.email||'')+'</div></div>';
+        h+='<div style="text-align:right"><span class="tag" style="color:'+tierColor+';border-color:'+tierColor+'">'+(u.tier||'free').toUpperCase()+'</span>';
+        h+='<div style="font-size:10px;color:var(--text3);margin-top:4px">Joined '+signDate+'</div></div></div>';
+        // Profile tags
+        h+='<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">';
+        if(u.stage)h+='<span class="tag t-cat" style="font-size:10px">'+u.stage+'</span>';
+        if(u.specialty)h+='<span class="tag t-cat" style="font-size:10px">'+u.specialty+'</span>';
+        if(u.goal)h+='<span class="tag" style="font-size:10px">Goal: '+u.goal+'</span>';
+        if(u.institution)h+='<span class="tag" style="font-size:10px">'+u.institution+'</span>';
+        h+='</div>';
+        // Report
+        if(u.score){
+          var sc=u.score>=70?'var(--green)':u.score>=45?'var(--accent)':'var(--red)';
+          h+='<div style="padding:12px;background:var(--bg2);border-radius:8px;margin-bottom:10px">';
+          h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">';
+          h+='<span style="font-size:12px;font-weight:600">Signup Assessment</span>';
+          h+='<span style="font-size:14px;font-weight:700;color:'+sc+'">'+u.score+'/95 — '+(u.grade||'')+'</span></div>';
+          if(u.strengths&&u.strengths.length){
+            h+='<div style="font-size:11px;color:var(--green);margin-bottom:4px">✦ '+u.strengths.join(' • ')+'</div>';
+          }
+          if(u.gaps&&u.gaps.length){
+            h+='<div style="font-size:11px;color:var(--red)">⚡ '+u.gaps.join(' • ')+'</div>';
+          }
+          h+='</div>';
+        }
+        // Profile data details
+        if(u.profile_data){
+          var pd=u.profile_data;
+          h+='<details style="margin-bottom:8px"><summary style="font-size:12px;color:var(--accent);cursor:pointer">Full Profile Data</summary>';
+          h+='<div style="margin-top:8px;padding:10px;background:var(--bg2);border-radius:6px;font-size:11px;color:var(--text2);line-height:1.8">';
+          Object.entries(pd).forEach(function(kv){if(kv[1]&&kv[0]!=='pass')h+='<div><strong>'+kv[0]+':</strong> '+kv[1]+'</div>'});
+          h+='</div></details>';
+        }
+        // Admin notes from Supabase
+        var notes=u.notes||[];
+        h+='<details style="margin-bottom:8px"><summary style="font-size:12px;color:var(--accent);cursor:pointer">Notes & Progress ('+notes.length+')</summary>';
+        h+='<div style="margin-top:10px">';
+        if(notes.length){
+          notes.forEach(function(n){
+            h+='<div style="padding:8px 12px;background:var(--bg2);border-radius:6px;margin-bottom:6px;border-left:2px solid var(--accent)">';
+            h+='<p style="font-size:12px;color:var(--text2);margin:0;line-height:1.5">'+n.text+'</p>';
+            h+='<span style="font-size:10px;color:var(--text3)">'+new Date(n.date).toLocaleDateString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'})+'</span></div>';
+          });
+        }
+        h+='<div style="display:flex;gap:8px;margin-top:8px">';
+        h+='<input type="text" id="sbnote-'+u.id+'" placeholder="Add a note..." style="flex:1;font-size:12px;padding:8px 12px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text)">';
+        h+='<button class="btn btn-a btn-sm" onclick="addSupabaseNote(\''+u.id+'\')">Add</button>';
+        h+='</div></div></details>';
+        h+='</div>';
+        return h;
+      }).join('');
+      return;
+    }
+    // Fallback to local DB
+    users=DB.users.filter(u=>u.id!=='admin').sort((a,b)=>(b.signupDate||'').localeCompare(a.signupDate||''));
     if(!users.length){
       c.innerHTML='<div style="text-align:center;padding:40px;color:var(--text3)">No users yet.</div>';
     }else{
@@ -847,12 +922,14 @@ function renderAdmin(){
       }).join('');
     }
   }else if(curAdminTab==='messages'){
-    const msgs=(DB.messages||[]).slice().reverse();
+    // Use Supabase messages if available
+    var msgs=_sbMessages&&_sbMessages.length?_sbMessages:(DB.messages||[]).slice().reverse();
     if(!msgs.length){
       c.innerHTML='<div style="text-align:center;padding:40px;color:var(--text3)">📭 No messages yet.</div>';
     }else{
+      var isSB=_sbMessages&&_sbMessages.length;
       c.innerHTML=msgs.map(function(m,idx){
-        var realIdx=(DB.messages.length-1)-idx;
+        var msgId=isSB?m.id:((DB.messages.length-1)-idx);
         var typeLabel={bug:'🐛 Bug',suggestion:'💡 Suggestion',question:'❓ Question',feedback:'📝 Feedback',other:'📎 Other'};
         var isRead=m.read?'':'border-left:3px solid var(--accent);';
         var d=m.date?new Date(m.date).toLocaleDateString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}):'';
@@ -862,8 +939,9 @@ function renderAdmin(){
         h+='<span style="font-size:10px;color:var(--text3)">'+d+'</span></div>';
         h+='<span class="tag t-cat" style="margin-bottom:8px;display:inline-block;font-size:10px">'+(typeLabel[m.type]||m.type)+'</span>';
         h+='<p style="font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:12px">'+m.message+'</p>';
-        if(m.replies&&m.replies.length){
-          m.replies.forEach(function(r){
+        var replies=m.replies||[];
+        if(replies.length){
+          replies.forEach(function(r){
             h+='<div style="margin-left:16px;padding:10px 14px;background:var(--bg2);border-radius:8px;margin-bottom:8px;border-left:2px solid var(--green)">';
             h+='<div style="font-size:10px;color:var(--green);font-weight:600;margin-bottom:4px">YOUR REPLY</div>';
             h+='<p style="font-size:12px;color:var(--text2);line-height:1.6;margin:0">'+r.text+'</p>';
@@ -871,9 +949,14 @@ function renderAdmin(){
           });
         }
         h+='<div style="display:flex;gap:8px;align-items:center">';
-        h+='<input type="text" id="reply-'+realIdx+'" placeholder="Type a reply..." style="flex:1;font-size:12px;padding:8px 12px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text)">';
-        h+='<button class="btn btn-a btn-sm" onclick="replyToMessage('+realIdx+')">Reply</button>';
-        if(!m.read)h+='<button class="btn btn-sm" onclick="markMessageRead('+realIdx+')" style="font-size:11px;padding:6px 10px;border:1px solid var(--border);border-radius:6px;color:var(--text3)">✓ Read</button>';
+        h+='<input type="text" id="reply-'+msgId+'" placeholder="Type a reply..." style="flex:1;font-size:12px;padding:8px 12px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text)">';
+        if(isSB){
+          h+='<button class="btn btn-a btn-sm" onclick="replyToSupabaseMessage('+m.id+')">Reply</button>';
+          if(!m.read)h+='<button class="btn btn-sm" onclick="markSupabaseMessageRead('+m.id+')" style="font-size:11px;padding:6px 10px;border:1px solid var(--border);border-radius:6px;color:var(--text3)">✓ Read</button>';
+        }else{
+          h+='<button class="btn btn-a btn-sm" onclick="replyToMessage('+msgId+')">Reply</button>';
+          if(!m.read)h+='<button class="btn btn-sm" onclick="markMessageRead('+msgId+')" style="font-size:11px;padding:6px 10px;border:1px solid var(--border);border-radius:6px;color:var(--text3)">✓ Read</button>';
+        }
         h+='</div></div>';
         return h;
       }).join('');
@@ -884,7 +967,33 @@ function renderAdmin(){
     c.innerHTML='<div class="stats" style="padding:0"><div class="st"><div class="st-n">'+total+'</div><div class="st-l">Total</div></div><div class="st"><div class="st-n">'+ans+'</div><div class="st-l">Reviewed</div></div><div class="st"><div class="st-n">'+pend+'</div><div class="st-l">Pending</div></div><div class="st"><div class="st-n">'+DB.users.length+'</div><div class="st-l">Members</div></div></div><div class="sec" style="padding:20px 0 14px">By Category</div>'+Object.entries(cats).map(([k,v])=>'<div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px"><span>'+(CATS[k]||k)+'</span><span style="color:var(--text3)">'+v+'</span></div>').join('');
   }
 }
-function adminTab(tab,btn){curAdminTab=tab;document.querySelectorAll('.atab').forEach(t=>t.classList.remove('on'));btn.classList.add('on');renderAdmin()}
+function adminTab(tab,btn){curAdminTab=tab;document.querySelectorAll('.atab').forEach(t=>t.classList.remove('on'));btn.classList.add('on');
+  // Load from Supabase for users and messages tabs
+  if((tab==='users'||tab==='messages')&&_supaClient){loadAdminDataFromSupabase(tab)}else{renderAdmin()}
+}
+
+async function loadAdminDataFromSupabase(tab){
+  const c=document.getElementById('admin-content');
+  c.innerHTML='<div style="text-align:center;padding:40px;color:var(--text3)">Loading...</div>';
+  try{
+    if(tab==='users'){
+      const{data,error}=await _supaClient.from('profiles').select('*').order('created_at',{ascending:false});
+      if(!error&&data&&data.length){
+        _sbProfiles=data;
+      }
+    }
+    if(tab==='messages'){
+      const{data,error}=await _supaClient.from('messages').select('*').order('date',{ascending:false});
+      if(!error&&data&&data.length){
+        _sbMessages=data;
+      }
+    }
+  }catch(ex){console.warn('Supabase load error',ex)}
+  renderAdmin();
+}
+
+var _sbProfiles=null;
+var _sbMessages=null;
 
 function addUserNote(userId){
   var input=document.getElementById('unote-'+userId);
@@ -925,6 +1034,48 @@ function markMessageRead(idx){
   if(!DB.messages||!DB.messages[idx])return;
   DB.messages[idx].read=true;
   saveDB();
+  renderAdmin();
+}
+
+async function addSupabaseNote(profileId){
+  var input=document.getElementById('sbnote-'+profileId);
+  if(!input||!input.value.trim()||!_supaClient)return;
+  var note={text:input.value.trim(),date:new Date().toISOString()};
+  // Find profile in cached data and update
+  var profile=_sbProfiles?_sbProfiles.find(function(p){return p.id===profileId}):null;
+  if(!profile)return;
+  var notes=profile.notes||[];
+  notes.push(note);
+  var{error}=await _supaClient.from('profiles').update({notes:notes}).eq('id',profileId);
+  if(error){notify('Failed to save note',1);return}
+  profile.notes=notes;
+  notify('Note added');
+  renderAdmin();
+}
+
+async function replyToSupabaseMessage(msgId){
+  var input=document.getElementById('reply-'+msgId);
+  if(!input||!input.value.trim()||!_supaClient)return;
+  var reply={text:input.value.trim(),date:new Date().toISOString()};
+  var msg=_sbMessages?_sbMessages.find(function(m){return m.id===msgId}):null;
+  if(!msg)return;
+  var replies=msg.replies||[];
+  replies.push(reply);
+  var{error}=await _supaClient.from('messages').update({replies:replies,read:true}).eq('id',msgId);
+  if(error){notify('Failed to send reply',1);return}
+  msg.replies=replies;
+  msg.read=true;
+  notify('Reply sent');
+  renderAdmin();
+}
+
+async function markSupabaseMessageRead(msgId){
+  if(!_supaClient)return;
+  var{error}=await _supaClient.from('messages').update({read:true}).eq('id',msgId);
+  if(!error){
+    var msg=_sbMessages?_sbMessages.find(function(m){return m.id===msgId}):null;
+    if(msg)msg.read=true;
+  }
   renderAdmin();
 }
 
@@ -1090,8 +1241,18 @@ function obComplete(){
   const reportSnapshot=captureReportData(p);
   const user={id:'u'+DB.nextUserId++,name:p.name,email:p.email.toLowerCase(),pass:p.pass,role:roleMap[p.stage]||'student',tier:'core',trialEnd:trialEnd.toISOString().split('T')[0],institution:p.inst,usage:{ai:0,credits:0,month:new Date().getMonth()},profile:p,signupDate:new Date().toISOString(),report:reportSnapshot,notes:[]};
   DB.users.push(user);saveDB();
-  // Also create in Supabase
-  if(_supaClient){_supaClient.auth.signUp({email:p.email.toLowerCase(),password:p.pass,options:{data:{name:p.name}}}).catch(()=>{})}
+  // Sync to Supabase
+  if(_supaClient){
+    _supaClient.auth.signUp({email:p.email.toLowerCase(),password:p.pass,options:{data:{name:p.name}}}).catch(()=>{});
+    _supaClient.from('profiles').insert([{
+      user_id:user.id,name:p.name,email:p.email.toLowerCase(),role:roleMap[p.stage]||'student',
+      tier:'core',institution:p.inst||'',stage:p.stage,specialty:p.spec||'',goal:p.goal||'',
+      score:reportSnapshot.score,grade:reportSnapshot.grade,
+      strengths:reportSnapshot.strengths,gaps:reportSnapshot.gaps,
+      trial_end:trialEnd.toISOString().split('T')[0],
+      profile_data:p
+    }]).then(function(res){if(res.error)console.warn('Profile sync error',res.error)});
+  }
   U=user;localStorage.setItem('hw_session',JSON.stringify(U));
   enterApp();showDisc();
   notify('Welcome! Your 3-day strategic access is active. ⚡');

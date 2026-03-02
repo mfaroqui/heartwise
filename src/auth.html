@@ -1,5 +1,6 @@
 <!-- ===== AUTH PAGES ===== -->
 <div id="pg-login" class="lp hidden" style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px">
+<a href="#" onclick="go('pg-landing');return false" style="position:absolute;top:24px;left:24px;font-size:13px;color:var(--text3);text-decoration:none;font-weight:400">← Home</a>
 <div class="sp-mark" style="width:52px;height:52px;border-radius:14px;margin-bottom:28px"><svg style="width:26px;height:26px;fill:#09090e"><use href="#i-heart"/></svg></div>
 <div style="font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:600;margin-bottom:6px;letter-spacing:.5px">HeartWise</div>
 <div style="color:var(--text3);font-size:13px;margin-bottom:40px;text-align:center;max-width:280px;line-height:1.6;font-weight:300">Strategic intelligence for physicians</div>
@@ -14,6 +15,7 @@
 
 <!-- ===== FORGOT PASSWORD ===== -->
 <div id="pg-forgot" class="lp hidden" style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px">
+<a href="#" onclick="go('pg-landing');return false" style="position:absolute;top:24px;left:24px;font-size:13px;color:var(--text3);text-decoration:none;font-weight:400">← Home</a>
 <div class="sp-mark" style="width:52px;height:52px;border-radius:14px;margin-bottom:28px"><svg style="width:26px;height:26px;fill:#09090e"><use href="#i-heart"/></svg></div>
 <div style="font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:600;margin-bottom:6px;letter-spacing:.5px">Reset Password</div>
 <div style="color:var(--text3);font-size:13px;margin-bottom:40px;text-align:center;max-width:300px;line-height:1.6;font-weight:300">Enter your email and we'll send you a link to reset your password</div>
@@ -45,6 +47,7 @@
 
 <!-- Step 1: Identity -->
 <div id="ob-step1" class="ob-step">
+<a href="#" onclick="go('pg-landing');return false" style="position:absolute;top:24px;left:24px;font-size:13px;color:var(--text3);text-decoration:none;font-weight:400">← Home</a>
 <div class="sp-mark" style="width:48px;height:48px;border-radius:14px;margin:0 auto 24px"><svg style="width:24px;height:24px;fill:#09090e"><use href="#i-heart"/></svg></div>
 <h2>What stage are you in?</h2>
 <p>This personalizes your strategic pathway automatically.</p>
@@ -62,6 +65,7 @@
 
 <!-- Step 2: Competitive Profile -->
 <div id="ob-step2" class="ob-step hidden">
+<a href="#" onclick="document.getElementById('ob-step2').classList.add('hidden');document.getElementById('ob-step1').classList.remove('hidden');return false" style="position:absolute;top:24px;left:24px;font-size:13px;color:var(--text3);text-decoration:none;font-weight:400">← Back</a>
 <h2>Build Your Profile</h2>
 <p>This becomes your competitive baseline. Used to generate your strategic report.</p>
 <form style="text-align:left;max-width:380px;margin:0 auto" id="ob-profile-form">
@@ -144,6 +148,7 @@
 
 <!-- Step 3: Strategic Report -->
 <div id="ob-step3" class="ob-step hidden" style="text-align:left;max-width:480px">
+<a href="#" onclick="document.getElementById('ob-step3').classList.add('hidden');document.getElementById('ob-step2').classList.remove('hidden');return false" style="position:absolute;top:24px;left:24px;font-size:13px;color:var(--text3);text-decoration:none;font-weight:400">← Back</a>
 <div style="text-align:center;margin-bottom:32px">
 <h2>Your Strategic Report</h2>
 <p style="margin-bottom:0">Based on your profile. This is your starting point.</p>

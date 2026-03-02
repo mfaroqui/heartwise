@@ -888,6 +888,10 @@ a:hover{color:var(--accent2)}
 <div style="position:absolute;top:-50%;right:-30%;width:200px;height:200px;background:radial-gradient(circle,rgba(200,168,124,.08),transparent 70%);border-radius:50%"></div>
 <h2 id="welcome-msg" class="serif" style="font-size:22px;font-weight:600;margin-bottom:6px;position:relative">Welcome 👋</h2>
 <p style="font-size:13px;color:var(--text2);line-height:1.6;position:relative">Strategic positioning. Career leverage. Financial clarity.</p>
+<div id="daily-quote" style="margin-top:16px;padding-top:14px;border-top:1px solid rgba(200,168,124,.15);position:relative">
+<p style="font-size:13px;color:var(--accent);line-height:1.6;font-style:italic;margin:0" id="quote-text"></p>
+<p style="font-size:11px;color:var(--text3);margin:6px 0 0;font-weight:400" id="quote-author"></p>
+</div>
 </div>
 </div>
 
@@ -2018,8 +2022,57 @@ function enterApp(){
 }
 
 // ===== RENDER HOME =====
+// ===== DAILY QUOTES =====
+const _dailyQuotes=[
+  {text:"The best time to plant a tree was 20 years ago. The second best time is now.",author:"Chinese Proverb"},
+  {text:"Medicine is not only a science; it is also an art. It does not consist of compounding pills and plasters; it deals with the very processes of life.",author:"Paracelsus"},
+  {text:"Success is not final, failure is not fatal: it is the courage to continue that counts.",author:"Winston Churchill"},
+  {text:"The physician must be able to tell the antecedents, know the present, and foretell the future.",author:"Hippocrates"},
+  {text:"Your career is a marathon, not a sprint. The decisions you make in training compound for decades.",author:"HeartWise"},
+  {text:"Don't let the noise of others' opinions drown out your own inner voice.",author:"Steve Jobs"},
+  {text:"Wherever the art of medicine is loved, there is also a love of humanity.",author:"Hippocrates"},
+  {text:"The only way to do great work is to love what you do. If you haven't found it yet, keep looking.",author:"Steve Jobs"},
+  {text:"Strategy without execution is a daydream. Execution without strategy is a nightmare.",author:"Japanese Proverb"},
+  {text:"It is not the strongest of the species that survives, nor the most intelligent, but the one most responsive to change.",author:"Charles Darwin"},
+  {text:"In the middle of difficulty lies opportunity.",author:"Albert Einstein"},
+  {text:"The secret of getting ahead is getting started.",author:"Mark Twain"},
+  {text:"Every expert was once a beginner. Every attending was once an intern who didn't know where the supply closet was.",author:"HeartWise"},
+  {text:"Compound interest is the eighth wonder of the world. He who understands it, earns it; he who doesn't, pays it.",author:"Albert Einstein"},
+  {text:"The best investment you can make is in yourself.",author:"Warren Buffett"},
+  {text:"Do not go where the path may lead, go instead where there is no path and leave a trail.",author:"Ralph Waldo Emerson"},
+  {text:"Clarity precedes success. Know where you're going before you optimize how to get there.",author:"HeartWise"},
+  {text:"The greatest wealth is health.",author:"Virgil"},
+  {text:"What lies behind us and what lies before us are tiny matters compared to what lies within us.",author:"Ralph Waldo Emerson"},
+  {text:"You are never too old to set another goal or to dream a new dream.",author:"C.S. Lewis"},
+  {text:"The future belongs to those who prepare for it today.",author:"Malcolm X"},
+  {text:"A good physician treats the disease; a great physician treats the patient who has the disease.",author:"William Osler"},
+  {text:"Don't compare your beginning to someone else's middle.",author:"Jon Acuff"},
+  {text:"The difference between a successful person and others is not a lack of strength, not a lack of knowledge, but rather a lack of will.",author:"Vince Lombardi"},
+  {text:"Your network is your net worth — especially in medicine. Build relationships before you need them.",author:"HeartWise"},
+  {text:"Excellence is not a singular act, but a habit. You are what you repeatedly do.",author:"Shaquille O'Neal (via Aristotle)"},
+  {text:"The impediment to action advances action. What stands in the way becomes the way.",author:"Marcus Aurelius"},
+  {text:"Financial freedom is available to those who learn about it and work for it.",author:"Robert Kiyosaki"},
+  {text:"To study the phenomena of disease without books is to sail an uncharted sea, while to study books without patients is not to go to sea at all.",author:"William Osler"},
+  {text:"Burnout is not a badge of honor. Protect your energy like you protect your patients.",author:"HeartWise"},
+  {text:"The way to get started is to quit talking and begin doing.",author:"Walt Disney"}
+];
+
+function setDailyQuote(){
+  var el=document.getElementById('quote-text');
+  var auth=document.getElementById('quote-author');
+  if(!el||!auth)return;
+  // Use day of year as index so it changes daily
+  var now=new Date();
+  var start=new Date(now.getFullYear(),0,0);
+  var dayOfYear=Math.floor((now-start)/86400000);
+  var q=_dailyQuotes[dayOfYear%_dailyQuotes.length];
+  el.textContent='"'+q.text+'"';
+  auth.textContent='— '+q.author;
+}
+
 function renderHome(){
   if(!U)return;
+  setDailyQuote();
   const t=TIERS[U.tier]||TIERS.free;
   const used=U.usage?.ai||0;const max=t.ai;
   const pct=max===999?0:Math.min(100,Math.round(used/max*100));

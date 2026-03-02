@@ -1247,8 +1247,9 @@ a:hover{color:var(--accent2)}
 <div id="scr-admin" class="scr">
 <div class="hdr"><div class="hdr-t serif" style="font-size:20px">Admin</div><span class="badge b-admin">MENTOR</span></div>
 <div class="admin-tabs">
-<button class="atab on" onclick="adminTab('queue',this)">Review Queue</button>
+<button class="atab on" onclick="adminTab('queue',this)">Queue</button>
 <button class="atab" onclick="adminTab('reviewed',this)">Published</button>
+<button class="atab" onclick="adminTab('users',this)">Users</button>
 <button class="atab" onclick="adminTab('messages',this)">Messages</button>
 <button class="atab" onclick="adminTab('stats',this)">Stats</button>
 </div>
@@ -2640,6 +2641,112 @@ function renderAdmin(){
   }else if(curAdminTab==='reviewed'){
     const reviewed=DB.questions.filter(q=>q.status==='reviewed').sort((a,b)=>b.date.localeCompare(a.date));
     c.innerHTML=reviewed.length?reviewed.map(renderQCard).join(''):'<div style="text-align:center;padding:40px;color:var(--text3)">No reviewed questions.</div>';
+  }else if(curAdminTab==='users'){
+    const users=DB.users.filter(u=>u.id!=='admin').sort((a,b)=>(b.signupDate||'').localeCompare(a.signupDate||''));
+    if(!users.length){
+      c.innerHTML='<div style="text-align:center;padding:40px;color:var(--text3)">No users yet.</div>';
+    }else{
+      c.innerHTML=users.map(function(u){
+        var h='<div class="card" style="margin-bottom:14px;padding:18px">';
+        // Header
+        var signDate=u.signupDate?new Date(u.signupDate).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}):'—';
+        var tierColor=u.tier==='core'?'var(--accent)':u.tier==='elite'?'var(--green)':'var(--text3)';
+        h+='<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">';
+        h+='<div><div style="font-weight:600;font-size:14px">'+u.name+'</div>';
+        h+='<div style="font-size:11px;color:var(--text3)">'+u.email+'</div></div>';
+        h+='<div style="text-align:right"><span class="tag" style="color:'+tierColor+';border-color:'+tierColor+'">'+u.tier.toUpperCase()+'</span>';
+        h+='<div style="font-size:10px;color:var(--text3);margin-top:4px">Joined '+signDate+'</div></div></div>';
+        // Profile info
+        var p=u.profile||{};
+        h+='<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">';
+        if(p.stage)h+='<span class="tag t-cat" style="font-size:10px">'+p.stage+'</span>';
+        if(p.spec)h+='<span class="tag t-cat" style="font-size:10px">'+p.spec+'</span>';
+        if(p.goal)h+='<span class="tag" style="font-size:10px">Goal: '+p.goal+'</span>';
+        if(u.institution)h+='<span class="tag" style="font-size:10px">'+u.institution+'</span>';
+        h+='</div>';
+        // Report snapshot
+        if(u.report){
+          var r=u.report;
+          var sc=r.score>=70?'var(--green)':r.score>=45?'var(--accent)':'var(--red)';
+          h+='<div style="padding:12px;background:var(--bg2);border-radius:8px;margin-bottom:10px">';
+          h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">';
+          h+='<span style="font-size:12px;font-weight:600">Signup Assessment</span>';
+          h+='<span style="font-size:14px;font-weight:700;color:'+sc+'">'+r.score+'/95 — '+r.grade+'</span></div>';
+          if(r.strengths&&r.strengths.length){
+            h+='<div style="font-size:11px;color:var(--green);margin-bottom:4px">✦ '+r.strengths.join(' • ')+'</div>';
+          }
+          if(r.gaps&&r.gaps.length){
+            h+='<div style="font-size:11px;color:var(--red)">⚡ '+r.gaps.join(' • ')+'</div>';
+          }
+          h+='</div>';
+        }
+        // Usage stats
+        var aiUsed=u.usage?u.usage.ai:0;
+        var qCount=DB.questions.filter(function(q){return q.userId===u.id}).length;
+        h+='<div style="display:flex;gap:16px;font-size:11px;color:var(--text3);margin-bottom:12px">';
+        h+='<span>AI Used: <strong style="color:var(--text2)">'+aiUsed+'</strong></span>';
+        h+='<span>Questions: <strong style="color:var(--text2)">'+qCount+'</strong></span>';
+        if(u.trialEnd)h+='<span>Trial Ends: <strong style="color:var(--text2)">'+u.trialEnd+'</strong></span>';
+        h+='</div>';
+        // Admin notes
+        h+='<details style="margin-bottom:8px"><summary style="font-size:12px;color:var(--accent);cursor:pointer">Notes & Progress Tracking</summary>';
+        h+='<div style="margin-top:10px">';
+        if(u.notes&&u.notes.length){
+          u.notes.forEach(function(n){
+            h+='<div style="padding:8px 12px;background:var(--bg2);border-radius:6px;margin-bottom:6px;border-left:2px solid var(--accent)">';
+            h+='<p style="font-size:12px;color:var(--text2);margin:0;line-height:1.5">'+n.text+'</p>';
+            h+='<span style="font-size:10px;color:var(--text3)">'+new Date(n.date).toLocaleDateString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'})+'</span></div>';
+          });
+        }
+        h+='<div style="display:flex;gap:8px;margin-top:8px">';
+        h+='<input type="text" id="unote-'+u.id+'" placeholder="Add a note about this user..." style="flex:1;font-size:12px;padding:8px 12px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text)">';
+        h+='<button class="btn btn-a btn-sm" onclick="addUserNote(\''+u.id+'\')">Add</button>';
+        h+='</div></div></details>';
+        // Tier management
+        h+='<div style="display:flex;gap:8px;align-items:center">';
+        h+='<select id="tier-'+u.id+'" style="font-size:11px;padding:6px 10px;border:1px solid var(--border);border-radius:6px;background:var(--bg2);color:var(--text)">';
+        h+='<option value="free"'+(u.tier==='free'?' selected':'')+'>Free</option>';
+        h+='<option value="core"'+(u.tier==='core'?' selected':'')+'>Core</option>';
+        h+='<option value="elite"'+(u.tier==='elite'?' selected':'')+'>Elite</option>';
+        h+='</select>';
+        h+='<button class="btn btn-a btn-sm" onclick="updateUserTier(\''+u.id+'\')" style="font-size:11px">Update Tier</button>';
+        h+='</div>';
+        h+='</div>';
+        return h;
+      }).join('');
+    }
+  }else if(curAdminTab==='messages'){
+    const msgs=(DB.messages||[]).slice().reverse();
+    if(!msgs.length){
+      c.innerHTML='<div style="text-align:center;padding:40px;color:var(--text3)">📭 No messages yet.</div>';
+    }else{
+      c.innerHTML=msgs.map(function(m,idx){
+        var realIdx=(DB.messages.length-1)-idx;
+        var typeLabel={bug:'🐛 Bug',suggestion:'💡 Suggestion',question:'❓ Question',feedback:'📝 Feedback',other:'📎 Other'};
+        var isRead=m.read?'':'border-left:3px solid var(--accent);';
+        var d=m.date?new Date(m.date).toLocaleDateString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}):'';
+        var h='<div class="card" style="margin-bottom:12px;'+isRead+'">';
+        h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">';
+        h+='<div><span style="font-weight:600;font-size:13px">'+(m.user_name||'Unknown')+'</span><span style="color:var(--text3);font-size:11px;margin-left:8px">'+(m.user_email||'')+'</span></div>';
+        h+='<span style="font-size:10px;color:var(--text3)">'+d+'</span></div>';
+        h+='<span class="tag t-cat" style="margin-bottom:8px;display:inline-block;font-size:10px">'+(typeLabel[m.type]||m.type)+'</span>';
+        h+='<p style="font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:12px">'+m.message+'</p>';
+        if(m.replies&&m.replies.length){
+          m.replies.forEach(function(r){
+            h+='<div style="margin-left:16px;padding:10px 14px;background:var(--bg2);border-radius:8px;margin-bottom:8px;border-left:2px solid var(--green)">';
+            h+='<div style="font-size:10px;color:var(--green);font-weight:600;margin-bottom:4px">YOUR REPLY</div>';
+            h+='<p style="font-size:12px;color:var(--text2);line-height:1.6;margin:0">'+r.text+'</p>';
+            h+='<span style="font-size:10px;color:var(--text3)">'+new Date(r.date).toLocaleDateString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'})+'</span></div>';
+          });
+        }
+        h+='<div style="display:flex;gap:8px;align-items:center">';
+        h+='<input type="text" id="reply-'+realIdx+'" placeholder="Type a reply..." style="flex:1;font-size:12px;padding:8px 12px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text)">';
+        h+='<button class="btn btn-a btn-sm" onclick="replyToMessage('+realIdx+')">Reply</button>';
+        if(!m.read)h+='<button class="btn btn-sm" onclick="markMessageRead('+realIdx+')" style="font-size:11px;padding:6px 10px;border:1px solid var(--border);border-radius:6px;color:var(--text3)">✓ Read</button>';
+        h+='</div></div>';
+        return h;
+      }).join('');
+    }
   }else{
     const total=DB.questions.length,ans=DB.questions.filter(q=>q.status==='reviewed').length,pend=DB.questions.filter(q=>q.status==='pending').length;
     const cats={};DB.questions.forEach(q=>{cats[q.cat]=(cats[q.cat]||0)+1});
@@ -2647,6 +2754,48 @@ function renderAdmin(){
   }
 }
 function adminTab(tab,btn){curAdminTab=tab;document.querySelectorAll('.atab').forEach(t=>t.classList.remove('on'));btn.classList.add('on');renderAdmin()}
+
+function addUserNote(userId){
+  var input=document.getElementById('unote-'+userId);
+  if(!input||!input.value.trim())return;
+  var user=DB.users.find(function(u){return u.id===userId});
+  if(!user)return;
+  if(!user.notes)user.notes=[];
+  user.notes.push({text:input.value.trim(),date:new Date().toISOString()});
+  saveDB();
+  notify('Note added');
+  renderAdmin();
+}
+
+function updateUserTier(userId){
+  var sel=document.getElementById('tier-'+userId);
+  if(!sel)return;
+  var user=DB.users.find(function(u){return u.id===userId});
+  if(!user)return;
+  user.tier=sel.value;
+  saveDB();
+  notify('Tier updated to '+sel.value.toUpperCase());
+  renderAdmin();
+}
+
+function replyToMessage(idx){
+  var input=document.getElementById('reply-'+idx);
+  if(!input||!input.value.trim())return;
+  if(!DB.messages||!DB.messages[idx])return;
+  if(!DB.messages[idx].replies)DB.messages[idx].replies=[];
+  DB.messages[idx].replies.push({text:input.value.trim(),date:new Date().toISOString()});
+  DB.messages[idx].read=true;
+  saveDB();
+  notify('Reply sent');
+  renderAdmin();
+}
+
+function markMessageRead(idx){
+  if(!DB.messages||!DB.messages[idx])return;
+  DB.messages[idx].read=true;
+  saveDB();
+  renderAdmin();
+}
 
 function publishReview(id){
   const ta=document.getElementById('rev-'+id);
@@ -2806,13 +2955,54 @@ function obComplete(){
   // Create user with trial
   const roleMap={premed:'student',student:'student',resident:'resident',fellow:'fellow',attending:'attending',switching:'other'};
   const trialEnd=new Date();trialEnd.setDate(trialEnd.getDate()+3);
-  const user={id:'u'+DB.nextUserId++,name:p.name,email:p.email.toLowerCase(),pass:p.pass,role:roleMap[p.stage]||'student',tier:'core',trialEnd:trialEnd.toISOString().split('T')[0],institution:p.inst,usage:{ai:0,credits:0,month:new Date().getMonth()},profile:p};
+  // Capture report snapshot
+  const reportSnapshot=captureReportData(p);
+  const user={id:'u'+DB.nextUserId++,name:p.name,email:p.email.toLowerCase(),pass:p.pass,role:roleMap[p.stage]||'student',tier:'core',trialEnd:trialEnd.toISOString().split('T')[0],institution:p.inst,usage:{ai:0,credits:0,month:new Date().getMonth()},profile:p,signupDate:new Date().toISOString(),report:reportSnapshot,notes:[]};
   DB.users.push(user);saveDB();
   // Also create in Supabase
   if(_supaClient){_supaClient.auth.signUp({email:p.email.toLowerCase(),password:p.pass,options:{data:{name:p.name}}}).catch(()=>{})}
   U=user;localStorage.setItem('hw_session',JSON.stringify(U));
   enterApp();showDisc();
   notify('Welcome! Your 3-day strategic access is active. ⚡');
+}
+
+function captureReportData(p){
+  const hasPubsField=p.stage==='student'||p.stage==='resident'||p.stage==='fellow';
+  const hasLeadField=p.stage==='student';
+  let score=50;
+  const pubs=parseInt(p.pubs)||0;
+  const lead=parseInt(p.lead)||0;
+  if(hasPubsField){if(pubs>=3)score+=15;else if(pubs>=1)score+=8}
+  if(hasLeadField){if(lead>=2)score+=10;else if(lead>=1)score+=5}
+  if(p.spec&&p.spec!=='Undecided')score+=5;
+  if(p.goal)score+=5;
+  if(p.score1){const s=parseInt(p.score1);if(s>=250)score+=15;else if(s>=240)score+=10;else if(s>=230)score+=5}
+  if(p.score2){const s=parseInt(p.score2);if(s>=260)score+=15;else if(s>=250)score+=10;else if(s>=240)score+=5}
+  if(p.comp)score+=10;
+  if(p.practice)score+=5;
+  score=Math.min(95,Math.max(20,score));
+  let strengths=[],gaps=[];
+  if(hasPubsField){
+    if(pubs<2)gaps.push('Research Output ('+pubs+' pubs)');
+    else strengths.push('Research Output ('+pubs+' pubs)');
+  }
+  if(hasLeadField){
+    if(lead<1)gaps.push('Leadership');
+    else strengths.push('Leadership ('+lead+' roles)');
+  }
+  if(!p.spec||p.spec==='Undecided')gaps.push('Specialty Clarity');
+  else strengths.push('Specialty: '+p.spec);
+  if(!p.goal)gaps.push('Strategic Goal');
+  else strengths.push('Goal: '+p.goal);
+  if(p.stage==='attending'){
+    if(!p.comp)gaps.push('Compensation Baseline');
+    if(!p.practice)gaps.push('Practice Model');
+    if(!p.debt)gaps.push('Loan Strategy');
+    if(p.comp)strengths.push('Comp: '+p.comp);
+    if(p.practice)strengths.push('Practice: '+p.practice);
+  }
+  const grade=score>=28?'Strong':score>=21?'Solid With Gaps':score>=14?'Needs Work':'Reassess';
+  return{score,grade,strengths,gaps,capturedAt:new Date().toISOString()};
 }
 
 // ===== DISCLAIMER =====

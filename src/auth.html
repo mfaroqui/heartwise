@@ -16,14 +16,28 @@
 <div id="pg-forgot" class="lp hidden" style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px">
 <div class="sp-mark" style="width:52px;height:52px;border-radius:14px;margin-bottom:28px"><svg style="width:26px;height:26px;fill:#09090e"><use href="#i-heart"/></svg></div>
 <div style="font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:600;margin-bottom:6px;letter-spacing:.5px">Reset Password</div>
-<div style="color:var(--text3);font-size:13px;margin-bottom:40px;text-align:center;max-width:300px;line-height:1.6;font-weight:300">Enter your email and a new password below</div>
-<form style="width:100%;max-width:340px" onsubmit="doResetPassword(event)">
+<div style="color:var(--text3);font-size:13px;margin-bottom:40px;text-align:center;max-width:300px;line-height:1.6;font-weight:300">Enter your email and we'll send you a link to reset your password</div>
+<form style="width:100%;max-width:340px" onsubmit="doForgotPassword(event)">
 <div class="fg"><label>Email</label><input type="email" id="r-email" placeholder="you@example.com" required></div>
-<div class="fg"><label>New Password</label><input type="password" id="r-pass" placeholder="Min 8 characters" minlength="8" required></div>
-<div class="fg"><label>Confirm New Password</label><input type="password" id="r-pass2" placeholder="••••••••" minlength="8" required></div>
-<button type="submit" class="btn btn-a">Reset Password</button>
+<button type="submit" class="btn btn-a">Send Reset Link</button>
 </form>
+<div id="reset-sent" class="hidden" style="margin-top:24px;padding:20px;border-radius:12px;background:var(--green-dim);border:1px solid rgba(92,184,154,.2);text-align:center;max-width:340px;width:100%">
+<div style="font-size:14px;color:var(--green);font-weight:500;margin-bottom:6px">✓ Check your email</div>
+<div style="font-size:13px;color:var(--text2);font-weight:300;line-height:1.6">We've sent a password reset link to your email. Click the link to set a new password.</div>
+</div>
 <div style="margin-top:28px;color:var(--text3);font-size:13px;font-weight:300">Remember it? <a href="#" onclick="go('pg-login');return false" style="font-weight:500">Sign in</a></div>
+</div>
+
+<!-- ===== RESET PASSWORD (from email link) ===== -->
+<div id="pg-reset" class="lp hidden" style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px">
+<div class="sp-mark" style="width:52px;height:52px;border-radius:14px;margin-bottom:28px"><svg style="width:26px;height:26px;fill:#09090e"><use href="#i-heart"/></svg></div>
+<div style="font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:600;margin-bottom:6px;letter-spacing:.5px">Set New Password</div>
+<div style="color:var(--text3);font-size:13px;margin-bottom:40px;text-align:center;max-width:300px;line-height:1.6;font-weight:300">Choose a new password for your account</div>
+<form style="width:100%;max-width:340px" onsubmit="doNewPassword(event)">
+<div class="fg"><label>New Password</label><input type="password" id="rp-pass" placeholder="Min 8 characters" minlength="8" required></div>
+<div class="fg"><label>Confirm Password</label><input type="password" id="rp-pass2" placeholder="••••••••" minlength="8" required></div>
+<button type="submit" class="btn btn-a">Update Password</button>
+</form>
 </div>
 
 <!-- ===== ONBOARDING FLOW ===== -->

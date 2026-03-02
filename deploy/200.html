@@ -8,6 +8,7 @@
 <meta name="theme-color" content="#0a0a0f">
 <title>HeartWise — Physician-Built Mentorship Platform</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 
 <style>
@@ -719,14 +720,28 @@ a:hover{color:var(--accent2)}
 <div id="pg-forgot" class="lp hidden" style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px">
 <div class="sp-mark" style="width:52px;height:52px;border-radius:14px;margin-bottom:28px"><svg style="width:26px;height:26px;fill:#09090e"><use href="#i-heart"/></svg></div>
 <div style="font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:600;margin-bottom:6px;letter-spacing:.5px">Reset Password</div>
-<div style="color:var(--text3);font-size:13px;margin-bottom:40px;text-align:center;max-width:300px;line-height:1.6;font-weight:300">Enter your email and a new password below</div>
-<form style="width:100%;max-width:340px" onsubmit="doResetPassword(event)">
+<div style="color:var(--text3);font-size:13px;margin-bottom:40px;text-align:center;max-width:300px;line-height:1.6;font-weight:300">Enter your email and we'll send you a link to reset your password</div>
+<form style="width:100%;max-width:340px" onsubmit="doForgotPassword(event)">
 <div class="fg"><label>Email</label><input type="email" id="r-email" placeholder="you@example.com" required></div>
-<div class="fg"><label>New Password</label><input type="password" id="r-pass" placeholder="Min 8 characters" minlength="8" required></div>
-<div class="fg"><label>Confirm New Password</label><input type="password" id="r-pass2" placeholder="••••••••" minlength="8" required></div>
-<button type="submit" class="btn btn-a">Reset Password</button>
+<button type="submit" class="btn btn-a">Send Reset Link</button>
 </form>
+<div id="reset-sent" class="hidden" style="margin-top:24px;padding:20px;border-radius:12px;background:var(--green-dim);border:1px solid rgba(92,184,154,.2);text-align:center;max-width:340px;width:100%">
+<div style="font-size:14px;color:var(--green);font-weight:500;margin-bottom:6px">✓ Check your email</div>
+<div style="font-size:13px;color:var(--text2);font-weight:300;line-height:1.6">We've sent a password reset link to your email. Click the link to set a new password.</div>
+</div>
 <div style="margin-top:28px;color:var(--text3);font-size:13px;font-weight:300">Remember it? <a href="#" onclick="go('pg-login');return false" style="font-weight:500">Sign in</a></div>
+</div>
+
+<!-- ===== RESET PASSWORD (from email link) ===== -->
+<div id="pg-reset" class="lp hidden" style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px">
+<div class="sp-mark" style="width:52px;height:52px;border-radius:14px;margin-bottom:28px"><svg style="width:26px;height:26px;fill:#09090e"><use href="#i-heart"/></svg></div>
+<div style="font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:600;margin-bottom:6px;letter-spacing:.5px">Set New Password</div>
+<div style="color:var(--text3);font-size:13px;margin-bottom:40px;text-align:center;max-width:300px;line-height:1.6;font-weight:300">Choose a new password for your account</div>
+<form style="width:100%;max-width:340px" onsubmit="doNewPassword(event)">
+<div class="fg"><label>New Password</label><input type="password" id="rp-pass" placeholder="Min 8 characters" minlength="8" required></div>
+<div class="fg"><label>Confirm Password</label><input type="password" id="rp-pass2" placeholder="••••••••" minlength="8" required></div>
+<button type="submit" class="btn btn-a">Update Password</button>
+</form>
 </div>
 
 <!-- ===== ONBOARDING FLOW ===== -->
@@ -1570,6 +1585,11 @@ document.addEventListener('click',function(e){
   window._observeReveals=function(){document.querySelectorAll('.reveal:not(.visible)').forEach(function(el){obs.observe(el)})};
 })();
 
+// ===== SUPABASE INIT =====
+const SUPABASE_URL='https://kqyvfykbnboesskxovtw.supabase.co';
+const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtxeXZmeWtibmJvZXNza3hvdnR3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI0MTQ2MjMsImV4cCI6MjA4Nzk5MDYyM30.OknOG2sY9Z9a6SVwPpqA55oHwgZ5mnRyDwfLrTRFxn0';
+const supabase=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+
 // ===== APP STATE =====
 let DB,U=null,curFilter='all',curAdminTab='queue';
 
@@ -1585,13 +1605,29 @@ function initDB(){
 }
 function saveDB(){localStorage.setItem('hw_db',JSON.stringify(DB))}
 
-window.onload=function(){
+window.onload=async function(){
   initDB();
   document.getElementById('disc-check').addEventListener('change',function(){
     const b=document.getElementById('disc-btn');
     b.style.opacity=this.checked?'1':'.5';
     b.style.pointerEvents=this.checked?'auto':'none';
   });
+  // Handle Supabase password reset redirect
+  const hash=window.location.hash;
+  if(hash.includes('type=recovery')||hash.includes('reset-password')){
+    // Supabase recovery flow — parse tokens from hash
+    const params=new URLSearchParams(hash.replace('#',''));
+    const accessToken=params.get('access_token');
+    const refreshToken=params.get('refresh_token');
+    if(accessToken){
+      await supabase.auth.setSession({access_token:accessToken,refresh_token:refreshToken});
+    }
+    // Clean up URL
+    history.replaceState(null,'',window.location.pathname);
+    document.getElementById('splash').classList.add('out');
+    setTimeout(()=>{document.getElementById('splash').style.display='none';go('pg-reset')},500);
+    return;
+  }
   setTimeout(()=>{
     document.getElementById('splash').classList.add('out');
     setTimeout(()=>{
@@ -1604,7 +1640,7 @@ window.onload=function(){
 
 // ===== NAV =====
 function go(id){
-  ['pg-landing','pg-login','pg-signup','pg-onboard','pg-forgot','main-app'].forEach(p=>{
+  ['pg-landing','pg-login','pg-signup','pg-onboard','pg-forgot','pg-reset','main-app'].forEach(p=>{
     const el=document.getElementById(p);if(el){el.classList.add('hidden');el.style.display=''}
   });
   const el=document.getElementById(id);if(el){el.classList.remove('hidden');el.style.display=''}
@@ -1635,12 +1671,30 @@ function navTo(scr,btn){
 }
 
 // ===== AUTH =====
-function doLogin(e){
+async function doLogin(e){
   e.preventDefault();
   const email=document.getElementById('l-email').value.trim().toLowerCase();
   const pass=document.getElementById('l-pass').value;
-  const user=DB.users.find(u=>u.email.toLowerCase()===email&&u.pass===pass);
-  if(!user){notify('Invalid email or password',1);return}
+  // Try Supabase auth first
+  const{data,error}=await supabase.auth.signInWithPassword({email,password:pass});
+  if(error){
+    // Fallback: check local DB for legacy users
+    const user=DB.users.find(u=>u.email.toLowerCase()===email&&u.pass===pass);
+    if(!user){notify('Invalid email or password',1);return}
+    // Migrate legacy user to Supabase in background
+    supabase.auth.signUp({email,password:pass,options:{data:{name:user.name}}}).catch(()=>{});
+    U=user;if(!U.usage)U.usage={ai:0,credits:TIERS[U.tier]?.credits||0,month:new Date().getMonth()};
+    localStorage.setItem('hw_session',JSON.stringify(U));
+    if(!localStorage.getItem('hw_disc_'+U.id)){enterApp();showDisc()}else{enterApp()}
+    return;
+  }
+  // Supabase login succeeded — find or create local user
+  const sbUser=data.user;
+  let user=DB.users.find(u=>u.email.toLowerCase()===email);
+  if(!user){
+    user={id:'u'+DB.nextUserId++,name:sbUser.user_metadata?.name||email.split('@')[0],email,pass:'__supabase__',role:'student',tier:'free',institution:'',usage:{ai:0,credits:0,month:new Date().getMonth()}};
+    DB.users.push(user);saveDB();
+  }
   U=user;if(!U.usage)U.usage={ai:0,credits:TIERS[U.tier]?.credits||0,month:new Date().getMonth()};
   localStorage.setItem('hw_session',JSON.stringify(U));
   if(!localStorage.getItem('hw_disc_'+U.id)){enterApp();showDisc()}else{enterApp()}
@@ -1656,22 +1710,41 @@ function doSignup(e){
   if(DB.users.find(u=>u.email.toLowerCase()===email)){notify('Email already registered',1);return}
   const user={id:'u'+DB.nextUserId++,name,email,pass,role,tier:'free',institution:inst,usage:{ai:0,credits:0,month:new Date().getMonth()}};
   DB.users.push(user);saveDB();
+  // Also create in Supabase
+  supabase.auth.signUp({email,password:pass,options:{data:{name}}}).catch(()=>{});
   U=user;localStorage.setItem('hw_session',JSON.stringify(U));
   enterApp();showDisc();
 }
 
-function doLogout(){U=null;localStorage.removeItem('hw_session');go('pg-landing')}
+function doLogout(){
+  supabase.auth.signOut().catch(()=>{});
+  U=null;localStorage.removeItem('hw_session');go('pg-landing');
+}
 
-function doResetPassword(e){
+async function doForgotPassword(e){
   e.preventDefault();
   const email=document.getElementById('r-email').value.trim().toLowerCase();
-  const pass=document.getElementById('r-pass').value;
-  const pass2=document.getElementById('r-pass2').value;
+  const siteUrl=window.location.origin+window.location.pathname;
+  const{error}=await supabase.auth.resetPasswordForEmail(email,{redirectTo:siteUrl+'#reset-password'});
+  if(error){notify('Error sending reset email. Please try again.',1);return}
+  document.getElementById('reset-sent').classList.remove('hidden');
+  notify('Reset link sent! Check your email.');
+}
+
+async function doNewPassword(e){
+  e.preventDefault();
+  const pass=document.getElementById('rp-pass').value;
+  const pass2=document.getElementById('rp-pass2').value;
   if(pass!==pass2){notify('Passwords do not match',1);return}
   if(pass.length<8){notify('Password must be at least 8 characters',1);return}
-  const user=DB.users.find(u=>u.email.toLowerCase()===email);
-  if(!user){notify('No account found with that email',1);return}
-  user.pass=pass;saveDB();
+  const{error}=await supabase.auth.updateUser({password:pass});
+  if(error){notify('Error updating password. Link may have expired.',1);return}
+  // Also update local DB
+  const{data:{user}}=await supabase.auth.getUser();
+  if(user){
+    const local=DB.users.find(u=>u.email.toLowerCase()===user.email.toLowerCase());
+    if(local){local.pass=pass;saveDB()}
+  }
   notify('Password updated! You can now sign in.');
   go('pg-login');
 }
@@ -2165,6 +2238,8 @@ function obComplete(){
   const trialEnd=new Date();trialEnd.setDate(trialEnd.getDate()+7);
   const user={id:'u'+DB.nextUserId++,name:p.name,email:p.email.toLowerCase(),pass:p.pass,role:roleMap[p.stage]||'student',tier:'core',trialEnd:trialEnd.toISOString().split('T')[0],institution:p.inst,usage:{ai:0,credits:0,month:new Date().getMonth()},profile:p};
   DB.users.push(user);saveDB();
+  // Also create in Supabase
+  supabase.auth.signUp({email:p.email.toLowerCase(),password:p.pass,options:{data:{name:p.name}}}).catch(()=>{});
   U=user;localStorage.setItem('hw_session',JSON.stringify(U));
   enterApp();showDisc();
   notify('Welcome! Your 7-day strategic access is active. ⚡');

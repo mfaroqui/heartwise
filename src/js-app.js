@@ -761,7 +761,11 @@ function handleCheckoutReturn(){
 function renderAdmin(){
   const c=document.getElementById('admin-content');
   const reviewedThisWeek=DB.questions.filter(q=>q.status==='reviewed'&&q.reviewDate).length;
-  document.getElementById('admin-info').innerHTML='<div style="display:flex;justify-content:space-between;align-items:center"><span>Select up to 10 questions per week for review.</span><span style="color:var(--accent);font-weight:600">'+reviewedThisWeek+' / 10 this week</span></div>';
+  if(curAdminTab==='messages'){
+    document.getElementById('admin-info').innerHTML='<div style="display:flex;justify-content:space-between;align-items:center"><span>User messages and feedback.</span><span style="color:var(--accent);font-weight:600">'+(DB.messages?DB.messages.filter(m=>!m.read).length:0)+' unread</span></div>';
+  }else{
+    document.getElementById('admin-info').innerHTML='<div style="display:flex;justify-content:space-between;align-items:center"><span>Select up to 10 questions per week for review.</span><span style="color:var(--accent);font-weight:600">'+reviewedThisWeek+' / 10 this week</span></div>';
+  }
   if(curAdminTab==='queue'){
     const pending=DB.questions.filter(q=>q.status==='pending');
     c.innerHTML=pending.length?pending.map(q=>'<div class="card" style="margin-bottom:12px"><div class="qc-top"><span class="qc-author">'+(q.anon?'Anonymous':q.author)+'</span><span class="tag '+(({student:'t-student',resident:'t-resident',fellow:'t-fellow'})[q.role]||'')+'">'+q.role+'</span></div><span class="tag t-cat">'+q.cat+'</span><div class="qc-q" style="margin:10px 0">'+q.q+'</div><div style="font-size:11px;color:var(--text3);margin-bottom:12px">'+q.date+(q.wantsReview?' \u2022 \u2b50 Review Requested':'')+'</div>'+(q.ai?'<details style="margin-bottom:12px"><summary style="font-size:12px;color:var(--accent);cursor:pointer">View AI Draft</summary><div class="ai-resp" style="margin-top:8px;font-size:13px"><p>'+q.ai.diag+'</p></div></details>':'')+'<div class="abox"><textarea id="rev-'+q.id+'" placeholder="Add review commentary..."></textarea><div style="display:flex;align-items:center;gap:12px;margin-top:12px"><label style="font-size:12px;color:var(--text2);display:flex;align-items:center;gap:6px"><input type="checkbox" id="share-'+q.id+'" checked> Share in archive</label><div style="flex:1"></div><button class="btn btn-a btn-sm" onclick="publishReview('+q.id+')">Publish</button></div></div></div>').join(''):'<div style="text-align:center;padding:40px;color:var(--text3)">\u2705 All caught up!</div>';
@@ -933,14 +937,14 @@ function obComplete(){
   const p=obProfile;
   // Create user with trial
   const roleMap={premed:'student',student:'student',resident:'resident',fellow:'fellow',attending:'attending',switching:'other'};
-  const trialEnd=new Date();trialEnd.setDate(trialEnd.getDate()+7);
+  const trialEnd=new Date();trialEnd.setDate(trialEnd.getDate()+3);
   const user={id:'u'+DB.nextUserId++,name:p.name,email:p.email.toLowerCase(),pass:p.pass,role:roleMap[p.stage]||'student',tier:'core',trialEnd:trialEnd.toISOString().split('T')[0],institution:p.inst,usage:{ai:0,credits:0,month:new Date().getMonth()},profile:p};
   DB.users.push(user);saveDB();
   // Also create in Supabase
   if(_supaClient){_supaClient.auth.signUp({email:p.email.toLowerCase(),password:p.pass,options:{data:{name:p.name}}}).catch(()=>{})}
   U=user;localStorage.setItem('hw_session',JSON.stringify(U));
   enterApp();showDisc();
-  notify('Welcome! Your 7-day strategic access is active. ⚡');
+  notify('Welcome! Your 3-day strategic access is active. ⚡');
 }
 
 // ===== DISCLAIMER =====

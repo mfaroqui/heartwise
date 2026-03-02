@@ -585,6 +585,26 @@ function renderProfile(){
   document.getElementById('prof-plan-label').textContent=t.name+(U.tier==='free'?'':' \u2022 Active');
   document.getElementById('prof-plan-label').style.color=U.tier==='free'?'var(--text3)':'var(--accent)';
   renderProgressDashboard();
+  // Show admin tier switcher
+  var sw=document.getElementById('admin-tier-switcher');
+  if(sw){sw.classList.toggle('hidden',U.email.toLowerCase()!==AE.toLowerCase())}
+}
+
+function adminSwitchTier(tier){
+  if(!U||U.email.toLowerCase()!==AE.toLowerCase())return;
+  U.tier=tier;
+  var t=TIERS[tier]||TIERS.free;
+  U.usage.credits=t.credits||0;
+  var user=DB.users.find(function(u){return u.id===U.id});
+  if(user){user.tier=tier;user.usage=U.usage}
+  saveDB();localStorage.setItem('hw_session',JSON.stringify(U));
+  // Keep admin nav visible regardless of tier
+  document.getElementById('nav-admin').style.display='';
+  enterApp();
+  navTo('scr-profile');
+  var note=document.getElementById('admin-tier-note');
+  if(note)note.textContent=tier==='admin'?'Reset to full admin access.':'Now viewing as '+t.name+'. Admin panel still accessible.';
+  notify('Switched to '+t.name);
 }
 function showMyQ(){
   const mine=DB.questions.filter(q=>q.userId===U.id).slice().reverse();

@@ -1293,6 +1293,21 @@ a:hover{color:var(--accent2)}
 </div>
 </div>
 
+<!-- Admin Tier Switcher (only visible to admin) -->
+<div id="admin-tier-switcher" class="hidden" style="margin-bottom:20px">
+<div class="card" style="padding:20px;border-color:rgba(200,168,124,.2)">
+<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">🔧 Admin — Test As Tier</div>
+<p style="font-size:11px;color:var(--text3);margin-bottom:14px;line-height:1.5">Switch your view to simulate what each plan looks like. Admin features stay accessible.</p>
+<div style="display:flex;gap:8px;flex-wrap:wrap">
+<button class="btn btn-sm" onclick="adminSwitchTier('free')" style="font-size:11px;padding:8px 14px;border:1px solid var(--border);border-radius:6px;color:var(--text3)">Explorer</button>
+<button class="btn btn-sm" onclick="adminSwitchTier('core')" style="font-size:11px;padding:8px 14px;border:1px solid var(--accent);border-radius:6px;color:var(--accent)">Core</button>
+<button class="btn btn-sm" onclick="adminSwitchTier('elite')" style="font-size:11px;padding:8px 14px;border:1px solid var(--accent2);border-radius:6px;color:var(--accent2)">Elite</button>
+<button class="btn btn-sm" onclick="adminSwitchTier('admin')" style="font-size:11px;padding:8px 14px;border:1px solid var(--green);border-radius:6px;color:var(--green)">Admin (Reset)</button>
+</div>
+<div id="admin-tier-note" style="font-size:10px;color:var(--text3);margin-top:10px"></div>
+</div>
+</div>
+
 <div id="upgrade-section" class="hidden">
 <div id="sub-manage" class="hidden" style="margin-bottom:16px">
 <div class="card" style="padding:20px;border-color:rgba(200,168,124,.2)">
@@ -2533,6 +2548,26 @@ function renderProfile(){
   document.getElementById('prof-plan-label').textContent=t.name+(U.tier==='free'?'':' \u2022 Active');
   document.getElementById('prof-plan-label').style.color=U.tier==='free'?'var(--text3)':'var(--accent)';
   renderProgressDashboard();
+  // Show admin tier switcher
+  var sw=document.getElementById('admin-tier-switcher');
+  if(sw){sw.classList.toggle('hidden',U.email.toLowerCase()!==AE.toLowerCase())}
+}
+
+function adminSwitchTier(tier){
+  if(!U||U.email.toLowerCase()!==AE.toLowerCase())return;
+  U.tier=tier;
+  var t=TIERS[tier]||TIERS.free;
+  U.usage.credits=t.credits||0;
+  var user=DB.users.find(function(u){return u.id===U.id});
+  if(user){user.tier=tier;user.usage=U.usage}
+  saveDB();localStorage.setItem('hw_session',JSON.stringify(U));
+  // Keep admin nav visible regardless of tier
+  document.getElementById('nav-admin').style.display='';
+  enterApp();
+  navTo('scr-profile');
+  var note=document.getElementById('admin-tier-note');
+  if(note)note.textContent=tier==='admin'?'Reset to full admin access.':'Now viewing as '+t.name+'. Admin panel still accessible.';
+  notify('Switched to '+t.name);
 }
 function showMyQ(){
   const mine=DB.questions.filter(q=>q.userId===U.id).slice().reverse();

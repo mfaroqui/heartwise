@@ -411,6 +411,10 @@ function openFramework(id){
   if(!content){notify('Framework content loading...',1);return}
   document.getElementById('modal-q-content').innerHTML=content;
   document.getElementById('modal-q').classList.remove('hidden');
+  // Execute any inline scripts in the content
+  document.getElementById('modal-q-content').querySelectorAll('script').forEach(function(s){
+    try{eval(s.textContent)}catch(e){console.warn('Framework script error',e)}
+  });
 }
 
 // ===== PROFILE =====

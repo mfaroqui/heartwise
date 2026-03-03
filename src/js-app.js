@@ -516,34 +516,61 @@ function previewEliteFramework(id){
   var preview=ELITE_PREVIEWS[id];
   if(!preview)return;
   var h='<div style="position:relative">';
-  h+='<div style="text-align:center;margin-bottom:20px">';
-  h+='<div style="font-size:36px;margin-bottom:10px">'+preview.icon+'</div>';
-  h+='<h3 class="serif" style="font-size:20px;font-weight:600;margin-bottom:8px">'+preview.title+'</h3>';
-  h+='<span class="tag" style="color:var(--accent2);border-color:var(--accent2);font-size:10px">Elite Strategy Only</span>';
+  
+  // Hero header with gradient background
+  h+='<div style="text-align:center;padding:32px 20px;margin:-20px -20px 24px;background:linear-gradient(160deg,rgba(200,168,124,.1),rgba(200,168,124,.03));border-radius:12px 12px 0 0;border-bottom:1px solid rgba(200,168,124,.15)">';
+  h+='<div style="font-size:44px;margin-bottom:12px">'+preview.icon+'</div>';
+  h+='<h3 class="serif" style="font-size:22px;font-weight:600;margin-bottom:10px;color:var(--text)">'+preview.title+'</h3>';
+  h+='<div style="display:inline-block;padding:4px 12px;background:linear-gradient(135deg,var(--accent2),var(--accent));border-radius:20px;font-size:10px;font-weight:600;color:#0a0a0f;letter-spacing:.5px;text-transform:uppercase">Elite Strategy</div>';
   h+='</div>';
-  h+='<p style="font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:20px;text-align:center">'+preview.desc+'</p>';
-  // Section previews
-  h+='<div style="position:relative">';
+
+  h+='<p style="font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:24px;text-align:center">'+preview.desc+'</p>';
+
+  // What you get section
+  h+='<div style="margin-bottom:24px">';
+  h+='<div style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:14px">What\'s Inside</div>';
+  
   preview.sections.forEach(function(sec,i){
-    var fade=i>=2?'opacity:.5;':'';
-    h+='<div style="margin-bottom:14px;'+fade+'">';
-    h+='<div style="font-size:12px;font-weight:600;color:var(--accent);margin-bottom:8px">'+sec.name+'</div>';
+    var isBlurred=i>=2;
+    h+='<div style="margin-bottom:12px;padding:14px;background:var(--bg2);border-radius:10px;border:1px solid '+(isBlurred?'transparent':'rgba(200,168,124,.12)')+';'+(isBlurred?'filter:blur(2.5px);opacity:.4;user-select:none;pointer-events:none;':'transition:all .2s;')+'">';
+    h+='<div style="font-size:12px;font-weight:600;color:'+(isBlurred?'var(--text3)':'var(--accent)')+';margin-bottom:8px">'+sec.name+'</div>';
+    h+='<div style="display:flex;flex-wrap:wrap;gap:6px">';
     sec.items.forEach(function(item){
-      h+='<div style="display:flex;align-items:center;gap:8px;padding:6px 0">';
-      h+='<span style="color:var(--text3);font-size:10px">\u25CB</span>';
-      h+='<span style="font-size:12px;color:var(--text3)">'+item+'</span>';
-      h+='</div>';
+      h+='<span style="font-size:10px;padding:4px 10px;border-radius:20px;background:'+(isBlurred?'var(--bg)':'rgba(200,168,124,.06)')+';color:'+(isBlurred?'var(--text3)':'var(--text2)')+';border:1px solid '+(isBlurred?'transparent':'var(--border)')+'">'+item+'</span>';
     });
-    h+='</div>';
+    h+='</div></div>';
   });
-  // Fade overlay
-  h+='<div style="position:absolute;bottom:0;left:0;right:0;height:120px;background:linear-gradient(transparent,var(--bg));pointer-events:none"></div>';
   h+='</div>';
+
+  // Social proof / stats
+  h+='<div style="display:flex;gap:1px;margin-bottom:24px;border-radius:10px;overflow:hidden">';
+  if(id==='v9'){
+    h+='<div style="flex:1;background:var(--bg2);padding:14px;text-align:center"><div style="font-size:20px;font-weight:700;color:var(--accent)">20</div><div style="font-size:10px;color:var(--text3);margin-top:2px">Intake Fields</div></div>';
+    h+='<div style="flex:1;background:var(--bg2);padding:14px;text-align:center"><div style="font-size:20px;font-weight:700;color:var(--accent)">4</div><div style="font-size:10px;color:var(--text3);margin-top:2px">Strategic Sections</div></div>';
+    h+='<div style="flex:1;background:var(--bg2);padding:14px;text-align:center"><div style="font-size:20px;font-weight:700;color:var(--accent)">7d</div><div style="font-size:10px;color:var(--text3);margin-top:2px">Response Time</div></div>';
+  }else{
+    h+='<div style="flex:1;background:var(--bg2);padding:14px;text-align:center"><div style="font-size:20px;font-weight:700;color:var(--accent)">4</div><div style="font-size:10px;color:var(--text3);margin-top:2px">Decision Steps</div></div>';
+    h+='<div style="flex:1;background:var(--bg2);padding:14px;text-align:center"><div style="font-size:20px;font-weight:700;color:var(--accent)">\u2696\ufe0f</div><div style="font-size:10px;color:var(--text3);margin-top:2px">Pros & Cons AI</div></div>';
+    h+='<div style="flex:1;background:var(--bg2);padding:14px;text-align:center"><div style="font-size:20px;font-weight:700;color:var(--accent)">$</div><div style="font-size:10px;color:var(--text3);margin-top:2px">Cost Calculator</div></div>';
+  }
+  h+='</div>';
+
+  // Value proposition
+  h+='<div style="padding:16px;background:linear-gradient(135deg,rgba(200,168,124,.06),rgba(200,168,124,.02));border:1px solid rgba(200,168,124,.15);border-radius:10px;margin-bottom:20px">';
+  h+='<div style="font-size:12px;font-weight:600;color:var(--accent);margin-bottom:8px">\u2728 Why Elite members use this</div>';
+  if(id==='v9'){
+    h+='<p style="font-size:12px;color:var(--text2);line-height:1.7;margin:0">The Strategic Audit eliminates guesswork from career decisions. Instead of a vague email to a mentor, you get a structured analysis reviewed by a physician who\'s navigated these exact crossroads. Most members say it\'s the single most valuable tool on the platform.</p>';
+  }else{
+    h+='<p style="font-size:12px;color:var(--text2);line-height:1.7;margin:0">Career pivots carry six-figure consequences. This engine walks you through the financial, emotional, and strategic dimensions before you make a move \u2014 then sends your complete analysis to Dr. Faroqui for a reality check. No other platform offers this.</p>';
+  }
+  h+='</div>';
+
   // CTA
-  h+='<div style="text-align:center;padding-top:10px">';
-  h+='<p style="font-size:13px;color:var(--text2);margin-bottom:14px">Upgrade to Elite Strategy to unlock this tool and submit directly to Dr. Faroqui.</p>';
-  h+='<button class="btn btn-a" onclick="closeModal(\'modal-q\');navTo(\'scr-profile\');showUpgrade()" style="max-width:260px;margin:0 auto">Upgrade to Elite \u2192</button>';
+  h+='<div style="text-align:center">';
+  h+='<button class="btn btn-a" onclick="closeModal(\'modal-q\');navTo(\'scr-profile\');showUpgrade()" style="width:100%;padding:14px;font-size:14px;font-weight:600">Unlock Elite Strategy \u2014 $99/mo</button>';
+  h+='<p style="font-size:11px;color:var(--text3);margin-top:10px">Includes 2 physician review credits, all frameworks, and direct access to Dr. Faroqui.</p>';
   h+='</div></div>';
+  
   document.getElementById('modal-q-content').innerHTML=h;
   document.getElementById('modal-q').classList.remove('hidden');
 }

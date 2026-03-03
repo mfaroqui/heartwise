@@ -297,6 +297,19 @@ function renderHome(){
   const thisWeek=reviewed.filter(q=>(q.reviewDate||q.date)>=weekStr);
   const featured=thisWeek.length>=3?thisWeek.slice(0,5):reviewed.slice(0,5);
   document.getElementById('home-feed').innerHTML=featured.length?featured.map(renderQCard).join(''):'<div style="text-align:center;padding:40px;color:var(--text3)"><p>No reviewed questions yet.</p></div>';
+  // Animate How It Works steps on scroll
+  setTimeout(function(){
+    var steps=document.querySelectorAll('.hiw-step');
+    if(!steps.length)return;
+    if('IntersectionObserver' in window){
+      var obs=new IntersectionObserver(function(entries){
+        entries.forEach(function(e){if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target)}});
+      },{threshold:0.2});
+      steps.forEach(function(s){obs.observe(s)});
+    }else{
+      steps.forEach(function(s){s.classList.add('visible')});
+    }
+  },100);
 }
 
 function renderQCard(q){

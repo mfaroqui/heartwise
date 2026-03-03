@@ -1756,3 +1756,187 @@ async function submitAudit(){
   document.getElementById('audit-success').classList.remove('hidden');
   notify('Strategic audit submitted!');
 }
+
+// ===== CAREER PIVOT DECISION ENGINE =====
+var PIVOT_PROS_CONS={
+  specialty:{
+    title:'The Specialty Itself',
+    pros:['Clear signal that a pivot may be warranted','You\'ve given the field a fair shot and can speak to it honestly','Transferable clinical skills remain valuable in adjacent specialties'],
+    cons:['Full pivot is the most expensive and time-consuming option','Sunk cost of training years can create psychological resistance','May need to repeat fellowship or complete additional residency']
+  },
+  setting:{
+    title:'The Practice Setting',
+    pros:['Easiest to fix — same skills, different environment','No additional training typically required','Can test quickly (locum tenens, moonlighting, telemedicine)'],
+    cons:['Risk of carrying the same patterns to a new setting','May need to relocate or accept different compensation','Cultural issues can exist across settings in the same specialty']
+  },
+  job:{
+    title:'The Specific Job / Employer',
+    pros:['Most common and most fixable root cause','Job change within specialty preserves all your training investment','Often leads to significant improvement in satisfaction and compensation'],
+    cons:['May take 6-12 months to find the right replacement position','Non-compete clauses can limit local options','Risk of "grass is greener" thinking if the issue is deeper']
+  },
+  burnout:{
+    title:'Burnout',
+    pros:['Recognition is the first step — most physicians ignore this for years','Treatable with targeted interventions (therapy, boundaries, time off)','Often improves significantly without any career change'],
+    cons:['Burnout distorts all decision-making — high risk of impulsive pivots','Can mask underlying structural misalignment','Recovery timeline is unpredictable (months to years)']
+  }
+};
+
+var PIVOT_BURNOUT_FEEDBACK={
+  burnout:{
+    title:'Likely Burned Out',
+    msg:'If you used to love this work and now feel exhausted or detached, burnout is the most likely explanation. Before making any career moves: take time off if possible, establish firm boundaries, and consider working with a therapist who understands physician burnout. Decisions made during burnout are often regretted.'
+  },
+  misaligned:{
+    title:'Possible Structural Misalignment',
+    msg:'If this field never felt right, the issue is likely structural rather than situational. This is a stronger signal that a pivot may be warranted. Focus on Step 2 to map your options carefully and Step 3 to ensure financial readiness.'
+  },
+  unsure:{
+    title:'Unclear — Needs More Data',
+    msg:'This is common and honest. Try this: take 2 weeks of vacation (real vacation, no email). If you dread coming back, it\'s likely misalignment. If you feel recharged and ready, it\'s likely burnout. Don\'t make permanent decisions based on temporary feelings.'
+  }
+};
+
+function pivotSelect(el,group){
+  // Highlight selected option
+  var container=document.getElementById(group);
+  if(container){
+    container.querySelectorAll('label').forEach(function(l){l.style.borderColor='var(--border)';l.style.background='var(--bg2)'});
+    el.style.borderColor='var(--accent)';el.style.background='rgba(200,168,124,.08)';
+  }
+  var val=el.querySelector('input').value;
+  var fb=document.getElementById(group+'-feedback');
+  if(!fb)return;
+
+  if(group==='pivot-cause'&&PIVOT_PROS_CONS[val]){
+    var data=PIVOT_PROS_CONS[val];
+    var h='<div style="padding:14px;background:rgba(200,168,124,.04);border:1px solid rgba(200,168,124,.15);border-radius:8px;animation:fadeIn .3s">';
+    h+='<div style="font-size:12px;font-weight:600;color:var(--accent);margin-bottom:10px">'+data.title+'</div>';
+    h+='<div style="display:flex;gap:12px;flex-wrap:wrap">';
+    h+='<div style="flex:1;min-width:140px"><div style="font-size:10px;font-weight:600;color:var(--green);margin-bottom:6px">PROS</div>';
+    data.pros.forEach(function(p){h+='<div style="font-size:11px;color:var(--text2);line-height:1.5;padding:2px 0">+ '+p+'</div>'});
+    h+='</div>';
+    h+='<div style="flex:1;min-width:140px"><div style="font-size:10px;font-weight:600;color:var(--red);margin-bottom:6px">CONS</div>';
+    data.cons.forEach(function(c){h+='<div style="font-size:11px;color:var(--text2);line-height:1.5;padding:2px 0">\u2013 '+c+'</div>'});
+    h+='</div></div></div>';
+    fb.innerHTML=h;
+  }
+  if(group==='pivot-burnout'&&PIVOT_BURNOUT_FEEDBACK[val]){
+    var d=PIVOT_BURNOUT_FEEDBACK[val];
+    fb.innerHTML='<div style="padding:12px;background:rgba(200,168,124,.04);border:1px solid rgba(200,168,124,.15);border-radius:8px;animation:fadeIn .3s"><div style="font-size:12px;font-weight:600;color:var(--accent);margin-bottom:6px">'+d.title+'</div><p style="font-size:11px;color:var(--text2);line-height:1.6;margin:0">'+d.msg+'</p></div>';
+  }
+  if(group==='pivot-regret'){
+    if(val==='yes'){
+      fb.innerHTML='<div style="padding:10px;background:rgba(200,168,124,.04);border-radius:6px;font-size:11px;color:var(--text2);line-height:1.5;animation:fadeIn .3s"><strong style="color:var(--accent)">That\'s a strong signal.</strong> Regret avoidance is one of the most reliable decision-making heuristics. If the financial reality supports it, this pivot deserves serious consideration.</div>';
+    }else{
+      fb.innerHTML='<div style="padding:10px;background:rgba(200,168,124,.04);border-radius:6px;font-size:11px;color:var(--text2);line-height:1.5;animation:fadeIn .3s"><strong style="color:var(--accent)">Good to know.</strong> If you won\'t regret staying, consider whether smaller adjustments (setting change, boundary changes, role modification) could address your dissatisfaction without a full pivot.</div>';
+    }
+  }
+}
+
+function pivotCalcAvg(){
+  var rows=['stay','adj','full','hyb'];
+  var dims=['f','i','t','s'];
+  var best='';var bestAvg=0;
+  var labels={stay:'Stay + Modify',adj:'Adjacent Pivot',full:'Full Pivot',hyb:'Hybrid'};
+  rows.forEach(function(r){
+    var sum=0;var count=0;
+    dims.forEach(function(d){
+      var v=parseInt(document.getElementById('pv-'+r+'-'+d).value);
+      if(v){sum+=v;count++}
+    });
+    var avg=count===4?(sum/4).toFixed(1):'\u2014';
+    document.getElementById('pv-'+r+'-avg').textContent=avg;
+    if(count===4&&parseFloat(avg)>bestAvg){bestAvg=parseFloat(avg);best=r}
+  });
+  var rec=document.getElementById('pivot-recommendation');
+  if(best&&rec){
+    var color=bestAvg>=4?'var(--green)':bestAvg>=3?'var(--accent)':'var(--text3)';
+    rec.innerHTML='<div style="padding:10px;background:rgba(200,168,124,.04);border-radius:6px;font-size:12px;color:var(--text2);line-height:1.5"><strong style="color:'+color+'">Highest rated: '+labels[best]+' ('+bestAvg.toFixed(1)+'/5.0)</strong></div>';
+  }
+}
+
+function pivotCalcTraining(){
+  var yrs=parseFloat(document.getElementById('pivot-train-yrs').value)||0;
+  var tuition=parseFloat(document.getElementById('pivot-train-cost').value)||0;
+  var salary=parseFloat(document.getElementById('pivot-train-salary').value)||0;
+  var stipend=parseFloat(document.getElementById('pivot-train-stipend').value)||0;
+  if(yrs===0){document.getElementById('pivot-train-result').innerHTML='<span style="font-size:12px;color:var(--text3)">Enter values above to calculate total cost</span>';return}
+  var directCost=yrs*tuition;
+  var opportunityCost=yrs*(salary-stipend);
+  var totalCost=directCost+Math.max(0,opportunityCost);
+  var el=document.getElementById('pivot-train-result');
+  var h='<div style="font-size:11px;color:var(--text2);line-height:1.8;text-align:left">';
+  h+='<div style="display:flex;justify-content:space-between"><span>Direct cost (tuition \u00d7 '+yrs+'yr)</span><strong>$'+directCost.toLocaleString()+'</strong></div>';
+  h+='<div style="display:flex;justify-content:space-between"><span>Opportunity cost (lost salary \u2013 stipend)</span><strong>$'+Math.max(0,opportunityCost).toLocaleString()+'</strong></div>';
+  h+='<div style="display:flex;justify-content:space-between;padding-top:6px;border-top:1px solid var(--border);margin-top:6px"><span style="font-weight:600">Total cost of transition</span><strong style="color:var(--accent);font-size:14px">$'+totalCost.toLocaleString()+'</strong></div>';
+  h+='</div>';
+  el.innerHTML=h;
+}
+
+async function submitPivot(){
+  var report='=== CAREER PIVOT DECISION ENGINE REPORT ===\n\n';
+  // Step 1
+  var cause=document.querySelector('input[name="pivot-cause"]:checked');
+  report+='STEP 1: DIAGNOSE THE DISSATISFACTION\n';
+  report+='Core Issue: '+(cause?PIVOT_PROS_CONS[cause.value].title:'Not selected')+'\n';
+  report+='What they dislike: '+(document.getElementById('pivot-1a').value.trim()||'Not answered')+'\n';
+  report+='Same specialty different setting: '+(document.getElementById('pivot-1b').value.trim()||'Not answered')+'\n';
+  var burnout=document.querySelector('input[name="pivot-burnout"]:checked');
+  report+='Burnout vs Misaligned: '+(burnout?burnout.value:'Not selected')+'\n\n';
+  // Step 2
+  report+='STEP 2: MAP THE OPTIONS\n';
+  var rows=['stay','adj','full','hyb'];
+  var labels={stay:'Stay + Modify',adj:'Adjacent Pivot',full:'Full Pivot',hyb:'Hybrid'};
+  var dims=['f','i','t','s'];var dimLabels=['Feasibility','Financial','Timeline','Satisfaction'];
+  rows.forEach(function(r){
+    var vals=[];
+    dims.forEach(function(d,i){
+      var v=document.getElementById('pv-'+r+'-'+d).value;
+      vals.push(dimLabels[i]+': '+(v||'-'));
+    });
+    var avg=document.getElementById('pv-'+r+'-avg').textContent;
+    report+=labels[r]+': '+vals.join(', ')+' (Avg: '+avg+')\n';
+  });
+  report+='\n';
+  // Step 3
+  report+='STEP 3: FINANCIAL REALITY CHECK\n';
+  report+='Debt/obligations: '+(document.getElementById('pivot-3a').value.trim()||'Not answered')+'\n';
+  report+='Sustain reduced income: '+(document.getElementById('pivot-3b').value.trim()||'Not answered')+'\n';
+  report+='Comparable earning potential: '+(document.getElementById('pivot-3c').value.trim()||'Not answered')+'\n';
+  var yrs=document.getElementById('pivot-train-yrs').value;
+  var cost=document.getElementById('pivot-train-cost').value;
+  var sal=document.getElementById('pivot-train-salary').value;
+  var stip=document.getElementById('pivot-train-stipend').value;
+  if(parseFloat(yrs)>0){
+    var total=(parseFloat(yrs)*parseFloat(cost))+(parseFloat(yrs)*Math.max(0,parseFloat(sal)-parseFloat(stip)));
+    report+='Training cost estimate: $'+Math.round(total).toLocaleString()+' ('+yrs+' yrs, $'+cost+' tuition, $'+sal+' lost salary, $'+stip+' stipend)\n';
+  }
+  report+='Emergency fund: '+(document.getElementById('pivot-3d').value.trim()||'Not answered')+'\n\n';
+  // Step 4
+  report+='STEP 4: TEST BEFORE COMMITTING\n';
+  var checks=['Shadow new role','Informational interviews (3+)','Side project / moonlighting','Decision deadline set'];
+  for(var i=1;i<=4;i++){
+    report+=checks[i-1]+': '+(document.getElementById('pv-check-'+i).checked?'\u2705 Yes':'\u274c No')+'\n';
+  }
+  var regret=document.querySelector('input[name="pivot-regret"]:checked');
+  report+='Will regret not trying in 5 years: '+(regret?regret.value.toUpperCase():'Not answered')+'\n';
+
+  var payload={
+    user_name:U?U.name:'Unknown',
+    user_email:U?U.email:'Unknown',
+    type:'pivot-report',
+    message:report,
+    date:new Date().toISOString(),
+    read:false,
+    replies:[]
+  };
+  if(!DB.messages)DB.messages=[];
+  DB.messages.push(payload);
+  saveDB();
+  if(_supaClient){
+    try{await _supaClient.from('messages').insert([payload])}catch(ex){console.warn('Pivot sync error',ex)}
+  }
+  document.getElementById('pivot-form').classList.add('hidden');
+  document.getElementById('pivot-success').classList.remove('hidden');
+  notify('Decision Engine report submitted!');
+}

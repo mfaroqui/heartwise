@@ -432,16 +432,117 @@ v9:`<h3>Strategic Audit Template</h3>
 </div>`,
 
 v10:`<h3>Career Pivot Decision Engine</h3>
-<p style="color:var(--text3);font-size:12px;margin-bottom:16px">Structured framework for evaluating specialty switches, practice model changes, or non-clinical transitions.</p>
-<div style="font-size:12px">
-<div style="padding:14px;background:var(--bg2);border-radius:8px;margin-bottom:10px">
-<strong style="color:var(--accent)">Step 1: Diagnose the Dissatisfaction</strong><br><span style="color:var(--text2);line-height:1.8">Before pivoting, identify what's actually wrong. Is it the specialty, the practice setting, the specific job, or burnout? Changing specialties when the real problem is a toxic workplace is expensive and unnecessary.<br>• What specifically do you dislike?<br>• Would the same specialty in a different setting fix it?<br>• Are you burned out (temporary) or misaligned (structural)?</span></div>
-<div style="padding:14px;background:var(--bg2);border-radius:8px;margin-bottom:10px">
-<strong style="color:var(--accent)">Step 2: Map the Options</strong><br><span style="color:var(--text2);line-height:1.8">• Stay + modify (different role, different employer, part-time)<br>• Adjacent pivot (same training, different practice model)<br>• Full pivot (new specialty, non-clinical, industry, consulting)<br>• Hybrid (clinical + non-clinical income streams)<br>Rate each on: feasibility, financial impact, timeline, satisfaction potential</span></div>
-<div style="padding:14px;background:var(--bg2);border-radius:8px;margin-bottom:10px">
-<strong style="color:var(--accent)">Step 3: Financial Reality Check</strong><br><span style="color:var(--text2);line-height:1.8">• What's your current debt load and monthly obligations?<br>• How long can you sustain reduced income during transition?<br>• Does the new path have comparable earning potential long-term?<br>• What's the cost of additional training (time + money)?<br>• Do you have 6-12 months of expenses saved?</span></div>
-<div style="padding:14px;background:var(--bg2);border-radius:8px">
-<strong style="color:var(--accent)">Step 4: Test Before Committing</strong><br><span style="color:var(--text2);line-height:1.8">• Shadow someone in the new role for a week<br>• Do informational interviews with 3+ people who made a similar pivot<br>• Try a side project or moonlighting in the new area<br>• Set a decision deadline — analysis paralysis is its own trap<br>• <strong>Key question: In 5 years, will you regret not trying?</strong></span></div>
+<p style="color:var(--text3);font-size:12px;margin-bottom:20px">Work through each step. Your answers are compiled into a report and sent directly to Dr. Faroqui for strategic review.</p>
+<div style="font-size:12px" id="pivot-form">
+
+<!-- STEP 1 -->
+<div style="margin-bottom:24px">
+<div style="font-size:13px;font-weight:600;color:var(--accent);margin-bottom:4px">Step 1: Diagnose the Dissatisfaction</div>
+<p style="font-size:11px;color:var(--text3);margin-bottom:14px;line-height:1.5">Before pivoting, identify what's actually wrong. Changing specialties when the real problem is a toxic workplace is expensive and unnecessary.</p>
+
+<div style="margin-bottom:14px">
+<label style="display:block;font-size:11px;color:var(--text3);margin-bottom:6px">What is the core issue?</label>
+<div id="pivot-cause" style="display:flex;flex-direction:column;gap:6px">
+<label style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;cursor:pointer" onclick="pivotSelect(this,'pivot-cause')"><input type="radio" name="pivot-cause" value="specialty" style="accent-color:var(--accent)"> <span>The specialty itself</span></label>
+<label style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;cursor:pointer" onclick="pivotSelect(this,'pivot-cause')"><input type="radio" name="pivot-cause" value="setting" style="accent-color:var(--accent)"> <span>The practice setting</span></label>
+<label style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;cursor:pointer" onclick="pivotSelect(this,'pivot-cause')"><input type="radio" name="pivot-cause" value="job" style="accent-color:var(--accent)"> <span>The specific job / employer</span></label>
+<label style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;cursor:pointer" onclick="pivotSelect(this,'pivot-cause')"><input type="radio" name="pivot-cause" value="burnout" style="accent-color:var(--accent)"> <span>Burnout</span></label>
 </div>
-<div style="padding:16px;background:var(--bg2);border-radius:8px;margin-top:12px"><p style="font-size:12px;color:var(--text2);line-height:1.6;margin:0"><strong>Important:</strong> Do not make major career pivots while actively burned out. Stabilize first (therapy, time off, boundary changes), then evaluate with a clear mind. Burnout distorts decision-making.</p></div>`
+<div id="pivot-cause-feedback" style="margin-top:8px"></div>
+</div>
+
+<div style="margin-bottom:14px"><label style="display:block;font-size:11px;color:var(--text3);margin-bottom:4px">What specifically do you dislike?</label><textarea id="pivot-1a" rows="3" placeholder="Be specific — what drains you, frustrates you, or feels wrong..." style="width:100%;font-family:inherit;font-size:12px;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);resize:vertical"></textarea></div>
+
+<div style="margin-bottom:14px"><label style="display:block;font-size:11px;color:var(--text3);margin-bottom:4px">Would the same specialty in a different setting fix it?</label><textarea id="pivot-1b" rows="2" placeholder="Think about the specialty vs. the environment..." style="width:100%;font-family:inherit;font-size:12px;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);resize:vertical"></textarea></div>
+
+<div style="margin-bottom:14px">
+<label style="display:block;font-size:11px;color:var(--text3);margin-bottom:6px">Are you burned out (temporary) or misaligned (structural)?</label>
+<div id="pivot-burnout" style="display:flex;flex-direction:column;gap:6px">
+<label style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;cursor:pointer" onclick="pivotSelect(this,'pivot-burnout')"><input type="radio" name="pivot-burnout" value="burnout" style="accent-color:var(--accent)"> <span>Burned out — I used to love this, now I'm exhausted</span></label>
+<label style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;cursor:pointer" onclick="pivotSelect(this,'pivot-burnout')"><input type="radio" name="pivot-burnout" value="misaligned" style="accent-color:var(--accent)"> <span>Misaligned — this was never the right fit</span></label>
+<label style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;cursor:pointer" onclick="pivotSelect(this,'pivot-burnout')"><input type="radio" name="pivot-burnout" value="unsure" style="accent-color:var(--accent)"> <span>Not sure — hard to tell right now</span></label>
+</div>
+<div id="pivot-burnout-feedback" style="margin-top:8px"></div>
+</div>
+</div>
+
+<!-- STEP 2 -->
+<div style="margin-bottom:24px">
+<div style="font-size:13px;font-weight:600;color:var(--accent);margin-bottom:4px">Step 2: Map the Options</div>
+<p style="font-size:11px;color:var(--text3);margin-bottom:14px;line-height:1.5">Rate each option 1-5 across four dimensions. Higher = better.</p>
+<div style="overflow-x:auto">
+<table style="width:100%;border-collapse:collapse;font-size:11px;min-width:340px">
+<thead><tr style="border-bottom:2px solid var(--border)">
+<th style="text-align:left;padding:8px 6px;color:var(--text3)">Option</th>
+<th style="text-align:center;padding:8px 4px;color:var(--text3);font-size:10px">Feasibility</th>
+<th style="text-align:center;padding:8px 4px;color:var(--text3);font-size:10px">Financial</th>
+<th style="text-align:center;padding:8px 4px;color:var(--text3);font-size:10px">Timeline</th>
+<th style="text-align:center;padding:8px 4px;color:var(--text3);font-size:10px">Satisfaction</th>
+<th style="text-align:center;padding:8px 4px;color:var(--accent);font-size:10px;font-weight:600">Avg</th>
+</tr></thead>
+<tbody>
+<tr style="border-bottom:1px solid var(--border)"><td style="padding:8px 6px;font-weight:500">Stay + Modify</td><td style="text-align:center;padding:4px"><select id="pv-stay-f" onchange="pivotCalcAvg()" style="width:44px;font-size:11px;padding:4px;border:1px solid var(--border);border-radius:4px;background:var(--bg2);color:var(--text)"><option value="">-</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td><td style="text-align:center;padding:4px"><select id="pv-stay-i" onchange="pivotCalcAvg()" style="width:44px;font-size:11px;padding:4px;border:1px solid var(--border);border-radius:4px;background:var(--bg2);color:var(--text)"><option value="">-</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td><td style="text-align:center;padding:4px"><select id="pv-stay-t" onchange="pivotCalcAvg()" style="width:44px;font-size:11px;padding:4px;border:1px solid var(--border);border-radius:4px;background:var(--bg2);color:var(--text)"><option value="">-</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td><td style="text-align:center;padding:4px"><select id="pv-stay-s" onchange="pivotCalcAvg()" style="width:44px;font-size:11px;padding:4px;border:1px solid var(--border);border-radius:4px;background:var(--bg2);color:var(--text)"><option value="">-</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td><td style="text-align:center;padding:4px;font-weight:600;color:var(--accent)" id="pv-stay-avg">\u2014</td></tr>
+<tr style="border-bottom:1px solid var(--border)"><td style="padding:8px 6px;font-weight:500">Adjacent Pivot</td><td style="text-align:center;padding:4px"><select id="pv-adj-f" onchange="pivotCalcAvg()" style="width:44px;font-size:11px;padding:4px;border:1px solid var(--border);border-radius:4px;background:var(--bg2);color:var(--text)"><option value="">-</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td><td style="text-align:center;padding:4px"><select id="pv-adj-i" onchange="pivotCalcAvg()" style="width:44px;font-size:11px;padding:4px;border:1px solid var(--border);border-radius:4px;background:var(--bg2);color:var(--text)"><option value="">-</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td><td style="text-align:center;padding:4px"><select id="pv-adj-t" onchange="pivotCalcAvg()" style="width:44px;font-size:11px;padding:4px;border:1px solid var(--border);border-radius:4px;background:var(--bg2);color:var(--text)"><option value="">-</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td><td style="text-align:center;padding:4px"><select id="pv-adj-s" onchange="pivotCalcAvg()" style="width:44px;font-size:11px;padding:4px;border:1px solid var(--border);border-radius:4px;background:var(--bg2);color:var(--text)"><option value="">-</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td><td style="text-align:center;padding:4px;font-weight:600;color:var(--accent)" id="pv-adj-avg">\u2014</td></tr>
+<tr style="border-bottom:1px solid var(--border)"><td style="padding:8px 6px;font-weight:500">Full Pivot</td><td style="text-align:center;padding:4px"><select id="pv-full-f" onchange="pivotCalcAvg()" style="width:44px;font-size:11px;padding:4px;border:1px solid var(--border);border-radius:4px;background:var(--bg2);color:var(--text)"><option value="">-</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td><td style="text-align:center;padding:4px"><select id="pv-full-i" onchange="pivotCalcAvg()" style="width:44px;font-size:11px;padding:4px;border:1px solid var(--border);border-radius:4px;background:var(--bg2);color:var(--text)"><option value="">-</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td><td style="text-align:center;padding:4px"><select id="pv-full-t" onchange="pivotCalcAvg()" style="width:44px;font-size:11px;padding:4px;border:1px solid var(--border);border-radius:4px;background:var(--bg2);color:var(--text)"><option value="">-</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td><td style="text-align:center;padding:4px"><select id="pv-full-s" onchange="pivotCalcAvg()" style="width:44px;font-size:11px;padding:4px;border:1px solid var(--border);border-radius:4px;background:var(--bg2);color:var(--text)"><option value="">-</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td><td style="text-align:center;padding:4px;font-weight:600;color:var(--accent)" id="pv-full-avg">\u2014</td></tr>
+<tr><td style="padding:8px 6px;font-weight:500">Hybrid</td><td style="text-align:center;padding:4px"><select id="pv-hyb-f" onchange="pivotCalcAvg()" style="width:44px;font-size:11px;padding:4px;border:1px solid var(--border);border-radius:4px;background:var(--bg2);color:var(--text)"><option value="">-</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td><td style="text-align:center;padding:4px"><select id="pv-hyb-i" onchange="pivotCalcAvg()" style="width:44px;font-size:11px;padding:4px;border:1px solid var(--border);border-radius:4px;background:var(--bg2);color:var(--text)"><option value="">-</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td><td style="text-align:center;padding:4px"><select id="pv-hyb-t" onchange="pivotCalcAvg()" style="width:44px;font-size:11px;padding:4px;border:1px solid var(--border);border-radius:4px;background:var(--bg2);color:var(--text)"><option value="">-</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td><td style="text-align:center;padding:4px"><select id="pv-hyb-s" onchange="pivotCalcAvg()" style="width:44px;font-size:11px;padding:4px;border:1px solid var(--border);border-radius:4px;background:var(--bg2);color:var(--text)"><option value="">-</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td><td style="text-align:center;padding:4px;font-weight:600;color:var(--accent)" id="pv-hyb-avg">\u2014</td></tr>
+</tbody></table></div>
+<div id="pivot-recommendation" style="margin-top:10px"></div>
+</div>
+
+<!-- STEP 3 -->
+<div style="margin-bottom:24px">
+<div style="font-size:13px;font-weight:600;color:var(--accent);margin-bottom:4px">Step 3: Financial Reality Check</div>
+<p style="font-size:11px;color:var(--text3);margin-bottom:14px;line-height:1.5">Honest numbers only. This section protects you from emotional decisions.</p>
+<div style="margin-bottom:10px"><label style="display:block;font-size:11px;color:var(--text3);margin-bottom:4px">What's your current debt load and monthly obligations?</label><textarea id="pivot-3a" rows="2" placeholder="e.g. $280K student loans, $3,200/mo minimum payments, $1,800 rent..." style="width:100%;font-family:inherit;font-size:12px;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);resize:vertical"></textarea></div>
+<div style="margin-bottom:10px"><label style="display:block;font-size:11px;color:var(--text3);margin-bottom:4px">How long can you sustain reduced income during transition?</label><textarea id="pivot-3b" rows="2" placeholder="e.g. 6 months with current savings, partner income covers basics..." style="width:100%;font-family:inherit;font-size:12px;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);resize:vertical"></textarea></div>
+<div style="margin-bottom:10px"><label style="display:block;font-size:11px;color:var(--text3);margin-bottom:4px">Does the new path have comparable earning potential long-term?</label><textarea id="pivot-3c" rows="2" placeholder="Compare current vs. projected income at 5 and 10 years..." style="width:100%;font-family:inherit;font-size:12px;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);resize:vertical"></textarea></div>
+<div style="margin-bottom:14px">
+<label style="display:block;font-size:11px;color:var(--text3);margin-bottom:6px">Training Cost Calculator</label>
+<div style="padding:14px;background:var(--bg2);border-radius:8px;border:1px solid var(--border)">
+<div style="display:flex;gap:10px;margin-bottom:8px;flex-wrap:wrap">
+<div style="flex:1;min-width:130px"><label style="font-size:10px;color:var(--text3)">Additional training (years)</label><input type="number" id="pivot-train-yrs" value="0" min="0" max="10" step="1" oninput="pivotCalcTraining()" style="width:100%;font-size:12px;padding:8px;border:1px solid var(--border);border-radius:6px;background:var(--bg);color:var(--text);margin-top:4px"></div>
+<div style="flex:1;min-width:130px"><label style="font-size:10px;color:var(--text3)">Tuition / fees per year ($)</label><input type="number" id="pivot-train-cost" value="0" min="0" step="1000" oninput="pivotCalcTraining()" style="width:100%;font-size:12px;padding:8px;border:1px solid var(--border);border-radius:6px;background:var(--bg);color:var(--text);margin-top:4px"></div>
+</div>
+<div style="display:flex;gap:10px;margin-bottom:10px;flex-wrap:wrap">
+<div style="flex:1;min-width:130px"><label style="font-size:10px;color:var(--text3)">Lost salary per year ($)</label><input type="number" id="pivot-train-salary" value="0" min="0" step="5000" oninput="pivotCalcTraining()" style="width:100%;font-size:12px;padding:8px;border:1px solid var(--border);border-radius:6px;background:var(--bg);color:var(--text);margin-top:4px"></div>
+<div style="flex:1;min-width:130px"><label style="font-size:10px;color:var(--text3)">Stipend / income during ($)</label><input type="number" id="pivot-train-stipend" value="0" min="0" step="5000" oninput="pivotCalcTraining()" style="width:100%;font-size:12px;padding:8px;border:1px solid var(--border);border-radius:6px;background:var(--bg);color:var(--text);margin-top:4px"></div>
+</div>
+<div id="pivot-train-result" style="padding:10px;background:var(--bg);border-radius:6px;text-align:center"><span style="font-size:12px;color:var(--text3)">Enter values above to calculate total cost</span></div>
+</div></div>
+<div style="margin-bottom:10px"><label style="display:block;font-size:11px;color:var(--text3);margin-bottom:4px">Do you have 6-12 months of expenses saved?</label><textarea id="pivot-3d" rows="2" placeholder="Current emergency fund status..." style="width:100%;font-family:inherit;font-size:12px;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);resize:vertical"></textarea></div>
+</div>
+
+<!-- STEP 4 -->
+<div style="margin-bottom:24px">
+<div style="font-size:13px;font-weight:600;color:var(--accent);margin-bottom:4px">Step 4: Test Before Committing</div>
+<p style="font-size:11px;color:var(--text3);margin-bottom:14px;line-height:1.5">Check off the validation steps you've completed or plan to complete.</p>
+<div style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px">
+<label style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;cursor:pointer"><input type="checkbox" id="pv-check-1" style="accent-color:var(--accent)"> <span style="font-size:12px;color:var(--text2)">Shadow someone in the new role for a week</span></label>
+<label style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;cursor:pointer"><input type="checkbox" id="pv-check-2" style="accent-color:var(--accent)"> <span style="font-size:12px;color:var(--text2)">Informational interviews with 3+ people who made a similar pivot</span></label>
+<label style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;cursor:pointer"><input type="checkbox" id="pv-check-3" style="accent-color:var(--accent)"> <span style="font-size:12px;color:var(--text2)">Try a side project or moonlighting in the new area</span></label>
+<label style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;cursor:pointer"><input type="checkbox" id="pv-check-4" style="accent-color:var(--accent)"> <span style="font-size:12px;color:var(--text2)">Set a decision deadline (no analysis paralysis)</span></label>
+</div>
+<div style="margin-bottom:14px">
+<label style="display:block;font-size:12px;font-weight:500;color:var(--text);margin-bottom:8px">Key question: In 5 years, will you regret not trying?</label>
+<div style="display:flex;gap:8px">
+<label style="flex:1;display:flex;align-items:center;justify-content:center;gap:8px;padding:12px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;cursor:pointer;text-align:center" onclick="pivotSelect(this,'pivot-regret')"><input type="radio" name="pivot-regret" value="yes" style="accent-color:var(--accent)"> <span style="font-size:13px;font-weight:500">Yes</span></label>
+<label style="flex:1;display:flex;align-items:center;justify-content:center;gap:8px;padding:12px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;cursor:pointer;text-align:center" onclick="pivotSelect(this,'pivot-regret')"><input type="radio" name="pivot-regret" value="no" style="accent-color:var(--accent)"> <span style="font-size:13px;font-weight:500">No</span></label>
+</div>
+<div id="pivot-regret-feedback" style="margin-top:8px"></div>
+</div>
+</div>
+
+<div style="padding:14px;background:var(--bg2);border-radius:8px;margin-bottom:20px"><p style="font-size:12px;color:var(--text2);line-height:1.6;margin:0"><strong>Important:</strong> Do not make major career pivots while actively burned out. Stabilize first (therapy, time off, boundary changes), then evaluate with a clear mind.</p></div>
+
+<div style="padding-top:20px;border-top:1px solid var(--border)">
+<button class="btn btn-a" onclick="submitPivot()" style="width:100%;padding:14px">Submit Decision Engine Report \u2192</button>
+<p style="font-size:10px;color:var(--text3);margin-top:10px;text-align:center">Your complete report will be sent to Dr. Faroqui for strategic review.</p>
+</div>
+</div>
+
+<div id="pivot-success" class="hidden" style="text-align:center;padding:40px 20px">
+<div style="font-size:48px;margin-bottom:16px">\u2713</div>
+<h3 class="serif" style="font-size:20px;margin-bottom:8px">Report Submitted</h3>
+<p style="font-size:13px;color:var(--text2);line-height:1.6">Your Career Pivot Decision Engine report has been sent to Dr. Faroqui for review.</p>
+</div>`
 };

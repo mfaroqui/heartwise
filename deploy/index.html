@@ -2650,7 +2650,15 @@ function renderVault(){
   document.getElementById('vault-list').innerHTML=VAULT_ITEMS.map(v=>{
     const mentOnly=v.tier==='elite'&&U.tier!=='elite'&&U.tier!=='admin';
     const locked=!canAccess||mentOnly;
-    return '<div class="vault-card '+(locked?'':'unlocked')+'" '+(locked?'onclick="notify(\'Upgrade to access this framework\',1)"':'onclick="openFramework(\''+v.id+'\')"')+'><div class="v-icon">'+v.icon+'</div><div class="v-info"><h3>'+v.title+'</h3><p>'+v.desc+(mentOnly?' \u2022 Private Strategy only':'')+'</p></div><div class="v-lock">'+(locked?'\ud83d\udd12':'\ud83d\udcc4')+'</div></div>';
+    var onclick;
+    if(locked&&mentOnly&&canAccess){
+      onclick='onclick="previewEliteFramework(\''+v.id+'\')"';
+    }else if(locked){
+      onclick='onclick="notify(\'Upgrade to access this framework\',1)"';
+    }else{
+      onclick='onclick="openFramework(\''+v.id+'\')"';
+    }
+    return '<div class="vault-card '+(locked?'':'unlocked')+'" '+onclick+'><div class="v-icon">'+v.icon+'</div><div class="v-info"><h3>'+v.title+'</h3><p>'+v.desc+(mentOnly?' \u2022 Elite Strategy only':'')+'</p></div><div class="v-lock">'+(locked?'\ud83d\udd12':'\ud83d\udcc4')+'</div></div>';
   }).join('');
 }
 function openFramework(id){
@@ -2658,6 +2666,67 @@ function openFramework(id){
   if(!content){notify('Framework content loading...',1);return}
   document.getElementById('modal-q-content').innerHTML=content;
   document.getElementById('modal-q').classList.remove('hidden');
+
+var ELITE_PREVIEWS={
+v9:{
+  title:'Strategic Audit Template',
+  icon:'\ud83d\udcdd',
+  desc:'The exact intake framework used in Elite Strategy sessions. Complete every section and submit directly to Dr. Faroqui for a structured strategic review.',
+  sections:[
+    {name:'Part 1: Current Position',items:['Current training level / position','Institution strengths and limitations','Financial situation (debt, savings, obligations)','CV snapshot (publications, scores, leadership)','What are you known for?']},
+    {name:'Part 2: The Decision',items:['What specific decision are you facing?','What are all your options?','What is the timeline?','What have you already tried?','What\'s holding you back?']},
+    {name:'Part 3: Constraints & Priorities',items:['Non-negotiables','What are you willing to sacrifice?','Who else is affected?','Success in 1 year? 5 years?','What would you regret not doing?']},
+    {name:'Part 4: Information Gaps',items:['What info would make this easier?','Who have you talked to?','Worst realistic outcome?','Best realistic outcome?','Is this decision reversible?']}
+  ]
+},
+v10:{
+  title:'Career Pivot Decision Engine',
+  icon:'\u26a1',
+  desc:'An interactive, step-by-step framework for evaluating specialty switches, practice model changes, or non-clinical transitions — with your answers compiled into a report for Dr. Faroqui.',
+  sections:[
+    {name:'Step 1: Diagnose the Dissatisfaction',items:['Multiple-choice core issue identifier with pros & cons analysis','Free-text reflection on what you dislike','Burnout vs. misalignment assessment with personalized feedback']},
+    {name:'Step 2: Map the Options',items:['Rate 4 paths across feasibility, financial impact, timeline, satisfaction','Auto-calculated scores highlight your strongest option','Stay + Modify, Adjacent Pivot, Full Pivot, Hybrid']},
+    {name:'Step 3: Financial Reality Check',items:['Debt and obligations assessment','Training Cost Calculator — total transition cost breakdown','Income sustainability and emergency fund evaluation']},
+    {name:'Step 4: Test Before Committing',items:['Validation checklist (shadowing, interviews, side projects)','5-year regret test with guided feedback','Full report submitted to Dr. Faroqui for review']}
+  ]
+}
+};
+
+function previewEliteFramework(id){
+  var preview=ELITE_PREVIEWS[id];
+  if(!preview)return;
+  var h='<div style="position:relative">';
+  h+='<div style="text-align:center;margin-bottom:20px">';
+  h+='<div style="font-size:36px;margin-bottom:10px">'+preview.icon+'</div>';
+  h+='<h3 class="serif" style="font-size:20px;font-weight:600;margin-bottom:8px">'+preview.title+'</h3>';
+  h+='<span class="tag" style="color:var(--accent2);border-color:var(--accent2);font-size:10px">Elite Strategy Only</span>';
+  h+='</div>';
+  h+='<p style="font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:20px;text-align:center">'+preview.desc+'</p>';
+  // Section previews
+  h+='<div style="position:relative">';
+  preview.sections.forEach(function(sec,i){
+    var fade=i>=2?'opacity:.5;':'';
+    h+='<div style="margin-bottom:14px;'+fade+'">';
+    h+='<div style="font-size:12px;font-weight:600;color:var(--accent);margin-bottom:8px">'+sec.name+'</div>';
+    sec.items.forEach(function(item){
+      h+='<div style="display:flex;align-items:center;gap:8px;padding:6px 0">';
+      h+='<span style="color:var(--text3);font-size:10px">\u25CB</span>';
+      h+='<span style="font-size:12px;color:var(--text3)">'+item+'</span>';
+      h+='</div>';
+    });
+    h+='</div>';
+  });
+  // Fade overlay
+  h+='<div style="position:absolute;bottom:0;left:0;right:0;height:120px;background:linear-gradient(transparent,var(--bg));pointer-events:none"></div>';
+  h+='</div>';
+  // CTA
+  h+='<div style="text-align:center;padding-top:10px">';
+  h+='<p style="font-size:13px;color:var(--text2);margin-bottom:14px">Upgrade to Elite Strategy to unlock this tool and submit directly to Dr. Faroqui.</p>';
+  h+='<button class="btn btn-a" onclick="closeModal(\'modal-q\');navTo(\'scr-profile\');showUpgrade()" style="max-width:260px;margin:0 auto">Upgrade to Elite \u2192</button>';
+  h+='</div></div>';
+  document.getElementById('modal-q-content').innerHTML=h;
+  document.getElementById('modal-q').classList.remove('hidden');
+}
   if(id==='v1')setTimeout(frcUpdate,50);
   if(id==='v4')setTimeout(function(){rvuModelChange();rvuUpdate()},50);
   if(id==='v7')setTimeout(roiUpdate,50);

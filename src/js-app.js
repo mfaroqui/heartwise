@@ -1807,8 +1807,12 @@ function pivotSelect(el,group){
   var fb=document.getElementById(group+'-feedback');
   if(!fb)return;
 
-  if(group==='pivot-cause'&&PIVOT_PROS_CONS[val]){
-    var data=PIVOT_PROS_CONS[val];
+  if(group==='pivot-cause'){
+    // Show/hide other text field
+    var otherBox=document.getElementById('pivot-cause-other');
+    if(otherBox){otherBox.classList.toggle('hidden',val!=='other')}
+    if(PIVOT_PROS_CONS[val]){
+      var data=PIVOT_PROS_CONS[val];
     var h='<div style="padding:14px;background:rgba(200,168,124,.04);border:1px solid rgba(200,168,124,.15);border-radius:8px;animation:fadeIn .3s">';
     h+='<div style="font-size:12px;font-weight:600;color:var(--accent);margin-bottom:10px">'+data.title+'</div>';
     h+='<div style="display:flex;gap:12px;flex-wrap:wrap">';
@@ -1819,6 +1823,9 @@ function pivotSelect(el,group){
     data.cons.forEach(function(c){h+='<div style="font-size:11px;color:var(--text2);line-height:1.5;padding:2px 0">\u2013 '+c+'</div>'});
     h+='</div></div></div>';
     fb.innerHTML=h;
+  }else if(val==='other'){
+    fb.innerHTML='<div style="padding:10px;background:rgba(200,168,124,.04);border-radius:6px;font-size:11px;color:var(--text2);line-height:1.5;animation:fadeIn .3s">Describe your situation in the field above. Dr. Faroqui will review the full context in your submitted report.</div>';
+  }
   }
   if(group==='pivot-burnout'&&PIVOT_BURNOUT_FEEDBACK[val]){
     var d=PIVOT_BURNOUT_FEEDBACK[val];
@@ -1878,7 +1885,9 @@ async function submitPivot(){
   // Step 1
   var cause=document.querySelector('input[name="pivot-cause"]:checked');
   report+='STEP 1: DIAGNOSE THE DISSATISFACTION\n';
-  report+='Core Issue: '+(cause?PIVOT_PROS_CONS[cause.value].title:'Not selected')+'\n';
+  var causeLabel=cause?(PIVOT_PROS_CONS[cause.value]?PIVOT_PROS_CONS[cause.value].title:'Other'):'Not selected';
+  report+='Core Issue: '+causeLabel+'\n';
+  if(cause&&cause.value==='other'){var otherText=document.getElementById('pivot-cause-other-text');if(otherText&&otherText.value.trim())report+='Other details: '+otherText.value.trim()+'\n'}
   report+='What they dislike: '+(document.getElementById('pivot-1a').value.trim()||'Not answered')+'\n';
   report+='Same specialty different setting: '+(document.getElementById('pivot-1b').value.trim()||'Not answered')+'\n';
   var burnout=document.querySelector('input[name="pivot-burnout"]:checked');

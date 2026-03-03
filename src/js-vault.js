@@ -447,6 +447,8 @@ v10:`<h3>Career Pivot Decision Engine</h3>
 <label style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;cursor:pointer" onclick="pivotSelect(this,'pivot-cause')"><input type="radio" name="pivot-cause" value="setting" style="accent-color:var(--accent)"> <span>The practice setting</span></label>
 <label style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;cursor:pointer" onclick="pivotSelect(this,'pivot-cause')"><input type="radio" name="pivot-cause" value="job" style="accent-color:var(--accent)"> <span>The specific job / employer</span></label>
 <label style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;cursor:pointer" onclick="pivotSelect(this,'pivot-cause')"><input type="radio" name="pivot-cause" value="burnout" style="accent-color:var(--accent)"> <span>Burnout</span></label>
+<label style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;cursor:pointer" onclick="pivotSelect(this,'pivot-cause')"><input type="radio" name="pivot-cause" value="other" style="accent-color:var(--accent)"> <span>Other</span></label>
+<div id="pivot-cause-other" class="hidden" style="margin-top:6px"><textarea id="pivot-cause-other-text" rows="2" placeholder="Describe your situation..." style="width:100%;font-family:inherit;font-size:12px;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);resize:vertical"></textarea></div>
 </div>
 <div id="pivot-cause-feedback" style="margin-top:8px"></div>
 </div>

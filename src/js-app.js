@@ -3,8 +3,17 @@
   const lp=document.getElementById('pg-landing');
   const tb=document.getElementById('topbar');
   if(lp&&tb){
-    lp.addEventListener('scroll',function(){tb.classList.toggle('solid',lp.scrollTop>60)});
-    window.addEventListener('scroll',function(){tb.classList.toggle('solid',window.scrollY>60)});
+    function updateTopbar(scrollY){
+      tb.classList.toggle('solid',scrollY>60);
+      var heroEl=document.querySelector('.hero-lux');
+      if(heroEl){
+        var heroH=heroEl.offsetHeight;
+        tb.classList.toggle('on-light',scrollY<heroH-80);
+      }
+    }
+    lp.addEventListener('scroll',function(){updateTopbar(lp.scrollTop)});
+    window.addEventListener('scroll',function(){updateTopbar(window.scrollY)});
+    updateTopbar(0);
   }
 })();
 

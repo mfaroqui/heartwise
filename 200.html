@@ -316,6 +316,205 @@ a:hover{color:var(--accent2)}
 .metric-bar .mb-fill{height:100%;border-radius:3px;transition:width .8s ease}
 
 .prof-stat .n{font-family:var(--font-serif);font-size:24px;font-weight:600}.prof-stat .l{font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-top:3px;font-weight:500;font-family:var(--font-ui)}
+
+/* ========== LUXURY HERO ========== */
+.hero-lux{
+  background:#F6F3EE;
+  padding:140px 48px 80px;
+  position:relative;
+  overflow:hidden;
+}
+.hero-lux-inner{
+  max-width:1120px;
+  margin:0 auto;
+  display:grid;
+  grid-template-columns:1fr 420px;
+  gap:64px;
+  align-items:center;
+}
+.hero-lux-text{
+  position:relative;
+}
+.hero-lux-badge{
+  display:inline-block;
+  font-size:11px;
+  font-weight:500;
+  letter-spacing:3px;
+  text-transform:uppercase;
+  color:#C6A75E;
+  margin-bottom:32px;
+  font-family:var(--font-ui);
+}
+.hero-lux-h1{
+  font-family:var(--font-serif);
+  font-size:60px;
+  font-weight:600;
+  line-height:1.1;
+  color:#1A1A1A;
+  letter-spacing:-.5px;
+  margin-bottom:28px;
+}
+.hero-lux-h1 em{
+  font-style:italic;
+  color:#C6A75E;
+}
+.hero-lux-sub{
+  font-size:17px;
+  line-height:1.8;
+  color:#4A4A4A;
+  font-weight:300;
+  max-width:480px;
+  margin-bottom:44px;
+  letter-spacing:.01em;
+}
+.hero-lux-ctas{
+  display:flex;
+  gap:16px;
+  align-items:center;
+  margin-bottom:20px;
+}
+.hero-btn-primary{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:16px 36px;
+  background:#C6A75E;
+  color:#1A1A1A;
+  border:none;
+  border-radius:100px;
+  font-size:13px;
+  font-weight:600;
+  font-family:var(--font-ui);
+  letter-spacing:.8px;
+  text-transform:uppercase;
+  cursor:pointer;
+  transition:all .35s ease;
+}
+.hero-btn-primary:hover{
+  background:#B89B5E;
+  transform:translateY(-2px);
+  box-shadow:0 8px 32px rgba(198,167,94,.25);
+}
+.hero-btn-secondary{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:16px 36px;
+  background:transparent;
+  color:#1A1A1A;
+  border:1px solid #1A1A1A;
+  border-radius:100px;
+  font-size:13px;
+  font-weight:600;
+  font-family:var(--font-ui);
+  letter-spacing:.8px;
+  text-transform:uppercase;
+  cursor:pointer;
+  transition:all .35s ease;
+}
+.hero-btn-secondary:hover{
+  background:#1A1A1A;
+  color:#F6F3EE;
+}
+.hero-lux-fine{
+  font-size:12px;
+  color:#8A857E;
+  font-weight:300;
+  letter-spacing:.02em;
+}
+.hero-lux-portrait{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+}
+.hero-lux-img-wrap{
+  width:380px;
+  height:460px;
+  border-radius:12px;
+  overflow:hidden;
+  margin-bottom:24px;
+  background:#E8E4DD;
+}
+.hero-lux-img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  object-position:top center;
+  display:block;
+}
+.hero-lux-img-fallback{
+  width:100%;
+  height:100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-family:var(--font-serif);
+  font-size:72px;
+  font-weight:600;
+  color:#C6A75E;
+  background:linear-gradient(160deg,#E8E4DD,#DDD8D0);
+}
+.hero-lux-credentials{
+  text-align:center;
+}
+.hero-lux-name{
+  font-family:var(--font-serif);
+  font-size:18px;
+  font-weight:600;
+  color:#1A1A1A;
+  margin-bottom:6px;
+  letter-spacing:.2px;
+}
+.hero-lux-title{
+  font-size:12px;
+  color:#4A4A4A;
+  font-weight:400;
+  letter-spacing:.8px;
+  line-height:1.7;
+}
+.hero-lux-rule{
+  max-width:1120px;
+  margin:60px auto 0;
+  height:1px;
+  background:linear-gradient(90deg,transparent,rgba(198,167,94,.3),transparent);
+}
+
+/* Hero responsive */
+@media(max-width:900px){
+  .hero-lux{padding:120px 32px 60px}
+  .hero-lux-inner{
+    grid-template-columns:1fr;
+    gap:48px;
+    text-align:center;
+  }
+  .hero-lux-h1{font-size:44px}
+  .hero-lux-sub{margin-left:auto;margin-right:auto}
+  .hero-lux-ctas{justify-content:center;flex-wrap:wrap}
+  .hero-lux-portrait{order:-1}
+  .hero-lux-img-wrap{width:280px;height:340px}
+}
+@media(min-width:901px) and (max-width:1100px){
+  .hero-lux-inner{grid-template-columns:1fr 340px;gap:48px}
+  .hero-lux-h1{font-size:50px}
+  .hero-lux-img-wrap{width:320px;height:400px}
+}
+@media(max-width:480px){
+  .hero-lux{padding:100px 20px 48px}
+  .hero-lux-h1{font-size:36px}
+  .hero-lux-sub{font-size:15px}
+  .hero-lux-ctas{flex-direction:column;gap:12px}
+  .hero-btn-primary,.hero-btn-secondary{width:100%;justify-content:center}
+  .hero-lux-img-wrap{width:220px;height:270px}
+}
+
+/* Topbar on light hero */
+.topbar.on-light{background:rgba(246,243,238,.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom-color:rgba(26,26,26,.08)}
+.topbar.on-light .logo-text{color:#1A1A1A}
+.topbar.on-light .logo-mark{background:linear-gradient(135deg,#C6A75E,#D4B96E)}
+.topbar.on-light .topbar-links a{color:#4A4A4A}
+.topbar.on-light .topbar-links a:hover{color:#C6A75E}
+.topbar.on-light .topbar-links .tb-cta{color:#C6A75E;border-color:#C6A75E}
+.topbar.on-light .topbar-links .tb-cta:hover{background:#C6A75E;color:#1A1A1A}
 </style>
 <body>
 <svg style="display:none">
@@ -426,12 +625,30 @@ a:hover{color:var(--accent2)}
 <div id="pg-landing" class="lp">
 
 <!-- HERO -->
-<div class="hero">
-<div class="hero-badge">Strategic Intelligence Platform</div>
-<h1 class="serif">Strategic Intelligence for <em>Competitive Physicians.</em></h1>
-<p>Stop guessing. Start positioning. HeartWise gives you structured career and financial leverage — built by a practicing interventional cardiologist.</p>
-<button class="btn btn-a" onclick="go('pg-onboard')" style="max-width:300px;margin:0 auto 14px">Start 3-Day Strategic Access →</button>
-<p style="font-size:12px;color:var(--text3);font-weight:300;margin-top:8px">No credit card required. Full access for 3 days.</p>
+<div class="hero-lux">
+<div class="hero-lux-inner">
+<div class="hero-lux-text">
+<div class="hero-lux-badge">Strategic Intelligence Platform</div>
+<h1 class="hero-lux-h1">Strategic Intelligence for <em>Competitive Physicians.</em></h1>
+<p class="hero-lux-sub">Stop guessing. Start positioning. HeartWise gives you structured career and financial leverage — built by a practicing interventional cardiologist.</p>
+<div class="hero-lux-ctas">
+<button class="hero-btn-primary" onclick="go('pg-onboard')">Start 3-Day Strategic Access →</button>
+<button class="hero-btn-secondary" onclick="document.getElementById('founder-sec').scrollIntoView({behavior:'smooth'})">Meet the Founder</button>
+</div>
+<p class="hero-lux-fine">No credit card required. Full access for 3 days.</p>
+</div>
+<div class="hero-lux-portrait">
+<div class="hero-lux-img-wrap">
+<img src="https://drive.google.com/thumbnail?id=1jdDSU7nby8p_H0NawRISgUw-pKGUs0Lo&sz=w800" alt="Dr. Mouzam Faroqui" class="hero-lux-img" onerror="this.parentElement.innerHTML='<div class=\'hero-lux-img-fallback\'>MF</div>'">
+</div>
+<div class="hero-lux-credentials">
+<div class="hero-lux-name">Mouzam Faroqui, MD, FACC</div>
+<div class="hero-lux-title">Board Certified Interventional Cardiologist</div>
+<div class="hero-lux-title">Founder, HeartWise</div>
+</div>
+</div>
+</div>
+<div class="hero-lux-rule"></div>
 </div>
 
 <!-- WHAT YOU GET -->
@@ -2359,10 +2576,10 @@ v10:`<h3>Career Pivot Decision Engine</h3>
 <th style="text-align:center;padding:8px 4px;color:var(--accent);font-size:10px;font-weight:600">Avg</th>
 </tr></thead>
 <tbody>
-<tr style="border-bottom:1px solid var(--border)"><td style="padding:8px 6px;font-weight:500">Stay + Modify</td><td style="text-align:center;padding:4px"><select id="pv-stay-f" onchange="pivotCalcAvg()" style="width:44px;font-size:11px;padding:4px;border:1px solid var(--border);border-radius:4px;background:var(--bg2);color:var(--text)"><option value="">-</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td><td style="text-align:center;padding:4px"><select id="pv-stay-i" onchange="pivotCalcAvg()" style="width:44px;font-size:11px;padding:4px;border:1px solid var(--border);border-radius:4px;background:var(--bg2);color:var(--text)"><option value="">-</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td><td style="text-align:center;padding:4px"><select id="pv-stay-t" onchange="pivotCalcAvg()" style="width:44px;font-size:11px;padding:4px;border:1px solid var(--border);border-radius:4px;background:var(--bg2);color:var(--text)"><option value="">-</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td><td style="text-align:center;padding:4px"><select id="pv-stay-s" onchange="pivotCalcAvg()" style="width:44px;font-size:11px;padding:4px;border:1px solid var(--border);border-radius:4px;background:var(--bg2);color:var(--text)"><option value="">-</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td><td style="text-align:center;padding:4px;font-weight:600;color:var(--accent)" id="pv-stay-avg">\u2014</td></tr>
-<tr style="border-bottom:1px solid var(--border)"><td style="padding:8px 6px;font-weight:500">Adjacent Pivot</td><td style="text-align:center;padding:4px"><select id="pv-adj-f" onchange="pivotCalcAvg()" style="width:44px;font-size:11px;padding:4px;border:1px solid var(--border);border-radius:4px;background:var(--bg2);color:var(--text)"><option value="">-</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td><td style="text-align:center;padding:4px"><select id="pv-adj-i" onchange="pivotCalcAvg()" style="width:44px;font-size:11px;padding:4px;border:1px solid var(--border);border-radius:4px;background:var(--bg2);color:var(--text)"><option value="">-</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td><td style="text-align:center;padding:4px"><select id="pv-adj-t" onchange="pivotCalcAvg()" style="width:44px;font-size:11px;padding:4px;border:1px solid var(--border);border-radius:4px;background:var(--bg2);color:var(--text)"><option value="">-</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td><td style="text-align:center;padding:4px"><select id="pv-adj-s" onchange="pivotCalcAvg()" style="width:44px;font-size:11px;padding:4px;border:1px solid var(--border);border-radius:4px;background:var(--bg2);color:var(--text)"><option value="">-</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td><td style="text-align:center;padding:4px;font-weight:600;color:var(--accent)" id="pv-adj-avg">\u2014</td></tr>
-<tr style="border-bottom:1px solid var(--border)"><td style="padding:8px 6px;font-weight:500">Full Pivot</td><td style="text-align:center;padding:4px"><select id="pv-full-f" onchange="pivotCalcAvg()" style="width:44px;font-size:11px;padding:4px;border:1px solid var(--border);border-radius:4px;background:var(--bg2);color:var(--text)"><option value="">-</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td><td style="text-align:center;padding:4px"><select id="pv-full-i" onchange="pivotCalcAvg()" style="width:44px;font-size:11px;padding:4px;border:1px solid var(--border);border-radius:4px;background:var(--bg2);color:var(--text)"><option value="">-</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td><td style="text-align:center;padding:4px"><select id="pv-full-t" onchange="pivotCalcAvg()" style="width:44px;font-size:11px;padding:4px;border:1px solid var(--border);border-radius:4px;background:var(--bg2);color:var(--text)"><option value="">-</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td><td style="text-align:center;padding:4px"><select id="pv-full-s" onchange="pivotCalcAvg()" style="width:44px;font-size:11px;padding:4px;border:1px solid var(--border);border-radius:4px;background:var(--bg2);color:var(--text)"><option value="">-</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td><td style="text-align:center;padding:4px;font-weight:600;color:var(--accent)" id="pv-full-avg">\u2014</td></tr>
-<tr><td style="padding:8px 6px;font-weight:500">Hybrid</td><td style="text-align:center;padding:4px"><select id="pv-hyb-f" onchange="pivotCalcAvg()" style="width:44px;font-size:11px;padding:4px;border:1px solid var(--border);border-radius:4px;background:var(--bg2);color:var(--text)"><option value="">-</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td><td style="text-align:center;padding:4px"><select id="pv-hyb-i" onchange="pivotCalcAvg()" style="width:44px;font-size:11px;padding:4px;border:1px solid var(--border);border-radius:4px;background:var(--bg2);color:var(--text)"><option value="">-</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td><td style="text-align:center;padding:4px"><select id="pv-hyb-t" onchange="pivotCalcAvg()" style="width:44px;font-size:11px;padding:4px;border:1px solid var(--border);border-radius:4px;background:var(--bg2);color:var(--text)"><option value="">-</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td><td style="text-align:center;padding:4px"><select id="pv-hyb-s" onchange="pivotCalcAvg()" style="width:44px;font-size:11px;padding:4px;border:1px solid var(--border);border-radius:4px;background:var(--bg2);color:var(--text)"><option value="">-</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td><td style="text-align:center;padding:4px;font-weight:600;color:var(--accent)" id="pv-hyb-avg">\u2014</td></tr>
+<tr style="border-bottom:1px solid var(--border)"><td style="padding:8px 6px"><span style="font-weight:500">Stay + Modify</span><br><span style="font-size:10px;color:var(--text3)">e.g. Same specialty, but switch from academic to private practice</span></td><td style="text-align:center;padding:4px"><select id="pv-stay-f" onchange="pivotCalcAvg()" style="width:44px;font-size:11px;padding:4px;border:1px solid var(--border);border-radius:4px;background:var(--bg2);color:var(--text)"><option value="">-</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td><td style="text-align:center;padding:4px"><select id="pv-stay-i" onchange="pivotCalcAvg()" style="width:44px;font-size:11px;padding:4px;border:1px solid var(--border);border-radius:4px;background:var(--bg2);color:var(--text)"><option value="">-</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td><td style="text-align:center;padding:4px"><select id="pv-stay-t" onchange="pivotCalcAvg()" style="width:44px;font-size:11px;padding:4px;border:1px solid var(--border);border-radius:4px;background:var(--bg2);color:var(--text)"><option value="">-</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td><td style="text-align:center;padding:4px"><select id="pv-stay-s" onchange="pivotCalcAvg()" style="width:44px;font-size:11px;padding:4px;border:1px solid var(--border);border-radius:4px;background:var(--bg2);color:var(--text)"><option value="">-</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td><td style="text-align:center;padding:4px;font-weight:600;color:var(--accent)" id="pv-stay-avg">\u2014</td></tr>
+<tr style="border-bottom:1px solid var(--border)"><td style="padding:8px 6px"><span style="font-weight:500">Adjacent Pivot</span><br><span style="font-size:10px;color:var(--text3)">e.g. Cardiologist → interventional cardiology or cardiac imaging</span></td><td style="text-align:center;padding:4px"><select id="pv-adj-f" onchange="pivotCalcAvg()" style="width:44px;font-size:11px;padding:4px;border:1px solid var(--border);border-radius:4px;background:var(--bg2);color:var(--text)"><option value="">-</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td><td style="text-align:center;padding:4px"><select id="pv-adj-i" onchange="pivotCalcAvg()" style="width:44px;font-size:11px;padding:4px;border:1px solid var(--border);border-radius:4px;background:var(--bg2);color:var(--text)"><option value="">-</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td><td style="text-align:center;padding:4px"><select id="pv-adj-t" onchange="pivotCalcAvg()" style="width:44px;font-size:11px;padding:4px;border:1px solid var(--border);border-radius:4px;background:var(--bg2);color:var(--text)"><option value="">-</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td><td style="text-align:center;padding:4px"><select id="pv-adj-s" onchange="pivotCalcAvg()" style="width:44px;font-size:11px;padding:4px;border:1px solid var(--border);border-radius:4px;background:var(--bg2);color:var(--text)"><option value="">-</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td><td style="text-align:center;padding:4px;font-weight:600;color:var(--accent)" id="pv-adj-avg">\u2014</td></tr>
+<tr style="border-bottom:1px solid var(--border)"><td style="padding:8px 6px"><span style="font-weight:500">Full Pivot</span><br><span style="font-size:10px;color:var(--text3)">e.g. Internal medicine → dermatology or leaving clinical medicine entirely</span></td><td style="text-align:center;padding:4px"><select id="pv-full-f" onchange="pivotCalcAvg()" style="width:44px;font-size:11px;padding:4px;border:1px solid var(--border);border-radius:4px;background:var(--bg2);color:var(--text)"><option value="">-</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td><td style="text-align:center;padding:4px"><select id="pv-full-i" onchange="pivotCalcAvg()" style="width:44px;font-size:11px;padding:4px;border:1px solid var(--border);border-radius:4px;background:var(--bg2);color:var(--text)"><option value="">-</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td><td style="text-align:center;padding:4px"><select id="pv-full-t" onchange="pivotCalcAvg()" style="width:44px;font-size:11px;padding:4px;border:1px solid var(--border);border-radius:4px;background:var(--bg2);color:var(--text)"><option value="">-</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td><td style="text-align:center;padding:4px"><select id="pv-full-s" onchange="pivotCalcAvg()" style="width:44px;font-size:11px;padding:4px;border:1px solid var(--border);border-radius:4px;background:var(--bg2);color:var(--text)"><option value="">-</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td><td style="text-align:center;padding:4px;font-weight:600;color:var(--accent)" id="pv-full-avg">\u2014</td></tr>
+<tr><td style="padding:8px 6px"><span style="font-weight:500">Hybrid</span><br><span style="font-size:10px;color:var(--text3)">e.g. Keep clinical 3 days/week + consulting, med-tech, or teaching on the side</span></td><td style="text-align:center;padding:4px"><select id="pv-hyb-f" onchange="pivotCalcAvg()" style="width:44px;font-size:11px;padding:4px;border:1px solid var(--border);border-radius:4px;background:var(--bg2);color:var(--text)"><option value="">-</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td><td style="text-align:center;padding:4px"><select id="pv-hyb-i" onchange="pivotCalcAvg()" style="width:44px;font-size:11px;padding:4px;border:1px solid var(--border);border-radius:4px;background:var(--bg2);color:var(--text)"><option value="">-</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td><td style="text-align:center;padding:4px"><select id="pv-hyb-t" onchange="pivotCalcAvg()" style="width:44px;font-size:11px;padding:4px;border:1px solid var(--border);border-radius:4px;background:var(--bg2);color:var(--text)"><option value="">-</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td><td style="text-align:center;padding:4px"><select id="pv-hyb-s" onchange="pivotCalcAvg()" style="width:44px;font-size:11px;padding:4px;border:1px solid var(--border);border-radius:4px;background:var(--bg2);color:var(--text)"><option value="">-</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td><td style="text-align:center;padding:4px;font-weight:600;color:var(--accent)" id="pv-hyb-avg">\u2014</td></tr>
 </tbody></table></div>
 <div id="pivot-recommendation" style="margin-top:10px"></div>
 </div>
@@ -2432,8 +2649,17 @@ v10:`<h3>Career Pivot Decision Engine</h3>
   const lp=document.getElementById('pg-landing');
   const tb=document.getElementById('topbar');
   if(lp&&tb){
-    lp.addEventListener('scroll',function(){tb.classList.toggle('solid',lp.scrollTop>60)});
-    window.addEventListener('scroll',function(){tb.classList.toggle('solid',window.scrollY>60)});
+    function updateTopbar(scrollY){
+      tb.classList.toggle('solid',scrollY>60);
+      var heroEl=document.querySelector('.hero-lux');
+      if(heroEl){
+        var heroH=heroEl.offsetHeight;
+        tb.classList.toggle('on-light',scrollY<heroH-80);
+      }
+    }
+    lp.addEventListener('scroll',function(){updateTopbar(lp.scrollTop)});
+    window.addEventListener('scroll',function(){updateTopbar(window.scrollY)});
+    updateTopbar(0);
   }
 })();
 

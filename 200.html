@@ -422,6 +422,60 @@ a:hover{color:var(--accent2)}
   font-weight:300;
   letter-spacing:.02em;
 }
+.hero-lux-steps{
+  margin-bottom:24px;
+  padding:20px 0;
+}
+.hero-lux-steps-label{
+  font-size:11px;
+  font-weight:500;
+  letter-spacing:2.5px;
+  text-transform:uppercase;
+  color:#C6A75E;
+  margin-bottom:16px;
+  font-family:var(--font-ui);
+}
+.hero-lux-steps-row{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+.hero-lux-step{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.hero-lux-step-num{
+  width:28px;
+  height:28px;
+  border-radius:50%;
+  border:1.5px solid #C6A75E;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:12px;
+  font-weight:600;
+  color:#C6A75E;
+  flex-shrink:0;
+  font-family:var(--font-ui);
+}
+.hero-lux-step-text{
+  font-size:13px;
+  font-weight:500;
+  color:#1A1A1A;
+  line-height:1.4;
+  text-align:left;
+}
+.hero-lux-step-sub{
+  display:block;
+  font-size:11px;
+  font-weight:300;
+  color:#4A4A4A;
+  margin-top:1px;
+}
+.hero-lux-step-arrow{
+  flex-shrink:0;
+}
 .hero-lux-portrait{
   display:flex;
   flex-direction:column;
@@ -502,6 +556,9 @@ a:hover{color:var(--accent2)}
   .hero-lux-img-wrap{width:280px;height:340px}
   .hero-lux-ctas .hero-btn-secondary{display:none}
   .hero-lux-meet-mobile{display:flex}
+  .hero-lux-steps-row{flex-direction:column;align-items:flex-start;gap:10px}
+  .hero-lux-steps{text-align:left}
+  .hero-lux-step-arrow{transform:rotate(90deg);margin-left:8px}
 }
 @media(min-width:901px) and (max-width:1100px){
   .hero-lux-inner{grid-template-columns:1fr 340px;gap:48px}
@@ -644,6 +701,25 @@ a:hover{color:var(--accent2)}
 <div class="hero-lux-ctas">
 <button class="hero-btn-primary" onclick="go('pg-onboard')">Start 3-Day Strategic Access →</button>
 <button class="hero-btn-secondary" onclick="document.getElementById('founder-sec').scrollIntoView({behavior:'smooth'})">Meet the Founder</button>
+</div>
+<div class="hero-lux-steps">
+<div class="hero-lux-steps-label">In under 5 minutes</div>
+<div class="hero-lux-steps-row">
+<div class="hero-lux-step">
+<div class="hero-lux-step-num">1</div>
+<div class="hero-lux-step-text">Choose your stage<span class="hero-lux-step-sub">Medical student → Attending</span></div>
+</div>
+<svg class="hero-lux-step-arrow" width="28" height="12" viewBox="0 0 28 12"><path d="M0 6h22M18 1l6 5-6 5" fill="none" stroke="#C6A75E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+<div class="hero-lux-step">
+<div class="hero-lux-step-num">2</div>
+<div class="hero-lux-step-text">Evaluate yourself<span class="hero-lux-step-sub">Using our framework tools</span></div>
+</div>
+<svg class="hero-lux-step-arrow" width="28" height="12" viewBox="0 0 28 12"><path d="M0 6h22M18 1l6 5-6 5" fill="none" stroke="#C6A75E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+<div class="hero-lux-step">
+<div class="hero-lux-step-num">3</div>
+<div class="hero-lux-step-text">Get your strategy report</div>
+</div>
+</div>
 </div>
 <p class="hero-lux-fine">No credit card required. Full access for 3 days.</p>
 </div>

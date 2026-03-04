@@ -764,8 +764,8 @@ a:hover{color:var(--accent2)}
 <div class="tool-card">
 <div class="tool-icon">💰</div>
 <div class="tool-info">
-<h3>Financial Trajectory Model</h3>
-<p>PSLF vs. refinance. Academic vs. private. See your 10-year net wealth under different scenarios.</p>
+<h3>Financial Trajectory Simulator</h3>
+<p>Compare specialties, practice types, and savings rates. See your 30-year wealth trajectory instantly.</p>
 </div>
 </div>
 <div class="tool-card">
@@ -2175,7 +2175,8 @@ const VAULT_ITEMS=[
 {id:'v7',title:'Research ROI Calculator',desc:'Calculate your research portfolio strength and see how close you are to optimal',icon:'\u2696\ufe0f',tier:'core'},
 {id:'v8',title:'Income Leverage Playbook',desc:'PSLF vs refinance modeling, tax strategy, disability planning',icon:'\ud83d\udcb5',tier:'core'},
 {id:'v9',title:'Strategic Audit Template',desc:'The exact intake framework used in Elite Strategy sessions',icon:'\ud83d\udcdd',tier:'elite'},
-{id:'v10',title:'Career Pivot Decision Engine',desc:'Structured framework for specialty switches and practice model changes',icon:'\u26a1',tier:'elite'}
+{id:'v10',title:'Career Pivot Decision Engine',desc:'Structured framework for specialty switches and practice model changes',icon:'\u26a1',tier:'elite'},
+{id:'v11',title:'Financial Trajectory Simulator',desc:'See how specialty, fellowship, and practice type impact your lifetime wealth',icon:'\ud83d\udcb0',tier:'core'}
 ];
 
 
@@ -2728,6 +2729,206 @@ v10:`<h3>Career Pivot Decision Engine</h3>
 <div style="font-size:48px;margin-bottom:16px">\u2713</div>
 <h3 class="serif" style="font-size:20px;margin-bottom:8px">Report Submitted</h3>
 <p style="font-size:13px;color:var(--text2);line-height:1.6">Your Career Pivot Decision Engine report has been sent to Dr. Faroqui for review.</p>
+</div>`,
+v11:`<div style="text-align:center;padding:28px 20px;margin:-20px -20px 24px;background:linear-gradient(160deg,rgba(200,168,124,.1),rgba(200,168,124,.03));border-radius:12px 12px 0 0;border-bottom:1px solid rgba(200,168,124,.15)">
+<div style="font-size:36px;margin-bottom:8px">\ud83d\udcb0</div>
+<h3 class="serif" style="font-size:22px;margin-bottom:4px">Financial Trajectory Simulator</h3>
+<p style="font-size:12px;color:var(--text3);margin-bottom:4px">The $10 Million Decision Calculator</p>
+<p style="font-size:11px;color:var(--text3)">See how your specialty choice, fellowship, and practice type impact lifetime wealth.</p>
+</div>
+
+<div style="font-size:13px">
+<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:14px">\ud83c\udfaf Build Your Scenarios</div>
+<p style="font-size:12px;color:var(--text3);margin-bottom:18px">Configure up to 3 career paths. The graph updates instantly.</p>
+
+<div id="ft-scenarios">
+<div class="card" style="padding:16px;margin-bottom:10px;border-color:var(--accent)">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><span style="font-size:12px;font-weight:600;color:var(--accent)">Scenario A</span></div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+<div><label style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:4px">Specialty</label>
+<select id="ft-spec-a" onchange="ftCalc()" style="width:100%;padding:8px;font-size:12px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;color:var(--text)">
+<option value="im">Internal Medicine</option>
+<option value="hosp">Hospitalist</option>
+<option value="cards">General Cardiology</option>
+<option value="ic" selected>Interventional Cardiology</option>
+<option value="ep">Electrophysiology</option>
+<option value="ct_surg">CT Surgery</option>
+<option value="gi">Gastroenterology</option>
+<option value="pulm">Pulm/Critical Care</option>
+<option value="heme_onc">Heme/Onc</option>
+<option value="nephro">Nephrology</option>
+<option value="rheum">Rheumatology</option>
+<option value="endo">Endocrinology</option>
+<option value="id">Infectious Disease</option>
+<option value="gen_surg">General Surgery</option>
+<option value="ortho">Orthopedic Surgery</option>
+<option value="uro">Urology</option>
+<option value="ent">ENT</option>
+<option value="derm">Dermatology</option>
+<option value="rad">Radiology</option>
+<option value="anes">Anesthesiology</option>
+<option value="er">Emergency Medicine</option>
+<option value="fm">Family Medicine</option>
+<option value="psych">Psychiatry</option>
+<option value="pm_r">PM&R</option>
+<option value="neuro">Neurology</option>
+<option value="path">Pathology</option>
+<option value="ophtho">Ophthalmology</option>
+<option value="peds">Pediatrics</option>
+</select></div>
+<div><label style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:4px">Practice Type</label>
+<select id="ft-prac-a" onchange="ftCalc()" style="width:100%;padding:8px;font-size:12px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;color:var(--text)">
+<option value="academic">Academic</option>
+<option value="employed" selected>Hospital Employed</option>
+<option value="private">Private Practice</option>
+</select></div>
+<div><label style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:4px">Savings Rate</label>
+<select id="ft-save-a" onchange="ftCalc()" style="width:100%;padding:8px;font-size:12px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;color:var(--text)">
+<option value="0.10">10%</option>
+<option value="0.20" selected>20%</option>
+<option value="0.30">30%</option>
+<option value="0.40">40%</option>
+</select></div>
+<div><label style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:4px">Current Stage</label>
+<select id="ft-stage-a" onchange="ftCalc()" style="width:100%;padding:8px;font-size:12px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;color:var(--text)">
+<option value="ms">Medical Student</option>
+<option value="res" selected>Resident</option>
+<option value="fellow">Fellow</option>
+<option value="attending">Attending</option>
+</select></div>
+</div>
+</div>
+
+<div class="card" style="padding:16px;margin-bottom:10px;border-color:var(--blue)">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><span style="font-size:12px;font-weight:600;color:var(--blue)">Scenario B</span><span id="ft-toggle-b" style="font-size:10px;color:var(--accent);cursor:pointer" onclick="document.getElementById('ft-fields-b').classList.toggle('hidden');ftCalc()">Show/Hide</span></div>
+<div id="ft-fields-b">
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+<div><label style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:4px">Specialty</label>
+<select id="ft-spec-b" onchange="ftCalc()" style="width:100%;padding:8px;font-size:12px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;color:var(--text)">
+<option value="im">Internal Medicine</option>
+<option value="hosp" selected>Hospitalist</option>
+<option value="cards">General Cardiology</option>
+<option value="ic">Interventional Cardiology</option>
+<option value="ep">Electrophysiology</option>
+<option value="ct_surg">CT Surgery</option>
+<option value="gi">Gastroenterology</option>
+<option value="pulm">Pulm/Critical Care</option>
+<option value="heme_onc">Heme/Onc</option>
+<option value="nephro">Nephrology</option>
+<option value="rheum">Rheumatology</option>
+<option value="endo">Endocrinology</option>
+<option value="id">Infectious Disease</option>
+<option value="gen_surg">General Surgery</option>
+<option value="ortho">Orthopedic Surgery</option>
+<option value="uro">Urology</option>
+<option value="ent">ENT</option>
+<option value="derm">Dermatology</option>
+<option value="rad">Radiology</option>
+<option value="anes">Anesthesiology</option>
+<option value="er">Emergency Medicine</option>
+<option value="fm">Family Medicine</option>
+<option value="psych">Psychiatry</option>
+<option value="pm_r">PM&R</option>
+<option value="neuro">Neurology</option>
+<option value="path">Pathology</option>
+<option value="ophtho">Ophthalmology</option>
+<option value="peds">Pediatrics</option>
+</select></div>
+<div><label style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:4px">Practice Type</label>
+<select id="ft-prac-b" onchange="ftCalc()" style="width:100%;padding:8px;font-size:12px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;color:var(--text)">
+<option value="academic">Academic</option>
+<option value="employed" selected>Hospital Employed</option>
+<option value="private">Private Practice</option>
+</select></div>
+<div><label style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:4px">Savings Rate</label>
+<select id="ft-save-b" onchange="ftCalc()" style="width:100%;padding:8px;font-size:12px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;color:var(--text)">
+<option value="0.10">10%</option>
+<option value="0.20" selected>20%</option>
+<option value="0.30">30%</option>
+<option value="0.40">40%</option>
+</select></div>
+<div><label style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:4px">Current Stage</label>
+<select id="ft-stage-b" onchange="ftCalc()" style="width:100%;padding:8px;font-size:12px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;color:var(--text)">
+<option value="ms">Medical Student</option>
+<option value="res" selected>Resident</option>
+<option value="fellow">Fellow</option>
+<option value="attending">Attending</option>
+</select></div>
+</div>
+</div>
+</div>
+
+<div class="card" style="padding:16px;margin-bottom:10px;border-color:var(--green)">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><span style="font-size:12px;font-weight:600;color:var(--green)">Scenario C</span><span style="font-size:10px;color:var(--accent);cursor:pointer" onclick="document.getElementById('ft-fields-c').classList.toggle('hidden');ftCalc()">Show/Hide</span></div>
+<div id="ft-fields-c" class="hidden">
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+<div><label style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:4px">Specialty</label>
+<select id="ft-spec-c" onchange="ftCalc()" style="width:100%;padding:8px;font-size:12px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;color:var(--text)">
+<option value="im">Internal Medicine</option>
+<option value="hosp">Hospitalist</option>
+<option value="cards" selected>General Cardiology</option>
+<option value="ic">Interventional Cardiology</option>
+<option value="ep">Electrophysiology</option>
+<option value="ct_surg">CT Surgery</option>
+<option value="gi">Gastroenterology</option>
+<option value="pulm">Pulm/Critical Care</option>
+<option value="heme_onc">Heme/Onc</option>
+<option value="nephro">Nephrology</option>
+<option value="rheum">Rheumatology</option>
+<option value="endo">Endocrinology</option>
+<option value="id">Infectious Disease</option>
+<option value="gen_surg">General Surgery</option>
+<option value="ortho">Orthopedic Surgery</option>
+<option value="uro">Urology</option>
+<option value="ent">ENT</option>
+<option value="derm">Dermatology</option>
+<option value="rad">Radiology</option>
+<option value="anes">Anesthesiology</option>
+<option value="er">Emergency Medicine</option>
+<option value="fm">Family Medicine</option>
+<option value="psych">Psychiatry</option>
+<option value="pm_r">PM&R</option>
+<option value="neuro">Neurology</option>
+<option value="path">Pathology</option>
+<option value="ophtho">Ophthalmology</option>
+<option value="peds">Pediatrics</option>
+</select></div>
+<div><label style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:4px">Practice Type</label>
+<select id="ft-prac-c" onchange="ftCalc()" style="width:100%;padding:8px;font-size:12px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;color:var(--text)">
+<option value="academic">Academic</option>
+<option value="employed">Hospital Employed</option>
+<option value="private" selected>Private Practice</option>
+</select></div>
+<div><label style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:4px">Savings Rate</label>
+<select id="ft-save-c" onchange="ftCalc()" style="width:100%;padding:8px;font-size:12px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;color:var(--text)">
+<option value="0.10">10%</option>
+<option value="0.20">20%</option>
+<option value="0.30" selected>30%</option>
+<option value="0.40">40%</option>
+</select></div>
+<div><label style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:4px">Current Stage</label>
+<select id="ft-stage-c" onchange="ftCalc()" style="width:100%;padding:8px;font-size:12px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;color:var(--text)">
+<option value="ms">Medical Student</option>
+<option value="res" selected>Resident</option>
+<option value="fellow">Fellow</option>
+<option value="attending">Attending</option>
+</select></div>
+</div>
+</div>
+</div>
+</div>
+
+<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1.2px;margin:28px 0 14px">\ud83d\udcc8 30-Year Wealth Trajectory</div>
+<div style="position:relative;width:100%;height:280px;background:var(--bg3);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:8px">
+<canvas id="ft-chart" style="width:100%;height:100%"></canvas>
+</div>
+<div id="ft-legend" style="display:flex;gap:16px;justify-content:center;font-size:11px;margin-bottom:24px"></div>
+
+<div id="ft-summary" style="margin-bottom:20px"></div>
+
+<div id="ft-insights" style="margin-bottom:20px"></div>
+
+<p style="font-size:10px;color:var(--text3);line-height:1.6;font-style:italic;margin-top:16px">Based on MGMA 2024 compensation data. Assumes 7% annual investment return, 3% annual salary growth, and $250K starting student debt. This is a modeling tool \u2014 not financial advice. Consult a financial professional for personalized planning.</p>
 </div>`
 };
 
@@ -3248,6 +3449,7 @@ function openFramework(id){
   if(id==='v1')setTimeout(frcUpdate,50);
   if(id==='v4')setTimeout(function(){rvuModelChange();rvuUpdate()},50);
   if(id==='v7')setTimeout(roiUpdate,50);
+  if(id==='v11')setTimeout(ftInit,50);
 }
 
 var ELITE_PREVIEWS={
@@ -3719,6 +3921,183 @@ async function saveAccountSettings(e){
   notify('Account updated!');
   document.getElementById('account-settings').classList.add('hidden');
 }
+// ===== FINANCIAL TRAJECTORY SIMULATOR =====
+var FT_SALARY={
+  // [academic, employed, private] - based on MGMA 2024 median data (in thousands)
+  im:[230,260,280],hosp:[280,310,340],cards:[430,500,580],ic:[550,650,780],ep:[520,610,720],
+  ct_surg:[500,600,750],gi:[420,480,560],pulm:[350,400,440],heme_onc:[400,460,530],
+  nephro:[300,340,370],rheum:[280,310,340],endo:[260,290,310],id:[260,290,310],
+  gen_surg:[370,410,480],ortho:[520,580,700],uro:[420,480,570],ent:[380,430,510],
+  derm:[380,430,520],rad:[400,460,530],anes:[370,410,460],er:[310,340,370],
+  fm:[220,250,280],psych:[270,300,340],pm_r:[290,330,370],neuro:[290,330,370],
+  path:[300,340,370],ophtho:[350,400,500],peds:[220,250,275]
+};
+var FT_TRAIN_YRS={
+  im:3,hosp:3,cards:6,ic:8,ep:8,ct_surg:9,gi:6,pulm:6,heme_onc:6,nephro:5,rheum:5,endo:5,id:5,
+  gen_surg:5,ortho:5,uro:5,ent:5,derm:4,rad:5,anes:4,er:3,fm:3,psych:4,pm_r:4,neuro:4,path:4,ophtho:4,peds:3
+};
+var FT_SPEC_NAMES={
+  im:'Internal Medicine',hosp:'Hospitalist',cards:'Gen Cardiology',ic:'Interventional Cardiology',
+  ep:'Electrophysiology',ct_surg:'CT Surgery',gi:'GI',pulm:'Pulm/CC',heme_onc:'Heme/Onc',
+  nephro:'Nephrology',rheum:'Rheumatology',endo:'Endocrinology',id:'Infectious Disease',
+  gen_surg:'General Surgery',ortho:'Ortho',uro:'Urology',ent:'ENT',derm:'Dermatology',
+  rad:'Radiology',anes:'Anesthesiology',er:'Emergency Med',fm:'Family Medicine',
+  psych:'Psychiatry',pm_r:'PM&R',neuro:'Neurology',path:'Pathology',ophtho:'Ophthalmology',peds:'Pediatrics'
+};
+var FT_COLORS=['rgba(200,168,124,1)','rgba(139,173,196,1)','rgba(139,184,160,1)'];
+
+function ftInit(){ftCalc()}
+
+function ftGetScenario(suffix){
+  var spec=document.getElementById('ft-spec-'+suffix);
+  var prac=document.getElementById('ft-prac-'+suffix);
+  var save=document.getElementById('ft-save-'+suffix);
+  var stage=document.getElementById('ft-stage-'+suffix);
+  if(!spec)return null;
+  var fields=document.getElementById('ft-fields-'+suffix);
+  if(fields&&fields.classList.contains('hidden'))return null;
+  var pracIdx={academic:0,employed:1,private:2}[prac.value]||1;
+  var salary=(FT_SALARY[spec.value]||[300,350,400])[pracIdx]*1000;
+  var trainYrs=FT_TRAIN_YRS[spec.value]||5;
+  var stageOffset={ms:0,res:2,fellow:Math.max(trainYrs-1,3),attending:trainYrs}[stage.value]||0;
+  return{spec:spec.value,salary:salary,trainYrs:trainYrs,saveRate:parseFloat(save.value),stageOffset:stageOffset,pracType:prac.value,label:FT_SPEC_NAMES[spec.value]+' ('+prac.value+')'};
+}
+
+function ftProject(sc){
+  var years=30;var data=[];var netWorth=-250000;// start with student debt
+  var residentPay=65000;var annualReturn=0.07;var salaryGrowth=0.03;
+  var curSalary=sc.salary;
+  for(var y=0;y<=years;y++){
+    var actualYear=y+sc.stageOffset;
+    var income;
+    if(actualYear<sc.trainYrs){income=residentPay}
+    else{income=curSalary;curSalary*=(1+salaryGrowth)}
+    var saved=income*sc.saveRate;
+    netWorth=netWorth*(1+annualReturn)+saved;
+    data.push({year:y,netWorth:Math.round(netWorth),income:Math.round(income),cumEarnings:0});
+  }
+  // calc cumulative earnings
+  var cum=0;var rp=residentPay;var cs=sc.salary;
+  for(var y=0;y<=years;y++){
+    var ay=y+sc.stageOffset;
+    if(ay<sc.trainYrs){cum+=rp}else{cum+=cs;cs*=(1+salaryGrowth)}
+    data[y].cumEarnings=Math.round(cum);
+  }
+  return data;
+}
+
+function ftCalc(){
+  var scenarios=[];
+  var a=ftGetScenario('a');if(a)scenarios.push(a);
+  var b=ftGetScenario('b');if(b)scenarios.push(b);
+  var c=ftGetScenario('c');if(c)scenarios.push(c);
+  if(!scenarios.length)return;
+  var projections=scenarios.map(ftProject);
+
+  // Draw chart
+  var canvas=document.getElementById('ft-chart');
+  if(!canvas)return;
+  var dpr=window.devicePixelRatio||1;
+  canvas.width=canvas.offsetWidth*dpr;
+  canvas.height=canvas.offsetHeight*dpr;
+  var ctx=canvas.getContext('2d');
+  ctx.scale(dpr,dpr);
+  var W=canvas.offsetWidth,H=canvas.offsetHeight;
+  var pad={t:20,r:20,b:36,l:60};
+  var gW=W-pad.l-pad.r,gH=H-pad.t-pad.b;
+
+  // Find max
+  var maxNW=0;var minNW=0;
+  projections.forEach(function(p){p.forEach(function(d){if(d.netWorth>maxNW)maxNW=d.netWorth;if(d.netWorth<minNW)minNW=d.netWorth})});
+  maxNW=Math.ceil(maxNW/1000000)*1000000;
+  minNW=Math.floor(minNW/1000000)*1000000;
+  var range=maxNW-minNW||1;
+
+  ctx.clearRect(0,0,W,H);
+
+  // Grid
+  ctx.strokeStyle='rgba(200,168,124,0.08)';ctx.lineWidth=1;
+  var gridSteps=5;
+  for(var i=0;i<=gridSteps;i++){
+    var y=pad.t+gH-(i/gridSteps)*gH;
+    ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(pad.l+gW,y);ctx.stroke();
+    var val=minNW+(i/gridSteps)*range;
+    ctx.fillStyle='rgba(200,168,124,0.4)';ctx.font='10px Inter,sans-serif';ctx.textAlign='right';
+    ctx.fillText('$'+(val/1000000).toFixed(1)+'M',pad.l-6,y+4);
+  }
+  // X labels
+  for(var x=0;x<=30;x+=5){
+    var px=pad.l+(x/30)*gW;
+    ctx.fillStyle='rgba(200,168,124,0.4)';ctx.font='10px Inter,sans-serif';ctx.textAlign='center';
+    ctx.fillText('Yr '+x,px,H-pad.b+18);
+  }
+  // Zero line
+  var zeroY=pad.t+gH-((0-minNW)/range)*gH;
+  ctx.strokeStyle='rgba(200,168,124,0.2)';ctx.setLineDash([4,4]);
+  ctx.beginPath();ctx.moveTo(pad.l,zeroY);ctx.lineTo(pad.l+gW,zeroY);ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Lines
+  projections.forEach(function(data,idx){
+    ctx.strokeStyle=FT_COLORS[idx];ctx.lineWidth=2.5;ctx.lineJoin='round';
+    ctx.beginPath();
+    data.forEach(function(d,i){
+      var px=pad.l+(i/30)*gW;
+      var py=pad.t+gH-((d.netWorth-minNW)/range)*gH;
+      if(i===0)ctx.moveTo(px,py);else ctx.lineTo(px,py);
+    });
+    ctx.stroke();
+    // End dot
+    var last=data[data.length-1];
+    var ex=pad.l+gW;var ey=pad.t+gH-((last.netWorth-minNW)/range)*gH;
+    ctx.fillStyle=FT_COLORS[idx];ctx.beginPath();ctx.arc(ex,ey,4,0,Math.PI*2);ctx.fill();
+  });
+
+  // Legend
+  var legend=document.getElementById('ft-legend');
+  legend.innerHTML=scenarios.map(function(s,i){
+    return '<span style="display:flex;align-items:center;gap:5px"><span style="width:12px;height:3px;border-radius:2px;background:'+FT_COLORS[i]+'"></span>'+s.label+'</span>';
+  }).join('');
+
+  // Summary cards
+  var sumEl=document.getElementById('ft-summary');
+  sumEl.innerHTML='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:12px">\ud83d\udcca Results at Year 30</div>'+
+    '<div style="display:grid;grid-template-columns:repeat('+Math.min(scenarios.length,3)+',1fr);gap:10px">'+
+    projections.map(function(data,idx){
+      var last=data[data.length-1];
+      var labels=['A','B','C'];
+      return '<div style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:14px;text-align:center">'+
+        '<div style="font-size:10px;color:var(--text3);margin-bottom:6px">Scenario '+labels[idx]+'</div>'+
+        '<div style="font-size:10px;color:var(--text3);margin-bottom:8px">'+scenarios[idx].label+'</div>'+
+        '<div style="font-size:20px;font-weight:600;color:'+FT_COLORS[idx]+';margin-bottom:4px">$'+(last.netWorth/1000000).toFixed(1)+'M</div>'+
+        '<div style="font-size:10px;color:var(--text3)">Net Worth</div>'+
+        '<div style="margin-top:8px;font-size:14px;font-weight:600;color:var(--text)">$'+(last.cumEarnings/1000000).toFixed(1)+'M</div>'+
+        '<div style="font-size:10px;color:var(--text3)">Lifetime Earnings</div>'+
+        '<div style="margin-top:8px;font-size:12px;color:var(--text2)">$'+(scenarios[idx].salary/1000).toFixed(0)+'K/yr</div>'+
+        '<div style="font-size:10px;color:var(--text3)">Starting Salary</div>'+
+        '</div>';
+    }).join('')+'</div>';
+
+  // Insights
+  var insEl=document.getElementById('ft-insights');
+  if(projections.length>=2){
+    var sorted=projections.map(function(p,i){return{idx:i,nw:p[p.length-1].netWorth,earn:p[p.length-1].cumEarnings}}).sort(function(a,b){return b.nw-a.nw});
+    var diff=sorted[0].nw-sorted[sorted.length-1].nw;
+    var earnDiff=sorted[0].earn-sorted[sorted.length-1].earn;
+    var labels=['A','B','C'];
+    insEl.innerHTML='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:12px">\ud83d\udca1 Strategic Insights</div>'+
+      '<div style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:16px;font-size:13px;line-height:1.7;color:var(--text2)">'+
+      '<div style="margin-bottom:10px">1\ufe0f\u20e3 <strong>Scenario '+labels[sorted[0].idx]+'</strong> ('+scenarios[sorted[0].idx].label+') produces <strong style="color:var(--accent)">$'+(diff/1000000).toFixed(1)+'M more</strong> in net worth over 30 years.</div>'+
+      '<div style="margin-bottom:10px">2\ufe0f\u20e3 Lifetime earnings difference: <strong>$'+(earnDiff/1000000).toFixed(1)+'M</strong>. '+
+      (earnDiff>2000000?'This is a significant career-defining gap.':'The gap narrows when you factor in training length and opportunity cost.')+'</div>'+
+      '<div style="margin-bottom:10px">3\ufe0f\u20e3 Increasing savings rate from 10% \u2192 20% roughly doubles retirement assets. The savings rate matters almost as much as the specialty choice.</div>'+
+      (scenarios.some(function(s){return s.pracType==='private'})?'<div>4\ufe0f\u20e3 Private practice offers the highest income ceiling but comes with business risk, overhead, and partner dynamics. Factor in your risk tolerance.</div>':'')+
+      '</div>';
+  }else{
+    insEl.innerHTML='<p style="font-size:12px;color:var(--text3);text-align:center;padding:12px">Enable Scenario B to see comparative insights.</p>';
+  }
+}
+
 // ===== STRIPE CONFIG =====
 const STRIPE_PK='pk_test_51T5mX3PXNQA0ks87KmMtyTYTQZKBLJ6dE5U15eSBf97sK2ecqdU1DYjcJYpevRpdJnE1Xyi0Uow6PG2J8b4A8UCq004h8agh3H';
 const STRIPE_PRICES={

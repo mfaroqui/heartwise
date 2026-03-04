@@ -546,5 +546,205 @@ v10:`<h3>Career Pivot Decision Engine</h3>
 <div style="font-size:48px;margin-bottom:16px">\u2713</div>
 <h3 class="serif" style="font-size:20px;margin-bottom:8px">Report Submitted</h3>
 <p style="font-size:13px;color:var(--text2);line-height:1.6">Your Career Pivot Decision Engine report has been sent to Dr. Faroqui for review.</p>
+</div>`,
+v11:`<div style="text-align:center;padding:28px 20px;margin:-20px -20px 24px;background:linear-gradient(160deg,rgba(200,168,124,.1),rgba(200,168,124,.03));border-radius:12px 12px 0 0;border-bottom:1px solid rgba(200,168,124,.15)">
+<div style="font-size:36px;margin-bottom:8px">\ud83d\udcb0</div>
+<h3 class="serif" style="font-size:22px;margin-bottom:4px">Financial Trajectory Simulator</h3>
+<p style="font-size:12px;color:var(--text3);margin-bottom:4px">The $10 Million Decision Calculator</p>
+<p style="font-size:11px;color:var(--text3)">See how your specialty choice, fellowship, and practice type impact lifetime wealth.</p>
+</div>
+
+<div style="font-size:13px">
+<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:14px">\ud83c\udfaf Build Your Scenarios</div>
+<p style="font-size:12px;color:var(--text3);margin-bottom:18px">Configure up to 3 career paths. The graph updates instantly.</p>
+
+<div id="ft-scenarios">
+<div class="card" style="padding:16px;margin-bottom:10px;border-color:var(--accent)">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><span style="font-size:12px;font-weight:600;color:var(--accent)">Scenario A</span></div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+<div><label style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:4px">Specialty</label>
+<select id="ft-spec-a" onchange="ftCalc()" style="width:100%;padding:8px;font-size:12px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;color:var(--text)">
+<option value="im">Internal Medicine</option>
+<option value="hosp">Hospitalist</option>
+<option value="cards">General Cardiology</option>
+<option value="ic" selected>Interventional Cardiology</option>
+<option value="ep">Electrophysiology</option>
+<option value="ct_surg">CT Surgery</option>
+<option value="gi">Gastroenterology</option>
+<option value="pulm">Pulm/Critical Care</option>
+<option value="heme_onc">Heme/Onc</option>
+<option value="nephro">Nephrology</option>
+<option value="rheum">Rheumatology</option>
+<option value="endo">Endocrinology</option>
+<option value="id">Infectious Disease</option>
+<option value="gen_surg">General Surgery</option>
+<option value="ortho">Orthopedic Surgery</option>
+<option value="uro">Urology</option>
+<option value="ent">ENT</option>
+<option value="derm">Dermatology</option>
+<option value="rad">Radiology</option>
+<option value="anes">Anesthesiology</option>
+<option value="er">Emergency Medicine</option>
+<option value="fm">Family Medicine</option>
+<option value="psych">Psychiatry</option>
+<option value="pm_r">PM&R</option>
+<option value="neuro">Neurology</option>
+<option value="path">Pathology</option>
+<option value="ophtho">Ophthalmology</option>
+<option value="peds">Pediatrics</option>
+</select></div>
+<div><label style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:4px">Practice Type</label>
+<select id="ft-prac-a" onchange="ftCalc()" style="width:100%;padding:8px;font-size:12px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;color:var(--text)">
+<option value="academic">Academic</option>
+<option value="employed" selected>Hospital Employed</option>
+<option value="private">Private Practice</option>
+</select></div>
+<div><label style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:4px">Savings Rate</label>
+<select id="ft-save-a" onchange="ftCalc()" style="width:100%;padding:8px;font-size:12px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;color:var(--text)">
+<option value="0.10">10%</option>
+<option value="0.20" selected>20%</option>
+<option value="0.30">30%</option>
+<option value="0.40">40%</option>
+</select></div>
+<div><label style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:4px">Current Stage</label>
+<select id="ft-stage-a" onchange="ftCalc()" style="width:100%;padding:8px;font-size:12px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;color:var(--text)">
+<option value="ms">Medical Student</option>
+<option value="res" selected>Resident</option>
+<option value="fellow">Fellow</option>
+<option value="attending">Attending</option>
+</select></div>
+</div>
+</div>
+
+<div class="card" style="padding:16px;margin-bottom:10px;border-color:var(--blue)">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><span style="font-size:12px;font-weight:600;color:var(--blue)">Scenario B</span><span id="ft-toggle-b" style="font-size:10px;color:var(--accent);cursor:pointer" onclick="document.getElementById('ft-fields-b').classList.toggle('hidden');ftCalc()">Show/Hide</span></div>
+<div id="ft-fields-b">
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+<div><label style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:4px">Specialty</label>
+<select id="ft-spec-b" onchange="ftCalc()" style="width:100%;padding:8px;font-size:12px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;color:var(--text)">
+<option value="im">Internal Medicine</option>
+<option value="hosp" selected>Hospitalist</option>
+<option value="cards">General Cardiology</option>
+<option value="ic">Interventional Cardiology</option>
+<option value="ep">Electrophysiology</option>
+<option value="ct_surg">CT Surgery</option>
+<option value="gi">Gastroenterology</option>
+<option value="pulm">Pulm/Critical Care</option>
+<option value="heme_onc">Heme/Onc</option>
+<option value="nephro">Nephrology</option>
+<option value="rheum">Rheumatology</option>
+<option value="endo">Endocrinology</option>
+<option value="id">Infectious Disease</option>
+<option value="gen_surg">General Surgery</option>
+<option value="ortho">Orthopedic Surgery</option>
+<option value="uro">Urology</option>
+<option value="ent">ENT</option>
+<option value="derm">Dermatology</option>
+<option value="rad">Radiology</option>
+<option value="anes">Anesthesiology</option>
+<option value="er">Emergency Medicine</option>
+<option value="fm">Family Medicine</option>
+<option value="psych">Psychiatry</option>
+<option value="pm_r">PM&R</option>
+<option value="neuro">Neurology</option>
+<option value="path">Pathology</option>
+<option value="ophtho">Ophthalmology</option>
+<option value="peds">Pediatrics</option>
+</select></div>
+<div><label style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:4px">Practice Type</label>
+<select id="ft-prac-b" onchange="ftCalc()" style="width:100%;padding:8px;font-size:12px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;color:var(--text)">
+<option value="academic">Academic</option>
+<option value="employed" selected>Hospital Employed</option>
+<option value="private">Private Practice</option>
+</select></div>
+<div><label style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:4px">Savings Rate</label>
+<select id="ft-save-b" onchange="ftCalc()" style="width:100%;padding:8px;font-size:12px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;color:var(--text)">
+<option value="0.10">10%</option>
+<option value="0.20" selected>20%</option>
+<option value="0.30">30%</option>
+<option value="0.40">40%</option>
+</select></div>
+<div><label style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:4px">Current Stage</label>
+<select id="ft-stage-b" onchange="ftCalc()" style="width:100%;padding:8px;font-size:12px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;color:var(--text)">
+<option value="ms">Medical Student</option>
+<option value="res" selected>Resident</option>
+<option value="fellow">Fellow</option>
+<option value="attending">Attending</option>
+</select></div>
+</div>
+</div>
+</div>
+
+<div class="card" style="padding:16px;margin-bottom:10px;border-color:var(--green)">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><span style="font-size:12px;font-weight:600;color:var(--green)">Scenario C</span><span style="font-size:10px;color:var(--accent);cursor:pointer" onclick="document.getElementById('ft-fields-c').classList.toggle('hidden');ftCalc()">Show/Hide</span></div>
+<div id="ft-fields-c" class="hidden">
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+<div><label style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:4px">Specialty</label>
+<select id="ft-spec-c" onchange="ftCalc()" style="width:100%;padding:8px;font-size:12px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;color:var(--text)">
+<option value="im">Internal Medicine</option>
+<option value="hosp">Hospitalist</option>
+<option value="cards" selected>General Cardiology</option>
+<option value="ic">Interventional Cardiology</option>
+<option value="ep">Electrophysiology</option>
+<option value="ct_surg">CT Surgery</option>
+<option value="gi">Gastroenterology</option>
+<option value="pulm">Pulm/Critical Care</option>
+<option value="heme_onc">Heme/Onc</option>
+<option value="nephro">Nephrology</option>
+<option value="rheum">Rheumatology</option>
+<option value="endo">Endocrinology</option>
+<option value="id">Infectious Disease</option>
+<option value="gen_surg">General Surgery</option>
+<option value="ortho">Orthopedic Surgery</option>
+<option value="uro">Urology</option>
+<option value="ent">ENT</option>
+<option value="derm">Dermatology</option>
+<option value="rad">Radiology</option>
+<option value="anes">Anesthesiology</option>
+<option value="er">Emergency Medicine</option>
+<option value="fm">Family Medicine</option>
+<option value="psych">Psychiatry</option>
+<option value="pm_r">PM&R</option>
+<option value="neuro">Neurology</option>
+<option value="path">Pathology</option>
+<option value="ophtho">Ophthalmology</option>
+<option value="peds">Pediatrics</option>
+</select></div>
+<div><label style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:4px">Practice Type</label>
+<select id="ft-prac-c" onchange="ftCalc()" style="width:100%;padding:8px;font-size:12px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;color:var(--text)">
+<option value="academic">Academic</option>
+<option value="employed">Hospital Employed</option>
+<option value="private" selected>Private Practice</option>
+</select></div>
+<div><label style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:4px">Savings Rate</label>
+<select id="ft-save-c" onchange="ftCalc()" style="width:100%;padding:8px;font-size:12px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;color:var(--text)">
+<option value="0.10">10%</option>
+<option value="0.20">20%</option>
+<option value="0.30" selected>30%</option>
+<option value="0.40">40%</option>
+</select></div>
+<div><label style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:4px">Current Stage</label>
+<select id="ft-stage-c" onchange="ftCalc()" style="width:100%;padding:8px;font-size:12px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;color:var(--text)">
+<option value="ms">Medical Student</option>
+<option value="res" selected>Resident</option>
+<option value="fellow">Fellow</option>
+<option value="attending">Attending</option>
+</select></div>
+</div>
+</div>
+</div>
+</div>
+
+<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1.2px;margin:28px 0 14px">\ud83d\udcc8 30-Year Wealth Trajectory</div>
+<div style="position:relative;width:100%;height:280px;background:var(--bg3);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:8px">
+<canvas id="ft-chart" style="width:100%;height:100%"></canvas>
+</div>
+<div id="ft-legend" style="display:flex;gap:16px;justify-content:center;font-size:11px;margin-bottom:24px"></div>
+
+<div id="ft-summary" style="margin-bottom:20px"></div>
+
+<div id="ft-insights" style="margin-bottom:20px"></div>
+
+<p style="font-size:10px;color:var(--text3);line-height:1.6;font-style:italic;margin-top:16px">Based on MGMA 2024 compensation data. Assumes 7% annual investment return, 3% annual salary growth, and $250K starting student debt. This is a modeling tool \u2014 not financial advice. Consult a financial professional for personalized planning.</p>
 </div>`
 };

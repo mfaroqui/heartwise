@@ -513,6 +513,7 @@ function openFramework(id){
   if(id==='v1')setTimeout(frcUpdate,50);
   if(id==='v4')setTimeout(function(){rvuModelChange();rvuUpdate()},50);
   if(id==='v7')setTimeout(roiUpdate,50);
+  if(id==='v11')setTimeout(ftInit,50);
 }
 
 var ELITE_PREVIEWS={
@@ -984,6 +985,183 @@ async function saveAccountSettings(e){
   notify('Account updated!');
   document.getElementById('account-settings').classList.add('hidden');
 }
+// ===== FINANCIAL TRAJECTORY SIMULATOR =====
+var FT_SALARY={
+  // [academic, employed, private] - based on MGMA 2024 median data (in thousands)
+  im:[230,260,280],hosp:[280,310,340],cards:[430,500,580],ic:[550,650,780],ep:[520,610,720],
+  ct_surg:[500,600,750],gi:[420,480,560],pulm:[350,400,440],heme_onc:[400,460,530],
+  nephro:[300,340,370],rheum:[280,310,340],endo:[260,290,310],id:[260,290,310],
+  gen_surg:[370,410,480],ortho:[520,580,700],uro:[420,480,570],ent:[380,430,510],
+  derm:[380,430,520],rad:[400,460,530],anes:[370,410,460],er:[310,340,370],
+  fm:[220,250,280],psych:[270,300,340],pm_r:[290,330,370],neuro:[290,330,370],
+  path:[300,340,370],ophtho:[350,400,500],peds:[220,250,275]
+};
+var FT_TRAIN_YRS={
+  im:3,hosp:3,cards:6,ic:8,ep:8,ct_surg:9,gi:6,pulm:6,heme_onc:6,nephro:5,rheum:5,endo:5,id:5,
+  gen_surg:5,ortho:5,uro:5,ent:5,derm:4,rad:5,anes:4,er:3,fm:3,psych:4,pm_r:4,neuro:4,path:4,ophtho:4,peds:3
+};
+var FT_SPEC_NAMES={
+  im:'Internal Medicine',hosp:'Hospitalist',cards:'Gen Cardiology',ic:'Interventional Cardiology',
+  ep:'Electrophysiology',ct_surg:'CT Surgery',gi:'GI',pulm:'Pulm/CC',heme_onc:'Heme/Onc',
+  nephro:'Nephrology',rheum:'Rheumatology',endo:'Endocrinology',id:'Infectious Disease',
+  gen_surg:'General Surgery',ortho:'Ortho',uro:'Urology',ent:'ENT',derm:'Dermatology',
+  rad:'Radiology',anes:'Anesthesiology',er:'Emergency Med',fm:'Family Medicine',
+  psych:'Psychiatry',pm_r:'PM&R',neuro:'Neurology',path:'Pathology',ophtho:'Ophthalmology',peds:'Pediatrics'
+};
+var FT_COLORS=['rgba(200,168,124,1)','rgba(139,173,196,1)','rgba(139,184,160,1)'];
+
+function ftInit(){ftCalc()}
+
+function ftGetScenario(suffix){
+  var spec=document.getElementById('ft-spec-'+suffix);
+  var prac=document.getElementById('ft-prac-'+suffix);
+  var save=document.getElementById('ft-save-'+suffix);
+  var stage=document.getElementById('ft-stage-'+suffix);
+  if(!spec)return null;
+  var fields=document.getElementById('ft-fields-'+suffix);
+  if(fields&&fields.classList.contains('hidden'))return null;
+  var pracIdx={academic:0,employed:1,private:2}[prac.value]||1;
+  var salary=(FT_SALARY[spec.value]||[300,350,400])[pracIdx]*1000;
+  var trainYrs=FT_TRAIN_YRS[spec.value]||5;
+  var stageOffset={ms:0,res:2,fellow:Math.max(trainYrs-1,3),attending:trainYrs}[stage.value]||0;
+  return{spec:spec.value,salary:salary,trainYrs:trainYrs,saveRate:parseFloat(save.value),stageOffset:stageOffset,pracType:prac.value,label:FT_SPEC_NAMES[spec.value]+' ('+prac.value+')'};
+}
+
+function ftProject(sc){
+  var years=30;var data=[];var netWorth=-250000;// start with student debt
+  var residentPay=65000;var annualReturn=0.07;var salaryGrowth=0.03;
+  var curSalary=sc.salary;
+  for(var y=0;y<=years;y++){
+    var actualYear=y+sc.stageOffset;
+    var income;
+    if(actualYear<sc.trainYrs){income=residentPay}
+    else{income=curSalary;curSalary*=(1+salaryGrowth)}
+    var saved=income*sc.saveRate;
+    netWorth=netWorth*(1+annualReturn)+saved;
+    data.push({year:y,netWorth:Math.round(netWorth),income:Math.round(income),cumEarnings:0});
+  }
+  // calc cumulative earnings
+  var cum=0;var rp=residentPay;var cs=sc.salary;
+  for(var y=0;y<=years;y++){
+    var ay=y+sc.stageOffset;
+    if(ay<sc.trainYrs){cum+=rp}else{cum+=cs;cs*=(1+salaryGrowth)}
+    data[y].cumEarnings=Math.round(cum);
+  }
+  return data;
+}
+
+function ftCalc(){
+  var scenarios=[];
+  var a=ftGetScenario('a');if(a)scenarios.push(a);
+  var b=ftGetScenario('b');if(b)scenarios.push(b);
+  var c=ftGetScenario('c');if(c)scenarios.push(c);
+  if(!scenarios.length)return;
+  var projections=scenarios.map(ftProject);
+
+  // Draw chart
+  var canvas=document.getElementById('ft-chart');
+  if(!canvas)return;
+  var dpr=window.devicePixelRatio||1;
+  canvas.width=canvas.offsetWidth*dpr;
+  canvas.height=canvas.offsetHeight*dpr;
+  var ctx=canvas.getContext('2d');
+  ctx.scale(dpr,dpr);
+  var W=canvas.offsetWidth,H=canvas.offsetHeight;
+  var pad={t:20,r:20,b:36,l:60};
+  var gW=W-pad.l-pad.r,gH=H-pad.t-pad.b;
+
+  // Find max
+  var maxNW=0;var minNW=0;
+  projections.forEach(function(p){p.forEach(function(d){if(d.netWorth>maxNW)maxNW=d.netWorth;if(d.netWorth<minNW)minNW=d.netWorth})});
+  maxNW=Math.ceil(maxNW/1000000)*1000000;
+  minNW=Math.floor(minNW/1000000)*1000000;
+  var range=maxNW-minNW||1;
+
+  ctx.clearRect(0,0,W,H);
+
+  // Grid
+  ctx.strokeStyle='rgba(200,168,124,0.08)';ctx.lineWidth=1;
+  var gridSteps=5;
+  for(var i=0;i<=gridSteps;i++){
+    var y=pad.t+gH-(i/gridSteps)*gH;
+    ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(pad.l+gW,y);ctx.stroke();
+    var val=minNW+(i/gridSteps)*range;
+    ctx.fillStyle='rgba(200,168,124,0.4)';ctx.font='10px Inter,sans-serif';ctx.textAlign='right';
+    ctx.fillText('$'+(val/1000000).toFixed(1)+'M',pad.l-6,y+4);
+  }
+  // X labels
+  for(var x=0;x<=30;x+=5){
+    var px=pad.l+(x/30)*gW;
+    ctx.fillStyle='rgba(200,168,124,0.4)';ctx.font='10px Inter,sans-serif';ctx.textAlign='center';
+    ctx.fillText('Yr '+x,px,H-pad.b+18);
+  }
+  // Zero line
+  var zeroY=pad.t+gH-((0-minNW)/range)*gH;
+  ctx.strokeStyle='rgba(200,168,124,0.2)';ctx.setLineDash([4,4]);
+  ctx.beginPath();ctx.moveTo(pad.l,zeroY);ctx.lineTo(pad.l+gW,zeroY);ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Lines
+  projections.forEach(function(data,idx){
+    ctx.strokeStyle=FT_COLORS[idx];ctx.lineWidth=2.5;ctx.lineJoin='round';
+    ctx.beginPath();
+    data.forEach(function(d,i){
+      var px=pad.l+(i/30)*gW;
+      var py=pad.t+gH-((d.netWorth-minNW)/range)*gH;
+      if(i===0)ctx.moveTo(px,py);else ctx.lineTo(px,py);
+    });
+    ctx.stroke();
+    // End dot
+    var last=data[data.length-1];
+    var ex=pad.l+gW;var ey=pad.t+gH-((last.netWorth-minNW)/range)*gH;
+    ctx.fillStyle=FT_COLORS[idx];ctx.beginPath();ctx.arc(ex,ey,4,0,Math.PI*2);ctx.fill();
+  });
+
+  // Legend
+  var legend=document.getElementById('ft-legend');
+  legend.innerHTML=scenarios.map(function(s,i){
+    return '<span style="display:flex;align-items:center;gap:5px"><span style="width:12px;height:3px;border-radius:2px;background:'+FT_COLORS[i]+'"></span>'+s.label+'</span>';
+  }).join('');
+
+  // Summary cards
+  var sumEl=document.getElementById('ft-summary');
+  sumEl.innerHTML='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:12px">\ud83d\udcca Results at Year 30</div>'+
+    '<div style="display:grid;grid-template-columns:repeat('+Math.min(scenarios.length,3)+',1fr);gap:10px">'+
+    projections.map(function(data,idx){
+      var last=data[data.length-1];
+      var labels=['A','B','C'];
+      return '<div style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:14px;text-align:center">'+
+        '<div style="font-size:10px;color:var(--text3);margin-bottom:6px">Scenario '+labels[idx]+'</div>'+
+        '<div style="font-size:10px;color:var(--text3);margin-bottom:8px">'+scenarios[idx].label+'</div>'+
+        '<div style="font-size:20px;font-weight:600;color:'+FT_COLORS[idx]+';margin-bottom:4px">$'+(last.netWorth/1000000).toFixed(1)+'M</div>'+
+        '<div style="font-size:10px;color:var(--text3)">Net Worth</div>'+
+        '<div style="margin-top:8px;font-size:14px;font-weight:600;color:var(--text)">$'+(last.cumEarnings/1000000).toFixed(1)+'M</div>'+
+        '<div style="font-size:10px;color:var(--text3)">Lifetime Earnings</div>'+
+        '<div style="margin-top:8px;font-size:12px;color:var(--text2)">$'+(scenarios[idx].salary/1000).toFixed(0)+'K/yr</div>'+
+        '<div style="font-size:10px;color:var(--text3)">Starting Salary</div>'+
+        '</div>';
+    }).join('')+'</div>';
+
+  // Insights
+  var insEl=document.getElementById('ft-insights');
+  if(projections.length>=2){
+    var sorted=projections.map(function(p,i){return{idx:i,nw:p[p.length-1].netWorth,earn:p[p.length-1].cumEarnings}}).sort(function(a,b){return b.nw-a.nw});
+    var diff=sorted[0].nw-sorted[sorted.length-1].nw;
+    var earnDiff=sorted[0].earn-sorted[sorted.length-1].earn;
+    var labels=['A','B','C'];
+    insEl.innerHTML='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:12px">\ud83d\udca1 Strategic Insights</div>'+
+      '<div style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:16px;font-size:13px;line-height:1.7;color:var(--text2)">'+
+      '<div style="margin-bottom:10px">1\ufe0f\u20e3 <strong>Scenario '+labels[sorted[0].idx]+'</strong> ('+scenarios[sorted[0].idx].label+') produces <strong style="color:var(--accent)">$'+(diff/1000000).toFixed(1)+'M more</strong> in net worth over 30 years.</div>'+
+      '<div style="margin-bottom:10px">2\ufe0f\u20e3 Lifetime earnings difference: <strong>$'+(earnDiff/1000000).toFixed(1)+'M</strong>. '+
+      (earnDiff>2000000?'This is a significant career-defining gap.':'The gap narrows when you factor in training length and opportunity cost.')+'</div>'+
+      '<div style="margin-bottom:10px">3\ufe0f\u20e3 Increasing savings rate from 10% \u2192 20% roughly doubles retirement assets. The savings rate matters almost as much as the specialty choice.</div>'+
+      (scenarios.some(function(s){return s.pracType==='private'})?'<div>4\ufe0f\u20e3 Private practice offers the highest income ceiling but comes with business risk, overhead, and partner dynamics. Factor in your risk tolerance.</div>':'')+
+      '</div>';
+  }else{
+    insEl.innerHTML='<p style="font-size:12px;color:var(--text3);text-align:center;padding:12px">Enable Scenario B to see comparative insights.</p>';
+  }
+}
+
 // ===== STRIPE CONFIG =====
 const STRIPE_PK='pk_test_51T5mX3PXNQA0ks87KmMtyTYTQZKBLJ6dE5U15eSBf97sK2ecqdU1DYjcJYpevRpdJnE1Xyi0Uow6PG2J8b4A8UCq004h8agh3H';
 const STRIPE_PRICES={

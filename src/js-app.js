@@ -238,6 +238,12 @@ function enterApp(){
   document.getElementById('welcome-msg').textContent='Welcome, '+U.name.split(' ')[0]+' \ud83d\udc4b';
   document.getElementById('nav-admin').style.display=U.tier==='admin'?'':'none';
   document.getElementById('upgrade-prompt').style.display=U.tier==='free'?'':'none';
+  // Check for pending plan from landing page
+  const pendingPlan=sessionStorage.getItem('hw_pending_plan');
+  if(pendingPlan){
+    sessionStorage.removeItem('hw_pending_plan');
+    setTimeout(()=>subPlan(pendingPlan),500);
+  }
   renderHome();
 }
 
@@ -982,10 +988,20 @@ async function saveAccountSettings(e){
 const STRIPE_PK='pk_test_51T5mX3PXNQA0ks87KmMtyTYTQZKBLJ6dE5U15eSBf97sK2ecqdU1DYjcJYpevRpdJnE1Xyi0Uow6PG2J8b4A8UCq004h8agh3H';
 const STRIPE_PRICES={
   core:'price_1T5rG5PXNQA0ks87NtjJVnYi',
-  pro:'price_1T5rGQPXNQA0ks87WdzaewtE',
+  elite:'price_1T5rGQPXNQA0ks87WdzaewtE',
   audit:'price_1T5rGtPXNQA0ks8758d20r97',
   intensive:'price_1T5rHJPXNQA0ks87dGsOMuWM'
 };
+
+// Landing page plan signup: if logged in → Stripe, if not → onboard with plan intent
+function planSignup(plan){
+  if(U){
+    subPlan(plan);
+  }else{
+    sessionStorage.setItem('hw_pending_plan',plan);
+    go('pg-onboard');
+  }
+}
 let stripeLoaded=false,stripeObj=null;
 
 function loadStripe(){
@@ -1016,10 +1032,8 @@ function subPlan(plan){
   if(!U){notify('Please sign in first.',1);return}
   if(plan==='core'){
     startCheckout(STRIPE_PRICES.core,'subscription');
-  }else if(plan==='pro'){
-    startCheckout(STRIPE_PRICES.pro,'subscription');
   }else if(plan==='elite'){
-    startCheckout(STRIPE_PRICES.elite||STRIPE_PRICES.pro,'subscription');
+    startCheckout(STRIPE_PRICES.elite,'subscription');
   }else if(plan==='audit'){
     startCheckout(STRIPE_PRICES.audit,'payment');
   }else if(plan==='intensive'){
@@ -1055,7 +1069,7 @@ function handleCheckoutReturn(){
     const priceId=params.get('plan');
     // Map price back to tier
     if(priceId===STRIPE_PRICES.core){if(U){U.tier='core';U.usage.credits=TIERS.core.credits}}
-    else if(priceId===STRIPE_PRICES.pro){if(U){U.tier='pro';U.usage.credits=TIERS.pro.credits}}
+    else if(priceId===STRIPE_PRICES.elite){if(U){U.tier='elite';U.usage.credits=TIERS.elite.credits}}
     else{if(U)notify('Payment received! We will be in touch within 48 hours to begin your strategic engagement.')}
     if(U){
       const u=DB.users.find(u=>u.id===U.id);if(u)u.tier=U.tier;

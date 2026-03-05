@@ -107,6 +107,7 @@ window.onload=async function(){
 };
 
 // ===== NAV =====
+var _lastPage='';var _lastScr='';var _skipPush=false;
 function go(id){
   ['pg-landing','pg-login','pg-signup','pg-onboard','pg-forgot','pg-reset','main-app'].forEach(p=>{
     const el=document.getElementById(p);if(el){el.classList.add('hidden');el.style.display=''}
@@ -117,6 +118,7 @@ function go(id){
   // Show/hide topbar
   const tb=document.getElementById('topbar');
   if(tb)tb.style.display=(id==='pg-landing')?'':'none';
+  if(!_skipPush&&id!==_lastPage){history.pushState({page:id},'',null);_lastPage=id}
 }
 
 function navTo(scr,btn){
@@ -136,7 +138,41 @@ function navTo(scr,btn){
   if(scr==='scr-admin')renderAdmin();
   if(scr==='scr-ask')updateAskScreen();
   if(scr==='scr-profile')renderProfile();
+  // Close any open modals
+  var modal=document.getElementById('modal-q');if(modal&&!modal.classList.contains('hidden')){modal.classList.add('hidden')}
+  if(!_skipPush&&scr!==_lastScr){history.pushState({page:'main-app',scr:scr},'',null);_lastScr=scr}
 }
+
+window.addEventListener('popstate',function(e){
+  // Close modal first if open
+  var modal=document.getElementById('modal-q');
+  if(modal&&!modal.classList.contains('hidden')){modal.classList.add('hidden');return}
+  _skipPush=true;
+  if(e.state&&e.state.scr){
+    go('main-app');navTo(e.state.scr);_lastScr=e.state.scr;_lastPage='main-app';
+  }else if(e.state&&e.state.page){
+    go(e.state.page);_lastPage=e.state.page;
+  }else{
+    // Default: if logged in go home, else landing
+    if(U){go('main-app');navTo('scr-home');_lastPage='main-app';_lastScr='scr-home'}
+    else{go('pg-landing');_lastPage='pg-landing'}
+  }
+  _skipPush=false;
+});
+
+// Push state when modal opens so back button closes it
+(function(){
+  var modal=document.getElementById('modal-q');
+  if(!modal)return;
+  var obs=new MutationObserver(function(muts){
+    muts.forEach(function(m){
+      if(m.attributeName==='class'&&!modal.classList.contains('hidden')){
+        history.pushState({modal:true},'',null);
+      }
+    });
+  });
+  obs.observe(modal,{attributes:true});
+})();
 
 // ===== AUTH =====
 async function doLogin(e){

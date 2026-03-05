@@ -267,6 +267,16 @@ function enterApp(){
   document.getElementById('main-nav').classList.add('on');
   if(!U.usage)U.usage={ai:0,credits:TIERS[U.tier]?.credits||0,month:new Date().getMonth()};
   if(U.usage.month!==new Date().getMonth()){U.usage.ai=0;U.usage.credits=TIERS[U.tier]?.credits||0;U.usage.month=new Date().getMonth()}
+  // Check trial expiration
+  if(U.isTrial&&U.trialEnd){
+    const now=new Date();const end=new Date(U.trialEnd);
+    if(now>=end){
+      U.tier='free';U.isTrial=false;
+      const u=DB.users.find(u=>u.id===U.id);if(u){u.tier='free';u.isTrial=false}
+      saveDB();localStorage.setItem('hw_session',JSON.stringify(U));
+      notify('Your trial has ended. Upgrade to keep full access.',1);
+    }
+  }
   const b=document.getElementById('user-badge');
   const bc={free:'b-free',core:'b-core',elite:'b-pro',admin:'b-admin'};
   b.className='badge '+(bc[U.tier]||'b-free');
@@ -280,6 +290,8 @@ function enterApp(){
     sessionStorage.removeItem('hw_pending_plan');
     setTimeout(()=>subPlan(pendingPlan),500);
   }
+  // Start trial countdown if active
+  if(U.isTrial&&U.trialEnd)startTrialCountdown();
   renderHome();
 }
 
@@ -332,6 +344,38 @@ function setDailyQuote(){
   auth.textContent='— '+q.author;
 }
 
+// ===== TRIAL COUNTDOWN =====
+var _trialInterval=null;
+function startTrialCountdown(){
+  if(_trialInterval)clearInterval(_trialInterval);
+  updateTrialBanner();
+  _trialInterval=setInterval(updateTrialBanner,60000); // update every minute
+}
+function updateTrialBanner(){
+  var el=document.getElementById('trial-countdown-banner');
+  if(!el||!U||!U.isTrial||!U.trialEnd)return;
+  var now=new Date();var end=new Date(U.trialEnd);
+  var diff=end-now;
+  if(diff<=0){
+    // Trial expired
+    U.tier='free';U.isTrial=false;
+    var u=DB.users.find(function(u){return u.id===U.id});if(u){u.tier='free';u.isTrial=false}
+    saveDB();localStorage.setItem('hw_session',JSON.stringify(U));
+    el.innerHTML='<div style="display:flex;align-items:center;gap:12px"><span style="font-size:18px">⏰</span><div style="flex:1"><div style="font-size:13px;font-weight:600;color:var(--red)">Your trial has ended</div><div style="font-size:11px;color:var(--text2);margin-top:2px">Subscribe now to keep full access to every tool.</div></div><button class="btn btn-a btn-sm" onclick="navTo(\'scr-profile\');showUpgrade()" style="flex-shrink:0;width:auto">Subscribe →</button></div>';
+    if(_trialInterval){clearInterval(_trialInterval);_trialInterval=null}
+    enterApp();
+    return;
+  }
+  var hours=Math.floor(diff/3600000);
+  var mins=Math.floor((diff%3600000)/60000);
+  var urgency=hours<6?'var(--red)':hours<12?'var(--accent)':'var(--green)';
+  var urgencyBg=hours<6?'var(--red-dim)':hours<12?'var(--accent-dim)':'var(--green-dim)';
+  var urgencyBorder=hours<6?'rgba(196,77,86,.2)':hours<12?'rgba(200,168,124,.2)':'rgba(139,184,160,.2)';
+  el.style.background=urgencyBg;
+  el.style.borderColor=urgencyBorder;
+  el.innerHTML='<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap"><span style="font-size:18px">⚡</span><div style="flex:1;min-width:180px"><div style="font-size:13px;font-weight:600;color:'+urgency+'">Full Access Trial — '+hours+'h '+mins+'m remaining</div><div style="font-size:11px;color:var(--text2);margin-top:2px">Every tool unlocked. Explore everything before time runs out.</div></div><button class="btn btn-a btn-sm" onclick="navTo(\'scr-profile\');showUpgrade()" style="flex-shrink:0;width:auto;padding:8px 18px">Keep Access →</button></div>';
+}
+
 function renderHome(){
   if(!U)return;
   setDailyQuote();
@@ -341,7 +385,13 @@ function renderHome(){
   document.getElementById('usage-ai').textContent=max===999?used+' / \u221e':used+' / '+max;
   document.getElementById('usage-bar').style.width=max===999?'0%':pct+'%';
   document.getElementById('usage-credits').textContent=U.usage?.credits||0;
-  document.getElementById('usage-tier').textContent=t.name+' plan';
+  document.getElementById('usage-tier').textContent=t.name+(U.isTrial?' (trial)':' plan');
+  // Show/hide trial elements
+  var trialBanner=document.getElementById('trial-countdown-banner');
+  var trialNote=document.getElementById('trial-review-note');
+  if(trialBanner)trialBanner.style.display=U.isTrial&&U.trialEnd?'':'none';
+  if(trialNote)trialNote.style.display=U.isTrial?'':'none';
+  if(U.isTrial&&U.trialEnd)updateTrialBanner();
   // Reviewed This Week = reviewed in last 7 days (or latest 5 if none recent)
   const now=new Date();const weekAgo=new Date(now);weekAgo.setDate(weekAgo.getDate()-7);const weekStr=weekAgo.toISOString().split('T')[0];
   let reviewed=DB.questions.filter(q=>q.status==='reviewed'&&q.reviewNote).sort((a,b)=>b.date.localeCompare(a.date));
@@ -409,6 +459,7 @@ function closeModal(id){document.getElementById(id).classList.add('hidden')}
 function toggleFinance(){document.getElementById('q-finance-box').style.display=document.getElementById('q-cat').value==='finance'?'':'none'}
 function togReview(){
   const t=document.getElementById('q-review-tog');
+  if(U.isTrial){notify('Physician reviews are available with paid plans. Explore all tools now — subscribe to unlock direct physician access.',1);return}
   if(!t.classList.contains('on')&&(U.usage?.credits||0)<=0){notify('No review credits. Upgrade your plan.',1);return}
   t.classList.toggle('on');
 }
@@ -1610,7 +1661,7 @@ function renderAdmin(){
         h+='<div style="display:flex;gap:16px;font-size:11px;color:var(--text3);margin-bottom:12px">';
         h+='<span>AI Used: <strong style="color:var(--text2)">'+aiUsed+'</strong></span>';
         h+='<span>Questions: <strong style="color:var(--text2)">'+qCount+'</strong></span>';
-        if(u.trialEnd)h+='<span>Trial Ends: <strong style="color:var(--text2)">'+u.trialEnd+'</strong></span>';
+        if(u.trialEnd)h+='<span>Trial Ends: <strong style="color:var(--text2)">'+new Date(u.trialEnd).toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'})+'</strong></span>';
         h+='</div>';
         // Admin notes
         h+='<details style="margin-bottom:8px"><summary style="font-size:12px;color:var(--accent);cursor:pointer">Notes & Progress Tracking</summary>';
@@ -1954,26 +2005,26 @@ function obComplete(){
   const p=obProfile;
   // Create user with trial
   const roleMap={premed:'student',student:'student',resident:'resident',fellow:'fellow',attending:'attending',switching:'other'};
-  const trialEnd=new Date();trialEnd.setDate(trialEnd.getDate()+3);
+  const trialEnd=new Date();trialEnd.setHours(trialEnd.getHours()+48);
   // Capture report snapshot
   const reportSnapshot=captureReportData(p);
-  const user={id:'u'+DB.nextUserId++,name:p.name,email:p.email.toLowerCase(),pass:p.pass,role:roleMap[p.stage]||'student',tier:'core',trialEnd:trialEnd.toISOString().split('T')[0],institution:p.inst,usage:{ai:0,credits:0,month:new Date().getMonth()},profile:p,signupDate:new Date().toISOString(),report:reportSnapshot,notes:[]};
+  const user={id:'u'+DB.nextUserId++,name:p.name,email:p.email.toLowerCase(),pass:p.pass,role:roleMap[p.stage]||'student',tier:'elite',trialEnd:trialEnd.toISOString(),isTrial:true,institution:p.inst,usage:{ai:0,credits:0,month:new Date().getMonth()},profile:p,signupDate:new Date().toISOString(),report:reportSnapshot,notes:[]};
   DB.users.push(user);saveDB();
   // Sync to Supabase
   if(_supaClient){
     _supaClient.auth.signUp({email:p.email.toLowerCase(),password:p.pass,options:{data:{name:p.name}}}).catch(()=>{});
     _supaClient.from('profiles').insert([{
       user_id:user.id,name:p.name,email:p.email.toLowerCase(),role:roleMap[p.stage]||'student',
-      tier:'core',institution:p.inst||'',stage:p.stage,specialty:p.spec||'',goal:p.goal||'',
+      tier:'elite',institution:p.inst||'',stage:p.stage,specialty:p.spec||'',goal:p.goal||'',
       score:reportSnapshot.score,grade:reportSnapshot.grade,
       strengths:reportSnapshot.strengths,gaps:reportSnapshot.gaps,
-      trial_end:trialEnd.toISOString().split('T')[0],
+      trial_end:trialEnd.toISOString(),
       profile_data:p
     }]).then(function(res){if(res.error)console.warn('Profile sync error',res.error)});
   }
   U=user;localStorage.setItem('hw_session',JSON.stringify(U));
   enterApp();showDisc();
-  notify('Welcome! Your 3-day strategic access is active. ⚡');
+  notify('Welcome! Your 48-hour full access is now active. Every tool. Every feature. The clock is ticking. ⚡');
 }
 
 function captureReportData(p){

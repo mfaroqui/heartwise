@@ -705,7 +705,7 @@ a:hover{color:var(--accent2)}
 <h1 class="hero-lux-h1">Strategic Intelligence for <em>Competitive Physicians.</em></h1>
 <p class="hero-lux-sub">Stop guessing. Start positioning. HeartWise gives you structured career and financial leverage — built by a practicing interventional cardiologist.</p>
 <div class="hero-lux-ctas">
-<button class="hero-btn-primary" onclick="go('pg-onboard')">Start 3-Day Strategic Access →</button>
+<button class="hero-btn-primary" onclick="go('pg-onboard')">Start 48-Hour Full Access →</button>
 <button class="hero-btn-secondary" onclick="document.getElementById('founder-sec').scrollIntoView({behavior:'smooth'})">Meet the Founder</button>
 </div>
 <div class="hero-lux-steps">
@@ -727,7 +727,7 @@ a:hover{color:var(--accent2)}
 </div>
 </div>
 </div>
-<p class="hero-lux-fine">No credit card required. Full access for 3 days.</p>
+<p class="hero-lux-fine">No credit card required. Every tool unlocked for 48 hours.</p>
 </div>
 <div class="hero-lux-portrait">
 <div class="hero-lux-img-wrap">
@@ -1192,7 +1192,7 @@ a:hover{color:var(--accent2)}
 <p style="font-size:15px;color:var(--text);line-height:1.85;font-weight:300;max-width:540px;margin:0 auto 24px">
 ChatGPT and Claude are powerful AI tools — but they're general-purpose. <strong style="font-weight:500;color:var(--accent)">HeartWise is your career co-pilot.</strong> Imagine a personalized guide that maps your path from residency to leadership, evaluates real contracts with financial insights, projects career outcomes before you make major decisions, and provides interactive dashboards tailored to physicians.
 </p>
-<button class="btn btn-a" onclick="go('pg-onboard')" style="max-width:320px;margin:0 auto">Try HeartWise Free for 3 Days →</button>
+<button class="btn btn-a" onclick="go('pg-onboard')" style="max-width:320px;margin:0 auto">Try HeartWise Free for 48 Hours →</button>
 </div>
 
 </div>
@@ -1328,14 +1328,14 @@ ChatGPT and Claude are powerful AI tools — but they're general-purpose. <stron
 <div class="lp-sec" id="pricing-sec" style="background:var(--bg2)">
 <h2 class="serif">Membership</h2>
 <div class="lp-divider"></div>
-<p class="sub">Start with 3 days of full access. Keep what works.</p>
+<p class="sub">Start with 48 hours of full access. Every tool. Every feature. No limits.</p>
 
 <div class="reveal" style="max-width:500px;margin:0 auto">
 
 <!-- Trial CTA -->
 <div style="padding:24px;border-radius:var(--r3);background:linear-gradient(160deg,rgba(200,168,124,.06),rgba(200,168,124,.02));border:1px solid var(--border2);margin-bottom:20px;text-align:center">
-<div style="font-size:18px;font-family:'Cormorant Garamond',serif;font-weight:600;margin-bottom:8px">3-Day Strategic Access</div>
-<p style="font-size:13px;color:var(--text2);font-weight:300;line-height:1.6;margin-bottom:16px">Unlimited access to every tool. No credit card. See if the system works for you.</p>
+<div style="font-size:18px;font-family:'Cormorant Garamond',serif;font-weight:600;margin-bottom:8px">48-Hour Full Access</div>
+<p style="font-size:13px;color:var(--text2);font-weight:300;line-height:1.6;margin-bottom:16px">Every tool. Every feature. No credit card. No limits. See what HeartWise can do for your career.</p>
 <button class="btn btn-a" onclick="go('pg-onboard')" style="max-width:260px;margin:0 auto">Start Free Trial</button>
 </div>
 
@@ -1590,9 +1590,9 @@ ChatGPT and Claude are powerful AI tools — but they're general-purpose. <stron
 <div id="ob-report"></div>
 <div style="text-align:center;margin-top:32px;padding:24px;border-radius:var(--r3);background:var(--accent-dim);border:1px solid var(--border2)">
 <div style="font-size:16px;font-family:'Cormorant Garamond',serif;font-weight:600;margin-bottom:8px">Unlock the Full Strategy Engine</div>
-<p style="font-size:13px;color:var(--text2);font-weight:300;margin-bottom:16px;line-height:1.6">Access optimization tools, financial modeling, scenario simulation, and the full strategy archive.</p>
-<button class="btn btn-a" onclick="obComplete()" style="max-width:280px;margin:0 auto">Start 7-Day Full Access</button>
-<p style="font-size:11px;color:var(--text3);margin-top:8px;font-weight:300">No credit card required.</p>
+<p style="font-size:13px;color:var(--text2);font-weight:300;margin-bottom:16px;line-height:1.6">Every tool. Every feature. Financial modeling, scenario simulation, contract analysis, and the full strategy archive — all yours for 48 hours.</p>
+<button class="btn btn-a" onclick="obComplete()" style="max-width:280px;margin:0 auto">Start 48-Hour Full Access →</button>
+<p style="font-size:11px;color:var(--text3);margin-top:8px;font-weight:300">No credit card required. Clock starts now.</p>
 </div>
 </div>
 
@@ -1622,6 +1622,22 @@ ChatGPT and Claude are powerful AI tools — but they're general-purpose. <stron
 <div id="daily-quote" style="margin-top:18px;padding-top:16px;border-top:1px solid rgba(200,168,124,.12);position:relative">
 <p style="font-size:17px;color:var(--text);line-height:1.7;font-family:'Cormorant Garamond',serif;font-weight:500;font-style:italic;margin:0;letter-spacing:.2px" id="quote-text"></p>
 <p style="font-size:11px;color:var(--accent);margin:10px 0 0;font-weight:500;letter-spacing:.8px;text-transform:uppercase" id="quote-author"></p>
+</div>
+</div>
+</div>
+
+<!-- Trial Countdown Banner -->
+<div id="trial-countdown-banner" style="margin:0 24px 16px;padding:16px 20px;border-radius:var(--r);border:1px solid rgba(200,168,124,.2);background:var(--accent-dim);display:none"></div>
+
+<!-- Trial: No physician reviews note -->
+<div id="trial-review-note" style="margin:0 24px 16px;display:none">
+<div class="card" style="padding:16px 18px;border-color:rgba(139,173,196,.15);background:var(--blue-dim)">
+<div style="display:flex;align-items:flex-start;gap:10px">
+<span style="font-size:14px;flex-shrink:0;margin-top:1px">ℹ️</span>
+<div>
+<div style="font-size:12px;font-weight:500;color:var(--blue);margin-bottom:3px">Trial Access Note</div>
+<div style="font-size:11px;color:var(--text2);line-height:1.6">Direct physician review credits are available with paid plans. During your trial, explore every tool, run simulations, and build your strategy — physician-reviewed responses become available when you subscribe.</div>
+</div>
 </div>
 </div>
 </div>
@@ -3709,6 +3725,16 @@ function enterApp(){
   document.getElementById('main-nav').classList.add('on');
   if(!U.usage)U.usage={ai:0,credits:TIERS[U.tier]?.credits||0,month:new Date().getMonth()};
   if(U.usage.month!==new Date().getMonth()){U.usage.ai=0;U.usage.credits=TIERS[U.tier]?.credits||0;U.usage.month=new Date().getMonth()}
+  // Check trial expiration
+  if(U.isTrial&&U.trialEnd){
+    const now=new Date();const end=new Date(U.trialEnd);
+    if(now>=end){
+      U.tier='free';U.isTrial=false;
+      const u=DB.users.find(u=>u.id===U.id);if(u){u.tier='free';u.isTrial=false}
+      saveDB();localStorage.setItem('hw_session',JSON.stringify(U));
+      notify('Your trial has ended. Upgrade to keep full access.',1);
+    }
+  }
   const b=document.getElementById('user-badge');
   const bc={free:'b-free',core:'b-core',elite:'b-pro',admin:'b-admin'};
   b.className='badge '+(bc[U.tier]||'b-free');
@@ -3722,6 +3748,8 @@ function enterApp(){
     sessionStorage.removeItem('hw_pending_plan');
     setTimeout(()=>subPlan(pendingPlan),500);
   }
+  // Start trial countdown if active
+  if(U.isTrial&&U.trialEnd)startTrialCountdown();
   renderHome();
 }
 
@@ -3774,6 +3802,38 @@ function setDailyQuote(){
   auth.textContent='— '+q.author;
 }
 
+// ===== TRIAL COUNTDOWN =====
+var _trialInterval=null;
+function startTrialCountdown(){
+  if(_trialInterval)clearInterval(_trialInterval);
+  updateTrialBanner();
+  _trialInterval=setInterval(updateTrialBanner,60000); // update every minute
+}
+function updateTrialBanner(){
+  var el=document.getElementById('trial-countdown-banner');
+  if(!el||!U||!U.isTrial||!U.trialEnd)return;
+  var now=new Date();var end=new Date(U.trialEnd);
+  var diff=end-now;
+  if(diff<=0){
+    // Trial expired
+    U.tier='free';U.isTrial=false;
+    var u=DB.users.find(function(u){return u.id===U.id});if(u){u.tier='free';u.isTrial=false}
+    saveDB();localStorage.setItem('hw_session',JSON.stringify(U));
+    el.innerHTML='<div style="display:flex;align-items:center;gap:12px"><span style="font-size:18px">⏰</span><div style="flex:1"><div style="font-size:13px;font-weight:600;color:var(--red)">Your trial has ended</div><div style="font-size:11px;color:var(--text2);margin-top:2px">Subscribe now to keep full access to every tool.</div></div><button class="btn btn-a btn-sm" onclick="navTo(\'scr-profile\');showUpgrade()" style="flex-shrink:0;width:auto">Subscribe →</button></div>';
+    if(_trialInterval){clearInterval(_trialInterval);_trialInterval=null}
+    enterApp();
+    return;
+  }
+  var hours=Math.floor(diff/3600000);
+  var mins=Math.floor((diff%3600000)/60000);
+  var urgency=hours<6?'var(--red)':hours<12?'var(--accent)':'var(--green)';
+  var urgencyBg=hours<6?'var(--red-dim)':hours<12?'var(--accent-dim)':'var(--green-dim)';
+  var urgencyBorder=hours<6?'rgba(196,77,86,.2)':hours<12?'rgba(200,168,124,.2)':'rgba(139,184,160,.2)';
+  el.style.background=urgencyBg;
+  el.style.borderColor=urgencyBorder;
+  el.innerHTML='<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap"><span style="font-size:18px">⚡</span><div style="flex:1;min-width:180px"><div style="font-size:13px;font-weight:600;color:'+urgency+'">Full Access Trial — '+hours+'h '+mins+'m remaining</div><div style="font-size:11px;color:var(--text2);margin-top:2px">Every tool unlocked. Explore everything before time runs out.</div></div><button class="btn btn-a btn-sm" onclick="navTo(\'scr-profile\');showUpgrade()" style="flex-shrink:0;width:auto;padding:8px 18px">Keep Access →</button></div>';
+}
+
 function renderHome(){
   if(!U)return;
   setDailyQuote();
@@ -3783,7 +3843,13 @@ function renderHome(){
   document.getElementById('usage-ai').textContent=max===999?used+' / \u221e':used+' / '+max;
   document.getElementById('usage-bar').style.width=max===999?'0%':pct+'%';
   document.getElementById('usage-credits').textContent=U.usage?.credits||0;
-  document.getElementById('usage-tier').textContent=t.name+' plan';
+  document.getElementById('usage-tier').textContent=t.name+(U.isTrial?' (trial)':' plan');
+  // Show/hide trial elements
+  var trialBanner=document.getElementById('trial-countdown-banner');
+  var trialNote=document.getElementById('trial-review-note');
+  if(trialBanner)trialBanner.style.display=U.isTrial&&U.trialEnd?'':'none';
+  if(trialNote)trialNote.style.display=U.isTrial?'':'none';
+  if(U.isTrial&&U.trialEnd)updateTrialBanner();
   // Reviewed This Week = reviewed in last 7 days (or latest 5 if none recent)
   const now=new Date();const weekAgo=new Date(now);weekAgo.setDate(weekAgo.getDate()-7);const weekStr=weekAgo.toISOString().split('T')[0];
   let reviewed=DB.questions.filter(q=>q.status==='reviewed'&&q.reviewNote).sort((a,b)=>b.date.localeCompare(a.date));
@@ -3851,6 +3917,7 @@ function closeModal(id){document.getElementById(id).classList.add('hidden')}
 function toggleFinance(){document.getElementById('q-finance-box').style.display=document.getElementById('q-cat').value==='finance'?'':'none'}
 function togReview(){
   const t=document.getElementById('q-review-tog');
+  if(U.isTrial){notify('Physician reviews are available with paid plans. Explore all tools now — subscribe to unlock direct physician access.',1);return}
   if(!t.classList.contains('on')&&(U.usage?.credits||0)<=0){notify('No review credits. Upgrade your plan.',1);return}
   t.classList.toggle('on');
 }
@@ -5052,7 +5119,7 @@ function renderAdmin(){
         h+='<div style="display:flex;gap:16px;font-size:11px;color:var(--text3);margin-bottom:12px">';
         h+='<span>AI Used: <strong style="color:var(--text2)">'+aiUsed+'</strong></span>';
         h+='<span>Questions: <strong style="color:var(--text2)">'+qCount+'</strong></span>';
-        if(u.trialEnd)h+='<span>Trial Ends: <strong style="color:var(--text2)">'+u.trialEnd+'</strong></span>';
+        if(u.trialEnd)h+='<span>Trial Ends: <strong style="color:var(--text2)">'+new Date(u.trialEnd).toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'})+'</strong></span>';
         h+='</div>';
         // Admin notes
         h+='<details style="margin-bottom:8px"><summary style="font-size:12px;color:var(--accent);cursor:pointer">Notes & Progress Tracking</summary>';
@@ -5396,26 +5463,26 @@ function obComplete(){
   const p=obProfile;
   // Create user with trial
   const roleMap={premed:'student',student:'student',resident:'resident',fellow:'fellow',attending:'attending',switching:'other'};
-  const trialEnd=new Date();trialEnd.setDate(trialEnd.getDate()+3);
+  const trialEnd=new Date();trialEnd.setHours(trialEnd.getHours()+48);
   // Capture report snapshot
   const reportSnapshot=captureReportData(p);
-  const user={id:'u'+DB.nextUserId++,name:p.name,email:p.email.toLowerCase(),pass:p.pass,role:roleMap[p.stage]||'student',tier:'core',trialEnd:trialEnd.toISOString().split('T')[0],institution:p.inst,usage:{ai:0,credits:0,month:new Date().getMonth()},profile:p,signupDate:new Date().toISOString(),report:reportSnapshot,notes:[]};
+  const user={id:'u'+DB.nextUserId++,name:p.name,email:p.email.toLowerCase(),pass:p.pass,role:roleMap[p.stage]||'student',tier:'elite',trialEnd:trialEnd.toISOString(),isTrial:true,institution:p.inst,usage:{ai:0,credits:0,month:new Date().getMonth()},profile:p,signupDate:new Date().toISOString(),report:reportSnapshot,notes:[]};
   DB.users.push(user);saveDB();
   // Sync to Supabase
   if(_supaClient){
     _supaClient.auth.signUp({email:p.email.toLowerCase(),password:p.pass,options:{data:{name:p.name}}}).catch(()=>{});
     _supaClient.from('profiles').insert([{
       user_id:user.id,name:p.name,email:p.email.toLowerCase(),role:roleMap[p.stage]||'student',
-      tier:'core',institution:p.inst||'',stage:p.stage,specialty:p.spec||'',goal:p.goal||'',
+      tier:'elite',institution:p.inst||'',stage:p.stage,specialty:p.spec||'',goal:p.goal||'',
       score:reportSnapshot.score,grade:reportSnapshot.grade,
       strengths:reportSnapshot.strengths,gaps:reportSnapshot.gaps,
-      trial_end:trialEnd.toISOString().split('T')[0],
+      trial_end:trialEnd.toISOString(),
       profile_data:p
     }]).then(function(res){if(res.error)console.warn('Profile sync error',res.error)});
   }
   U=user;localStorage.setItem('hw_session',JSON.stringify(U));
   enterApp();showDisc();
-  notify('Welcome! Your 3-day strategic access is active. ⚡');
+  notify('Welcome! Your 48-hour full access is now active. Every tool. Every feature. The clock is ticking. ⚡');
 }
 
 function captureReportData(p){

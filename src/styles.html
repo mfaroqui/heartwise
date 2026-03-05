@@ -570,6 +570,85 @@ a:hover{color:var(--accent2)}
 .topbar.on-light .topbar-links .tb-cta{color:#C6A75E;border-color:#C6A75E}
 .topbar.on-light .topbar-links .tb-cta:hover{background:#C6A75E;color:#1A1A1A}
 
+/* ===== PREMIUM SECTION SPACING ===== */
+.lp-sec{padding:100px 32px}
+@media(max-width:480px){.lp-sec{padding:72px 20px}}
+.lp-sec h2{font-size:42px;margin-bottom:18px}
+@media(max-width:480px){.lp-sec h2{font-size:32px}}
+.lp-sec .sub{font-size:16px;margin-bottom:56px;max-width:480px}
+.lp-divider{margin:0 auto 56px}
+
+/* ===== GLASS TOOL CARDS ===== */
+.glass-tool{
+  background:linear-gradient(160deg,rgba(22,22,31,.95),rgba(15,15,22,.98));
+  border:1px solid rgba(200,168,124,.1);
+  border-radius:20px;
+  padding:0;
+  margin-bottom:32px;
+  overflow:hidden;
+  transition:all .5s cubic-bezier(.23,1,.32,1);
+  position:relative;
+}
+.glass-tool::before{
+  content:'';position:absolute;inset:0;border-radius:20px;
+  background:linear-gradient(160deg,rgba(200,168,124,.06),transparent 40%);
+  pointer-events:none;opacity:0;transition:opacity .5s ease;
+}
+.glass-tool:hover{
+  border-color:rgba(200,168,124,.25);
+  transform:translateY(-6px);
+  box-shadow:0 24px 64px rgba(0,0,0,.35),0 0 80px rgba(200,168,124,.06);
+}
+.glass-tool:hover::before{opacity:1}
+.glass-tool-header{padding:36px 32px 0}
+.glass-tool-body{padding:0 32px 32px}
+.glass-tool-mock{
+  padding:24px;
+  margin:20px 0 0;
+  background:rgba(9,9,14,.6);
+  border:1px solid rgba(200,168,124,.06);
+  border-radius:14px;
+  position:relative;
+  overflow:hidden;
+}
+.glass-tool-mock::after{
+  content:'';position:absolute;top:0;right:0;width:120px;height:120px;
+  background:radial-gradient(circle,rgba(200,168,124,.04),transparent 70%);
+  pointer-events:none;
+}
+.glass-tool-num{
+  font-size:11px;font-weight:600;color:var(--accent);
+  text-transform:uppercase;letter-spacing:3px;margin-bottom:10px;
+  font-family:var(--font-ui);
+}
+.glass-tool-title{
+  font-family:var(--font-serif);font-size:28px;font-weight:600;
+  color:var(--text);margin-bottom:8px;line-height:1.2;
+}
+.glass-tool-desc{
+  font-size:14px;color:var(--text2);line-height:1.7;font-weight:300;
+}
+.glass-tool-insight{
+  margin-top:20px;padding-top:18px;
+  border-top:1px solid rgba(200,168,124,.08);
+  font-size:13px;color:var(--text2);line-height:1.7;font-weight:300;
+}
+.glass-tool-insight strong{color:var(--accent);font-weight:600}
+
+/* ===== HERO GLOW ===== */
+.hero-lux{position:relative;overflow:hidden}
+.hero-lux::before{
+  content:'';position:absolute;top:-200px;right:-150px;width:600px;height:600px;
+  background:radial-gradient(ellipse,rgba(200,168,124,.08),transparent 70%);
+  border-radius:50%;pointer-events:none;z-index:0;
+}
+.hero-lux::after{
+  content:'';position:absolute;bottom:-250px;left:-200px;width:700px;height:700px;
+  background:radial-gradient(ellipse,rgba(200,168,124,.04),transparent 60%);
+  border-radius:50%;pointer-events:none;z-index:0;
+}
+.hero-lux-inner{position:relative;z-index:1}
+
 /* ===== COMPARISON SECTION ===== */
 .hw-compare-row:hover{border-color:var(--border2)!important;box-shadow:0 8px 32px rgba(0,0,0,.15)}
 @media(max-width:520px){

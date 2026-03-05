@@ -256,5 +256,5 @@ const VAULT_ITEMS=[
 {id:'v8',title:'Income Leverage Playbook',desc:'PSLF vs refinance modeling, tax strategy, disability planning',icon:'\ud83d\udcb5',tier:'core'},
 {id:'v9',title:'Strategic Audit Template',desc:'The exact intake framework used in Elite Strategy sessions',icon:'\ud83d\udcdd',tier:'elite'},
 {id:'v10',title:'Career Pivot Decision Engine',desc:'Structured framework for specialty switches and practice model changes',icon:'\u26a1',tier:'elite'},
-{id:'v11',title:'Financial Trajectory Simulator',desc:'See how specialty, fellowship, and practice type impact your lifetime wealth',icon:'\ud83d\udcb0',tier:'core'}
+{id:'v11',title:'Financial Trajectory Simulator',desc:'See how specialty, fellowship, and practice type impact your lifetime wealth',icon:'\ud83d\udcb0',tier:'elite'}
 ];

@@ -514,6 +514,7 @@ function openFramework(id){
   if(id==='v4')setTimeout(function(){rvuModelChange();rvuUpdate()},50);
   if(id==='v7')setTimeout(roiUpdate,50);
   if(id==='v11')setTimeout(ftInit,50);
+  if(id==='v12')setTimeout(ciInit,50);
 }
 
 var ELITE_PREVIEWS={
@@ -537,6 +538,27 @@ v10:{
     {name:'Step 2: Map the Options',items:['Rate 4 paths across feasibility, financial impact, timeline, satisfaction','Auto-calculated scores highlight your strongest option','Stay + Modify, Adjacent Pivot, Full Pivot, Hybrid']},
     {name:'Step 3: Financial Reality Check',items:['Debt and obligations assessment','Training Cost Calculator — total transition cost breakdown','Income sustainability and emergency fund evaluation']},
     {name:'Step 4: Test Before Committing',items:['Validation checklist (shadowing, interviews, side projects)','5-year regret test with guided feedback','Full report submitted to Dr. Faroqui for review']}
+  ]
+},
+v11:{
+  title:'Financial Trajectory Simulator',
+  icon:'\ud83d\udcb0',
+  desc:'Compare up to 3 career paths with a 30-year wealth projection. See how specialty choice, fellowship training, and savings strategy impact lifetime earnings and net worth.',
+  sections:[
+    {name:'Scenario Builder',items:['28 specialties with MGMA salary data','Academic vs employed vs private practice','Savings rate modeling (10-40%)','Training stage adjustment']},
+    {name:'30-Year Projection',items:['Interactive canvas-drawn trajectory graph','Net worth and lifetime earnings per scenario','Investment compounding with 7% annual return']},
+    {name:'Strategic Insights',items:['Auto-generated comparison analysis','Earnings gap quantification','Savings rate impact assessment','Practice type risk/reward evaluation']}
+  ]
+},
+v12:{
+  title:'Contract Intelligence Tool',
+  icon:'\ud83d\udcdd',
+  desc:'Input your actual offer details and get an instant competitiveness score out of 100, MGMA salary benchmarking, risk flag identification, and specific negotiation recommendations.',
+  sections:[
+    {name:'Offer Input',items:['Specialty-specific MGMA benchmarking','Base salary, RVU rate, signing bonus','28 specialties with percentile data']},
+    {name:'Risk Analysis',items:['Non-compete radius and duration scoring','Tail coverage assessment','Termination notice evaluation','Call burden and compensation analysis']},
+    {name:'Score Report',items:['Overall competitiveness score /100','7-category breakdown with color-coded ratings','MGMA percentile positioning chart']},
+    {name:'Negotiation Strategy',items:['Specific dollar-amount recommendations','Red flag identification and response strategy','Attorney review triggers']}
   ]
 }
 };
@@ -985,6 +1007,171 @@ async function saveAccountSettings(e){
   notify('Account updated!');
   document.getElementById('account-settings').classList.add('hidden');
 }
+// ===== CONTRACT INTELLIGENCE TOOL =====
+var CI_MGMA={
+  im:{p25:235,p50:265,p75:305},hosp:{p25:270,p50:310,p75:365},cards:{p25:450,p50:520,p75:610},
+  ic:{p25:550,p50:660,p75:800},ep:{p25:500,p50:620,p75:740},ct_surg:{p25:480,p50:600,p75:760},
+  gi:{p25:400,p50:480,p75:570},pulm:{p25:340,p50:400,p75:460},heme_onc:{p25:380,p50:460,p75:540},
+  nephro:{p25:290,p50:340,p75:390},rheum:{p25:270,p50:310,p75:360},endo:{p25:250,p50:290,p75:330},
+  id:{p25:250,p50:290,p75:330},gen_surg:{p25:350,p50:410,p75:500},ortho:{p25:490,p50:580,p75:720},
+  uro:{p25:400,p50:480,p75:580},ent:{p25:360,p50:430,p75:530},derm:{p25:370,p50:430,p75:540},
+  rad:{p25:380,p50:460,p75:550},anes:{p25:350,p50:410,p75:480},er:{p25:300,p50:340,p75:390},
+  fm:{p25:215,p50:255,p75:300},psych:{p25:260,p50:300,p75:360},pm_r:{p25:280,p50:330,p75:390},
+  neuro:{p25:280,p50:330,p75:390},path:{p25:290,p50:340,p75:390},ophtho:{p25:320,p50:400,p75:520},
+  peds:{p25:210,p50:250,p75:290}
+};
+
+function ciInit(){ciCalc()}
+
+function ciCalc(){
+  var spec=document.getElementById('ci-spec').value;
+  var salary=parseFloat(document.getElementById('ci-salary').value)||0;
+  var rvu=parseFloat(document.getElementById('ci-rvu').value)||0;
+  var ncRadius=parseFloat(document.getElementById('ci-nc-radius').value)||0;
+  var ncYears=parseFloat(document.getElementById('ci-nc-years').value)||0;
+  var tail=document.getElementById('ci-tail').value;
+  var termNotice=parseFloat(document.getElementById('ci-term-notice').value)||0;
+  var callFreq=document.getElementById('ci-call').value;
+  var callComp=document.getElementById('ci-call-comp').value;
+  var signing=parseFloat(document.getElementById('ci-signing').value)||0;
+  var clawback=parseFloat(document.getElementById('ci-clawback').value)||0;
+  var retMatch=parseFloat(document.getElementById('ci-ret').value)||0;
+  var cme=parseFloat(document.getElementById('ci-cme').value)||0;
+
+  var mgma=CI_MGMA[spec]||CI_MGMA.im;
+  var salaryK=salary;
+
+  // Score components (out of 100 total)
+  var score=0;var maxScore=100;
+  var details=[];
+
+  // 1. Salary vs MGMA (0-30 pts)
+  var salPts=0;
+  if(salaryK>=mgma.p75){salPts=30;details.push({label:'Base Salary',pts:30,max:30,note:'Above 75th percentile — excellent',color:'var(--green)'})}
+  else if(salaryK>=mgma.p50){salPts=22;details.push({label:'Base Salary',pts:22,max:30,note:'At or above median — solid',color:'var(--green)'})}
+  else if(salaryK>=mgma.p25){salPts=14;details.push({label:'Base Salary',pts:14,max:30,note:'Below median — room to negotiate',color:'var(--accent)'})}
+  else{salPts=6;details.push({label:'Base Salary',pts:6,max:30,note:'Below 25th percentile — significant concern',color:'var(--red)'})}
+  score+=salPts;
+
+  // 2. RVU Rate (0-15 pts)
+  var rvuPts=0;
+  if(rvu===0){rvuPts=8;details.push({label:'RVU Rate',pts:8,max:15,note:'No RVU structure (salary only)',color:'var(--text3)'})}
+  else if(rvu>=55){rvuPts=15;details.push({label:'RVU Rate',pts:15,max:15,note:'Strong RVU rate ($55+)',color:'var(--green)'})}
+  else if(rvu>=45){rvuPts=11;details.push({label:'RVU Rate',pts:11,max:15,note:'Competitive RVU rate',color:'var(--green)'})}
+  else if(rvu>=35){rvuPts=7;details.push({label:'RVU Rate',pts:7,max:15,note:'Below average RVU rate — negotiate up',color:'var(--accent)'})}
+  else{rvuPts=3;details.push({label:'RVU Rate',pts:3,max:15,note:'Low RVU rate — red flag',color:'var(--red)'})}
+  score+=rvuPts;
+
+  // 3. Non-compete (0-15 pts)
+  var ncPts=0;
+  if(ncRadius===0&&ncYears===0){ncPts=15;details.push({label:'Non-Compete',pts:15,max:15,note:'No restrictive covenant — ideal',color:'var(--green)'})}
+  else if(ncRadius<=15&&ncYears<=1){ncPts=12;details.push({label:'Non-Compete',pts:12,max:15,note:'Reasonable (≤15mi, ≤1yr)',color:'var(--green)'})}
+  else if(ncRadius<=25&&ncYears<=2){ncPts=7;details.push({label:'Non-Compete',pts:7,max:15,note:'Moderate risk ('+ncRadius+'mi, '+ncYears+'yr)',color:'var(--accent)'})}
+  else{ncPts=2;details.push({label:'Non-Compete',pts:2,max:15,note:'Aggressive covenant — major risk',color:'var(--red)'})}
+  score+=ncPts;
+
+  // 4. Tail insurance (0-10 pts)
+  var tailPts=0;
+  if(tail==='employer'){tailPts=10;details.push({label:'Tail Coverage',pts:10,max:10,note:'Employer pays — excellent',color:'var(--green)'})}
+  else if(tail==='occurrence'){tailPts=10;details.push({label:'Tail Coverage',pts:10,max:10,note:'Occurrence policy — no tail needed',color:'var(--green)'})}
+  else if(tail==='split'){tailPts=6;details.push({label:'Tail Coverage',pts:6,max:10,note:'Split cost — negotiate for full employer coverage',color:'var(--accent)'})}
+  else{tailPts=1;details.push({label:'Tail Coverage',pts:1,max:10,note:'You pay full tail ($20-50K+) — negotiate',color:'var(--red)'})}
+  score+=tailPts;
+
+  // 5. Termination (0-10 pts)
+  var termPts=0;
+  if(termNotice>=120){termPts=10;details.push({label:'Termination Notice',pts:10,max:10,note:'120+ days — strong protection',color:'var(--green)'})}
+  else if(termNotice>=90){termPts=8;details.push({label:'Termination Notice',pts:8,max:10,note:'90 days — standard',color:'var(--green)'})}
+  else if(termNotice>=60){termPts=5;details.push({label:'Termination Notice',pts:5,max:10,note:'60 days — short, negotiate up',color:'var(--accent)'})}
+  else{termPts=2;details.push({label:'Termination Notice',pts:2,max:10,note:'<60 days — inadequate, push for 90+',color:'var(--red)'})}
+  score+=termPts;
+
+  // 6. Call (0-10 pts)
+  var callPts=0;
+  if(callFreq==='none'){callPts=10;details.push({label:'Call Burden',pts:10,max:10,note:'No call — ideal',color:'var(--green)'})}
+  else if(callFreq==='1in6'&&callComp==='yes'){callPts=8;details.push({label:'Call Burden',pts:8,max:10,note:'1:6 or less, compensated — reasonable',color:'var(--green)'})}
+  else if(callComp==='yes'){callPts=6;details.push({label:'Call Burden',pts:6,max:10,note:'Compensated call — acceptable',color:'var(--green)'})}
+  else if(callFreq==='1in4'){callPts=3;details.push({label:'Call Burden',pts:3,max:10,note:'1:4 uncompensated — negotiate stipend',color:'var(--accent)'})}
+  else{callPts=2;details.push({label:'Call Burden',pts:2,max:10,note:'Heavy uncompensated call — red flag',color:'var(--red)'})}
+  score+=callPts;
+
+  // 7. Benefits (0-10 pts)
+  var benPts=0;
+  var benScore=0;
+  if(retMatch>=4)benScore+=3;else if(retMatch>=2)benScore+=2;else benScore+=1;
+  if(cme>=3000)benScore+=3;else if(cme>=1500)benScore+=2;else benScore+=1;
+  if(signing>=30)benScore+=4;else if(signing>=15)benScore+=3;else if(signing>0)benScore+=2;else benScore+=1;
+  benPts=Math.min(10,benScore);
+  var benNote=benPts>=8?'Strong benefits package':'Benefits could be improved — negotiate CME, match, or signing bonus';
+  var benColor=benPts>=8?'var(--green)':benPts>=5?'var(--accent)':'var(--red)';
+  details.push({label:'Benefits Package',pts:benPts,max:10,note:benNote,color:benColor});
+  score+=benPts;
+
+  // Render
+  var scoreColor=score>=80?'var(--green)':score>=60?'var(--accent)':'var(--red)';
+  var scoreLabel=score>=80?'Strong Offer':score>=60?'Competitive — Negotiate Specifics':score>=40?'Below Average — Significant Negotiation Needed':'Weak Offer — Major Concerns';
+
+  var out=document.getElementById('ci-output');
+  out.innerHTML='<div style="text-align:center;margin-bottom:20px">'+
+    '<div style="width:90px;height:90px;border-radius:50%;border:4px solid '+scoreColor+';display:inline-flex;align-items:center;justify-content:center;margin-bottom:8px">'+
+    '<span style="font-size:32px;font-weight:700;color:'+scoreColor+'">'+score+'</span></div>'+
+    '<div style="font-size:14px;font-weight:600;color:var(--text)">'+scoreLabel+'</div>'+
+    '<div style="font-size:11px;color:var(--text3)">Offer Competitiveness Score</div></div>';
+
+  // MGMA comparison bar
+  out.innerHTML+='<div style="background:var(--bg3);border-radius:8px;padding:14px;margin-bottom:16px">'+
+    '<div style="font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Salary vs MGMA Benchmarks — '+FT_SPEC_NAMES[spec]+'</div>'+
+    '<div style="display:flex;align-items:center;gap:8px;font-size:11px;margin-bottom:6px">'+
+    '<span style="color:var(--text3);width:32px">25th</span>'+
+    '<div style="flex:1;height:6px;background:var(--bg);border-radius:3px;position:relative;overflow:visible">'+
+    '<div style="position:absolute;left:0;top:0;height:100%;width:100%;background:linear-gradient(90deg,var(--red),var(--accent),var(--green));border-radius:3px;opacity:.3"></div>'+
+    '<div style="position:absolute;top:-4px;width:3px;height:14px;background:var(--accent);border-radius:2px;left:'+Math.max(0,Math.min(100,(salaryK-mgma.p25)/(mgma.p75-mgma.p25)*100))+'%"></div>'+
+    '</div>'+
+    '<span style="color:var(--text3);width:32px;text-align:right">75th</span></div>'+
+    '<div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text3)">'+
+    '<span>$'+mgma.p25+'K</span><span>$'+mgma.p50+'K (median)</span><span>$'+mgma.p75+'K</span></div>'+
+    '<div style="text-align:center;margin-top:8px;font-size:12px;font-weight:600;color:var(--text)">Your offer: $'+salaryK+'K</div></div>';
+
+  // Detail breakdown
+  out.innerHTML+='<div style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Score Breakdown</div>';
+  details.forEach(function(d){
+    var pct=Math.round(d.pts/d.max*100);
+    out.innerHTML+='<div style="margin-bottom:10px">'+
+      '<div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px"><span style="color:var(--text2);font-weight:500">'+d.label+'</span><span style="color:'+d.color+';font-weight:600">'+d.pts+'/'+d.max+'</span></div>'+
+      '<div style="height:4px;background:var(--bg);border-radius:2px;overflow:hidden"><div style="height:100%;width:'+pct+'%;background:'+d.color+';border-radius:2px"></div></div>'+
+      '<div style="font-size:10px;color:'+d.color+';margin-top:2px">'+d.note+'</div></div>';
+  });
+
+  // Negotiation recommendations
+  var recs=[];
+  if(salPts<22)recs.push('Request salary increase to at least $'+mgma.p50+'K (MGMA median). Present market data from MGMA and AMGA benchmarks.');
+  if(rvuPts<11&&rvu>0)recs.push('Negotiate RVU rate to $55+ per wRVU. Your current rate of $'+rvu+' is below competitive range.');
+  if(ncPts<12)recs.push('Push to reduce non-compete to ≤15 miles / ≤1 year, or waive if terminated without cause.');
+  if(tailPts<10)recs.push('Negotiate full employer-paid tail coverage. This can save you $20,000–$50,000+.');
+  if(termPts<8)recs.push('Request 90+ day termination notice period with defined severance.');
+  if(callPts<6)recs.push('Negotiate call compensation: per-diem stipend or reduced frequency.');
+  if(benPts<8){
+    if(retMatch<4)recs.push('Push retirement match to 4%+ ($'+Math.round(salaryK*0.04)+'K/yr value).');
+    if(cme<3000)recs.push('Request CME allowance of $3,000+ with dedicated CME days.');
+  }
+  if(recs.length){
+    out.innerHTML+='<div style="margin-top:16px;font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">\ud83c\udfaf Recommended Negotiation Points</div>'+
+      '<div style="background:var(--bg3);border:1px solid rgba(200,168,124,.15);border-radius:8px;padding:14px;font-size:12px;color:var(--text2);line-height:1.8">'+
+      recs.map(function(r,i){return '<div style="margin-bottom:6px">'+(i+1)+'. '+r+'</div>'}).join('')+'</div>';
+  }
+
+  // Red flags summary
+  var flags=details.filter(function(d){return d.color==='var(--red)'});
+  if(flags.length){
+    out.innerHTML+='<div style="margin-top:16px;padding:14px;background:rgba(255,100,100,.05);border:1px solid rgba(255,100,100,.15);border-radius:8px">'+
+      '<div style="font-size:10px;font-weight:600;color:var(--red);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">\ud83d\udea9 '+flags.length+' Red Flag'+(flags.length>1?'s':'')+'</div>'+
+      flags.map(function(f){return '<div style="font-size:11px;color:var(--red);margin-bottom:4px">\u2022 '+f.label+': '+f.note+'</div>'}).join('')+
+      '<div style="margin-top:8px;font-size:11px;color:var(--text2);font-weight:500">\u2192 Strongly recommend physician contract attorney review ($2-3.5K).</div></div>';
+  }
+
+  out.innerHTML+='<p style="font-size:10px;color:var(--text3);margin-top:16px;line-height:1.6;font-style:italic">Based on MGMA 2024 Provider Compensation Report. This is a modeling tool \u2014 not legal advice. Always have a physician contract attorney review your specific contract terms.</p>';
+}
+
 // ===== FINANCIAL TRAJECTORY SIMULATOR =====
 var FT_SALARY={
   // [academic, employed, private] - based on MGMA 2024 median data (in thousands)

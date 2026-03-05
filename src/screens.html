@@ -135,12 +135,12 @@
 </div>
 
 <!-- Tool 3: Contract Intelligence -->
-<div class="card" style="padding:0;margin-bottom:14px;overflow:hidden;cursor:pointer" onclick="navTo('scr-vault')">
+<div class="card" style="padding:0;margin-bottom:14px;overflow:hidden;cursor:pointer" onclick="if(U&&(U.tier==='elite'||U.tier==='admin')){navTo('scr-vault');setTimeout(function(){openFramework('v12')},300)}else{notify('Contract Intelligence Tool is an Elite Strategy feature. Upgrade to access.',1)}">
 <div style="padding:18px 18px 0">
 <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
 <span style="font-size:22px">📋</span>
 <div>
-<div style="font-size:13px;font-weight:600;color:var(--text)">Contract Intelligence Tool</div>
+<div style="font-size:13px;font-weight:600;color:var(--text)">Contract Intelligence Tool <span style="font-size:9px;padding:2px 8px;border-radius:100px;background:var(--accent-dim);color:var(--accent);font-weight:600;letter-spacing:.8px;vertical-align:middle">ELITE</span></div>
 <div style="font-size:10px;color:var(--accent);letter-spacing:.5px">NEGOTIATE WITH DATA</div>
 </div>
 </div>

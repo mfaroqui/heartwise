@@ -2397,6 +2397,18 @@ ChatGPT and Claude are powerful AI tools — but they're general-purpose. <stron
 </div>
 </div>
 
+<div style="margin-bottom:12px">
+<div class="card" style="cursor:pointer;padding:16px 20px;position:relative" onclick="showMyMessages()">
+<div style="display:flex;justify-content:space-between;align-items:center">
+<span style="font-size:14px">💬 Messages from Dr. Faroqui</span>
+<span style="display:flex;align-items:center;gap:8px">
+<span id="notif-badge" style="display:none;background:var(--red);color:#fff;font-size:10px;font-weight:700;min-width:18px;height:18px;border-radius:9px;display:none;align-items:center;justify-content:center;padding:0 5px"></span>
+<span style="color:var(--text3)">›</span>
+</span>
+</div>
+</div>
+</div>
+
 <!-- Progress Dashboard -->
 <div id="progress-dashboard" style="margin-bottom:16px"></div>
 
@@ -3934,6 +3946,8 @@ function enterApp(){
   // Start trial countdown if active
   if(U.isTrial&&U.trialEnd)startTrialCountdown();
   renderHome();
+  // Check for unread notifications
+  checkNotifBadge();
 }
 
 // ===== RENDER HOME =====
@@ -4120,7 +4134,7 @@ function submitQ(){
   const context=document.getElementById('q-context').value.trim();
   let fullQ=core;if(context)fullQ+=' '+context;
   const aiResp=genAI(cat,core,level);
-  const q={id:DB.nextId++,userId:U.id,cat,role:U.role||'student',q:fullQ,author:anon?'Anonymous':U.name,anon,date:new Date().toISOString().split('T')[0],status:wantsReview?'pending':'answered',ai:aiResp,wantsReview};
+  const q={id:DB.nextId++,userId:U.id,userEmail:U.email,cat,role:U.role||'student',q:fullQ,author:anon?'Anonymous':U.name,anon,date:new Date().toISOString().split('T')[0],status:wantsReview?'pending':'answered',ai:aiResp,wantsReview};
   if(wantsReview&&U.usage.credits>0)U.usage.credits--;
   U.usage.ai++;
   DB.questions.push(q);saveDB();localStorage.setItem('hw_session',JSON.stringify(U));
@@ -4676,10 +4690,13 @@ function showQDetail(qid){
     if(q.ai.refs){h+='<div style="margin-top:12px;padding:12px;border-radius:var(--r2);background:rgba(100,149,237,.06);border:1px solid rgba(100,149,237,.15)"><div style="font-size:10px;font-weight:600;color:var(--blue);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">📚 References</div><p style="font-size:11px;color:var(--text3);line-height:1.6">'+q.ai.refs+'</p></div>'}
     h+='</div>';
   }
-  if(q.review){
+  if(q.reviewNote||q.review){
+    var revText=q.reviewNote||q.review;
     h+='<div style="margin-top:16px;padding:16px;border-radius:var(--r2);background:rgba(106,191,75,.06);border:1px solid rgba(106,191,75,.15)">';
-    h+='<div style="font-size:10px;font-weight:600;color:var(--green);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">✓ Physician Review</div>';
-    h+='<p style="font-size:13px;color:var(--text2);line-height:1.7">'+q.review+'</p></div>';
+    h+='<div style="font-size:10px;font-weight:600;color:var(--green);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">✓ Physician Review — Dr. Faroqui</div>';
+    h+='<p style="font-size:13px;color:var(--text2);line-height:1.7">'+revText+'</p>';
+    if(q.reviewDate){h+='<div style="font-size:10px;color:var(--text3);margin-top:8px">Reviewed '+q.reviewDate+'</div>'}
+    h+='</div>';
   }
   document.getElementById('modal-q-content').innerHTML=h;
 }
@@ -5382,6 +5399,8 @@ function renderAdmin(){
         h+='<input type="text" id="sbnote-'+u.id+'" placeholder="Add a note..." style="flex:1;font-size:12px;padding:8px 12px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text)">';
         h+='<button class="btn btn-a btn-sm" onclick="addSupabaseNote(\''+u.id+'\')">Add</button>';
         h+='</div></div></details>';
+        // Message User button
+        h+='<button class="btn btn-sm" onclick="adminMessageUser(\''+u.email+'\',\''+(u.name||'').replace(/'/g,"\\'")+'\')" style="font-size:11px;padding:8px 14px;border:1px solid var(--accent);border-radius:6px;color:var(--accent);margin-top:8px">\ud83d\udce9 Message User</button>';
         h+='</div>';
         return h;
       }).join('');
@@ -5605,6 +5624,10 @@ async function replyToSupabaseMessage(msgId){
   if(error){notify('Failed to send reply',1);return}
   msg.replies=replies;
   msg.read=true;
+  // Notify user that their message got a reply
+  sendUserNotification(msg.user_id||'',msg.user_email||'','direct',
+    'Dr. Faroqui replied to your message',
+    reply.text.substring(0,200)+(reply.text.length>200?'...':''));
   notify('Reply sent');
   renderAdmin();
 }
@@ -5627,10 +5650,177 @@ function publishReview(id){
     q.reviewNote=ta.value.trim();
     q.status='reviewed';
     q.reviewDate=new Date().toISOString().split('T')[0];
-    // Content flywheel: check share toggle
     const shareBox=document.getElementById('share-'+id);
     q.shareInArchive=shareBox?shareBox.checked:true;
     saveDB();notify('Review published! \u2728');renderAdmin();
+    // Sync review to Supabase
+    if(_supaClient&&q.sbId){
+      _supaClient.from('questions').update({
+        review_note:q.reviewNote,status:'reviewed'
+      }).eq('id',q.sbId).then(function(){}).catch(function(ex){console.warn('Review sync',ex)});
+    }
+    // Create in-app notification for the user
+    sendUserNotification(q.userId,q.userEmail||'','review',
+      'Dr. Faroqui reviewed your question',
+      q.reviewNote.substring(0,200)+(q.reviewNote.length>200?'...':''));
+  }
+}
+
+// ===== IN-APP NOTIFICATIONS =====
+// Stores notifications in Supabase messages table with type='notification'
+// and in local DB.notifications array
+
+function sendUserNotification(userId,userEmail,ntype,title,body){
+  var notif={
+    user_name:title,
+    user_email:userEmail,
+    type:'notification',
+    message:body,
+    read:false,
+    date:new Date().toISOString()
+  };
+  // Store in Supabase
+  if(_supaClient){
+    _supaClient.from('messages').insert([notif])
+    .then(function(){}).catch(function(ex){console.warn('Notif store',ex)});
+  }
+  // Store locally
+  if(!DB.notifications)DB.notifications=[];
+  DB.notifications.push(Object.assign({notif_type:ntype,title:title},notif));
+  saveDB();
+}
+
+// Send a direct message to a user from admin
+async function adminMessageUser(email,name){
+  var msg=prompt('Send a message to '+(name||email)+':');
+  if(!msg||!msg.trim())return;
+  var payload={
+    user_name:'Message from Dr. Faroqui',
+    user_email:email,
+    type:'notification',
+    message:msg.trim(),
+    read:false,
+    date:new Date().toISOString()
+  };
+  if(_supaClient){
+    var{error}=await _supaClient.from('messages').insert([payload]);
+    if(error){notify('Failed to send message',1);return}
+  }
+  if(!DB.notifications)DB.notifications=[];
+  DB.notifications.push(payload);
+  saveDB();
+  notify('Message sent to '+(name||email)+' \u2728');
+}
+
+// Load notifications for current user
+async function loadMyNotifications(){
+  if(!U||!U.email)return[];
+  var notifs=[];
+  // Load from Supabase
+  if(_supaClient){
+    try{
+      var{data,error}=await _supaClient.from('messages').select('*')
+        .eq('user_email',U.email)
+        .eq('type','notification')
+        .order('date',{ascending:false})
+        .limit(20);
+      if(!error&&data)notifs=data;
+    }catch(ex){}
+  }
+  // Fallback: local notifications for this user
+  if(!notifs.length&&DB.notifications){
+    notifs=DB.notifications.filter(function(n){
+      return n.user_email===U.email;
+    }).reverse();
+  }
+  return notifs;
+}
+
+async function showMyMessages(){
+  var notifs=await loadMyNotifications();
+  // Also load contact message replies
+  var contactReplies=[];
+  if(_supaClient){
+    try{
+      var{data}=await _supaClient.from('messages').select('*')
+        .eq('user_email',U.email)
+        .neq('type','notification')
+        .order('date',{ascending:false})
+        .limit(20);
+      if(data)contactReplies=data.filter(function(m){return m.replies&&m.replies.length});
+    }catch(ex){}
+  }
+
+  var h='<div style="margin-bottom:20px"><span class="serif" style="font-size:18px;font-weight:600">My Messages</span></div>';
+
+  if(!notifs.length&&!contactReplies.length){
+    h+='<div style="text-align:center;padding:40px 0;color:var(--text3)"><p style="font-size:36px;margin-bottom:12px">\ud83d\udcec</p><p style="font-size:14px">No messages yet.</p><p style="font-size:12px;margin-top:6px;color:var(--text3)">When Dr. Faroqui reviews your questions or sends you a message, it\u2019ll show up here.</p></div>';
+  }else{
+    // Show notifications
+    notifs.forEach(function(n){
+      var title=n.title||n.user_name||'Notification';
+      var isReview=title.indexOf('reviewed')>=0;
+      var icon=isReview?'\u2705':'\ud83d\udce9';
+      var borderColor=n.read?'var(--border)':'rgba(200,168,124,.3)';
+      var bg=n.read?'':'background:rgba(200,168,124,.03);';
+      h+='<div class="card" style="margin-bottom:10px;border-color:'+borderColor+';'+bg+'">';
+      h+='<div style="display:flex;gap:12px;align-items:flex-start">';
+      h+='<span style="font-size:20px;flex-shrink:0;margin-top:2px">'+icon+'</span>';
+      h+='<div style="flex:1;min-width:0">';
+      h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">';
+      h+='<span style="font-size:13px;font-weight:600;color:var(--text)">'+title+'</span>';
+      var d=n.date?new Date(n.date).toLocaleDateString('en-US',{month:'short',day:'numeric'}):' ';
+      h+='<span style="font-size:10px;color:var(--text3)">'+d+'</span></div>';
+      h+='<p style="font-size:12px;color:var(--text2);line-height:1.6;margin:0">'+n.message+'</p>';
+      h+='</div></div></div>';
+      // Mark as read
+      if(!n.read&&n.id&&_supaClient){
+        _supaClient.from('messages').update({read:true}).eq('id',n.id).then(function(){}).catch(function(){});
+      }
+    });
+
+    // Show contact message replies
+    contactReplies.forEach(function(m){
+      h+='<div class="card" style="margin-bottom:10px">';
+      h+='<div style="font-size:11px;color:var(--text3);margin-bottom:6px">Your message: "'+m.message.substring(0,80)+(m.message.length>80?'...':'')+'"</div>';
+      m.replies.forEach(function(r){
+        h+='<div style="padding:10px 14px;background:var(--bg2);border-radius:8px;margin-bottom:6px;border-left:2px solid var(--green)">';
+        h+='<div style="font-size:10px;color:var(--green);font-weight:600;margin-bottom:4px">DR. FAROQUI</div>';
+        h+='<p style="font-size:12px;color:var(--text2);line-height:1.6;margin:0">'+r.text+'</p>';
+        var d=r.date?new Date(r.date).toLocaleDateString('en-US',{month:'short',day:'numeric'}):' ';
+        h+='<span style="font-size:10px;color:var(--text3)">'+d+'</span></div>';
+      });
+      h+='</div>';
+    });
+  }
+
+  document.getElementById('modal-q-content').innerHTML=h;
+  document.getElementById('modal-q').classList.remove('hidden');
+  // Clear notification badge
+  var badge=document.getElementById('notif-badge');
+  if(badge)badge.style.display='none';
+}
+
+// Check for unread notifications and show badge
+async function checkNotifBadge(){
+  if(!U||!U.email)return;
+  var count=0;
+  if(_supaClient){
+    try{
+      var{data,error}=await _supaClient.from('messages').select('id',{count:'exact'})
+        .eq('user_email',U.email)
+        .eq('type','notification')
+        .eq('read',false);
+      if(!error&&data)count=data.length;
+    }catch(ex){}
+  }
+  if(!count&&DB.notifications){
+    count=DB.notifications.filter(function(n){return n.user_email===U.email&&!n.read}).length;
+  }
+  var badge=document.getElementById('notif-badge');
+  if(badge){
+    badge.style.display=count>0?'':'none';
+    badge.textContent=count>9?'9+':count;
   }
 }
 

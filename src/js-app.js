@@ -575,6 +575,136 @@ function renderArchive(){
 function filterArchive(){renderArchive()}
 function setFilter(f,btn){curFilter=f;document.querySelectorAll('.fc .chip').forEach(c=>c.classList.remove('on'));btn.classList.add('on');renderArchive()}
 
+// ===== TOOLKIT QUIZ =====
+var quizAnswers={stage:null,goal:null,urgency:null};
+
+// Recommendation engine: maps (stage, goal) → ordered tool IDs with rationale
+var QUIZ_RECS={
+  // STUDENT
+  'student_fellowship':  [{id:'v1',why:'See exactly where your fellowship application stands'},{id:'v7',why:'Know which research activities move the needle most'},{id:'v6',why:'Month-by-month roadmap to match day'},{id:'v11',why:'See the financial impact of your specialty choice'}],
+  'student_contract':    [{id:'v3',why:'Learn what to look for before you ever see an offer'},{id:'v2',why:'Know the red flags before you need to negotiate'},{id:'v5',why:'Plan your first 3 years of attending income'},{id:'v8',why:'PSLF vs refinance — make this decision early'}],
+  'student_finance':     [{id:'v11',why:'See how specialty choice impacts lifetime wealth'},{id:'v8',why:'The 5 financial decisions worth millions'},{id:'v5',why:'Map your post-training financial trajectory'},{id:'v4',why:'Understand how RVU compensation actually works'}],
+  'student_direction':   [{id:'v11',why:'Compare career paths side by side'},{id:'v10',why:'Structured framework for specialty decisions'},{id:'v1',why:'Assess your competitiveness for target specialties'},{id:'v7',why:'Build research that opens doors'}],
+
+  // RESIDENT
+  'resident_fellowship': [{id:'v1',why:'Score your application against successful profiles'},{id:'v7',why:'Maximize research ROI with limited time'},{id:'v6',why:'Your timeline from now to match day'},{id:'v9',why:'Get a physician-reviewed strategic assessment'}],
+  'resident_contract':   [{id:'v2',why:'Identify red flags in any contract'},{id:'v3',why:'Compare offers systematically'},{id:'v4',why:'Model your real compensation by RVU volume'},{id:'v12',why:'Full contract analysis with risk scoring'}],
+  'resident_finance':    [{id:'v5',why:'Your first 3 years determine the next 20'},{id:'v8',why:'PSLF, disability, tax strategy — get these right'},{id:'v11',why:'30-year wealth projection by career path'},{id:'v4',why:'Model what you\'ll actually earn'}],
+  'resident_direction':  [{id:'v10',why:'Should you pivot? Structured decision engine'},{id:'v11',why:'Compare financial trajectories across paths'},{id:'v1',why:'How competitive are you for the switch?'},{id:'v9',why:'Submit your situation for physician review'}],
+
+  // FELLOW
+  'fellow_fellowship':   [{id:'v1',why:'Benchmark yourself for advanced fellowship'},{id:'v7',why:'Optimize your research portfolio for the next step'},{id:'v6',why:'Position for advanced subspecialty programs'},{id:'v9',why:'Get a strategic assessment from Dr. Faroqui'}],
+  'fellow_contract':     [{id:'v12',why:'Score your first attending contract'},{id:'v2',why:'Catch red flags before you sign'},{id:'v3',why:'Compare multiple offers with real data'},{id:'v4',why:'Model your actual take-home compensation'}],
+  'fellow_finance':      [{id:'v11',why:'Visualize your lifetime wealth trajectory'},{id:'v5',why:'Plan your first 3 years strategically'},{id:'v8',why:'PSLF decision, disability insurance, tax optimization'},{id:'v4',why:'Understand your future compensation structure'}],
+  'fellow_direction':    [{id:'v10',why:'Evaluating a pivot? Use this framework'},{id:'v11',why:'Compare career paths financially'},{id:'v9',why:'Get Dr. Faroqui\'s strategic assessment'},{id:'v3',why:'Weigh your options systematically'}],
+
+  // ATTENDING
+  'attending_fellowship':[{id:'v1',why:'Assess competitiveness for additional training'},{id:'v7',why:'Build a research portfolio strategically'},{id:'v6',why:'Timeline planning for fellowship re-entry'},{id:'v11',why:'Financial impact of more training'}],
+  'attending_contract':  [{id:'v12',why:'Full contract intelligence with benchmarks'},{id:'v2',why:'Risk scorecard for your contract terms'},{id:'v4',why:'Model compensation scenarios'},{id:'v3',why:'Compare offers side by side'}],
+  'attending_finance':   [{id:'v11',why:'30-year trajectory — are you on track?'},{id:'v5',why:'Leverage planner for wealth acceleration'},{id:'v8',why:'Tax strategy, disability, advisor selection'},{id:'v4',why:'Are you being paid fairly? RVU benchmarks'}],
+  'attending_direction': [{id:'v10',why:'Career pivot decision engine with financial modeling'},{id:'v9',why:'Submit for Dr. Faroqui\'s strategic review'},{id:'v11',why:'What does a pivot cost over 30 years?'},{id:'v3',why:'Compare your options objectively'}]
+};
+
+function quizPick(q,val,btn){
+  // Highlight selected option
+  var parent=btn.parentElement;
+  parent.querySelectorAll('.quiz-opt').forEach(function(b){
+    b.style.borderColor='var(--border)';
+    b.style.background='var(--bg2)';
+  });
+  btn.style.borderColor='var(--accent)';
+  btn.style.background='var(--accent-dim)';
+
+  if(q===1){
+    quizAnswers.stage=val;
+    quizAnswers.goal=null;
+    quizAnswers.urgency=null;
+    document.getElementById('quiz-q2').classList.remove('hidden');
+    document.getElementById('quiz-q3').classList.add('hidden');
+    document.getElementById('vault-quiz-results').classList.add('hidden');
+    // Reset Q2 and Q3 selections
+    document.querySelectorAll('#quiz-q2 .quiz-opt, #quiz-q3 .quiz-opt').forEach(function(b){
+      b.style.borderColor='var(--border)';b.style.background='var(--bg2)';
+    });
+    document.getElementById('quiz-q2').scrollIntoView({behavior:'smooth',block:'nearest'});
+  }else if(q===2){
+    quizAnswers.goal=val;
+    quizAnswers.urgency=null;
+    document.getElementById('quiz-q3').classList.remove('hidden');
+    document.querySelectorAll('#quiz-q3 .quiz-opt').forEach(function(b){
+      b.style.borderColor='var(--border)';b.style.background='var(--bg2)';
+    });
+    document.getElementById('vault-quiz-results').classList.add('hidden');
+    document.getElementById('quiz-q3').scrollIntoView({behavior:'smooth',block:'nearest'});
+  }else if(q===3){
+    quizAnswers.urgency=val;
+    quizShowResults();
+  }
+}
+
+function quizShowResults(){
+  var key=quizAnswers.stage+'_'+quizAnswers.goal;
+  var recs=QUIZ_RECS[key]||QUIZ_RECS['resident_fellowship'];
+  var canAccess=U&&(U.tier==='core'||U.tier==='elite'||U.tier==='admin');
+
+  // Build urgency message
+  var urgMsg='';
+  if(quizAnswers.urgency==='now') urgMsg='<div style="padding:10px 14px;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.15);border-radius:8px;margin-bottom:14px;font-size:11px;color:var(--red);display:flex;align-items:center;gap:8px"><span style="font-size:14px">🔥</span> <span>You need to act now — start with <strong>'+findVaultTitle(recs[0].id)+'</strong> today.</span></div>';
+  else if(quizAnswers.urgency==='soon') urgMsg='<div style="padding:10px 14px;background:rgba(200,168,124,.08);border:1px solid rgba(200,168,124,.15);border-radius:8px;margin-bottom:14px;font-size:11px;color:var(--accent);display:flex;align-items:center;gap:8px"><span style="font-size:14px">📅</span> <span>You have time to plan. Work through these in order over the next few weeks.</span></div>';
+  else urgMsg='<div style="padding:10px 14px;background:rgba(139,173,196,.08);border:1px solid rgba(139,173,196,.15);border-radius:8px;margin-bottom:14px;font-size:11px;color:var(--blue);display:flex;align-items:center;gap:8px"><span style="font-size:14px">🗺️</span> <span>Great time to build your strategy. Explore these tools at your own pace.</span></div>';
+
+  var html=urgMsg;
+  recs.forEach(function(rec,i){
+    var item=VAULT_ITEMS.find(function(v){return v.id===rec.id});
+    if(!item) return;
+    var mentOnly=item.tier==='elite'&&U.tier!=='elite'&&U.tier!=='admin';
+    var locked=!canAccess||mentOnly;
+    var onclick;
+    if(locked&&mentOnly&&canAccess) onclick='previewEliteFramework(\''+item.id+'\')';
+    else if(locked) onclick='notify(\'Upgrade to access this framework\',1)';
+    else onclick='openFramework(\''+item.id+'\')';
+
+    html+='<div onclick="'+onclick+'" style="display:flex;gap:14px;padding:14px;background:var(--bg2);border:1px solid '+(i===0?'rgba(200,168,124,.3)':'var(--border)')+';border-radius:10px;margin-bottom:8px;cursor:pointer;position:relative;transition:border-color .2s'+(i===0?';box-shadow:0 0 20px rgba(200,168,124,.06)':'')+'">';
+    html+='<div style="flex-shrink:0;width:38px;height:38px;border-radius:10px;background:'+(i===0?'linear-gradient(135deg,var(--accent),var(--accent2))':'var(--bg3)')+';display:flex;align-items:center;justify-content:center;font-size:18px'+(i===0?';color:#0a0a0f':'')+'">'+item.icon+'</div>';
+    html+='<div style="flex:1;min-width:0">';
+    html+='<div style="display:flex;align-items:center;gap:6px;margin-bottom:3px"><span style="font-size:13px;font-weight:600;color:var(--text)">'+item.title+'</span>';
+    if(mentOnly) html+='<span style="font-size:8px;padding:2px 6px;border-radius:100px;background:var(--accent-dim);color:var(--accent);font-weight:600;letter-spacing:.5px">ELITE</span>';
+    if(locked) html+='<span style="font-size:12px">🔒</span>';
+    html+='</div>';
+    html+='<div style="font-size:11px;color:var(--accent);line-height:1.5">'+rec.why+'</div>';
+    html+='</div>';
+    if(i===0) html+='<div style="position:absolute;top:6px;right:10px;font-size:8px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:.8px">#1 Pick</div>';
+    html+='</div>';
+  });
+
+  document.getElementById('vault-quiz-recs').innerHTML=html;
+  document.getElementById('vault-quiz-results').classList.remove('hidden');
+  // Collapse quiz
+  document.getElementById('vault-quiz').style.display='none';
+  // Scroll to results
+  setTimeout(function(){
+    document.getElementById('vault-quiz-results').scrollIntoView({behavior:'smooth',block:'start'});
+  },100);
+}
+
+function findVaultTitle(id){
+  var item=VAULT_ITEMS.find(function(v){return v.id===id});
+  return item?item.title:'this tool';
+}
+
+function quizReset(){
+  quizAnswers={stage:null,goal:null,urgency:null};
+  document.getElementById('vault-quiz').style.display='';
+  document.getElementById('vault-quiz-results').classList.add('hidden');
+  document.getElementById('quiz-q2').classList.add('hidden');
+  document.getElementById('quiz-q3').classList.add('hidden');
+  // Reset all selections
+  document.querySelectorAll('#vault-quiz .quiz-opt').forEach(function(b){
+    b.style.borderColor='var(--border)';b.style.background='var(--bg2)';
+  });
+  document.getElementById('vault-quiz').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
 // ===== VAULT =====
 function renderVault(){
   const canAccess=U.tier==='core'||U.tier==='elite'||U.tier==='admin';

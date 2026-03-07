@@ -135,7 +135,7 @@ function navTo(scr,btn){
   if(scr==='scr-home')renderHome();
   if(scr==='scr-archive')renderArchive();
   if(scr==='scr-vault')renderVault();
-  if(scr==='scr-admin')renderAdmin();
+  if(scr==='scr-admin'){if(_supaClient){loadAdminDataFromSupabase(curAdminTab)}else{renderAdmin()}}
   if(scr==='scr-ask')updateAskScreen();
   if(scr==='scr-profile')renderProfile();
   // Close any open modals
@@ -1671,22 +1671,148 @@ function handleCheckoutReturn(){
 }
 
 // ===== ADMIN =====
+
+// Merge local + Supabase questions, deduplicate by question text
+function getAdminQuestions(){
+  var all=[];
+  var seen={};
+  // Supabase questions first (authoritative)
+  if(_sbQuestions&&_sbQuestions.length){
+    _sbQuestions.forEach(function(q){
+      var key=(q.question||'').substring(0,50).toLowerCase();
+      if(!seen[key]){
+        seen[key]=true;
+        all.push({
+          id:q.id,_sbId:q.id,
+          userId:q.user_id,userEmail:q.user_email,
+          author:q.author,role:q.role||'',
+          cat:q.cat||'career',
+          q:q.question,question:q.question,
+          ai:q.ai_response,ai_response:q.ai_response,
+          status:q.status||'pending',
+          reviewNote:q.review_note,review_note:q.review_note,
+          wantsReview:q.wants_review,wants_review:q.wants_review,
+          anon:q.anon,
+          date:q.date?q.date.split('T')[0]:'',
+          user_email:q.user_email
+        });
+      }
+    });
+  }
+  // Local questions (if not already in Supabase)
+  DB.questions.forEach(function(q){
+    var key=(q.q||'').substring(0,50).toLowerCase();
+    if(!seen[key]){
+      seen[key]=true;
+      all.push(q);
+    }
+  });
+  return all;
+}
+
+// Publish review — works for both local and Supabase questions
+async function publishAdminReview(qId){
+  var ta=document.getElementById('rev-'+qId);
+  if(!ta||!ta.value.trim()){notify('Add review commentary',1);return}
+  var reviewText=ta.value.trim();
+
+  if(typeof qId==='string'&&qId.startsWith('sb_')){
+    // Supabase question
+    var sbId=parseInt(qId.replace('sb_',''));
+    if(_supaClient){
+      var{error}=await _supaClient.from('questions').update({
+        review_note:reviewText,
+        status:'reviewed'
+      }).eq('id',sbId);
+      if(error){notify('Failed to save review: '+error.message,1);return}
+      // Update local cache
+      if(_sbQuestions){
+        var sq=_sbQuestions.find(function(q){return q.id===sbId});
+        if(sq){sq.review_note=reviewText;sq.status='reviewed'}
+      }
+      // Send notification to user
+      var q=_sbQuestions?_sbQuestions.find(function(q){return q.id===sbId}):null;
+      if(q&&q.user_email){
+        sendUserNotification(q.user_id||'',q.user_email,'review',
+          'Dr. Faroqui reviewed your question',
+          reviewText.substring(0,200)+(reviewText.length>200?'...':''));
+      }
+      notify('Review published! \u2728');
+      renderAdmin();
+    }
+  }else{
+    // Local question — use existing publishReview
+    publishReview(typeof qId==='string'?parseInt(qId):qId);
+  }
+}
+
 function renderAdmin(){
   const c=document.getElementById('admin-content');
-  const reviewedThisWeek=DB.questions.filter(q=>q.status==='reviewed'&&q.reviewDate).length;
+  var allQ=getAdminQuestions();
+  const reviewedThisWeek=allQ.filter(q=>q.status==='reviewed').length;
+  var pendingCount=allQ.filter(q=>q.status==='pending'||q.status==='answered').length;
   if(curAdminTab==='messages'){
     document.getElementById('admin-info').innerHTML='<div style="display:flex;justify-content:space-between;align-items:center"><span>User messages and feedback.</span><span style="color:var(--accent);font-weight:600">'+(DB.messages?DB.messages.filter(m=>!m.read).length:0)+' unread</span></div>';
   }else if(curAdminTab==='users'){
-    document.getElementById('admin-info').innerHTML='<div style="display:flex;justify-content:space-between;align-items:center"><span>All registered users and their strategic reports.</span><span style="color:var(--accent);font-weight:600">'+DB.users.length+' total</span></div>';
+    var userCount=(_sbProfiles&&_sbProfiles.length)?_sbProfiles.length:DB.users.length;
+    document.getElementById('admin-info').innerHTML='<div style="display:flex;justify-content:space-between;align-items:center"><span>All registered users and their strategic reports.</span><span style="color:var(--accent);font-weight:600">'+userCount+' total</span></div>';
+  }else if(curAdminTab==='queue'){
+    document.getElementById('admin-info').innerHTML='<div style="display:flex;justify-content:space-between;align-items:center"><span>Questions awaiting your review.</span><span style="color:var(--accent);font-weight:600">'+pendingCount+' pending</span></div>';
   }else{
-    document.getElementById('admin-info').innerHTML='<div style="display:flex;justify-content:space-between;align-items:center"><span>Select up to 10 questions per week for review.</span><span style="color:var(--accent);font-weight:600">'+reviewedThisWeek+' / 10 this week</span></div>';
+    document.getElementById('admin-info').innerHTML='<div style="display:flex;justify-content:space-between;align-items:center"><span>Published reviews.</span><span style="color:var(--accent);font-weight:600">'+reviewedThisWeek+' reviewed</span></div>';
   }
   if(curAdminTab==='queue'){
-    const pending=DB.questions.filter(q=>q.status==='pending');
-    c.innerHTML=pending.length?pending.map(q=>'<div class="card" style="margin-bottom:12px"><div class="qc-top"><span class="qc-author">'+(q.anon?'Anonymous':q.author)+'</span><span class="tag '+(({student:'t-student',resident:'t-resident',fellow:'t-fellow'})[q.role]||'')+'">'+q.role+'</span></div><span class="tag t-cat">'+q.cat+'</span><div class="qc-q" style="margin:10px 0">'+q.q+'</div><div style="font-size:11px;color:var(--text3);margin-bottom:12px">'+q.date+(q.wantsReview?' \u2022 \u2b50 Review Requested':'')+'</div>'+(q.ai?'<details style="margin-bottom:12px"><summary style="font-size:12px;color:var(--accent);cursor:pointer">View AI Draft</summary><div class="ai-resp" style="margin-top:8px;font-size:13px"><p>'+q.ai.diag+'</p></div></details>':'')+'<div class="abox"><textarea id="rev-'+q.id+'" placeholder="Add review commentary..."></textarea><div style="display:flex;align-items:center;gap:12px;margin-top:12px"><label style="font-size:12px;color:var(--text2);display:flex;align-items:center;gap:6px"><input type="checkbox" id="share-'+q.id+'" checked> Share in archive</label><div style="flex:1"></div><button class="btn btn-a btn-sm" onclick="publishReview('+q.id+')">Publish</button></div></div></div>').join(''):'<div style="text-align:center;padding:40px;color:var(--text3)">\u2705 All caught up!</div>';
+    // Merge local + Supabase questions
+    var allQ=getAdminQuestions();
+    const pending=allQ.filter(q=>q.status==='pending'||q.status==='answered');
+    c.innerHTML=pending.length?pending.map(function(q){
+      var qId=q._sbId?'sb_'+q._sbId:q.id;
+      var ai=q.ai||q.ai_response;
+      var h='<div class="card" style="margin-bottom:12px">';
+      h+='<div class="qc-top"><span class="qc-author">'+(q.anon?'Anonymous':q.author)+'</span>';
+      h+='<span class="tag '+(({student:'t-student',resident:'t-resident',fellow:'t-fellow'})[q.role]||'')+'">'+q.role+'</span>';
+      if(q.user_email){h+='<span style="font-size:10px;color:var(--text3);margin-left:8px">'+q.user_email+'</span>'}
+      h+='</div>';
+      h+='<span class="tag t-cat">'+q.cat+'</span>';
+      h+='<div class="qc-q" style="margin:10px 0">'+(q.q||q.question)+'</div>';
+      h+='<div style="font-size:11px;color:var(--text3);margin-bottom:12px">'+(q.date||'')+(q.wantsReview||q.wants_review?' \u2022 \u2b50 Review Requested':'')+'</div>';
+      if(ai){
+        var diag=typeof ai==='object'?ai.diag:ai;
+        h+='<details style="margin-bottom:12px"><summary style="font-size:12px;color:var(--accent);cursor:pointer">View AI Draft</summary>';
+        h+='<div class="ai-resp" style="margin-top:8px;font-size:13px;max-height:300px;overflow-y:auto"><p>'+diag+'</p></div></details>';
+      }
+      h+='<div class="abox"><textarea id="rev-'+qId+'" placeholder="Add review commentary..."></textarea>';
+      h+='<div style="display:flex;align-items:center;gap:12px;margin-top:12px">';
+      h+='<label style="font-size:12px;color:var(--text2);display:flex;align-items:center;gap:6px"><input type="checkbox" id="share-'+qId+'" checked> Share in archive</label>';
+      h+='<div style="flex:1"></div>';
+      h+='<button class="btn btn-a btn-sm" onclick="publishAdminReview(\''+qId+'\')">Publish</button>';
+      h+='</div></div></div>';
+      return h;
+    }).join(''):'<div style="text-align:center;padding:40px;color:var(--text3)">\u2705 All caught up!</div>';
   }else if(curAdminTab==='reviewed'){
-    const reviewed=DB.questions.filter(q=>q.status==='reviewed').sort((a,b)=>b.date.localeCompare(a.date));
-    c.innerHTML=reviewed.length?reviewed.map(renderQCard).join(''):'<div style="text-align:center;padding:40px;color:var(--text3)">No reviewed questions.</div>';
+    var allQ=getAdminQuestions();
+    const reviewed=allQ.filter(q=>q.status==='reviewed').sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+    if(reviewed.length){
+      c.innerHTML=reviewed.map(function(q){
+        var ai=q.ai||q.ai_response;
+        var revNote=q.reviewNote||q.review_note;
+        var h='<div class="card" style="margin-bottom:12px">';
+        h+='<div class="qc-top"><span class="qc-author">'+(q.anon?'Anonymous':q.author)+'</span>';
+        h+='<span class="tag '+(({student:'t-student',resident:'t-resident',fellow:'t-fellow'})[q.role]||'')+'">'+q.role+'</span></div>';
+        h+='<span class="tag t-cat">'+q.cat+'</span>';
+        h+='<div class="qc-q" style="margin:10px 0">'+(q.q||q.question)+'</div>';
+        h+='<div style="font-size:11px;color:var(--text3);margin-bottom:8px">'+(q.date||'')+'</div>';
+        if(revNote){
+          h+='<div style="padding:12px;background:rgba(106,191,75,.06);border:1px solid rgba(106,191,75,.15);border-radius:8px;margin-top:8px">';
+          h+='<div style="font-size:10px;font-weight:600;color:var(--green);margin-bottom:4px">\u2705 YOUR REVIEW</div>';
+          h+='<p style="font-size:12px;color:var(--text2);line-height:1.6;margin:0">'+revNote+'</p></div>';
+        }
+        h+='</div>';
+        return h;
+      }).join('');
+    }else{
+      c.innerHTML='<div style="text-align:center;padding:40px;color:var(--text3)">No reviewed questions.</div>';
+    }
   }else if(curAdminTab==='users'){
     // Use Supabase profiles if available, otherwise local
     var users;
@@ -1868,14 +1994,16 @@ function renderAdmin(){
       }).join('');
     }
   }else{
-    const total=DB.questions.length,ans=DB.questions.filter(q=>q.status==='reviewed').length,pend=DB.questions.filter(q=>q.status==='pending').length;
-    const cats={};DB.questions.forEach(q=>{cats[q.cat]=(cats[q.cat]||0)+1});
-    c.innerHTML='<div class="stats" style="padding:0"><div class="st"><div class="st-n">'+total+'</div><div class="st-l">Total</div></div><div class="st"><div class="st-n">'+ans+'</div><div class="st-l">Reviewed</div></div><div class="st"><div class="st-n">'+pend+'</div><div class="st-l">Pending</div></div><div class="st"><div class="st-n">'+DB.users.length+'</div><div class="st-l">Members</div></div></div><div class="sec" style="padding:20px 0 14px">By Category</div>'+Object.entries(cats).map(([k,v])=>'<div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px"><span>'+(CATS[k]||k)+'</span><span style="color:var(--text3)">'+v+'</span></div>').join('');
+    var allQ2=getAdminQuestions();
+    const total=allQ2.length,ans=allQ2.filter(q=>q.status==='reviewed').length,pend=allQ2.filter(q=>q.status==='pending'||q.status==='answered').length;
+    var userCount2=(_sbProfiles&&_sbProfiles.length)?_sbProfiles.length:DB.users.length;
+    const cats={};allQ2.forEach(q=>{cats[q.cat]=(cats[q.cat]||0)+1});
+    c.innerHTML='<div class="stats" style="padding:0"><div class="st"><div class="st-n">'+total+'</div><div class="st-l">Total</div></div><div class="st"><div class="st-n">'+ans+'</div><div class="st-l">Reviewed</div></div><div class="st"><div class="st-n">'+pend+'</div><div class="st-l">Pending</div></div><div class="st"><div class="st-n">'+userCount2+'</div><div class="st-l">Members</div></div></div><div class="sec" style="padding:20px 0 14px">By Category</div>'+Object.entries(cats).map(([k,v])=>'<div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px"><span>'+(CATS[k]||k)+'</span><span style="color:var(--text3)">'+v+'</span></div>').join('');
   }
 }
 function adminTab(tab,btn){curAdminTab=tab;document.querySelectorAll('.atab').forEach(t=>t.classList.remove('on'));btn.classList.add('on');
-  // Load from Supabase for users and messages tabs
-  if((tab==='users'||tab==='messages')&&_supaClient){loadAdminDataFromSupabase(tab)}else{renderAdmin()}
+  // Load from Supabase for all admin tabs
+  if(_supaClient){loadAdminDataFromSupabase(tab)}else{renderAdmin()}
 }
 
 async function loadAdminDataFromSupabase(tab){
@@ -1889,9 +2017,15 @@ async function loadAdminDataFromSupabase(tab){
       }
     }
     if(tab==='messages'){
-      const{data,error}=await _supaClient.from('messages').select('*').order('date',{ascending:false});
+      const{data,error}=await _supaClient.from('messages').select('*').neq('type','notification').order('date',{ascending:false});
       if(!error&&data&&data.length){
         _sbMessages=data;
+      }
+    }
+    if(tab==='queue'||tab==='reviewed'){
+      const{data,error}=await _supaClient.from('questions').select('*').order('date',{ascending:false});
+      if(!error&&data&&data.length){
+        _sbQuestions=data;
       }
     }
   }catch(ex){console.warn('Supabase load error',ex)}
@@ -1900,6 +2034,7 @@ async function loadAdminDataFromSupabase(tab){
 
 var _sbProfiles=null;
 var _sbMessages=null;
+var _sbQuestions=null;
 
 function addUserNote(userId){
   var input=document.getElementById('unote-'+userId);

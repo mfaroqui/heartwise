@@ -2412,6 +2412,9 @@ ChatGPT and Claude are powerful AI tools — but they're general-purpose. <stron
 <!-- Progress Dashboard -->
 <div id="progress-dashboard" style="margin-bottom:16px"></div>
 
+<!-- Goal Tracker (Core + Elite) -->
+<div id="goal-tracker" style="margin-bottom:16px"></div>
+
 <div style="margin-bottom:12px">
 <div class="card" style="cursor:pointer;padding:16px 20px" onclick="toggleAccountSettings()">
 <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:14px">👤 Account Settings</span><span style="color:var(--text3)">›</span></div>
@@ -4605,6 +4608,7 @@ function renderProfile(){
   document.getElementById('prof-plan-label').textContent=t.name+(U.tier==='free'?'':' \u2022 Active');
   document.getElementById('prof-plan-label').style.color=U.tier==='free'?'var(--text3)':'var(--accent)';
   renderProgressDashboard();
+  renderGoalTracker();
   // Show admin tier switcher
   var sw=document.getElementById('admin-tier-switcher');
   if(sw){sw.classList.toggle('hidden',U.email.toLowerCase()!==AE.toLowerCase())}
@@ -4794,6 +4798,394 @@ function renderProgressDashboard(){
   h+='</div></div>';
   el.innerHTML=h;
 }
+
+// ===== GOAL TRACKER (Core + Elite) =====
+
+var GOAL_TEMPLATES={
+  // stage_goal → monthly goal sets
+  student_match:{
+    title:'Fellowship Match Prep',
+    months:[
+      {label:'Month 1',goals:['Identify target specialty with conviction','Start one research project (case report or abstract)','Build relationships with 2 potential letter writers','Create a tiered program list (reach/target/safety)']},
+      {label:'Month 2',goals:['Submit first abstract to a national conference','Get informal feedback on application strength from a mentor','Draft personal statement outline','Complete one away rotation application']},
+      {label:'Month 3',goals:['Finish first draft of personal statement','Have 3+ letter writers confirmed','Manuscript in progress or submitted','Attend a subspecialty conference or networking event']}
+    ]
+  },
+  student_finance:{
+    title:'Financial Foundation',
+    months:[
+      {label:'Month 1',goals:['Calculate total projected debt at graduation','Research PSLF eligibility for target employers','Open a Roth IRA if you have earned income','Create a basic budget tracking your spending']},
+      {label:'Month 2',goals:['Compare income-driven repayment plans (IBR, PAYE, REPAYE)','Get a disability insurance quote (trainee discount)','Set up automatic savings — even $50/month builds the habit','Read White Coat Investor\'s student guide']},
+      {label:'Month 3',goals:['Build a 1-month emergency fund','Map out your loan repayment strategy (PSLF vs refinance)','Understand your future contract compensation models (RVU, salary, hybrid)','Connect with a fee-only financial advisor for a one-time consultation']}
+    ]
+  },
+  resident_match:{
+    title:'Fellowship Positioning',
+    months:[
+      {label:'Month 1',goals:['Finalize subspecialty decision and tell your PD','Start or accelerate a first-author research project','Identify 3 specialty-specific letter writers','Build tiered program list of 15-20 programs']},
+      {label:'Month 2',goals:['Submit abstract to ACC, AHA, or relevant society','Schedule away rotations at 1-2 target programs','Get honest CV review from a mentor in your target field','Begin personal statement — 3+ drafts minimum']},
+      {label:'Month 3',goals:['First-author manuscript submitted or near completion','Confirm all letter writers and give them your CV + personal statement','Personal statement polished (5+ revisions)','Research each target program specifically (PD name, research focus, culture)']}
+    ]
+  },
+  resident_contract:{
+    title:'Contract & Job Search',
+    months:[
+      {label:'Month 1',goals:['Research MGMA median compensation for your specialty','Understand RVU-based vs salary-based compensation models','Learn the 7 key contract red flags (non-compete, tail, termination)','Talk to 2 attendings about their contract negotiation experience']},
+      {label:'Month 2',goals:['Use the Contract Risk Scorecard on a sample contract','Start building a list of target employers/practices','Get an introduction to a healthcare attorney (for when you need one)','Understand your geographic flexibility and non-negotiables']},
+      {label:'Month 3',goals:['Compare at least 2 real or sample offers using the Comparison Matrix','Calculate your true compensation (base + RVU + benefits + call)','Draft your negotiation priorities list','Determine your PSLF eligibility — this affects which employers to target']}
+    ]
+  },
+  resident_finance:{
+    title:'Financial Strategy',
+    months:[
+      {label:'Month 1',goals:['Calculate your total student loan balance and interest rate','Make the PSLF vs refinance decision (or know what info you still need)','Get own-occupation disability insurance quotes — buy during training','Open and max your Roth IRA ($7,000)']},
+      {label:'Month 2',goals:['Create a post-training budget that maintains near-resident spending','Map your employer retirement plan options and match percentage','Build a 3-month emergency fund plan','Understand your tax bracket and basic tax-advantaged account strategy']},
+      {label:'Month 3',goals:['Set up automatic investments — index funds, target date, or robo-advisor','Get term life insurance if you have dependents','Review your attending contract for financial red flags','Build a 3-year financial projection (Year 1: foundation, Year 2: acceleration, Year 3: leverage)']}
+    ]
+  },
+  resident_direction:{
+    title:'Career Direction',
+    months:[
+      {label:'Month 1',goals:['Diagnose your dissatisfaction: specialty, setting, job, or burnout?','Shadow or talk to 2 physicians in a potential new path','Take stock: what energizes you vs what drains you in your current role','Journal for 2 weeks — track daily satisfaction and frustration triggers']},
+      {label:'Month 2',goals:['Informational interviews with 3 people who made a similar pivot','Calculate the financial cost of a pivot (use the Career Pivot Decision Engine)','Test the new direction: moonlight, volunteer, or take an elective','Discuss your thinking with a trusted mentor — get honest feedback']},
+      {label:'Month 3',goals:['Make a provisional decision and set a 90-day trial period','If staying: identify 2 concrete changes to improve your current situation','If pivoting: map the timeline, training requirements, and financial bridge','Submit a Strategic Audit to Dr. Faroqui for structured guidance']}
+    ]
+  },
+  fellow_contract:{
+    title:'First Attending Contract',
+    months:[
+      {label:'Month 1',goals:['Research MGMA compensation benchmarks for your subspecialty','Understand the 7 contract red flags and how to negotiate each one','Start networking with potential employers — conferences, alumni, faculty contacts','Define your non-negotiables: geography, practice type, call, compensation floor']},
+      {label:'Month 2',goals:['Use the Contract Intelligence Tool to score any offers you receive','Compare offers side-by-side using the Offer Comparison Matrix','Get a healthcare attorney recommendation from your program','Understand tail coverage, non-competes, and clawback terms in detail']},
+      {label:'Month 3',goals:['Negotiate your top offer — use specific MGMA data as leverage','Finalize your PSLF vs refinance decision based on employer type','Review the 3-Year Leverage Planner — map your first 3 attending years','Sign with confidence — or walk away if the deal isn\'t right']}
+    ]
+  },
+  fellow_finance:{
+    title:'Wealth Building',
+    months:[
+      {label:'Month 1',goals:['Model your attending compensation using the RVU Calculator','Make the PSLF vs refinance decision — this is a $50K-$200K decision','Secure own-occupation disability insurance before finishing training','Plan your post-fellowship budget: live on resident salary for Year 1']},
+      {label:'Month 2',goals:['Max your Roth IRA and understand backdoor Roth strategy','Map out all tax-advantaged accounts: 401k, HSA, mega backdoor Roth','Build 6-month emergency fund plan on attending salary','Get a fee-only fiduciary financial advisor consultation']},
+      {label:'Month 3',goals:['Set up automatic investment plan — index funds on autopilot','Use the Financial Trajectory Simulator to model your 30-year wealth','Term life insurance if you have dependents','Create your personal "Year 1 financial playbook" — specific dollar amounts for each goal']}
+    ]
+  },
+  attending_contract:{
+    title:'Contract Optimization',
+    months:[
+      {label:'Month 1',goals:['Benchmark your current compensation against MGMA data for your specialty','Identify the 3 weakest terms in your current contract','Research what top-performing physicians in your specialty are earning','List your leverage points: productivity, patient satisfaction, unique skills']},
+      {label:'Month 2',goals:['Prepare your renegotiation case with specific data and comparables','Use the Contract Intelligence Tool to score your current deal','Talk to a healthcare attorney about your non-compete and termination terms','Explore alternative opportunities — even if you\'re not planning to leave']},
+      {label:'Month 3',goals:['Have the renegotiation conversation — or start interviewing','Compare any new offers using the Offer Comparison Matrix','Evaluate partnership/equity track if applicable','Make a decision: renegotiate, move, or stay with clarity']}
+    ]
+  },
+  attending_finance:{
+    title:'Wealth Acceleration',
+    months:[
+      {label:'Month 1',goals:['Run your 30-year projection in the Financial Trajectory Simulator','Audit your savings rate — are you hitting 20%+ of gross income?','Review all tax-advantaged accounts: are you maxing everything?','Check your disability and life insurance coverage — still adequate?']},
+      {label:'Month 2',goals:['Evaluate your investment allocation — too conservative? Too concentrated?','Calculate your net worth and set a 12-month target','Review your student loan strategy — PSLF on track? Refinance rate competitive?','Consider real estate, side income, or practice ownership opportunities']},
+      {label:'Month 3',goals:['Meet with your financial advisor for annual review','Optimize your tax strategy — charitable giving, retirement contributions, entity structure','Set your next 12-month financial goals with specific dollar amounts','Build or update your estate plan (will, trust, beneficiaries)']}
+    ]
+  },
+  attending_direction:{
+    title:'Career Reinvention',
+    months:[
+      {label:'Month 1',goals:['Complete the Career Pivot Decision Engine — diagnose before you prescribe','Talk to 3 physicians who\'ve made the pivot you\'re considering','Calculate the true financial cost of transition','Assess: is this burnout (temporary) or misalignment (structural)?']},
+      {label:'Month 2',goals:['Test the new direction without quitting: moonlight, consult, teach, or volunteer','Build a 12-month financial bridge plan','Identify skills that transfer and gaps that need filling','Submit a Strategic Audit to Dr. Faroqui for structured review']},
+      {label:'Month 3',goals:['Make a provisional decision with a clear timeline','If staying clinical: negotiate specific changes to your current role','If pivoting: set a start date and announce to key stakeholders','Build your support system — mentors, peers, family alignment']}
+    ]
+  }
+};
+
+// Fallback goals for combinations not explicitly defined
+var GOAL_DEFAULTS={
+  student:{title:'Medical Student Goals',goals:['Set a clear career direction and target specialty','Start one research or scholarly project','Build relationships with 2-3 potential mentors','Create a financial plan for your remaining training']},
+  resident:{title:'Resident Goals',goals:['Advance your primary career objective this month','Complete one scholarly activity (abstract, case report, or QI project)','Strengthen a key mentor relationship','Review your financial plan — loans, insurance, savings']},
+  fellow:{title:'Fellow Goals',goals:['Progress toward your first attending position','Submit or advance a research project','Network with 2 potential employers or collaborators','Finalize your post-fellowship financial strategy']},
+  attending:{title:'Attending Goals',goals:['Review and optimize your current contract terms','Advance one professional development goal','Check your financial trajectory — savings rate, investments, debt','Invest in one relationship that will matter in 5 years']}
+};
+
+function getGoalTemplate(){
+  if(!U)return null;
+  var stage=U.stage||(U.profile&&U.profile.stage)||U.role||'resident';
+  var goal=U.goal||(U.profile&&U.profile.goal)||'';
+  // Normalize stage
+  if(stage==='switching')stage='attending';
+  if(stage==='other')stage='resident';
+  // Map user goal to template key
+  var goalKey='';
+  if(goal==='match'||goal==='fellowship')goalKey='match';
+  else if(goal==='contract'||goal==='job'||goal==='jobs')goalKey='contract';
+  else if(goal==='finance'||goal==='financial'||goal==='wealth')goalKey='finance';
+  else if(goal==='direction'||goal==='pivot'||goal==='career')goalKey='direction';
+  else goalKey='finance'; // default
+
+  var key=stage+'_'+goalKey;
+  return GOAL_TEMPLATES[key]||null;
+}
+
+function getCurrentMonth(){
+  if(_goalMonthOverride!==null)return _goalMonthOverride;
+  if(!U)return 0;
+  var signup=U.signupDate||U.created_at||(U.profile&&U.profile.signupDate)||null;
+  if(!signup)return 0;
+  var d=new Date(signup);
+  var now=new Date();
+  var months=Math.floor((now-d)/(30*24*60*60*1000));
+  return Math.min(months,2); // 0, 1, or 2
+}
+
+async function renderGoalTracker(){
+  var el=document.getElementById('goal-tracker');
+  if(!el||!U)return;
+  // Only for core and elite
+  if(U.tier!=='core'&&U.tier!=='elite'&&U.tier!=='admin'){el.innerHTML='';return}
+
+  var template=getGoalTemplate();
+  if(!template){
+    // Use stage defaults
+    var stage=U.stage||U.role||'resident';
+    if(stage==='switching')stage='attending';
+    var def=GOAL_DEFAULTS[stage]||GOAL_DEFAULTS.resident;
+    template={title:def.title,months:[{label:'This Month',goals:def.goals}]};
+  }
+
+  // Load saved progress from Supabase
+  var savedProgress=await loadGoalProgress();
+  var monthIdx=getCurrentMonth();
+  var currentGoals=template.months[Math.min(monthIdx,template.months.length-1)];
+
+  var h='<div class="card" style="padding:20px;border-color:rgba(200,168,124,.2)">';
+
+  // Header
+  h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">';
+  h+='<div style="display:flex;align-items:center;gap:8px">';
+  h+='<span style="font-size:18px">\ud83c\udfaf</span>';
+  h+='<span style="font-size:14px;font-weight:600;color:var(--text)">'+template.title+'</span>';
+  h+='</div>';
+  h+='<span class="tag" style="background:var(--accent-dim);color:var(--accent);font-size:10px">'+currentGoals.label+'</span>';
+  h+='</div>';
+  h+='<p style="font-size:11px;color:var(--text3);margin-bottom:16px">Track your progress. Dr. Faroqui reviews your updates.</p>';
+
+  // Progress bar
+  var completed=0;
+  var totalGoals=currentGoals.goals.length;
+  currentGoals.goals.forEach(function(g,i){
+    var goalId=monthIdx+'_'+i;
+    if(savedProgress[goalId]&&savedProgress[goalId].status==='done')completed++;
+  });
+  var pctDone=totalGoals>0?Math.round((completed/totalGoals)*100):0;
+  h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">';
+  h+='<span style="font-size:11px;color:var(--text3)">'+completed+' of '+totalGoals+' completed</span>';
+  h+='<span style="font-size:12px;font-weight:600;color:var(--accent)">'+pctDone+'%</span></div>';
+  h+='<div style="height:6px;background:var(--bg2);border-radius:3px;overflow:hidden;margin-bottom:18px">';
+  h+='<div style="height:100%;width:'+pctDone+'%;background:linear-gradient(90deg,var(--accent),var(--green));border-radius:3px;transition:width .4s"></div></div>';
+
+  // Goal checklist
+  currentGoals.goals.forEach(function(g,i){
+    var goalId=monthIdx+'_'+i;
+    var progress=savedProgress[goalId]||{};
+    var isDone=progress.status==='done';
+    var isBlocked=progress.status==='blocked';
+
+    h+='<div style="padding:12px;background:'+(isDone?'rgba(106,191,75,.04)':'var(--bg2)')+';border:1px solid '+(isDone?'rgba(106,191,75,.2)':isBlocked?'rgba(239,68,68,.2)':'var(--border)')+';border-radius:10px;margin-bottom:8px">';
+    h+='<div style="display:flex;gap:10px;align-items:flex-start">';
+
+    // Checkbox
+    h+='<button onclick="toggleGoal(\''+goalId+'\')" style="flex-shrink:0;width:22px;height:22px;border-radius:6px;border:2px solid '+(isDone?'var(--green)':'var(--border)')+';background:'+(isDone?'var(--green)':'transparent')+';cursor:pointer;display:flex;align-items:center;justify-content:center;margin-top:1px;transition:all .2s">';
+    if(isDone)h+='<span style="color:#fff;font-size:12px;font-weight:700">\u2713</span>';
+    h+='</button>';
+
+    h+='<div style="flex:1;min-width:0">';
+    h+='<div style="font-size:12px;color:'+(isDone?'var(--green)':'var(--text)')+';line-height:1.5;'+(isDone?'text-decoration:line-through;opacity:.7':'')+'">'+g+'</div>';
+
+    // Show blocker if marked
+    if(isBlocked&&progress.blocker){
+      h+='<div style="margin-top:6px;padding:8px 10px;background:rgba(239,68,68,.06);border-radius:6px;border-left:2px solid var(--red)">';
+      h+='<div style="font-size:10px;font-weight:600;color:var(--red);margin-bottom:2px">BLOCKER</div>';
+      h+='<div style="font-size:11px;color:var(--text2)">'+progress.blocker+'</div></div>';
+    }
+
+    // Action buttons (only if not done)
+    if(!isDone){
+      h+='<div style="display:flex;gap:6px;margin-top:8px">';
+      h+='<button onclick="markGoalBlocked(\''+goalId+'\')" style="font-size:10px;padding:4px 10px;border:1px solid '+(isBlocked?'var(--red)':'var(--border)')+';border-radius:6px;color:'+(isBlocked?'var(--red)':'var(--text3)')+';background:transparent;cursor:pointer">'+(isBlocked?'\ud83d\udea9 Blocked':'Report Blocker')+'</button>';
+      h+='</div>';
+    }
+
+    h+='</div></div></div>';
+  });
+
+  // Month navigation
+  if(template.months.length>1){
+    h+='<div style="display:flex;gap:6px;margin-top:14px;padding-top:14px;border-top:1px solid var(--border)">';
+    template.months.forEach(function(m,i){
+      var isActive=i===Math.min(monthIdx,template.months.length-1);
+      h+='<button onclick="switchGoalMonth('+i+')" style="flex:1;padding:8px;font-size:11px;border:1px solid '+(isActive?'var(--accent)':'var(--border)')+';border-radius:6px;background:'+(isActive?'var(--accent-dim)':'transparent')+';color:'+(isActive?'var(--accent)':'var(--text3)')+';cursor:pointer;font-weight:'+(isActive?'600':'400')+'">'+m.label+'</button>';
+    });
+    h+='</div>';
+  }
+
+  // Weekly check-in prompt
+  var lastCheckin=savedProgress._lastCheckin||'';
+  var daysSince=lastCheckin?Math.floor((Date.now()-new Date(lastCheckin))/(24*60*60*1000)):999;
+  if(daysSince>=7){
+    h+='<div style="margin-top:14px;padding:14px;background:linear-gradient(135deg,rgba(200,168,124,.08),rgba(200,168,124,.02));border:1px solid rgba(200,168,124,.15);border-radius:10px">';
+    h+='<div style="font-size:12px;font-weight:600;color:var(--accent);margin-bottom:6px">\ud83d\udcac Weekly Check-In</div>';
+    h+='<p style="font-size:11px;color:var(--text3);margin-bottom:10px">How\'s this '+(currentGoals.label||'month')+' going? Your update goes directly to Dr. Faroqui.</p>';
+    h+='<textarea id="goal-checkin-text" rows="3" placeholder="What progress did you make this week? What\'s blocking you?" style="width:100%;font-family:inherit;font-size:12px;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);resize:vertical;margin-bottom:8px;box-sizing:border-box"></textarea>';
+    h+='<button class="btn btn-a btn-sm" onclick="submitGoalCheckin()" style="width:100%;padding:10px">Submit Check-In</button>';
+    h+='</div>';
+  }
+
+  h+='</div>';
+  el.innerHTML=h;
+}
+
+// Goal month view state
+var _goalMonthOverride=null;
+
+function switchGoalMonth(idx){
+  _goalMonthOverride=idx;
+  renderGoalTracker();
+}
+
+// Load goal progress from Supabase or localStorage
+async function loadGoalProgress(){
+  var key='hw_goals_'+(U?U.email:'');
+  var local=localStorage.getItem(key);
+  var progress=local?JSON.parse(local):{};
+
+  // Also try Supabase
+  if(_supaClient&&U&&U.email){
+    try{
+      var{data}=await _supaClient.from('profiles').select('notes').eq('email',U.email).single();
+      if(data&&data.notes){
+        // Find goal progress in notes
+        var goalNote=data.notes.find(function(n){return n.type==='goal_progress'});
+        if(goalNote&&goalNote.data){
+          progress=goalNote.data;
+          localStorage.setItem(key,JSON.stringify(progress));
+        }
+      }
+    }catch(ex){}
+  }
+  return progress;
+}
+
+// Save goal progress
+async function saveGoalProgress(progress){
+  var key='hw_goals_'+(U?U.email:'');
+  localStorage.setItem(key,JSON.stringify(progress));
+
+  // Sync to Supabase
+  if(_supaClient&&U&&U.email){
+    try{
+      var{data}=await _supaClient.from('profiles').select('notes').eq('email',U.email).single();
+      if(data){
+        var notes=data.notes||[];
+        // Remove old goal progress note
+        notes=notes.filter(function(n){return n.type!=='goal_progress'});
+        // Add updated progress
+        notes.push({type:'goal_progress',data:progress,updated:new Date().toISOString()});
+        await _supaClient.from('profiles').update({notes:notes}).eq('email',U.email);
+      }
+    }catch(ex){console.warn('Goal sync error',ex)}
+  }
+}
+
+async function toggleGoal(goalId){
+  var progress=await loadGoalProgress();
+  if(progress[goalId]&&progress[goalId].status==='done'){
+    // Undo
+    delete progress[goalId];
+  }else{
+    progress[goalId]={status:'done',date:new Date().toISOString()};
+    // Send progress update to admin
+    reportGoalUpdate(goalId,'completed');
+  }
+  await saveGoalProgress(progress);
+  renderGoalTracker();
+}
+
+async function markGoalBlocked(goalId){
+  var blocker=prompt('What\'s preventing you from completing this goal?');
+  if(!blocker||!blocker.trim())return;
+  var progress=await loadGoalProgress();
+  progress[goalId]={status:'blocked',blocker:blocker.trim(),date:new Date().toISOString()};
+  await saveGoalProgress(progress);
+  // Report blocker to admin
+  reportGoalUpdate(goalId,'blocked',blocker.trim());
+  notify('Blocker reported \u2014 Dr. Faroqui will review');
+  renderGoalTracker();
+}
+
+async function submitGoalCheckin(){
+  var text=document.getElementById('goal-checkin-text');
+  if(!text||!text.value.trim()){notify('Write something about your progress',1);return}
+  var checkinText=text.value.trim();
+
+  // Save last checkin timestamp
+  var progress=await loadGoalProgress();
+  progress._lastCheckin=new Date().toISOString();
+  await saveGoalProgress(progress);
+
+  // Get current goals for context
+  var template=getGoalTemplate();
+  var monthIdx=getCurrentMonth();
+  var currentGoals=template?template.months[Math.min(monthIdx,template.months.length-1)]:null;
+  var completed=0;var total=0;
+  if(currentGoals){
+    total=currentGoals.goals.length;
+    currentGoals.goals.forEach(function(g,i){
+      var gid=monthIdx+'_'+i;
+      if(progress[gid]&&progress[gid].status==='done')completed++;
+    });
+  }
+
+  // Send to admin via messages table
+  var payload={
+    user_name:U.name||'Unknown',
+    user_email:U.email,
+    type:'progress',
+    message:'WEEKLY CHECK-IN \u2014 '+(template?template.title:'Goals')+' ('+completed+'/'+total+' completed)\n\n'+checkinText,
+    read:false,
+    date:new Date().toISOString()
+  };
+  if(_supaClient){
+    await _supaClient.from('messages').insert([payload]).catch(function(){});
+  }
+  if(!DB.messages)DB.messages=[];
+  DB.messages.push(payload);
+  saveDB();
+
+  notify('Check-in submitted! Dr. Faroqui will review your progress \ud83d\udcaa');
+  renderGoalTracker();
+}
+
+// Report individual goal updates to admin
+function reportGoalUpdate(goalId,action,detail){
+  var template=getGoalTemplate();
+  if(!template)return;
+  var parts=goalId.split('_');
+  var monthIdx=parseInt(parts[0]);
+  var goalIdx=parseInt(parts[1]);
+  var month=template.months[monthIdx];
+  var goalText=month?month.goals[goalIdx]:'';
+
+  var msg=action==='completed'
+    ? 'GOAL COMPLETED: "'+goalText+'" ('+month.label+')'
+    : 'BLOCKER: "'+goalText+'" ('+month.label+')\nIssue: '+detail;
+
+  var payload={
+    user_name:U.name||'Unknown',
+    user_email:U.email,
+    type:'progress',
+    message:msg,
+    read:false,
+    date:new Date().toISOString()
+  };
+  if(_supaClient){
+    _supaClient.from('messages').insert([payload]).then(function(){}).catch(function(){});
+  }
+}
+
 function showUpgrade(){
   document.getElementById('upgrade-section').classList.toggle('hidden');
   // Update subscription management display
@@ -5525,6 +5917,39 @@ function renderAdmin(){
         h+='<input type="text" id="sbnote-'+u.id+'" placeholder="Add a note..." style="flex:1;font-size:12px;padding:8px 12px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text)">';
         h+='<button class="btn btn-a btn-sm" onclick="addSupabaseNote(\''+u.id+'\')">Add</button>';
         h+='</div></div></details>';
+        // Goal progress section
+        var goalProgress=null;
+        if(u.notes){
+          var gn=u.notes.find(function(n){return n.type==='goal_progress'});
+          if(gn)goalProgress=gn;
+        }
+        if(goalProgress&&goalProgress.data){
+          var gd=goalProgress.data;
+          var doneCount=0;var blockedCount=0;var totalTracked=0;
+          Object.keys(gd).forEach(function(k){
+            if(k.startsWith('_'))return;
+            totalTracked++;
+            if(gd[k].status==='done')doneCount++;
+            if(gd[k].status==='blocked')blockedCount++;
+          });
+          if(totalTracked>0){
+            h+='<div style="padding:10px 14px;background:'+(blockedCount>0?'rgba(239,68,68,.04)':'rgba(106,191,75,.04)')+';border:1px solid '+(blockedCount>0?'rgba(239,68,68,.12)':'rgba(106,191,75,.12)')+';border-radius:8px;margin-bottom:10px">';
+            h+='<div style="display:flex;justify-content:space-between;align-items:center">';
+            h+='<span style="font-size:11px;font-weight:600;color:var(--text)">📈 Goal Progress</span>';
+            h+='<span style="font-size:11px;color:var(--text3)">'+doneCount+' done · '+blockedCount+' blocked · '+(totalTracked-doneCount-blockedCount)+' in progress</span></div>';
+            // Show blockers if any
+            Object.keys(gd).forEach(function(k){
+              if(k.startsWith('_'))return;
+              if(gd[k].status==='blocked'&&gd[k].blocker){
+                h+='<div style="margin-top:6px;font-size:11px;color:var(--red)">🚩 '+gd[k].blocker+'</div>';
+              }
+            });
+            if(gd._lastCheckin){
+              h+='<div style="margin-top:6px;font-size:10px;color:var(--text3)">Last check-in: '+new Date(gd._lastCheckin).toLocaleDateString('en-US',{month:'short',day:'numeric'})+'</div>';
+            }
+            h+='</div>';
+          }
+        }
         // Message User button + Tier control
         h+='<div style="display:flex;gap:8px;align-items:center;margin-top:10px;flex-wrap:wrap">';
         h+='<button class="btn btn-sm" onclick="adminMessageUser(\''+u.email+'\',\''+(u.name||'').replace(/'/g,"\\'")+'\')" style="font-size:11px;padding:8px 14px;border:1px solid var(--accent);border-radius:6px;color:var(--accent)">\ud83d\udce9 Message</button>';
@@ -5623,7 +6048,7 @@ function renderAdmin(){
       var isSB=_sbMessages&&_sbMessages.length;
       c.innerHTML=msgs.map(function(m,idx){
         var msgId=isSB?m.id:((DB.messages.length-1)-idx);
-        var typeLabel={bug:'🐛 Bug',suggestion:'💡 Suggestion',question:'❓ Question',feedback:'📝 Feedback',other:'📎 Other'};
+        var typeLabel={bug:'🐛 Bug',suggestion:'💡 Suggestion',question:'❓ Question',feedback:'📝 Feedback',progress:'📈 Progress Update',other:'📎 Other'};
         var isRead=m.read?'':'border-left:3px solid var(--accent);';
         var d=m.date?new Date(m.date).toLocaleDateString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}):'';
         var h='<div class="card" style="margin-bottom:12px;'+isRead+'">';

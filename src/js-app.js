@@ -1872,8 +1872,16 @@ function renderAdmin(){
         h+='<input type="text" id="sbnote-'+u.id+'" placeholder="Add a note..." style="flex:1;font-size:12px;padding:8px 12px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text)">';
         h+='<button class="btn btn-a btn-sm" onclick="addSupabaseNote(\''+u.id+'\')">Add</button>';
         h+='</div></div></details>';
-        // Message User button
-        h+='<button class="btn btn-sm" onclick="adminMessageUser(\''+u.email+'\',\''+(u.name||'').replace(/'/g,"\\'")+'\')" style="font-size:11px;padding:8px 14px;border:1px solid var(--accent);border-radius:6px;color:var(--accent);margin-top:8px">\ud83d\udce9 Message User</button>';
+        // Message User button + Tier control
+        h+='<div style="display:flex;gap:8px;align-items:center;margin-top:10px;flex-wrap:wrap">';
+        h+='<button class="btn btn-sm" onclick="adminMessageUser(\''+u.email+'\',\''+(u.name||'').replace(/'/g,"\\'")+'\')" style="font-size:11px;padding:8px 14px;border:1px solid var(--accent);border-radius:6px;color:var(--accent)">\ud83d\udce9 Message</button>';
+        h+='<select onchange="adminChangeTier(\''+u.id+'\',this.value)" style="font-size:11px;padding:7px 10px;border:1px solid var(--border);border-radius:6px;background:var(--bg2);color:var(--text)">';
+        h+='<option value="" disabled selected>Change Tier</option>';
+        h+='<option value="free"'+(u.tier==='free'?' style="font-weight:600"':'')+'>Explorer (Free)</option>';
+        h+='<option value="core"'+(u.tier==='core'?' style="font-weight:600"':'')+'>Core ($15/mo)</option>';
+        h+='<option value="elite"'+(u.tier==='elite'?' style="font-weight:600"':'')+'>Elite ($99/mo)</option>';
+        h+='</select>';
+        h+='</div>';
         h+='</div>';
         return h;
       }).join('');
@@ -2170,6 +2178,28 @@ function sendUserNotification(userId,userEmail,ntype,title,body){
   if(!DB.notifications)DB.notifications=[];
   DB.notifications.push(Object.assign({notif_type:ntype,title:title},notif));
   saveDB();
+}
+
+// Change user tier from admin panel
+async function adminChangeTier(profileId,newTier){
+  if(!newTier||!_supaClient)return;
+  var tierNames={free:'Explorer',core:'Core',elite:'Elite'};
+  if(!confirm('Change this user to '+tierNames[newTier]+' tier?'))return;
+  var{error}=await _supaClient.from('profiles').update({tier:newTier}).eq('id',profileId);
+  if(error){notify('Failed to update tier: '+error.message,1);return}
+  // Update local cache
+  if(_sbProfiles){
+    var p=_sbProfiles.find(function(u){return u.id===profileId});
+    if(p){
+      p.tier=newTier;
+      // Notify the user
+      sendUserNotification('',p.email,'tier',
+        'Your plan has been updated',
+        'Your HeartWise plan has been changed to '+tierNames[newTier]+'. Log out and back in to see the changes.');
+    }
+  }
+  notify('Tier updated to '+tierNames[newTier]+' \u2728');
+  renderAdmin();
 }
 
 // Send a direct message to a user from admin

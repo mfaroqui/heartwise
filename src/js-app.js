@@ -32,6 +32,52 @@ function landingNav(id){
   if(id==='pg-landing'){document.getElementById('pg-landing').scrollTo({top:0,behavior:'smooth'});return}
   const el=document.getElementById(id);
   if(el)el.scrollIntoView({behavior:'smooth'});
+
+// Landing page hook — stage selector
+function hookSelect(stage){
+  var btns=document.querySelectorAll('#hook-stages .hook-opt');
+  btns.forEach(function(b){b.style.borderColor='var(--border)';b.style.background='var(--bg2)'});
+  event.currentTarget.style.borderColor='var(--accent)';
+  event.currentTarget.style.background='rgba(200,168,124,.08)';
+
+  var labels={student:'Medical Students',resident:'Residents',fellow:'Fellows',attending:'Attending Physicians'};
+  document.getElementById('hook-stage-label').textContent=labels[stage]||'you';
+
+  var tools={
+    student:[
+      {icon:'🏆',name:'Match Competitiveness Calculator',desc:'See your real match probability based on Step scores, research, and school tier.'},
+      {icon:'🔮',name:'Financial Trajectory Simulator',desc:'Model 30-year wealth across specialties — see how your choice today shapes everything.'},
+      {icon:'🧬',name:'Specialty Fit Analyzer',desc:'Discover which specialties match your personality, values, and lifestyle priorities.'}
+    ],
+    resident:[
+      {icon:'🏆',name:'Match Competitiveness Calculator',desc:'Benchmark your fellowship application against NRMP data for your target specialty.'},
+      {icon:'📋',name:'Contract Intelligence Tool',desc:'Score your first attending contract — catch red flags before you sign.'},
+      {icon:'🔮',name:'Financial Trajectory Simulator',desc:'PSLF vs refinance? See the 30-year impact of your financial decisions now.'}
+    ],
+    fellow:[
+      {icon:'📋',name:'Contract Intelligence Tool',desc:'Analyze your first attending contract with benchmarks, risk scoring, and negotiation strategy.'},
+      {icon:'🔮',name:'Financial Trajectory Simulator',desc:'Model your attending compensation — RVU vs salary vs hybrid, 30-year projection.'},
+      {icon:'🎤',name:'Mock Interview Simulator',desc:'Practice real job interview and salary negotiation questions with honest AI feedback.'}
+    ],
+    attending:[
+      {icon:'📋',name:'Contract Intelligence Tool',desc:'Are you being paid fairly? Full contract analysis with MGMA benchmarks.'},
+      {icon:'🔮',name:'Financial Trajectory Simulator',desc:'Are you on track? Model your 30-year wealth trajectory and find gaps.'},
+      {icon:'⚖️',name:'Career Pivot Decision Engine',desc:'Thinking about a change? Structured framework with financial modeling.'}
+    ]
+  };
+
+  var list=tools[stage]||tools.student;
+  var html='';
+  list.forEach(function(t){
+    html+='<div style="display:flex;gap:14px;padding:14px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:10px">';
+    html+='<div style="flex-shrink:0;width:36px;height:36px;border-radius:10px;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:18px">'+t.icon+'</div>';
+    html+='<div><div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:2px">'+t.name+'</div>';
+    html+='<div style="font-size:11px;color:var(--text3);line-height:1.5">'+t.desc+'</div></div></div>';
+  });
+  document.getElementById('hook-tool-list').innerHTML=html;
+  document.getElementById('hook-tools').style.display='';
+  setTimeout(function(){document.getElementById('hook-tools').scrollIntoView({behavior:'smooth',block:'nearest'})},100);
+}
 }
 document.addEventListener('click',function(e){
   const m=document.getElementById('landing-menu');

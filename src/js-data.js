@@ -257,6 +257,7 @@ const VAULT_ITEMS=[
 {id:'v13',title:'Specialty Fit Analyzer',desc:'Determine which specialty fits your personality, goals, and lifestyle preferences',icon:'🔬',tier:'core'},
 {id:'v14',title:'Match Competitiveness Calculator',desc:'Estimate your match likelihood based on board scores, research, and school tier',icon:'🏆',tier:'core'},
 {id:'v15',title:'Career Strategy Builder',desc:'Build a step-by-step roadmap to reach your target specialty or career goal',icon:'🗂️',tier:'core'},
+{id:'v16',title:'Mock Interview Simulator',desc:'Practice with real interview questions for your specialty and stage — get honest feedback on your answers',icon:'🎙️',tier:'elite'},
 {id:'v9',title:'Strategic Audit Template',desc:'The exact intake framework used in Elite Strategy sessions',icon:'📝',tier:'elite'},
 {id:'v10',title:'Career Pivot Decision Engine',desc:'Structured framework for specialty switches and practice model changes',icon:'⚡',tier:'elite'},
 {id:'v11',title:'Financial Trajectory Simulator',desc:'30-year wealth projection with debt payoff timeline by specialty and practice type',icon:'💰',tier:'elite'},

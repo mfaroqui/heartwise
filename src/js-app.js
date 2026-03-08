@@ -1549,26 +1549,26 @@ var quizAnswers={stage:null,goal:null,urgency:null};
 // Recommendation engine: maps (stage, goal) → ordered tool IDs with rationale
 var QUIZ_RECS={
   // STUDENT
-  'student_fellowship':  [{id:'v14',why:'See your real match probability based on scores and research'},{id:'v15',why:'Build a step-by-step roadmap to your target specialty'},{id:'v1',why:'Score your application against successful profiles'},{id:'v7',why:'Know which research activities move the needle most'}],
+  'student_fellowship':  [{id:'v14',why:'See your real match probability based on scores and research'},{id:'v16',why:'Practice the exact questions program directors will ask you'},{id:'v15',why:'Build a step-by-step roadmap to your target specialty'},{id:'v1',why:'Score your application against successful profiles'},{id:'v7',why:'Know which research activities move the needle most'}],
   'student_contract':    [{id:'v3',why:'Learn what to look for before you ever see an offer'},{id:'v2',why:'Know the red flags before you need to negotiate'},{id:'v5',why:'Plan your first 3 years of attending income'},{id:'v8',why:'PSLF vs refinance — make this decision early'}],
   'student_finance':     [{id:'v11',why:'See how specialty choice impacts lifetime wealth'},{id:'v8',why:'The 5 financial decisions worth millions'},{id:'v5',why:'Map your post-training financial trajectory'},{id:'v4',why:'Understand how RVU compensation actually works'}],
   'student_direction':   [{id:'v13',why:'Discover which specialties fit your personality and goals'},{id:'v14',why:'Check your competitiveness for each target specialty'},{id:'v15',why:'Build a roadmap once you choose'},{id:'v11',why:'Compare financial trajectories side by side'}],
 
   // RESIDENT
-  'resident_fellowship': [{id:'v14',why:'See your real match probability with current stats'},{id:'v15',why:'Build your personalized fellowship roadmap'},{id:'v1',why:'Score your application against successful profiles'},{id:'v7',why:'Maximize research ROI with limited time'}],
-  'resident_contract':   [{id:'v2',why:'Identify red flags in any contract'},{id:'v3',why:'Compare offers systematically'},{id:'v4',why:'Model your real compensation by RVU volume'},{id:'v12',why:'Full contract analysis with risk scoring'}],
+  'resident_fellowship': [{id:'v14',why:'See your real match probability with current stats'},{id:'v16',why:'Practice real fellowship interview questions with honest feedback'},{id:'v15',why:'Build your personalized fellowship roadmap'},{id:'v1',why:'Score your application against successful profiles'},{id:'v7',why:'Maximize research ROI with limited time'}],
+  'resident_contract':   [{id:'v2',why:'Identify red flags in any contract'},{id:'v16',why:'Practice your negotiation pitch and job interview answers'},{id:'v3',why:'Compare offers systematically'},{id:'v4',why:'Model your real compensation by RVU volume'},{id:'v12',why:'Full contract analysis with risk scoring'}],
   'resident_finance':    [{id:'v5',why:'Your first 3 years determine the next 20'},{id:'v8',why:'PSLF, disability, tax strategy — get these right'},{id:'v11',why:'30-year wealth projection by career path'},{id:'v4',why:'Model what you\'ll actually earn'}],
   'resident_direction':  [{id:'v13',why:'Find which specialties actually fit you'},{id:'v10',why:'Should you pivot? Structured decision engine'},{id:'v15',why:'Build a roadmap to the new target'},{id:'v11',why:'Compare financial trajectories across paths'}],
 
   // FELLOW
-  'fellow_fellowship':   [{id:'v1',why:'Benchmark yourself for advanced fellowship'},{id:'v7',why:'Optimize your research portfolio for the next step'},{id:'v6',why:'Position for advanced subspecialty programs'},{id:'v9',why:'Get a strategic assessment from Dr. Faroqui'}],
-  'fellow_contract':     [{id:'v12',why:'Score your first attending contract'},{id:'v2',why:'Catch red flags before you sign'},{id:'v3',why:'Compare multiple offers with real data'},{id:'v4',why:'Model your actual take-home compensation'}],
+  'fellow_fellowship':   [{id:'v1',why:'Benchmark yourself for advanced fellowship'},{id:'v16',why:'Practice the questions fellowship directors actually ask'},{id:'v7',why:'Optimize your research portfolio for the next step'},{id:'v6',why:'Position for advanced subspecialty programs'},{id:'v9',why:'Get a strategic assessment from Dr. Faroqui'}],
+  'fellow_contract':     [{id:'v12',why:'Score your first attending contract'},{id:'v16',why:'Practice your job interview and salary negotiation answers'},{id:'v2',why:'Catch red flags before you sign'},{id:'v3',why:'Compare multiple offers with real data'},{id:'v4',why:'Model your actual take-home compensation'}],
   'fellow_finance':      [{id:'v11',why:'Visualize your lifetime wealth trajectory'},{id:'v5',why:'Plan your first 3 years strategically'},{id:'v8',why:'PSLF decision, disability insurance, tax optimization'},{id:'v4',why:'Understand your future compensation structure'}],
   'fellow_direction':    [{id:'v10',why:'Evaluating a pivot? Use this framework'},{id:'v11',why:'Compare career paths financially'},{id:'v9',why:'Get Dr. Faroqui\'s strategic assessment'},{id:'v3',why:'Weigh your options systematically'}],
 
   // ATTENDING
   'attending_fellowship':[{id:'v1',why:'Assess competitiveness for additional training'},{id:'v7',why:'Build a research portfolio strategically'},{id:'v6',why:'Timeline planning for fellowship re-entry'},{id:'v11',why:'Financial impact of more training'}],
-  'attending_contract':  [{id:'v12',why:'Full contract intelligence with benchmarks'},{id:'v2',why:'Risk scorecard for your contract terms'},{id:'v4',why:'Model compensation scenarios'},{id:'v3',why:'Compare offers side by side'}],
+  'attending_contract':  [{id:'v12',why:'Full contract intelligence with benchmarks'},{id:'v16',why:'Practice salary negotiation and job interview answers'},{id:'v2',why:'Risk scorecard for your contract terms'},{id:'v4',why:'Model compensation scenarios'},{id:'v3',why:'Compare offers side by side'}],
   'attending_finance':   [{id:'v11',why:'30-year trajectory — are you on track?'},{id:'v5',why:'Leverage planner for wealth acceleration'},{id:'v8',why:'Tax strategy, disability, advisor selection'},{id:'v4',why:'Are you being paid fairly? RVU benchmarks'}],
   'attending_direction': [{id:'v10',why:'Career pivot decision engine with financial modeling'},{id:'v9',why:'Submit for Dr. Faroqui\'s strategic review'},{id:'v11',why:'What does a pivot cost over 30 years?'},{id:'v3',why:'Compare your options objectively'}]
 };
@@ -1700,6 +1700,7 @@ function openFramework(id){
   if(id==='v7')setTimeout(roiUpdate,50);
   if(id==='v11')setTimeout(ftInit,50);
   if(id==='v12')setTimeout(ciInit,50);
+  if(id==='v16')setTimeout(misInit,50);
 }
 
 var ELITE_PREVIEWS={
@@ -4413,3 +4414,495 @@ async function submitPivot(){
   document.getElementById('pivot-success').classList.remove('hidden');
   notify('Decision Engine report submitted!');
 }
+
+// ===== MOCK INTERVIEW SIMULATOR (v16) =====
+var MIS_QUESTIONS={
+  medschool:{
+    general:[
+      {q:'Why do you want to be a doctor?',type:'career',what:'The most important question of your life right now — and the easiest to blow. They hear "I want to help people" 50 times a day. They need YOUR story.',ideal:'A specific personal experience that sparked medicine, genuine intellectual curiosity about the science, understanding of what a doctor\'s life actually looks like, not idealized.',red:['Generic "helping people" answer','Only mentioning prestige or money','A parent/family member being sick as the ONLY reason (needs more depth)','No evidence you\'ve explored what being a doctor actually means']},
+      {q:'Tell me about yourself.',type:'behavioral',what:'They want the 60-second version of who you are beyond your application. Hobbies, values, what makes you interesting as a human — not a resume recitation.',ideal:'Personal, memorable, shows character beyond academics, connects who you are to why medicine makes sense for you.',red:['Reading back your activities list','Being boring and forgettable','Only talking about academics','Going over 90 seconds']},
+      {q:'What will you do if you don\'t get into medical school?',type:'behavioral',what:'A test of resilience, self-awareness, and whether you have a backup plan. "I\'ll just keep applying" is honest but weak.',ideal:'Genuine backup plan that still connects to healthcare/science, shows you\'ve actually thought about it, demonstrates maturity and adaptability.',red:['Saying "that\'s not an option" — it\'s arrogant and unrealistic','Having zero backup plan','Becoming visibly distressed','A backup plan completely unrelated to science/healthcare']},
+      {q:'Tell me about a challenge you\'ve overcome.',type:'behavioral',what:'They want resilience and self-awareness. Choose something real — not a humble brag about how hard you studied for the MCAT.',ideal:'Genuine hardship or failure, specific actions you took, what you learned, how it prepared you for the demands of medicine.',red:['Choosing something trivially easy','Making it a humble brag','Not showing vulnerability','No lesson learned — just "it was hard but I did it"']},
+      {q:'What is the biggest issue facing healthcare today?',type:'career',what:'They want informed opinions, not a TED talk. Pick one issue, show you understand its complexity, and have a nuanced take.',ideal:'Specific issue (access, cost, burnout, health equity, AI), nuanced understanding of multiple perspectives, connection to your experience or interests.',red:['Having no opinion on healthcare','Giving a surface-level answer from a headline','Being preachy or political without substance','Not connecting it to why you want to practice medicine']},
+      {q:'Describe an experience where you worked with someone very different from you.',type:'behavioral',what:'Diversity and cultural competence test. They want evidence you can connect with patients from all backgrounds.',ideal:'Specific situation, what made it challenging, what you learned about yourself, how it changed your perspective.',red:['Tokenizing the other person','Having no cross-cultural experience','Making yourself the hero who "saved" someone','Being patronizing']},
+      {q:'What do you do outside of academics?',type:'fit',what:'They\'re checking if you\'re a real human. All-studying-no-living applicants burn out. They want someone with depth and sustainability.',ideal:'Genuine interests with passion and depth, shows you can balance life, bonus if activities reveal character (not just resume padding).',red:['Listing activities purely for the application','Having nothing outside school','Only mentioning things that are obviously resume-builders','Not being able to talk passionately about anything']}
+    ],
+    specialty:{other:[]}
+  },
+  residency:{
+    general:[
+      {q:'Tell me about yourself.',type:'behavioral',what:'They want your 60-second origin story — not your CV recited back to them. Who are you, what drives you, and why medicine? This is the most common opening question and most people blow it by being too long or too generic.',ideal:'Concise (60-90 sec), personal motivation, clear trajectory to this specialty, ends with forward-looking statement.',red:['Reciting your CV line by line','Going over 2 minutes','No personal motivation — sounds like everyone else','Starting with "Well, I was born in..."']},
+      {q:'Why this specialty?',type:'career',what:'They want genuine intellectual curiosity and a specific moment or experience that made it click. Not "I like helping people" — every doctor likes helping people.',ideal:'Specific clinical moment or experience, intellectual excitement about the field, understanding of daily attending life, honest about challenges.',red:['Generic answers that could apply to any specialty','Only mentioning lifestyle or money','No specific patient story or clinical experience','Badmouthing other specialties']},
+      {q:'Tell me about a time you made a mistake in patient care. What happened and what did you learn?',type:'behavioral',what:'This is a character test. They want honesty, accountability, and evidence that you grew from it. Everyone makes mistakes — the question is whether you own it or hide behind a team.',ideal:'Specific real example, personal accountability (not blaming the system), what you learned, how it changed your practice going forward.',red:['Saying "I\'ve never made a mistake"','Blaming the nurse, the attending, or the EMR','Choosing something trivially small to avoid vulnerability','Not explaining what changed afterward']},
+      {q:'Where do you see yourself in 10 years?',type:'career',what:'They want to see ambition that aligns with reality. Academic programs want to hear about research and teaching. Community programs want clinical excellence and leadership.',ideal:'Realistic and specific, shows you\'ve thought about it, aligns with the program\'s mission, mentions both clinical and non-clinical goals.',red:['Being vague — "I\'ll be a great doctor"','Pure money motivation','Having zero idea what you want','Describing a plan that doesn\'t require this residency']},
+      {q:'What is your biggest weakness?',type:'behavioral',what:'The oldest trick in the book. Don\'t give a fake weakness ("I work too hard"). Give a real one with a real plan to address it. Self-awareness is the point.',ideal:'Genuine weakness (not a disguised strength), specific steps you\'re taking to improve, evidence of growth.',red:['The classic "I\'m a perfectionist" non-answer','Revealing something genuinely disqualifying','Not having a plan to address it','Getting defensive or dismissive']},
+      {q:'Tell me about a conflict you had with a colleague and how you resolved it.',type:'behavioral',what:'They\'re testing emotional intelligence. Medicine is teamwork. They want to know you can disagree without being disagreeable.',ideal:'Specific situation, your role in the conflict (not just the other person\'s fault), steps you took to resolve it, outcome and what you learned.',red:['Trashing the other person','Making yourself the hero who was always right','Avoiding the question with "I don\'t really have conflicts"','No resolution — just a vent session']},
+      {q:'What questions do you have for us?',type:'fit',what:'This is not optional. Having no questions signals disinterest. Having great questions signals that you\'ve done your homework and you\'re evaluating them too.',ideal:'2-3 specific questions about the program that show research (not things on the website), questions about culture/mentorship/resident experience.',red:['No questions','Questions answered on the website or in the brochure','Only asking about schedule, vacation, or salary','Asking something that makes them uncomfortable']}
+    ],
+    specialty:{
+      cards:[
+        {q:'Walk me through how you would manage a patient presenting with acute chest pain.',type:'clinical',what:'They want systematic thinking under pressure. Not a perfect answer — a structured approach that shows you know the priorities.',ideal:'ABCs first, focused history, ECG within 10 minutes, troponin, risk stratification, clear decision tree for STEMI vs NSTEMI vs other.',red:['Jumping to cath lab without assessment','Forgetting to mention ECG timing','No mention of differential diagnosis','Panicking or freezing']},
+        {q:'Why cardiology specifically, and not another IM subspecialty?',type:'career',what:'They want to hear genuine passion for the heart — not just that it\'s competitive or well-paying. What about cardiology specifically excites your brain?',ideal:'Specific clinical moment, what makes cardiology intellectually unique to you, understanding of the daily grind (not just the glamour cases).',red:['Mentioning salary or lifestyle first','Generic answers about "saving lives"','Not being able to name specific aspects of cardiology that excite you','Comparing it negatively to other specialties']}
+      ],
+      ic:[
+        {q:'You\'re doing a PCI and encounter a complication — a perforation. Walk me through your next 60 seconds.',type:'clinical',what:'They want calm, systematic thinking in a crisis. This is life-or-death and they need to know you won\'t freeze.',ideal:'Immediate balloon inflation at site, call for echo, assess hemodynamics, prepare for pericardiocentesis, consider covered stent, notify attending/team.',red:['Freezing or not having a systematic approach','Not mentioning balloon tamponade first','Forgetting to check for tamponade with echo','Not calling for help']},
+        {q:'What draws you to interventional cardiology over general cardiology or EP?',type:'career',what:'They want to know you\'ve thought deeply about this and aren\'t just chasing procedures. What about wires, stents, and hemodynamics lights your brain up?',ideal:'Specific procedural experience that clicked, intellectual challenge of complex anatomy, immediate impact on patients, realistic understanding of call/lifestyle.',red:['Only talking about money','Not mentioning any hands-on experience','Being unable to articulate what\'s different about interventional work','Showing no awareness of the call burden']}
+      ],
+      im:[
+        {q:'What area of internal medicine are you most passionate about and why?',type:'career',what:'Even for IM residency, they want to see intellectual curiosity and some direction, while remaining open to the breadth of IM.',ideal:'Specific area with a patient story, genuine curiosity, openness to discovering other areas during residency.',red:['Being so narrowly focused that you seem like you only want fellowship','Having no interests at all — seems apathetic','Choosing something because it\'s "easy" or "good lifestyle"']},
+        {q:'How would you approach a patient with multiple comorbidities who is non-adherent to medications?',type:'clinical',what:'This tests empathy, systems thinking, and realistic medicine. There\'s no magic answer — they want to see how you think about complex patients.',ideal:'Explore barriers (cost, health literacy, side effects, beliefs), motivational interviewing approach, simplify regimen, involve pharmacist/social work, follow-up plan.',red:['Blaming the patient','Having no strategy beyond "tell them to take their meds"','Not considering social determinants','Being paternalistic']}
+      ],
+      gensurg:[
+        {q:'Tell me about the most technically challenging case you\'ve been involved in.',type:'clinical',what:'They want to see genuine surgical experience and the ability to reflect on complexity — not bragging.',ideal:'Specific case, your role, what made it challenging, what you learned, honest about what went well and what didn\'t.',red:['Exaggerating your role','Not being able to describe the actual technical challenge','Only mentioning cases you observed, not participated in']},
+        {q:'How do you handle the long hours and physical demands of a surgical career?',type:'behavioral',what:'This is a trap question if you dismiss it. They want realistic self-awareness about sustainability.',ideal:'Specific strategies (exercise, relationships, boundaries), acknowledgment that it\'s hard, evidence you\'ve already managed demanding schedules.',red:['Bravado — "I never get tired"','Complaining about hours','Having no actual coping strategy','Seeming unaware of what surgical residency demands']}
+      ],
+      other:[
+        {q:'What do you think is the biggest challenge facing your chosen specialty in the next decade?',type:'career',what:'This tests whether you\'ve thought beyond the training bubble. Do you understand the landscape you\'re entering?',ideal:'Specific, informed answer (AI impact, workforce shortages, burnout, reimbursement changes), your thoughts on solutions or adaptation.',red:['Having no answer','Something vague like "healthcare is changing"','Being overly negative or cynical','Not connecting it to your own career planning']},
+        {q:'Describe a patient encounter that challenged your assumptions or changed how you practice.',type:'behavioral',what:'They want humility and growth. Medicine is supposed to change you. Have you let it?',ideal:'Specific patient, what you assumed going in, what actually happened, how it changed your approach permanently.',red:['Not having an example','Choosing something superficial','Making it about you instead of the patient','No evidence of actual change in practice']}
+      ]
+    }
+  },
+  fellowship:{
+    general:[
+      {q:'Tell me about yourself and your path to this fellowship.',type:'behavioral',what:'By fellowship, your story should be tight. They want a clear narrative arc: why medicine → why this specialty → why this subspecialty → why now. No rambling.',ideal:'Under 90 seconds, clear trajectory, specific inflection points that led to this fellowship, forward-looking.',red:['Starting from medical school day one','No clear narrative arc','Sounding rehearsed and robotic','Going over 2 minutes']},
+      {q:'What is your research interest and how do you plan to develop it?',type:'research',what:'For academic fellowship programs, this is non-negotiable. Even clinical fellows need a scholarly plan. They want specifics, not "I\'m interested in research."',ideal:'Specific area, why it matters clinically, preliminary work you\'ve done, realistic plan for fellowship, potential mentors you\'ve identified.',red:['No specific research interest','Only wanting to do clinical work (for academic programs)','Naming a mentor at the program without having contacted them','Having unrealistic expectations about what you can accomplish']},
+      {q:'Why our program specifically?',type:'fit',what:'This is where homework pays off. They can tell immediately if you\'ve researched them or if you\'re giving a generic answer you give every program.',ideal:'Specific faculty, unique program features, patient population, research strengths, culture fit — things you learned from visiting or talking to current fellows.',red:['Generic answer that applies to any program','Only mentioning ranking or reputation','Not knowing basic facts about the program','Having clearly not talked to any current fellows']},
+      {q:'Describe a difficult clinical decision you made during residency.',type:'clinical',what:'They want clinical maturity. Can you handle ambiguity? Do you know when to ask for help? Did you think through the decision systematically?',ideal:'Specific case with genuine complexity, your thought process, who you consulted, outcome, what you learned.',red:['Choosing an easy case to avoid vulnerability','Not consulting anyone — cowboy medicine','Only describing a textbook decision','No reflection on what you\'d do differently']},
+      {q:'What do you think you\'ll struggle with most during fellowship?',type:'behavioral',what:'Self-awareness test. They want to see you\'ve thought about the challenges honestly and have a plan.',ideal:'Genuine anticipated challenge (technical skills, research time management, work-life balance), specific plan to address it.',red:['"Nothing, I\'m ready" — overconfidence','Something that suggests you can\'t handle the fellowship','No plan for how you\'ll address it','Getting defensive about the question']}
+    ],
+    specialty:{
+      cards:[
+        {q:'A patient is referred to you for heart failure management. Their EF is 25% and they\'re on no guideline-directed therapy. Walk me through your approach.',type:'clinical',what:'This is bread-and-butter cardiology. They want systematic GDMT initiation, not just drug names.',ideal:'Assess volume status first, initiate the four pillars (ACEi/ARB/ARNI, beta-blocker, MRA, SGLT2i), monitoring plan, device evaluation, patient education.',red:['Missing any of the four pillars','Starting everything at once without monitoring','Not mentioning device therapy evaluation','Forgetting to address the patient\'s understanding']},
+        {q:'How do you see the field of cardiology evolving in the next 10 years?',type:'career',what:'They want a thoughtful answer showing you\'re paying attention to the field — AI in imaging, structural heart growth, precision medicine, workforce issues.',ideal:'Specific trends with examples, how they affect your planned career, honest about uncertainties.',red:['Having no opinion','Being too focused on one niche','Ignoring technology/AI impact','Being cynically negative about the field']}
+      ],
+      ic:[
+        {q:'You\'re offered two jobs: academic at $450K with research time, and private practice at $700K pure clinical. How do you think about this decision?',type:'career',what:'No right answer — they want your decision-making framework. How do you weigh money vs career development vs lifestyle?',ideal:'Structured comparison (compensation, PSLF implications, career trajectory, research goals, call burden), acknowledgment of tradeoffs, framework not just gut feeling.',red:['Immediately choosing money without analysis','Dismissing the financial difference as irrelevant','Not considering PSLF or long-term wealth','Having no framework — just vibes']},
+        {q:'What is your CTO experience and how comfortable are you with complex PCI?',type:'clinical',what:'Be honest about your level. Overselling will get you caught on day one. They want someone who knows their limits and is hungry to learn.',ideal:'Honest case numbers, specific techniques you\'re comfortable with, areas you want to develop, enthusiasm for learning.',red:['Inflating your numbers','Claiming comfort with procedures you\'ve barely done','Not showing eagerness to learn','Being dismissive about the complexity']}
+      ],
+      other:[
+        {q:'How will you balance clinical duties with research during fellowship?',type:'behavioral',what:'Fellowship is a juggling act. They want a realistic plan, not "I\'ll just work harder."',ideal:'Specific time management strategy, understanding of protected research time, willingness to set boundaries, realistic about tradeoffs.',red:['Saying you\'ll do it all perfectly','Not having a plan','Seeming unaware of how demanding fellowship is','Ignoring the clinical load']},
+        {q:'Tell me about a patient you\'ll never forget.',type:'behavioral',what:'This reveals what moves you as a physician. Choose someone who changed how you think about medicine.',ideal:'Specific patient, emotional honesty, what you learned, how it shapes your practice today.',red:['Choosing a case purely for the diagnosis, not the human','Being emotionally disconnected','Making it about your cleverness rather than the patient','Not having one — suggests disengagement']}
+      ]
+    }
+  },
+  academic:{
+    general:[
+      {q:'Tell us about your clinical and academic background.',type:'career',what:'This is your executive summary. They want: training pedigree, clinical focus, research productivity, teaching experience, and where you\'re headed.',ideal:'Crisp 90-second summary, clinical expertise clearly defined, research trajectory with publications mentioned, teaching philosophy briefly noted.',red:['Rambling through your entire CV','No mention of teaching (it\'s academic, teaching matters)','No research direction','Being vague about clinical expertise']},
+      {q:'What does your 5-year research plan look like? What grants will you pursue?',type:'research',what:'This separates serious candidates from people who just want to be called "professor." They want a funded research trajectory, not vague interest.',ideal:'Specific aims, target funding (K-award, R01 plan, foundation grants), preliminary data, timeline, collaboration strategy.',red:['No specific grant plan','Only planning chart reviews','Not understanding K vs R funding','Having aims too broad to ever get funded']},
+      {q:'How do you approach teaching and mentorship?',type:'behavioral',what:'Academic jobs require teaching. They want to know you\'re not just tolerating it — you should genuinely care about developing the next generation.',ideal:'Specific teaching philosophy, examples of past teaching, how you give feedback, how you mentor diverse learners.',red:['Treating teaching as an afterthought','No specific examples','Only lecturing — no mention of bedside teaching or mentorship','Seeming annoyed by trainees']},
+      {q:'What would you need from this department to be successful?',type:'fit',what:'Smart question. They\'re testing whether your needs align with what they can offer. It also shows you know what you need.',ideal:'Specific needs (protected research time, mentorship, lab space, startup funding, administrative support), showing you\'ve thought about infrastructure.',red:['Saying "nothing, I\'m self-sufficient" — unrealistic','Only asking about salary','Having needs they clearly can\'t meet','Not having thought about this']},
+      {q:'If you get this position, what will you be known for in 10 years?',type:'career',what:'Vision test. They want someone who will put their department on the map, not just occupy a slot.',ideal:'Specific clinical or research niche, realistic but ambitious, explains how it benefits the department and patients.',red:['Being vague — "I\'ll be a good faculty member"','Goals that don\'t need this department','No connection between your goals and their mission','Sounding like you\'re just passing through']}
+    ],
+    specialty:{other:[]}
+  },
+  private:{
+    general:[
+      {q:'Why are you interested in joining our practice?',type:'fit',what:'They want to know you\'ve researched their group and that you\'re not just applying everywhere. Practice culture matters enormously.',ideal:'Specific reasons (reputation, colleagues, patient population, practice model, call structure), evidence you\'ve talked to current physicians.',red:['Generic answer — "it seems like a great group"','Only mentioning compensation','Not knowing basic facts about the practice','Seeming like you\'re just comparison-shopping']},
+      {q:'What kind of patient volume do you expect to handle and how do you plan to build your practice?',type:'career',what:'In private practice, you eat what you kill (at least eventually). They want to know you understand the business side.',ideal:'Realistic ramp-up expectations (12-18 months), networking plan, referral development strategy, community engagement.',red:['Expecting full volume from day one','Having no plan to build referrals','Being dismissive of the business side','Not understanding the ramp-up period']},
+      {q:'How do you handle difficult patients or patient complaints?',type:'behavioral',what:'In private practice, patient satisfaction directly affects the business. They want emotional intelligence and de-escalation skills.',ideal:'Specific example, empathetic approach, de-escalation technique, follow-up, systemic changes to prevent recurrence.',red:['Getting defensive about complaints','Having no strategy','Dismissing patient concerns','Not taking satisfaction seriously in a private setting']},
+      {q:'What are your long-term career goals? Do you see yourself eventually wanting to be a partner?',type:'career',what:'They\'re evaluating retention risk. Training someone who leaves in 2 years is expensive. They want commitment signals.',ideal:'Honest about timeline, interest in partnership/leadership, understanding of partnership track, long-term community commitment.',red:['Being noncommittal about staying','Only focusing on short-term','Not understanding the partnership model','Seeming like you\'re using this as a stepping stone']},
+      {q:'Tell me about a time you had to adapt quickly to an unexpected clinical situation.',type:'clinical',what:'Private practice means less backup. They want to know you can handle things when the specialist is 45 minutes away.',ideal:'Specific case, rapid assessment, resourceful problem-solving, good outcome (or honest about a tough one), lessons learned.',red:['Never having faced real clinical pressure','Only describing cases with attending backup','Not showing independent clinical judgment','Freezing or panicking in the story']}
+    ],
+    specialty:{other:[]}
+  },
+  employed:{
+    general:[
+      {q:'What attracted you to hospital-employed practice versus private practice?',type:'career',what:'They want to know you understand the model and that you chose it for real reasons, not just because it was available.',ideal:'Specific reasons (guaranteed salary, benefits, less business management, institutional resources, team), realistic about tradeoffs.',red:['Badmouthing private practice','Only mentioning salary guarantee','Not understanding the employed model\'s limitations','Seeming like you couldn\'t get a private practice job']},
+      {q:'How do you approach working within a large healthcare system with administrative requirements?',type:'behavioral',what:'Hospital systems have bureaucracy. They need to know you won\'t fight every policy and can work within the structure.',ideal:'Balanced approach — advocate for patients within the system, examples of navigating bureaucracy effectively, willingness to participate in committees.',red:['Ranting about administrators','Being a pushover with no advocacy','Not understanding that metrics and documentation matter','Seeming like you\'ll be a constant problem']},
+      {q:'What is your approach to RVU-based productivity and meeting targets?',type:'career',what:'Employed positions increasingly tie compensation to productivity. They want to know you understand this and can perform.',ideal:'Understanding of RVU model, realistic expectations, strategies for efficiency without cutting corners, willingness to ramp up.',red:['Not knowing what an RVU is','Being hostile to productivity metrics','Having unrealistic volume expectations','Seeming like you\'ll coast on a guaranteed salary']},
+      {q:'Describe your ideal work-life balance and how you manage call responsibilities.',type:'behavioral',what:'They need to know your expectations align with reality. Being honest about boundaries while showing flexibility is key.',ideal:'Realistic expectations, specific strategies for call recovery, acknowledgment that call is part of the job, clear boundaries without rigidity.',red:['Demanding no call','Saying you have no limits — unsustainable','Not asking about the actual call schedule','Having expectations that don\'t match the position']},
+      {q:'How do you see yourself contributing to the department beyond clinical care?',type:'fit',what:'Employed positions want team players who improve the department — quality committees, teaching, mentoring, community outreach.',ideal:'Specific interests (QI, teaching, program building, community health), examples of past contributions beyond clinical work.',red:['Only wanting to see patients and go home','Having no interest in department life','Overcommitting to everything','Not understanding what the department needs']}
+    ],
+    specialty:{other:[]}
+  },
+  salary:{
+    general:[
+      {q:'Why do you believe a compensation adjustment is appropriate at this time?',type:'career',what:'This is the moment. You need data, not feelings. They want to see you\'ve done the homework with MGMA, wRVU reports, and market data.',ideal:'Specific data points (MGMA percentile, your wRVU production, market comparisons, recent offers), concrete number or range, professional tone.',red:['No data — just "I deserve more"','Being emotional or threatening','Not knowing your MGMA percentile','Comparing yourself to colleagues by name']},
+      {q:'What specific contributions have you made that justify this increase?',type:'behavioral',what:'Document your value. Patient satisfaction scores, RVUs above target, program building, revenue generation, quality metrics.',ideal:'Specific metrics and accomplishments, revenue you\'ve generated, programs you\'ve built, patient outcomes, quantifiable impact.',red:['Vague contributions — "I work hard"','Not tracking your metrics','Only listing clinical volume without broader impact','Being unable to quantify your value']},
+      {q:'If we can\'t meet your salary expectations, what other forms of compensation would you consider?',type:'career',what:'Smart negotiators have a full picture. Salary is one lever — there\'s also signing bonus, CME, research time, schedule flexibility, partnership acceleration.',ideal:'Prepared list of alternatives (CME budget, research time, schedule modification, bonus structure, title, partnership timeline), prioritized by what matters to you.',red:['Only caring about base salary','Having no alternatives prepared','Not understanding total compensation','Being inflexible']},
+      {q:'Where do you see your career here in the next 3-5 years?',type:'fit',what:'They want to know you\'re invested. A raise is an investment in keeping you — they need to believe you\'re staying.',ideal:'Specific growth plans within the organization, leadership interests, program development, commitment signals.',red:['Hinting you might leave','Having no vision for growth','Seeming like the raise is just to stay afloat','Not connecting your future to their organization']},
+      {q:'How do you handle the business and administrative side of your practice?',type:'behavioral',what:'Physicians who understand the business side get paid more because they\'re more valuable. Show you understand revenue, efficiency, and operations.',ideal:'Understanding of practice economics, specific examples of improving efficiency or revenue, willingness to take on leadership, data-driven approach.',red:['Being dismissive of business — "I\'m a doctor, not a businessman"','Not understanding how your practice generates revenue','Having no interest in operational improvement','Only seeing medicine through a clinical lens']}
+    ],
+    specialty:{other:[]}
+  }
+};
+
+function misInit(){
+  // Reset state on open
+  document.getElementById('mis-interview').style.display='none';
+  document.getElementById('mis-feedback').innerHTML='';
+}
+
+function misUpdateSpec(){
+  // Optional — show/hide specialty-specific note
+}
+
+function misStart(){
+  var type=document.getElementById('mis-type').value;
+  var spec=document.getElementById('mis-spec').value;
+  var setting=document.getElementById('mis-setting').value;
+  var years=document.getElementById('mis-years').value;
+
+  if(!type){notify('Select what you\'re interviewing for.',1);return}
+
+  var bank=MIS_QUESTIONS[type];
+  if(!bank){notify('Interview type not found.',1);return}
+
+  // Build question pool: 3 general + 2 specialty (or all general if no specialty match)
+  var generalPool=bank.general.slice();
+  var specPool=[];
+
+  // Map mis-spec values to specialty keys
+  var specMap={
+    cards:'cards',ic:'ic',ep:'cards',im:'im',fm:'im',
+    gi:'other',pulm:'other',hemonc:'other',neph:'other',endo:'other',
+    rheum:'other',id:'other',em:'other',anes:'other',
+    ortho:'gensurg',gensurg:'gensurg',uro:'gensurg',
+    psych:'other',derm:'other',rads:'other',path:'other',
+    peds:'other',obgyn:'other',neuro:'other',other:'other'
+  };
+  var specKey=specMap[spec]||'other';
+
+  if(bank.specialty){
+    if(bank.specialty[specKey]&&bank.specialty[specKey].length>0){
+      specPool=bank.specialty[specKey].slice();
+    }else if(bank.specialty.other&&bank.specialty.other.length>0){
+      specPool=bank.specialty.other.slice();
+    }
+  }
+
+  // Shuffle
+  function shuffle(arr){for(var i=arr.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=arr[i];arr[i]=arr[j];arr[j]=t;}return arr;}
+
+  shuffle(generalPool);
+  shuffle(specPool);
+
+  var questions=[];
+
+  // Pick specialty questions first (up to 2)
+  var specCount=Math.min(specPool.length,2);
+  for(var i=0;i<specCount;i++) questions.push(specPool[i]);
+
+  // Fill remainder from general (total 5)
+  var genNeeded=5-questions.length;
+  for(var i=0;i<genNeeded&&i<generalPool.length;i++) questions.push(generalPool[i]);
+
+  // Shuffle final order
+  shuffle(questions);
+
+  window._misQuestions=questions;
+  window._misType=type;
+  window._misSetting=setting;
+
+  // Render interview header
+  var typeNames={residency:'Residency Interview',fellowship:'Fellowship Interview',academic:'Academic Faculty Interview',private:'Private Practice Interview',employed:'Hospital-Employed Position Interview',salary:'Salary Renegotiation Meeting'};
+  var settingNames={academic:'Academic Medical Center',community:'Community Hospital',private:'Private Group Practice',va:'VA / Government'};
+
+  var hdr='<div style="display:flex;align-items:center;gap:12px">';
+  hdr+='<div style="font-size:32px">🎙️</div>';
+  hdr+='<div>';
+  hdr+='<div style="font-size:15px;font-weight:600;color:var(--accent);font-family:var(--font-serif)">'+(typeNames[type]||'Interview Simulation')+'</div>';
+  hdr+='<div style="font-size:11px;color:var(--text3)">'+(settingNames[setting]||setting)+' • 5 Questions • Answer as if you\'re in the room</div>';
+  hdr+='</div></div>';
+  hdr+='<div style="margin-top:12px;padding:10px;background:rgba(200,168,124,.06);border-radius:8px;border:1px solid rgba(200,168,124,.1)">';
+  hdr+='<div style="font-size:11px;color:var(--text2);line-height:1.6">💡 <strong>Treat this like a real interview.</strong> Type your actual answer — the way you\'d say it out loud. Don\'t look anything up. Your natural response is what we need to evaluate.</div>';
+  hdr+='</div>';
+  document.getElementById('mis-header').innerHTML=hdr;
+
+  // Render questions
+  var typeBadge={clinical:'🩺 Clinical',research:'🔬 Research',behavioral:'🧠 Behavioral',career:'🎯 Career',fit:'🏥 Program Fit'};
+  var typeColor={clinical:'#3B82F6',research:'var(--green)',behavioral:'var(--accent)',career:'#8B5CF6',fit:'#E67E22'};
+
+  var qh='';
+  questions.forEach(function(q,i){
+    qh+='<div style="margin-bottom:16px;padding:16px;background:var(--bg2);border:1px solid var(--border);border-radius:12px">';
+    qh+='<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">';
+    qh+='<span style="font-size:16px;font-weight:700;color:var(--accent)">Q'+(i+1)+'</span>';
+    qh+='<span style="font-size:9px;padding:2px 8px;border-radius:100px;background:rgba(200,168,124,.06);color:'+(typeColor[q.type]||'var(--text3)')+';font-weight:600;letter-spacing:.5px">'+(typeBadge[q.type]||q.type)+'</span>';
+    qh+='</div>';
+    qh+='<div style="font-size:14px;font-weight:500;color:var(--text);line-height:1.6;margin-bottom:4px">"'+q.q+'"</div>';
+    qh+='<div style="font-size:11px;color:var(--text3);margin-bottom:12px;line-height:1.5;font-style:italic">'+q.what+'</div>';
+    qh+='<textarea id="mis-a'+i+'" rows="4" placeholder="Type your answer here... be honest, this is practice." style="width:100%;font-family:inherit;font-size:13px;padding:12px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);resize:vertical;box-sizing:border-box;line-height:1.6"></textarea>';
+    qh+='</div>';
+  });
+
+  document.getElementById('mis-questions').innerHTML=qh;
+  document.getElementById('mis-interview').style.display='block';
+  document.getElementById('mis-feedback').innerHTML='';
+
+  // Scroll to interview
+  document.getElementById('mis-interview').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function misGrade(){
+  var questions=window._misQuestions;
+  if(!questions||!questions.length){notify('Start the interview first.',1);return}
+
+  var answers=[];
+  var emptyCount=0;
+  for(var i=0;i<questions.length;i++){
+    var el=document.getElementById('mis-a'+i);
+    var val=el?el.value.trim():'';
+    answers.push(val);
+    if(!val)emptyCount++;
+  }
+
+  if(emptyCount===questions.length){
+    notify('Answer at least a few questions before getting feedback.',1);
+    return;
+  }
+
+  // Grade each answer
+  var results=[];
+  var overallScore=0;
+
+  questions.forEach(function(q,i){
+    var ans=answers[i];
+    var grade={score:0,label:'',color:'',strengths:[],concerns:[],advice:'',redFlags:[]};
+
+    if(!ans){
+      grade.score=0;
+      grade.label='Not Answered';
+      grade.color='var(--text3)';
+      grade.concerns=['You skipped this question. In a real interview, silence is a red flag.'];
+      grade.advice='Even a mediocre answer beats no answer. If you freeze, buy time: "That\'s a great question — let me think about that for a moment." Then give an honest attempt.';
+      results.push(grade);
+      return;
+    }
+
+    var words=ans.split(/\s+/).length;
+    var sentences=ans.split(/[.!?]+/).filter(function(s){return s.trim().length>0}).length;
+    var hasSpecific=(/\b(patient|case|example|experience|specifically|instance|time when|I remember|one time)\b/i).test(ans);
+    var hasData=(/\b(\d+%|\$[\d,]+|\d+ (year|month|patient|case|publication)|MGMA|RVU|wRVU|percentile|score)\b/i).test(ans);
+    var hasReflection=(/\b(learned|realized|changed|grew|taught me|made me|shaped|influenced|understand now)\b/i).test(ans);
+    var hasStructure=(/\b(first|second|additionally|furthermore|finally|in summary|three (thing|reason|area)|my approach)\b/i).test(ans);
+    var hasFiller=(/\b(I think maybe|I guess|sort of|kind of|you know|um|like,|basically|honestly I'm not sure)\b/i).test(ans);
+    var isGeneric=(/\b(I love helping people|make a difference|passion for medicine|always wanted to be a doctor|great opportunity)\b/i).test(ans);
+    var isNegative=(/\b(hate|terrible|worst|stupid|awful|can't stand|never liked)\b/i).test(ans);
+    var hasAccountability=(/\b(my (fault|mistake|responsibility)|I should have|I could have done better|I own|I dropped)\b/i).test(ans);
+
+    var pts=0;
+    var maxPts=100;
+
+    // Length scoring (20 pts)
+    if(words>=40&&words<=200){pts+=20;grade.strengths.push('Good length — concise but substantial.')}
+    else if(words>=25&&words<40){pts+=12;grade.concerns.push('A bit short. In a real interview, aim for 60-90 seconds of speaking (roughly 100-180 words).')}
+    else if(words>200&&words<=350){pts+=14;grade.concerns.push('Getting long. Interviewers tune out after 90 seconds. Tighten this up.')}
+    else if(words>350){pts+=6;grade.concerns.push('Way too long. You\'d lose the interviewer. Cut this in half. What\'s the core message?')}
+    else if(words<25){pts+=5;grade.concerns.push('Too brief. This reads like you\'re dodging the question. Expand with a specific example.')}
+
+    // Specificity (25 pts)
+    if(hasSpecific&&hasData){pts+=25;grade.strengths.push('Great — you used specific examples and data. That\'s what separates good from great answers.')}
+    else if(hasSpecific){pts+=18;grade.strengths.push('Good use of a specific example. Add concrete numbers or outcomes to make it even stronger.')}
+    else if(hasData){pts+=15;grade.strengths.push('Nice use of data points. Now anchor them in a specific story or experience.')}
+    else{pts+=4;grade.concerns.push('Too generic. Every candidate says something similar. Give a specific patient, case, or situation that only YOU experienced.')}
+
+    // Reflection / self-awareness (20 pts)
+    if(hasReflection&&hasAccountability){pts+=20;grade.strengths.push('Excellent self-awareness. Showing growth and accountability is exactly what they want to see.')}
+    else if(hasReflection){pts+=15;grade.strengths.push('Good reflection. You show capacity for growth.')}
+    else if(hasAccountability){pts+=14;grade.strengths.push('Points for owning it. That takes guts and interviewers respect it.')}
+    else{pts+=3;grade.concerns.push('No reflection or self-awareness comes through. Add what you learned, how you changed, or what you\'d do differently.')}
+
+    // Structure (15 pts)
+    if(hasStructure&&sentences>=3){pts+=15;grade.strengths.push('Well-organized answer with clear structure.')}
+    else if(sentences>=3){pts+=10}
+    else{pts+=3;grade.concerns.push('Feels stream-of-consciousness. Structure your answer: situation → action → result → lesson.')}
+
+    // Red flag detection (20 pts penalty zone)
+    var flagsHit=0;
+    if(hasFiller){flagsHit++;grade.redFlags.push('🚩 Filler language detected ("kind of," "I guess," "sort of"). This signals uncertainty. Cut the qualifiers.')}
+    if(isGeneric){flagsHit++;grade.redFlags.push('🚩 Generic phrasing. "I love helping people" — so does every applicant. Be more specific about what draws YOU to this.')}
+    if(isNegative){flagsHit++;grade.redFlags.push('🚩 Negative language about people or institutions. Even if true, it comes across as unprofessional in an interview setting. Reframe.')}
+
+    // Check against the question's specific red flags
+    var qRedFlags=q.red||[];
+    qRedFlags.forEach(function(rf){
+      // Simple keyword matching for common red flags
+      var lower=ans.toLowerCase();
+      if(rf.toLowerCase().includes('salary')&&lower.match(/salary|money|pay|compensation/)){
+        if(q.type!=='career'||(window._misType!=='salary')){
+          flagsHit++;
+          grade.redFlags.push('🚩 '+rf);
+        }
+      }
+      if(rf.toLowerCase().includes('never made a mistake')&&lower.match(/never (made|had) (a )?(mistake|error)/)){
+        flagsHit++;
+        grade.redFlags.push('🚩 '+rf);
+      }
+      if(rf.toLowerCase().includes('no question')&&words<5&&q.type==='fit'){
+        flagsHit++;
+        grade.redFlags.push('🚩 '+rf);
+      }
+    });
+
+    if(flagsHit===0){pts+=20;grade.strengths.push('No red flags detected. Clean answer.')}
+    else if(flagsHit===1){pts+=10}
+    else{pts+=0}
+
+    grade.score=Math.min(Math.round(pts),100);
+
+    if(grade.score>=80){grade.label='Strong';grade.color='var(--green)'}
+    else if(grade.score>=60){grade.label='Solid';grade.color='var(--accent)'}
+    else if(grade.score>=40){grade.label='Needs Work';grade.color='#E67E22'}
+    else{grade.label='Weak';grade.color='var(--red)'}
+
+    // Generate targeted advice
+    var adviceParts=[];
+    if(!hasSpecific) adviceParts.push('Start with "Let me tell you about a specific time when..." — stories beat abstractions every time.');
+    if(words<40) adviceParts.push('Flesh this out. Practice saying it out loud for 60-90 seconds.');
+    if(words>200) adviceParts.push('Cut 30-40%. Read it out loud — if you\'re going past 90 seconds, you\'re losing them.');
+    if(!hasReflection) adviceParts.push('End with what you learned or how it changed you. That\'s the part they actually remember.');
+    if(hasFiller) adviceParts.push('Remove filler words. Replace "I think" with a statement. "I believe" or "In my experience" are stronger alternatives.');
+    if(isGeneric) adviceParts.push('Replace generic phrases with details only you can provide. What specific moment made you choose this path?');
+    if(adviceParts.length===0) adviceParts.push('This is a solid answer. To go from good to great: practice it out loud 5 times, then record yourself. Watch the recording once. You\'ll immediately see what to tighten.');
+    grade.advice=adviceParts.join(' ');
+
+    overallScore+=grade.score;
+    results.push(grade);
+  });
+
+  var answered=questions.length-emptyCount;
+  var avgScore=answered>0?Math.round(overallScore/answered):0;
+
+  // Build feedback HTML
+  var h='<div style="margin-top:24px">';
+
+  // Overall score header
+  h+='<div style="text-align:center;padding:28px;background:linear-gradient(160deg,rgba(200,168,124,.1),rgba(200,168,124,.03));border:1px solid rgba(200,168,124,.15);border-radius:14px;margin-bottom:20px">';
+  h+='<div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px">Interview Performance</div>';
+
+  var overallColor=avgScore>=80?'var(--green)':avgScore>=60?'var(--accent)':avgScore>=40?'#E67E22':'var(--red)';
+  var overallLabel=avgScore>=80?'Interview Ready':avgScore>=60?'Getting There':avgScore>=40?'Needs Practice':'Significant Work Needed';
+  var overallMsg=avgScore>=80?'You\'d hold your own in most interviews. Keep practicing the specifics and you\'ll be sharp on game day.'
+    :avgScore>=60?'Decent foundation, but you\'re leaving points on the table. The feedback below shows exactly where.'
+    :avgScore>=40?'You\'re not ready yet — and that\'s why you\'re practicing here instead of bombing it live. Read every piece of feedback below.'
+    :'Real talk: if you interviewed like this today, you\'d be forgotten by lunch. But that\'s fixable. Every strong interviewer was bad at first. Work through the feedback below methodically.';
+
+  h+='<div style="width:80px;height:80px;border-radius:50%;border:4px solid '+overallColor+';display:flex;align-items:center;justify-content:center;margin:0 auto 12px">';
+  h+='<span style="font-size:28px;font-weight:700;color:'+overallColor+'">'+avgScore+'</span>';
+  h+='</div>';
+  h+='<div style="font-size:16px;font-weight:600;color:'+overallColor+';margin-bottom:4px">'+overallLabel+'</div>';
+  h+='<div style="font-size:12px;color:var(--text2);line-height:1.6;max-width:400px;margin:0 auto">'+overallMsg+'</div>';
+  if(emptyCount>0) h+='<div style="margin-top:10px;font-size:11px;color:var(--red)">'+emptyCount+' question'+(emptyCount>1?'s':'')+' left blank. Skipping questions in a real interview is never a good look.</div>';
+  h+='</div>';
+
+  // Per-question feedback
+  questions.forEach(function(q,i){
+    var g=results[i];
+    var typeBadge={clinical:'🩺 Clinical',research:'🔬 Research',behavioral:'🧠 Behavioral',career:'🎯 Career',fit:'🏥 Program Fit'};
+    var typeColor={clinical:'#3B82F6',research:'var(--green)',behavioral:'var(--accent)',career:'#8B5CF6',fit:'#E67E22'};
+
+    h+='<div style="margin-bottom:16px;padding:16px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;border-left:4px solid '+g.color+'">';
+
+    // Question header
+    h+='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:6px">';
+    h+='<div style="display:flex;align-items:center;gap:8px">';
+    h+='<span style="font-size:14px;font-weight:700;color:var(--accent)">Q'+(i+1)+'</span>';
+    h+='<span style="font-size:9px;padding:2px 8px;border-radius:100px;background:rgba(200,168,124,.06);color:'+(typeColor[q.type]||'var(--text3)')+';font-weight:600;letter-spacing:.5px">'+(typeBadge[q.type]||q.type)+'</span>';
+    h+='</div>';
+    h+='<div style="display:flex;align-items:center;gap:6px"><span style="font-size:12px;font-weight:700;color:'+g.color+'">'+g.score+'/100</span><span style="font-size:10px;color:'+g.color+';font-weight:600">'+g.label+'</span></div>';
+    h+='</div>';
+
+    h+='<div style="font-size:12px;color:var(--text3);margin-bottom:12px;font-style:italic">"'+q.q+'"</div>';
+
+    // Your answer (collapsed)
+    if(answers[i]){
+      h+='<details style="margin-bottom:12px"><summary style="font-size:11px;color:var(--text3);cursor:pointer;font-weight:600">📝 Your Answer</summary>';
+      h+='<div style="font-size:12px;color:var(--text2);line-height:1.6;margin-top:8px;padding:10px;background:var(--bg);border-radius:6px;border:1px solid var(--border)">'+answers[i].replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>')+'</div>';
+      h+='</details>';
+    }
+
+    // Strengths
+    if(g.strengths.length>0){
+      h+='<div style="margin-bottom:10px">';
+      g.strengths.forEach(function(s){
+        h+='<div style="font-size:11px;color:var(--green);line-height:1.6;padding:4px 0">✅ '+s+'</div>';
+      });
+      h+='</div>';
+    }
+
+    // Concerns
+    if(g.concerns.length>0){
+      h+='<div style="margin-bottom:10px">';
+      g.concerns.forEach(function(c){
+        h+='<div style="font-size:11px;color:#E67E22;line-height:1.6;padding:4px 0">⚠️ '+c+'</div>';
+      });
+      h+='</div>';
+    }
+
+    // Red flags
+    if(g.redFlags.length>0){
+      h+='<div style="margin-bottom:10px;padding:10px;background:rgba(239,68,68,.05);border-radius:6px;border:1px solid rgba(239,68,68,.15)">';
+      g.redFlags.forEach(function(rf){
+        h+='<div style="font-size:11px;color:var(--red);line-height:1.6;padding:2px 0">'+rf+'</div>';
+      });
+      h+='</div>';
+    }
+
+    // What a great answer looks like
+    h+='<details style="margin-bottom:8px"><summary style="font-size:11px;color:var(--accent);cursor:pointer;font-weight:600">💡 What a great answer looks like</summary>';
+    h+='<div style="font-size:11px;color:var(--text2);line-height:1.7;margin-top:8px;padding:10px;background:var(--bg);border-radius:6px;border:1px solid var(--border)">'+q.ideal+'</div>';
+    h+='</details>';
+
+    // Coaching advice
+    h+='<div style="margin-top:8px;padding:10px;background:rgba(200,168,124,.04);border-radius:6px;border:1px solid rgba(200,168,124,.1)">';
+    h+='<div style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Coaching</div>';
+    h+='<div style="font-size:11px;color:var(--text2);line-height:1.7">'+g.advice+'</div>';
+    h+='</div>';
+
+    h+='</div>';
+  });
+
+  // Bottom section: overall tips
+  h+='<div style="padding:20px;background:linear-gradient(160deg,rgba(200,168,124,.06),rgba(200,168,124,.02));border:1px solid rgba(200,168,124,.12);border-radius:12px;margin-bottom:16px">';
+  h+='<div style="font-size:12px;font-weight:600;color:var(--accent);margin-bottom:12px;font-family:var(--font-serif)">🎯 The Honest Debrief</div>';
+  h+='<div style="font-size:12px;color:var(--text2);line-height:1.8">';
+
+  // Count red flags across all answers
+  var totalRed=0;results.forEach(function(r){totalRed+=r.redFlags.length});
+  var strongCount=0;results.forEach(function(r){if(r.score>=80)strongCount++});
+  var weakCount=0;results.forEach(function(r){if(r.score<40)weakCount++});
+
+  if(avgScore>=80){
+    h+='You\'re in good shape. Your answers show specificity, self-awareness, and structure. Here\'s how to go from good to memorable:<br><br>';
+    h+='• <strong>Practice out loud</strong> — reading and speaking are different skills. Record yourself.<br>';
+    h+='• <strong>Time yourself</strong> — 60-90 seconds per answer. You know the content; now polish the delivery.<br>';
+    h+='• <strong>Prepare 3 specific questions per program</strong> — not things on their website.<br>';
+    h+='• <strong>Have your 30-second career story ready</strong> — why this path, why now, where you\'re going.';
+  }else if(avgScore>=60){
+    h+='You have the foundation, but you\'re not there yet. The gap between "solid" and "memorable" is specificity.<br><br>';
+    h+='• <strong>Replace every generic statement with a specific example</strong> — names, numbers, outcomes.<br>';
+    h+='• <strong>Add reflection to every answer</strong> — "Here\'s what I learned" is the line they remember.<br>';
+    h+='• <strong>Cut filler language ruthlessly</strong> — "I think," "kind of," "sort of" signal insecurity.<br>';
+    h+='• <strong>Do 2-3 mock interviews with attendings</strong> — not friends, attendings. You need honest feedback.';
+    if(totalRed>2) h+='<br>• <strong>Address the '+totalRed+' red flags above</strong> — any one of them can tank an otherwise decent interview.';
+  }else{
+    h+='Let\'s be real: you need more practice before the real thing. But that\'s exactly why this tool exists — better to learn this now than in front of a program director.<br><br>';
+    h+='• <strong>Start with one question at a time</strong> — master "Tell me about yourself" before moving on.<br>';
+    h+='• <strong>Every answer needs a specific story</strong> — if you can\'t name a patient, a case, or a date, it\'s too vague.<br>';
+    h+='• <strong>Record yourself and watch it back</strong> — painful but there\'s no faster way to improve.<br>';
+    h+='• <strong>Get honest feedback from a mentor</strong> — not someone who will be nice. Someone who will be real.<br>';
+    h+='• <strong>Come back and retake this in a week</strong> — track your improvement.';
+    if(weakCount>2) h+='<br><br>'+weakCount+' of your 5 answers scored below 40. That\'s not a disaster — it\'s a starting point. Focus on the coaching notes above and rewrite each one.';
+  }
+
+  h+='</div></div>';
+
+  // Retake button
+  h+='<div style="display:flex;gap:10px">';
+  h+='<button onclick="misStart()" class="btn btn-a" style="flex:1;padding:12px;font-size:13px">🔄 Retake Interview</button>';
+  h+='<button onclick="misNewType()" class="btn btn-g" style="flex:1;padding:12px;font-size:13px">🔀 Try Different Type</button>';
+  h+='</div>';
+  h+='</div>';
+
+  document.getElementById('mis-feedback').innerHTML=h;
+  document.getElementById('mis-feedback').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function misNewType(){
+  document.getElementById('mis-interview').style.display='none';
+  document.getElementById('mis-feedback').innerHTML='';
+  document.getElementById('mis-type').value='';
+  document.getElementById('mis-tool').scrollIntoView({behavior:'smooth',block:'start'});
+}
+

@@ -534,6 +534,86 @@ v8:`<h3>Income Leverage Playbook</h3>
 </div>
 <p style="font-size:10px;color:var(--text3);margin-top:12px;font-style:italic">Sources: White Coat Investor, Council for Disability Awareness 2023, IRS 2024 limits.</p>`,
 
+v16:`<h3 class="serif">Mock Interview Simulator</h3>
+<p style="color:var(--text3);font-size:12px;margin-bottom:20px">Real interview questions. Real feedback. No sugarcoating. Select your situation and answer each question like you\u2019re sitting across from the program director or hiring committee.</p>
+
+<div id="mis-tool" style="font-size:13px">
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+<div class="fg"><label style="font-size:11px;color:var(--text3)">What are you interviewing for?</label>
+<select id="mis-type" onchange="misUpdateSpec()" style="width:100%">
+<option value="">Select interview type...</option>
+<option value="medschool">Medical School Admissions</option>
+<option value="residency">Residency Match</option>
+<option value="fellowship">Fellowship Match</option>
+<option value="academic">Academic Faculty Position</option>
+<option value="private">Private Practice / Group</option>
+<option value="employed">Hospital-Employed Position</option>
+<option value="salary">Salary Renegotiation / Promotion</option>
+</select></div>
+<div class="fg"><label style="font-size:11px;color:var(--text3)">Specialty</label>
+<select id="mis-spec" style="width:100%">
+<option value="">Select specialty...</option>
+<option value="im">Internal Medicine</option>
+<option value="fm">Family Medicine</option>
+<option value="cards">Cardiology</option>
+<option value="ic">Interventional Cardiology</option>
+<option value="ep">Electrophysiology</option>
+<option value="gi">Gastroenterology</option>
+<option value="pulm">Pulmonology / Critical Care</option>
+<option value="hemonc">Hematology / Oncology</option>
+<option value="neph">Nephrology</option>
+<option value="endo">Endocrinology</option>
+<option value="rheum">Rheumatology</option>
+<option value="id">Infectious Disease</option>
+<option value="em">Emergency Medicine</option>
+<option value="anes">Anesthesiology</option>
+<option value="ortho">Orthopedic Surgery</option>
+<option value="gensurg">General Surgery</option>
+<option value="uro">Urology</option>
+<option value="psych">Psychiatry</option>
+<option value="derm">Dermatology</option>
+<option value="rads">Radiology</option>
+<option value="path">Pathology</option>
+<option value="peds">Pediatrics</option>
+<option value="obgyn">OB/GYN</option>
+<option value="neuro">Neurology</option>
+<option value="other">Other</option>
+</select></div>
+</div>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
+<div class="fg"><label style="font-size:11px;color:var(--text3)">Setting</label>
+<select id="mis-setting" style="width:100%">
+<option value="academic">Academic Medical Center</option>
+<option value="community">Community Hospital</option>
+<option value="private">Private Group Practice</option>
+<option value="va">VA / Government</option>
+</select></div>
+<div class="fg"><label style="font-size:11px;color:var(--text3)">Years Out of Training</label>
+<select id="mis-years" style="width:100%">
+<option value="student">Still in medical school</option>
+<option value="pgy">In residency/fellowship</option>
+<option value="0">First job out of training</option>
+<option value="3">1-3 years out</option>
+<option value="5">4-7 years out</option>
+<option value="10">8+ years out</option>
+</select></div>
+</div>
+
+<button onclick="misStart()" class="btn btn-a" style="width:100%;padding:14px;margin-bottom:8px">Start Mock Interview \u2192</button>
+<p style="font-size:10px;color:var(--text3);text-align:center;margin-bottom:20px">Your answers are analyzed locally. Nothing is stored or sent to anyone.</p>
+
+<div id="mis-interview" style="display:none">
+<div id="mis-header" style="padding:16px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;margin-bottom:16px"></div>
+<div id="mis-questions"></div>
+<button onclick="misGrade()" class="btn btn-a" style="width:100%;padding:14px;margin-top:8px;margin-bottom:8px">Get Interview Feedback \u2192</button>
+<p id="mis-grade-hint" style="font-size:10px;color:var(--text3);text-align:center;margin-bottom:16px">Answer all questions before submitting for the best feedback.</p>
+</div>
+
+<div id="mis-feedback"></div>
+</div>`,
+
 v9:`<h3>Strategic Audit Template</h3>
 <p style="color:var(--text3);font-size:12px;margin-bottom:20px">Complete this intake form and submit it directly to Dr. Faroqui for review. Be thorough — the more detail you provide, the more targeted the strategic guidance.</p>
 

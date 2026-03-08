@@ -579,6 +579,251 @@ function renderArchive(){
 function filterArchive(){renderArchive()}
 function setFilter(f,btn){curFilter=f;document.querySelectorAll('.fc .chip').forEach(c=>c.classList.remove('on'));btn.classList.add('on');renderArchive()}
 
+// ===== CONTRACT RISK SCORECARD (v2) =====
+function crsVal(id){var el=document.getElementById(id);return el?el.value:'';}
+
+function crsCalc(){
+  var flags=[];  // {cat,severity:'red'|'yellow'|'green',text,detail,points}
+  var maxPoints=0;
+  var earnedPoints=0;
+  var answered=0;
+  var total=16; // total questions
+
+  // Helper
+  function score(id,cat,greenPts,mapping){
+    // mapping: {value:{sev,pts,text,detail}}
+    var v=crsVal(id);
+    maxPoints+=greenPts;
+    if(!v)return;
+    answered++;
+    var m=mapping[v];
+    if(m){
+      earnedPoints+=m.pts;
+      flags.push({cat:cat,severity:m.sev,text:m.text,detail:m.detail||'',points:m.pts,max:greenPts});
+    }
+  }
+
+  // 1. Compensation
+  score('crs-comp-base','Compensation',10,{
+    'yes':{sev:'green',pts:10,text:'Base salary clearly defined',detail:'This is what you want — a guaranteed floor regardless of volume.'},
+    'partial':{sev:'yellow',pts:6,text:'Income guarantee is temporary',detail:'After the guarantee period ends, you\u2019re fully at risk. What\u2019s the fallback if volume is low? Get the post-guarantee formula in writing now.'},
+    'no':{sev:'red',pts:2,text:'No guaranteed base — pure production from day 1',detail:'You\u2019re building a practice with zero safety net. Unless you\u2019re joining an established group with guaranteed referrals, this is high-risk. Most new attendings take 12-18 months to ramp up.'}
+  });
+  score('crs-comp-rvu','Compensation',10,{
+    'yes':{sev:'green',pts:10,text:'Bonus formula clearly defined',detail:'You can model your actual income. Run the numbers through the RVU Calculator to verify.'},
+    'partial':{sev:'yellow',pts:5,text:'Bonus structure is vague',detail:'If they can\u2019t define the formula before you sign, they can define it after — and it won\u2019t be in your favor. Get specific $/wRVU rate and threshold in the contract.'},
+    'no':{sev:'red',pts:1,text:'No defined bonus formula',detail:'You have no way to predict your actual compensation. This is a negotiation point — don\u2019t leave it unresolved.'}
+  });
+
+  // 2. Non-compete
+  score('crs-nc-radius','Non-Compete',10,{
+    'none':{sev:'green',pts:10,text:'No non-compete clause',detail:'This is increasingly rare and extremely valuable. You have full career mobility.'},
+    'small':{sev:'green',pts:8,text:'Non-compete \u2264 10 miles',detail:'Reasonable for most markets. You can likely find a position nearby if things don\u2019t work out.'},
+    'medium':{sev:'yellow',pts:5,text:'Non-compete 11-20 miles',detail:'Manageable in urban areas, potentially restrictive in suburban/rural markets. Consider your commute tolerance and family situation.'},
+    'large':{sev:'red',pts:3,text:'Non-compete 21-30 miles',detail:'This could force a full relocation if you leave. In a metro area this might cover the entire city. Negotiate this down aggressively.'},
+    'extreme':{sev:'red',pts:0,text:'Non-compete 30+ miles',detail:'This is designed to make leaving extremely painful. You\u2019d likely have to move your family. This should be a dealbreaker unless the rest of the contract is exceptional.'}
+  });
+  score('crs-nc-dur','Non-Compete',8,{
+    'none':{sev:'green',pts:8,text:'No duration restriction'},
+    '1yr':{sev:'green',pts:7,text:'1-year non-compete',detail:'Standard and generally enforceable. One year is survivable.'},
+    '2yr':{sev:'yellow',pts:4,text:'2-year non-compete',detail:'Two years is a long time to be locked out. Your referral network and patient relationships will erode. Push for 1 year.'},
+    '3yr':{sev:'red',pts:1,text:'3+ year non-compete',detail:'Excessively punitive. Few courts enforce this length, but fighting it costs $20-50K in legal fees. Don\u2019t rely on unenforceability — negotiate it out.'}
+  });
+  score('crs-nc-term','Non-Compete',8,{
+    'na':{sev:'green',pts:8,text:'No non-compete'},
+    'waived':{sev:'green',pts:8,text:'Non-compete waived if terminated without cause',detail:'This is the fair standard. You shouldn\u2019t be penalized for their decision to let you go.'},
+    'always':{sev:'red',pts:1,text:'Non-compete applies even if THEY fire you',detail:'This is one of the biggest red flags in physician contracts. They can fire you and simultaneously prevent you from working nearby. Negotiate this clause specifically — it\u2019s often the easiest to change because it\u2019s so obviously unfair.'}
+  });
+
+  // 3. Tail coverage
+  score('crs-mal-type','Malpractice',6,{
+    'occurrence':{sev:'green',pts:6,text:'Occurrence-based policy — no tail needed',detail:'Best case scenario. You\u2019re covered for incidents that happened during employment regardless of when the claim is filed.'},
+    'claims':{sev:'yellow',pts:3,text:'Claims-made policy',detail:'You\u2019ll need tail coverage when you leave. The cost depends on your specialty and years of coverage — typically $20K-$80K. Make sure the contract addresses who pays.'},
+    'unknown':{sev:'red',pts:1,text:'Policy type not specified',detail:'You need to know this before signing. If it\u2019s claims-made and you\u2019re responsible for tail, that\u2019s a five-figure hidden cost. Ask.'}
+  });
+  score('crs-tail-pay','Malpractice',10,{
+    'na':{sev:'green',pts:10,text:'No tail needed (occurrence policy)'},
+    'employer':{sev:'green',pts:10,text:'Employer pays tail coverage',detail:'This is worth $30-80K depending on specialty. It\u2019s real money and a significant contract benefit.'},
+    'shared':{sev:'yellow',pts:5,text:'Shared tail cost',detail:'Get the exact split in writing. A 50/50 split on a $60K tail is still a $30K expense you need to budget for.'},
+    'you':{sev:'red',pts:1,text:'You pay full tail coverage',detail:'Budget $30-80K for this. Many physicians don\u2019t realize this cost until they try to leave. It\u2019s essentially a financial anchor keeping you in the position. Negotiate employer-paid tail, especially for without-cause termination.'},
+    'unknown':{sev:'red',pts:0,text:'Tail coverage not addressed in contract',detail:'This is a major omission. If the contract is silent on tail, you\u2019re almost certainly on the hook for it. Clarify this in writing before signing.'}
+  });
+
+  // 4. Termination
+  score('crs-term-notice','Termination',8,{
+    '180':{sev:'green',pts:8,text:'180-day notice period',detail:'Six months gives you real time to job search, relocate, and transition patients. This is physician-friendly.'},
+    '90':{sev:'green',pts:6,text:'90-day notice period',detail:'Standard and workable. Three months is tight but manageable for a job search.'},
+    '60':{sev:'yellow',pts:4,text:'60-day notice period',detail:'Two months is short to find a new position, especially with credentialing timelines. Try to negotiate 90 days.'},
+    '30':{sev:'red',pts:1,text:'30-day notice or less',detail:'One month is not enough time to find a physician position, get credentialed, and transition patients. This gives the employer all the power. Push back hard.'}
+  });
+  score('crs-term-sev','Termination',6,{
+    'yes':{sev:'green',pts:6,text:'Severance defined in writing',detail:'Knowing what you get if terminated without cause lets you plan. Typical physician severance is 3-6 months of base salary.'},
+    'no':{sev:'red',pts:1,text:'No severance mentioned',detail:'If they can fire you with 30-90 days notice and zero severance, you have no financial cushion. Negotiate at least 3 months of base salary as severance for without-cause termination.'}
+  });
+  score('crs-term-cause','Termination',8,{
+    'narrow':{sev:'green',pts:8,text:'"For cause" narrowly defined',detail:'Limited to objective, serious offenses. This protects you from being fired "for cause" (and losing severance/benefits) over subjective performance disputes.'},
+    'broad':{sev:'red',pts:2,text:'"For cause" includes subjective criteria',detail:'If "cause" includes "failure to meet productivity standards" or "conduct detrimental to the practice," they can fire you for cause, deny severance, and potentially enforce the non-compete — all for not hitting a number. This is one of the most dangerous clauses in physician contracts.'},
+    'unclear':{sev:'red',pts:1,text:'"For cause" not clearly defined',detail:'Ambiguity in termination provisions always favors the employer. Get specific language — if they won\u2019t define it, assume it\u2019s broad.'}
+  });
+
+  // 5. Benefits
+  score('crs-ben-detail','Benefits',6,{
+    'yes':{sev:'green',pts:6,text:'Benefits specified with amounts',detail:'You can model your true total compensation. This is how it should be done.'},
+    'partial':{sev:'yellow',pts:3,text:'Benefits referenced but not detailed',detail:'\"Benefits available\" is meaningless without amounts. A 2% retirement match vs 6% is a $10-20K/year difference. Get the numbers.'},
+    'no':{sev:'red',pts:1,text:'Benefits reference a separate handbook',detail:'Benefit handbooks can be changed unilaterally. If the retirement match, CME budget, or disability coverage matters to you, get the key numbers in the contract itself.'}
+  });
+  score('crs-ben-call','Benefits',6,{
+    'na':{sev:'green',pts:6,text:'No call requirement'},
+    'yes':{sev:'green',pts:6,text:'Call is compensated',detail:'Paid call is increasingly standard. Your time has value whether it\u2019s 2 AM or 2 PM.'},
+    'partial':{sev:'yellow',pts:3,text:'Shared call pool, no extra pay',detail:'Uncompensated call is effectively a pay cut proportional to frequency. Calculate what your nights and weekends are actually worth.'},
+    'no':{sev:'red',pts:1,text:'Uncompensated call',detail:'If you\u2019re taking 4-6 call nights per month with no additional compensation, that\u2019s potentially $20-40K/year in free labor. This is a clear negotiation point.'}
+  });
+
+  // 6. Signing bonus / loan clawback
+  score('crs-sign-claw','Financial Traps',6,{
+    'na':{sev:'green',pts:6,text:'No signing bonus (no clawback risk)'},
+    'prorated':{sev:'green',pts:6,text:'Signing bonus clawback is pro-rated',detail:'Fair and standard. If you leave after 2 of 3 years, you repay 1/3. Reasonable.'},
+    'full':{sev:'red',pts:1,text:'Full clawback of signing bonus',detail:'If you leave (or are fired without cause) in year 2 of 3, you repay the entire bonus. This is punitive and creates a golden handcuff. Negotiate pro-rated repayment at minimum.'}
+  });
+  score('crs-loan-claw','Financial Traps',6,{
+    'na':{sev:'green',pts:6,text:'No loan repayment (no clawback risk)'},
+    'prorated':{sev:'green',pts:6,text:'Loan repayment vests over time',detail:'Standard and fair. Make sure vesting starts immediately, not after a cliff period.'},
+    'full':{sev:'red',pts:1,text:'Full loan repayment clawback',detail:'If they paid $100K toward your loans and you leave in year 2, you owe it all back. Combined with a non-compete, this makes leaving financially devastating. Negotiate pro-rated vesting.'}
+  });
+
+  // 7. Partnership
+  score('crs-partner','Partnership',4,{
+    'na':{sev:'green',pts:4,text:'Employed position (N/A)'},
+    'no':{sev:'green',pts:4,text:'No partnership track (employed position)'},
+    'defined':{sev:'green',pts:4,text:'Partnership terms defined in writing',detail:'Timeline, buy-in cost, and criteria are clear. Verify: what happens if you meet criteria but partnership is denied?'},
+    'vague':{sev:'yellow',pts:2,text:'Partnership mentioned but not defined',detail:'\u201cEligible after X years\u201d means nothing without defined criteria, buy-in structure, and what \u201cpartner\u201d actually means in the operating agreement. People spend 3-5 years waiting for a partnership that never materializes. Get it in writing or treat this as an employed position.'}
+  });
+
+  // 8. Scope
+  score('crs-scope','Scope & Duties',5,{
+    'yes':{sev:'green',pts:5,text:'Clinical duties clearly defined',detail:'You know what you\u2019re signing up for. Changes require mutual agreement.'},
+    'broad':{sev:'yellow',pts:2,text:'Duties vaguely defined',detail:'\u201cDuties as assigned\u201d gives them the ability to change your role, add administrative responsibilities, or shift you to less desirable work without renegotiating your contract.'}
+  });
+  score('crs-reassign','Scope & Duties',5,{
+    'no':{sev:'green',pts:5,text:'Location and scope fixed in contract',detail:'You can\u2019t be moved to a satellite office 45 minutes away without your consent. This matters.'},
+    'yes':{sev:'red',pts:1,text:'Employer can reassign location/duties unilaterally',detail:'You could sign up for a suburban practice and end up at a rural outpost. If location matters to your family, negotiate this out.'},
+    'unclear':{sev:'yellow',pts:2,text:'Reassignment rights not addressed',detail:'Silence usually means they can. Add a clause fixing your primary practice location.'}
+  });
+
+  // Calculate score
+  if(answered===0){
+    document.getElementById('crs-score').textContent='\u2014';
+    document.getElementById('crs-grade').textContent='Answer the questions above';
+    document.getElementById('crs-grade').style.color='var(--text3)';
+    document.getElementById('crs-bar').style.width='0%';
+    document.getElementById('crs-bar').style.background='var(--border)';
+    document.getElementById('crs-results').innerHTML='';
+    return;
+  }
+
+  var pct=Math.round((earnedPoints/maxPoints)*100);
+
+  // Grade
+  var grade,gradeColor,gradeDetail;
+  if(pct>=85){grade='LOW RISK';gradeColor='var(--green)';gradeDetail='This contract is well-structured with strong physician protections. Review the details below, but the fundamentals are solid.';}
+  else if(pct>=70){grade='MODERATE RISK';gradeColor='var(--accent)';gradeDetail='Decent foundation but has specific areas that need attention before signing. Address the yellow and red flags below.';}
+  else if(pct>=50){grade='ELEVATED RISK';gradeColor='#E67E22';gradeDetail='Multiple concerning provisions. Do not sign without addressing the red flags. Consider having a healthcare attorney review the full document ($2-3.5K — it\u2019s worth it).';}
+  else{grade='HIGH RISK';gradeColor='var(--red)';gradeDetail='This contract has serious structural problems that could cost you tens of thousands of dollars or trap you in a bad situation. Get an attorney involved before proceeding.';}
+
+  // Update score display
+  document.getElementById('crs-score').textContent=pct;
+  document.getElementById('crs-score').style.color=gradeColor;
+  document.getElementById('crs-grade').textContent=grade;
+  document.getElementById('crs-grade').style.color=gradeColor;
+  document.getElementById('crs-bar').style.width=pct+'%';
+  document.getElementById('crs-bar').style.background=gradeColor;
+
+  // Build results
+  var h='';
+
+  // Grade summary
+  h+='<div style="padding:16px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;margin-bottom:16px">';
+  h+='<div style="font-size:12px;color:var(--text2);line-height:1.7">'+gradeDetail+'</div>';
+  h+='</div>';
+
+  // Red flags first
+  var reds=flags.filter(function(f){return f.severity==='red'});
+  var yellows=flags.filter(function(f){return f.severity==='yellow'});
+  var greens=flags.filter(function(f){return f.severity==='green'});
+
+  if(reds.length){
+    h+='<div style="margin-bottom:16px">';
+    h+='<div style="font-size:11px;font-weight:600;color:var(--red);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">\ud83d\udea9 RED FLAGS — Negotiate These ('+reds.length+')</div>';
+    reds.forEach(function(f){
+      h+='<div style="padding:12px 14px;background:rgba(239,68,68,.05);border:1px solid rgba(239,68,68,.12);border-radius:8px;margin-bottom:8px">';
+      h+='<div style="font-size:12px;font-weight:600;color:var(--red);margin-bottom:4px">'+f.cat+': '+f.text+'</div>';
+      if(f.detail) h+='<div style="font-size:11px;color:var(--text2);line-height:1.7">'+f.detail+'</div>';
+      h+='</div>';
+    });
+    h+='</div>';
+  }
+
+  if(yellows.length){
+    h+='<div style="margin-bottom:16px">';
+    h+='<div style="font-size:11px;font-weight:600;color:#E67E22;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">\u26a0\ufe0f CAUTION — Review These ('+yellows.length+')</div>';
+    yellows.forEach(function(f){
+      h+='<div style="padding:12px 14px;background:rgba(230,126,34,.04);border:1px solid rgba(230,126,34,.10);border-radius:8px;margin-bottom:8px">';
+      h+='<div style="font-size:12px;font-weight:600;color:#E67E22;margin-bottom:4px">'+f.cat+': '+f.text+'</div>';
+      if(f.detail) h+='<div style="font-size:11px;color:var(--text2);line-height:1.7">'+f.detail+'</div>';
+      h+='</div>';
+    });
+    h+='</div>';
+  }
+
+  if(greens.length){
+    h+='<div style="margin-bottom:16px">';
+    h+='<div style="font-size:11px;font-weight:600;color:var(--green);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">\u2705 STRONG PROVISIONS ('+greens.length+')</div>';
+    greens.forEach(function(f){
+      h+='<div style="padding:10px 14px;background:rgba(106,191,75,.04);border-left:2px solid var(--green);margin-bottom:6px;border-radius:4px">';
+      h+='<div style="font-size:12px;font-weight:500;color:var(--text)">'+f.cat+': '+f.text+'</div>';
+      if(f.detail) h+='<div style="font-size:11px;color:var(--text3);line-height:1.6;margin-top:2px">'+f.detail+'</div>';
+      h+='</div>';
+    });
+    h+='</div>';
+  }
+
+  // Financial exposure estimate
+  var exposure=0;
+  if(crsVal('crs-tail-pay')==='you'||crsVal('crs-tail-pay')==='unknown') exposure+=50000;
+  if(crsVal('crs-tail-pay')==='shared') exposure+=25000;
+  if(crsVal('crs-sign-claw')==='full') exposure+=30000;
+  if(crsVal('crs-loan-claw')==='full') exposure+=50000;
+  if(crsVal('crs-nc-radius')==='large'||crsVal('crs-nc-radius')==='extreme') exposure+=40000;
+  if(crsVal('crs-term-sev')==='no') exposure+=60000;
+  if(crsVal('crs-ben-call')==='no') exposure+=30000;
+
+  if(exposure>0){
+    h+='<div style="padding:16px;background:rgba(239,68,68,.04);border:1px solid rgba(239,68,68,.10);border-radius:12px;margin-bottom:16px">';
+    h+='<div style="font-size:11px;font-weight:600;color:var(--red);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">\ud83d\udcb8 Estimated Financial Exposure</div>';
+    h+='<div style="font-size:28px;font-weight:700;font-family:var(--font-serif);color:var(--red);margin-bottom:8px">$'+(exposure/1000).toFixed(0)+'K+</div>';
+    h+='<div style="font-size:11px;color:var(--text2);line-height:1.7">This is a rough estimate of what the red-flag provisions could cost you if you leave this position. It includes potential tail coverage, clawback obligations, lost severance, lost call compensation, and relocation costs from an aggressive non-compete. An attorney review ($2-3.5K) that fixes even one of these issues would pay for itself many times over.</div>';
+    h+='</div>';
+  }
+
+  // Bottom line
+  h+='<div style="padding:16px;background:linear-gradient(160deg,rgba(200,168,124,.06),rgba(200,168,124,.02));border:1px solid rgba(200,168,124,.15);border-radius:12px">';
+  h+='<div style="font-size:12px;font-weight:600;color:var(--accent);margin-bottom:8px">\ud83e\udde0 What to Do Next</div>';
+  h+='<div style="font-size:12px;color:var(--text2);line-height:1.8">';
+  if(reds.length>=3) h+='<p style="margin-bottom:8px"><strong>'+reds.length+' red flags</strong> is too many to negotiate alone. Hire a healthcare contract attorney ($2-3.5K). They typically save physicians $20-50K+ in improved terms. This is not optional — it\u2019s a financial investment with a clear ROI.</p>';
+  else if(reds.length>=1) h+='<p style="margin-bottom:8px">You have <strong>'+reds.length+' red flag'+(reds.length>1?'s':'')+'</strong>. These are specific, addressable issues. You can negotiate them yourself, but consider attorney review if the non-compete or tail provisions are involved.</p>';
+  else if(yellows.length>=2) h+='<p style="margin-bottom:8px">No red flags, but <strong>'+yellows.length+' caution areas</strong>. Raise these in negotiation — they\u2019re reasonable asks that most employers will address.</p>';
+  else h+='<p style="margin-bottom:8px">This contract scores well. Do a final read with fresh eyes, verify the numbers match what was discussed verbally, and make sure nothing is referenced in a \u201cseparate document\u201d that you haven\u2019t seen.</p>';
+  h+='<p style="margin:0">Use the <strong>Offer Comparison Matrix</strong> to compare this against other offers, or the <strong>RVU Calculator</strong> to model your actual take-home based on the compensation structure.</p>';
+  h+='</div></div>';
+
+  // Completion indicator
+  if(answered<total){
+    h+='<div style="text-align:center;margin-top:12px;font-size:11px;color:var(--text3)">'+answered+' of '+total+' questions answered. Complete all for the most accurate score.</div>';
+  }
+
+  document.getElementById('crs-results').innerHTML=h;
+}
+
 // ===== OFFER COMPARISON MATRIX (v3) =====
 function ocmVal(id){return document.getElementById(id)?document.getElementById(id).value:'';}
 function ocmNum(id){return parseFloat(document.getElementById(id)?.value)||0;}

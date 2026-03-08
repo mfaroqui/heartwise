@@ -71,19 +71,98 @@ v1:`<h3>Fellowship Readiness Calculator</h3>
 </div>
 <p style="font-size:10px;color:var(--text3);margin-top:12px;font-style:italic">Based on NRMP Charting Outcomes and program director surveys. Weighted scoring reflects relative importance per PD surveys.</p>`,
 
-v2:`<h3>Contract Risk Scorecard</h3>
-<p style="color:var(--text3);font-size:12px;margin-bottom:16px">Red flags don't mean "don't sign." They mean "negotiate or get attorney clarification."</p>
-<div style="font-size:13px">
-<div style="padding:12px 0;border-bottom:1px solid var(--border)"><strong>1. Compensation Structure</strong><br><span style="color:var(--green);font-size:11px">✅ Clear base + defined RVU rate at/above MGMA median</span><br><span style="color:var(--red);font-size:11px">🚩 Vague "productivity bonus" without defined formula</span></div>
-<div style="padding:12px 0;border-bottom:1px solid var(--border)"><strong>2. Restrictive Covenant</strong><br><span style="color:var(--green);font-size:11px">✅ 10-15 mi radius, 1 year, waived if terminated without cause</span><br><span style="color:var(--red);font-size:11px">🚩 25+ miles, 2+ years, applies regardless of who terminates</span></div>
-<div style="padding:12px 0;border-bottom:1px solid var(--border)"><strong>3. Tail Insurance</strong><br><span style="color:var(--green);font-size:11px">✅ Employer pays tail, or occurrence-based policy</span><br><span style="color:var(--red);font-size:11px">🚩 You pay full tail ($20K-$50K+) regardless of circumstances</span></div>
-<div style="padding:12px 0;border-bottom:1px solid var(--border)"><strong>4. Termination Clauses</strong><br><span style="color:var(--green);font-size:11px">✅ 90-180 day notice, severance defined, narrow "cause"</span><br><span style="color:var(--red);font-size:11px">🚩 30-day notice, no severance, broad "cause" including "productivity"</span></div>
-<div style="padding:12px 0;border-bottom:1px solid var(--border)"><strong>5. Benefits & Call</strong><br><span style="color:var(--green);font-size:11px">✅ Full benefits in writing, $3K+ CME, 4%+ match, call compensated</span><br><span style="color:var(--red);font-size:11px">🚩 Benefits "available" without amounts, uncompensated call</span></div>
-<div style="padding:12px 0;border-bottom:1px solid var(--border)"><strong>6. Signing Bonus Clawback</strong><br><span style="color:var(--green);font-size:11px">✅ Pro-rated over 2-3 years</span><br><span style="color:var(--red);font-size:11px">🚩 Full repayment if you leave within 3 years for any reason</span></div>
-<div style="padding:12px 0"><strong>7. Partnership Track</strong><br><span style="color:var(--green);font-size:11px">✅ Defined timeline, transparent buy-in, criteria in writing</span><br><span style="color:var(--red);font-size:11px">🚩 "Eligible after X years" with no defined process</span></div>
+v2:`<h3 class="serif">Contract Risk Scorecard</h3>
+<p style="color:var(--text3);font-size:12px;margin-bottom:20px">Answer these questions about your contract. You'll get a risk score and specific flags to address before signing.</p>
+
+<div id="crs-tool" style="font-size:13px">
+
+<!-- Overall Risk Score -->
+<div id="crs-score-box" style="padding:24px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;margin-bottom:20px;text-align:center">
+<div style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--text3);margin-bottom:6px">Contract Risk Score</div>
+<div id="crs-score" style="font-size:52px;font-weight:700;font-family:'Cormorant Garamond',serif;color:var(--text3)">—</div>
+<div id="crs-grade" style="font-size:13px;font-weight:600;margin-top:4px;color:var(--text3)">Answer the questions below</div>
+<div id="crs-bar-wrap" style="height:6px;background:var(--bg3);border-radius:3px;margin-top:12px;overflow:hidden"><div id="crs-bar" style="height:100%;width:0%;border-radius:3px;transition:width .4s,background .4s;background:var(--border)"></div></div>
 </div>
-<div style="padding:16px;background:var(--bg2);border-radius:8px;margin-top:16px"><p style="font-size:12px;color:var(--text2);line-height:1.6;margin:0"><strong>Rule of thumb:</strong> 3+ red flags = don't sign without attorney review ($2K-$3.5K). Attorney fees typically save $20K+ in negotiated improvements.</p></div>
-<p style="font-size:10px;color:var(--text3);margin-top:12px;font-style:italic">Sources: MGMA 2024, AMA Practice Benchmark Survey 2023.</p>`,
+
+<!-- 1. Compensation Structure -->
+<div style="padding:14px 0;border-bottom:1px solid var(--border)">
+<div style="font-weight:600;color:var(--accent);margin-bottom:8px">1. Compensation Structure</div>
+<div class="fg" style="margin-bottom:8px"><label style="font-size:11px;color:var(--text3)">Is the base salary clearly defined as a fixed dollar amount?</label>
+<select id="crs-comp-base" onchange="crsCalc()" style="width:100%"><option value="">Select...</option><option value="yes">Yes — fixed base clearly stated</option><option value="partial">Partially — guarantee for first 1-2 years only</option><option value="no">No — it's all production/RVU-based from day 1</option></select></div>
+<div class="fg"><label style="font-size:11px;color:var(--text3)">Is the RVU/bonus formula defined with specific numbers?</label>
+<select id="crs-comp-rvu" onchange="crsCalc()" style="width:100%"><option value="">Select...</option><option value="yes">Yes — specific $/wRVU rate and threshold in writing</option><option value="partial">Partially — "productivity bonus" mentioned but formula vague</option><option value="no">No — no bonus structure defined, or "to be determined"</option></select></div>
+</div>
+
+<!-- 2. Restrictive Covenant / Non-Compete -->
+<div style="padding:14px 0;border-bottom:1px solid var(--border)">
+<div style="font-weight:600;color:var(--accent);margin-bottom:8px">2. Restrictive Covenant (Non-Compete)</div>
+<div class="fg" style="margin-bottom:8px"><label style="font-size:11px;color:var(--text3)">Non-compete radius</label>
+<select id="crs-nc-radius" onchange="crsCalc()" style="width:100%"><option value="">Select...</option><option value="none">No non-compete</option><option value="small">10 miles or less</option><option value="medium">11-20 miles</option><option value="large">21-30 miles</option><option value="extreme">30+ miles</option></select></div>
+<div class="fg" style="margin-bottom:8px"><label style="font-size:11px;color:var(--text3)">Non-compete duration</label>
+<select id="crs-nc-dur" onchange="crsCalc()" style="width:100%"><option value="">Select...</option><option value="none">No non-compete</option><option value="1yr">1 year</option><option value="2yr">2 years</option><option value="3yr">3+ years</option></select></div>
+<div class="fg"><label style="font-size:11px;color:var(--text3)">Does non-compete apply if YOU are terminated without cause?</label>
+<select id="crs-nc-term" onchange="crsCalc()" style="width:100%"><option value="">Select...</option><option value="waived">Waived if terminated without cause</option><option value="always">Applies regardless of who terminates</option><option value="na">No non-compete</option></select></div>
+</div>
+
+<!-- 3. Tail Coverage -->
+<div style="padding:14px 0;border-bottom:1px solid var(--border)">
+<div style="font-weight:600;color:var(--accent);margin-bottom:8px">3. Malpractice Tail Coverage</div>
+<div class="fg" style="margin-bottom:8px"><label style="font-size:11px;color:var(--text3)">Policy type</label>
+<select id="crs-mal-type" onchange="crsCalc()" style="width:100%"><option value="">Select...</option><option value="occurrence">Occurrence-based (no tail needed)</option><option value="claims">Claims-made</option><option value="unknown">Not specified / I don't know</option></select></div>
+<div class="fg"><label style="font-size:11px;color:var(--text3)">Who pays tail if you leave?</label>
+<select id="crs-tail-pay" onchange="crsCalc()" style="width:100%"><option value="">Select...</option><option value="employer">Employer pays</option><option value="shared">Shared / pro-rated</option><option value="you">You pay full tail</option><option value="na">Not applicable (occurrence policy)</option><option value="unknown">Not addressed in contract</option></select></div>
+</div>
+
+<!-- 4. Termination Clauses -->
+<div style="padding:14px 0;border-bottom:1px solid var(--border)">
+<div style="font-weight:600;color:var(--accent);margin-bottom:8px">4. Termination Provisions</div>
+<div class="fg" style="margin-bottom:8px"><label style="font-size:11px;color:var(--text3)">Without-cause termination notice period</label>
+<select id="crs-term-notice" onchange="crsCalc()" style="width:100%"><option value="">Select...</option><option value="180">180 days (6 months)</option><option value="90">90 days</option><option value="60">60 days</option><option value="30">30 days or less</option></select></div>
+<div class="fg" style="margin-bottom:8px"><label style="font-size:11px;color:var(--text3)">Is severance defined?</label>
+<select id="crs-term-sev" onchange="crsCalc()" style="width:100%"><option value="">Select...</option><option value="yes">Yes — specific amount/duration in writing</option><option value="no">No severance mentioned</option></select></div>
+<div class="fg"><label style="font-size:11px;color:var(--text3)">How is "for cause" termination defined?</label>
+<select id="crs-term-cause" onchange="crsCalc()" style="width:100%"><option value="">Select...</option><option value="narrow">Narrow — fraud, felony, license loss only</option><option value="broad">Broad — includes "failure to meet productivity," subjective criteria</option><option value="unclear">Not clearly defined</option></select></div>
+</div>
+
+<!-- 5. Benefits & Call -->
+<div style="padding:14px 0;border-bottom:1px solid var(--border)">
+<div style="font-weight:600;color:var(--accent);margin-bottom:8px">5. Benefits & Call Schedule</div>
+<div class="fg" style="margin-bottom:8px"><label style="font-size:11px;color:var(--text3)">Are benefits (health, disability, CME, retirement) specified with dollar amounts?</label>
+<select id="crs-ben-detail" onchange="crsCalc()" style="width:100%"><option value="">Select...</option><option value="yes">Yes — amounts, match %, CME budget all in writing</option><option value="partial">Partially — says "benefits available" without specifics</option><option value="no">No — references a separate benefits handbook</option></select></div>
+<div class="fg"><label style="font-size:11px;color:var(--text3)">Is call compensated?</label>
+<select id="crs-ben-call" onchange="crsCalc()" style="width:100%"><option value="">Select...</option><option value="yes">Yes — paid per diem or reduced clinical load</option><option value="partial">Shared call pool, no extra compensation</option><option value="no">Uncompensated call</option><option value="na">No call requirement</option></select></div>
+</div>
+
+<!-- 6. Signing Bonus / Loan Repayment -->
+<div style="padding:14px 0;border-bottom:1px solid var(--border)">
+<div style="font-weight:600;color:var(--accent);margin-bottom:8px">6. Signing Bonus & Loan Repayment</div>
+<div class="fg" style="margin-bottom:8px"><label style="font-size:11px;color:var(--text3)">Signing bonus clawback terms</label>
+<select id="crs-sign-claw" onchange="crsCalc()" style="width:100%"><option value="">Select...</option><option value="prorated">Pro-rated over 2-3 years</option><option value="full">Full repayment if you leave within X years</option><option value="na">No signing bonus</option></select></div>
+<div class="fg"><label style="font-size:11px;color:var(--text3)">Loan repayment clawback</label>
+<select id="crs-loan-claw" onchange="crsCalc()" style="width:100%"><option value="">Select...</option><option value="prorated">Pro-rated forgiveness over time</option><option value="full">Full repayment if you leave early</option><option value="na">No loan repayment offered</option></select></div>
+</div>
+
+<!-- 7. Partnership Track -->
+<div style="padding:14px 0;border-bottom:1px solid var(--border)">
+<div style="font-weight:600;color:var(--accent);margin-bottom:8px">7. Partnership / Equity Track</div>
+<div class="fg"><label style="font-size:11px;color:var(--text3)">Partnership terms</label>
+<select id="crs-partner" onchange="crsCalc()" style="width:100%"><option value="">Select...</option><option value="defined">Defined timeline, buy-in, and criteria in writing</option><option value="vague">"Eligible after X years" with no defined process</option><option value="no">No partnership track</option><option value="na">N/A — employed position</option></select></div>
+</div>
+
+<!-- 8. Assignment & Duties -->
+<div style="padding:14px 0">
+<div style="font-weight:600;color:var(--accent);margin-bottom:8px">8. Scope of Duties</div>
+<div class="fg" style="margin-bottom:8px"><label style="font-size:11px;color:var(--text3)">Are your clinical duties and practice scope clearly defined?</label>
+<select id="crs-scope" onchange="crsCalc()" style="width:100%"><option value="">Select...</option><option value="yes">Yes — specific clinical responsibilities listed</option><option value="broad">Broad — "duties as assigned" or vague language</option></select></div>
+<div class="fg"><label style="font-size:11px;color:var(--text3)">Can they reassign your location or duties without your consent?</label>
+<select id="crs-reassign" onchange="crsCalc()" style="width:100%"><option value="">Select...</option><option value="no">No — location and scope are fixed in the contract</option><option value="yes">Yes — contract allows unilateral reassignment</option><option value="unclear">Not addressed</option></select></div>
+</div>
+
+<button onclick="crsCalc();document.getElementById('crs-results').scrollIntoView({behavior:'smooth',block:'start'})" class="btn btn-a" style="width:100%;padding:14px;margin-top:16px;margin-bottom:8px">Calculate Risk Score →</button>
+<p style="font-size:10px;color:var(--text3);text-align:center;margin-bottom:20px">All data stays on your device. Nothing is sent to a server.</p>
+
+<div id="crs-results"></div>
+</div>`,
 
 v3:`<h3 class="serif">Offer Comparison Matrix</h3>
 <p style="color:var(--text3);font-size:12px;margin-bottom:20px">Input your two offers. We'll compare them honestly — no sugarcoating, just the trade-offs you need to see.</p>

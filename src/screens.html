@@ -613,73 +613,81 @@
 
 <!-- Q1: Stage -->
 <div id="quiz-q1">
-<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">1. Where are you in training?</div>
+<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">1. Where are you currently in training?</div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
 <button class="quiz-opt" onclick="quizPick(1,'student',this)" style="padding:12px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;text-align:center;cursor:pointer;transition:all .2s">
 <div style="font-size:18px;margin-bottom:4px">🎓</div>
-<div style="font-size:12px;font-weight:500;color:var(--text)">Med Student</div>
-<div style="font-size:10px;color:var(--text3)">MS1–MS4</div>
+<div style="font-size:12px;font-weight:500;color:var(--text)">Medical Student</div>
 </button>
 <button class="quiz-opt" onclick="quizPick(1,'resident',this)" style="padding:12px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;text-align:center;cursor:pointer;transition:all .2s">
 <div style="font-size:18px;margin-bottom:4px">🏥</div>
 <div style="font-size:12px;font-weight:500;color:var(--text)">Resident</div>
-<div style="font-size:10px;color:var(--text3)">PGY 1–3+</div>
 </button>
 <button class="quiz-opt" onclick="quizPick(1,'fellow',this)" style="padding:12px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;text-align:center;cursor:pointer;transition:all .2s">
 <div style="font-size:18px;margin-bottom:4px">🫀</div>
 <div style="font-size:12px;font-weight:500;color:var(--text)">Fellow</div>
-<div style="font-size:10px;color:var(--text3)">Subspecialty</div>
 </button>
 <button class="quiz-opt" onclick="quizPick(1,'attending',this)" style="padding:12px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;text-align:center;cursor:pointer;transition:all .2s">
 <div style="font-size:18px;margin-bottom:4px">⚕️</div>
-<div style="font-size:12px;font-weight:500;color:var(--text)">Attending</div>
-<div style="font-size:10px;color:var(--text3)">Practicing</div>
+<div style="font-size:12px;font-weight:500;color:var(--text)">Early Attending</div>
 </button>
 </div>
+<button class="quiz-opt" onclick="quizPick(1,'pivot',this)" style="padding:10px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;text-align:center;cursor:pointer;transition:all .2s;margin-top:8px;width:100%;display:flex;align-items:center;justify-content:center;gap:8px">
+<span style="font-size:16px">🔄</span>
+<span style="font-size:12px;font-weight:500;color:var(--text)">Exploring a Career Pivot</span>
+</button>
 </div>
 
-<!-- Q2: Goal (hidden until Q1 answered) -->
+<!-- Q2: Decision (hidden until Q1 answered) -->
 <div id="quiz-q2" class="hidden" style="margin-top:18px">
-<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">2. What's your primary goal right now?</div>
+<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">2. What decision are you trying to make right now?</div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-<button class="quiz-opt" onclick="quizPick(2,'fellowship',this)" style="padding:12px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;text-align:center;cursor:pointer;transition:all .2s">
+<button class="quiz-opt" onclick="quizPick(2,'specialty',this)" style="padding:12px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;text-align:center;cursor:pointer;transition:all .2s">
+<div style="font-size:18px;margin-bottom:4px">🧬</div>
+<div style="font-size:12px;font-weight:500;color:var(--text)">Choosing a Specialty</div>
+</button>
+<button class="quiz-opt" onclick="quizPick(2,'match',this)" style="padding:12px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;text-align:center;cursor:pointer;transition:all .2s">
 <div style="font-size:18px;margin-bottom:4px">🎯</div>
-<div style="font-size:12px;font-weight:500;color:var(--text)">Fellowship Prep</div>
-<div style="font-size:10px;color:var(--text3)">Match competitively</div>
+<div style="font-size:12px;font-weight:500;color:var(--text)">Matching Residency</div>
+</button>
+<button class="quiz-opt" onclick="quizPick(2,'fellowship',this)" style="padding:12px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;text-align:center;cursor:pointer;transition:all .2s">
+<div style="font-size:18px;margin-bottom:4px">🏆</div>
+<div style="font-size:12px;font-weight:500;color:var(--text)">Positioning for Fellowship</div>
 </button>
 <button class="quiz-opt" onclick="quizPick(2,'contract',this)" style="padding:12px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;text-align:center;cursor:pointer;transition:all .2s">
 <div style="font-size:18px;margin-bottom:4px">📋</div>
-<div style="font-size:12px;font-weight:500;color:var(--text)">Jobs & Contracts</div>
-<div style="font-size:10px;color:var(--text3)">Negotiate & compare</div>
+<div style="font-size:12px;font-weight:500;color:var(--text)">Negotiating a Job Offer</div>
 </button>
 <button class="quiz-opt" onclick="quizPick(2,'finance',this)" style="padding:12px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;text-align:center;cursor:pointer;transition:all .2s">
 <div style="font-size:18px;margin-bottom:4px">💰</div>
-<div style="font-size:12px;font-weight:500;color:var(--text)">Financial Planning</div>
-<div style="font-size:10px;color:var(--text3)">Maximize wealth</div>
+<div style="font-size:12px;font-weight:500;color:var(--text)">Improving Income & Leverage</div>
 </button>
 <button class="quiz-opt" onclick="quizPick(2,'direction',this)" style="padding:12px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;text-align:center;cursor:pointer;transition:all .2s">
-<div style="font-size:18px;margin-bottom:4px">🧭</div>
-<div style="font-size:12px;font-weight:500;color:var(--text)">Career Direction</div>
-<div style="font-size:10px;color:var(--text3)">Pivots & strategy</div>
+<div style="font-size:18px;margin-bottom:4px">🔄</div>
+<div style="font-size:12px;font-weight:500;color:var(--text)">Considering a Career Change</div>
 </button>
 </div>
 </div>
 
 <!-- Q3: Urgency (hidden until Q2 answered) -->
 <div id="quiz-q3" class="hidden" style="margin-top:18px">
-<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">3. How soon do you need to act?</div>
-<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">3. How urgent is this decision?</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
 <button class="quiz-opt" onclick="quizPick(3,'now',this)" style="padding:12px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;text-align:center;cursor:pointer;transition:all .2s">
 <div style="font-size:16px;margin-bottom:4px">🔥</div>
-<div style="font-size:11px;font-weight:500;color:var(--text)">Right now</div>
+<div style="font-size:11px;font-weight:500;color:var(--text)">Within 3 months</div>
 </button>
 <button class="quiz-opt" onclick="quizPick(3,'soon',this)" style="padding:12px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;text-align:center;cursor:pointer;transition:all .2s">
 <div style="font-size:16px;margin-bottom:4px">📅</div>
-<div style="font-size:11px;font-weight:500;color:var(--text)">Next 6 months</div>
+<div style="font-size:11px;font-weight:500;color:var(--text)">Within 12 months</div>
 </button>
 <button class="quiz-opt" onclick="quizPick(3,'later',this)" style="padding:12px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;text-align:center;cursor:pointer;transition:all .2s">
+<div style="font-size:16px;margin-bottom:4px">🗓️</div>
+<div style="font-size:11px;font-weight:500;color:var(--text)">Within 3 years</div>
+</button>
+<button class="quiz-opt" onclick="quizPick(3,'exploring',this)" style="padding:12px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;text-align:center;cursor:pointer;transition:all .2s">
 <div style="font-size:16px;margin-bottom:4px">🗺️</div>
-<div style="font-size:11px;font-weight:500;color:var(--text)">Long-term</div>
+<div style="font-size:11px;font-weight:500;color:var(--text)">Just exploring</div>
 </button>
 </div>
 </div>

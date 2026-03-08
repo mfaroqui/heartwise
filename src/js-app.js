@@ -2715,6 +2715,19 @@ async function sendContactMessage(e){
   var type=document.getElementById('contact-type').value;
   var msg=document.getElementById('contact-msg').value.trim();
   if(!msg){notify('Please enter a message',1);return}
+
+  // Career/finance/contract messages require physician review credits
+  var needsCredit=type==='career'||type==='finance'||type==='contract';
+  if(needsCredit){
+    if(!U||!U.usage||(U.usage.credits||0)<=0){
+      notify('You need physician review credits to send career, finance, or contract questions. Upgrade your plan to get credits.',1);
+      return;
+    }
+    U.usage.credits--;
+    localStorage.setItem('hw_session',JSON.stringify(U));saveDB();
+    renderHome();
+  }
+
   var payload={
     user_name:U?U.name:'Unknown',
     user_email:U?U.email:'Unknown',

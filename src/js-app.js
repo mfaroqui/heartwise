@@ -4168,7 +4168,34 @@ function showDisc(){
   document.getElementById('disc-agree').classList.add('hidden');
   document.getElementById('modal-disc').classList.remove('hidden');
 }
-function acceptDisc(){document.getElementById('modal-disc').classList.add('hidden');if(U)localStorage.setItem('hw_disc_'+U.id,'1')}
+function acceptDisc(){
+  document.getElementById('modal-disc').classList.add('hidden');
+  if(U){
+    localStorage.setItem('hw_disc_'+U.id,'1');
+    // Store TOS agreement in Supabase for legal compliance
+    if(_supaClient){
+      var agreement={
+        user_id:U.id,
+        user_email:U.email||'',
+        user_name:U.name||'',
+        tos_version:'2026-03-08',
+        agreed_at:new Date().toISOString(),
+        user_agent:navigator.userAgent||''
+      };
+      _supaClient.from('tos_agreements').insert([agreement]).catch(function(){
+        // Fallback: store in messages table if tos_agreements doesn't exist
+        _supaClient.from('messages').insert([{
+          user_name:U.name||'Unknown',
+          user_email:U.email||'Unknown',
+          type:'tos-agreement',
+          message:'TOS v2026-03-08 agreed at '+agreement.agreed_at+' | UA: '+agreement.user_agent,
+          date:agreement.agreed_at,
+          read:true
+        }]).catch(function(){});
+      });
+    }
+  }
+}
 
 // ===== NOTIFY =====
 function notify(msg,err){

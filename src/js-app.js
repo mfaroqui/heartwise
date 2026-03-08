@@ -293,8 +293,7 @@ function enterApp(){
   // Start trial countdown if active
   if(U.isTrial&&U.trialEnd)startTrialCountdown();
   renderHome();
-  // Navigate to Frameworks by default
-  navTo('scr-vault');
+  navTo('scr-home');
   // Check for unread notifications
   checkNotifBadge();
 }

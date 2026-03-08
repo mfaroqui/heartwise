@@ -2709,7 +2709,7 @@ function showUpgrade(){
 function toggleNotifSettings(){document.getElementById('notif-settings').classList.toggle('hidden')}
 
 function toggleContactForm(){document.getElementById('contact-form').classList.toggle('hidden')}
-function selectContactCat(el){el.closest('#contact-type-cards').querySelectorAll('label').forEach(function(l){l.style.borderColor='var(--border)'});el.style.borderColor='var(--accent)'}
+function selectContactCat(el){var form=document.getElementById('contact-form');form.querySelectorAll('label[onclick]').forEach(function(l){l.style.borderColor='var(--border)'});el.style.borderColor='var(--accent)';var r=el.querySelector('input[type=radio]');if(r)r.checked=true}
 
 // Email notification to admin via Supabase Edge Function
 function notifyAdmin(payload){

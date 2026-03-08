@@ -2709,6 +2709,7 @@ function showUpgrade(){
 function toggleNotifSettings(){document.getElementById('notif-settings').classList.toggle('hidden')}
 
 function toggleContactForm(){document.getElementById('contact-form').classList.toggle('hidden')}
+function selectContactCat(el){el.closest('#contact-type-cards').querySelectorAll('label').forEach(function(l){l.style.borderColor='var(--border)'});el.style.borderColor='var(--accent)'}
 
 // Email notification to admin via Supabase Edge Function
 function notifyAdmin(payload){
@@ -2726,7 +2727,8 @@ function notifyAdmin(payload){
 
 async function sendContactMessage(e){
   e.preventDefault();
-  var type=document.getElementById('contact-type').value;
+  var radio=document.querySelector('input[name="contact-cat"]:checked');
+  var type=radio?radio.value:'other';
   var msg=document.getElementById('contact-msg').value.trim();
   if(!msg){notify('Please enter a message',1);return}
 

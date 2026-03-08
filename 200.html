@@ -2584,19 +2584,45 @@ ChatGPT and Claude are powerful AI tools — but they're general-purpose. <stron
 <div id="contact-form" class="hidden" style="margin-bottom:12px">
 <div class="card" style="padding:20px">
 <div style="font-size:13px;font-weight:600;margin-bottom:4px">Send a Message</div>
-<p style="font-size:11px;color:var(--text3);margin-bottom:16px;line-height:1.5">Career question, feedback, or need help? Send me a message directly.</p>
+<p style="font-size:11px;color:var(--text3);margin-bottom:16px;line-height:1.5">Report an issue, share feedback, or ask a career question directly.</p>
 <form onsubmit="sendContactMessage(event)">
-<div class="fg"><label>Subject</label>
-<select id="contact-type">
-<option value="bug">🐛 Bug / Something Broken</option>
-<option value="feedback">📝 Feedback</option>
-<option value="suggestion">💡 Feature Suggestion</option>
-<option value="other">📎 Other</option>
-<option value="career">🎯 Career / Strategy Question (uses 1 credit)</option>
-<option value="finance">💰 Finance / Compensation Question (uses 1 credit)</option>
-<option value="contract">📋 Contract / Negotiation Question (uses 1 credit)</option>
-</select></div>
-<div class="fg"><label>Message *</label><textarea id="contact-msg" rows="4" placeholder="Describe the issue or share your thoughts..." required style="width:100%;resize:vertical;font-family:inherit;font-size:13px;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text)"></textarea></div>
+<div class="fg">
+<label style="margin-bottom:8px;display:block">Choose a Category</label>
+<div style="display:flex;flex-direction:column;gap:6px" id="contact-type-cards">
+<label style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--bg2);border:2px solid var(--accent);border-radius:8px;cursor:pointer;transition:border-color .2s" onclick="selectContactCat(this)">
+<input type="radio" name="contact-cat" value="bug" checked style="accent-color:var(--accent)">
+<div><div style="font-size:13px">🐛 Bug / Something Broken</div><div style="font-size:10px;color:var(--text3)">Report a technical issue — always free</div></div>
+</label>
+<label style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--bg2);border:2px solid var(--border);border-radius:8px;cursor:pointer;transition:border-color .2s" onclick="selectContactCat(this)">
+<input type="radio" name="contact-cat" value="feedback" style="accent-color:var(--accent)">
+<div><div style="font-size:13px">📝 Feedback</div><div style="font-size:10px;color:var(--text3)">Share your experience — always free</div></div>
+</label>
+<label style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--bg2);border:2px solid var(--border);border-radius:8px;cursor:pointer;transition:border-color .2s" onclick="selectContactCat(this)">
+<input type="radio" name="contact-cat" value="suggestion" style="accent-color:var(--accent)">
+<div><div style="font-size:13px">💡 Feature Suggestion</div><div style="font-size:10px;color:var(--text3)">Ideas for new tools or improvements — always free</div></div>
+</label>
+<label style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--bg2);border:2px solid var(--border);border-radius:8px;cursor:pointer;transition:border-color .2s" onclick="selectContactCat(this)">
+<input type="radio" name="contact-cat" value="other" style="accent-color:var(--accent)">
+<div><div style="font-size:13px">📎 Other</div><div style="font-size:10px;color:var(--text3)">General inquiry — always free</div></div>
+</label>
+<div style="border-top:1px solid var(--border);margin:4px 0;padding-top:6px">
+<div style="font-size:10px;color:var(--accent);font-weight:500;letter-spacing:.3px">PHYSICIAN REVIEW (uses 1 credit)</div>
+</div>
+<label style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--bg2);border:2px solid var(--border);border-radius:8px;cursor:pointer;transition:border-color .2s" onclick="selectContactCat(this)">
+<input type="radio" name="contact-cat" value="career" style="accent-color:var(--accent)">
+<div><div style="font-size:13px">🎯 Career / Strategy Question</div><div style="font-size:10px;color:var(--text3)">Get physician-reviewed career guidance</div></div>
+</label>
+<label style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--bg2);border:2px solid var(--border);border-radius:8px;cursor:pointer;transition:border-color .2s" onclick="selectContactCat(this)">
+<input type="radio" name="contact-cat" value="finance" style="accent-color:var(--accent)">
+<div><div style="font-size:13px">💰 Finance / Compensation Question</div><div style="font-size:10px;color:var(--text3)">Salary, RVU, loan strategy review</div></div>
+</label>
+<label style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--bg2);border:2px solid var(--border);border-radius:8px;cursor:pointer;transition:border-color .2s" onclick="selectContactCat(this)">
+<input type="radio" name="contact-cat" value="contract" style="accent-color:var(--accent)">
+<div><div style="font-size:13px">📋 Contract / Negotiation Question</div><div style="font-size:10px;color:var(--text3)">Contract review and negotiation advice</div></div>
+</label>
+</div>
+</div>
+<div class="fg" style="margin-top:16px"><label>Message *</label><textarea id="contact-msg" rows="4" placeholder="Describe the issue or share your thoughts..." required style="width:100%;resize:vertical;font-family:inherit;font-size:13px;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text)"></textarea></div>
 <button type="submit" class="btn btn-a" style="margin-top:8px">Send Message</button>
 </form>
 </div>
@@ -7094,6 +7120,7 @@ function showUpgrade(){
 function toggleNotifSettings(){document.getElementById('notif-settings').classList.toggle('hidden')}
 
 function toggleContactForm(){document.getElementById('contact-form').classList.toggle('hidden')}
+function selectContactCat(el){el.closest('#contact-type-cards').querySelectorAll('label').forEach(function(l){l.style.borderColor='var(--border)'});el.style.borderColor='var(--accent)'}
 
 // Email notification to admin via Supabase Edge Function
 function notifyAdmin(payload){
@@ -7111,7 +7138,8 @@ function notifyAdmin(payload){
 
 async function sendContactMessage(e){
   e.preventDefault();
-  var type=document.getElementById('contact-type').value;
+  var radio=document.querySelector('input[name="contact-cat"]:checked');
+  var type=radio?radio.value:'other';
   var msg=document.getElementById('contact-msg').value.trim();
   if(!msg){notify('Please enter a message',1);return}
 

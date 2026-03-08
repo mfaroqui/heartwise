@@ -2363,11 +2363,7 @@ ChatGPT and Claude are powerful AI tools — but they're general-purpose. <stron
 </div>
 
 <!-- All Frameworks -->
-<div style="padding:16px 24px 0">
-<div id="vault-all-label" style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">All Frameworks</div>
-<p style="font-size:11px;color:var(--text3);line-height:1.5;margin-bottom:12px">Process-driven tools — not shortcuts. Access depends on your plan.</p>
-</div>
-<div id="vault-list" class="pad"></div>
+<div id="vault-categories" class="pad" style="padding-top:16px"></div>
 </div>
 
 <!-- PROFILE SCREEN -->
@@ -5800,7 +5796,46 @@ function quizReset(){
 // ===== VAULT =====
 function renderVault(){
   const canAccess=U.tier==='core'||U.tier==='elite'||U.tier==='admin';
-  document.getElementById('vault-list').innerHTML=VAULT_ITEMS.map(v=>{
+
+  var VAULT_CATEGORIES=[
+    {
+      key:'discover',
+      title:'Discover Your Fit',
+      icon:'🧬',
+      goal:'Understand which specialties align with your personality, interests, and lifestyle goals.',
+      tools:['v13']
+    },
+    {
+      key:'evaluate',
+      title:'Evaluate Competitiveness',
+      icon:'🏆',
+      goal:'Assess whether you\'re competitive for your desired specialty or next career move.',
+      tools:['v1','v14','v7']
+    },
+    {
+      key:'simulate',
+      title:'Simulate the Future',
+      icon:'🔮',
+      goal:'See realistic long-term outcomes of different career and financial paths.',
+      tools:['v11','v4','v5','v8']
+    },
+    {
+      key:'decide',
+      title:'Decision Intelligence',
+      icon:'⚖️',
+      goal:'Compare options and make strategic, data-driven career decisions.',
+      tools:['v3','v2','v12','v10']
+    },
+    {
+      key:'execute',
+      title:'Execute the Strategy',
+      icon:'🚀',
+      goal:'Implement your career plan with structured roadmaps, interview prep, and expert review.',
+      tools:['v15','v6','v16','v9']
+    }
+  ];
+
+  function renderCard(v){
     const mentOnly=v.tier==='elite'&&U.tier!=='elite'&&U.tier!=='admin';
     const locked=!canAccess||mentOnly;
     var onclick;
@@ -5811,8 +5846,30 @@ function renderVault(){
     }else{
       onclick='onclick="openFramework(\''+v.id+'\')"';
     }
-    return '<div class="vault-card '+(locked?'':'unlocked')+'" '+onclick+'><div class="v-icon">'+v.icon+'</div><div class="v-info"><h3>'+v.title+'</h3><p>'+v.desc+(mentOnly?' \u2022 Elite Strategy only':'')+'</p></div><div class="v-lock">'+(locked?'\ud83d\udd12':'\ud83d\udcc4')+'</div></div>';
-  }).join('');
+    var tierBadge='';
+    if(v.tier==='elite') tierBadge=' <span style="font-size:8px;padding:2px 6px;border-radius:100px;background:linear-gradient(135deg,var(--accent2),var(--accent));color:#0a0a0f;font-weight:700;letter-spacing:.5px;vertical-align:middle">ELITE</span>';
+    return '<div class="vault-card '+(locked?'':'unlocked')+'" '+onclick+'><div class="v-icon">'+v.icon+'</div><div class="v-info"><h3>'+v.title+tierBadge+'</h3><p>'+v.desc+'</p></div><div class="v-lock">'+(locked?'\ud83d\udd12':'\ud83d\udcc4')+'</div></div>';
+  }
+
+  var h='';
+  VAULT_CATEGORIES.forEach(function(cat){
+    h+='<div style="padding:0 24px 8px">';
+    h+='<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">';
+    h+='<span style="font-size:18px">'+cat.icon+'</span>';
+    h+='<div style="font-size:13px;font-weight:600;color:var(--text);letter-spacing:.3px">'+cat.title+'</div>';
+    h+='</div>';
+    h+='<p style="font-size:11px;color:var(--text3);line-height:1.5;margin-bottom:12px;padding-left:26px">'+cat.goal+'</p>';
+    h+='</div>';
+
+    cat.tools.forEach(function(toolId){
+      var v=VAULT_ITEMS.find(function(item){return item.id===toolId});
+      if(v) h+='<div style="padding:0 24px">'+renderCard(v)+'</div>';
+    });
+
+    h+='<div style="height:20px"></div>';
+  });
+
+  document.getElementById('vault-categories').innerHTML=h;
 }
 function openFramework(id){
   const content=VAULT_CONTENT[id];

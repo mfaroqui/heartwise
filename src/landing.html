@@ -87,23 +87,27 @@
 
 <!-- Stage Selector -->
 <div id="hook-stages" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:28px">
-<button onclick="hookSelect('student')" class="hook-opt" style="padding:16px;background:var(--bg2);border:2px solid var(--border);border-radius:12px;cursor:pointer;text-align:center;transition:all .25s">
+<button onclick="hookSelect('student',this)" class="hook-opt" style="padding:16px;background:var(--bg2);border:2px solid var(--border);border-radius:12px;cursor:pointer;text-align:center;transition:all .25s">
 <div style="font-size:22px;margin-bottom:6px">🎓</div>
 <div style="font-size:13px;font-weight:600;color:var(--text)">Medical Student</div>
 </button>
-<button onclick="hookSelect('resident')" class="hook-opt" style="padding:16px;background:var(--bg2);border:2px solid var(--border);border-radius:12px;cursor:pointer;text-align:center;transition:all .25s">
+<button onclick="hookSelect('resident',this)" class="hook-opt" style="padding:16px;background:var(--bg2);border:2px solid var(--border);border-radius:12px;cursor:pointer;text-align:center;transition:all .25s">
 <div style="font-size:22px;margin-bottom:6px">🏥</div>
 <div style="font-size:13px;font-weight:600;color:var(--text)">Resident</div>
 </button>
-<button onclick="hookSelect('fellow')" class="hook-opt" style="padding:16px;background:var(--bg2);border:2px solid var(--border);border-radius:12px;cursor:pointer;text-align:center;transition:all .25s">
+<button onclick="hookSelect('fellow',this)" class="hook-opt" style="padding:16px;background:var(--bg2);border:2px solid var(--border);border-radius:12px;cursor:pointer;text-align:center;transition:all .25s">
 <div style="font-size:22px;margin-bottom:6px">🫀</div>
 <div style="font-size:13px;font-weight:600;color:var(--text)">Fellow</div>
 </button>
-<button onclick="hookSelect('attending')" class="hook-opt" style="padding:16px;background:var(--bg2);border:2px solid var(--border);border-radius:12px;cursor:pointer;text-align:center;transition:all .25s">
+<button onclick="hookSelect('attending',this)" class="hook-opt" style="padding:16px;background:var(--bg2);border:2px solid var(--border);border-radius:12px;cursor:pointer;text-align:center;transition:all .25s">
 <div style="font-size:22px;margin-bottom:6px">⚕️</div>
 <div style="font-size:13px;font-weight:600;color:var(--text)">Attending</div>
 </button>
 </div>
+<button onclick="hookSelect('pivot',this)" class="hook-opt" style="padding:12px;background:var(--bg2);border:2px solid var(--border);border-radius:12px;cursor:pointer;text-align:center;transition:all .25s;width:100%;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:-18px;margin-bottom:28px">
+<span style="font-size:18px">🔄</span>
+<span style="font-size:13px;font-weight:600;color:var(--text)">Exploring a Career Pivot</span>
+</button>
 
 <!-- Tool Recommendations (hidden until stage selected) -->
 <div id="hook-tools" style="display:none">

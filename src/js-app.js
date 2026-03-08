@@ -34,13 +34,13 @@ function landingNav(id){
   if(el)el.scrollIntoView({behavior:'smooth'});
 
 // Landing page hook — stage selector
-function hookSelect(stage){
-  var btns=document.querySelectorAll('#hook-stages .hook-opt');
-  btns.forEach(function(b){b.style.borderColor='var(--border)';b.style.background='var(--bg2)'});
-  event.currentTarget.style.borderColor='var(--accent)';
-  event.currentTarget.style.background='rgba(200,168,124,.08)';
+function hookSelect(stage,btn){
+  var allBtns=document.querySelectorAll('.hook-opt');
+  allBtns.forEach(function(b){b.style.borderColor='var(--border)';b.style.background='var(--bg2)'});
+  btn.style.borderColor='var(--accent)';
+  btn.style.background='rgba(200,168,124,.08)';
 
-  var labels={student:'Medical Students',resident:'Residents',fellow:'Fellows',attending:'Attending Physicians'};
+  var labels={student:'Medical Students',resident:'Residents',fellow:'Fellows',attending:'Attending Physicians',pivot:'Physicians Exploring a Career Change'};
   document.getElementById('hook-stage-label').textContent=labels[stage]||'you';
 
   var tools={
@@ -63,6 +63,11 @@ function hookSelect(stage){
       {icon:'📋',name:'Contract Intelligence Tool',desc:'Are you being paid fairly? Full contract analysis with MGMA benchmarks.'},
       {icon:'🔮',name:'Financial Trajectory Simulator',desc:'Are you on track? Model your 30-year wealth trajectory and find gaps.'},
       {icon:'⚖️',name:'Career Pivot Decision Engine',desc:'Thinking about a change? Structured framework with financial modeling.'}
+    ],
+    pivot:[
+      {icon:'⚖️',name:'Career Pivot Decision Engine',desc:'Structured analysis of your options — financial cost, timeline, and readiness scoring.'},
+      {icon:'🔮',name:'Financial Trajectory Simulator',desc:'What does this career change cost over 30 years? Model every scenario.'},
+      {icon:'🧬',name:'Specialty Fit Analyzer',desc:'Rediscover what actually fits you now — values, lifestyle, and practice style.'}
     ]
   };
 

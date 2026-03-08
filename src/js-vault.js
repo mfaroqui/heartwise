@@ -801,4 +801,229 @@ v11:`<div style="text-align:center;padding:28px 20px;margin:-20px -20px 24px;bac
 
 <p style="font-size:10px;color:var(--text3);line-height:1.6;font-style:italic;margin-top:16px">Based on MGMA 2024 compensation data. Assumes 7% annual investment return, 3% annual salary growth, and $250K starting student debt. This is a modeling tool \u2014 not financial advice. Consult a financial professional for personalized planning.</p>
 </div>`
+,
+v13:`<h3 class="serif">Specialty Fit Analyzer</h3>
+<p style="color:var(--text3);font-size:12px;margin-bottom:20px">Answer honestly — this tool helps you identify which specialties align with your personality, goals, and lifestyle preferences.</p>
+<div id="sfa-tool" style="font-size:13px">
+
+<div style="padding:14px 0;border-bottom:1px solid var(--border)">
+<div style="margin-bottom:6px"><strong>1. Patient Interaction Style</strong></div>
+<span style="color:var(--text3);font-size:11px;display:block;margin-bottom:10px">What type of patient relationships do you prefer?</span>
+<select id="sfa-q1" onchange="sfaUpdate()" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
+<option value="">Select...</option>
+<option value="long">Long-term relationships (years)</option>
+<option value="episode">Episodic but meaningful (weeks/months)</option>
+<option value="acute">Acute, high-intensity encounters</option>
+<option value="minimal">Minimal direct patient contact</option>
+</select>
+</div>
+
+<div style="padding:14px 0;border-bottom:1px solid var(--border)">
+<div style="margin-bottom:6px"><strong>2. Procedural Interest</strong></div>
+<span style="color:var(--text3);font-size:11px;display:block;margin-bottom:10px">How much do you want to work with your hands?</span>
+<select id="sfa-q2" onchange="sfaUpdate()" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
+<option value="">Select...</option>
+<option value="heavy">Heavily procedural — I love the cath lab / OR</option>
+<option value="mix">Mix of procedures and clinic</option>
+<option value="cognitive">Primarily cognitive / diagnostic</option>
+<option value="none">No procedures preferred</option>
+</select>
+</div>
+
+<div style="padding:14px 0;border-bottom:1px solid var(--border)">
+<div style="margin-bottom:6px"><strong>3. Lifestyle Priority</strong></div>
+<span style="color:var(--text3);font-size:11px;display:block;margin-bottom:10px">How important is work-life balance vs. income?</span>
+<select id="sfa-q3" onchange="sfaUpdate()" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
+<option value="">Select...</option>
+<option value="lifestyle">Lifestyle is top priority — I want predictable hours</option>
+<option value="balanced">Balanced — good income with reasonable hours</option>
+<option value="income">Income-focused — I'll work hard for high compensation</option>
+<option value="mission">Mission-driven — I'll sacrifice income/lifestyle for impact</option>
+</select>
+</div>
+
+<div style="padding:14px 0;border-bottom:1px solid var(--border)">
+<div style="margin-bottom:6px"><strong>4. Intellectual Style</strong></div>
+<span style="color:var(--text3);font-size:11px;display:block;margin-bottom:10px">What kind of thinking energizes you?</span>
+<select id="sfa-q4" onchange="sfaUpdate()" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
+<option value="">Select...</option>
+<option value="complex">Complex diagnostic puzzles</option>
+<option value="systems">Systems thinking and management</option>
+<option value="technical">Technical mastery and precision</option>
+<option value="breadth">Broad knowledge across many areas</option>
+</select>
+</div>
+
+<div style="padding:14px 0;border-bottom:1px solid var(--border)">
+<div style="margin-bottom:6px"><strong>5. Practice Setting</strong></div>
+<span style="color:var(--text3);font-size:11px;display:block;margin-bottom:10px">Where do you see yourself working?</span>
+<select id="sfa-q5" onchange="sfaUpdate()" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
+<option value="">Select...</option>
+<option value="academic">Academic medical center</option>
+<option value="community">Community hospital</option>
+<option value="private">Private practice / group</option>
+<option value="flexible">Flexible — open to anything</option>
+</select>
+</div>
+
+<div style="padding:14px 0;border-bottom:1px solid var(--border)">
+<div style="margin-bottom:6px"><strong>6. Tolerance for Uncertainty</strong></div>
+<span style="color:var(--text3);font-size:11px;display:block;margin-bottom:10px">How comfortable are you with ambiguity and high-stakes decisions?</span>
+<select id="sfa-q6" onchange="sfaUpdate()" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
+<option value="">Select...</option>
+<option value="high">Thrive in uncertainty — EM, ICU, surgery</option>
+<option value="moderate">Moderate — I like guidelines with room for judgment</option>
+<option value="low">Prefer structured, predictable work</option>
+</select>
+</div>
+
+<div id="sfa-results" style="margin-top:20px"></div>
+
+</div>`,
+
+v14:`<h3 class="serif">Match Competitiveness Calculator</h3>
+<p style="color:var(--text3);font-size:12px;margin-bottom:20px">Estimate your likelihood of matching into a specialty based on key metrics. Data referenced from NRMP Charting Outcomes.</p>
+<div id="mcc-tool" style="font-size:13px">
+
+<div style="padding:14px 0;border-bottom:1px solid var(--border)">
+<div style="margin-bottom:6px"><strong>Target Specialty</strong></div>
+<select id="mcc-spec" onchange="mccUpdate()" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
+<option value="">Select specialty...</option>
+<option value="im">Internal Medicine</option>
+<option value="fm">Family Medicine</option>
+<option value="peds">Pediatrics</option>
+<option value="em">Emergency Medicine</option>
+<option value="psych">Psychiatry</option>
+<option value="neuro">Neurology</option>
+<option value="rads">Radiology</option>
+<option value="anes">Anesthesiology</option>
+<option value="path">Pathology</option>
+<option value="gen_surg">General Surgery</option>
+<option value="ortho">Orthopedic Surgery</option>
+<option value="uro">Urology</option>
+<option value="ent">ENT</option>
+<option value="ophtho">Ophthalmology</option>
+<option value="derm">Dermatology</option>
+<option value="plastics">Plastic Surgery</option>
+<option value="nsurg">Neurosurgery</option>
+<option value="ir">Interventional Radiology</option>
+</select>
+</div>
+
+<div style="padding:14px 0;border-bottom:1px solid var(--border)">
+<div style="margin-bottom:6px"><strong>Step 2 CK Score</strong></div>
+<input type="number" id="mcc-step2" placeholder="e.g., 255" onchange="mccUpdate()" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px;box-sizing:border-box">
+</div>
+
+<div style="padding:14px 0;border-bottom:1px solid var(--border)">
+<div style="margin-bottom:6px"><strong>Research Publications / Abstracts</strong></div>
+<select id="mcc-pubs" onchange="mccUpdate()" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
+<option value="0">0 — None</option>
+<option value="1">1-2 abstracts/posters</option>
+<option value="2">3-5 publications</option>
+<option value="3">6-10 publications</option>
+<option value="4">10+ publications</option>
+</select>
+</div>
+
+<div style="padding:14px 0;border-bottom:1px solid var(--border)">
+<div style="margin-bottom:6px"><strong>Medical School Tier</strong></div>
+<select id="mcc-school" onchange="mccUpdate()" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
+<option value="">Select...</option>
+<option value="top20">Top 20 (Harvard, Hopkins, UCSF, etc.)</option>
+<option value="top50">Top 21-50</option>
+<option value="mid">Mid-tier US MD</option>
+<option value="do">DO school</option>
+<option value="img">IMG / Caribbean</option>
+</select>
+</div>
+
+<div style="padding:14px 0;border-bottom:1px solid var(--border)">
+<div style="margin-bottom:6px"><strong>Number of Programs Applying To</strong></div>
+<input type="number" id="mcc-programs" placeholder="e.g., 30" onchange="mccUpdate()" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px;box-sizing:border-box">
+</div>
+
+<div style="padding:14px 0;border-bottom:1px solid var(--border)">
+<div style="margin-bottom:6px"><strong>Away Rotations at Target Programs</strong></div>
+<select id="mcc-aways" onchange="mccUpdate()" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
+<option value="0">None</option>
+<option value="1">1 rotation</option>
+<option value="2">2 rotations</option>
+<option value="3">3+ rotations</option>
+</select>
+</div>
+
+<div id="mcc-results" style="margin-top:20px"></div>
+
+</div>`,
+
+v15:`<h3 class="serif">Career Strategy Builder</h3>
+<p style="color:var(--text3);font-size:12px;margin-bottom:20px">Build a step-by-step roadmap to reach your target specialty or career goal. Generates a personalized timeline with milestones.</p>
+<div id="csb-tool" style="font-size:13px">
+
+<div style="padding:14px 0;border-bottom:1px solid var(--border)">
+<div style="margin-bottom:6px"><strong>Where are you now?</strong></div>
+<select id="csb-now" onchange="csbUpdate()" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
+<option value="">Select current stage...</option>
+<option value="ms1">MS1-MS2 (Pre-clinical)</option>
+<option value="ms3">MS3-MS4 (Clinical)</option>
+<option value="intern">PGY-1 (Intern)</option>
+<option value="resident">PGY-2/3 (Resident)</option>
+<option value="senior">PGY-4+ (Senior Resident)</option>
+<option value="fellow">Fellow</option>
+<option value="attending">Attending</option>
+</select>
+</div>
+
+<div style="padding:14px 0;border-bottom:1px solid var(--border)">
+<div style="margin-bottom:6px"><strong>Target Specialty / Goal</strong></div>
+<select id="csb-target" onchange="csbUpdate()" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
+<option value="">Select target...</option>
+<option value="cards">Cardiology</option>
+<option value="ic">Interventional Cardiology</option>
+<option value="gi">Gastroenterology</option>
+<option value="pulm">Pulmonary/Critical Care</option>
+<option value="heme">Hematology/Oncology</option>
+<option value="endo">Endocrinology</option>
+<option value="rheum">Rheumatology</option>
+<option value="neph">Nephrology</option>
+<option value="id">Infectious Disease</option>
+<option value="ortho">Orthopedic Surgery</option>
+<option value="nsurg">Neurosurgery</option>
+<option value="derm">Dermatology</option>
+<option value="ophtho">Ophthalmology</option>
+<option value="rads">Radiology</option>
+<option value="gen_surg">General Surgery</option>
+<option value="em">Emergency Medicine</option>
+<option value="academic">Academic Medicine</option>
+<option value="private">Private Practice</option>
+<option value="admin">Healthcare Administration</option>
+</select>
+</div>
+
+<div style="padding:14px 0;border-bottom:1px solid var(--border)">
+<div style="margin-bottom:6px"><strong>Current Research Output</strong></div>
+<select id="csb-research" onchange="csbUpdate()" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
+<option value="0">No research yet</option>
+<option value="1">1-2 abstracts</option>
+<option value="2">3-5 publications</option>
+<option value="3">6+ publications</option>
+</select>
+</div>
+
+<div style="padding:14px 0;border-bottom:1px solid var(--border)">
+<div style="margin-bottom:6px"><strong>Timeline Urgency</strong></div>
+<select id="csb-urgency" onchange="csbUpdate()" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
+<option value="">Select...</option>
+<option value="1">Applying this cycle</option>
+<option value="2">Applying next cycle (1 year out)</option>
+<option value="3">2+ years to prepare</option>
+</select>
+</div>
+
+<button onclick="csbGenerate()" class="btn btn-a" style="width:100%;margin-top:16px;padding:14px">Build My Roadmap →</button>
+
+<div id="csb-results" style="margin-top:20px"></div>
+
+</div>`
 };

@@ -1,7 +1,7 @@
 // This gets inlined into the HTML via build script
 // ===== CONFIG =====
 const AE='mfaroqui@gmail.com';
-const TIERS={free:{name:'Explorer',ai:1,credits:0},core:{name:'Core',ai:999,credits:0},elite:{name:'Elite Strategy',ai:999,credits:2},admin:{name:'Admin',ai:999,credits:999}};
+const TIERS={free:{name:'Explorer',ai:2,credits:0},core:{name:'Core',ai:50,credits:0},elite:{name:'Elite Strategy',ai:999,credits:2},admin:{name:'Admin',ai:999,credits:999}};
 const CATS={career:'Career Strategy',fellowship:'Fellowship Positioning',contract:'Contract Negotiation',finance:'Income & Financial Leverage',clinical:'Clinical Education',productivity:'Productivity Systems',wellness:'Performance Sustainability'};
 
 // ===== SEED DATA (Structured AI Format) =====
@@ -246,16 +246,19 @@ const LEGACY_Q=[
 ];
 
 const VAULT_ITEMS=[
-{id:'v1',title:'Fellowship Readiness Worksheet',desc:'Evaluate your application against successful fellowship profiles',icon:'\ud83c\udfaf',tier:'core'},
-{id:'v2',title:'Contract Risk Scorecard',desc:'Identify red flags and leverage points in any physician contract',icon:'\ud83d\udea9',tier:'core'},
-{id:'v3',title:'Offer Comparison Matrix',desc:'Side-by-side analysis framework for multiple job offers',icon:'\ud83d\udcca',tier:'core'},
-{id:'v4',title:'RVU Modeling Sheet',desc:'Model compensation scenarios by volume, rate, and practice type',icon:'\ud83d\udcb0',tier:'core'},
-{id:'v5',title:'3-Year Leverage Planner',desc:'Map your income trajectory from training exit through year 3',icon:'\ud83d\udcc8',tier:'core'},
-{id:'v6',title:'Fellowship Positioning Roadmap',desc:'Month-by-month timeline from PGY-2 to match day',icon:'\ud83d\uddfa\ufe0f',tier:'core'},
-{id:'v7',title:'Research ROI Calculator',desc:'Calculate your research portfolio strength and see how close you are to optimal',icon:'\u2696\ufe0f',tier:'core'},
-{id:'v8',title:'Income Leverage Playbook',desc:'PSLF vs refinance modeling, tax strategy, disability planning',icon:'\ud83d\udcb5',tier:'core'},
-{id:'v9',title:'Strategic Audit Template',desc:'The exact intake framework used in Elite Strategy sessions',icon:'\ud83d\udcdd',tier:'elite'},
-{id:'v10',title:'Career Pivot Decision Engine',desc:'Structured framework for specialty switches and practice model changes',icon:'\u26a1',tier:'elite'},
-{id:'v11',title:'Financial Trajectory Simulator',desc:'See how specialty, fellowship, and practice type impact your lifetime wealth',icon:'\ud83d\udcb0',tier:'elite'},
-{id:'v12',title:'Contract Intelligence Tool',desc:'Input your offer details and get a competitiveness score, risk flags, and negotiation strategy',icon:'\ud83d\udcdd',tier:'elite'}
+{id:'v1',title:'Fellowship Readiness Worksheet',desc:'Evaluate your application against successful fellowship profiles',icon:'🎯',tier:'core'},
+{id:'v2',title:'Contract Risk Scorecard',desc:'Identify red flags and leverage points in any physician contract',icon:'🚩',tier:'core'},
+{id:'v3',title:'Offer Comparison Matrix',desc:'Side-by-side analysis framework for multiple job offers',icon:'📊',tier:'core'},
+{id:'v4',title:'RVU Modeling Sheet',desc:'Model compensation scenarios by volume, rate, and practice type',icon:'💰',tier:'core'},
+{id:'v5',title:'3-Year Leverage Planner',desc:'Map your income trajectory from training exit through year 3',icon:'📈',tier:'core'},
+{id:'v6',title:'Fellowship Positioning Roadmap',desc:'Month-by-month timeline from PGY-2 to match day',icon:'🗺️',tier:'core'},
+{id:'v7',title:'Research ROI Calculator',desc:'Calculate your research portfolio strength and see how close you are to optimal',icon:'⚖️',tier:'core'},
+{id:'v8',title:'Income Leverage Playbook',desc:'PSLF vs refinance modeling, tax strategy, disability planning',icon:'💵',tier:'core'},
+{id:'v13',title:'Specialty Fit Analyzer',desc:'Determine which specialty fits your personality, goals, and lifestyle preferences',icon:'🔬',tier:'core'},
+{id:'v14',title:'Match Competitiveness Calculator',desc:'Estimate your match likelihood based on board scores, research, and school tier',icon:'🏆',tier:'core'},
+{id:'v15',title:'Career Strategy Builder',desc:'Build a step-by-step roadmap to reach your target specialty or career goal',icon:'🗂️',tier:'core'},
+{id:'v9',title:'Strategic Audit Template',desc:'The exact intake framework used in Elite Strategy sessions',icon:'📝',tier:'elite'},
+{id:'v10',title:'Career Pivot Decision Engine',desc:'Structured framework for specialty switches and practice model changes',icon:'⚡',tier:'elite'},
+{id:'v11',title:'Financial Trajectory Simulator',desc:'30-year wealth projection with debt payoff timeline by specialty and practice type',icon:'💰',tier:'elite'},
+{id:'v12',title:'Contract Intelligence Tool',desc:'Input your offer details and get a competitiveness score, risk flags, and negotiation strategy',icon:'📝',tier:'elite'}
 ];

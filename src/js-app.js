@@ -293,6 +293,8 @@ function enterApp(){
   // Start trial countdown if active
   if(U.isTrial&&U.trialEnd)startTrialCountdown();
   renderHome();
+  // Navigate to Frameworks by default
+  navTo('scr-vault');
   // Check for unread notifications
   checkNotifBadge();
 }
@@ -577,22 +579,276 @@ function renderArchive(){
 function filterArchive(){renderArchive()}
 function setFilter(f,btn){curFilter=f;document.querySelectorAll('.fc .chip').forEach(c=>c.classList.remove('on'));btn.classList.add('on');renderArchive()}
 
+// ===== SPECIALTY FIT ANALYZER (v13) =====
+function sfaUpdate(){
+  var q1=document.getElementById('sfa-q1').value;
+  var q2=document.getElementById('sfa-q2').value;
+  var q3=document.getElementById('sfa-q3').value;
+  var q4=document.getElementById('sfa-q4').value;
+  var q5=document.getElementById('sfa-q5').value;
+  var q6=document.getElementById('sfa-q6').value;
+  if(!q1||!q2||!q3||!q4||!q5||!q6)return;
+
+  var specs=[
+    {name:'Interventional Cardiology',icon:'\ud83e\udec0',fit:0,comp:'$600-800K',hours:'55-65h/wk',train:'IM 3yr + Cards 3yr + IC 1yr',path:'Heavily procedural, high-stakes, excellent compensation'},
+    {name:'General Cardiology',icon:'\u2764\ufe0f',fit:0,comp:'$450-600K',hours:'50-60h/wk',train:'IM 3yr + Cards 3yr',path:'Mix of procedures and cognitive work'},
+    {name:'Gastroenterology',icon:'\ud83e\ude7a',fit:0,comp:'$450-700K',hours:'45-55h/wk',train:'IM 3yr + GI 3yr',path:'Procedural with good lifestyle'},
+    {name:'Dermatology',icon:'\ud83e\uddb4',fit:0,comp:'$400-600K',hours:'40-50h/wk',train:'1yr prelim + 3yr derm',path:'Lifestyle specialty, very competitive match'},
+    {name:'Radiology',icon:'\ud83d\udcf7',fit:0,comp:'$400-550K',hours:'40-55h/wk',train:'1yr prelim + 4yr rads',path:'Cognitive, image-based, minimal patient contact'},
+    {name:'Emergency Medicine',icon:'\ud83d\ude91',fit:0,comp:'$350-450K',hours:'36-42h/wk shift',train:'3-4yr EM',path:'Shift-based, high acuity, no follow-up'},
+    {name:'Orthopedic Surgery',icon:'\ud83e\uddb4',fit:0,comp:'$500-800K',hours:'55-70h/wk',train:'5yr ortho',path:'Heavily procedural, sports/trauma'},
+    {name:'Psychiatry',icon:'\ud83e\udde0',fit:0,comp:'$250-350K',hours:'40-50h/wk',train:'4yr psych',path:'Cognitive, long-term relationships, growing demand'},
+    {name:'Hospitalist Medicine',icon:'\ud83c\udfe5',fit:0,comp:'$280-380K',hours:'7-on/7-off',train:'IM 3yr',path:'Flexible scheduling, no clinic overhead'},
+    {name:'Pulm/Critical Care',icon:'\ud83c\udf2c\ufe0f',fit:0,comp:'$350-500K',hours:'50-60h/wk',train:'IM 3yr + PCCM 3yr',path:'ICU-based, procedures + cognitive'}
+  ];
+
+  // Scoring logic
+  specs.forEach(function(s){
+    // Patient interaction
+    if(q1==='long'&&(s.name.includes('Cardiology')||s.name.includes('Psychiatry')))s.fit+=20;
+    if(q1==='episode'&&(s.name.includes('Gastro')||s.name.includes('Hospitalist')||s.name.includes('Pulm')))s.fit+=20;
+    if(q1==='acute'&&(s.name.includes('Emergency')||s.name.includes('Surgery')||s.name.includes('Interventional')))s.fit+=20;
+    if(q1==='minimal'&&(s.name.includes('Radiology')||s.name.includes('Pathology')))s.fit+=20;
+    // Procedural
+    if(q2==='heavy'&&(s.name.includes('Interventional')||s.name.includes('Surgery')))s.fit+=25;
+    if(q2==='mix'&&(s.name.includes('General Cardiology')||s.name.includes('Gastro')||s.name.includes('Pulm')))s.fit+=25;
+    if(q2==='cognitive'&&(s.name.includes('Psychiatry')||s.name.includes('Hospitalist')))s.fit+=25;
+    if(q2==='none'&&(s.name.includes('Radiology')||s.name.includes('Dermatology')||s.name.includes('Psychiatry')))s.fit+=25;
+    // Lifestyle
+    if(q3==='lifestyle'&&(s.name.includes('Dermatology')||s.name.includes('Psychiatry')||s.name.includes('Emergency')||s.name.includes('Radiology')))s.fit+=20;
+    if(q3==='balanced'&&(s.name.includes('Gastro')||s.name.includes('General Cardiology')||s.name.includes('Hospitalist')))s.fit+=20;
+    if(q3==='income'&&(s.name.includes('Interventional')||s.name.includes('Surgery')||s.name.includes('Gastro')))s.fit+=20;
+    if(q3==='mission'&&(s.name.includes('Psychiatry')||s.name.includes('Emergency')||s.name.includes('Pulm')))s.fit+=20;
+    // Intellectual style
+    if(q4==='complex'&&(s.name.includes('Cardiology')||s.name.includes('Pulm')))s.fit+=15;
+    if(q4==='systems'&&(s.name.includes('Hospitalist')||s.name.includes('Emergency')))s.fit+=15;
+    if(q4==='technical'&&(s.name.includes('Interventional')||s.name.includes('Surgery')||s.name.includes('Radiology')))s.fit+=15;
+    if(q4==='breadth'&&(s.name.includes('Emergency')||s.name.includes('Hospitalist')))s.fit+=15;
+    // Practice setting
+    if(q5==='academic'&&(s.name.includes('Cardiology')||s.name.includes('Pulm')||s.name.includes('Surgery')))s.fit+=10;
+    if(q5==='private'&&(s.name.includes('Dermatology')||s.name.includes('Gastro')||s.name.includes('Orthopedic')))s.fit+=10;
+    if(q5==='community'&&(s.name.includes('Hospitalist')||s.name.includes('Emergency')))s.fit+=10;
+    if(q5==='flexible')s.fit+=5;
+    // Uncertainty tolerance
+    if(q6==='high'&&(s.name.includes('Emergency')||s.name.includes('Surgery')||s.name.includes('Interventional')||s.name.includes('Pulm')))s.fit+=10;
+    if(q6==='moderate'&&(s.name.includes('Cardiology')||s.name.includes('Gastro')||s.name.includes('Hospitalist')))s.fit+=10;
+    if(q6==='low'&&(s.name.includes('Dermatology')||s.name.includes('Radiology')||s.name.includes('Psychiatry')))s.fit+=10;
+  });
+
+  // Sort and show top 3
+  specs.sort(function(a,b){return b.fit-a.fit});
+  var top=specs.slice(0,3);
+  var maxFit=top[0].fit||1;
+  var h='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:14px">\u2728 Your Top Specialty Matches</div>';
+  top.forEach(function(s,i){
+    var pct=Math.round((s.fit/maxFit)*100);
+    var border=i===0?'rgba(200,168,124,.3)':'var(--border)';
+    h+='<div style="padding:16px;background:var(--bg2);border:1px solid '+border+';border-radius:10px;margin-bottom:10px'+(i===0?';box-shadow:0 0 20px rgba(200,168,124,.06)':'')+'">';
+    h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">';
+    h+='<span style="font-size:14px;font-weight:600;color:var(--text)">'+s.icon+' '+s.name+'</span>';
+    if(i===0)h+='<span style="font-size:9px;padding:3px 8px;border-radius:100px;background:var(--accent-dim);color:var(--accent);font-weight:600">#1 FIT</span>';
+    h+='</div>';
+    h+='<div style="height:4px;background:var(--bg3);border-radius:2px;margin-bottom:10px"><div style="height:100%;width:'+pct+'%;background:linear-gradient(90deg,var(--accent),var(--green));border-radius:2px"></div></div>';
+    h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:11px;color:var(--text2)">';
+    h+='<div>\ud83d\udcb0 <strong>Comp:</strong> '+s.comp+'</div>';
+    h+='<div>\u23f0 <strong>Hours:</strong> '+s.hours+'</div>';
+    h+='<div>\ud83c\udf93 <strong>Training:</strong> '+s.train+'</div>';
+    h+='</div>';
+    h+='<p style="font-size:11px;color:var(--text3);margin-top:8px;line-height:1.5">'+s.path+'</p>';
+    h+='</div>';
+  });
+  h+='<p style="font-size:10px;color:var(--text3);font-style:italic;margin-top:12px">This analysis is directional guidance based on your preferences. Shadow, rotate, and talk to physicians in each field before committing.</p>';
+  document.getElementById('sfa-results').innerHTML=h;
+}
+
+// ===== MATCH COMPETITIVENESS CALCULATOR (v14) =====
+function mccUpdate(){
+  var spec=document.getElementById('mcc-spec').value;
+  var step2=parseInt(document.getElementById('mcc-step2').value)||0;
+  var pubs=parseInt(document.getElementById('mcc-pubs').value)||0;
+  var school=document.getElementById('mcc-school').value;
+  var programs=parseInt(document.getElementById('mcc-programs').value)||0;
+  var aways=parseInt(document.getElementById('mcc-aways').value)||0;
+  if(!spec||!step2||!school)return;
+
+  // Specialty competitiveness data (approximate match rates and thresholds)
+  var specData={
+    im:{name:'Internal Medicine',matchRate:94,avgStep:235,compLevel:'low'},
+    fm:{name:'Family Medicine',matchRate:93,avgStep:227,compLevel:'low'},
+    peds:{name:'Pediatrics',matchRate:88,avgStep:233,compLevel:'low'},
+    em:{name:'Emergency Medicine',matchRate:82,avgStep:240,compLevel:'moderate'},
+    psych:{name:'Psychiatry',matchRate:87,avgStep:233,compLevel:'moderate'},
+    neuro:{name:'Neurology',matchRate:90,avgStep:237,compLevel:'moderate'},
+    rads:{name:'Radiology',matchRate:85,avgStep:248,compLevel:'moderate'},
+    anes:{name:'Anesthesiology',matchRate:87,avgStep:242,compLevel:'moderate'},
+    path:{name:'Pathology',matchRate:85,avgStep:240,compLevel:'low'},
+    gen_surg:{name:'General Surgery',matchRate:83,avgStep:245,compLevel:'moderate'},
+    ortho:{name:'Orthopedic Surgery',matchRate:75,avgStep:252,compLevel:'high'},
+    uro:{name:'Urology',matchRate:78,avgStep:250,compLevel:'high'},
+    ent:{name:'ENT',matchRate:76,avgStep:252,compLevel:'high'},
+    ophtho:{name:'Ophthalmology',matchRate:72,avgStep:252,compLevel:'very_high'},
+    derm:{name:'Dermatology',matchRate:68,avgStep:255,compLevel:'very_high'},
+    plastics:{name:'Plastic Surgery',matchRate:70,avgStep:254,compLevel:'very_high'},
+    nsurg:{name:'Neurosurgery',matchRate:72,avgStep:250,compLevel:'very_high'},
+    ir:{name:'Interventional Radiology',matchRate:80,avgStep:250,compLevel:'high'}
+  };
+
+  var sd=specData[spec];
+  if(!sd)return;
+
+  // Calculate score
+  var score=50;
+  // Step 2 scoring
+  var stepDiff=step2-sd.avgStep;
+  if(stepDiff>=20)score+=25;
+  else if(stepDiff>=10)score+=20;
+  else if(stepDiff>=0)score+=12;
+  else if(stepDiff>=-10)score+=5;
+  else score-=10;
+
+  // Research
+  score+=pubs*7;
+
+  // School tier
+  if(school==='top20')score+=15;
+  else if(school==='top50')score+=10;
+  else if(school==='mid')score+=5;
+  else if(school==='do')score-=5;
+  else if(school==='img')score-=10;
+
+  // Programs applied
+  if(programs>=30)score+=5;
+  else if(programs>=20)score+=3;
+  else if(programs<10)score-=5;
+
+  // Aways
+  score+=aways*4;
+
+  score=Math.max(10,Math.min(98,score));
+
+  var color=score>=75?'var(--green)':score>=50?'var(--accent)':'var(--red)';
+  var label=score>=80?'Strong Candidate':score>=65?'Competitive':score>=50?'Average':score>=35?'Below Average':'At Risk';
+
+  var h='<div style="text-align:center;padding:24px;background:var(--bg2);border:1px solid '+color+';border-radius:14px;margin-bottom:16px">';
+  h+='<div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">'+sd.name+' Match Likelihood</div>';
+  h+='<div style="font-size:48px;font-weight:700;color:'+color+';font-family:var(--font-serif)">'+score+'<span style="font-size:18px">%</span></div>';
+  h+='<div style="font-size:13px;font-weight:600;color:'+color+'">'+label+'</div>';
+  h+='</div>';
+
+  // Breakdown
+  h+='<div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Factor Analysis</div>';
+
+  var stepColor=stepDiff>=10?'var(--green)':stepDiff>=0?'var(--accent)':'var(--red)';
+  h+='<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:12px"><span>Step 2 CK ('+step2+' vs avg '+sd.avgStep+')</span><span style="color:'+stepColor+';font-weight:600">'+(stepDiff>=0?'+':'')+stepDiff+'</span></div>';
+
+  var pubLabel=['None','1-2 abstracts','3-5 pubs','6-10 pubs','10+ pubs'];
+  var pubColor=pubs>=2?'var(--green)':pubs>=1?'var(--accent)':'var(--red)';
+  h+='<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:12px"><span>Research ('+pubLabel[pubs]+')</span><span style="color:'+pubColor+';font-weight:600">'+(pubs>=2?'Strong':pubs>=1?'Adequate':'Weak')+'</span></div>';
+
+  var schoolLabel={top20:'Top 20',top50:'Top 50',mid:'Mid-tier MD',do:'DO',img:'IMG'};
+  h+='<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:12px"><span>School ('+(schoolLabel[school])+')</span><span style="color:var(--text2)">'+(school==='top20'||school==='top50'?'Advantage':'Neutral to disadvantage')+'</span></div>';
+
+  // Strategic recommendations
+  h+='<div style="margin-top:16px;padding:14px;background:var(--bg2);border-radius:10px;border-left:3px solid var(--accent)">';
+  h+='<div style="font-size:11px;font-weight:600;color:var(--accent);margin-bottom:8px">\ud83c\udfaf Strategic Recommendations</div>';
+  h+='<ul style="font-size:12px;color:var(--text2);line-height:1.8;padding-left:16px;margin:0">';
+  if(stepDiff<0)h+='<li>Your Step 2 CK is below the specialty average \u2014 consider retaking if >10 points below</li>';
+  if(pubs<2)h+='<li>Increase research output \u2014 aim for 2-3 first-author publications for competitive specialties</li>';
+  if(aways<2)h+='<li>Plan 1-2 away rotations at target programs \u2014 this significantly improves rank list position</li>';
+  if(programs<15)h+='<li>Apply broadly \u2014 15-25 programs minimum for competitive specialties</li>';
+  if(school==='img')h+='<li>As an IMG, strong Step scores and research are critical differentiators</li>';
+  if(score>=75)h+='<li>Strong position \u2014 focus on interview performance and rank list strategy</li>';
+  h+='</ul></div>';
+
+  h+='<p style="font-size:10px;color:var(--text3);font-style:italic;margin-top:12px">Based on NRMP Charting Outcomes data. This is directional guidance, not a guarantee. Individual circumstances vary significantly.</p>';
+  document.getElementById('mcc-results').innerHTML=h;
+}
+
+// ===== CAREER STRATEGY BUILDER (v15) =====
+function csbUpdate(){}
+function csbGenerate(){
+  var now=document.getElementById('csb-now').value;
+  var target=document.getElementById('csb-target').value;
+  var research=parseInt(document.getElementById('csb-research').value)||0;
+  var urgency=document.getElementById('csb-urgency').value;
+  if(!now||!target||!urgency){notify('Complete all fields to build your roadmap',1);return}
+
+  var targetNames={cards:'Cardiology',ic:'Interventional Cardiology',gi:'Gastroenterology',pulm:'Pulmonary/Critical Care',heme:'Hematology/Oncology',endo:'Endocrinology',rheum:'Rheumatology',neph:'Nephrology',id:'Infectious Disease',ortho:'Orthopedic Surgery',nsurg:'Neurosurgery',derm:'Dermatology',ophtho:'Ophthalmology',rads:'Radiology',gen_surg:'General Surgery',em:'Emergency Medicine',academic:'Academic Medicine',private:'Private Practice',admin:'Healthcare Administration'};
+
+  var tName=targetNames[target]||target;
+
+  // Generate timeline phases
+  var phases=[];
+  if(now==='ms1'||now==='ms2'){
+    phases.push({time:'Now \u2013 6 months',title:'Build Your Foundation',items:['Excel in pre-clinical coursework \u2014 build habits that carry through','Join 1-2 interest groups related to '+tName,'Find a research mentor in the field','Start reading about '+tName+' career paths']});
+    phases.push({time:'6 \u2013 12 months',title:'Start Building Evidence',items:['Begin a research project (case report or QI project)','Shadow physicians in '+tName+' \u2014 2-3 different settings','Take leadership in a relevant student organization','Prepare for Step 1 with discipline']});
+    phases.push({time:'12 \u2013 24 months',title:'Strengthen Your Application',items:['Submit first abstract to a national conference','Get involved in clinical experiences related to '+tName,'Build relationships with 2-3 potential letter writers','Start personal statement brainstorming']});
+  }else if(now==='ms3'){
+    phases.push({time:'Now \u2013 3 months',title:'Clinical Excellence',items:['Honor key clinical rotations \u2014 especially relevant to '+tName,'Begin or continue research project with publication timeline','Identify and cultivate 3 letter writers','Prepare for Step 2 CK']});
+    phases.push({time:'3 \u2013 6 months',title:'Application Assembly',items:['Draft personal statement (aim for 5+ revisions)','Build tiered program list (reach/target/safety)','Submit abstracts to relevant society meetings','Schedule away rotations at 1-2 target programs']});
+    phases.push({time:'6 \u2013 12 months',title:'Application & Interview Season',items:['Submit ERAS application early','Prepare for interviews with mock sessions','Send thank-you/interest emails strategically','Finalize rank list with honest self-assessment']});
+  }else if(now==='intern'||now==='resident'){
+    phases.push({time:'Now \u2013 3 months',title:'Position Yourself',items:['Declare your interest in '+tName+' to your PD','Start or accelerate research in '+tName,'Identify specialty-specific letter writers','Network at department events and conferences']});
+    if(urgency==='1'){
+      phases.push({time:'3 \u2013 6 months',title:'Execute Rapidly',items:['Submit at least 1 abstract to ACC, AHA, DDW, or relevant society','Finalize all letters of recommendation','Complete personal statement (5+ drafts)','Schedule away rotations']});
+      phases.push({time:'6 \u2013 9 months',title:'Application Window',items:['Submit ERAS on day 1','Interview strategically \u2014 15-20+ programs','Send focused interest emails after interviews','Build your rank list thoughtfully']});
+    }else{
+      phases.push({time:'3 \u2013 12 months',title:'Build Deliberately',items:['Aim for 2-3 first-author publications in '+tName,'Present at 1-2 national conferences','Complete 1-2 away rotations at target programs','Mentor-match with someone who matched where you want to go']});
+      phases.push({time:'12 \u2013 18 months',title:'Application Year',items:['Submit a competitive application with strong research portfolio','Interview broadly but with intention','Personal statement should tell a clear narrative','Have 3-4 strong, specialty-specific letters']});
+    }
+  }else if(now==='fellow'){
+    phases.push({time:'Now \u2013 6 months',title:'Define Your Attending Path',items:['Clarify: academic vs private vs employed','Research compensation benchmarks (MGMA) for '+tName,'Network at conferences for job opportunities','Start conversations with potential employers']});
+    phases.push({time:'6 \u2013 12 months',title:'Contract & Position Search',items:['Use the Contract Intelligence Tool on any offers','Compare offers systematically','Negotiate with MGMA data as leverage','Plan your post-fellowship financial strategy']});
+  }else{
+    phases.push({time:'Now \u2013 3 months',title:'Strategic Assessment',items:['Evaluate your current position honestly','Benchmark your compensation against MGMA data','Identify what needs to change \u2014 role, setting, or specialty','Talk to 2-3 physicians who\u2019ve made similar moves']});
+    phases.push({time:'3 \u2013 6 months',title:'Build Your Plan',items:['Calculate the financial impact of any transition','Test the new direction \u2014 moonlight, consult, or shadow','Build a 12-month financial bridge if pivoting','Strengthen your network in the target area']});
+    phases.push({time:'6 \u2013 12 months',title:'Execute',items:['Make a decision with a clear timeline','Negotiate your next position with data','Set up your financial foundation for the transition','Submit a Strategic Audit if you need structured guidance']});
+  }
+
+  // Research gap warning
+  var researchGap='';
+  if(research<2&&(target==='cards'||target==='ic'||target==='gi'||target==='derm'||target==='ortho'||target==='nsurg'||target==='ophtho')){
+    researchGap='<div style="padding:12px;background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.15);border-radius:8px;margin-bottom:16px;font-size:12px;color:var(--red)"><strong>\u26a0\ufe0f Research Gap:</strong> '+tName+' is research-heavy. With your current output, prioritize getting at least 2-3 publications before applying.</div>';
+  }
+
+  var h='<div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:6px">\ud83d\udccd Roadmap to '+tName+'</div>';
+  h+='<p style="font-size:11px;color:var(--text3);margin-bottom:16px">From '+now.toUpperCase()+' \u2192 '+tName+' \u2022 '+(urgency==='1'?'Applying this cycle':'Timeline: '+urgency+' year(s)')+'</p>';
+  h+=researchGap;
+
+  phases.forEach(function(phase,i){
+    h+='<div style="position:relative;padding-left:28px;padding-bottom:'+(i<phases.length-1?'20px':'0')+'">';
+    if(i<phases.length-1)h+='<div style="position:absolute;left:8px;top:20px;bottom:0;width:2px;background:var(--border)"></div>';
+    h+='<div style="position:absolute;left:0;top:2px;width:18px;height:18px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:10px;color:#0a0a0f;font-weight:700">'+(i+1)+'</div>';
+    h+='<div style="font-size:10px;color:var(--accent);font-weight:600;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">'+phase.time+'</div>';
+    h+='<div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:8px">'+phase.title+'</div>';
+    h+='<ul style="font-size:12px;color:var(--text2);line-height:1.8;padding-left:16px;margin:0">';
+    phase.items.forEach(function(item){h+='<li>'+item+'</li>'});
+    h+='</ul></div>';
+  });
+
+  h+='<div style="margin-top:20px;padding:14px;background:var(--accent-dim);border:1px solid rgba(200,168,124,.15);border-radius:10px;text-align:center">';
+  h+='<div style="font-size:12px;color:var(--accent);font-weight:600;margin-bottom:4px">Want expert review of your roadmap?</div>';
+  h+='<div style="font-size:11px;color:var(--text3)">Submit a Strategic Audit for Dr. Faroqui\u2019s personalized assessment.</div></div>';
+
+  document.getElementById('csb-results').innerHTML=h;
+}
+
 // ===== TOOLKIT QUIZ =====
 var quizAnswers={stage:null,goal:null,urgency:null};
 
 // Recommendation engine: maps (stage, goal) → ordered tool IDs with rationale
 var QUIZ_RECS={
   // STUDENT
-  'student_fellowship':  [{id:'v1',why:'See exactly where your fellowship application stands'},{id:'v7',why:'Know which research activities move the needle most'},{id:'v6',why:'Month-by-month roadmap to match day'},{id:'v11',why:'See the financial impact of your specialty choice'}],
+  'student_fellowship':  [{id:'v14',why:'See your real match probability based on scores and research'},{id:'v15',why:'Build a step-by-step roadmap to your target specialty'},{id:'v1',why:'Score your application against successful profiles'},{id:'v7',why:'Know which research activities move the needle most'}],
   'student_contract':    [{id:'v3',why:'Learn what to look for before you ever see an offer'},{id:'v2',why:'Know the red flags before you need to negotiate'},{id:'v5',why:'Plan your first 3 years of attending income'},{id:'v8',why:'PSLF vs refinance — make this decision early'}],
   'student_finance':     [{id:'v11',why:'See how specialty choice impacts lifetime wealth'},{id:'v8',why:'The 5 financial decisions worth millions'},{id:'v5',why:'Map your post-training financial trajectory'},{id:'v4',why:'Understand how RVU compensation actually works'}],
-  'student_direction':   [{id:'v11',why:'Compare career paths side by side'},{id:'v10',why:'Structured framework for specialty decisions'},{id:'v1',why:'Assess your competitiveness for target specialties'},{id:'v7',why:'Build research that opens doors'}],
+  'student_direction':   [{id:'v13',why:'Discover which specialties fit your personality and goals'},{id:'v14',why:'Check your competitiveness for each target specialty'},{id:'v15',why:'Build a roadmap once you choose'},{id:'v11',why:'Compare financial trajectories side by side'}],
 
   // RESIDENT
-  'resident_fellowship': [{id:'v1',why:'Score your application against successful profiles'},{id:'v7',why:'Maximize research ROI with limited time'},{id:'v6',why:'Your timeline from now to match day'},{id:'v9',why:'Get a physician-reviewed strategic assessment'}],
+  'resident_fellowship': [{id:'v14',why:'See your real match probability with current stats'},{id:'v15',why:'Build your personalized fellowship roadmap'},{id:'v1',why:'Score your application against successful profiles'},{id:'v7',why:'Maximize research ROI with limited time'}],
   'resident_contract':   [{id:'v2',why:'Identify red flags in any contract'},{id:'v3',why:'Compare offers systematically'},{id:'v4',why:'Model your real compensation by RVU volume'},{id:'v12',why:'Full contract analysis with risk scoring'}],
   'resident_finance':    [{id:'v5',why:'Your first 3 years determine the next 20'},{id:'v8',why:'PSLF, disability, tax strategy — get these right'},{id:'v11',why:'30-year wealth projection by career path'},{id:'v4',why:'Model what you\'ll actually earn'}],
-  'resident_direction':  [{id:'v10',why:'Should you pivot? Structured decision engine'},{id:'v11',why:'Compare financial trajectories across paths'},{id:'v1',why:'How competitive are you for the switch?'},{id:'v9',why:'Submit your situation for physician review'}],
+  'resident_direction':  [{id:'v13',why:'Find which specialties actually fit you'},{id:'v10',why:'Should you pivot? Structured decision engine'},{id:'v15',why:'Build a roadmap to the new target'},{id:'v11',why:'Compare financial trajectories across paths'}],
 
   // FELLOW
   'fellow_fellowship':   [{id:'v1',why:'Benchmark yourself for advanced fellowship'},{id:'v7',why:'Optimize your research portfolio for the next step'},{id:'v6',why:'Position for advanced subspecialty programs'},{id:'v9',why:'Get a strategic assessment from Dr. Faroqui'}],
@@ -1942,7 +2198,23 @@ function ftCalc(){
 
   // Insights
   var insEl=document.getElementById('ft-insights');
-  if(projections.length>=2){
+  if(projections.length>=1){
+    // Calculate debt payoff timeline
+    var debtTimelines='';
+    projections.forEach(function(proj,i){
+      var sc=scenarios[i];
+      var payoffYear=null;
+      for(var y=0;y<proj.length;y++){
+        if(proj[y].netWorth>=0){payoffYear=y;break}
+      }
+      var labels2=['A','B','C'];
+      var debtFreeAge=payoffYear?(payoffYear+sc.stageOffset+25):null;
+      debtTimelines+='<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:12px"><span>Scenario '+labels2[i]+' ('+sc.label+')</span><span style="font-weight:600;color:'+(payoffYear&&payoffYear<=10?'var(--green)':'var(--accent)')+'">Debt-free by year '+(payoffYear||'30+')+(debtFreeAge?' (age ~'+debtFreeAge+')':'')+'</span></div>';
+    });
+
+    var debtSection='<div style="margin-top:16px;padding:14px;background:rgba(200,168,124,.04);border:1px solid rgba(200,168,124,.12);border-radius:8px"><div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">\ud83d\udcb3 Debt Payoff Timeline</div>'+debtTimelines+'<p style="font-size:10px;color:var(--text3);margin-top:8px">Assumes $250K starting debt. Higher savings rates and higher income specialties accelerate payoff dramatically.</p></div>';
+
+    if(projections.length>=2){
     var sorted=projections.map(function(p,i){return{idx:i,nw:p[p.length-1].netWorth,earn:p[p.length-1].cumEarnings}}).sort(function(a,b){return b.nw-a.nw});
     var diff=sorted[0].nw-sorted[sorted.length-1].nw;
     var earnDiff=sorted[0].earn-sorted[sorted.length-1].earn;
@@ -1954,9 +2226,12 @@ function ftCalc(){
       (earnDiff>2000000?'This is a significant career-defining gap.':'The gap narrows when you factor in training length and opportunity cost.')+'</div>'+
       '<div style="margin-bottom:10px">3\ufe0f\u20e3 Increasing savings rate from 10% \u2192 20% roughly doubles retirement assets. The savings rate matters almost as much as the specialty choice.</div>'+
       (scenarios.some(function(s){return s.pracType==='private'})?'<div>4\ufe0f\u20e3 Private practice offers the highest income ceiling but comes with business risk, overhead, and partner dynamics. Factor in your risk tolerance.</div>':'')+
-      '</div>';
+      '</div>'+debtSection;
   }else{
-    insEl.innerHTML='<p style="font-size:12px;color:var(--text3);text-align:center;padding:12px">Enable Scenario B to see comparative insights.</p>';
+    insEl.innerHTML=debtSection;
+  }
+  }else{
+    insEl.innerHTML='<p style="font-size:12px;color:var(--text3);text-align:center;padding:12px">Configure a scenario to see insights.</p>';
   }
 }
 

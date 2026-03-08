@@ -1773,7 +1773,14 @@ function quizShowResults(){
   else if(quizAnswers.urgency==='later') urgMsg='<div style="padding:10px 14px;background:rgba(139,173,196,.08);border:1px solid rgba(139,173,196,.15);border-radius:8px;margin-bottom:14px;font-size:11px;color:var(--blue);display:flex;align-items:center;gap:8px"><span style="font-size:14px">🗓️</span> <span>You have time to plan strategically. Use these tools to build a strong foundation.</span></div>';
   else urgMsg='<div style="padding:10px 14px;background:rgba(139,173,196,.08);border:1px solid rgba(139,173,196,.15);border-radius:8px;margin-bottom:14px;font-size:11px;color:var(--blue);display:flex;align-items:center;gap:8px"><span style="font-size:14px">🗺️</span> <span>Great time to explore. Browse these tools at your own pace — no pressure.</span></div>';
 
-  var html=urgMsg;
+  // Stage labels for personalized intro
+  var stageLabels={student:'medical student',resident:'resident',fellow:'fellow',attending:'early attending',pivot:'physician exploring a career pivot'};
+  var goalLabels={specialty:'choosing a specialty',match:'matching into residency',fellowship:'positioning for fellowship',contract:'negotiating a job offer',finance:'building income and financial leverage',direction:'considering a career change'};
+  var stageLabel=stageLabels[quizAnswers.stage]||'physician';
+  var goalLabel=goalLabels[quizAnswers.goal]||'your next move';
+
+  var html='<div style="margin-bottom:16px"><p style="font-size:13px;color:var(--text);line-height:1.6;margin:0 0 4px">Based on your answers, these tools were selected specifically for <strong style="color:var(--accent)">a '+stageLabel+' focused on '+goalLabel+'</strong>.</p><p style="font-size:11px;color:var(--text3);line-height:1.5;margin:0">We recommend working through them in this order.</p></div>';
+  html+=urgMsg;
   recs.forEach(function(rec,i){
     var item=VAULT_ITEMS.find(function(v){return v.id===rec.id});
     if(!item) return;
@@ -1796,6 +1803,12 @@ function quizShowResults(){
     if(i===0) html+='<div style="position:absolute;top:6px;right:10px;font-size:8px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:.8px">#1 Pick</div>';
     html+='</div>';
   });
+
+  // Explore all tools CTA
+  html+='<div style="margin-top:16px;padding:16px;background:linear-gradient(160deg,rgba(200,168,124,.04),rgba(200,168,124,.01));border:1px solid rgba(200,168,124,.12);border-radius:10px;text-align:center">';
+  html+='<p style="font-size:12px;color:var(--text2);margin:0 0 8px;line-height:1.5">These are your top picks — but every physician\'s path is different. All '+VAULT_ITEMS.length+' tools in the Framework Library are available to explore.</p>';
+  html+='<button onclick="quizReset();document.getElementById(\'vault-categories\').scrollIntoView({behavior:\'smooth\',block:\'start\'})" style="font-size:11px;font-weight:600;color:var(--accent);background:none;border:1px solid rgba(200,168,124,.25);border-radius:8px;padding:8px 20px;cursor:pointer;transition:all .2s">Browse All Tools ↓</button>';
+  html+='</div>';
 
   document.getElementById('vault-quiz-recs').innerHTML=html;
   document.getElementById('vault-quiz-results').classList.remove('hidden');

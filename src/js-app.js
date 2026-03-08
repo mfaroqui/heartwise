@@ -4672,89 +4672,126 @@ function misGrade(){
 
     var words=ans.split(/\s+/).length;
     var sentences=ans.split(/[.!?]+/).filter(function(s){return s.trim().length>0}).length;
-    var hasSpecific=(/\b(patient|case|example|experience|specifically|instance|time when|I remember|one time)\b/i).test(ans);
-    var hasData=(/\b(\d+%|\$[\d,]+|\d+ (year|month|patient|case|publication)|MGMA|RVU|wRVU|percentile|score)\b/i).test(ans);
-    var hasReflection=(/\b(learned|realized|changed|grew|taught me|made me|shaped|influenced|understand now)\b/i).test(ans);
-    var hasStructure=(/\b(first|second|additionally|furthermore|finally|in summary|three (thing|reason|area)|my approach)\b/i).test(ans);
-    var hasFiller=(/\b(I think maybe|I guess|sort of|kind of|you know|um|like,|basically|honestly I'm not sure)\b/i).test(ans);
-    var isGeneric=(/\b(I love helping people|make a difference|passion for medicine|always wanted to be a doctor|great opportunity)\b/i).test(ans);
-    var isNegative=(/\b(hate|terrible|worst|stupid|awful|can't stand|never liked)\b/i).test(ans);
-    var hasAccountability=(/\b(my (fault|mistake|responsibility)|I should have|I could have done better|I own|I dropped)\b/i).test(ans);
+    var lower=ans.toLowerCase();
+
+    // ===== DETECTION FLAGS =====
+    // Specificity: real stories, names, cases, concrete details
+    var hasSpecific=(/\b(patient|case|example|experience|specifically|instance|time when|I remember|one time|during my|rotation at|while I was|in my (PGY|third|second|first|intern))\b/i).test(ans);
+    var hasConcreteDetail=(/\b(Dr\.|hospital|clinic|ICU|ED|floor|cath lab|OR|[A-Z][a-z]+ (Hospital|Medical|University|Center))\b/).test(ans);
+    var hasData=(/\b(\d+%|\$[\d,]+|\d+ (year|month|patient|case|publication|hour|week)|MGMA|RVU|wRVU|percentile|score|Step [12]|USMLE)\b/i).test(ans);
+    var hasOutcome=(/\b(result|outcome|improved|resolved|discharged|survived|recovered|successful|failed|complication)\b/i).test(ans);
+
+    // Reflection & self-awareness
+    var hasReflection=(/\b(learned|realized|changed|grew|taught me|made me|shaped|influenced|understand now|looking back|in hindsight|if I could do it again|what I took away)\b/i).test(ans);
+    var hasAccountability=(/\b(my (fault|mistake|responsibility|weakness|limitation)|I should have|I could have done better|I own|I dropped|I missed|I failed|I struggled)\b/i).test(ans);
+
+    // Structure
+    var hasStructure=(/\b(first|second|third|additionally|furthermore|finally|in summary|to start|my approach|there are (two|three|four)|the (first|main|key) (thing|reason|point))\b/i).test(ans);
+    var hasTransitions=sentences>=3&&(/\b(then|after that|from there|next|subsequently|this led|because of this|as a result)\b/i).test(ans);
+
+    // Red flag patterns — much broader detection
+    var hasFiller=(/\b(I think maybe|I guess|sort of|kind of|you know|um+|uh+|like,|basically|honestly I'm not sure|I don't really know|I suppose|whatever|stuff like that|things like that|and stuff|or something)\b/i).test(ans);
+    var isGeneric=(/\b(I love helping people|make a difference|passion for medicine|always wanted to be a doctor|great opportunity|I've always been passionate|I really enjoy|I find it rewarding|it's very fulfilling|I like the idea of)\b/i).test(ans);
+    var isNegative=(/\b(hate|terrible|worst|stupid|awful|can't stand|never liked|garbage|sucks|ridiculous|waste of time|pointless|boring)\b/i).test(ans);
+    var isVague=!hasSpecific&&!hasData&&!hasConcreteDetail&&words>=10; // has words but says nothing concrete
+    var isLazy=words<15&&sentences<=2; // barely tried
+    var isRambling=words>300&&sentences>8&&!hasStructure;
+    var isRepetitive=(function(){var w=lower.split(/\s+/);var seen={};var repeats=0;for(var k=0;k<w.length;k++){var ww=w[k].replace(/[^a-z]/g,'');if(ww.length>4){if(seen[ww])repeats++;seen[ww]=true}}return repeats>words*0.15})();
+    var hasNoSubstance=words>=15&&!hasSpecific&&!hasData&&!hasReflection&&!hasStructure&&!hasConcreteDetail;
+    var isDismissive=(/\b(I don't know|not sure|no idea|haven't thought about|good question|that's hard|I'll figure it out|we'll see|idk|idc|whatever)\b/i).test(ans);
+    var isOverconfident=(/\b(I'm the best|no one else|I never fail|I always succeed|I'm perfect|nothing scares me|I have no weaknesses|I don't make mistakes|everyone says I'm)\b/i).test(ans);
+    var mentionsMoney=(/\b(salary|money|pay|compensation|income|rich|wealthy|lucrative|six figures|seven figures)\b/i).test(ans);
+    var badmouths=(/\b(my (program|school|hospital|residency|boss|attending|co-resident) (is|was|are|were) (bad|terrible|awful|toxic|incompetent|useless|worst)|I (hate|hated) my|the problem with my)\b/i).test(ans);
 
     var pts=0;
     var maxPts=100;
 
-    // Length scoring (20 pts)
-    if(words>=40&&words<=200){pts+=20;grade.strengths.push('Good length — concise but substantial.')}
-    else if(words>=25&&words<40){pts+=12;grade.concerns.push('A bit short. In a real interview, aim for 60-90 seconds of speaking (roughly 100-180 words).')}
-    else if(words>200&&words<=350){pts+=14;grade.concerns.push('Getting long. Interviewers tune out after 90 seconds. Tighten this up.')}
-    else if(words>350){pts+=6;grade.concerns.push('Way too long. You\'d lose the interviewer. Cut this in half. What\'s the core message?')}
-    else if(words<25){pts+=5;grade.concerns.push('Too brief. This reads like you\'re dodging the question. Expand with a specific example.')}
+    // ===== LENGTH SCORING (15 pts) =====
+    if(words>=60&&words<=200){pts+=15;grade.strengths.push('Good length — concise but substantial.')}
+    else if(words>=40&&words<60){pts+=10;grade.concerns.push('Slightly short. A strong interview answer runs 60-90 seconds (roughly 100-180 words). Expand with a specific example.')}
+    else if(words>=25&&words<40){pts+=6;grade.concerns.push('Too short. This sounds like you\'re dodging the question or haven\'t thought about it. In a real interview, this silence after 15 seconds would be awkward.')}
+    else if(words>200&&words<=300){pts+=12;grade.concerns.push('Getting long. Interviewers tune out after 90 seconds. Tighten this up — what\'s the core message?')}
+    else if(words>300){pts+=5;grade.concerns.push('Way too long. You\'d lose the interviewer halfway through. Cut this in half. The best answers are tight and memorable.')}
+    else if(words<25){pts+=2;grade.concerns.push('Barely an answer. In a real interview, this would signal disinterest or total unpreparedness. You need at least 3-4 solid sentences.')}
 
-    // Specificity (25 pts)
-    if(hasSpecific&&hasData){pts+=25;grade.strengths.push('Great — you used specific examples and data. That\'s what separates good from great answers.')}
-    else if(hasSpecific){pts+=18;grade.strengths.push('Good use of a specific example. Add concrete numbers or outcomes to make it even stronger.')}
-    else if(hasData){pts+=15;grade.strengths.push('Nice use of data points. Now anchor them in a specific story or experience.')}
-    else{pts+=4;grade.concerns.push('Too generic. Every candidate says something similar. Give a specific patient, case, or situation that only YOU experienced.')}
+    // ===== SPECIFICITY (25 pts) =====
+    if(hasSpecific&&hasData&&hasConcreteDetail){pts+=25;grade.strengths.push('Great — specific examples with concrete details and data. This is the kind of answer that sticks with an interviewer.')}
+    else if(hasSpecific&&(hasData||hasConcreteDetail)){pts+=20;grade.strengths.push('Good specificity with real examples. Adding one more concrete detail or number would make this even sharper.')}
+    else if(hasSpecific){pts+=14;grade.strengths.push('You referenced a specific experience — good. Now anchor it with concrete details: where, when, what exactly happened, what was the outcome.')}
+    else if(hasData){pts+=10;grade.concerns.push('You have data but no story. Numbers without context don\'t land. Wrap the data in a specific experience.')}
+    else{pts+=2;grade.concerns.push('Too vague and generic. This answer could come from literally any applicant. An interviewer hears this and immediately forgets you. Give a specific patient, case, or situation that only YOU experienced.')}
 
-    // Reflection / self-awareness (20 pts)
-    if(hasReflection&&hasAccountability){pts+=20;grade.strengths.push('Excellent self-awareness. Showing growth and accountability is exactly what they want to see.')}
-    else if(hasReflection){pts+=15;grade.strengths.push('Good reflection. You show capacity for growth.')}
-    else if(hasAccountability){pts+=14;grade.strengths.push('Points for owning it. That takes guts and interviewers respect it.')}
-    else{pts+=3;grade.concerns.push('No reflection or self-awareness comes through. Add what you learned, how you changed, or what you\'d do differently.')}
+    // ===== REFLECTION / SELF-AWARENESS (20 pts) =====
+    if(hasReflection&&hasAccountability){pts+=20;grade.strengths.push('Excellent self-awareness. Showing growth and accountability is exactly what makes an interviewer lean forward.')}
+    else if(hasReflection&&hasOutcome){pts+=16;grade.strengths.push('Good reflection with outcomes mentioned. You show capacity for growth.')}
+    else if(hasReflection){pts+=12;grade.strengths.push('Some reflection present. Strengthen it by being more specific about exactly what changed in your thinking or practice.')}
+    else if(hasAccountability){pts+=12;grade.strengths.push('Points for owning it. That takes guts and interviewers respect it.')}
+    else{pts+=1;grade.concerns.push('No reflection or self-awareness comes through. Every strong interview answer ends with what you learned, how it changed you, or what you\'d do differently. Without this, you\'re just telling a story with no point.')}
 
-    // Structure (15 pts)
-    if(hasStructure&&sentences>=3){pts+=15;grade.strengths.push('Well-organized answer with clear structure.')}
-    else if(sentences>=3){pts+=10}
-    else{pts+=3;grade.concerns.push('Feels stream-of-consciousness. Structure your answer: situation → action → result → lesson.')}
+    // ===== STRUCTURE & COHERENCE (15 pts) =====
+    if(hasStructure&&hasTransitions&&sentences>=3){pts+=15;grade.strengths.push('Well-organized answer with clear structure and flow.')}
+    else if(hasStructure&&sentences>=3){pts+=12;grade.strengths.push('Decent structure. Your points are organized.')}
+    else if(sentences>=3&&!isRambling){pts+=8}
+    else if(sentences>=2){pts+=4;grade.concerns.push('Needs more structure. Try: situation → what you did → result → what you learned. That framework works for 80% of interview questions.')}
+    else{pts+=1;grade.concerns.push('This reads like one thought fragment, not a structured answer. Interviewers want to see organized thinking — it signals how you\'ll present at conferences, explain plans to patients, and communicate with teams.')}
 
-    // Red flag detection (20 pts penalty zone)
+    // ===== RED FLAG DETECTION (25 pts — this is where bad answers get punished) =====
     var flagsHit=0;
-    if(hasFiller){flagsHit++;grade.redFlags.push('🚩 Filler language detected ("kind of," "I guess," "sort of"). This signals uncertainty. Cut the qualifiers.')}
-    if(isGeneric){flagsHit++;grade.redFlags.push('🚩 Generic phrasing. "I love helping people" — so does every applicant. Be more specific about what draws YOU to this.')}
-    if(isNegative){flagsHit++;grade.redFlags.push('🚩 Negative language about people or institutions. Even if true, it comes across as unprofessional in an interview setting. Reframe.')}
 
-    // Check against the question's specific red flags
-    var qRedFlags=q.red||[];
-    qRedFlags.forEach(function(rf){
-      // Simple keyword matching for common red flags
-      var lower=ans.toLowerCase();
-      if(rf.toLowerCase().includes('salary')&&lower.match(/salary|money|pay|compensation/)){
-        if(q.type!=='career'||(window._misType!=='salary')){
-          flagsHit++;
-          grade.redFlags.push('🚩 '+rf);
-        }
-      }
-      if(rf.toLowerCase().includes('never made a mistake')&&lower.match(/never (made|had) (a )?(mistake|error)/)){
-        flagsHit++;
-        grade.redFlags.push('🚩 '+rf);
-      }
-      if(rf.toLowerCase().includes('no question')&&words<5&&q.type==='fit'){
-        flagsHit++;
-        grade.redFlags.push('🚩 '+rf);
-      }
-    });
+    // Content quality red flags
+    if(isLazy){flagsHit++;grade.redFlags.push('🚩 This barely qualifies as an answer. One or two sentences tells the interviewer you either don\'t care or you\'re completely unprepared. Neither is a good look.')}
+    if(isVague&&!isLazy){flagsHit++;grade.redFlags.push('🚩 Vague and unsubstantiated. You made claims without backing them up with anything concrete. Interviewers notice this immediately — it sounds like you\'re making it up on the spot.')}
+    if(hasNoSubstance){flagsHit++;grade.redFlags.push('🚩 No substance. You used a lot of words but didn\'t actually say anything specific, reflective, or structured. This is the interview equivalent of writing a paragraph that says nothing.')}
+    if(isDismissive){flagsHit++;grade.redFlags.push('🚩 Dismissive language detected. Saying "I don\'t know" or "I haven\'t thought about it" in an interview is a dealbreaker. If you don\'t know, pivot: "I\'m still developing my thinking on this, but here\'s where I am..."')}
+    if(isOverconfident){flagsHit++;grade.redFlags.push('🚩 Overconfidence. Claiming you never fail, have no weaknesses, or are the best reads as either delusional or dishonest. Interviewers want self-awareness, not bravado.')}
+    if(isRambling){flagsHit++;grade.redFlags.push('🚩 Rambling without direction. This goes on too long without clear structure. An interviewer would be checking their phone by the second paragraph.')}
+    if(isRepetitive){flagsHit++;grade.redFlags.push('🚩 Repetitive — you\'re saying the same thing multiple ways. This happens when you don\'t have enough substance, so you fill space by rephrasing. Cut the repetition and add new content.')}
 
-    if(flagsHit===0){pts+=20;grade.strengths.push('No red flags detected. Clean answer.')}
-    else if(flagsHit===1){pts+=10}
-    else{pts+=0}
+    // Language red flags
+    if(hasFiller){flagsHit++;grade.redFlags.push('🚩 Filler language detected ("kind of," "I guess," "sort of," "basically"). This signals uncertainty. In an interview, uncertainty reads as incompetence. Cut every qualifier.')}
+    if(isGeneric){flagsHit++;grade.redFlags.push('🚩 Cliché phrasing. "I love helping people" / "I\'ve always been passionate" — every single applicant says this. It\'s meaningless. Replace with the specific moment, case, or experience that actually made this real for you.')}
+    if(isNegative){flagsHit++;grade.redFlags.push('🚩 Negative language about people, institutions, or experiences. Even if justified, negativity in an interview makes YOU look bad, not the thing you\'re criticizing. Reframe: what did you learn from a difficult situation?')}
+    if(badmouths){flagsHit++;grade.redFlags.push('🚩 Badmouthing your program, school, or colleagues. This is an instant disqualifier at most programs. No matter how bad the situation was, the interviewer wonders: "Will they talk about us like this someday?"')}
 
-    grade.score=Math.min(Math.round(pts),100);
+    // Context-specific red flags
+    if(mentionsMoney&&q.type!=='career'&&window._misType!=='salary'){flagsHit++;grade.redFlags.push('🚩 Mentioning money/salary unprompted. Unless you\'re in a salary negotiation, bringing up compensation signals that money is your primary motivator. Save it for the appropriate conversation.')}
 
+    // Quality-based scoring (not just flag counting)
+    if(flagsHit===0&&!isVague&&!isLazy&&!hasNoSubstance){
+      pts+=25;
+      // Only say "clean answer" if the answer actually has substance
+      if(pts>=50){grade.strengths.push('No red flags. Clean, professional answer.')}
+    }else if(flagsHit===1){pts+=12}
+    else if(flagsHit===2){pts+=4}
+    else{pts+=0} // 3+ flags = zero credit
+
+    // ===== CALCULATE FINAL SCORE =====
+    grade.score=Math.max(0,Math.min(Math.round(pts),100));
+
+    // Adjust labels to be more honest at the low end
     if(grade.score>=80){grade.label='Strong';grade.color='var(--green)'}
-    else if(grade.score>=60){grade.label='Solid';grade.color='var(--accent)'}
+    else if(grade.score>=60){grade.label='Decent';grade.color='var(--accent)'}
     else if(grade.score>=40){grade.label='Needs Work';grade.color='#E67E22'}
-    else{grade.label='Weak';grade.color='var(--red)'}
+    else if(grade.score>=20){grade.label='Weak';grade.color='var(--red)'}
+    else{grade.label='Not Ready';grade.color='var(--red)'}
 
-    // Generate targeted advice
+    // ===== GENERATE TARGETED ADVICE =====
     var adviceParts=[];
-    if(!hasSpecific) adviceParts.push('Start with "Let me tell you about a specific time when..." — stories beat abstractions every time.');
-    if(words<40) adviceParts.push('Flesh this out. Practice saying it out loud for 60-90 seconds.');
-    if(words>200) adviceParts.push('Cut 30-40%. Read it out loud — if you\'re going past 90 seconds, you\'re losing them.');
-    if(!hasReflection) adviceParts.push('End with what you learned or how it changed you. That\'s the part they actually remember.');
-    if(hasFiller) adviceParts.push('Remove filler words. Replace "I think" with a statement. "I believe" or "In my experience" are stronger alternatives.');
-    if(isGeneric) adviceParts.push('Replace generic phrases with details only you can provide. What specific moment made you choose this path?');
-    if(adviceParts.length===0) adviceParts.push('This is a solid answer. To go from good to great: practice it out loud 5 times, then record yourself. Watch the recording once. You\'ll immediately see what to tighten.');
+    if(isLazy) adviceParts.push('You need to actually answer the question. Block 5 minutes, think about what you\'d really say, and write a real response. This isn\'t something you can wing.');
+    else if(hasNoSubstance) adviceParts.push('You wrote words but said nothing memorable. Rewrite this starting with: "During my [specific rotation/year/experience] at [specific place], I [specific thing that happened]..."');
+    if(!hasSpecific&&!isLazy) adviceParts.push('Start with "Let me tell you about a specific time when..." — stories beat abstractions every time. Name the place, the patient (anonymized), the situation.');
+    if(words>=25&&words<60&&!isLazy) adviceParts.push('Flesh this out. Practice saying it out loud for 60-90 seconds. You need at least 4-5 sentences of real content.');
+    if(words>250) adviceParts.push('Cut 30-40%. Read it out loud — if you\'re going past 90 seconds, you\'re losing them. What\'s the ONE thing you want them to remember?');
+    if(!hasReflection&&!isLazy) adviceParts.push('End with what you learned or how it changed you. That\'s the line they actually remember 10 interviews later.');
+    if(hasFiller) adviceParts.push('Remove every filler word. Replace "I think" with a statement. "I believe" or "In my experience" are stronger. "I guess" should never leave your mouth in an interview.');
+    if(isGeneric) adviceParts.push('Kill every cliché. Replace "I\'m passionate about helping people" with the exact moment you knew this was your path. What patient? What happened? What did you feel?');
+    if(isDismissive) adviceParts.push('Never say "I don\'t know" in an interview. Instead: "That\'s something I\'m actively thinking about. Here\'s where my thinking is so far..." Then give your best honest attempt.');
+    if(isRepetitive) adviceParts.push('You\'re circling the same point. State it once, clearly, then move to the next idea. If you don\'t have a next idea, your answer needs more preparation.');
+    if(badmouths) adviceParts.push('Rewrite without mentioning anyone negatively. Frame challenges as "I navigated a difficult environment and learned to..." Not "my program was terrible because..."');
+    if(adviceParts.length===0){
+      if(grade.score>=80) adviceParts.push('This is a strong answer. To go from good to great: practice it out loud 5 times, then record yourself. Watch the recording once. You\'ll immediately see what to tighten.');
+      else adviceParts.push('Rewrite this answer from scratch using the STAR method: Situation, Task, Action, Result. Be specific in every section. Then read it out loud — does it sound like something a real person would say?');
+    }
     grade.advice=adviceParts.join(' ');
 
     overallScore+=grade.score;

@@ -65,7 +65,9 @@ function hookCard(d){
   var h='<div style="padding:20px;background:linear-gradient(160deg,#1a1825,rgba(200,168,124,.06));border:1px solid rgba(200,168,124,.2);border-radius:14px">';
   h+='<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px"><span style="font-size:16px">'+d.icon+'</span>';
   h+='<span style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px">'+d.title+'</span></div>';
-  h+='<p style="font-size:11px;color:var(--text3);margin-bottom:14px">'+d.tag+'</p>';
+  h+='<p style="font-size:11px;color:var(--text3);margin-bottom:6px">'+d.tag+'</p>';
+  // Sample inputs badge
+  if(d.inp){h+='<div style="display:inline-block;padding:4px 10px;background:rgba(200,168,124,.08);border:1px solid rgba(200,168,124,.12);border-radius:6px;font-size:9px;color:var(--accent);margin-bottom:12px;letter-spacing:.3px">📊 Sample inputs: '+d.inp+'</div>';}
   h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">';
   d.c.forEach(function(c){
     h+='<div style="padding:14px;background:var(--bg2);border-radius:10px;text-align:center;border:1px solid rgba(200,168,124,.12)">';
@@ -74,14 +76,17 @@ function hookCard(d){
     h+='<div style="font-size:26px;font-weight:700;color:'+c[3]+';font-family:var(--font-serif)">'+c[2]+'</div>';
     h+='<div style="font-size:9px;color:'+c[3]+'">'+c[4]+'</div></div>';
   });
-  h+='</div><div style="text-align:center;font-size:11px;color:var(--text2);font-weight:500">'+d.ins+'</div></div>';
+  h+='</div><div style="text-align:center;font-size:11px;color:var(--text2);font-weight:500">'+d.ins+'</div>';
+  // "Your version" line
+  if(d.yours){h+='<div style="text-align:center;margin-top:10px;padding:8px 12px;background:rgba(139,184,160,.06);border:1px solid rgba(139,184,160,.12);border-radius:8px;font-size:9px;color:var(--text3)">🔑 <span style="color:var(--text2)">Your personalized version uses:</span> '+d.yours+'</div>';}
+  h+='</div>';
   return h;
 }
 
 function hookShowResults(){
   var s=hookA.stage,g=hookA.goal;
   var labels={student:'Medical Students',resident:'Residents',fellow:'Fellows',attending:'Attending Physicians',pivot:'Physicians Exploring a Career Change'};
-  document.getElementById('hook-label').textContent=labels[s]||'you';
+  var el=document.getElementById('hook-label');if(el)el.textContent=labels[s]||'you';
   var G='#6abf4b',A='#c8a87c',W='#e8a838';
   // 3 tool recs per combo [icon,name,desc]
   var T={
@@ -224,9 +229,35 @@ function hookShowResults(){
   });
   document.getElementById('hook-tool-list').innerHTML=html;
 
-  // Render demo cards
-  var dhtml='';
-  dList.forEach(function(d){dhtml+=hookCard(d)});
+  // Personalization callout
+  var goalLabels={specialty:'choosing a specialty',match:'matching into residency',fellowship:'positioning for fellowship',contract:'negotiating a job offer',finance:'financial planning',direction:'career direction'};
+  var stageLabels={student:'a medical student',resident:'a resident',fellow:'a fellow',attending:'an attending physician',pivot:'a physician exploring a career change'};
+  var phtml='<div style="padding:14px 16px;background:rgba(200,168,124,.06);border:1px solid rgba(200,168,124,.15);border-radius:10px;margin-bottom:6px;text-align:center">';
+  phtml+='<div style="font-size:12px;color:var(--text);font-weight:600;margin-bottom:4px">These examples are tailored to your answers</div>';
+  phtml+='<div style="font-size:11px;color:var(--text3);line-height:1.5">Below is what HeartWise output looks like for <strong style="color:var(--accent)">'+(stageLabels[s]||'you')+'</strong> focused on <strong style="color:var(--accent)">'+(goalLabels[g]||'your goals')+'</strong>. When you sign up, each tool asks targeted questions about <em>your</em> actual scores, finances, and goals — generating results unique to you.</div>';
+  phtml+='</div>';
+
+  // Demo section header
+  var dhtml=phtml+'<div style="font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px;text-align:center">✦ Example outputs from your recommended tools</div>';
+
+  // Add inp/yours metadata to demo cards
+  var inputMeta={
+    '🏆':{ inp:'Step 2 CK score, publication count, school tier, target specialty', yours:'your Step scores, research, LORs, school type, leadership, target programs'},
+    '🔮':{ inp:'Specialty, age, debt, savings rate, compensation data', yours:'your specialty, training length, debt, living costs, investment strategy, target retirement'},
+    '🧬':{ inp:'Personality traits, lifestyle preferences, value rankings', yours:'your personality assessment, work-life priorities, clinical interests, practice setting preferences'},
+    '📋':{ inp:'Base salary, RVU rate, call frequency, benefits package', yours:'your specific offer terms, specialty benchmarks, geographic adjustments, contract clauses'},
+    '💰':{ inp:'Loan balance, interest rate, income, employer type', yours:'your exact loan details, repayment plan, employer, tax situation, insurance needs'},
+    '📈':{ inp:'Specialty, RVU rate, panel size, payer mix', yours:'your specialty, contract terms, productivity data, practice setting'},
+    '🎤':{ inp:'Interview type, specialty, training level', yours:'your target specialty, interview format, experience level, prior feedback'},
+    '🔬':{ inp:'Research type, time investment, target specialty', yours:'your available time, current CV, target program, research interests'},
+    '⚖️':{ inp:'Current specialty, target, years in practice, financial data', yours:'your career stage, financial obligations, risk tolerance, timeline, family considerations'}
+  };
+  dList.forEach(function(d){
+    var meta=inputMeta[d.icon]||{};
+    d.inp=meta.inp||'';
+    d.yours=meta.yours||'';
+    dhtml+=hookCard(d);
+  });
   document.getElementById('hook-demos').innerHTML=dhtml;
 
   document.getElementById('hook-results').style.display='';

@@ -234,8 +234,8 @@ v4:`<h3>RVU Compensation Calculator</h3>
 <select id="rvu-spec" onchange="rvuFillBenchmark();rvuUpdate()" style="width:100%">
 <option value="custom">Custom / Other</option>
 <option value="fm">Family Medicine</option>
-<option value="im">Internal Medicine (General)</option>
-<option value="hosp">Hospitalist</option>
+<option value="im">IM — Outpatient / Primary Care</option>
+<option value="hosp">IM — Hospitalist</option>
 <option value="gc">General Cardiology</option>
 <option value="ic">Interventional Cardiology</option>
 <option value="ep">Electrophysiology</option>
@@ -554,7 +554,8 @@ v16:`<h3 class="serif">Mock Interview Simulator</h3>
 <div class="fg"><label style="font-size:11px;color:var(--text3)">Specialty</label>
 <select id="mis-spec" style="width:100%">
 <option value="">Select specialty...</option>
-<option value="im">Internal Medicine</option>
+<option value="im_outpatient">Internal Medicine — Outpatient / Primary Care</option>
+<option value="im_hospitalist">Internal Medicine — Hospitalist</option>
 <option value="fm">Family Medicine</option>
 <option value="cards">Cardiology</option>
 <option value="ic">Interventional Cardiology</option>
@@ -796,7 +797,7 @@ v12:`<div style="text-align:center;padding:28px 20px;margin:-20px -20px 24px;bac
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
 <div><label style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:4px">Specialty</label>
 <select id="ci-spec" onchange="ciCalc()" style="width:100%;padding:8px;font-size:12px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;color:var(--text)">
-<option value="im">Internal Medicine</option><option value="hosp">Hospitalist</option><option value="cards">General Cardiology</option><option value="ic" selected>Interventional Cardiology</option><option value="ep">Electrophysiology</option><option value="ct_surg">CT Surgery</option><option value="gi">GI</option><option value="pulm">Pulm/CC</option><option value="heme_onc">Heme/Onc</option><option value="nephro">Nephrology</option><option value="rheum">Rheumatology</option><option value="endo">Endocrinology</option><option value="id">Infectious Disease</option><option value="gen_surg">General Surgery</option><option value="ortho">Orthopedic Surgery</option><option value="uro">Urology</option><option value="ent">ENT</option><option value="derm">Dermatology</option><option value="rad">Radiology</option><option value="anes">Anesthesiology</option><option value="er">Emergency Medicine</option><option value="fm">Family Medicine</option><option value="psych">Psychiatry</option><option value="pm_r">PM&R</option><option value="neuro">Neurology</option><option value="path">Pathology</option><option value="ophtho">Ophthalmology</option><option value="peds">Pediatrics</option>
+<option value="im">IM — Outpatient / Primary Care</option><option value="hosp">IM — Hospitalist</option><option value="cards">General Cardiology</option><option value="ic" selected>Interventional Cardiology</option><option value="ep">Electrophysiology</option><option value="ct_surg">CT Surgery</option><option value="gi">GI</option><option value="pulm">Pulm/CC</option><option value="heme_onc">Heme/Onc</option><option value="nephro">Nephrology</option><option value="rheum">Rheumatology</option><option value="endo">Endocrinology</option><option value="id">Infectious Disease</option><option value="gen_surg">General Surgery</option><option value="ortho">Orthopedic Surgery</option><option value="uro">Urology</option><option value="ent">ENT</option><option value="derm">Dermatology</option><option value="rad">Radiology</option><option value="anes">Anesthesiology</option><option value="er">Emergency Medicine</option><option value="fm">Family Medicine</option><option value="psych">Psychiatry</option><option value="pm_r">PM&R</option><option value="neuro">Neurology</option><option value="path">Pathology</option><option value="ophtho">Ophthalmology</option><option value="peds">Pediatrics</option>
 </select></div>
 <div><label style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:4px">Base Salary ($K)</label>
 <input id="ci-salary" type="number" value="425" onchange="ciCalc()" oninput="ciCalc()" style="width:100%;padding:8px;font-size:12px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;color:var(--text);box-sizing:border-box" placeholder="e.g. 425"></div>
@@ -855,8 +856,8 @@ v11:`<div style="text-align:center;padding:28px 20px;margin:-20px -20px 24px;bac
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
 <div><label style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:4px">Specialty</label>
 <select id="ft-spec-a" onchange="ftCalc()" style="width:100%;padding:8px;font-size:12px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;color:var(--text)">
-<option value="im">Internal Medicine</option>
-<option value="hosp">Hospitalist</option>
+<option value="im">IM — Outpatient / Primary Care</option>
+<option value="hosp">IM — Hospitalist</option>
 <option value="cards">General Cardiology</option>
 <option value="ic" selected>Interventional Cardiology</option>
 <option value="ep">Electrophysiology</option>
@@ -913,8 +914,8 @@ v11:`<div style="text-align:center;padding:28px 20px;margin:-20px -20px 24px;bac
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
 <div><label style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:4px">Specialty</label>
 <select id="ft-spec-b" onchange="ftCalc()" style="width:100%;padding:8px;font-size:12px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;color:var(--text)">
-<option value="im">Internal Medicine</option>
-<option value="hosp" selected>Hospitalist</option>
+<option value="im">IM — Outpatient / Primary Care</option>
+<option value="hosp" selected>IM — Hospitalist</option>
 <option value="cards">General Cardiology</option>
 <option value="ic">Interventional Cardiology</option>
 <option value="ep">Electrophysiology</option>
@@ -972,8 +973,8 @@ v11:`<div style="text-align:center;padding:28px 20px;margin:-20px -20px 24px;bac
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
 <div><label style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:4px">Specialty</label>
 <select id="ft-spec-c" onchange="ftCalc()" style="width:100%;padding:8px;font-size:12px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;color:var(--text)">
-<option value="im">Internal Medicine</option>
-<option value="hosp">Hospitalist</option>
+<option value="im">IM — Outpatient / Primary Care</option>
+<option value="hosp">IM — Hospitalist</option>
 <option value="cards" selected>General Cardiology</option>
 <option value="ic">Interventional Cardiology</option>
 <option value="ep">Electrophysiology</option>

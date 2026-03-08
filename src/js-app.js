@@ -1308,40 +1308,41 @@ function sfaUpdate(){
     {name:'Emergency Medicine',icon:'\ud83d\ude91',fit:0,comp:'$350-450K',hours:'36-42h/wk shift',train:'3-4yr EM',path:'Shift-based, high acuity, no follow-up'},
     {name:'Orthopedic Surgery',icon:'\ud83e\uddb4',fit:0,comp:'$500-800K',hours:'55-70h/wk',train:'5yr ortho',path:'Heavily procedural, sports/trauma'},
     {name:'Psychiatry',icon:'\ud83e\udde0',fit:0,comp:'$250-350K',hours:'40-50h/wk',train:'4yr psych',path:'Cognitive, long-term relationships, growing demand'},
-    {name:'Hospitalist Medicine',icon:'\ud83c\udfe5',fit:0,comp:'$280-380K',hours:'7-on/7-off',train:'IM 3yr',path:'Flexible scheduling, no clinic overhead'},
+    {name:'Hospitalist Medicine',icon:'\ud83c\udfe5',fit:0,comp:'$280-380K',hours:'7-on/7-off',train:'IM 3yr',path:'Flexible scheduling, no clinic overhead, inpatient acute care'},
+    {name:'Outpatient IM / Primary Care',icon:'\ud83e\ude7a',fit:0,comp:'$250-320K',hours:'40-50h/wk',train:'IM 3yr',path:'Longitudinal patient relationships, clinic-based, growing demand for internists'},
     {name:'Pulm/Critical Care',icon:'\ud83c\udf2c\ufe0f',fit:0,comp:'$350-500K',hours:'50-60h/wk',train:'IM 3yr + PCCM 3yr',path:'ICU-based, procedures + cognitive'}
   ];
 
   // Scoring logic
   specs.forEach(function(s){
     // Patient interaction
-    if(q1==='long'&&(s.name.includes('Cardiology')||s.name.includes('Psychiatry')))s.fit+=20;
+    if(q1==='long'&&(s.name.includes('Cardiology')||s.name.includes('Psychiatry')||s.name.includes('Outpatient')))s.fit+=20;
     if(q1==='episode'&&(s.name.includes('Gastro')||s.name.includes('Hospitalist')||s.name.includes('Pulm')))s.fit+=20;
     if(q1==='acute'&&(s.name.includes('Emergency')||s.name.includes('Surgery')||s.name.includes('Interventional')))s.fit+=20;
     if(q1==='minimal'&&(s.name.includes('Radiology')||s.name.includes('Pathology')))s.fit+=20;
     // Procedural
     if(q2==='heavy'&&(s.name.includes('Interventional')||s.name.includes('Surgery')))s.fit+=25;
     if(q2==='mix'&&(s.name.includes('General Cardiology')||s.name.includes('Gastro')||s.name.includes('Pulm')))s.fit+=25;
-    if(q2==='cognitive'&&(s.name.includes('Psychiatry')||s.name.includes('Hospitalist')))s.fit+=25;
-    if(q2==='none'&&(s.name.includes('Radiology')||s.name.includes('Dermatology')||s.name.includes('Psychiatry')))s.fit+=25;
+    if(q2==='cognitive'&&(s.name.includes('Psychiatry')||s.name.includes('Hospitalist')||s.name.includes('Outpatient')))s.fit+=25;
+    if(q2==='none'&&(s.name.includes('Radiology')||s.name.includes('Dermatology')||s.name.includes('Psychiatry')||s.name.includes('Outpatient')))s.fit+=25;
     // Lifestyle
-    if(q3==='lifestyle'&&(s.name.includes('Dermatology')||s.name.includes('Psychiatry')||s.name.includes('Emergency')||s.name.includes('Radiology')))s.fit+=20;
+    if(q3==='lifestyle'&&(s.name.includes('Dermatology')||s.name.includes('Psychiatry')||s.name.includes('Emergency')||s.name.includes('Radiology')||s.name.includes('Outpatient')))s.fit+=20;
     if(q3==='balanced'&&(s.name.includes('Gastro')||s.name.includes('General Cardiology')||s.name.includes('Hospitalist')))s.fit+=20;
     if(q3==='income'&&(s.name.includes('Interventional')||s.name.includes('Surgery')||s.name.includes('Gastro')))s.fit+=20;
-    if(q3==='mission'&&(s.name.includes('Psychiatry')||s.name.includes('Emergency')||s.name.includes('Pulm')))s.fit+=20;
+    if(q3==='mission'&&(s.name.includes('Psychiatry')||s.name.includes('Emergency')||s.name.includes('Pulm')||s.name.includes('Outpatient')))s.fit+=20;
     // Intellectual style
     if(q4==='complex'&&(s.name.includes('Cardiology')||s.name.includes('Pulm')))s.fit+=15;
     if(q4==='systems'&&(s.name.includes('Hospitalist')||s.name.includes('Emergency')))s.fit+=15;
     if(q4==='technical'&&(s.name.includes('Interventional')||s.name.includes('Surgery')||s.name.includes('Radiology')))s.fit+=15;
-    if(q4==='breadth'&&(s.name.includes('Emergency')||s.name.includes('Hospitalist')))s.fit+=15;
+    if(q4==='breadth'&&(s.name.includes('Emergency')||s.name.includes('Hospitalist')||s.name.includes('Outpatient')))s.fit+=15;
     // Practice setting
     if(q5==='academic'&&(s.name.includes('Cardiology')||s.name.includes('Pulm')||s.name.includes('Surgery')))s.fit+=10;
-    if(q5==='private'&&(s.name.includes('Dermatology')||s.name.includes('Gastro')||s.name.includes('Orthopedic')))s.fit+=10;
-    if(q5==='community'&&(s.name.includes('Hospitalist')||s.name.includes('Emergency')))s.fit+=10;
+    if(q5==='private'&&(s.name.includes('Dermatology')||s.name.includes('Gastro')||s.name.includes('Orthopedic')||s.name.includes('Outpatient')))s.fit+=10;
+    if(q5==='community'&&(s.name.includes('Hospitalist')||s.name.includes('Emergency')||s.name.includes('Outpatient')))s.fit+=10;
     if(q5==='flexible')s.fit+=5;
     // Uncertainty tolerance
     if(q6==='high'&&(s.name.includes('Emergency')||s.name.includes('Surgery')||s.name.includes('Interventional')||s.name.includes('Pulm')))s.fit+=10;
-    if(q6==='moderate'&&(s.name.includes('Cardiology')||s.name.includes('Gastro')||s.name.includes('Hospitalist')))s.fit+=10;
+    if(q6==='moderate'&&(s.name.includes('Cardiology')||s.name.includes('Gastro')||s.name.includes('Hospitalist')||s.name.includes('Outpatient')))s.fit+=10;
     if(q6==='low'&&(s.name.includes('Dermatology')||s.name.includes('Radiology')||s.name.includes('Psychiatry')))s.fit+=10;
   });
 
@@ -2827,7 +2828,7 @@ var FT_TRAIN_YRS={
   gen_surg:5,ortho:5,uro:5,ent:5,derm:4,rad:5,anes:4,er:3,fm:3,psych:4,pm_r:4,neuro:4,path:4,ophtho:4,peds:3
 };
 var FT_SPEC_NAMES={
-  im:'Internal Medicine',hosp:'Hospitalist',cards:'Gen Cardiology',ic:'Interventional Cardiology',
+  im:'IM — Outpatient',hosp:'IM — Hospitalist',cards:'Gen Cardiology',ic:'Interventional Cardiology',
   ep:'Electrophysiology',ct_surg:'CT Surgery',gi:'GI',pulm:'Pulm/CC',heme_onc:'Heme/Onc',
   nephro:'Nephrology',rheum:'Rheumatology',endo:'Endocrinology',id:'Infectious Disease',
   gen_surg:'General Surgery',ortho:'Ortho',uro:'Urology',ent:'ENT',derm:'Dermatology',
@@ -4028,8 +4029,8 @@ function notify(msg,err){
 // ===== RVU CALCULATOR =====
 var _rvuBenchmarks={
   fm:{name:'Family Medicine',wrvu:4608,rate:52,comp:275000},
-  im:{name:'Internal Medicine',wrvu:4824,rate:55,comp:300000},
-  hosp:{name:'Hospitalist',wrvu:4252,rate:65,comp:335000},
+  im:{name:'IM — Outpatient / Primary Care',wrvu:4824,rate:55,comp:300000},
+  hosp:{name:'IM — Hospitalist',wrvu:4252,rate:65,comp:335000},
   gc:{name:'General Cardiology',wrvu:7247,rate:65,comp:550000},
   ic:{name:'Interventional Cardiology',wrvu:9187,rate:70,comp:700000},
   ep:{name:'Electrophysiology',wrvu:8452,rate:68,comp:600000},
@@ -4615,7 +4616,7 @@ function misStart(){
 
   // Map mis-spec values to specialty keys
   var specMap={
-    cards:'cards',ic:'ic',ep:'cards',im:'im',fm:'im',
+    cards:'cards',ic:'ic',ep:'cards',im:'im',im_outpatient:'im',im_hospitalist:'im',fm:'im',
     gi:'other',pulm:'other',hemonc:'other',neph:'other',endo:'other',
     rheum:'other',id:'other',em:'other',anes:'other',
     ortho:'gensurg',gensurg:'gensurg',uro:'gensurg',

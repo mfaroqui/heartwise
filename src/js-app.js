@@ -2712,13 +2712,16 @@ function toggleContactForm(){document.getElementById('contact-form').classList.t
 
 // Email notification to admin via Supabase Edge Function
 function notifyAdmin(payload){
-  if(!_supaClient)return;
-  _supaClient.functions.invoke('notify-email',{body:{
-    user_name:payload.user_name||'Unknown',
-    user_email:payload.user_email||'',
-    type:payload.type||'other',
-    message:payload.message||''
-  }}).catch(function(){});
+  fetch('https://kqyvfykbnboesskxovtw.supabase.co/functions/v1/notify-email',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY},
+    body:JSON.stringify({
+      user_name:payload.user_name||'Unknown',
+      user_email:payload.user_email||'',
+      type:payload.type||'other',
+      message:payload.message||''
+    })
+  }).catch(function(){});
 }
 
 async function sendContactMessage(e){

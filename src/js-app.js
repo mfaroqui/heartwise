@@ -2106,7 +2106,7 @@ function renderProfile(){
   if(!U)return;
   document.getElementById('prof-av').textContent=U.name.charAt(0).toUpperCase();
   document.getElementById('prof-name').textContent=U.name;
-  const rl={student:'Medical Student',resident:'IM Resident',fellow:'Cardiology Fellow',attending:'Early Career Attending',admin:'Interventional Cardiologist',other:'Member'};
+  const rl={premed:'Pre-Medical Student',student:'Medical Student',resident:'Resident',fellow:'Fellow',attending:'Attending Physician',switching:'Career Transition',admin:'Physician · Founder',other:'Member'};
   document.getElementById('prof-role').textContent=rl[U.role]||'Member';
   const t=TIERS[U.tier]||TIERS.free;
   document.getElementById('ps-used').textContent=U.usage?.ai||0;
@@ -2405,7 +2405,8 @@ var GOAL_DEFAULTS={
   student:{title:'Medical Student Goals',goals:['Set a clear career direction and target specialty','Start one research or scholarly project','Build relationships with 2-3 potential mentors','Create a financial plan for your remaining training']},
   resident:{title:'Resident Goals',goals:['Advance your primary career objective this month','Complete one scholarly activity (abstract, case report, or QI project)','Strengthen a key mentor relationship','Review your financial plan — loans, insurance, savings']},
   fellow:{title:'Fellow Goals',goals:['Progress toward your first attending position','Submit or advance a research project','Network with 2 potential employers or collaborators','Finalize your post-fellowship financial strategy']},
-  attending:{title:'Attending Goals',goals:['Review and optimize your current contract terms','Advance one professional development goal','Check your financial trajectory — savings rate, investments, debt','Invest in one relationship that will matter in 5 years']}
+  attending:{title:'Attending Physician Goals',goals:['Review and optimize your current contract terms','Advance one professional development goal','Check your financial trajectory — savings rate, investments, debt','Invest in one relationship that will matter in 5 years']},
+  premed:{title:'Pre-Med Goals',goals:['Strengthen your application — research, volunteering, clinical hours','Prepare for the MCAT with a structured study plan','Build relationships with 2-3 potential recommenders','Shadow physicians in specialties you find interesting']}
 };
 
 function getGoalTemplate(){
@@ -2415,6 +2416,8 @@ function getGoalTemplate(){
   // Normalize stage
   if(stage==='switching')stage='attending';
   if(stage==='other')stage='resident';
+  if(stage==='premed')stage='student';
+  if(stage==='admin')stage='attending';
   // Map user goal to template key
   var goalKey='';
   if(goal==='match'||goal==='fellowship')goalKey='match';
@@ -2447,8 +2450,10 @@ async function renderGoalTracker(){
   var template=getGoalTemplate();
   if(!template){
     // Use stage defaults
-    var stage=U.stage||U.role||'resident';
+    var stage=U.stage||(U.profile&&U.profile.stage)||U.role||'resident';
     if(stage==='switching')stage='attending';
+    if(stage==='admin')stage='attending';
+    if(stage==='other')stage='resident';
     var def=GOAL_DEFAULTS[stage]||GOAL_DEFAULTS.resident;
     template={title:def.title,months:[{label:'This Month',goals:def.goals}]};
   }

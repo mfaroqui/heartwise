@@ -85,26 +85,58 @@ v2:`<h3>Contract Risk Scorecard</h3>
 <div style="padding:16px;background:var(--bg2);border-radius:8px;margin-top:16px"><p style="font-size:12px;color:var(--text2);line-height:1.6;margin:0"><strong>Rule of thumb:</strong> 3+ red flags = don't sign without attorney review ($2K-$3.5K). Attorney fees typically save $20K+ in negotiated improvements.</p></div>
 <p style="font-size:10px;color:var(--text3);margin-top:12px;font-style:italic">Sources: MGMA 2024, AMA Practice Benchmark Survey 2023.</p>`,
 
-v3:`<h3>Offer Comparison Matrix</h3>
-<p style="color:var(--text3);font-size:12px;margin-bottom:16px">Don't just compare salary — model total compensation over 3 years.</p>
-<div style="font-size:12px">
-<div style="font-weight:600;color:var(--accent);padding:8px 0">💰 Compensation</div>
-<div style="padding:6px 0;border-bottom:1px solid var(--border)">• Base Salary — what's guaranteed regardless of volume?</div>
-<div style="padding:6px 0;border-bottom:1px solid var(--border)">• RVU Rate & Threshold — per-unit rate, and when does bonus kick in?</div>
-<div style="padding:6px 0;border-bottom:1px solid var(--border)">• Signing Bonus — amount and clawback terms?</div>
-<div style="padding:6px 0;border-bottom:1px solid var(--border)">• Loan Repayment — amount, vesting, repayment if you leave?</div>
-<div style="font-weight:600;color:var(--accent);padding:12px 0 8px">⚖️ Risk & Structure</div>
-<div style="padding:6px 0;border-bottom:1px solid var(--border)">• Non-Compete — radius, duration, applies if they fire you?</div>
-<div style="padding:6px 0;border-bottom:1px solid var(--border)">• Tail Coverage — who pays, and how much?</div>
-<div style="padding:6px 0;border-bottom:1px solid var(--border)">• Termination — notice period, severance, "cause" definition?</div>
-<div style="padding:6px 0;border-bottom:1px solid var(--border)">• Partnership/Equity — timeline, buy-in, criteria?</div>
-<div style="font-weight:600;color:var(--accent);padding:12px 0 8px">🏥 Quality of Life</div>
-<div style="padding:6px 0;border-bottom:1px solid var(--border)">• Call Frequency — how often, compensated?</div>
-<div style="padding:6px 0;border-bottom:1px solid var(--border)">• PTO + CME Days — total days, CME budget?</div>
-<div style="padding:6px 0;border-bottom:1px solid var(--border)">• Location — cost of living, family, preferences</div>
-<div style="padding:6px 0">• Retirement — match %, plan type?</div>
+v3:`<h3 class="serif">Offer Comparison Matrix</h3>
+<p style="color:var(--text3);font-size:12px;margin-bottom:20px">Input your two offers. We'll compare them honestly — no sugarcoating, just the trade-offs you need to see.</p>
+
+<div id="ocm-tool" style="font-size:13px">
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px">
+
+<!-- OFFER A -->
+<div style="padding:16px;background:var(--bg2);border:1px solid var(--border);border-radius:12px">
+<div style="font-size:13px;font-weight:600;color:var(--accent);margin-bottom:12px;text-align:center">Offer A</div>
+<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Employer / Label</label><input type="text" id="ocm-a-name" placeholder="e.g., Academic Medical Center" style="width:100%;box-sizing:border-box"></div>
+<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Base Salary ($)</label><input type="number" id="ocm-a-salary" placeholder="350000" style="width:100%;box-sizing:border-box"></div>
+<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Signing Bonus ($)</label><input type="number" id="ocm-a-sign" placeholder="0" style="width:100%;box-sizing:border-box"></div>
+<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">RVU Rate ($/wRVU)</label><input type="number" id="ocm-a-rvu" placeholder="55" step="0.5" style="width:100%;box-sizing:border-box"></div>
+<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Expected Annual wRVUs</label><input type="number" id="ocm-a-wrvus" placeholder="5000" style="width:100%;box-sizing:border-box"></div>
+<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Loan Repayment ($)</label><input type="number" id="ocm-a-loan" placeholder="0" style="width:100%;box-sizing:border-box"></div>
+<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Retirement Match (%)</label><input type="number" id="ocm-a-retire" placeholder="5" max="100" style="width:100%;box-sizing:border-box"></div>
+<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Call Days / Month</label><input type="number" id="ocm-a-call" placeholder="4" style="width:100%;box-sizing:border-box"></div>
+<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">PTO Days / Year</label><input type="number" id="ocm-a-pto" placeholder="20" style="width:100%;box-sizing:border-box"></div>
+<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Non-Compete (miles)</label><input type="number" id="ocm-a-noncomp" placeholder="0" style="width:100%;box-sizing:border-box"></div>
+<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Tail Coverage</label><select id="ocm-a-tail" style="width:100%"><option value="employer">Employer pays</option><option value="shared">Shared</option><option value="you">You pay</option><option value="none">Not included</option></select></div>
+<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Partnership Track?</label><select id="ocm-a-partner" style="width:100%"><option value="no">No</option><option value="yes">Yes</option></select></div>
+<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">PSLF Eligible?</label><select id="ocm-a-pslf" style="width:100%"><option value="no">No</option><option value="yes">Yes</option></select></div>
+<div class="fg"><label style="font-size:11px;color:var(--text3)">Location / Notes</label><input type="text" id="ocm-a-loc" placeholder="e.g., Houston, TX" style="width:100%;box-sizing:border-box"></div>
 </div>
-<div style="padding:16px;background:var(--bg2);border-radius:8px;margin-top:16px"><p style="font-size:12px;color:var(--text2);line-height:1.6;margin:0"><strong>Pro tip:</strong> A $30K higher salary with a 25-mile non-compete and no tail coverage may cost you more over 5 years than a slightly lower offer with better structure.</p></div>`,
+
+<!-- OFFER B -->
+<div style="padding:16px;background:var(--bg2);border:1px solid var(--border);border-radius:12px">
+<div style="font-size:13px;font-weight:600;color:var(--green);margin-bottom:12px;text-align:center">Offer B</div>
+<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Employer / Label</label><input type="text" id="ocm-b-name" placeholder="e.g., Private Group" style="width:100%;box-sizing:border-box"></div>
+<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Base Salary ($)</label><input type="number" id="ocm-b-salary" placeholder="500000" style="width:100%;box-sizing:border-box"></div>
+<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Signing Bonus ($)</label><input type="number" id="ocm-b-sign" placeholder="0" style="width:100%;box-sizing:border-box"></div>
+<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">RVU Rate ($/wRVU)</label><input type="number" id="ocm-b-rvu" placeholder="60" step="0.5" style="width:100%;box-sizing:border-box"></div>
+<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Expected Annual wRVUs</label><input type="number" id="ocm-b-wrvus" placeholder="6000" style="width:100%;box-sizing:border-box"></div>
+<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Loan Repayment ($)</label><input type="number" id="ocm-b-loan" placeholder="0" style="width:100%;box-sizing:border-box"></div>
+<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Retirement Match (%)</label><input type="number" id="ocm-b-retire" placeholder="3" max="100" style="width:100%;box-sizing:border-box"></div>
+<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Call Days / Month</label><input type="number" id="ocm-b-call" placeholder="6" style="width:100%;box-sizing:border-box"></div>
+<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">PTO Days / Year</label><input type="number" id="ocm-b-pto" placeholder="15" style="width:100%;box-sizing:border-box"></div>
+<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Non-Compete (miles)</label><input type="number" id="ocm-b-noncomp" placeholder="25" style="width:100%;box-sizing:border-box"></div>
+<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Tail Coverage</label><select id="ocm-b-tail" style="width:100%"><option value="employer">Employer pays</option><option value="shared">Shared</option><option value="you">You pay</option><option value="none">Not included</option></select></div>
+<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Partnership Track?</label><select id="ocm-b-partner" style="width:100%"><option value="no">No</option><option value="yes">Yes</option></select></div>
+<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">PSLF Eligible?</label><select id="ocm-b-pslf" style="width:100%"><option value="no">No</option><option value="yes">Yes</option></select></div>
+<div class="fg"><label style="font-size:11px;color:var(--text3)">Location / Notes</label><input type="text" id="ocm-b-loc" placeholder="e.g., Dallas, TX" style="width:100%;box-sizing:border-box"></div>
+</div>
+
+</div>
+
+<button onclick="ocmCompare()" class="btn btn-a" style="width:100%;padding:14px;margin-bottom:8px">Compare Offers →</button>
+<p style="font-size:10px;color:var(--text3);text-align:center;margin-bottom:20px">All data stays on your device. Nothing is sent to a server.</p>
+
+<div id="ocm-results"></div>
+</div>`,
 
 v4:`<h3>RVU Compensation Calculator</h3>
 <p style="color:var(--text3);font-size:12px;margin-bottom:20px">Model your actual take-home based on your contract structure. Adjust the inputs to see how volume changes your pay.</p>

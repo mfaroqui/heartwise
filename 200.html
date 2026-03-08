@@ -2939,26 +2939,58 @@ v2:`<h3>Contract Risk Scorecard</h3>
 <div style="padding:16px;background:var(--bg2);border-radius:8px;margin-top:16px"><p style="font-size:12px;color:var(--text2);line-height:1.6;margin:0"><strong>Rule of thumb:</strong> 3+ red flags = don't sign without attorney review ($2K-$3.5K). Attorney fees typically save $20K+ in negotiated improvements.</p></div>
 <p style="font-size:10px;color:var(--text3);margin-top:12px;font-style:italic">Sources: MGMA 2024, AMA Practice Benchmark Survey 2023.</p>`,
 
-v3:`<h3>Offer Comparison Matrix</h3>
-<p style="color:var(--text3);font-size:12px;margin-bottom:16px">Don't just compare salary — model total compensation over 3 years.</p>
-<div style="font-size:12px">
-<div style="font-weight:600;color:var(--accent);padding:8px 0">💰 Compensation</div>
-<div style="padding:6px 0;border-bottom:1px solid var(--border)">• Base Salary — what's guaranteed regardless of volume?</div>
-<div style="padding:6px 0;border-bottom:1px solid var(--border)">• RVU Rate & Threshold — per-unit rate, and when does bonus kick in?</div>
-<div style="padding:6px 0;border-bottom:1px solid var(--border)">• Signing Bonus — amount and clawback terms?</div>
-<div style="padding:6px 0;border-bottom:1px solid var(--border)">• Loan Repayment — amount, vesting, repayment if you leave?</div>
-<div style="font-weight:600;color:var(--accent);padding:12px 0 8px">⚖️ Risk & Structure</div>
-<div style="padding:6px 0;border-bottom:1px solid var(--border)">• Non-Compete — radius, duration, applies if they fire you?</div>
-<div style="padding:6px 0;border-bottom:1px solid var(--border)">• Tail Coverage — who pays, and how much?</div>
-<div style="padding:6px 0;border-bottom:1px solid var(--border)">• Termination — notice period, severance, "cause" definition?</div>
-<div style="padding:6px 0;border-bottom:1px solid var(--border)">• Partnership/Equity — timeline, buy-in, criteria?</div>
-<div style="font-weight:600;color:var(--accent);padding:12px 0 8px">🏥 Quality of Life</div>
-<div style="padding:6px 0;border-bottom:1px solid var(--border)">• Call Frequency — how often, compensated?</div>
-<div style="padding:6px 0;border-bottom:1px solid var(--border)">• PTO + CME Days — total days, CME budget?</div>
-<div style="padding:6px 0;border-bottom:1px solid var(--border)">• Location — cost of living, family, preferences</div>
-<div style="padding:6px 0">• Retirement — match %, plan type?</div>
+v3:`<h3 class="serif">Offer Comparison Matrix</h3>
+<p style="color:var(--text3);font-size:12px;margin-bottom:20px">Input your two offers. We'll compare them honestly — no sugarcoating, just the trade-offs you need to see.</p>
+
+<div id="ocm-tool" style="font-size:13px">
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px">
+
+<!-- OFFER A -->
+<div style="padding:16px;background:var(--bg2);border:1px solid var(--border);border-radius:12px">
+<div style="font-size:13px;font-weight:600;color:var(--accent);margin-bottom:12px;text-align:center">Offer A</div>
+<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Employer / Label</label><input type="text" id="ocm-a-name" placeholder="e.g., Academic Medical Center" style="width:100%;box-sizing:border-box"></div>
+<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Base Salary ($)</label><input type="number" id="ocm-a-salary" placeholder="350000" style="width:100%;box-sizing:border-box"></div>
+<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Signing Bonus ($)</label><input type="number" id="ocm-a-sign" placeholder="0" style="width:100%;box-sizing:border-box"></div>
+<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">RVU Rate ($/wRVU)</label><input type="number" id="ocm-a-rvu" placeholder="55" step="0.5" style="width:100%;box-sizing:border-box"></div>
+<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Expected Annual wRVUs</label><input type="number" id="ocm-a-wrvus" placeholder="5000" style="width:100%;box-sizing:border-box"></div>
+<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Loan Repayment ($)</label><input type="number" id="ocm-a-loan" placeholder="0" style="width:100%;box-sizing:border-box"></div>
+<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Retirement Match (%)</label><input type="number" id="ocm-a-retire" placeholder="5" max="100" style="width:100%;box-sizing:border-box"></div>
+<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Call Days / Month</label><input type="number" id="ocm-a-call" placeholder="4" style="width:100%;box-sizing:border-box"></div>
+<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">PTO Days / Year</label><input type="number" id="ocm-a-pto" placeholder="20" style="width:100%;box-sizing:border-box"></div>
+<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Non-Compete (miles)</label><input type="number" id="ocm-a-noncomp" placeholder="0" style="width:100%;box-sizing:border-box"></div>
+<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Tail Coverage</label><select id="ocm-a-tail" style="width:100%"><option value="employer">Employer pays</option><option value="shared">Shared</option><option value="you">You pay</option><option value="none">Not included</option></select></div>
+<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Partnership Track?</label><select id="ocm-a-partner" style="width:100%"><option value="no">No</option><option value="yes">Yes</option></select></div>
+<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">PSLF Eligible?</label><select id="ocm-a-pslf" style="width:100%"><option value="no">No</option><option value="yes">Yes</option></select></div>
+<div class="fg"><label style="font-size:11px;color:var(--text3)">Location / Notes</label><input type="text" id="ocm-a-loc" placeholder="e.g., Houston, TX" style="width:100%;box-sizing:border-box"></div>
 </div>
-<div style="padding:16px;background:var(--bg2);border-radius:8px;margin-top:16px"><p style="font-size:12px;color:var(--text2);line-height:1.6;margin:0"><strong>Pro tip:</strong> A $30K higher salary with a 25-mile non-compete and no tail coverage may cost you more over 5 years than a slightly lower offer with better structure.</p></div>`,
+
+<!-- OFFER B -->
+<div style="padding:16px;background:var(--bg2);border:1px solid var(--border);border-radius:12px">
+<div style="font-size:13px;font-weight:600;color:var(--green);margin-bottom:12px;text-align:center">Offer B</div>
+<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Employer / Label</label><input type="text" id="ocm-b-name" placeholder="e.g., Private Group" style="width:100%;box-sizing:border-box"></div>
+<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Base Salary ($)</label><input type="number" id="ocm-b-salary" placeholder="500000" style="width:100%;box-sizing:border-box"></div>
+<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Signing Bonus ($)</label><input type="number" id="ocm-b-sign" placeholder="0" style="width:100%;box-sizing:border-box"></div>
+<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">RVU Rate ($/wRVU)</label><input type="number" id="ocm-b-rvu" placeholder="60" step="0.5" style="width:100%;box-sizing:border-box"></div>
+<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Expected Annual wRVUs</label><input type="number" id="ocm-b-wrvus" placeholder="6000" style="width:100%;box-sizing:border-box"></div>
+<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Loan Repayment ($)</label><input type="number" id="ocm-b-loan" placeholder="0" style="width:100%;box-sizing:border-box"></div>
+<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Retirement Match (%)</label><input type="number" id="ocm-b-retire" placeholder="3" max="100" style="width:100%;box-sizing:border-box"></div>
+<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Call Days / Month</label><input type="number" id="ocm-b-call" placeholder="6" style="width:100%;box-sizing:border-box"></div>
+<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">PTO Days / Year</label><input type="number" id="ocm-b-pto" placeholder="15" style="width:100%;box-sizing:border-box"></div>
+<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Non-Compete (miles)</label><input type="number" id="ocm-b-noncomp" placeholder="25" style="width:100%;box-sizing:border-box"></div>
+<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Tail Coverage</label><select id="ocm-b-tail" style="width:100%"><option value="employer">Employer pays</option><option value="shared">Shared</option><option value="you">You pay</option><option value="none">Not included</option></select></div>
+<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Partnership Track?</label><select id="ocm-b-partner" style="width:100%"><option value="no">No</option><option value="yes">Yes</option></select></div>
+<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">PSLF Eligible?</label><select id="ocm-b-pslf" style="width:100%"><option value="no">No</option><option value="yes">Yes</option></select></div>
+<div class="fg"><label style="font-size:11px;color:var(--text3)">Location / Notes</label><input type="text" id="ocm-b-loc" placeholder="e.g., Dallas, TX" style="width:100%;box-sizing:border-box"></div>
+</div>
+
+</div>
+
+<button onclick="ocmCompare()" class="btn btn-a" style="width:100%;padding:14px;margin-bottom:8px">Compare Offers →</button>
+<p style="font-size:10px;color:var(--text3);text-align:center;margin-bottom:20px">All data stays on your device. Nothing is sent to a server.</p>
+
+<div id="ocm-results"></div>
+</div>`,
 
 v4:`<h3>RVU Compensation Calculator</h3>
 <p style="color:var(--text3);font-size:12px;margin-bottom:20px">Model your actual take-home based on your contract structure. Adjust the inputs to see how volume changes your pay.</p>
@@ -4464,6 +4496,193 @@ function renderArchive(){
 }
 function filterArchive(){renderArchive()}
 function setFilter(f,btn){curFilter=f;document.querySelectorAll('.fc .chip').forEach(c=>c.classList.remove('on'));btn.classList.add('on');renderArchive()}
+
+// ===== OFFER COMPARISON MATRIX (v3) =====
+function ocmVal(id){return document.getElementById(id)?document.getElementById(id).value:'';}
+function ocmNum(id){return parseFloat(document.getElementById(id)?.value)||0;}
+
+function ocmCompare(){
+  var aN=ocmVal('ocm-a-name')||'Offer A';
+  var bN=ocmVal('ocm-b-name')||'Offer B';
+  var a={name:aN,salary:ocmNum('ocm-a-salary'),sign:ocmNum('ocm-a-sign'),rvu:ocmNum('ocm-a-rvu'),wrvus:ocmNum('ocm-a-wrvus'),loan:ocmNum('ocm-a-loan'),retire:ocmNum('ocm-a-retire'),call:ocmNum('ocm-a-call'),pto:ocmNum('ocm-a-pto'),noncomp:ocmNum('ocm-a-noncomp'),tail:ocmVal('ocm-a-tail'),partner:ocmVal('ocm-a-partner'),pslf:ocmVal('ocm-a-pslf'),loc:ocmVal('ocm-a-loc')};
+  var b={name:bN,salary:ocmNum('ocm-b-salary'),sign:ocmNum('ocm-b-sign'),rvu:ocmNum('ocm-b-rvu'),wrvus:ocmNum('ocm-b-wrvus'),loan:ocmNum('ocm-b-loan'),retire:ocmNum('ocm-b-retire'),call:ocmNum('ocm-b-call'),pto:ocmNum('ocm-b-pto'),noncomp:ocmNum('ocm-b-noncomp'),tail:ocmVal('ocm-b-tail'),partner:ocmVal('ocm-b-partner'),pslf:ocmVal('ocm-b-pslf'),loc:ocmVal('ocm-b-loc')};
+
+  if(!a.salary&&!b.salary){notify('Enter at least base salary for both offers',1);return}
+
+  // Calculate total comp
+  function totalComp(o){
+    var base=o.salary;
+    var rvuComp=(o.rvu&&o.wrvus)?o.rvu*o.wrvus:0;
+    var total=Math.max(base,rvuComp)+o.sign+o.loan;
+    var retireVal=base*(o.retire/100);
+    return {base:base,rvuComp:rvuComp,gross:Math.max(base,rvuComp),total:total,yr3:Math.max(base,rvuComp)*3+o.loan,retire:retireVal,totalWithRetire:total+retireVal};
+  }
+  var cA=totalComp(a);
+  var cB=totalComp(b);
+
+  // Build pros/cons for each
+  function buildAnalysis(offer,comp,other,otherComp,label,otherLabel){
+    var pros=[];
+    var cons=[];
+    var warnings=[];
+
+    // Compensation
+    if(comp.gross>otherComp.gross){
+      var diff=comp.gross-otherComp.gross;
+      pros.push('\ud83d\udcb0 Higher gross compensation by $'+(diff/1000).toFixed(0)+'K/year ($'+(diff*3/1000).toFixed(0)+'K over 3 years)');
+    }else if(comp.gross<otherComp.gross){
+      var diff=otherComp.gross-comp.gross;
+      cons.push('\ud83d\udcb0 Lower gross compensation by $'+(diff/1000).toFixed(0)+'K/year \u2014 that\u2019s $'+(diff*3/1000).toFixed(0)+'K less over 3 years');
+    }
+
+    // Signing bonus
+    if(offer.sign>other.sign&&offer.sign>0) pros.push('\ud83c\udf81 Signing bonus: $'+(offer.sign/1000).toFixed(0)+'K'+(other.sign>0?' vs $'+(other.sign/1000).toFixed(0)+'K':'')+' \u2014 but check clawback terms');
+    if(offer.sign<other.sign&&other.sign>0) cons.push('\ud83c\udf81 No signing bonus'+(offer.sign>0?' (lower: $'+(offer.sign/1000).toFixed(0)+'K vs $'+(other.sign/1000).toFixed(0)+'K)':''));
+
+    // Loan repayment
+    if(offer.loan>other.loan&&offer.loan>0) pros.push('\ud83c\udf93 Loan repayment: $'+(offer.loan/1000).toFixed(0)+'K \u2014 verify vesting schedule and what happens if you leave early');
+    if(offer.loan<other.loan&&other.loan>0) cons.push('\ud83c\udf93 No loan repayment benefit'+(other.loan>0?' ('+otherLabel+' offers $'+(other.loan/1000).toFixed(0)+'K)':''));
+
+    // RVU rate
+    if(offer.rvu>0&&other.rvu>0){
+      if(offer.rvu>other.rvu) pros.push('\ud83d\udcc8 Higher RVU rate: $'+offer.rvu+'/wRVU vs $'+other.rvu+' \u2014 compounds significantly with volume');
+      if(offer.rvu<other.rvu) cons.push('\ud83d\udcc8 Lower RVU rate: $'+offer.rvu+'/wRVU vs $'+other.rvu+' \u2014 you\u2019re being paid less per unit of work');
+    }
+
+    // Retirement
+    if(offer.retire>other.retire) pros.push('\ud83c\udfe6 Better retirement match: '+offer.retire+'% vs '+other.retire+'% \u2014 that\u2019s ~$'+(comp.retire/1000).toFixed(0)+'K/year of free money');
+    if(offer.retire<other.retire&&other.retire>0) cons.push('\ud83c\udfe6 Weaker retirement: '+offer.retire+'% vs '+other.retire+'% match \u2014 you\u2019re leaving $'+((otherComp.retire-comp.retire)/1000).toFixed(0)+'K/year on the table');
+
+    // Call
+    if(offer.call<other.call&&other.call>0) pros.push('\ud83c\udf19 Less call: '+offer.call+' days/month vs '+other.call+' \u2014 '+(other.call-offer.call)*12+' fewer call days per year');
+    if(offer.call>other.call) cons.push('\ud83c\udf19 Heavier call burden: '+offer.call+' days/month vs '+other.call+' \u2014 that\u2019s '+(offer.call-other.call)*12+' more call days per year. Is the extra comp worth the lifestyle cost?');
+
+    // PTO
+    if(offer.pto>other.pto) pros.push('\ud83c\udfd6\ufe0f More time off: '+offer.pto+' days vs '+other.pto+' \u2014 '+(offer.pto-other.pto)+' extra days matters for longevity and burnout');
+    if(offer.pto<other.pto) cons.push('\ud83c\udfd6\ufe0f Less PTO: '+offer.pto+' days vs '+other.pto+' \u2014 fewer vacation days compounds into resentment over years');
+
+    // Non-compete
+    if(offer.noncomp===0&&other.noncomp>0) pros.push('\u2705 No non-compete \u2014 this is a major advantage. You can leave without relocating');
+    if(offer.noncomp>0&&offer.noncomp<=other.noncomp&&other.noncomp>0) pros.push('\ud83d\udccd Tighter non-compete: '+offer.noncomp+' miles vs '+other.noncomp+' miles');
+    if(offer.noncomp>0){
+      if(offer.noncomp>=20) warnings.push('\ud83d\udea9 '+offer.noncomp+'-mile non-compete is aggressive. If this doesn\u2019t work out, you may have to uproot your family. Negotiate this down or get it removed if terminated without cause.');
+      else if(offer.noncomp>0) cons.push('\ud83d\udccd Non-compete: '+offer.noncomp+' miles \u2014 understand exactly what triggers it');
+    }
+
+    // Tail coverage
+    if(offer.tail==='employer') pros.push('\ud83d\udee1\ufe0f Employer-paid tail coverage \u2014 this can be worth $30-80K. This is a real financial advantage');
+    if(offer.tail==='you') warnings.push('\ud83d\udea9 You pay tail coverage. Budget $30-80K for this. It\u2019s a hidden cost that most trainees don\u2019t account for until it\u2019s too late.');
+    if(offer.tail==='none') warnings.push('\u26a0\ufe0f No tail coverage mentioned. Clarify this before signing \u2014 it\u2019s one of the most expensive oversights in physician contracts.');
+    if(offer.tail==='shared') cons.push('\ud83d\udee1\ufe0f Shared tail coverage \u2014 get the exact split in writing');
+
+    // Partnership
+    if(offer.partner==='yes'&&other.partner==='no') pros.push('\ud83e\udd1d Partnership track \u2014 this is the highest-ceiling path long-term, but verify: buy-in cost, timeline, and what \u201cpartner\u201d actually means in the operating agreement');
+    if(offer.partner==='no'&&other.partner==='yes') cons.push('\ud83e\udd1d No partnership track \u2014 you\u2019re an employee with a ceiling. '+otherLabel+' has a path to ownership.');
+
+    // PSLF
+    if(offer.pslf==='yes'&&other.pslf==='no') pros.push('\ud83c\udf93 PSLF eligible \u2014 if you have >$200K in federal loans, this can be worth $100-300K in forgiveness over 10 years. This is a massive financial lever.');
+    if(offer.pslf==='no'&&other.pslf==='yes') cons.push('\ud83c\udf93 Not PSLF eligible \u2014 if you have significant federal loans, '+otherLabel+'\u2019s PSLF eligibility could be worth six figures');
+
+    return {pros:pros,cons:cons,warnings:warnings};
+  }
+
+  var aAnalysis=buildAnalysis(a,cA,b,cB,aN,bN);
+  var bAnalysis=buildAnalysis(b,cB,a,cA,bN,aN);
+
+  // Render results
+  var h='';
+
+  // Summary header
+  var winner=cA.totalWithRetire>cB.totalWithRetire?aN:bN;
+  var loser=cA.totalWithRetire>cB.totalWithRetire?bN:aN;
+  var totalDiff=Math.abs(cA.totalWithRetire-cB.totalWithRetire);
+  h+='<div style="padding:20px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;margin-bottom:20px">';
+  h+='<div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:14px">Year 1 Total Compensation</div>';
+  h+='<div style="display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:center">';
+  h+='<div style="text-align:center"><div style="font-size:11px;color:var(--accent);font-weight:600;margin-bottom:4px">'+aN+'</div><div style="font-size:24px;font-weight:700;color:var(--text);font-family:var(--font-serif)">$'+(cA.totalWithRetire/1000).toFixed(0)+'K</div></div>';
+  h+='<div style="font-size:12px;color:var(--text3)">vs</div>';
+  h+='<div style="text-align:center"><div style="font-size:11px;color:var(--green);font-weight:600;margin-bottom:4px">'+bN+'</div><div style="font-size:24px;font-weight:700;color:var(--text);font-family:var(--font-serif)">$'+(cB.totalWithRetire/1000).toFixed(0)+'K</div></div>';
+  h+='</div>';
+  if(totalDiff>5000){
+    h+='<div style="text-align:center;margin-top:12px;padding-top:12px;border-top:1px solid var(--border);font-size:12px;color:var(--text2)"><strong>'+winner+'</strong> pays <strong style="color:var(--accent)">$'+(totalDiff/1000).toFixed(0)+'K more</strong> in Year 1'+(totalDiff>30000?' \u2014 but money isn\u2019t everything. Read the full analysis.':' \u2014 keep reading for the full picture.')+'</div>';
+  }
+  h+='</div>';
+
+  // 3-Year projection
+  h+='<div style="padding:14px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;margin-bottom:20px">';
+  h+='<div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">3-Year Earnings Projection</div>';
+  h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:13px">';
+  h+='<div><span style="color:var(--accent);font-weight:600">'+aN+':</span> <strong>$'+(cA.yr3/1000).toFixed(0)+'K</strong></div>';
+  h+='<div><span style="color:var(--green);font-weight:600">'+bN+':</span> <strong>$'+(cB.yr3/1000).toFixed(0)+'K</strong></div>';
+  h+='</div>';
+  var yr3Diff=Math.abs(cA.yr3-cB.yr3);
+  if(yr3Diff>10000){
+    var yr3Winner=cA.yr3>cB.yr3?aN:bN;
+    h+='<div style="font-size:11px;color:var(--text3);margin-top:8px">3-year gap: <strong>$'+(yr3Diff/1000).toFixed(0)+'K</strong> in favor of '+yr3Winner+'</div>';
+  }
+  h+='</div>';
+
+  // Offer A analysis
+  h+=renderOfferAnalysis(aN,'var(--accent)',aAnalysis);
+  // Offer B analysis
+  h+=renderOfferAnalysis(bN,'var(--green)',bAnalysis);
+
+  // Bottom line
+  h+='<div style="padding:18px;background:linear-gradient(160deg,rgba(200,168,124,.06),rgba(200,168,124,.02));border:1px solid rgba(200,168,124,.15);border-radius:12px;margin-top:4px">';
+  h+='<div style="font-size:12px;font-weight:600;color:var(--accent);margin-bottom:8px">\ud83e\udde0 The Honest Bottom Line</div>';
+  h+='<div style="font-size:12px;color:var(--text2);line-height:1.8">';
+
+  var aWarnings=aAnalysis.warnings.length;
+  var bWarnings=bAnalysis.warnings.length;
+  if(aWarnings>bWarnings&&totalDiff<50000) h+='<p style="margin-bottom:8px"><strong>'+aN+'</strong> has more structural red flags ('+aWarnings+' warnings). A higher salary doesn\u2019t help if the contract traps you or costs you on the back end.</p>';
+  else if(bWarnings>aWarnings&&totalDiff<50000) h+='<p style="margin-bottom:8px"><strong>'+bN+'</strong> has more structural red flags ('+bWarnings+' warnings). Don\u2019t let a bigger number blind you to bad contract terms.</p>';
+
+  if(a.pslf==='yes'&&b.pslf==='no') h+='<p style="margin-bottom:8px">PSLF eligibility at '+aN+' could be worth $100-300K in loan forgiveness. If you have significant federal debt, this may outweigh a salary gap.</p>';
+  if(b.pslf==='yes'&&a.pslf==='no') h+='<p style="margin-bottom:8px">PSLF eligibility at '+bN+' could be worth $100-300K in loan forgiveness. If you have significant federal debt, this may outweigh a salary gap.</p>';
+
+  if(a.partner==='yes'&&b.partner==='no') h+='<p style="margin-bottom:8px">'+aN+'\u2019s partnership track means your income ceiling is much higher \u2014 but verify the buy-in, timeline, and what happens if partnership is denied.</p>';
+  if(b.partner==='yes'&&a.partner==='no') h+='<p style="margin-bottom:8px">'+bN+'\u2019s partnership track means your income ceiling is much higher \u2014 but verify the buy-in, timeline, and what happens if partnership is denied.</p>';
+
+  var callDiff=Math.abs(a.call-b.call);
+  if(callDiff>=3) h+='<p style="margin-bottom:8px">The call difference is '+(callDiff*12)+' days/year. That\u2019s not a minor lifestyle detail \u2014 it\u2019s the difference between burnout at year 3 and a sustainable career. Price your time honestly.</p>';
+
+  h+='<p style="margin:0">The best offer is the one that aligns with where you want to be in 5 years, not just what looks best on paper today. If you\u2019re unsure, submit both offers through the <strong>Contract Intelligence Tool</strong> for a full risk analysis.</p>';
+  h+='</div></div>';
+
+  document.getElementById('ocm-results').innerHTML=h;
+  document.getElementById('ocm-results').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function renderOfferAnalysis(name,color,analysis){
+  var h='<div style="margin-bottom:16px">';
+  h+='<div style="font-size:13px;font-weight:600;color:'+color+';margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid '+color+'">'+name+'</div>';
+
+  // Warnings first
+  if(analysis.warnings.length){
+    analysis.warnings.forEach(function(w){
+      h+='<div style="padding:10px 14px;background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.12);border-radius:8px;margin-bottom:8px;font-size:12px;color:var(--red);line-height:1.6">'+w+'</div>';
+    });
+  }
+  // Pros
+  if(analysis.pros.length){
+    h+='<div style="font-size:10px;font-weight:600;color:var(--green);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;margin-top:8px">ADVANTAGES</div>';
+    analysis.pros.forEach(function(p){
+      h+='<div style="padding:8px 12px;background:rgba(106,191,75,.04);border-left:2px solid var(--green);margin-bottom:6px;font-size:12px;color:var(--text2);line-height:1.6">'+p+'</div>';
+    });
+  }
+  // Cons
+  if(analysis.cons.length){
+    h+='<div style="font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;margin-top:12px">TRADE-OFFS</div>';
+    analysis.cons.forEach(function(c){
+      h+='<div style="padding:8px 12px;background:var(--bg2);border-left:2px solid var(--border);margin-bottom:6px;font-size:12px;color:var(--text2);line-height:1.6">'+c+'</div>';
+    });
+  }
+  if(!analysis.pros.length&&!analysis.cons.length&&!analysis.warnings.length){
+    h+='<div style="font-size:12px;color:var(--text3);padding:12px 0">Enter more details to see analysis.</div>';
+  }
+  h+='</div>';
+  return h;
+}
 
 // ===== SPECIALTY FIT ANALYZER (v13) =====
 function sfaUpdate(){

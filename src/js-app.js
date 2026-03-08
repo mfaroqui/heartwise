@@ -3587,7 +3587,7 @@ function renderAdmin(){
       var isSB=_sbMessages&&_sbMessages.length;
       c.innerHTML=msgs.map(function(m,idx){
         var msgId=isSB?m.id:((DB.messages.length-1)-idx);
-        var typeLabel={career:'🎯 Career/Strategy',finance:'💰 Finance/Comp',contract:'📋 Contract/Negotiation',bug:'🐛 Bug',suggestion:'💡 Suggestion',question:'❓ Question',feedback:'📝 Feedback',progress:'📈 Progress Update',other:'📎 Other'};
+        var typeLabel={career:'🎯 Career/Strategy',finance:'💰 Finance/Comp',contract:'📋 Contract/Negotiation','pivot-report':'📊 Pivot Report',audit:'🎯 Strategic Audit',bug:'🐛 Bug',suggestion:'💡 Suggestion',question:'❓ Question',feedback:'📝 Feedback',progress:'📈 Progress Update',other:'📎 Other'};
         var isRead=m.read?'':'border-left:3px solid var(--accent);';
         var d=m.date?new Date(m.date).toLocaleDateString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}):'';
         var h='<div class="card" style="margin-bottom:12px;'+isRead+'">';
@@ -3595,7 +3595,13 @@ function renderAdmin(){
         h+='<div><span style="font-weight:600;font-size:13px">'+(m.user_name||'Unknown')+'</span><span style="color:var(--text3);font-size:11px;margin-left:8px">'+(m.user_email||'')+'</span></div>';
         h+='<span style="font-size:10px;color:var(--text3)">'+d+'</span></div>';
         h+='<span class="tag t-cat" style="margin-bottom:8px;display:inline-block;font-size:10px">'+(typeLabel[m.type]||m.type)+'</span>';
-        h+='<p style="font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:12px">'+m.message+'</p>';
+        // Detect HTML reports vs plain text
+        var isHTML=m.message&&m.message.trim().charAt(0)==='<';
+        if(isHTML){
+          h+='<div style="margin-bottom:12px">'+m.message+'</div>';
+        }else{
+          h+='<p style="font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:12px;white-space:pre-wrap">'+m.message+'</p>';
+        }
         var replies=m.replies||[];
         if(replies.length){
           replies.forEach(function(r){
@@ -4373,59 +4379,92 @@ function roiUpdate(){
 
 // ===== STRATEGIC AUDIT SUBMISSION =====
 async function submitAudit(){
-  var fields=[
-    {id:'audit-1a',label:'Current Position'},
-    {id:'audit-1b',label:'Institution Strengths/Limitations'},
-    {id:'audit-1c',label:'Financial Situation'},
-    {id:'audit-1d',label:'CV Snapshot'},
-    {id:'audit-1e',label:'Known For'},
-    {id:'audit-2a',label:'Decision Facing'},
-    {id:'audit-2b',label:'All Options'},
-    {id:'audit-2c',label:'Timeline'},
-    {id:'audit-2d',label:'Already Tried'},
-    {id:'audit-2e',label:'Holding Back'},
-    {id:'audit-3a',label:'Non-Negotiables'},
-    {id:'audit-3b',label:'Willing to Sacrifice'},
-    {id:'audit-3c',label:'Who Else Affected'},
-    {id:'audit-3d',label:'Success in 1yr/5yr'},
-    {id:'audit-3e',label:'Regret Not Doing'},
-    {id:'audit-4a',label:'Info Gaps'},
-    {id:'audit-4b',label:'Who Consulted'},
-    {id:'audit-4c',label:'Worst Outcome'},
-    {id:'audit-4d',label:'Best Outcome'},
-    {id:'audit-4e',label:'Reversible?'}
+  var sections=[
+    {title:'Current Position',fields:[
+      {id:'audit-1a',label:'Current Position'},
+      {id:'audit-1b',label:'Institution Strengths/Limitations'},
+      {id:'audit-1c',label:'Financial Situation'},
+      {id:'audit-1d',label:'CV Snapshot'},
+      {id:'audit-1e',label:'Known For'}
+    ]},
+    {title:'The Decision',fields:[
+      {id:'audit-2a',label:'Decision Facing'},
+      {id:'audit-2b',label:'All Options Considered'},
+      {id:'audit-2c',label:'Timeline'},
+      {id:'audit-2d',label:'Already Tried'},
+      {id:'audit-2e',label:'What\'s Holding Back'}
+    ]},
+    {title:'Values & Priorities',fields:[
+      {id:'audit-3a',label:'Non-Negotiables'},
+      {id:'audit-3b',label:'Willing to Sacrifice'},
+      {id:'audit-3c',label:'Who Else Is Affected'},
+      {id:'audit-3d',label:'Success in 1yr / 5yr'},
+      {id:'audit-3e',label:'Will Regret Not Doing'}
+    ]},
+    {title:'Information & Risk',fields:[
+      {id:'audit-4a',label:'Information Gaps'},
+      {id:'audit-4b',label:'Who They\'ve Consulted'},
+      {id:'audit-4c',label:'Worst Possible Outcome'},
+      {id:'audit-4d',label:'Best Possible Outcome'},
+      {id:'audit-4e',label:'Is It Reversible?'}
+    ]}
   ];
-  // Validate — at least 3 fields filled
-  var filled=0;var auditText='';
-  fields.forEach(function(f){
+
+  var filled=0;
+  sections.forEach(function(s){s.fields.forEach(function(f){
     var el=document.getElementById(f.id);
-    var val=el?el.value.trim():'';
-    if(val){
-      filled++;
-      auditText+=f.label+':\n'+val+'\n\n';
-    }
-  });
+    if(el&&el.value.trim())filled++;
+  })});
   if(filled<3){notify('Please fill out at least a few sections before submitting.',1);return}
+
+  var h='<div style="font-family:system-ui,sans-serif">';
+  h+='<div style="font-size:16px;font-weight:700;margin-bottom:16px;color:#c8a87c">🎯 Strategic Audit Report</div>';
+  h+='<div style="font-size:11px;color:#7a756e;margin-bottom:16px">'+filled+' of 20 fields completed</div>';
+
+  sections.forEach(function(sec){
+    var secFilled=0;
+    sec.fields.forEach(function(f){var el=document.getElementById(f.id);if(el&&el.value.trim())secFilled++});
+    h+='<div style="margin-bottom:16px;padding:12px;background:rgba(200,168,124,.06);border:1px solid rgba(200,168,124,.1);border-radius:8px">';
+    h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">';
+    h+='<div style="font-size:11px;font-weight:700;color:#c8a87c;text-transform:uppercase;letter-spacing:1px">'+sec.title+'</div>';
+    h+='<div style="font-size:10px;color:#7a756e">'+secFilled+'/'+sec.fields.length+' answered</div>';
+    h+='</div>';
+    h+='<table style="width:100%;font-size:12px;border-collapse:collapse">';
+    sec.fields.forEach(function(f){
+      var el=document.getElementById(f.id);
+      var val=el?el.value.trim():'';
+      h+='<tr style="border-bottom:1px solid rgba(200,168,124,.06)">';
+      h+='<td style="padding:6px 8px;color:#7a756e;width:35%;vertical-align:top;font-size:11px">'+f.label+'</td>';
+      h+='<td style="padding:6px 8px">'+(val||'<em style="color:#7a756e;font-size:11px">Not answered</em>')+'</td>';
+      h+='</tr>';
+    });
+    h+='</table></div>';
+  });
+
+  // Completion summary
+  var pct=Math.round((filled/20)*100);
+  var completionColor=pct>=80?'#6abf4b':pct>=50?'#c8a87c':'#ef4444';
+  h+='<div style="padding:10px 12px;background:rgba(200,168,124,.04);border-radius:6px;display:flex;align-items:center;gap:10px">';
+  h+='<div style="width:36px;height:36px;border-radius:50%;border:3px solid '+completionColor+';display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:'+completionColor+';flex-shrink:0">'+pct+'%</div>';
+  h+='<div><div style="font-size:12px;font-weight:600;color:'+completionColor+'">'+(pct>=80?'Comprehensive submission':pct>=50?'Partially complete':'Minimal detail')+'</div>';
+  h+='<div style="font-size:10px;color:#7a756e">The more detail provided, the more actionable the review.</div></div></div>';
+  h+='</div>';
+
   var payload={
     user_name:U?U.name:'Unknown',
     user_email:U?U.email:'Unknown',
     type:'audit',
-    message:auditText,
+    message:h,
     date:new Date().toISOString(),
     read:false,
     replies:[]
   };
-  // Save to local DB
   if(!DB.messages)DB.messages=[];
   DB.messages.push(payload);
   saveDB();
-  // Sync to Supabase
   if(_supaClient){
-    try{
-      await _supaClient.from('messages').insert([payload]);
-    }catch(ex){console.warn('Audit sync error',ex)}
+    try{await _supaClient.from('messages').insert([payload])}catch(ex){console.warn('Audit sync error',ex)}
   }
-  // Show success
   document.getElementById('audit-form').classList.add('hidden');
   document.getElementById('audit-success').classList.remove('hidden');
   notify('Strategic audit submitted!');
@@ -4555,60 +4594,114 @@ function pivotCalcTraining(){
 }
 
 async function submitPivot(){
-  var report='=== CAREER PIVOT DECISION ENGINE REPORT ===\n\n';
-  // Step 1
+  // Collect structured data
   var cause=document.querySelector('input[name="pivot-cause"]:checked');
-  report+='STEP 1: DIAGNOSE THE DISSATISFACTION\n';
   var causeLabel=cause?(PIVOT_PROS_CONS[cause.value]?PIVOT_PROS_CONS[cause.value].title:'Other'):'Not selected';
-  report+='Core Issue: '+causeLabel+'\n';
-  if(cause&&cause.value==='other'){var otherText=document.getElementById('pivot-cause-other-text');if(otherText&&otherText.value.trim())report+='Other details: '+otherText.value.trim()+'\n'}
-  report+='What they dislike: '+(document.getElementById('pivot-1a').value.trim()||'Not answered')+'\n';
-  report+='Same specialty different setting: '+(document.getElementById('pivot-1b').value.trim()||'Not answered')+'\n';
+  var causeOther='';
+  if(cause&&cause.value==='other'){var otherText=document.getElementById('pivot-cause-other-text');if(otherText&&otherText.value.trim())causeOther=otherText.value.trim()}
   var burnout=document.querySelector('input[name="pivot-burnout"]:checked');
-  report+='Burnout vs Misaligned: '+(burnout?burnout.value:'Not selected')+'\n\n';
-  // Step 2
-  report+='STEP 2: MAP THE OPTIONS\n';
+
   var rows=['stay','adj','full','hyb'];
   var labels={stay:'Stay + Modify',adj:'Adjacent Pivot',full:'Full Pivot',hyb:'Hybrid'};
-  var dims=['f','i','t','s'];var dimLabels=['Feasibility','Financial','Timeline','Satisfaction'];
+  var dims=['f','i','t','s'];
+  var options=[];
   rows.forEach(function(r){
-    var vals=[];
-    dims.forEach(function(d,i){
-      var v=document.getElementById('pv-'+r+'-'+d).value;
-      vals.push(dimLabels[i]+': '+(v||'-'));
-    });
+    var vals={};
+    dims.forEach(function(d){vals[d]=parseInt(document.getElementById('pv-'+r+'-'+d).value)||0});
     var avg=document.getElementById('pv-'+r+'-avg').textContent;
-    report+=labels[r]+': '+vals.join(', ')+' (Avg: '+avg+')\n';
+    options.push({key:r,label:labels[r],f:vals.f,i:vals.i,t:vals.t,s:vals.s,avg:avg});
   });
-  report+='\n';
-  // Step 3
-  report+='STEP 3: FINANCIAL REALITY CHECK\n';
-  report+='Debt/obligations: '+(document.getElementById('pivot-3a').value.trim()||'Not answered')+'\n';
-  report+='Sustain reduced income: '+(document.getElementById('pivot-3b').value.trim()||'Not answered')+'\n';
-  report+='Comparable earning potential: '+(document.getElementById('pivot-3c').value.trim()||'Not answered')+'\n';
-  var yrs=document.getElementById('pivot-train-yrs').value;
-  var cost=document.getElementById('pivot-train-cost').value;
-  var sal=document.getElementById('pivot-train-salary').value;
-  var stip=document.getElementById('pivot-train-stipend').value;
-  if(parseFloat(yrs)>0){
-    var total=(parseFloat(yrs)*parseFloat(cost))+(parseFloat(yrs)*Math.max(0,parseFloat(sal)-parseFloat(stip)));
-    report+='Training cost estimate: $'+Math.round(total).toLocaleString()+' ('+yrs+' yrs, $'+cost+' tuition, $'+sal+' lost salary, $'+stip+' stipend)\n';
-  }
-  report+='Emergency fund: '+(document.getElementById('pivot-3d').value.trim()||'Not answered')+'\n\n';
-  // Step 4
-  report+='STEP 4: TEST BEFORE COMMITTING\n';
-  var checks=['Shadow new role','Informational interviews (3+)','Side project / moonlighting','Decision deadline set'];
-  for(var i=1;i<=4;i++){
-    report+=checks[i-1]+': '+(document.getElementById('pv-check-'+i).checked?'\u2705 Yes':'\u274c No')+'\n';
-  }
+
+  var yrs=parseFloat(document.getElementById('pivot-train-yrs').value)||0;
+  var cost=parseFloat(document.getElementById('pivot-train-cost').value)||0;
+  var sal=parseFloat(document.getElementById('pivot-train-salary').value)||0;
+  var stip=parseFloat(document.getElementById('pivot-train-stipend').value)||0;
+  var trainCost=yrs>0?Math.round((yrs*cost)+(yrs*Math.max(0,sal-stip))):0;
+
+  var checks=[];
+  var checkLabels=['Shadow new role','Informational interviews (3+)','Side project / moonlighting','Decision deadline set'];
+  for(var i=1;i<=4;i++){checks.push({label:checkLabels[i-1],done:document.getElementById('pv-check-'+i).checked})}
   var regret=document.querySelector('input[name="pivot-regret"]:checked');
-  report+='Will regret not trying in 5 years: '+(regret?regret.value.toUpperCase():'Not answered')+'\n';
+  var readiness=checks.filter(function(c){return c.done}).length;
+
+  // Build clean HTML report
+  var h='<div style="font-family:system-ui,sans-serif">';
+  h+='<div style="font-size:16px;font-weight:700;margin-bottom:16px;color:#c8a87c">📊 Career Pivot Decision Engine Report</div>';
+
+  // Step 1
+  h+='<div style="margin-bottom:16px;padding:12px;background:rgba(200,168,124,.06);border:1px solid rgba(200,168,124,.1);border-radius:8px">';
+  h+='<div style="font-size:11px;font-weight:700;color:#c8a87c;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Step 1: Diagnose the Dissatisfaction</div>';
+  h+='<table style="width:100%;font-size:12px;border-collapse:collapse">';
+  h+='<tr><td style="padding:4px 8px;color:#7a756e;width:40%">Core Issue</td><td style="padding:4px 8px;font-weight:600">'+causeLabel+(causeOther?' — '+causeOther:'')+'</td></tr>';
+  h+='<tr><td style="padding:4px 8px;color:#7a756e">What they dislike</td><td style="padding:4px 8px">'+(document.getElementById('pivot-1a').value.trim()||'<em style="color:#7a756e">Not answered</em>')+'</td></tr>';
+  h+='<tr><td style="padding:4px 8px;color:#7a756e">Same specialty, different setting?</td><td style="padding:4px 8px">'+(document.getElementById('pivot-1b').value.trim()||'<em style="color:#7a756e">Not answered</em>')+'</td></tr>';
+  h+='<tr><td style="padding:4px 8px;color:#7a756e">Burnout vs Misaligned</td><td style="padding:4px 8px;font-weight:600">'+(burnout?burnout.value:'<em style="color:#7a756e">Not selected</em>')+'</td></tr>';
+  h+='</table></div>';
+
+  // Step 2 — Options comparison chart
+  h+='<div style="margin-bottom:16px;padding:12px;background:rgba(200,168,124,.06);border:1px solid rgba(200,168,124,.1);border-radius:8px">';
+  h+='<div style="font-size:11px;font-weight:700;color:#c8a87c;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Step 2: Options Comparison</div>';
+  h+='<table style="width:100%;font-size:11px;border-collapse:collapse;text-align:center">';
+  h+='<tr style="border-bottom:2px solid rgba(200,168,124,.15)"><th style="padding:6px;text-align:left;color:#7a756e">Option</th><th style="padding:6px;color:#7a756e">Feasibility</th><th style="padding:6px;color:#7a756e">Financial</th><th style="padding:6px;color:#7a756e">Timeline</th><th style="padding:6px;color:#7a756e">Satisfaction</th><th style="padding:6px;color:#c8a87c;font-weight:700">Avg</th></tr>';
+  var bestAvg=0;var bestKey='';
+  options.forEach(function(o){var a=parseFloat(o.avg);if(a>bestAvg){bestAvg=a;bestKey=o.key}});
+  options.forEach(function(o){
+    var isBest=o.key===bestKey&&bestAvg>0;
+    var rowStyle=isBest?'background:rgba(106,191,75,.06);':'';
+    function scoreColor(v){if(!v||v===0)return'color:#7a756e';if(v>=8)return'color:#6abf4b;font-weight:700';if(v>=5)return'color:#c8a87c';return'color:#ef4444'}
+    h+='<tr style="border-bottom:1px solid rgba(200,168,124,.08);'+rowStyle+'">';
+    h+='<td style="padding:6px;text-align:left;font-weight:600">'+(isBest?'✦ ':'')+o.label+'</td>';
+    h+='<td style="padding:6px;'+scoreColor(o.f)+'">'+(o.f||'—')+'</td>';
+    h+='<td style="padding:6px;'+scoreColor(o.i)+'">'+(o.i||'—')+'</td>';
+    h+='<td style="padding:6px;'+scoreColor(o.t)+'">'+(o.t||'—')+'</td>';
+    h+='<td style="padding:6px;'+scoreColor(o.s)+'">'+(o.s||'—')+'</td>';
+    h+='<td style="padding:6px;font-weight:700;color:#c8a87c">'+o.avg+'</td>';
+    h+='</tr>';
+  });
+  h+='</table>';
+  if(bestKey&&bestAvg>0) h+='<div style="margin-top:8px;font-size:11px;color:#6abf4b;font-weight:600">✦ Highest scoring: '+labels[bestKey]+' ('+bestAvg.toFixed(1)+')</div>';
+  h+='</div>';
+
+  // Step 3
+  h+='<div style="margin-bottom:16px;padding:12px;background:rgba(200,168,124,.06);border:1px solid rgba(200,168,124,.1);border-radius:8px">';
+  h+='<div style="font-size:11px;font-weight:700;color:#c8a87c;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Step 3: Financial Reality Check</div>';
+  h+='<table style="width:100%;font-size:12px;border-collapse:collapse">';
+  h+='<tr><td style="padding:4px 8px;color:#7a756e;width:40%">Debt / obligations</td><td style="padding:4px 8px">'+(document.getElementById('pivot-3a').value.trim()||'<em style="color:#7a756e">Not answered</em>')+'</td></tr>';
+  h+='<tr><td style="padding:4px 8px;color:#7a756e">Sustain reduced income?</td><td style="padding:4px 8px">'+(document.getElementById('pivot-3b').value.trim()||'<em style="color:#7a756e">Not answered</em>')+'</td></tr>';
+  h+='<tr><td style="padding:4px 8px;color:#7a756e">Comparable earning potential?</td><td style="padding:4px 8px">'+(document.getElementById('pivot-3c').value.trim()||'<em style="color:#7a756e">Not answered</em>')+'</td></tr>';
+  if(trainCost>0) h+='<tr><td style="padding:4px 8px;color:#7a756e">Retraining cost estimate</td><td style="padding:4px 8px;font-weight:600;color:#ef4444">$'+trainCost.toLocaleString()+' <span style="font-weight:400;color:#7a756e;font-size:11px">('+yrs+' yrs)</span></td></tr>';
+  h+='<tr><td style="padding:4px 8px;color:#7a756e">Emergency fund?</td><td style="padding:4px 8px">'+(document.getElementById('pivot-3d').value.trim()||'<em style="color:#7a756e">Not answered</em>')+'</td></tr>';
+  h+='</table></div>';
+
+  // Step 4 — Readiness
+  h+='<div style="margin-bottom:16px;padding:12px;background:rgba(200,168,124,.06);border:1px solid rgba(200,168,124,.1);border-radius:8px">';
+  h+='<div style="font-size:11px;font-weight:700;color:#c8a87c;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Step 4: Readiness Check</div>';
+  h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px">';
+  checks.forEach(function(c){
+    var bg=c.done?'rgba(106,191,75,.08)':'rgba(239,68,68,.05)';
+    var bdr=c.done?'rgba(106,191,75,.2)':'rgba(239,68,68,.12)';
+    var clr=c.done?'#6abf4b':'#ef4444';
+    h+='<div style="padding:8px 10px;background:'+bg+';border:1px solid '+bdr+';border-radius:6px;font-size:11px">';
+    h+='<span style="color:'+clr+';font-weight:600">'+(c.done?'✅':'❌')+'</span> '+c.label+'</div>';
+  });
+  h+='</div>';
+  var regretVal=regret?regret.value:'not answered';
+  h+='<div style="font-size:12px"><span style="color:#7a756e">Will regret not trying in 5 years:</span> <strong>'+(regretVal==='yes'?'Yes — strong signal to act':regretVal==='no'?'No — may not be the right move':regretVal==='unsure'?'Unsure':regretVal)+'</strong></div>';
+  // Readiness score
+  var readyColor=readiness>=3?'#6abf4b':readiness>=2?'#c8a87c':'#ef4444';
+  var readyLabel=readiness>=3?'Ready to decide':readiness>=2?'Almost ready':'More groundwork needed';
+  h+='<div style="margin-top:10px;padding:8px 12px;background:rgba(200,168,124,.04);border-radius:6px;display:flex;align-items:center;gap:10px">';
+  h+='<div style="width:36px;height:36px;border-radius:50%;border:3px solid '+readyColor+';display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:'+readyColor+';flex-shrink:0">'+readiness+'/4</div>';
+  h+='<div><div style="font-size:12px;font-weight:600;color:'+readyColor+'">'+readyLabel+'</div><div style="font-size:10px;color:#7a756e">Readiness checklist completion</div></div>';
+  h+='</div>';
+  h+='</div>';
+  h+='</div>';
 
   var payload={
     user_name:U?U.name:'Unknown',
     user_email:U?U.email:'Unknown',
     type:'pivot-report',
-    message:report,
+    message:h,
     date:new Date().toISOString(),
     read:false,
     replies:[]

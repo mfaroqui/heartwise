@@ -3036,7 +3036,12 @@ v3:`<h3 class="serif">Offer Comparison Matrix</h3>
 <div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Loan Repayment ($)</label><input type="number" id="ocm-a-loan" placeholder="0" style="width:100%;box-sizing:border-box"></div>
 <div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Retirement Match (%)</label><input type="number" id="ocm-a-retire" placeholder="5" max="100" style="width:100%;box-sizing:border-box"></div>
 <div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Call Days / Month</label><input type="number" id="ocm-a-call" placeholder="4" style="width:100%;box-sizing:border-box"></div>
+<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Call Type</label><select id="ocm-a-calltype" style="width:100%"><option value="none">No call</option><option value="phone">Phone only (home)</option><option value="home">Home call w/ occasional come-in</option><option value="home_backup">Home call + in-house backup</option><option value="inhouse">In-house (24hr)</option></select></div>
+<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Weekly Schedule</label><select id="ocm-a-schedule" style="width:100%"><option value="5day">5 days/week</option><option value="4day">4 days/week</option><option value="4.5day">4.5 days/week</option><option value="7on7off">7-on / 7-off</option><option value="shift">Shift-based (variable)</option><option value="other">Other</option></select></div>
+<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Avg Clinical Hours / Week</label><input type="number" id="ocm-a-hours" placeholder="45" style="width:100%;box-sizing:border-box"></div>
+<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Weekend Rounding</label><select id="ocm-a-weekend" style="width:100%"><option value="none">None</option><option value="1-2">1-2x / month</option><option value="eow">Every other weekend</option><option value="every">Every weekend</option></select></div>
 <div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">PTO Days / Year</label><input type="number" id="ocm-a-pto" placeholder="20" style="width:100%;box-sizing:border-box"></div>
+<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">CME Days / Year</label><input type="number" id="ocm-a-cme" placeholder="5" style="width:100%;box-sizing:border-box"></div>
 <div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Non-Compete (miles)</label><input type="number" id="ocm-a-noncomp" placeholder="0" style="width:100%;box-sizing:border-box"></div>
 <div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Tail Coverage</label><select id="ocm-a-tail" style="width:100%"><option value="employer">Employer pays</option><option value="shared">Shared</option><option value="you">You pay</option><option value="none">Not included</option></select></div>
 <div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Partnership Track?</label><select id="ocm-a-partner" style="width:100%"><option value="no">No</option><option value="yes">Yes</option></select></div>
@@ -3055,7 +3060,12 @@ v3:`<h3 class="serif">Offer Comparison Matrix</h3>
 <div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Loan Repayment ($)</label><input type="number" id="ocm-b-loan" placeholder="0" style="width:100%;box-sizing:border-box"></div>
 <div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Retirement Match (%)</label><input type="number" id="ocm-b-retire" placeholder="3" max="100" style="width:100%;box-sizing:border-box"></div>
 <div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Call Days / Month</label><input type="number" id="ocm-b-call" placeholder="6" style="width:100%;box-sizing:border-box"></div>
+<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Call Type</label><select id="ocm-b-calltype" style="width:100%"><option value="none">No call</option><option value="phone">Phone only (home)</option><option value="home">Home call w/ occasional come-in</option><option value="home_backup">Home call + in-house backup</option><option value="inhouse">In-house (24hr)</option></select></div>
+<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Weekly Schedule</label><select id="ocm-b-schedule" style="width:100%"><option value="5day">5 days/week</option><option value="4day">4 days/week</option><option value="4.5day">4.5 days/week</option><option value="7on7off">7-on / 7-off</option><option value="shift">Shift-based (variable)</option><option value="other">Other</option></select></div>
+<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Avg Clinical Hours / Week</label><input type="number" id="ocm-b-hours" placeholder="50" style="width:100%;box-sizing:border-box"></div>
+<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Weekend Rounding</label><select id="ocm-b-weekend" style="width:100%"><option value="none">None</option><option value="1-2">1-2x / month</option><option value="eow">Every other weekend</option><option value="every">Every weekend</option></select></div>
 <div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">PTO Days / Year</label><input type="number" id="ocm-b-pto" placeholder="15" style="width:100%;box-sizing:border-box"></div>
+<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">CME Days / Year</label><input type="number" id="ocm-b-cme" placeholder="5" style="width:100%;box-sizing:border-box"></div>
 <div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Non-Compete (miles)</label><input type="number" id="ocm-b-noncomp" placeholder="25" style="width:100%;box-sizing:border-box"></div>
 <div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Tail Coverage</label><select id="ocm-b-tail" style="width:100%"><option value="employer">Employer pays</option><option value="shared">Shared</option><option value="you">You pay</option><option value="none">Not included</option></select></div>
 <div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Partnership Track?</label><select id="ocm-b-partner" style="width:100%"><option value="no">No</option><option value="yes">Yes</option></select></div>
@@ -5233,8 +5243,8 @@ function ocmNum(id){return parseFloat(document.getElementById(id)?.value)||0;}
 function ocmCompare(){
   var aN=ocmVal('ocm-a-name')||'Offer A';
   var bN=ocmVal('ocm-b-name')||'Offer B';
-  var a={name:aN,salary:ocmNum('ocm-a-salary'),sign:ocmNum('ocm-a-sign'),rvu:ocmNum('ocm-a-rvu'),wrvus:ocmNum('ocm-a-wrvus'),loan:ocmNum('ocm-a-loan'),retire:ocmNum('ocm-a-retire'),call:ocmNum('ocm-a-call'),pto:ocmNum('ocm-a-pto'),noncomp:ocmNum('ocm-a-noncomp'),tail:ocmVal('ocm-a-tail'),partner:ocmVal('ocm-a-partner'),pslf:ocmVal('ocm-a-pslf'),loc:ocmVal('ocm-a-loc')};
-  var b={name:bN,salary:ocmNum('ocm-b-salary'),sign:ocmNum('ocm-b-sign'),rvu:ocmNum('ocm-b-rvu'),wrvus:ocmNum('ocm-b-wrvus'),loan:ocmNum('ocm-b-loan'),retire:ocmNum('ocm-b-retire'),call:ocmNum('ocm-b-call'),pto:ocmNum('ocm-b-pto'),noncomp:ocmNum('ocm-b-noncomp'),tail:ocmVal('ocm-b-tail'),partner:ocmVal('ocm-b-partner'),pslf:ocmVal('ocm-b-pslf'),loc:ocmVal('ocm-b-loc')};
+  var a={name:aN,salary:ocmNum('ocm-a-salary'),sign:ocmNum('ocm-a-sign'),rvu:ocmNum('ocm-a-rvu'),wrvus:ocmNum('ocm-a-wrvus'),loan:ocmNum('ocm-a-loan'),retire:ocmNum('ocm-a-retire'),call:ocmNum('ocm-a-call'),calltype:ocmVal('ocm-a-calltype'),schedule:ocmVal('ocm-a-schedule'),hours:ocmNum('ocm-a-hours'),weekend:ocmVal('ocm-a-weekend'),pto:ocmNum('ocm-a-pto'),cme:ocmNum('ocm-a-cme'),noncomp:ocmNum('ocm-a-noncomp'),tail:ocmVal('ocm-a-tail'),partner:ocmVal('ocm-a-partner'),pslf:ocmVal('ocm-a-pslf'),loc:ocmVal('ocm-a-loc')};
+  var b={name:bN,salary:ocmNum('ocm-b-salary'),sign:ocmNum('ocm-b-sign'),rvu:ocmNum('ocm-b-rvu'),wrvus:ocmNum('ocm-b-wrvus'),loan:ocmNum('ocm-b-loan'),retire:ocmNum('ocm-b-retire'),call:ocmNum('ocm-b-call'),calltype:ocmVal('ocm-b-calltype'),schedule:ocmVal('ocm-b-schedule'),hours:ocmNum('ocm-b-hours'),weekend:ocmVal('ocm-b-weekend'),pto:ocmNum('ocm-b-pto'),cme:ocmNum('ocm-b-cme'),noncomp:ocmNum('ocm-b-noncomp'),tail:ocmVal('ocm-b-tail'),partner:ocmVal('ocm-b-partner'),pslf:ocmVal('ocm-b-pslf'),loc:ocmVal('ocm-b-loc')};
 
   if(!a.salary&&!b.salary){notify('Enter at least base salary for both offers',1);return}
 
@@ -5286,9 +5296,52 @@ function ocmCompare(){
     if(offer.call<other.call&&other.call>0) pros.push('\ud83c\udf19 Less call: '+offer.call+' days/month vs '+other.call+' \u2014 '+(other.call-offer.call)*12+' fewer call days per year');
     if(offer.call>other.call) cons.push('\ud83c\udf19 Heavier call burden: '+offer.call+' days/month vs '+other.call+' \u2014 that\u2019s '+(offer.call-other.call)*12+' more call days per year. Is the extra comp worth the lifestyle cost?');
 
+    // Call type
+    var callSeverity={none:0,phone:1,home:2,home_backup:3,inhouse:4};
+    var callLabels={none:'no call',phone:'phone-only call',home:'home call',home_backup:'home call with in-house backup',inhouse:'24-hour in-house call'};
+    var mySev=callSeverity[offer.calltype]||0;
+    var theirSev=callSeverity[other.calltype]||0;
+    if(mySev<theirSev&&theirSev>=2) pros.push('\ud83d\udcde Lighter call type: '+callLabels[offer.calltype]+' vs '+callLabels[other.calltype]+'. The type of call matters as much as the frequency \u2014 phone call from your couch is not the same as sleeping in the hospital.');
+    if(mySev>theirSev&&mySev>=3) cons.push('\ud83d\udcde Heavier call type: '+callLabels[offer.calltype]+' vs '+callLabels[other.calltype]+'. In-house call destroys your recovery time and compounds into burnout. Factor this into the real hourly rate.');
+    if(mySev>=4) warnings.push('\ud83d\udea9 24-hour in-house call is the most demanding call structure. Confirm frequency, post-call expectations, and whether you get a post-call day off. This is a sustainability issue, not just a preference.');
+
+    // Weekly schedule
+    var schedLabels={'5day':'5 days/week','4day':'4 days/week','4.5day':'4.5 days/week','7on7off':'7-on/7-off','shift':'shift-based','other':'other schedule'};
+    var schedDays={'5day':5,'4day':4,'4.5day':4.5,'7on7off':3.5,'shift':4,'other':5};
+    var myDays=schedDays[offer.schedule]||5;
+    var theirDays=schedDays[other.schedule]||5;
+    if(myDays<theirDays) pros.push('\ud83d\udcc5 Better weekly schedule: '+(schedLabels[offer.schedule]||offer.schedule)+' vs '+(schedLabels[other.schedule]||other.schedule)+'. Fewer clinic days means more personal time, CME, or side income. Over 48 weeks, that\u2019s ~'+Math.round((theirDays-myDays)*48)+' fewer workdays per year.');
+    if(myDays>theirDays) cons.push('\ud83d\udcc5 More demanding schedule: '+(schedLabels[offer.schedule]||offer.schedule)+' vs '+(schedLabels[other.schedule]||other.schedule)+'. That\u2019s ~'+Math.round((myDays-theirDays)*48)+' extra workdays per year \u2014 think about what that means for your family and longevity.');
+    if(offer.schedule==='7on7off') pros.push('\ud83c\udfe0 7-on/7-off gives you 26 full weeks off per year \u2014 more total days off than most 5-day/week jobs with 4 weeks PTO. The trade-off: your "on" weeks are intense and you have less schedule flexibility.');
+    if(offer.schedule==='4day'&&other.schedule==='5day') pros.push('\u2728 4-day weeks are increasingly common in specialties like heme/onc, derm, and ophthalmology. That extra day compounds: it\u2019s 48+ free days per year for research, family, or building something on the side.');
+
+    // Clinical hours
+    if(offer.hours>0&&other.hours>0){
+      if(offer.hours<other.hours) pros.push('\u23f0 Fewer clinical hours: '+offer.hours+'h/week vs '+other.hours+'h \u2014 '+(other.hours-offer.hours)+' fewer hours weekly adds up to '+Math.round((other.hours-offer.hours)*48)+' hours/year. That\u2019s real life back.');
+      if(offer.hours>other.hours) cons.push('\u23f0 More clinical hours: '+offer.hours+'h/week vs '+other.hours+'h \u2014 '+(offer.hours-other.hours)+' extra hours weekly. Calculate your effective hourly rate \u2014 sometimes the "higher salary" job pays less per hour.');
+      if(offer.hours>0&&offer.salary>0){
+        var effectiveRate=Math.round(offer.salary/(offer.hours*48));
+        if(effectiveRate>0) pros.push('\ud83d\udcb2 Effective hourly rate at '+label+': ~$'+effectiveRate+'/hour (based on '+offer.hours+'h/week \u00d7 48 weeks)');
+      }
+    }
+
+    // Weekend rounding
+    var wkndSeverity={none:0,'1-2':1,eow:2,every:3};
+    var wkndLabels={none:'no weekend rounding','1-2':'1-2 weekends/month',eow:'every other weekend',every:'every weekend'};
+    var myWknd=wkndSeverity[offer.weekend]||0;
+    var theirWknd=wkndSeverity[other.weekend]||0;
+    if(myWknd<theirWknd&&theirWknd>=2) pros.push('\ud83d\udcc6 Less weekend work: '+(wkndLabels[offer.weekend]||'none')+' vs '+(wkndLabels[other.weekend]||other.weekend)+'. Weekends with your family aren\u2019t a perk \u2014 they\u2019re what makes a career sustainable.');
+    if(myWknd>theirWknd&&myWknd>=2) cons.push('\ud83d\udcc6 More weekend rounding: '+(wkndLabels[offer.weekend]||offer.weekend)+' vs '+(wkndLabels[other.weekend]||'none')+'. Every-other-weekend rounding is ~26 Saturdays or Sundays per year you\u2019re not home.');
+    if(myWknd>=3) warnings.push('\u26a0\ufe0f Every-weekend rounding is a significant lifestyle burden. Confirm: is it full rounding or just check-ins? Does it come with extra comp or call pay? This is a leading cause of early career dissatisfaction.');
+
     // PTO
-    if(offer.pto>other.pto) pros.push('\ud83c\udfd6\ufe0f More time off: '+offer.pto+' days vs '+other.pto+' \u2014 '+(offer.pto-other.pto)+' extra days matters for longevity and burnout');
+    var totalTimeOff=offer.pto+(offer.cme||0);
+    var otherTimeOff=other.pto+(other.cme||0);
+    if(offer.pto>other.pto) pros.push('\ud83c\udfd6\ufe0f More PTO: '+offer.pto+' days vs '+other.pto+' \u2014 '+(offer.pto-other.pto)+' extra days matters for longevity and burnout');
     if(offer.pto<other.pto) cons.push('\ud83c\udfd6\ufe0f Less PTO: '+offer.pto+' days vs '+other.pto+' \u2014 fewer vacation days compounds into resentment over years');
+    if(offer.cme>0&&other.cme>0&&offer.cme>other.cme) pros.push('\ud83d\udcda More CME days: '+offer.cme+' vs '+other.cme+' \u2014 plus CME days are often on top of PTO, giving you '+totalTimeOff+' total days off vs '+otherTimeOff);
+    if(offer.cme>0&&other.cme>0&&offer.cme<other.cme) cons.push('\ud83d\udcda Fewer CME days: '+offer.cme+' vs '+other.cme);
+    if(totalTimeOff<20&&offer.pto>0) warnings.push('\u26a0\ufe0f '+totalTimeOff+' total days off (PTO + CME) is below the physician average of 25-30 days. This will catch up with you. Negotiate more PTO before signing.');
 
     // Non-compete
     if(offer.noncomp===0&&other.noncomp>0) pros.push('\u2705 No non-compete \u2014 this is a major advantage. You can leave without relocating');
@@ -5351,6 +5404,82 @@ function ocmCompare(){
   }
   h+='</div>';
 
+  // Schedule & Lifestyle Comparison
+  var schedLabelsMap={'5day':'5 days/wk','4day':'4 days/wk','4.5day':'4.5 days/wk','7on7off':'7-on / 7-off','shift':'Shift-based','other':'Other'};
+  var callLabelsMap={none:'No call',phone:'Phone only',home:'Home call',home_backup:'Home + backup',inhouse:'In-house 24hr'};
+  var wkndLabelsMap={none:'None','1-2':'1-2x/month',eow:'Every other',every:'Every weekend'};
+  var schedDaysMap={'5day':5,'4day':4,'4.5day':4.5,'7on7off':3.5,'shift':4,'other':5};
+  var callSeverityMap={none:0,phone:1,home:2,home_backup:3,inhouse:4};
+
+  h+='<div style="padding:14px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;margin-bottom:20px">';
+  h+='<div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">\ud83d\udcc5 Schedule & Lifestyle</div>';
+  h+='<div style="display:grid;grid-template-columns:auto 1fr 1fr;gap:0;font-size:12px">';
+
+  function schedRow(label,aVal,bVal,better){
+    var ac=better==='a'?'color:var(--green);font-weight:600':'';
+    var bc=better==='b'?'color:var(--green);font-weight:600':'';
+    var s='border-bottom:1px solid var(--border);padding:8px 10px;';
+    return '<div style="'+s+'color:var(--text3);font-size:11px">'+label+'</div><div style="'+s+'text-align:center;'+ac+'">'+aVal+'</div><div style="'+s+'text-align:center;'+bc+'">'+bVal+'</div>';
+  }
+
+  // Header row
+  h+='<div style="border-bottom:2px solid var(--border);padding:6px 10px;font-size:10px;color:var(--text3)"></div>';
+  h+='<div style="border-bottom:2px solid var(--border);padding:6px 10px;text-align:center;font-weight:600;color:var(--accent);font-size:11px">'+aN+'</div>';
+  h+='<div style="border-bottom:2px solid var(--border);padding:6px 10px;text-align:center;font-weight:600;color:var(--green);font-size:11px">'+bN+'</div>';
+
+  // Schedule
+  var aSched=schedLabelsMap[a.schedule]||'-';
+  var bSched=schedLabelsMap[b.schedule]||'-';
+  var schedBetter=(schedDaysMap[a.schedule]||5)<(schedDaysMap[b.schedule]||5)?'a':(schedDaysMap[b.schedule]||5)<(schedDaysMap[a.schedule]||5)?'b':'';
+  h+=schedRow('Weekly Schedule',aSched,bSched,schedBetter);
+
+  // Clinical hours
+  var aHrs=a.hours?a.hours+'h':'-';
+  var bHrs=b.hours?b.hours+'h':'-';
+  var hrsBetter=(a.hours&&b.hours)?(a.hours<b.hours?'a':b.hours<a.hours?'b':''):'';
+  h+=schedRow('Clinical Hours/Wk',aHrs,bHrs,hrsBetter);
+
+  // Call
+  var aCall=a.call?a.call+' days/mo':'-';
+  var bCall=b.call?b.call+' days/mo':'-';
+  var callBetter=a.call<b.call?'a':b.call<a.call?'b':'';
+  h+=schedRow('Call Frequency',aCall,bCall,callBetter);
+
+  // Call type
+  var aCallT=callLabelsMap[a.calltype]||'-';
+  var bCallT=callLabelsMap[b.calltype]||'-';
+  var ctBetter=(callSeverityMap[a.calltype]||0)<(callSeverityMap[b.calltype]||0)?'a':(callSeverityMap[b.calltype]||0)<(callSeverityMap[a.calltype]||0)?'b':'';
+  h+=schedRow('Call Type',aCallT,bCallT,ctBetter);
+
+  // Weekend
+  var aWknd=wkndLabelsMap[a.weekend]||'-';
+  var bWknd=wkndLabelsMap[b.weekend]||'-';
+  var wkndSev={none:0,'1-2':1,eow:2,every:3};
+  var wBetter=(wkndSev[a.weekend]||0)<(wkndSev[b.weekend]||0)?'a':(wkndSev[b.weekend]||0)<(wkndSev[a.weekend]||0)?'b':'';
+  h+=schedRow('Weekend Rounding',aWknd,bWknd,wBetter);
+
+  // PTO
+  var aPto=a.pto?a.pto+' days':'-';
+  var bPto=b.pto?b.pto+' days':'-';
+  var ptoBetter=a.pto>b.pto?'a':b.pto>a.pto?'b':'';
+  h+=schedRow('PTO / Year',aPto,bPto,ptoBetter);
+
+  // CME
+  var aCme=a.cme?a.cme+' days':'-';
+  var bCme=b.cme?b.cme+' days':'-';
+  var cmeBetter=a.cme>b.cme?'a':b.cme>a.cme?'b':'';
+  h+=schedRow('CME Days',aCme,bCme,cmeBetter);
+
+  // Total time off
+  var aTotalOff=(a.pto||0)+(a.cme||0);
+  var bTotalOff=(b.pto||0)+(b.cme||0);
+  if(aTotalOff>0||bTotalOff>0){
+    var toBetter=aTotalOff>bTotalOff?'a':bTotalOff>aTotalOff?'b':'';
+    h+=schedRow('\u2728 Total Days Off',aTotalOff?aTotalOff+' days':'-',bTotalOff?bTotalOff+' days':'-',toBetter);
+  }
+
+  h+='</div></div>';
+
   // Offer A analysis
   h+=renderOfferAnalysis(aN,'var(--accent)',aAnalysis);
   // Offer B analysis
@@ -5374,6 +5503,22 @@ function ocmCompare(){
 
   var callDiff=Math.abs(a.call-b.call);
   if(callDiff>=3) h+='<p style="margin-bottom:8px">The call difference is '+(callDiff*12)+' days/year. That\u2019s not a minor lifestyle detail \u2014 it\u2019s the difference between burnout at year 3 and a sustainable career. Price your time honestly.</p>';
+
+  // Schedule/lifestyle summary
+  var schedDaysMap={'5day':5,'4day':4,'4.5day':4.5,'7on7off':3.5,'shift':4,'other':5};
+  var aWorkdays=(schedDaysMap[a.schedule]||5)*48;
+  var bWorkdays=(schedDaysMap[b.schedule]||5)*48;
+  if(Math.abs(aWorkdays-bWorkdays)>=20){
+    var fewerSched=aWorkdays<bWorkdays?aN:bN;
+    var moreSched=aWorkdays<bWorkdays?bN:aN;
+    h+='<p style="margin-bottom:8px"><strong>'+fewerSched+'</strong> has ~'+Math.round(Math.abs(aWorkdays-bWorkdays))+' fewer workdays/year than '+moreSched+'. Run the numbers: divide each salary by annual workdays to see your true daily rate. The "lower salary" job might actually pay more per day of your life.</p>';
+  }
+  if((a.hours>0&&b.hours>0)&&Math.abs(a.hours-b.hours)>=5){
+    var lessHrs=a.hours<b.hours?aN:bN;
+    var moreHrs=a.hours<b.hours?bN:aN;
+    var hDiff=Math.abs(a.hours-b.hours);
+    h+='<p style="margin-bottom:8px">'+moreHrs+' asks for '+hDiff+' more clinical hours per week. That\u2019s '+Math.round(hDiff*48)+' extra hours per year. Before choosing the higher comp, calculate your effective hourly rate for both.</p>';
+  }
 
   h+='<p style="margin:0">The best offer is the one that aligns with where you want to be in 5 years, not just what looks best on paper today. If you\u2019re unsure, submit both offers through the <strong>Contract Intelligence Tool</strong> for a full risk analysis.</p>';
   h+='</div></div>';

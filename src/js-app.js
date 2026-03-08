@@ -579,6 +579,284 @@ function renderArchive(){
 function filterArchive(){renderArchive()}
 function setFilter(f,btn){curFilter=f;document.querySelectorAll('.fc .chip').forEach(c=>c.classList.remove('on'));btn.classList.add('on');renderArchive()}
 
+// ===== FELLOWSHIP POSITIONING ROADMAP (v6) =====
+var FPR_PHASES=[
+  {id:'p1',label:'18-24 Months Before Match',icon:'\ud83c\udfaf',items:[
+    {id:'t1',text:'Identify target subspecialty with conviction'},
+    {id:'t2',text:'Start first research project (aim for first-author)'},
+    {id:'t3',text:'Build relationships with 3-4 potential letter writers'},
+    {id:'t4',text:'Attend first subspecialty national conference'},
+    {id:'t5',text:'Join relevant subspecialty society (ACC, AGA, CHEST, etc.)'},
+    {id:'t6',text:'Shadow faculty in your target specialty at your institution'}
+  ]},
+  {id:'p2',label:'12-18 Months Before',icon:'\ud83d\udcdd',items:[
+    {id:'t7',text:'Submit first abstract to national conference'},
+    {id:'t8',text:'Get informal feedback on application competitiveness'},
+    {id:'t9',text:'Build initial program list (15-20 programs, tiered)'},
+    {id:'t10',text:'Take on a leadership role (chief, committee, QI lead)'},
+    {id:'t11',text:'Start second research project or case series'},
+    {id:'t12',text:'Begin networking with fellows at target programs'}
+  ]},
+  {id:'p3',label:'6-12 Months Before',icon:'\ud83c\udfe5',items:[
+    {id:'t13',text:'Complete away rotation #1 at a target program'},
+    {id:'t14',text:'Complete away rotation #2 (if applicable)'},
+    {id:'t15',text:'Formally ask letter writers (give them 8+ weeks)'},
+    {id:'t16',text:'Submit or have manuscript in final revision'},
+    {id:'t17',text:'Draft personal statement (first version)'},
+    {id:'t18',text:'Finalize program list based on away rotation intel'}
+  ]},
+  {id:'p4',label:'3-6 Months Before',icon:'\u270d\ufe0f',items:[
+    {id:'t19',text:'Finalize personal statement (5+ drafts minimum)'},
+    {id:'t20',text:'Confirm all letters are submitted'},
+    {id:'t21',text:'Research each program specifically (recent pubs, faculty interests)'},
+    {id:'t22',text:'Practice interview questions with attendings'},
+    {id:'t23',text:'ERAS application submitted'},
+    {id:'t24',text:'Prepare 2-3 specific questions for each program interview'}
+  ]},
+  {id:'p5',label:'0-3 Months Before Match',icon:'\ud83c\udfc1',items:[
+    {id:'t25',text:'Send thank-you emails within 24 hours of each interview'},
+    {id:'t26',text:'Track interview impressions immediately after each one'},
+    {id:'t27',text:'Schedule second-look visits at top 2-3 programs'},
+    {id:'t28',text:'Build rank list based on fit, not just reputation'},
+    {id:'t29',text:'Get input from trusted mentors on rank list'},
+    {id:'t30',text:'Submit final rank list before deadline'}
+  ]}
+];
+
+var FPR_MOCK_QUESTIONS={
+  cardiology:[
+    {q:'Tell me about a complex cardiac case that challenged your clinical reasoning.',type:'clinical',tip:'Use a specific patient. Walk through your differential, workup, and what you learned. PDs want to see how you think, not just what you know.'},
+    {q:'What area of cardiology research are you most passionate about and why?',type:'research',tip:'Connect your research to a real clinical problem. Show trajectory \u2014 where you\u2019ve been, where you\u2019re going.'},
+    {q:'How do you handle disagreements with supervising attendings about patient management?',type:'behavioral',tip:'Give a real example. Show diplomacy AND backbone. They want fellows who can push back respectfully when patient safety is at stake.'},
+    {q:'Where do you see yourself 10 years after fellowship?',type:'career',tip:'Be specific but realistic. Academic vs private? Interventional vs imaging? Show you\u2019ve thought about this \u2014 vague answers signal you\u2019re applying without conviction.'},
+    {q:'A 55-year-old presents with chest pain, troponin positive, and new ST depressions in V4-V6. Walk me through your approach.',type:'clinical',tip:'This tests your algorithm AND your clinical judgment. Don\u2019t just recite guidelines \u2014 discuss nuances like timing of cath, anticoagulation considerations, and what would make you deviate from standard protocol.'},
+    {q:'What would you do if you witnessed a co-fellow making a medical error?',type:'behavioral',tip:'Balance is key: patient safety first, then direct communication with the co-fellow, then escalation if needed. They\u2019re testing your professionalism and courage.'},
+    {q:'Why our program specifically?',type:'fit',tip:'This is where your research pays off. Reference specific faculty, recent publications, unique rotations, or program structure. Generic answers are an immediate red flag.'},
+    {q:'Describe your experience with cardiac catheterization. How many cases have you been involved in?',type:'clinical',tip:'Be honest about numbers. If your exposure is limited, show enthusiasm and a plan to build skills. Overstating experience is career-ending if caught.'}
+  ],
+  interventional:[
+    {q:'Walk me through your approach to a patient with a chronic total occlusion. When do you intervene vs. manage medically?',type:'clinical',tip:'This tests nuance. Discuss viability assessment, symptom burden, operator experience, and shared decision-making. Not every CTO needs opening.'},
+    {q:'What\u2019s your experience with structural heart procedures? Where do you see the field going?',type:'research',tip:'TAVR, MitraClip, LAAO \u2014 show you follow the trials and understand which patients benefit. Bonus points for mentioning ongoing trials by name.'},
+    {q:'Tell me about a complication you\u2019ve managed or witnessed in the cath lab.',type:'clinical',tip:'Complications happen. They want to see composure, systematic response, and learning \u2014 not that you\u2019ve never seen one.'},
+    {q:'How do you balance volume/efficiency with teaching in a busy cath lab?',type:'behavioral',tip:'Show that you value both. Reference specific teaching moments and how you\u2019ve created efficiency without compromising education.'},
+    {q:'Why interventional cardiology over other subspecialties?',type:'fit',tip:'Go beyond "I like procedures." Talk about the specific intellectual challenges, the immediate impact on patients, and the evolving technology.'},
+    {q:'Describe a situation where you had to advocate for a patient against the recommendations of a more senior physician.',type:'behavioral',tip:'This happens in IC \u2014 the senior wants to intervene, you think medical management is right (or vice versa). Show you can advocate with data and respect.'}
+  ],
+  electrophysiology:[
+    {q:'Explain your approach to a patient with recurrent syncope and a structurally normal heart.',type:'clinical',tip:'Systematic workup: Holter/event monitor, tilt table, EP study indications. Show you can risk-stratify and avoid unnecessary invasive testing.'},
+    {q:'What interests you about catheter ablation technology and where do you see it evolving?',type:'research',tip:'Discuss PFA vs RF vs cryo. Reference recent trials (ADVENT, MANIFEST-PF). Show you understand the limitations, not just the hype.'},
+    {q:'How do you explain the risks and benefits of an ICD to a patient who is hesitant?',type:'behavioral',tip:'Shared decision-making in action. Show empathy, clear communication without jargon, and respect for patient autonomy \u2014 even if you disagree with their choice.'},
+    {q:'Walk me through the interpretation of this EP study showing dual AV nodal physiology.',type:'clinical',tip:'Describe AH jump, echo beats, and the decision to proceed with ablation. Show you understand the electrophysiology, not just the button-pushing.'},
+    {q:'Why EP over interventional or imaging?',type:'fit',tip:'EP attracts a specific personality \u2014 systematic thinkers who love puzzles and technology. Be authentic about what drew you in.'},
+    {q:'Describe your experience managing device complications.',type:'clinical',tip:'Lead dislodgement, pocket infection, inappropriate shocks \u2014 show you\u2019ve seen the full spectrum and know when to escalate.'}
+  ],
+  gi:[
+    {q:'A 45-year-old presents with acute upper GI bleeding. Walk me through your management.',type:'clinical',tip:'Resuscitation first, then risk stratification (Glasgow-Blatchford), timing of endoscopy, and post-procedure management. Show you think systematically.'},
+    {q:'What area of GI are you most interested in pursuing after fellowship?',type:'career',tip:'Advanced endoscopy, hepatology, IBD, motility \u2014 show you\u2019ve explored the options and have early conviction.'},
+    {q:'Tell me about a challenging endoscopic procedure you\u2019ve observed or assisted with.',type:'clinical',tip:'Describe the complexity, the decision-making, and what you learned. Show respect for the difficulty and honesty about your current skill level.'},
+    {q:'How would you handle a patient who is non-compliant with their IBD medications and presents with a flare?',type:'behavioral',tip:'Explore why they\u2019re non-compliant before judging. Cost? Side effects? Misunderstanding? This tests your patient-centeredness.'},
+    {q:'Discuss a recent advance in GI that excites you.',type:'research',tip:'AI-assisted polyp detection, third-space endoscopy, FMT for C. diff \u2014 pick something you\u2019ve actually read about and can discuss intelligently.'},
+    {q:'Why GI over other IM subspecialties?',type:'fit',tip:'The combination of procedures and longitudinal patient relationships is unique. Be specific about what that means to you personally.'}
+  ],
+  pulm_crit:[
+    {q:'Describe your approach to managing a patient with severe ARDS on the ventilator.',type:'clinical',tip:'ARDSNet protocol, prone positioning, PEEP titration, neuromuscular blockade. But also discuss the human side \u2014 family communication, goals of care.'},
+    {q:'How do you approach ventilator liberation in a patient who has failed multiple SBTs?',type:'clinical',tip:'Systematic assessment of failure causes: cardiac, diaphragmatic weakness, secretions, anxiety. Show you don\u2019t just retry the same thing.'},
+    {q:'Tell me about a goals-of-care conversation that was particularly challenging.',type:'behavioral',tip:'ICU medicine is full of these. Show empathy, clarity, and comfort with uncertainty. The best answers include what you learned about yourself.'},
+    {q:'What research in pulmonary or critical care are you most interested in pursuing?',type:'research',tip:'ARDS phenotyping, ECMO utilization, ICU survivorship, lung cancer screening \u2014 show depth in one area rather than surface across many.'},
+    {q:'How do you manage disagreements about code status between family members?',type:'behavioral',tip:'Family meetings, identifying the decision-maker, exploring values rather than medical details. Show you can navigate family dynamics under pressure.'},
+    {q:'Why pulm/crit over hospitalist medicine or other subspecialties?',type:'fit',tip:'The intensity, the procedures, the immediate impact \u2014 but also the longitudinal pulmonary clinic. Show you want both sides.'}
+  ],
+  hemonc:[
+    {q:'How do you approach breaking bad news to a patient about a new cancer diagnosis?',type:'behavioral',tip:'SPIKES framework is a start, but show that you\u2019ve done this and know it\u2019s never formulaic. Each patient processes differently.'},
+    {q:'Discuss a recent immunotherapy trial that has changed clinical practice.',type:'research',tip:'Pick a specific trial (CheckMate, KEYNOTE series). Show you understand the mechanism, the population, and the limitations.'},
+    {q:'A patient with metastatic disease wants to pursue aggressive treatment despite poor performance status. How do you counsel them?',type:'clinical',tip:'This tests your ability to be honest without being paternalistic. Discuss realistic expectations, toxicity, and what matters to the patient.'},
+    {q:'Where do you see yourself in hematology vs. oncology, or both?',type:'career',tip:'Many programs want to know if you\u2019ll pursue both or sub-specialize further. Be honest about your trajectory.'},
+    {q:'How do you manage your own emotional well-being given the nature of oncology?',type:'behavioral',tip:'Burnout is real in this field. Showing self-awareness about coping strategies demonstrates maturity, not weakness.'},
+    {q:'Why heme/onc?',type:'fit',tip:'The therapeutic revolution, the patient relationships, the science \u2014 but be authentic. They\u2019ve heard the generic version.'}
+  ],
+  other:[
+    {q:'Tell me about a case that solidified your interest in this specialty.',type:'fit',tip:'Specific patient, specific moment. The best answers connect clinical experience to personal values.'},
+    {q:'What research are you most proud of and why?',type:'research',tip:'Not your highest-impact publication, but the work that taught you the most. PDs can spot genuine passion.'},
+    {q:'Describe a time you received constructive criticism. How did you respond?',type:'behavioral',tip:'Show growth, not defensiveness. The best fellows are coachable. Give a real example with a real outcome.'},
+    {q:'How do you prioritize when you have competing clinical and academic demands?',type:'behavioral',tip:'Time management is critical in fellowship. Show a system, not just "I work hard." Real examples beat abstract strategies.'},
+    {q:'Where do you see yourself practicing in 10 years?',type:'career',tip:'Academic vs community? Research-heavy vs clinical? Geographic preferences? Show you\u2019ve thought about the full picture.'},
+    {q:'What questions do you have for us?',type:'fit',tip:'Have 3-5 specific questions ready. Ask about fellow autonomy, research mentorship, and recent changes to the program. Never ask about things you could have found on the website.'}
+  ]
+};
+FPR_MOCK_QUESTIONS.rheum=FPR_MOCK_QUESTIONS.other;
+FPR_MOCK_QUESTIONS.endo=FPR_MOCK_QUESTIONS.other;
+FPR_MOCK_QUESTIONS.neph=FPR_MOCK_QUESTIONS.other;
+FPR_MOCK_QUESTIONS.id=FPR_MOCK_QUESTIONS.other;
+FPR_MOCK_QUESTIONS.allergy=FPR_MOCK_QUESTIONS.other;
+FPR_MOCK_QUESTIONS.sports=FPR_MOCK_QUESTIONS.other;
+FPR_MOCK_QUESTIONS.geri=FPR_MOCK_QUESTIONS.other;
+FPR_MOCK_QUESTIONS.pain=FPR_MOCK_QUESTIONS.other;
+FPR_MOCK_QUESTIONS.ortho=FPR_MOCK_QUESTIONS.other;
+FPR_MOCK_QUESTIONS.ctsx=FPR_MOCK_QUESTIONS.other;
+FPR_MOCK_QUESTIONS.vasc=FPR_MOCK_QUESTIONS.other;
+
+function fprGetProgress(){
+  try{return JSON.parse(localStorage.getItem('fpr_progress')||'{}');}catch(e){return {};}
+}
+function fprSaveProgress(data){
+  localStorage.setItem('fpr_progress',JSON.stringify(data));
+}
+
+function fprInit(){
+  var spec=document.getElementById('fpr-spec').value;
+  var months=document.getElementById('fpr-months').value;
+  if(!spec||!months){document.getElementById('fpr-phases').innerHTML='';document.getElementById('fpr-mock').innerHTML='';document.getElementById('fpr-progress-wrap').style.display='none';return;}
+
+  var progress=fprGetProgress();
+  var monthsNum=parseInt(months);
+  var phaseMonths=[24,18,12,6,3];
+  var h='';
+
+  FPR_PHASES.forEach(function(phase,pi){
+    var phaseThreshold=phaseMonths[pi];
+    var nextThreshold=phaseMonths[pi+1]||0;
+    var isActive=monthsNum<=phaseThreshold&&monthsNum>nextThreshold;
+    if(pi===FPR_PHASES.length-1&&monthsNum<=3) isActive=true;
+    var isPast=monthsNum<=nextThreshold&&pi<FPR_PHASES.length-1;
+    var isFuture=monthsNum>phaseThreshold;
+
+    var borderColor=isActive?'var(--accent)':isPast?'var(--green)':'var(--border)';
+    var opacity=isFuture?'0.5':'1';
+
+    h+='<div style="margin-bottom:16px;padding:16px;border:1px solid '+borderColor+';border-radius:12px;opacity:'+opacity+';background:'+(isActive?'rgba(200,168,124,.03)':'var(--bg)')+';">';
+    h+='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:6px">';
+    h+='<div style="font-size:13px;font-weight:600;color:'+(isActive?'var(--accent)':isPast?'var(--green)':'var(--text3)')+'">'+phase.icon+' '+phase.label+'</div>';
+    h+='<div style="display:flex;align-items:center;gap:6px">';
+
+    var done=0;
+    phase.items.forEach(function(item){if(progress[item.id])done++});
+    if(done>0) h+='<span style="font-size:10px;color:'+(done===phase.items.length?'var(--green)':'var(--accent)')+';font-weight:600">'+done+'/'+phase.items.length+'</span>';
+    if(isActive) h+='<span style="font-size:9px;padding:2px 8px;border-radius:100px;background:var(--accent);color:white;font-weight:600">CURRENT</span>';
+    if(isPast&&done<phase.items.length) h+='<span style="font-size:9px;padding:2px 8px;border-radius:100px;background:rgba(239,68,68,.1);color:var(--red);font-weight:600">CATCH UP</span>';
+    h+='</div></div>';
+
+    phase.items.forEach(function(item){
+      var checked=progress[item.id]?true:false;
+      h+='<div onclick="fprToggle(\''+item.id+'\')" style="display:flex;align-items:flex-start;gap:10px;padding:8px 4px;cursor:pointer;border-bottom:1px solid var(--bg3)">';
+      h+='<div style="min-width:20px;height:20px;border-radius:4px;border:2px solid '+(checked?'var(--green)':'var(--border)')+';background:'+(checked?'var(--green)':'transparent')+';display:flex;align-items:center;justify-content:center;margin-top:1px;flex-shrink:0">';
+      if(checked) h+='<svg width="12" height="12" viewBox="0 0 12 12"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" fill="none"/></svg>';
+      h+='</div>';
+      h+='<span style="font-size:12px;color:'+(checked?'var(--text3)':'var(--text2)')+';line-height:1.5;'+(checked?'text-decoration:line-through;':'')+'">'+item.text+'</span>';
+      h+='</div>';
+    });
+    h+='</div>';
+  });
+
+  document.getElementById('fpr-phases').innerHTML=h;
+  document.getElementById('fpr-progress-wrap').style.display='block';
+  fprUpdateBar();
+
+  if(monthsNum<=3){fprShowMockInterview(spec)}else{document.getElementById('fpr-mock').innerHTML=''}
+}
+
+function fprToggle(itemId){
+  var progress=fprGetProgress();
+  if(progress[itemId]){delete progress[itemId]}else{progress[itemId]=Date.now()}
+  fprSaveProgress(progress);
+  fprInit();
+}
+
+function fprUpdateBar(){
+  var progress=fprGetProgress();
+  var total=0;var done=0;
+  FPR_PHASES.forEach(function(phase){phase.items.forEach(function(item){total++;if(progress[item.id])done++})});
+  var pct=total?Math.round(done/total*100):0;
+  document.getElementById('fpr-pct').textContent=pct+'%';
+  document.getElementById('fpr-bar').style.width=pct+'%';
+  document.getElementById('fpr-bar').style.background=pct>=80?'var(--green)':'var(--accent)';
+  document.getElementById('fpr-stat').textContent=done+' of '+total+' milestones completed';
+}
+
+function fprShowMockInterview(spec){
+  var questions=FPR_MOCK_QUESTIONS[spec]||FPR_MOCK_QUESTIONS.other;
+  var specNames={cardiology:'Cardiology',interventional:'Interventional Cardiology',electrophysiology:'Electrophysiology',gi:'Gastroenterology',pulm_crit:'Pulmonology/Critical Care',hemonc:'Hematology/Oncology',rheum:'Rheumatology',endo:'Endocrinology',neph:'Nephrology',id:'Infectious Disease',allergy:'Allergy/Immunology',sports:'Sports Medicine',geri:'Geriatrics',pain:'Pain Medicine',ortho:'Orthopedic Surgery',ctsx:'Cardiothoracic Surgery',vasc:'Vascular Surgery',other:'Your Specialty'};
+  var specName=specNames[spec]||'Your Specialty';
+  var shuffled=questions.slice().sort(function(){return 0.5-Math.random()});
+  var selected=shuffled.slice(0,4);
+  window._fprMockQuestions=questions;
+  window._fprMockSpec=spec;
+
+  var h='<div style="margin-top:24px;padding:20px;background:linear-gradient(160deg,rgba(200,168,124,.06),rgba(200,168,124,.02));border:1px solid rgba(200,168,124,.15);border-radius:12px">';
+  h+='<div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">';
+  h+='<div style="font-size:24px">\ud83c\udf99\ufe0f</div>';
+  h+='<div><div style="font-size:15px;font-weight:600;color:var(--accent);font-family:var(--font-serif)">Mock Interview: '+specName+'</div>';
+  h+='<div style="font-size:11px;color:var(--text3)">Real questions asked by program directors. Practice these out loud.</div></div>';
+  h+='</div>';
+  h+=fprRenderMockCards(selected);
+  h+='</div>';
+  document.getElementById('fpr-mock').innerHTML=h;
+}
+
+function fprRenderMockCards(selected){
+  var typeBadge={clinical:'\ud83e\ude7a Clinical',research:'\ud83d\udd2c Research',behavioral:'\ud83e\udde0 Behavioral',career:'\ud83c\udfaf Career',fit:'\ud83c\udfe5 Program Fit'};
+  var typeColor={clinical:'#3B82F6',research:'var(--green)',behavioral:'var(--accent)',career:'#8B5CF6',fit:'#E67E22'};
+  var h='';
+
+  selected.forEach(function(q,i){
+    h+='<div style="margin-bottom:14px;padding:14px;background:var(--bg);border:1px solid var(--border);border-radius:10px">';
+    h+='<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">';
+    h+='<span style="font-size:14px;font-weight:700;color:var(--accent)">Q'+(i+1)+'</span>';
+    h+='<span style="font-size:9px;padding:2px 8px;border-radius:100px;background:rgba(0,0,0,.04);color:'+(typeColor[q.type]||'var(--text3)')+';font-weight:600;letter-spacing:.5px">'+(typeBadge[q.type]||q.type)+'</span>';
+    h+='</div>';
+    h+='<div style="font-size:13px;font-weight:500;color:var(--text);line-height:1.6;margin-bottom:10px">\u201c'+q.q+'\u201d</div>';
+    h+='<details style="margin-top:4px"><summary style="font-size:11px;color:var(--accent);cursor:pointer;font-weight:600;user-select:none">\ud83d\udca1 Coaching Tip</summary>';
+    h+='<div style="font-size:11px;color:var(--text2);line-height:1.7;margin-top:8px;padding:10px;background:var(--bg2);border-radius:6px">'+q.tip+'</div>';
+    h+='</details>';
+    h+='<details style="margin-top:8px"><summary style="font-size:11px;color:var(--text3);cursor:pointer;font-weight:500;user-select:none">\u270d\ufe0f Draft Your Answer</summary>';
+    h+='<textarea placeholder="Write your answer here. Practice saying it out loud \u2014 aim for 60-90 seconds." style="width:100%;min-height:80px;margin-top:8px;font-size:12px;line-height:1.6;border:1px solid var(--border);border-radius:6px;padding:10px;resize:vertical;box-sizing:border-box;background:var(--bg)"></textarea>';
+    h+='</details>';
+    h+='</div>';
+  });
+
+  h+='<div style="display:flex;gap:10px;margin-top:16px">';
+  h+='<button onclick="fprNewSet()" class="btn btn-g" style="flex:1;padding:10px;font-size:12px">\ud83d\udd00 New Question Set</button>';
+  h+='<button onclick="fprShowAll()" class="btn btn-g" style="flex:1;padding:10px;font-size:12px">\ud83d\udccb All Questions</button>';
+  h+='</div>';
+
+  h+='<div style="margin-top:14px;padding:12px;background:var(--bg);border:1px solid var(--border);border-radius:8px">';
+  h+='<div style="font-size:11px;font-weight:600;color:var(--accent);margin-bottom:6px">\ud83c\udfaf Interview Prep Tips</div>';
+  h+='<div style="font-size:11px;color:var(--text2);line-height:1.8">';
+  h+='\u2022 Practice each answer out loud (aim for 60-90 seconds)<br>';
+  h+='\u2022 Record yourself and watch it back \u2014 painful but effective<br>';
+  h+='\u2022 Do at least 2 mock interviews with attendings before the real thing<br>';
+  h+='\u2022 Prepare 3 specific questions per program (not things on their website)<br>';
+  h+='\u2022 Have your 30-second career story ready \u2014 why this specialty, why now, where you\u2019re going';
+  h+='</div></div>';
+
+  return h;
+}
+
+function fprNewSet(){
+  var spec=window._fprMockSpec||'other';
+  fprShowMockInterview(spec);
+}
+
+function fprShowAll(){
+  var questions=window._fprMockQuestions||FPR_MOCK_QUESTIONS.other;
+  var spec=window._fprMockSpec||'other';
+  var specNames={cardiology:'Cardiology',interventional:'Interventional Cardiology',electrophysiology:'Electrophysiology',gi:'Gastroenterology',pulm_crit:'Pulm/Crit',hemonc:'Heme/Onc',rheum:'Rheumatology',endo:'Endocrinology',neph:'Nephrology',id:'ID',allergy:'Allergy',sports:'Sports Med',geri:'Geriatrics',pain:'Pain',ortho:'Ortho',ctsx:'CT Surgery',vasc:'Vascular',other:'Fellowship'};
+  var typeBadge={clinical:'\ud83e\ude7a Clinical',research:'\ud83d\udd2c Research',behavioral:'\ud83e\udde0 Behavioral',career:'\ud83c\udfaf Career',fit:'\ud83c\udfe5 Fit'};
+  var typeColor={clinical:'#3B82F6',research:'var(--green)',behavioral:'var(--accent)',career:'#8B5CF6',fit:'#E67E22'};
+
+  var h='<div style="margin-top:24px;padding:20px;background:var(--bg2);border:1px solid var(--border);border-radius:12px">';
+  h+='<div style="font-size:14px;font-weight:600;color:var(--accent);margin-bottom:14px;font-family:var(--font-serif)">\ud83d\udccb All '+(specNames[spec]||'Fellowship')+' Interview Questions ('+questions.length+')</div>';
+  questions.forEach(function(q,i){
+    h+='<div style="padding:12px 0;border-bottom:1px solid var(--border)">';
+    h+='<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px"><span style="font-size:9px;padding:2px 6px;border-radius:100px;background:rgba(0,0,0,.04);color:'+(typeColor[q.type]||'var(--text3)')+';font-weight:600">'+(typeBadge[q.type]||q.type)+'</span></div>';
+    h+='<div style="font-size:12px;color:var(--text);line-height:1.6;margin-bottom:4px">\u201c'+q.q+'\u201d</div>';
+    h+='<div style="font-size:10px;color:var(--text3);line-height:1.6">\ud83d\udca1 '+q.tip+'</div>';
+    h+='</div>';
+  });
+  h+='<button onclick="fprShowMockInterview(\''+spec+'\')" class="btn btn-g" style="width:100%;margin-top:14px;padding:10px;font-size:12px">\u2190 Back to Mock Interview</button>';
+  h+='</div>';
+  document.getElementById('fpr-mock').innerHTML=h;
+}
+
 // ===== CONTRACT RISK SCORECARD (v2) =====
 function crsVal(id){var el=document.getElementById(id);return el?el.value:'';}
 

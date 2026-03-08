@@ -371,16 +371,62 @@ v5:`<h3>3-Year Financial Leverage Planner</h3>
 <div style="padding:16px;background:var(--bg2);border-radius:8px;margin-top:12px"><p style="font-size:12px;color:var(--text2);line-height:1.6;margin:0"><strong>The math:</strong> $400K income, $100K lifestyle = $300K/yr invested. At 8% returns, that's $1M+ in 3 years. Inflate to $300K lifestyle instead and it takes 10+ years.</p></div>
 <p style="font-size:10px;color:var(--text3);margin-top:12px;font-style:italic">Sources: White Coat Investor, AAMC Debt Data 2024.</p>`,
 
-v6:`<h3>Fellowship Positioning Roadmap</h3>
-<p style="color:var(--text3);font-size:12px;margin-bottom:16px">Month-by-month timeline. By the time ERAS opens, most of the work should already be done.</p>
-<div style="font-size:12px">
-<div style="padding:12px 0;border-bottom:1px solid var(--border)"><strong style="color:var(--accent)">18-24 Months Before Match</strong><br><span style="color:var(--text2)">• Identify subspecialty with conviction<br>• Start first research project<br>• Build relationships with letter writers<br>• Attend first subspecialty conference</span></div>
-<div style="padding:12px 0;border-bottom:1px solid var(--border)"><strong style="color:var(--accent)">12-18 Months Before</strong><br><span style="color:var(--text2)">• Submit first abstract<br>• Get informal feedback on application strength<br>• Build program list (15-20, tiered)<br>• Take on leadership role</span></div>
-<div style="padding:12px 0;border-bottom:1px solid var(--border)"><strong style="color:var(--accent)">6-12 Months Before</strong><br><span style="color:var(--text2)">• Away rotations (1-2 target programs)<br>• Secure letter writers — ask early<br>• Manuscript submitted or in prep<br>• Draft personal statement</span></div>
-<div style="padding:12px 0;border-bottom:1px solid var(--border)"><strong style="color:var(--accent)">3-6 Months Before</strong><br><span style="color:var(--text2)">• Finalize personal statement (5+ drafts)<br>• Confirm letters submitted<br>• Interview prep with attendings<br>• Research each program specifically</span></div>
-<div style="padding:12px 0"><strong style="color:var(--accent)">0-3 Months Before</strong><br><span style="color:var(--text2)">• Interview season — thank-you notes within 24h<br>• Build rank list on fit, not just reputation<br>• Second-look visits for top 2-3<br>• Trust your gut on culture</span></div>
+v6:`<h3 class="serif">Fellowship Positioning Roadmap</h3>
+<p style="color:var(--text3);font-size:12px;margin-bottom:20px">Your personalized timeline to match day. Check off milestones as you complete them — progress is saved automatically.</p>
+
+<div id="fpr-tool" style="font-size:13px">
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px">
+<div class="fg"><label style="font-size:11px;color:var(--text3)">Target Specialty</label>
+<select id="fpr-spec" onchange="fprInit()" style="width:100%">
+<option value="">Select specialty...</option>
+<option value="cardiology">Cardiology</option>
+<option value="interventional">Interventional Cardiology</option>
+<option value="electrophysiology">Electrophysiology</option>
+<option value="gi">Gastroenterology</option>
+<option value="pulm_crit">Pulmonology / Critical Care</option>
+<option value="hemonc">Hematology / Oncology</option>
+<option value="rheum">Rheumatology</option>
+<option value="endo">Endocrinology</option>
+<option value="neph">Nephrology</option>
+<option value="id">Infectious Disease</option>
+<option value="allergy">Allergy / Immunology</option>
+<option value="sports">Sports Medicine</option>
+<option value="geri">Geriatrics</option>
+<option value="pain">Pain Medicine</option>
+<option value="ortho">Orthopedic Surgery</option>
+<option value="ctsx">Cardiothoracic Surgery</option>
+<option value="vasc">Vascular Surgery</option>
+<option value="other">Other</option>
+</select></div>
+<div class="fg"><label style="font-size:11px;color:var(--text3)">Months Until Match</label>
+<select id="fpr-months" onchange="fprInit()" style="width:100%">
+<option value="">Select timeline...</option>
+<option value="24">24+ months</option>
+<option value="18">18 months</option>
+<option value="12">12 months</option>
+<option value="6">6 months</option>
+<option value="3">3 months or less</option>
+</select></div>
 </div>
-<p style="font-size:10px;color:var(--text3);margin-top:16px;font-style:italic">Based on NRMP data and program director input.</p>`,
+
+<!-- Progress bar -->
+<div id="fpr-progress-wrap" style="display:none;margin-bottom:20px;padding:16px;background:var(--bg2);border:1px solid var(--border);border-radius:12px">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+<div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:1px">Overall Progress</div>
+<div id="fpr-pct" style="font-size:14px;font-weight:700;color:var(--accent)">0%</div>
+</div>
+<div style="height:6px;background:var(--bg3);border-radius:3px;overflow:hidden"><div id="fpr-bar" style="height:100%;width:0%;border-radius:3px;transition:width .4s;background:var(--accent)"></div></div>
+<div id="fpr-stat" style="font-size:11px;color:var(--text3);margin-top:6px"></div>
+</div>
+
+<!-- Phases render here -->
+<div id="fpr-phases"></div>
+
+<!-- Mock Interview section renders here -->
+<div id="fpr-mock"></div>
+
+</div>`,
 
 v7:`<h3>Research ROI Calculator</h3>
 <p style="color:var(--text3);font-size:12px;margin-bottom:20px">Enter your current research portfolio. The calculator scores each item by application impact per time invested and shows how close you are to optimal.</p>

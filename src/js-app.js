@@ -2710,6 +2710,26 @@ function toggleNotifSettings(){document.getElementById('notif-settings').classLi
 
 function toggleContactForm(){document.getElementById('contact-form').classList.toggle('hidden')}
 
+// Email notification to admin
+function notifyAdmin(payload){
+  var TL={'career':'🎯 Career/Strategy','finance':'💰 Finance/Comp','contract':'📋 Contract/Negotiation','pivot-report':'📊 Career Pivot Report','audit':'🎯 Strategic Audit','bug':'🐛 Bug Report','suggestion':'💡 Suggestion','feedback':'📝 Feedback','other':'📎 Other'};
+  var label=TL[payload.type]||payload.type||'Message';
+  var name=payload.user_name||'Unknown';
+  var email=payload.user_email||'';
+  var body=payload.message||'';
+  var safe=body.startsWith('<')?body:body.replace(/</g,'&lt;').replace(/\n/g,'<br>');
+  fetch('https://api.resend.com/emails',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','Authorization':'Bearer re_Wzrmyu7Y_3uL6Ks2gh6mESGecy2GJj8Mo'},
+    body:JSON.stringify({
+      from:'HeartWise <onboarding@resend.dev>',
+      to:'heartwisementor@gmail.com',
+      subject:'HeartWise: '+label+' from '+name,
+      html:'<div style="font-family:system-ui,sans-serif;max-width:600px;margin:0 auto;padding:20px"><div style="background:#1a1620;padding:20px;border-radius:12px 12px 0 0;color:#f0ece6"><h2 style="color:#c8a87c;margin:0 0 4px;font-size:18px">'+label+'</h2><p style="color:#b8b3ac;margin:0;font-size:13px">From: '+name+' ('+email+')</p></div><div style="padding:20px;background:#f8f6f2;border-radius:0 0 12px 12px;border:1px solid #e8e4de;border-top:none"><div style="font-size:14px;line-height:1.7;color:#2a2520;white-space:pre-wrap">'+safe+'</div></div><p style="font-size:11px;color:#999;margin-top:16px;text-align:center">Log in to HeartWise Admin → Messages to reply.</p></div>'
+    })
+  }).catch(function(){});
+}
+
 async function sendContactMessage(e){
   e.preventDefault();
   var type=document.getElementById('contact-type').value;
@@ -2747,6 +2767,8 @@ async function sendContactMessage(e){
   document.getElementById('contact-msg').value='';
   document.getElementById('contact-form').classList.add('hidden');
   notify('Message sent! Thank you for your feedback. 🙏');
+  // Email notification to admin
+  notifyAdmin(payload);
 }
 
 function toggleAccountSettings(){
@@ -4495,6 +4517,7 @@ async function submitAudit(){
   document.getElementById('audit-form').classList.add('hidden');
   document.getElementById('audit-success').classList.remove('hidden');
   notify('Strategic audit submitted!');
+  notifyAdmin(payload);
 }
 
 // ===== CAREER PIVOT DECISION ENGINE =====
@@ -4742,6 +4765,7 @@ async function submitPivot(){
   document.getElementById('pivot-form').classList.add('hidden');
   document.getElementById('pivot-success').classList.remove('hidden');
   notify('Decision Engine report submitted!');
+  notifyAdmin(payload);
 }
 
 // ===== MOCK INTERVIEW SIMULATOR (v16) =====

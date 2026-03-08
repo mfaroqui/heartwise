@@ -281,7 +281,7 @@ function enterApp(){
   const bc={free:'b-free',core:'b-core',elite:'b-pro',admin:'b-admin'};
   b.className='badge '+(bc[U.tier]||'b-free');
   b.textContent=U.tier==='admin'?'MENTOR':TIERS[U.tier]?.name?.toUpperCase()||'FREE';
-  document.getElementById('welcome-msg').textContent='Welcome, '+U.name.split(' ')[0]+' \ud83d\udc4b';
+  document.getElementById('welcome-msg').textContent='Welcome, Dr. '+U.name.split(' ').pop();
   document.getElementById('nav-admin').style.display=U.tier==='admin'?'':'none';
   document.getElementById('upgrade-prompt').style.display=U.tier==='free'?'':'none';
   // Check for pending plan from landing page

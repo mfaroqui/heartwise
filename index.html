@@ -4270,12 +4270,16 @@ v13:`<h3 class="serif">Specialty Fit Analyzer</h3>
 </div>`,
 
 v14:`<h3 class="serif">Match Competitiveness Calculator</h3>
-<p style="color:var(--text3);font-size:12px;margin-bottom:20px">Estimate your likelihood of matching into a specialty based on key metrics. Data referenced from NRMP Charting Outcomes.</p>
+<p style="color:var(--text3);font-size:12px;margin-bottom:20px">Comprehensive competitiveness analysis with NRMP benchmarking, probability outlook, and strategic recommendations.</p>
 <div id="mcc-tool" style="font-size:13px">
 
-<div style="padding:14px 0;border-bottom:1px solid var(--border)">
-<div style="margin-bottom:6px"><strong>Target Specialty</strong></div>
-<select id="mcc-spec" onchange="mccUpdate()" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
+<!-- Section 1: Academic Profile -->
+<div style="margin-bottom:20px">
+<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid rgba(200,168,124,.15)">📚 Academic Profile</div>
+
+<div style="padding:10px 0;border-bottom:1px solid var(--border)">
+<div style="margin-bottom:4px"><strong>Target Specialty</strong></div>
+<select id="mcc-spec" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
 <option value="">Select specialty...</option>
 <option value="im">Internal Medicine</option>
 <option value="fm">Family Medicine</option>
@@ -4298,25 +4302,15 @@ v14:`<h3 class="serif">Match Competitiveness Calculator</h3>
 </select>
 </div>
 
-<div style="padding:14px 0;border-bottom:1px solid var(--border)">
-<div style="margin-bottom:6px"><strong>Step 2 CK Score</strong></div>
-<input type="number" id="mcc-step2" placeholder="e.g., 255" onchange="mccUpdate()" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px;box-sizing:border-box">
+<div style="padding:10px 0;border-bottom:1px solid var(--border)">
+<div style="margin-bottom:4px"><strong>Step 2 CK Score</strong></div>
+<div style="font-size:10px;color:var(--text3);margin-bottom:6px">Most competitive specialties have average Step 2 CK scores between 245–260.</div>
+<input type="number" id="mcc-step2" placeholder="e.g., 255" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px;box-sizing:border-box">
 </div>
 
-<div style="padding:14px 0;border-bottom:1px solid var(--border)">
-<div style="margin-bottom:6px"><strong>Research Publications / Abstracts</strong></div>
-<select id="mcc-pubs" onchange="mccUpdate()" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
-<option value="0">0 — None</option>
-<option value="1">1-2 abstracts/posters</option>
-<option value="2">3-5 publications</option>
-<option value="3">6-10 publications</option>
-<option value="4">10+ publications</option>
-</select>
-</div>
-
-<div style="padding:14px 0;border-bottom:1px solid var(--border)">
-<div style="margin-bottom:6px"><strong>Medical School Tier</strong></div>
-<select id="mcc-school" onchange="mccUpdate()" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
+<div style="padding:10px 0;border-bottom:1px solid var(--border)">
+<div style="margin-bottom:4px"><strong>Medical School Tier</strong></div>
+<select id="mcc-school" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
 <option value="">Select...</option>
 <option value="top20">Top 20 (Harvard, Hopkins, UCSF, etc.)</option>
 <option value="top50">Top 21-50</option>
@@ -4326,20 +4320,88 @@ v14:`<h3 class="serif">Match Competitiveness Calculator</h3>
 </select>
 </div>
 
-<div style="padding:14px 0;border-bottom:1px solid var(--border)">
-<div style="margin-bottom:6px"><strong>Number of Programs Applying To</strong></div>
-<input type="number" id="mcc-programs" placeholder="e.g., 30" onchange="mccUpdate()" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px;box-sizing:border-box">
+<div style="padding:10px 0;border-bottom:1px solid var(--border)">
+<div style="margin-bottom:4px"><strong>Training Background</strong></div>
+<select id="mcc-background" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
+<option value="">Select...</option>
+<option value="usmd">US MD</option>
+<option value="usdo">US DO</option>
+<option value="usimg">US IMG</option>
+<option value="nonusimg">Non-US IMG</option>
+</select>
 </div>
 
-<div style="padding:14px 0;border-bottom:1px solid var(--border)">
-<div style="margin-bottom:6px"><strong>Away Rotations at Target Programs</strong></div>
-<select id="mcc-aways" onchange="mccUpdate()" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
-<option value="0">None</option>
+<div style="padding:10px 0">
+<div style="margin-bottom:4px"><strong>AOA / Clerkship Performance</strong></div>
+<select id="mcc-aoa" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
+<option value="">Select...</option>
+<option value="aoa">AOA member</option>
+<option value="honors">Multiple Honors</option>
+<option value="pass">Mostly High Pass / Pass</option>
+</select>
+</div>
+</div>
+
+<!-- Section 2: Application Strength -->
+<div style="margin-bottom:20px">
+<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid rgba(200,168,124,.15)">💪 Application Strength</div>
+
+<div style="padding:10px 0;border-bottom:1px solid var(--border)">
+<div style="margin-bottom:4px"><strong>Research Publications / Abstracts</strong></div>
+<div style="font-size:10px;color:var(--text3);margin-bottom:6px">Highly competitive specialties often report 5+ research experiences.</div>
+<select id="mcc-pubs" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
+<option value="0">0 — None</option>
+<option value="1">1-2 abstracts / posters</option>
+<option value="2">3-5 publications</option>
+<option value="3">6-10 publications</option>
+<option value="4">10+ publications</option>
+</select>
+</div>
+
+<div style="padding:10px 0;border-bottom:1px solid var(--border)">
+<div style="margin-bottom:4px"><strong>Letters of Recommendation</strong></div>
+<select id="mcc-lors" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
+<option value="">Select...</option>
+<option value="avg">Average — from attendings who know you</option>
+<option value="strong">Strong — from recognized faculty in the field</option>
+<option value="notable">From well-known / nationally recognized faculty</option>
+</select>
+</div>
+
+<div style="padding:10px 0">
+<div style="margin-bottom:4px"><strong>Leadership / Extracurriculars</strong></div>
+<select id="mcc-leadership" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
+<option value="">Select...</option>
+<option value="none">None / minimal involvement</option>
+<option value="some">Some leadership roles</option>
+<option value="significant">Significant leadership (president, chief, national)</option>
+</select>
+</div>
+</div>
+
+<!-- Section 3: Application Strategy -->
+<div style="margin-bottom:20px">
+<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid rgba(200,168,124,.15)">🎯 Application Strategy</div>
+
+<div style="padding:10px 0;border-bottom:1px solid var(--border)">
+<div style="margin-bottom:4px"><strong>Number of Programs Applying To</strong></div>
+<div style="font-size:10px;color:var(--text3);margin-bottom:6px">Competitive specialties: 50–80+ programs. Less competitive: 15–30.</div>
+<input type="number" id="mcc-programs" placeholder="e.g., 40" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px;box-sizing:border-box">
+</div>
+
+<div style="padding:10px 0">
+<div style="margin-bottom:4px"><strong>Away Rotations at Target Programs</strong></div>
+<div style="font-size:10px;color:var(--text3);margin-bottom:6px">Away rotations can significantly boost your chances at specific programs.</div>
+<select id="mcc-aways" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
+<option value="0">None planned</option>
 <option value="1">1 rotation</option>
 <option value="2">2 rotations</option>
 <option value="3">3+ rotations</option>
 </select>
 </div>
+</div>
+
+<button onclick="mccCalculate()" class="btn btn-a" style="width:100%;padding:14px;font-size:14px;font-weight:600">Analyze My Competitiveness →</button>
 
 <div id="mcc-results" style="margin-top:20px"></div>
 
@@ -5927,106 +5989,294 @@ function sfaUpdate(){
 }
 
 // ===== MATCH COMPETITIVENESS CALCULATOR (v14) =====
-function mccUpdate(){
+function mccCalculate(){
   var spec=document.getElementById('mcc-spec').value;
   var step2=parseInt(document.getElementById('mcc-step2').value)||0;
   var pubs=parseInt(document.getElementById('mcc-pubs').value)||0;
   var school=document.getElementById('mcc-school').value;
+  var bg=document.getElementById('mcc-background').value;
+  var aoa=document.getElementById('mcc-aoa').value;
+  var lors=document.getElementById('mcc-lors').value;
+  var leadership=document.getElementById('mcc-leadership').value;
   var programs=parseInt(document.getElementById('mcc-programs').value)||0;
   var aways=parseInt(document.getElementById('mcc-aways').value)||0;
-  if(!spec||!step2||!school)return;
+  if(!spec||!step2||!school||!bg){notify('Please complete at least the Academic Profile section',1);return}
 
-  // Specialty competitiveness data (approximate match rates and thresholds)
+  // NRMP-referenced specialty data
   var specData={
-    im:{name:'Internal Medicine',matchRate:94,avgStep:235,compLevel:'low'},
-    fm:{name:'Family Medicine',matchRate:93,avgStep:227,compLevel:'low'},
-    peds:{name:'Pediatrics',matchRate:88,avgStep:233,compLevel:'low'},
-    em:{name:'Emergency Medicine',matchRate:82,avgStep:240,compLevel:'moderate'},
-    psych:{name:'Psychiatry',matchRate:87,avgStep:233,compLevel:'moderate'},
-    neuro:{name:'Neurology',matchRate:90,avgStep:237,compLevel:'moderate'},
-    rads:{name:'Radiology',matchRate:85,avgStep:248,compLevel:'moderate'},
-    anes:{name:'Anesthesiology',matchRate:87,avgStep:242,compLevel:'moderate'},
-    path:{name:'Pathology',matchRate:85,avgStep:240,compLevel:'low'},
-    gen_surg:{name:'General Surgery',matchRate:83,avgStep:245,compLevel:'moderate'},
-    ortho:{name:'Orthopedic Surgery',matchRate:75,avgStep:252,compLevel:'high'},
-    uro:{name:'Urology',matchRate:78,avgStep:250,compLevel:'high'},
-    ent:{name:'ENT',matchRate:76,avgStep:252,compLevel:'high'},
-    ophtho:{name:'Ophthalmology',matchRate:72,avgStep:252,compLevel:'very_high'},
-    derm:{name:'Dermatology',matchRate:68,avgStep:255,compLevel:'very_high'},
-    plastics:{name:'Plastic Surgery',matchRate:70,avgStep:254,compLevel:'very_high'},
-    nsurg:{name:'Neurosurgery',matchRate:72,avgStep:250,compLevel:'very_high'},
-    ir:{name:'Interventional Radiology',matchRate:80,avgStep:250,compLevel:'high'}
+    im:{name:'Internal Medicine',matchRate:94,avgStep:235,avgPubs:4,compLevel:'low',recPrograms:15},
+    fm:{name:'Family Medicine',matchRate:93,avgStep:227,avgPubs:3,compLevel:'low',recPrograms:15},
+    peds:{name:'Pediatrics',matchRate:88,avgStep:233,avgPubs:4,compLevel:'low',recPrograms:20},
+    em:{name:'Emergency Medicine',matchRate:82,avgStep:240,avgPubs:5,compLevel:'moderate',recPrograms:25},
+    psych:{name:'Psychiatry',matchRate:87,avgStep:233,avgPubs:4,compLevel:'moderate',recPrograms:20},
+    neuro:{name:'Neurology',matchRate:90,avgStep:237,avgPubs:5,compLevel:'moderate',recPrograms:20},
+    rads:{name:'Radiology',matchRate:85,avgStep:248,avgPubs:6,compLevel:'moderate',recPrograms:30},
+    anes:{name:'Anesthesiology',matchRate:87,avgStep:242,avgPubs:5,compLevel:'moderate',recPrograms:25},
+    path:{name:'Pathology',matchRate:85,avgStep:240,avgPubs:4,compLevel:'low',recPrograms:20},
+    gen_surg:{name:'General Surgery',matchRate:83,avgStep:245,avgPubs:7,compLevel:'moderate',recPrograms:40},
+    ortho:{name:'Orthopedic Surgery',matchRate:75,avgStep:252,avgPubs:10,compLevel:'high',recPrograms:60},
+    uro:{name:'Urology',matchRate:78,avgStep:250,avgPubs:9,compLevel:'high',recPrograms:50},
+    ent:{name:'ENT',matchRate:76,avgStep:252,avgPubs:8,compLevel:'high',recPrograms:50},
+    ophtho:{name:'Ophthalmology',matchRate:72,avgStep:252,avgPubs:9,compLevel:'very_high',recPrograms:60},
+    derm:{name:'Dermatology',matchRate:68,avgStep:255,avgPubs:12,compLevel:'very_high',recPrograms:70},
+    plastics:{name:'Plastic Surgery',matchRate:70,avgStep:254,avgPubs:11,compLevel:'very_high',recPrograms:60},
+    nsurg:{name:'Neurosurgery',matchRate:72,avgStep:250,avgPubs:15,compLevel:'very_high',recPrograms:60},
+    ir:{name:'Interventional Radiology',matchRate:80,avgStep:250,avgPubs:7,compLevel:'high',recPrograms:40}
   };
 
   var sd=specData[spec];
   if(!sd)return;
 
-  // Calculate score
-  var score=50;
-  // Step 2 scoring
+  // ===== SCORING ENGINE (0-100) =====
+  var score=0;
+  var factors=[];
+
+  // Step 2 CK (max 30 pts)
   var stepDiff=step2-sd.avgStep;
-  if(stepDiff>=20)score+=25;
-  else if(stepDiff>=10)score+=20;
-  else if(stepDiff>=0)score+=12;
-  else if(stepDiff>=-10)score+=5;
-  else score-=10;
+  var stepPts=0;
+  if(stepDiff>=20)stepPts=30;
+  else if(stepDiff>=10)stepPts=25;
+  else if(stepDiff>=5)stepPts=20;
+  else if(stepDiff>=0)stepPts=15;
+  else if(stepDiff>=-5)stepPts=10;
+  else if(stepDiff>=-10)stepPts=5;
+  else stepPts=0;
+  score+=stepPts;
+  factors.push({name:'Step 2 CK',value:step2,benchmark:sd.avgStep,pts:stepPts,max:30,status:stepDiff>=0?'above':'below',color:stepPts>=20?'#6abf4b':stepPts>=10?'#c8a87c':'#ef4444'});
 
-  // Research
-  score+=pubs*7;
+  // Research (max 20 pts)
+  var pubMap=[0,1.5,4,8,12];
+  var actualPubs=pubMap[pubs]||0;
+  var pubPts=0;
+  if(pubs>=4)pubPts=20;
+  else if(pubs>=3)pubPts=16;
+  else if(pubs>=2)pubPts=12;
+  else if(pubs>=1)pubPts=6;
+  else pubPts=0;
+  score+=pubPts;
+  var pubLabels=['None','1-2','3-5','6-10','10+'];
+  factors.push({name:'Research',value:pubLabels[pubs],benchmark:sd.avgPubs+' avg',pts:pubPts,max:20,color:pubPts>=12?'#6abf4b':pubPts>=6?'#c8a87c':'#ef4444'});
 
-  // School tier
-  if(school==='top20')score+=15;
-  else if(school==='top50')score+=10;
-  else if(school==='mid')score+=5;
-  else if(school==='do')score-=5;
-  else if(school==='img')score-=10;
+  // School + Background (max 15 pts)
+  var schoolPts=0;
+  if(school==='top20')schoolPts=15;
+  else if(school==='top50')schoolPts=12;
+  else if(school==='mid')schoolPts=8;
+  else if(school==='do')schoolPts=4;
+  else if(school==='img')schoolPts=2;
+  // Background modifier
+  if(bg==='usmd')schoolPts=Math.min(15,schoolPts+2);
+  else if(bg==='usdo')schoolPts=Math.max(0,schoolPts-1);
+  else if(bg==='usimg')schoolPts=Math.max(0,schoolPts-2);
+  else if(bg==='nonusimg')schoolPts=Math.max(0,schoolPts-4);
+  score+=schoolPts;
+  var bgLabels={usmd:'US MD',usdo:'US DO',usimg:'US IMG',nonusimg:'Non-US IMG'};
+  var schoolLabels={top20:'Top 20',top50:'Top 50',mid:'Mid-tier',do:'DO',img:'IMG'};
+  factors.push({name:'School & Background',value:(schoolLabels[school]||'')+' / '+(bgLabels[bg]||''),pts:schoolPts,max:15,color:schoolPts>=10?'#6abf4b':schoolPts>=6?'#c8a87c':'#ef4444'});
 
-  // Programs applied
-  if(programs>=30)score+=5;
-  else if(programs>=20)score+=3;
-  else if(programs<10)score-=5;
+  // AOA / Clerkship (max 10 pts)
+  var aoaPts=0;
+  if(aoa==='aoa')aoaPts=10;
+  else if(aoa==='honors')aoaPts=7;
+  else if(aoa==='pass')aoaPts=3;
+  score+=aoaPts;
+  var aoaLabels={aoa:'AOA',honors:'Multiple Honors',pass:'High Pass / Pass'};
+  factors.push({name:'Clerkship Performance',value:aoaLabels[aoa]||'Not specified',pts:aoaPts,max:10,color:aoaPts>=7?'#6abf4b':aoaPts>=3?'#c8a87c':'#ef4444'});
 
-  // Aways
-  score+=aways*4;
+  // Letters (max 10 pts)
+  var lorPts=0;
+  if(lors==='notable')lorPts=10;
+  else if(lors==='strong')lorPts=7;
+  else if(lors==='avg')lorPts=4;
+  score+=lorPts;
+  factors.push({name:'Letters of Rec',value:lors==='notable'?'Well-known faculty':lors==='strong'?'Strong':lors==='avg'?'Average':'Not specified',pts:lorPts,max:10,color:lorPts>=7?'#6abf4b':lorPts>=4?'#c8a87c':'#ef4444'});
 
-  score=Math.max(10,Math.min(98,score));
+  // Leadership (max 5 pts)
+  var leadPts=0;
+  if(leadership==='significant')leadPts=5;
+  else if(leadership==='some')leadPts=3;
+  else leadPts=0;
+  score+=leadPts;
+  factors.push({name:'Leadership',value:leadership==='significant'?'Significant':leadership==='some'?'Some':'None',pts:leadPts,max:5,color:leadPts>=3?'#6abf4b':'#c8a87c'});
 
-  var color=score>=75?'var(--green)':score>=50?'var(--accent)':'var(--red)';
-  var label=score>=80?'Strong Candidate':score>=65?'Competitive':score>=50?'Average':score>=35?'Below Average':'At Risk';
+  // Strategy: Programs + Aways (max 10 pts)
+  var stratPts=0;
+  var recP=sd.recPrograms;
+  if(programs>=recP)stratPts+=5;
+  else if(programs>=recP*0.6)stratPts+=3;
+  else if(programs>0)stratPts+=1;
+  stratPts+=Math.min(5,aways*2);
+  stratPts=Math.min(10,stratPts);
+  score+=stratPts;
+  factors.push({name:'Application Strategy',value:programs+' programs, '+aways+' aways',pts:stratPts,max:10,color:stratPts>=7?'#6abf4b':stratPts>=4?'#c8a87c':'#ef4444'});
 
-  var h='<div style="text-align:center;padding:24px;background:var(--bg2);border:1px solid '+color+';border-radius:14px;margin-bottom:16px">';
-  h+='<div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">'+sd.name+' Match Likelihood</div>';
-  h+='<div style="font-size:48px;font-weight:700;color:'+color+';font-family:var(--font-serif)">'+score+'<span style="font-size:18px">%</span></div>';
-  h+='<div style="font-size:13px;font-weight:600;color:'+color+'">'+label+'</div>';
+  score=Math.max(5,Math.min(100,score));
+
+  // ===== MATCH OUTLOOK =====
+  var outlook,topProb,midProb,commProb;
+  if(score>=85){outlook='Highly Competitive';topProb='High';midProb='Very High';commProb='Very High';}
+  else if(score>=65){outlook='Competitive';topProb='Moderate';midProb='High';commProb='Very High';}
+  else if(score>=50){outlook='Borderline';topProb='Low';midProb='Moderate';commProb='High';}
+  else{outlook='High Risk';topProb='Very Low';midProb='Low';commProb='Moderate';}
+
+  var scoreColor=score>=85?'#6abf4b':score>=65?'#c8a87c':score>=50?'#e8a33c':'#ef4444';
+
+  // ===== RENDER OUTPUT =====
+  var h='';
+
+  // 1. Competitiveness Score
+  h+='<div style="text-align:center;padding:28px;background:var(--bg2);border:1px solid '+scoreColor+';border-radius:14px;margin-bottom:16px">';
+  h+='<div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:10px">'+sd.name+' — Competitiveness Score</div>';
+  h+='<div style="position:relative;width:120px;height:120px;margin:0 auto 12px">';
+  h+='<svg viewBox="0 0 120 120" style="transform:rotate(-90deg)"><circle cx="60" cy="60" r="52" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="8"/><circle cx="60" cy="60" r="52" fill="none" stroke="'+scoreColor+'" stroke-width="8" stroke-dasharray="'+Math.round(score*3.27)+' 327" stroke-linecap="round"/></svg>';
+  h+='<div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center"><div style="font-size:36px;font-weight:700;color:'+scoreColor+';font-family:var(--font-serif)">'+score+'</div><div style="font-size:10px;color:var(--text3)">/ 100</div></div>';
+  h+='</div>';
+  h+='<div style="font-size:14px;font-weight:600;color:'+scoreColor+'">'+outlook+'</div>';
+  h+='<div style="display:flex;justify-content:center;gap:12px;margin-top:12px;font-size:9px;color:var(--text3)">';
+  h+='<span>85+ Highly Competitive</span><span>65–84 Competitive</span><span>50–64 Borderline</span><span>&lt;50 High Risk</span></div>';
   h+='</div>';
 
-  // Breakdown
-  h+='<div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Factor Analysis</div>';
+  // 2. Match Outlook
+  h+='<div style="margin-bottom:16px;padding:16px;background:var(--bg2);border-radius:10px;border:1px solid var(--border)">';
+  h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">📊 Match Outlook</div>';
+  var probColor=function(p){return p==='Very High'||p==='High'?'#6abf4b':p==='Moderate'?'#c8a87c':'#ef4444'};
+  h+='<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center">';
+  h+='<div style="padding:12px;background:var(--bg3);border-radius:8px"><div style="font-size:10px;color:var(--text3);margin-bottom:4px">Top-tier</div><div style="font-size:13px;font-weight:600;color:'+probColor(topProb)+'">'+topProb+'</div></div>';
+  h+='<div style="padding:12px;background:var(--bg3);border-radius:8px"><div style="font-size:10px;color:var(--text3);margin-bottom:4px">Mid-tier</div><div style="font-size:13px;font-weight:600;color:'+probColor(midProb)+'">'+midProb+'</div></div>';
+  h+='<div style="padding:12px;background:var(--bg3);border-radius:8px"><div style="font-size:10px;color:var(--text3);margin-bottom:4px">Community</div><div style="font-size:13px;font-weight:600;color:'+probColor(commProb)+'">'+commProb+'</div></div>';
+  h+='</div></div>';
 
-  var stepColor=stepDiff>=10?'var(--green)':stepDiff>=0?'var(--accent)':'var(--red)';
-  h+='<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:12px"><span>Step 2 CK ('+step2+' vs avg '+sd.avgStep+')</span><span style="color:'+stepColor+';font-weight:600">'+(stepDiff>=0?'+':'')+stepDiff+'</span></div>';
+  // 3. Factor Breakdown
+  h+='<div style="margin-bottom:16px;padding:16px;background:var(--bg2);border-radius:10px;border:1px solid var(--border)">';
+  h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">📋 Factor Breakdown</div>';
+  factors.forEach(function(f){
+    var pct=Math.round(f.pts/f.max*100);
+    h+='<div style="margin-bottom:10px">';
+    h+='<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span style="color:var(--text)">'+f.name+'</span><span style="color:'+f.color+';font-weight:600">'+f.pts+' / '+f.max+'</span></div>';
+    h+='<div style="height:6px;background:rgba(255,255,255,.06);border-radius:3px;overflow:hidden"><div style="height:100%;width:'+pct+'%;background:'+f.color+';border-radius:3px"></div></div>';
+    h+='<div style="font-size:10px;color:var(--text3);margin-top:2px">'+f.value+(f.benchmark?' — specialty avg: '+f.benchmark:'')+'</div>';
+    h+='</div>';
+  });
+  h+='</div>';
 
-  var pubLabel=['None','1-2 abstracts','3-5 pubs','6-10 pubs','10+ pubs'];
-  var pubColor=pubs>=2?'var(--green)':pubs>=1?'var(--accent)':'var(--red)';
-  h+='<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:12px"><span>Research ('+pubLabel[pubs]+')</span><span style="color:'+pubColor+';font-weight:600">'+(pubs>=2?'Strong':pubs>=1?'Adequate':'Weak')+'</span></div>';
+  // 4. NRMP Benchmark Comparison
+  h+='<div style="margin-bottom:16px;padding:16px;background:var(--bg2);border-radius:10px;border:1px solid var(--border)">';
+  h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">📈 NRMP Benchmark — '+sd.name+'</div>';
+  h+='<div style="font-size:10px;color:var(--text3);margin-bottom:10px">Average matched applicant profile (NRMP Charting Outcomes)</div>';
+  var benchmarks=[
+    {label:'Step 2 CK',yours:step2,avg:sd.avgStep,unit:''},
+    {label:'Research Experiences',yours:pubLabels[pubs],avg:sd.avgPubs,unit:''},
+    {label:'Programs Applied',yours:programs||'—',avg:sd.recPrograms+' rec.',unit:''}
+  ];
+  benchmarks.forEach(function(b){
+    var yourVal=typeof b.yours==='number'?b.yours:b.yours;
+    var diff=typeof b.yours==='number'&&typeof b.avg==='number'?b.yours-b.avg:null;
+    var dColor=diff===null?'var(--text3)':diff>=0?'#6abf4b':'#ef4444';
+    h+='<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px">';
+    h+='<span style="color:var(--text3)">'+b.label+'</span>';
+    h+='<span><span style="color:var(--text);font-weight:500">'+yourVal+'</span> <span style="color:var(--text3)">vs</span> <span style="color:'+dColor+';font-weight:500">'+b.avg+'</span></span>';
+    h+='</div>';
+  });
+  h+='</div>';
 
-  var schoolLabel={top20:'Top 20',top50:'Top 50',mid:'Mid-tier MD',do:'DO',img:'IMG'};
-  h+='<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:12px"><span>School ('+(schoolLabel[school])+')</span><span style="color:var(--text2)">'+(school==='top20'||school==='top50'?'Advantage':'Neutral to disadvantage')+'</span></div>';
-
-  // Strategic recommendations
-  h+='<div style="margin-top:16px;padding:14px;background:var(--bg2);border-radius:10px;border-left:3px solid var(--accent)">';
-  h+='<div style="font-size:11px;font-weight:600;color:var(--accent);margin-bottom:8px">\ud83c\udfaf Strategic Recommendations</div>';
-  h+='<ul style="font-size:12px;color:var(--text2);line-height:1.8;padding-left:16px;margin:0">';
-  if(stepDiff<0)h+='<li>Your Step 2 CK is below the specialty average \u2014 consider retaking if >10 points below</li>';
-  if(pubs<2)h+='<li>Increase research output \u2014 aim for 2-3 first-author publications for competitive specialties</li>';
-  if(aways<2)h+='<li>Plan 1-2 away rotations at target programs \u2014 this significantly improves rank list position</li>';
-  if(programs<15)h+='<li>Apply broadly \u2014 15-25 programs minimum for competitive specialties</li>';
-  if(school==='img')h+='<li>As an IMG, strong Step scores and research are critical differentiators</li>';
-  if(score>=75)h+='<li>Strong position \u2014 focus on interview performance and rank list strategy</li>';
+  // 5. Strategy Recommendations
+  h+='<div style="margin-bottom:16px;padding:16px;background:var(--bg2);border-radius:10px;border-left:3px solid var(--accent)">';
+  h+='<div style="font-size:11px;font-weight:600;color:var(--accent);margin-bottom:10px">🎯 Strategy Recommendations</div>';
+  h+='<ul style="font-size:12px;color:var(--text2);line-height:2;padding-left:16px;margin:0">';
+  var recs=[];
+  if(stepDiff<-10)recs.push('Your Step 2 CK is '+Math.abs(stepDiff)+' points below the specialty average — strongly consider retaking or adjusting target specialty');
+  else if(stepDiff<0)recs.push('Step 2 CK is slightly below average — still competitive, but every point helps');
+  if(pubs<=1&&(sd.compLevel==='high'||sd.compLevel==='very_high'))recs.push('Research is a critical gap — aim for '+Math.max(5,sd.avgPubs)+' publications for '+sd.name);
+  else if(pubs<=1)recs.push('Increase research output — 2-3 publications strengthens any application');
+  if(aways<1&&(sd.compLevel==='high'||sd.compLevel==='very_high'))recs.push('Complete at least 1-2 away rotations at target programs — this is essential for competitive specialties');
+  else if(aways<1)recs.push('Consider 1 away rotation at a top-choice program to demonstrate interest');
+  if(programs<sd.recPrograms)recs.push('Apply to at least '+sd.recPrograms+' programs — you currently plan '+programs);
+  if(bg==='nonusimg'||bg==='usimg')recs.push('As an IMG, strong Step scores, US clinical experience, and research are critical differentiators');
+  if(lors!=='notable'&&lors!=='strong'&&(sd.compLevel==='high'||sd.compLevel==='very_high'))recs.push('Secure letters from well-known faculty in '+sd.name+' — this significantly impacts rank list placement');
+  if(aoa!=='aoa'&&aoa!=='honors'&&(sd.compLevel==='very_high'))recs.push('AOA or strong honors are common among matched applicants in '+sd.name);
+  if(leadership!=='significant')recs.push('Strengthen leadership profile — meaningful roles demonstrate initiative beyond academics');
+  if(score>=85)recs.push('Strong position — focus on interview preparation and thoughtful rank list strategy');
+  if(recs.length===0)recs.push('Solid application overall — focus on interview performance and personal statement quality');
+  recs.forEach(function(r){h+='<li>'+r+'</li>'});
   h+='</ul></div>';
 
-  h+='<p style="font-size:10px;color:var(--text3);font-style:italic;margin-top:12px">Based on NRMP Charting Outcomes data. This is directional guidance, not a guarantee. Individual circumstances vary significantly.</p>';
+  // 6. Scenario Simulation
+  h+='<div style="margin-bottom:16px;padding:16px;background:linear-gradient(160deg,rgba(200,168,124,.04),rgba(200,168,124,.01));border:1px solid rgba(200,168,124,.15);border-radius:10px">';
+  h+='<div style="font-size:11px;font-weight:600;color:var(--accent);margin-bottom:10px">🔬 What-If Scenarios</div>';
+  h+='<div style="font-size:11px;color:var(--text3);margin-bottom:10px">See how improvements change your score.</div>';
+  // Simulate Step +10
+  var simStep=step2+10;
+  var simStepDiff=simStep-sd.avgStep;
+  var simStepPts=simStepDiff>=20?30:simStepDiff>=10?25:simStepDiff>=5?20:simStepDiff>=0?15:simStepDiff>=-5?10:simStepDiff>=-10?5:0;
+  var simScoreStep=score-stepPts+simStepPts;
+  // Simulate pubs +1 tier
+  var simPubPts=Math.min(20,[0,6,12,16,20][Math.min(4,pubs+1)]);
+  var simScorePub=score-pubPts+simPubPts;
+  // Simulate strong LORs
+  var simLorPts=lors==='notable'?lorPts:10;
+  var simScoreLor=score-lorPts+simLorPts;
+
+  h+='<div style="display:flex;flex-direction:column;gap:6px">';
+  if(step2<270){
+    var stepGain=simScoreStep-score;
+    h+='<div style="display:flex;justify-content:space-between;padding:8px 10px;background:var(--bg2);border-radius:6px;font-size:12px"><span>Step 2 CK '+step2+' → '+simStep+'</span><span style="color:'+(stepGain>0?'#6abf4b':'var(--text3)')+';font-weight:600">Score: '+score+' → '+simScoreStep+(stepGain>0?' (+'+stepGain+')':'')+'</span></div>';
+  }
+  if(pubs<4){
+    var pubGain=simScorePub-score;
+    h+='<div style="display:flex;justify-content:space-between;padding:8px 10px;background:var(--bg2);border-radius:6px;font-size:12px"><span>More research ('+pubLabels[pubs]+' → '+pubLabels[Math.min(4,pubs+1)]+')</span><span style="color:'+(pubGain>0?'#6abf4b':'var(--text3)')+';font-weight:600">Score: '+score+' → '+simScorePub+(pubGain>0?' (+'+pubGain+')':'')+'</span></div>';
+  }
+  if(lors!=='notable'){
+    var lorGain=simScoreLor-score;
+    h+='<div style="display:flex;justify-content:space-between;padding:8px 10px;background:var(--bg2);border-radius:6px;font-size:12px"><span>Stronger LORs → well-known faculty</span><span style="color:'+(lorGain>0?'#6abf4b':'var(--text3)')+';font-weight:600">Score: '+score+' → '+simScoreLor+(lorGain>0?' (+'+lorGain+')':'')+'</span></div>';
+  }
+  h+='</div>';
+  h+='<div style="font-size:10px;color:var(--text3);margin-top:8px;font-style:italic">Adjust your inputs above and re-analyze to see exact score changes.</div>';
+  h+='</div>';
+
+  // 7. Save Profile
+  h+='<div style="text-align:center;margin-bottom:16px"><button onclick="mccSaveProfile()" class="btn" style="font-size:12px;padding:10px 24px;border:1px solid rgba(200,168,124,.25);color:var(--accent);background:none;cursor:pointer;border-radius:8px">💾 Save Competitiveness Profile</button>';
+  h+='<div style="font-size:10px;color:var(--text3);margin-top:6px">Track improvements as your application strengthens.</div></div>';
+
+  // 8. Related Tools
+  h+='<div style="padding:16px;background:var(--bg2);border-radius:10px;border:1px solid var(--border)">';
+  h+='<div style="font-size:11px;font-weight:600;color:var(--accent);margin-bottom:10px">🔗 Recommended Next Tools</div>';
+  var related=[{id:'v7',icon:'📊',title:'Research ROI Calculator',why:'Maximize research impact before you apply'},{id:'v15',icon:'🗺️',title:'Career Strategy Builder',why:'Build a timeline for your remaining milestones'},{id:'v16',icon:'🎤',title:'Mock Interview Simulator',why:'Practice the questions programs will ask you'}];
+  related.forEach(function(t){
+    h+='<div onclick="openFramework(\''+t.id+'\')" style="display:flex;gap:10px;padding:10px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .2s">';
+    h+='<span style="font-size:18px">'+t.icon+'</span>';
+    h+='<div><div style="font-size:12px;font-weight:600;color:var(--text)">'+t.title+'</div><div style="font-size:10px;color:var(--text3)">'+t.why+'</div></div></div>';
+  });
+  h+='</div>';
+
+  h+='<p style="font-size:10px;color:var(--text3);font-style:italic;margin-top:14px">Based on NRMP Charting Outcomes data. This is directional guidance, not a guarantee. Individual circumstances, interview performance, and intangible factors significantly impact match outcomes.</p>';
   document.getElementById('mcc-results').innerHTML=h;
+  document.getElementById('mcc-results').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function mccSaveProfile(){
+  if(!U)return;
+  var profile={
+    date:new Date().toISOString(),
+    spec:document.getElementById('mcc-spec').value,
+    step2:document.getElementById('mcc-step2').value,
+    pubs:document.getElementById('mcc-pubs').value,
+    school:document.getElementById('mcc-school').value,
+    background:document.getElementById('mcc-background').value,
+    aoa:document.getElementById('mcc-aoa').value,
+    lors:document.getElementById('mcc-lors').value,
+    leadership:document.getElementById('mcc-leadership').value,
+    programs:document.getElementById('mcc-programs').value,
+    aways:document.getElementById('mcc-aways').value
+  };
+  if(!U.mccProfiles)U.mccProfiles=[];
+  U.mccProfiles.push(profile);
+  localStorage.setItem('hw_session',JSON.stringify(U));
+  saveDB();
+  // Sync to Supabase
+  if(_supaClient&&U.supaId){
+    _supaClient.from('profiles').update({notes:U.notes||[],mcc_profiles:U.mccProfiles}).eq('user_id',U.supaId||U.id).then(function(){}).catch(function(){});
+  }
+  notify('Competitiveness profile saved! Track your progress over time. 📈');
 }
 
 // ===== CAREER STRATEGY BUILDER (v15) =====

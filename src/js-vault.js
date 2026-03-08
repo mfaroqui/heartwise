@@ -1130,12 +1130,16 @@ v13:`<h3 class="serif">Specialty Fit Analyzer</h3>
 </div>`,
 
 v14:`<h3 class="serif">Match Competitiveness Calculator</h3>
-<p style="color:var(--text3);font-size:12px;margin-bottom:20px">Estimate your likelihood of matching into a specialty based on key metrics. Data referenced from NRMP Charting Outcomes.</p>
+<p style="color:var(--text3);font-size:12px;margin-bottom:20px">Comprehensive competitiveness analysis with NRMP benchmarking, probability outlook, and strategic recommendations.</p>
 <div id="mcc-tool" style="font-size:13px">
 
-<div style="padding:14px 0;border-bottom:1px solid var(--border)">
-<div style="margin-bottom:6px"><strong>Target Specialty</strong></div>
-<select id="mcc-spec" onchange="mccUpdate()" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
+<!-- Section 1: Academic Profile -->
+<div style="margin-bottom:20px">
+<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid rgba(200,168,124,.15)">📚 Academic Profile</div>
+
+<div style="padding:10px 0;border-bottom:1px solid var(--border)">
+<div style="margin-bottom:4px"><strong>Target Specialty</strong></div>
+<select id="mcc-spec" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
 <option value="">Select specialty...</option>
 <option value="im">Internal Medicine</option>
 <option value="fm">Family Medicine</option>
@@ -1158,25 +1162,15 @@ v14:`<h3 class="serif">Match Competitiveness Calculator</h3>
 </select>
 </div>
 
-<div style="padding:14px 0;border-bottom:1px solid var(--border)">
-<div style="margin-bottom:6px"><strong>Step 2 CK Score</strong></div>
-<input type="number" id="mcc-step2" placeholder="e.g., 255" onchange="mccUpdate()" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px;box-sizing:border-box">
+<div style="padding:10px 0;border-bottom:1px solid var(--border)">
+<div style="margin-bottom:4px"><strong>Step 2 CK Score</strong></div>
+<div style="font-size:10px;color:var(--text3);margin-bottom:6px">Most competitive specialties have average Step 2 CK scores between 245–260.</div>
+<input type="number" id="mcc-step2" placeholder="e.g., 255" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px;box-sizing:border-box">
 </div>
 
-<div style="padding:14px 0;border-bottom:1px solid var(--border)">
-<div style="margin-bottom:6px"><strong>Research Publications / Abstracts</strong></div>
-<select id="mcc-pubs" onchange="mccUpdate()" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
-<option value="0">0 — None</option>
-<option value="1">1-2 abstracts/posters</option>
-<option value="2">3-5 publications</option>
-<option value="3">6-10 publications</option>
-<option value="4">10+ publications</option>
-</select>
-</div>
-
-<div style="padding:14px 0;border-bottom:1px solid var(--border)">
-<div style="margin-bottom:6px"><strong>Medical School Tier</strong></div>
-<select id="mcc-school" onchange="mccUpdate()" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
+<div style="padding:10px 0;border-bottom:1px solid var(--border)">
+<div style="margin-bottom:4px"><strong>Medical School Tier</strong></div>
+<select id="mcc-school" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
 <option value="">Select...</option>
 <option value="top20">Top 20 (Harvard, Hopkins, UCSF, etc.)</option>
 <option value="top50">Top 21-50</option>
@@ -1186,20 +1180,88 @@ v14:`<h3 class="serif">Match Competitiveness Calculator</h3>
 </select>
 </div>
 
-<div style="padding:14px 0;border-bottom:1px solid var(--border)">
-<div style="margin-bottom:6px"><strong>Number of Programs Applying To</strong></div>
-<input type="number" id="mcc-programs" placeholder="e.g., 30" onchange="mccUpdate()" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px;box-sizing:border-box">
+<div style="padding:10px 0;border-bottom:1px solid var(--border)">
+<div style="margin-bottom:4px"><strong>Training Background</strong></div>
+<select id="mcc-background" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
+<option value="">Select...</option>
+<option value="usmd">US MD</option>
+<option value="usdo">US DO</option>
+<option value="usimg">US IMG</option>
+<option value="nonusimg">Non-US IMG</option>
+</select>
 </div>
 
-<div style="padding:14px 0;border-bottom:1px solid var(--border)">
-<div style="margin-bottom:6px"><strong>Away Rotations at Target Programs</strong></div>
-<select id="mcc-aways" onchange="mccUpdate()" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
-<option value="0">None</option>
+<div style="padding:10px 0">
+<div style="margin-bottom:4px"><strong>AOA / Clerkship Performance</strong></div>
+<select id="mcc-aoa" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
+<option value="">Select...</option>
+<option value="aoa">AOA member</option>
+<option value="honors">Multiple Honors</option>
+<option value="pass">Mostly High Pass / Pass</option>
+</select>
+</div>
+</div>
+
+<!-- Section 2: Application Strength -->
+<div style="margin-bottom:20px">
+<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid rgba(200,168,124,.15)">💪 Application Strength</div>
+
+<div style="padding:10px 0;border-bottom:1px solid var(--border)">
+<div style="margin-bottom:4px"><strong>Research Publications / Abstracts</strong></div>
+<div style="font-size:10px;color:var(--text3);margin-bottom:6px">Highly competitive specialties often report 5+ research experiences.</div>
+<select id="mcc-pubs" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
+<option value="0">0 — None</option>
+<option value="1">1-2 abstracts / posters</option>
+<option value="2">3-5 publications</option>
+<option value="3">6-10 publications</option>
+<option value="4">10+ publications</option>
+</select>
+</div>
+
+<div style="padding:10px 0;border-bottom:1px solid var(--border)">
+<div style="margin-bottom:4px"><strong>Letters of Recommendation</strong></div>
+<select id="mcc-lors" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
+<option value="">Select...</option>
+<option value="avg">Average — from attendings who know you</option>
+<option value="strong">Strong — from recognized faculty in the field</option>
+<option value="notable">From well-known / nationally recognized faculty</option>
+</select>
+</div>
+
+<div style="padding:10px 0">
+<div style="margin-bottom:4px"><strong>Leadership / Extracurriculars</strong></div>
+<select id="mcc-leadership" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
+<option value="">Select...</option>
+<option value="none">None / minimal involvement</option>
+<option value="some">Some leadership roles</option>
+<option value="significant">Significant leadership (president, chief, national)</option>
+</select>
+</div>
+</div>
+
+<!-- Section 3: Application Strategy -->
+<div style="margin-bottom:20px">
+<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid rgba(200,168,124,.15)">🎯 Application Strategy</div>
+
+<div style="padding:10px 0;border-bottom:1px solid var(--border)">
+<div style="margin-bottom:4px"><strong>Number of Programs Applying To</strong></div>
+<div style="font-size:10px;color:var(--text3);margin-bottom:6px">Competitive specialties: 50–80+ programs. Less competitive: 15–30.</div>
+<input type="number" id="mcc-programs" placeholder="e.g., 40" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px;box-sizing:border-box">
+</div>
+
+<div style="padding:10px 0">
+<div style="margin-bottom:4px"><strong>Away Rotations at Target Programs</strong></div>
+<div style="font-size:10px;color:var(--text3);margin-bottom:6px">Away rotations can significantly boost your chances at specific programs.</div>
+<select id="mcc-aways" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
+<option value="0">None planned</option>
 <option value="1">1 rotation</option>
 <option value="2">2 rotations</option>
 <option value="3">3+ rotations</option>
 </select>
 </div>
+</div>
+
+<button onclick="mccCalculate()" class="btn btn-a" style="width:100%;padding:14px;font-size:14px;font-weight:600">Analyze My Competitiveness →</button>
 
 <div id="mcc-results" style="margin-top:20px"></div>
 

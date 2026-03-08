@@ -3574,7 +3574,7 @@ function renderAdmin(){
       var isSB=_sbMessages&&_sbMessages.length;
       c.innerHTML=msgs.map(function(m,idx){
         var msgId=isSB?m.id:((DB.messages.length-1)-idx);
-        var typeLabel={bug:'🐛 Bug',suggestion:'💡 Suggestion',question:'❓ Question',feedback:'📝 Feedback',progress:'📈 Progress Update',other:'📎 Other'};
+        var typeLabel={career:'🎯 Career/Strategy',finance:'💰 Finance/Comp',contract:'📋 Contract/Negotiation',bug:'🐛 Bug',suggestion:'💡 Suggestion',question:'❓ Question',feedback:'📝 Feedback',progress:'📈 Progress Update',other:'📎 Other'};
         var isRead=m.read?'':'border-left:3px solid var(--accent);';
         var d=m.date?new Date(m.date).toLocaleDateString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}):'';
         var h='<div class="card" style="margin-bottom:12px;'+isRead+'">';

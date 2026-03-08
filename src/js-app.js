@@ -32,6 +32,7 @@ function landingNav(id){
   if(id==='pg-landing'){document.getElementById('pg-landing').scrollTo({top:0,behavior:'smooth'});return}
   const el=document.getElementById(id);
   if(el)el.scrollIntoView({behavior:'smooth'});
+}
 
 // Landing page hook — stage selector
 function hookSelect(stage,btn){
@@ -82,7 +83,6 @@ function hookSelect(stage,btn){
   document.getElementById('hook-tool-list').innerHTML=html;
   document.getElementById('hook-tools').style.display='';
   setTimeout(function(){document.getElementById('hook-tools').scrollIntoView({behavior:'smooth',block:'nearest'})},100);
-}
 }
 document.addEventListener('click',function(e){
   const m=document.getElementById('landing-menu');

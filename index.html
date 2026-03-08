@@ -853,7 +853,7 @@ a:hover{color:var(--accent2)}
 <div style="font-size:13px;font-weight:600;color:var(--text)">Fellow</div>
 </button>
 <button onclick="hookSelect('attending',this)" class="hook-opt" style="padding:16px;background:var(--bg2);border:2px solid var(--border);border-radius:12px;cursor:pointer;text-align:center;transition:all .25s">
-<div style="font-size:22px;margin-bottom:6px">⚕️</div>
+<div style="font-size:22px;margin-bottom:6px">🩺</div>
 <div style="font-size:13px;font-weight:600;color:var(--text)">Attending</div>
 </button>
 </div>
@@ -4593,6 +4593,7 @@ function landingNav(id){
   if(id==='pg-landing'){document.getElementById('pg-landing').scrollTo({top:0,behavior:'smooth'});return}
   const el=document.getElementById(id);
   if(el)el.scrollIntoView({behavior:'smooth'});
+}
 
 // Landing page hook — stage selector
 function hookSelect(stage,btn){
@@ -4643,7 +4644,6 @@ function hookSelect(stage,btn){
   document.getElementById('hook-tool-list').innerHTML=html;
   document.getElementById('hook-tools').style.display='';
   setTimeout(function(){document.getElementById('hook-tools').scrollIntoView({behavior:'smooth',block:'nearest'})},100);
-}
 }
 document.addEventListener('click',function(e){
   const m=document.getElementById('landing-menu');

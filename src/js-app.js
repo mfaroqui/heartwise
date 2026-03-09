@@ -346,6 +346,9 @@ function go(id){
   const el=document.getElementById(id);if(el){el.classList.remove('hidden');el.style.display=''}
   if(id==='pg-signup'){go('pg-onboard');return}
   document.getElementById('main-nav').classList.remove('on');
+  // Scroll to top on page change
+  window.scrollTo(0,0);
+  if(el)el.scrollTop=0;
   // Show/hide topbar
   const tb=document.getElementById('topbar');
   if(tb)tb.style.display=(id==='pg-landing')?'':'none';
@@ -363,6 +366,10 @@ function navTo(scr,btn){
     btns.forEach(n=>n.classList.remove('on'));
     if(map[key]!==undefined&&btns[map[key]])btns[map[key]].classList.add('on');
   }
+  // Scroll to top when navigating to a new screen
+  window.scrollTo(0,0);
+  var scrEl=document.getElementById(scr);
+  if(scrEl)scrEl.scrollTop=0;
   if(scr==='scr-home')renderHome();
   if(scr==='scr-archive')renderArchive();
   if(scr==='scr-vault')renderVault();
@@ -1481,7 +1488,29 @@ function togReview(){
   if(!t.classList.contains('on')&&(U.usage?.credits||0)<=0){notify('No review credits. Upgrade your plan.',1);return}
   t.classList.toggle('on');
 }
-function updateAskScreen(){document.getElementById('ask-credits').textContent=U.usage?.credits||0}
+function updateAskScreen(){
+  document.getElementById('ask-credits').textContent=U.usage?.credits||0;
+  // Auto-fill from career baseline profile
+  if(U&&U.careerProfile){
+    var cp=U.careerProfile;
+    var levelMap={student:'MS3-MS4',resident:'PGY-2',fellow:'Fellow',attending:'Attending'};
+    var pgyMap={MS1:'MS1-MS2',MS2:'MS1-MS2',MS3:'MS3-MS4',MS4:'MS3-MS4',PGY1:'PGY-1',PGY2:'PGY-2',PGY3:'PGY-3',PGY4:'PGY-3',PGY5:'PGY-3',F1:'Fellow',F2:'Fellow',F3:'Fellow'};
+    var levelEl=document.getElementById('q-level');
+    if(levelEl&&!levelEl.value){levelEl.value=pgyMap[cp.pgy]||levelMap[cp.stage]||''}
+    var specEl=document.getElementById('q-spec');
+    if(specEl&&!specEl.value&&cp.specialty){
+      // Try exact match first
+      var opts=specEl.options;
+      for(var i=0;i<opts.length;i++){if(opts[i].value===cp.specialty){specEl.value=cp.specialty;break}}
+    }
+    var goalCatMap={specialty:'career',match:'fellowship',contract:'contract',finance:'finance',direction:'career'};
+    var catEl=document.getElementById('q-cat');
+    if(catEl&&!catEl.value&&cp.goal){catEl.value=goalCatMap[cp.goal]||''}
+    var tlMap={student:'Medium (1-2yr)',resident:'Near-term (3-12mo)',fellow:'Near-term (3-12mo)',attending:'Immediate (0-3mo)'};
+    var tlEl=document.getElementById('q-timeline');
+    if(tlEl&&!tlEl.value){tlEl.value=tlMap[cp.stage]||''}
+  }
+}
 
 function submitQ(){
   const level=document.getElementById('q-level').value;
@@ -3131,6 +3160,104 @@ function openFramework(id){
   if(id==='v11')setTimeout(ftInit,50);
   if(id==='v12')setTimeout(ciInit,50);
   if(id==='v16')setTimeout(misInit,50);
+  // Auto-fill tool intakes from career baseline
+  setTimeout(function(){autoFillToolFromProfile(id)},60);
+}
+
+// Auto-fill tool inputs from the user's saved career baseline profile
+function autoFillToolFromProfile(toolId){
+  if(!U||!U.careerProfile)return;
+  var cp=U.careerProfile;
+  function setVal(elId,val){var el=document.getElementById(elId);if(el&&!el.value&&val){el.value=val}}
+  function setSelect(elId,val){
+    var el=document.getElementById(elId);if(!el||el.value||!val)return;
+    var opts=el.options;
+    for(var i=0;i<opts.length;i++){
+      if(opts[i].value===val||opts[i].value===String(val)){el.value=opts[i].value;return}
+    }
+  }
+  function setRange(elId,mapping){
+    // mapping: {fieldName: rangeValue}
+    var el=document.getElementById(elId);if(!el)return;
+    for(var key in mapping){
+      if(cp[key]!==undefined&&cp[key]!==''&&cp[key]!==null){
+        var v=parseInt(cp[key]);if(!isNaN(v)){el.value=Math.min(mapping[key](v),parseInt(el.max)||5);return}
+      }
+    }
+  }
+
+  // MCC — Match Competitiveness Calculator (v3)
+  if(toolId==='v3'){
+    setSelect('mcc-spec',cp.specialty);
+    setVal('mcc-step2',cp.step2);
+    setVal('mcc-programs',cp.programs);
+    // Publications mapping
+    var pubs=parseInt(cp.pubs)||0;
+    if(pubs===0)setSelect('mcc-pubs','0');
+    else if(pubs<=2)setSelect('mcc-pubs','1-2');
+    else if(pubs<=4)setSelect('mcc-pubs','3-4');
+    else if(pubs<=7)setSelect('mcc-pubs','5-7');
+    else setSelect('mcc-pubs','8+');
+    // LORs mapping
+    if(cp.lorStrength==='strong')setSelect('mcc-lors','strong');
+    else if(cp.lorStrength==='moderate')setSelect('mcc-lors','moderate');
+    else if(cp.lorStrength==='weak')setSelect('mcc-lors','weak');
+    // Leadership
+    var lead=parseInt(cp.leadership)||0;
+    if(lead===0)setSelect('mcc-leadership','none');
+    else if(lead===1)setSelect('mcc-leadership','minor');
+    else if(lead<=3)setSelect('mcc-leadership','significant');
+    else setSelect('mcc-leadership','major');
+    // Aways
+    var aways=parseInt(cp.aways)||0;
+    if(aways===0)setSelect('mcc-aways','0');
+    else if(aways===1)setSelect('mcc-aways','1');
+    else setSelect('mcc-aways','2+');
+    // AOA/Honors
+    if(cp.honors==='aoa')setSelect('mcc-aoa','aoa');
+    else if(cp.honors==='ghhs')setSelect('mcc-aoa','ghhs');
+    else if(cp.honors==='both')setSelect('mcc-aoa','both');
+    else if(cp.honors==='none')setSelect('mcc-aoa','none');
+  }
+
+  // Fellowship Readiness Calculator (v1) — sliders from profile data
+  if(toolId==='v1'){
+    var pubVal=parseInt(cp.pubs)||0;
+    var r1=document.getElementById('frc-r1');
+    if(r1){
+      if(pubVal>=5)r1.value=5;else if(pubVal>=4)r1.value=4;else if(pubVal>=2)r1.value=3;else if(pubVal>=1)r1.value=2;else r1.value=0;
+    }
+    var lorMap={strong:4,moderate:3,weak:1};
+    var r2=document.getElementById('frc-r2');if(r2&&cp.lorStrength)r2.value=lorMap[cp.lorStrength]||0;
+    var leadVal=parseInt(cp.leadership)||0;
+    var r5=document.getElementById('frc-r5');
+    if(r5){if(leadVal>=4)r5.value=5;else if(leadVal>=2)r5.value=4;else if(leadVal>=1)r5.value=3;else r5.value=0}
+    var awayVal=parseInt(cp.aways)||0;
+    var r6=document.getElementById('frc-r6');
+    if(r6){if(awayVal>=2)r6.value=4;else if(awayVal>=1)r6.value=3;else r6.value=0}
+    setTimeout(frcUpdate,10);
+  }
+
+  // Financial Trajectory Simulator (v11) — specialty
+  if(toolId==='v11'){
+    setSelect('ft-spec1',cp.specialty);
+    if(cp.practice)setSelect('ft-setting1',cp.practice);
+    if(cp.stage){
+      var stageMap={student:'student',resident:'resident',fellow:'fellow',attending:'attending'};
+      setSelect('ft-stage1',stageMap[cp.stage]||'');
+    }
+  }
+
+  // Contract Intelligence Tool (v12) — specialty and comp
+  if(toolId==='v12'){
+    setSelect('ci-spec',cp.specialty);
+    if(cp.comp){var compNum=cp.comp.replace(/[^0-9]/g,'');setVal('ci-base',compNum)}
+  }
+
+  // RVU Compensation Modeler (v4) — specialty
+  if(toolId==='v4'){
+    setSelect('rvu-spec',cp.specialty);
+  }
 }
 
 var ELITE_PREVIEWS={
@@ -3948,6 +4075,16 @@ function showUpgrade(){
 function toggleNotifSettings(){document.getElementById('notif-settings').classList.toggle('hidden')}
 
 function toggleContactForm(){document.getElementById('contact-form').classList.toggle('hidden')}
+
+// Navigate to profile and open Contact/Report Issue form
+function goToContactForm(){
+  navTo('scr-profile');
+  setTimeout(function(){
+    var cf=document.getElementById('contact-form');
+    if(cf&&cf.classList.contains('hidden'))cf.classList.remove('hidden');
+    cf.scrollIntoView({behavior:'smooth',block:'start'});
+  },100);
+}
 function toggleFounderBio(){document.getElementById('founder-bio').classList.toggle('hidden')}
 function toggleWhyNotGpt(){document.getElementById('why-not-gpt').classList.toggle('hidden')}
 function selectContactCat(el){var form=document.getElementById('contact-form');form.querySelectorAll('label[onclick]').forEach(function(l){l.style.borderColor='var(--border)'});el.style.borderColor='var(--accent)';var r=el.querySelector('input[type=radio]');if(r)r.checked=true}

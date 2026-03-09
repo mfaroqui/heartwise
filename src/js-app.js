@@ -610,8 +610,492 @@ function updateTrialBanner(){
   el.innerHTML='<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap"><span style="font-size:18px">⚡</span><div style="flex:1;min-width:180px"><div style="font-size:13px;font-weight:600;color:'+urgency+'">Full Access Trial — '+hours+'h '+mins+'m remaining</div><div style="font-size:11px;color:var(--text2);margin-top:2px">Every tool unlocked. Explore everything before time runs out.</div></div><button class="btn btn-a btn-sm" onclick="navTo(\'scr-profile\');showUpgrade()" style="flex-shrink:0;width:auto;padding:8px 18px">Keep Access →</button></div>';
 }
 
+// ===== CAREER DASHBOARD ENGINE =====
+
+// Career profile data stored on U.careerProfile
+// Score history stored on U.scoreHistory = [{date,scores:{competitiveness,research,financial,...}}]
+// Tool history stored on U.toolHistory = [{date,tool,score,summary}]
+// Milestones stored on U.milestones = [{id,label,done,date}]
+
+function initCareerProfile(){
+  if(!U)return;
+  if(!U.careerProfile) U.careerProfile={};
+  if(!U.scoreHistory) U.scoreHistory=[];
+  if(!U.toolHistory) U.toolHistory=[];
+  if(!U.milestones) U.milestones=getDefaultMilestones(U.role||U.profile?.stage||'student');
+  if(!U.careerProfile.lastUpdated&&U.profile){
+    // Seed from onboarding profile
+    var p=U.profile;
+    U.careerProfile.stage=p.stage||'student';
+    U.careerProfile.specialty=p.spec||'';
+    U.careerProfile.goal=p.goal||'';
+    U.careerProfile.step1=p.score1||'';
+    U.careerProfile.step2=p.score2||'';
+    U.careerProfile.pubs=parseInt(p.pubs)||0;
+    U.careerProfile.conferences=0;
+    U.careerProfile.leadership=parseInt(p.lead)||0;
+    U.careerProfile.volunteer=0;
+    U.careerProfile.research=parseInt(p.pubs)||0;
+    U.careerProfile.lorStrength='';
+    U.careerProfile.pgy=p.pgy||'';
+    U.careerProfile.comp=p.comp||'';
+    U.careerProfile.debt=p.debt||'';
+    U.careerProfile.lastUpdated=U.signupDate||new Date().toISOString();
+    // Calculate initial scores
+    var scores=calcDashScores(U.careerProfile);
+    U.scoreHistory.push({date:U.careerProfile.lastUpdated,scores:scores});
+    saveUser();
+  }
+}
+
+function getDefaultMilestones(stage){
+  var ms=[];
+  if(stage==='student'||stage==='premed'){
+    ms=[
+      {id:'step1',label:'Step 1 / Level 1 Completed',done:false},
+      {id:'step2',label:'Step 2 CK / Level 2 Completed',done:false},
+      {id:'pub1',label:'First Publication',done:false},
+      {id:'conference',label:'National Conference Presentation',done:false},
+      {id:'leadership',label:'Leadership Role',done:false},
+      {id:'lor',label:'Strong Letters of Recommendation Secured',done:false},
+      {id:'away',label:'Away Rotation Completed',done:false},
+      {id:'eras',label:'ERAS Application Submitted',done:false},
+      {id:'interview',label:'First Interview Completed',done:false},
+      {id:'match',label:'Matched into Residency',done:false}
+    ];
+  }else if(stage==='resident'){
+    ms=[
+      {id:'step3',label:'Step 3 / Level 3 Completed',done:false},
+      {id:'pub1',label:'First Publication',done:false},
+      {id:'pub3',label:'3+ Publications',done:false},
+      {id:'conference',label:'National Conference Presentation',done:false},
+      {id:'leadership',label:'Chief Resident / Leadership Role',done:false},
+      {id:'research_project',label:'Research Project Completed',done:false},
+      {id:'lor',label:'Fellowship LORs Secured',done:false},
+      {id:'fellowship_app',label:'Fellowship Application Submitted',done:false},
+      {id:'fellowship_match',label:'Matched into Fellowship',done:false}
+    ];
+  }else if(stage==='fellow'){
+    ms=[
+      {id:'pub3',label:'3+ Publications',done:false},
+      {id:'pub5',label:'5+ Publications',done:false},
+      {id:'conference',label:'National Conference Presentation',done:false},
+      {id:'boards',label:'Board Certification',done:false},
+      {id:'contract',label:'First Attending Contract Signed',done:false},
+      {id:'negotiation',label:'Contract Negotiated Successfully',done:false},
+      {id:'financial_plan',label:'Financial Plan Established',done:false}
+    ];
+  }else{
+    ms=[
+      {id:'boards',label:'Board Recertification Current',done:false},
+      {id:'contract_review',label:'Contract Reviewed / Renegotiated',done:false},
+      {id:'financial_review',label:'Financial Plan Reviewed',done:false},
+      {id:'pub_new',label:'New Publication / Research',done:false},
+      {id:'leadership',label:'New Leadership Role / Committee',done:false},
+      {id:'mentoring',label:'Mentoring Junior Physicians',done:false},
+      {id:'career_assessment',label:'Career Strategic Assessment Completed',done:false}
+    ];
+  }
+  return ms;
+}
+
+function calcDashScores(cp){
+  var stage=cp.stage||'student';
+  var scores={};
+
+  // Competitiveness Score (0-100)
+  var comp=40;
+  var s2=parseInt(cp.step2)||0;
+  if(s2>=260) comp+=25; else if(s2>=250) comp+=20; else if(s2>=240) comp+=15; else if(s2>=230) comp+=10; else if(s2>0) comp+=5;
+  var pubs=parseInt(cp.pubs)||0;
+  comp+=Math.min(20,pubs*4);
+  var conf=parseInt(cp.conferences)||0;
+  comp+=Math.min(5,conf*2);
+  var lead=parseInt(cp.leadership)||0;
+  comp+=Math.min(5,lead*3);
+  var lor=cp.lorStrength;
+  if(lor==='strong') comp+=5; else if(lor==='moderate') comp+=3;
+  scores.competitiveness=Math.min(100,comp);
+
+  // Research Productivity Score
+  var rScore=0;
+  rScore+=Math.min(40,pubs*8);
+  rScore+=Math.min(20,conf*5);
+  var resProj=parseInt(cp.research)||0;
+  rScore+=Math.min(20,resProj*5);
+  rScore+=Math.min(20,lead*5);
+  scores.research=Math.min(100,rScore);
+
+  // Fellowship/Residency Readiness
+  var ready=30;
+  if(s2>=250) ready+=20; else if(s2>=240) ready+=15; else if(s2>0) ready+=8;
+  ready+=Math.min(15,pubs*3);
+  ready+=Math.min(10,conf*3);
+  if(lor==='strong') ready+=10; else if(lor==='moderate') ready+=5;
+  ready+=Math.min(10,lead*4);
+  var vol=parseInt(cp.volunteer)||0;
+  ready+=Math.min(5,vol*2);
+  scores.readiness=Math.min(100,ready);
+
+  // Financial Score (simplified)
+  var fin=50;
+  var compVal=parseInt(String(cp.comp||'0').replace(/[^0-9]/g,''))||0;
+  var debtVal=parseInt(String(cp.debt||'0').replace(/[^0-9]/g,''))||0;
+  if(compVal>400000) fin+=20; else if(compVal>300000) fin+=15; else if(compVal>200000) fin+=10;
+  if(debtVal===0) fin+=20; else if(debtVal<100000) fin+=15; else if(debtVal<200000) fin+=10; else if(debtVal<300000) fin+=5;
+  scores.financial=Math.min(100,fin);
+
+  return scores;
+}
+
+function getPeerBenchmarks(cp){
+  var spec=(cp.specialty||'').toLowerCase();
+  // Averages based on NRMP Charting Outcomes data
+  var benchmarks={
+    'cardiology':     {step2:252,pubs:3.7,leadership:'60%',conferences:2.1},
+    'gastroenterology':{step2:248,pubs:3.2,leadership:'55%',conferences:1.8},
+    'dermatology':    {step2:256,pubs:4.2,leadership:'65%',conferences:2.5},
+    'orthopedic surgery':{step2:254,pubs:4.5,leadership:'70%',conferences:3.0},
+    'radiology':      {step2:250,pubs:2.8,leadership:'50%',conferences:1.5},
+    'emergency medicine':{step2:240,pubs:1.5,leadership:'45%',conferences:1.0},
+    'internal medicine':{step2:238,pubs:1.2,leadership:'40%',conferences:0.8},
+    'family medicine': {step2:232,pubs:0.8,leadership:'35%',conferences:0.5},
+    'psychiatry':     {step2:236,pubs:1.0,leadership:'38%',conferences:0.7},
+    'pediatrics':     {step2:237,pubs:1.1,leadership:'42%',conferences:0.9},
+    'neurology':      {step2:244,pubs:2.0,leadership:'48%',conferences:1.3},
+    'surgery':        {step2:249,pubs:3.0,leadership:'58%',conferences:1.9}
+  };
+  // Find closest match
+  var b=benchmarks['internal medicine'];
+  for(var k in benchmarks){if(spec.indexOf(k)!==-1||k.indexOf(spec)!==-1){b=benchmarks[k];break}}
+  return b;
+}
+
+function getScoreActions(cp,scores){
+  var actions=[];
+  var pubs=parseInt(cp.pubs)||0;
+  var conf=parseInt(cp.conferences)||0;
+  var lead=parseInt(cp.leadership)||0;
+  var s2=parseInt(cp.step2)||0;
+  var stage=cp.stage||'student';
+
+  if(pubs<2) actions.push({action:'Publish 1 research article',gain:'+4',priority:'high'});
+  if(pubs>=1&&pubs<4) actions.push({action:'Publish '+(pubs+1)+' total publications',gain:'+'+(4),priority:'high'});
+  if(pubs>=2&&pubs<6) actions.push({action:'Reach '+(pubs+2)+' publications',gain:'+'+(8),priority:'medium'});
+  if(conf<1) actions.push({action:'Present at a national conference',gain:'+2',priority:'high'});
+  if(conf>=1&&conf<3) actions.push({action:'Additional conference presentation',gain:'+2',priority:'medium'});
+  if(lead<1) actions.push({action:'Take on a leadership role',gain:'+3',priority:'high'});
+  if(lead>=1&&lead<3) actions.push({action:'Additional leadership position',gain:'+3',priority:'medium'});
+  if(cp.lorStrength!=='strong') actions.push({action:'Secure strong letters of recommendation',gain:'+5',priority:'high'});
+  if(s2>0&&s2<250&&(stage==='student'||stage==='resident')) actions.push({action:'Improve Step 2 CK score (retake/study)',gain:'+5 to +15',priority:'medium'});
+  if(stage==='resident'||stage==='fellow') actions.push({action:'Complete a quality improvement project',gain:'+2',priority:'medium'});
+  if(stage==='fellow'||stage==='attending') actions.push({action:'Publish a first-author original research paper',gain:'+6',priority:'high'});
+
+  // Sort by priority
+  actions.sort(function(a,b){return a.priority==='high'?-1:b.priority==='high'?1:0});
+  return actions.slice(0,6);
+}
+
+function renderDashboard(){
+  if(!U)return;
+  initCareerProfile();
+  var cp=U.careerProfile;
+  if(!cp||!cp.lastUpdated){
+    document.getElementById('career-dashboard').style.display='none';
+    return;
+  }
+  document.getElementById('career-dashboard').style.display='';
+  var scores=calcDashScores(cp);
+  var stage=cp.stage||'student';
+
+  // Subtitle
+  var stageLabel={student:'Medical Student',resident:'Resident',fellow:'Fellow',attending:'Attending Physician'}[stage]||'Physician';
+  var specLabel=cp.specialty?' · '+(cp.specialty.charAt(0).toUpperCase()+cp.specialty.slice(1)):'';
+  document.getElementById('dash-subtitle').textContent=stageLabel+specLabel+' — track your progress, see what\'s next.';
+
+  // Score Cards
+  var prev=U.scoreHistory.length>1?U.scoreHistory[U.scoreHistory.length-2].scores:null;
+  var sh='';
+  var scoreItems=[
+    {key:'competitiveness',label:'Competitiveness',icon:'🏆'},
+    {key:'research',label:'Research',icon:'🔬'},
+    {key:'readiness',label:stage==='fellow'||stage==='attending'?'Career Readiness':'Match Readiness',icon:'🎯'},
+    {key:'financial',label:'Financial',icon:'💰'}
+  ];
+  scoreItems.forEach(function(si){
+    var val=scores[si.key]||0;
+    var delta=prev?val-(prev[si.key]||0):0;
+    var deltaStr=delta>0?'<span style="color:var(--green);font-size:10px;font-weight:600">↑ +'+delta+'</span>':delta<0?'<span style="color:var(--red);font-size:10px;font-weight:600">↓ '+delta+'</span>':'';
+    var color=val>=75?'var(--green)':val>=55?'var(--accent)':'var(--red)';
+    sh+='<div class="card" style="padding:14px;text-align:center">';
+    sh+='<div style="font-size:14px;margin-bottom:4px">'+si.icon+'</div>';
+    sh+='<div style="font-size:24px;font-weight:700;color:'+color+';font-family:var(--font-serif)">'+val+'</div>';
+    sh+='<div style="font-size:10px;color:var(--text3);margin-bottom:2px">'+si.label+'</div>';
+    sh+=deltaStr;
+    sh+='<div style="margin-top:6px;height:4px;background:var(--bg3);border-radius:2px;overflow:hidden"><div style="height:100%;width:'+val+'%;background:'+color+';border-radius:2px"></div></div>';
+    sh+='</div>';
+  });
+  document.getElementById('dash-scores').innerHTML=sh;
+
+  // Progress Graph
+  if(U.scoreHistory.length>1){
+    document.getElementById('dash-graph-wrap').style.display='';
+    renderProgressGraph(U.scoreHistory);
+  }else{
+    document.getElementById('dash-graph-wrap').style.display='none';
+  }
+
+  // Actions
+  var actions=getScoreActions(cp,scores);
+  if(actions.length){
+    document.getElementById('dash-actions').style.display='';
+    var ah='';
+    actions.forEach(function(a){
+      var pri=a.priority==='high'?'var(--accent)':'var(--text3)';
+      ah+='<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)">';
+      ah+='<div style="font-size:12px;color:var(--text);flex:1">'+a.action+'</div>';
+      ah+='<div style="font-size:12px;font-weight:700;color:'+pri+';min-width:50px;text-align:right">'+a.gain+'</div>';
+      ah+='</div>';
+    });
+    document.getElementById('dash-action-list').innerHTML=ah;
+  }
+
+  // Peer Benchmarking
+  if(cp.specialty){
+    document.getElementById('dash-benchmark').style.display='';
+    var bench=getPeerBenchmarks(cp);
+    var bh='<div style="font-size:11px;color:var(--text3);margin-bottom:10px">vs. average matched <strong style="color:var(--text2)">'+(cp.specialty||'applicant')+'</strong> applicant</div>';
+    bh+='<div style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:0;font-size:11px">';
+    bh+='<div style="font-weight:600;color:var(--text3);padding:6px 0;border-bottom:1px solid var(--border)">Metric</div>';
+    bh+='<div style="font-weight:600;color:var(--accent);padding:6px 0;border-bottom:1px solid var(--border);text-align:center">You</div>';
+    bh+='<div style="font-weight:600;color:var(--text3);padding:6px 0;border-bottom:1px solid var(--border);text-align:center">Average</div>';
+    // Step 2
+    var yourS2=parseInt(cp.step2)||'—';
+    bh+='<div style="padding:8px 0;color:var(--text2);border-bottom:1px solid var(--border)">Step 2 CK</div>';
+    bh+='<div style="padding:8px 0;text-align:center;color:'+(yourS2>=bench.step2?'var(--green)':'var(--red)')+';font-weight:600;border-bottom:1px solid var(--border)">'+yourS2+'</div>';
+    bh+='<div style="padding:8px 0;text-align:center;color:var(--text3);border-bottom:1px solid var(--border)">'+bench.step2+'</div>';
+    // Pubs
+    var yourPubs=parseInt(cp.pubs)||0;
+    bh+='<div style="padding:8px 0;color:var(--text2);border-bottom:1px solid var(--border)">Publications</div>';
+    bh+='<div style="padding:8px 0;text-align:center;color:'+(yourPubs>=bench.pubs?'var(--green)':'var(--red)')+';font-weight:600;border-bottom:1px solid var(--border)">'+yourPubs+'</div>';
+    bh+='<div style="padding:8px 0;text-align:center;color:var(--text3);border-bottom:1px solid var(--border)">'+bench.pubs+'</div>';
+    // Leadership
+    var yourLead=parseInt(cp.leadership)||0;
+    bh+='<div style="padding:8px 0;color:var(--text2);border-bottom:1px solid var(--border)">Leadership</div>';
+    bh+='<div style="padding:8px 0;text-align:center;color:'+(yourLead>0?'var(--green)':'var(--red)')+';font-weight:600;border-bottom:1px solid var(--border)">'+(yourLead>0?'Yes':'No')+'</div>';
+    bh+='<div style="padding:8px 0;text-align:center;color:var(--text3);border-bottom:1px solid var(--border)">'+bench.leadership+'</div>';
+    // Conferences
+    var yourConf=parseInt(cp.conferences)||0;
+    bh+='<div style="padding:8px 0;color:var(--text2)">Conferences</div>';
+    bh+='<div style="padding:8px 0;text-align:center;color:'+(yourConf>=bench.conferences?'var(--green)':'var(--red)')+';font-weight:600">'+yourConf+'</div>';
+    bh+='<div style="padding:8px 0;text-align:center;color:var(--text3)">'+bench.conferences+'</div>';
+    bh+='</div>';
+    document.getElementById('dash-bench-list').innerHTML=bh;
+  }else{
+    document.getElementById('dash-benchmark').style.display='none';
+  }
+
+  // Milestones
+  if(U.milestones&&U.milestones.length){
+    document.getElementById('dash-milestones').style.display='';
+    var mh='';
+    U.milestones.forEach(function(m,i){
+      mh+='<div style="display:flex;align-items:center;gap:10px;padding:8px 0;'+(i<U.milestones.length-1?'border-bottom:1px solid var(--border)':'')+';cursor:pointer" onclick="toggleMilestone('+i+')">';
+      mh+='<div style="width:22px;height:22px;border-radius:6px;border:2px solid '+(m.done?'var(--green)':'var(--border)')+';display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:12px;background:'+(m.done?'rgba(106,191,75,.1)':'transparent')+'">'+(m.done?'✓':'')+'</div>';
+      mh+='<div style="font-size:12px;color:'+(m.done?'var(--text3)':'var(--text)')+';'+(m.done?'text-decoration:line-through':'')+'">'+m.label+'</div>';
+      if(m.done&&m.date) mh+='<div style="font-size:9px;color:var(--text3);margin-left:auto">'+new Date(m.date).toLocaleDateString('en-US',{month:'short',year:'numeric'})+'</div>';
+      mh+='</div>';
+    });
+    document.getElementById('dash-milestone-list').innerHTML=mh;
+  }
+
+  // Strategy History
+  if(U.toolHistory&&U.toolHistory.length){
+    document.getElementById('dash-history').style.display='';
+    var hh='';
+    U.toolHistory.slice(-10).reverse().forEach(function(t){
+      hh+='<div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--border)">';
+      hh+='<div style="font-size:10px;color:var(--text3);min-width:65px">'+new Date(t.date).toLocaleDateString('en-US',{month:'short',year:'numeric'})+'</div>';
+      hh+='<div style="flex:1;font-size:12px;color:var(--text)">'+t.tool+'</div>';
+      if(t.score) hh+='<div style="font-size:12px;font-weight:700;color:var(--accent)">'+t.score+'</div>';
+      hh+='</div>';
+    });
+    document.getElementById('dash-history-list').innerHTML=hh;
+  }else{
+    document.getElementById('dash-history').style.display='none';
+  }
+
+  // Reassessment prompt
+  var lastUp=new Date(cp.lastUpdated);
+  var daysSince=Math.floor((new Date()-lastUp)/(1000*60*60*24));
+  document.getElementById('dash-reassess').style.display='';
+  document.getElementById('dash-last-updated').textContent='Last updated: '+lastUp.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})+(daysSince>90?' — ⚠️ Consider updating your profile':'');
+}
+
+function renderProgressGraph(history){
+  var el=document.getElementById('dash-graph');
+  if(!el||history.length<2)return;
+  var W=el.offsetWidth||300;var H=140;
+  var pts=history.map(function(h){return{date:new Date(h.date),val:h.scores.competitiveness||0}});
+  var minV=Math.max(0,Math.min.apply(null,pts.map(function(p){return p.val}))-10);
+  var maxV=Math.min(100,Math.max.apply(null,pts.map(function(p){return p.val}))+10);
+  var range=maxV-minV||1;
+  var pad={t:20,b:30,l:35,r:15};
+  var gw=W-pad.l-pad.r;var gh=H-pad.t-pad.b;
+
+  var svg='<svg width="'+W+'" height="'+H+'" style="display:block">';
+  // Y-axis labels
+  for(var y=0;y<=4;y++){
+    var yv=Math.round(minV+(range*(y/4)));
+    var yy=pad.t+gh-((yv-minV)/range)*gh;
+    svg+='<text x="'+(pad.l-5)+'" y="'+(yy+3)+'" fill="var(--text3)" font-size="9" text-anchor="end">'+yv+'</text>';
+    svg+='<line x1="'+pad.l+'" y1="'+yy+'" x2="'+(W-pad.r)+'" y2="'+yy+'" stroke="var(--border)" stroke-width="0.5"/>';
+  }
+  // Line + dots
+  var path='';
+  pts.forEach(function(p,i){
+    var x=pad.l+(i/(pts.length-1))*gw;
+    var yy=pad.t+gh-((p.val-minV)/range)*gh;
+    path+=(i===0?'M':'L')+x+','+yy;
+    svg+='<circle cx="'+x+'" cy="'+yy+'" r="4" fill="var(--accent)" stroke="var(--bg)" stroke-width="2"/>';
+    svg+='<text x="'+x+'" y="'+(yy-10)+'" fill="var(--accent)" font-size="10" font-weight="700" text-anchor="middle">'+p.val+'</text>';
+    // X-axis date
+    var dl=p.date.toLocaleDateString('en-US',{month:'short',year:'2-digit'});
+    svg+='<text x="'+x+'" y="'+(H-5)+'" fill="var(--text3)" font-size="8" text-anchor="middle">'+dl+'</text>';
+  });
+  svg+='<path d="'+path+'" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>';
+  // Area fill
+  var first=pad.l;var last=pad.l+((pts.length-1)/(pts.length-1))*gw;
+  svg+='<path d="'+path+'L'+last+','+(pad.t+gh)+'L'+first+','+(pad.t+gh)+'Z" fill="url(#dashGrad)" opacity="0.15"/>';
+  svg+='<defs><linearGradient id="dashGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--accent)"/><stop offset="1" stop-color="var(--accent)" stop-opacity="0"/></linearGradient></defs>';
+  svg+='</svg>';
+  el.innerHTML=svg;
+}
+
+function toggleMilestone(idx){
+  if(!U||!U.milestones||!U.milestones[idx])return;
+  U.milestones[idx].done=!U.milestones[idx].done;
+  U.milestones[idx].date=U.milestones[idx].done?new Date().toISOString():null;
+  saveUser();
+  renderDashboard();
+}
+
+function showUpdateProfile(){
+  if(!U)return;
+  initCareerProfile();
+  var cp=U.careerProfile;
+  var stage=cp.stage||'student';
+  var h='';
+  h+='<div class="fg"><label>Training Stage</label><select id="up-stage"><option value="student"'+(stage==='student'?' selected':'')+'>Medical Student</option><option value="resident"'+(stage==='resident'?' selected':'')+'>Resident</option><option value="fellow"'+(stage==='fellow'?' selected':'')+'>Fellow</option><option value="attending"'+(stage==='attending'?' selected':'')+'>Attending</option></select></div>';
+  h+='<div class="fg"><label>Target / Current Specialty</label><input type="text" id="up-spec" value="'+(cp.specialty||'')+'" placeholder="e.g., Cardiology"></div>';
+  if(stage==='student'||stage==='resident'){
+    h+='<div class="fg"><label>USMLE Step 1 / COMLEX Level 1</label><input type="text" id="up-step1" value="'+(cp.step1||'')+'" placeholder="e.g., Pass, 230"></div>';
+  }
+  h+='<div class="fg"><label>USMLE Step 2 CK / COMLEX Level 2</label><input type="text" id="up-step2" value="'+(cp.step2||'')+'" placeholder="e.g., 252"></div>';
+  h+='<div class="fg"><label>Number of Publications</label><input type="number" id="up-pubs" value="'+(cp.pubs||0)+'" min="0"></div>';
+  h+='<div class="fg"><label>Conference Presentations</label><input type="number" id="up-conferences" value="'+(cp.conferences||0)+'" min="0"></div>';
+  h+='<div class="fg"><label>Leadership Roles</label><input type="number" id="up-leadership" value="'+(cp.leadership||0)+'" min="0"></div>';
+  h+='<div class="fg"><label>Volunteer Activities</label><input type="number" id="up-volunteer" value="'+(cp.volunteer||0)+'" min="0"></div>';
+  h+='<div class="fg"><label>Research Projects</label><input type="number" id="up-research" value="'+(cp.research||0)+'" min="0"></div>';
+  h+='<div class="fg"><label>Letters of Recommendation Strength</label><select id="up-lor"><option value="">Select</option><option value="strong"'+(cp.lorStrength==='strong'?' selected':'')+'>Strong (department chair, well-known faculty)</option><option value="moderate"'+(cp.lorStrength==='moderate'?' selected':'')+'>Moderate (attending, good relationship)</option><option value="weak"'+(cp.lorStrength==='weak'?' selected':'')+'>Weak (limited interaction)</option></select></div>';
+  if(stage==='attending'||stage==='fellow'){
+    h+='<div class="fg"><label>Current Compensation</label><input type="text" id="up-comp" value="'+(cp.comp||'')+'" placeholder="e.g., $350,000"></div>';
+    h+='<div class="fg"><label>Student Loan Balance</label><input type="text" id="up-debt" value="'+(cp.debt||'')+'" placeholder="e.g., $280,000"></div>';
+  }
+  document.getElementById('update-profile-fields').innerHTML=h;
+  document.getElementById('modal-update-profile').classList.remove('hidden');
+}
+
+function saveUpdatedProfile(){
+  if(!U)return;
+  var cp=U.careerProfile;
+  var oldScores=calcDashScores(cp);
+  cp.stage=document.getElementById('up-stage').value;
+  cp.specialty=document.getElementById('up-spec').value.trim();
+  var s1=document.getElementById('up-step1');if(s1)cp.step1=s1.value.trim();
+  cp.step2=document.getElementById('up-step2').value.trim();
+  cp.pubs=parseInt(document.getElementById('up-pubs').value)||0;
+  cp.conferences=parseInt(document.getElementById('up-conferences').value)||0;
+  cp.leadership=parseInt(document.getElementById('up-leadership').value)||0;
+  cp.volunteer=parseInt(document.getElementById('up-volunteer').value)||0;
+  cp.research=parseInt(document.getElementById('up-research').value)||0;
+  cp.lorStrength=document.getElementById('up-lor').value;
+  var compEl=document.getElementById('up-comp');if(compEl)cp.comp=compEl.value.trim();
+  var debtEl=document.getElementById('up-debt');if(debtEl)cp.debt=debtEl.value.trim();
+  cp.lastUpdated=new Date().toISOString();
+
+  // Recalculate scores
+  var newScores=calcDashScores(cp);
+  U.scoreHistory.push({date:cp.lastUpdated,scores:newScores});
+
+  // Update milestones based on stage if changed
+  if(!U.milestones||U.milestones.length===0){
+    U.milestones=getDefaultMilestones(cp.stage);
+  }
+
+  // Auto-check milestones based on profile data
+  U.milestones.forEach(function(m){
+    if(m.id==='pub1'&&cp.pubs>=1&&!m.done){m.done=true;m.date=cp.lastUpdated}
+    if(m.id==='pub3'&&cp.pubs>=3&&!m.done){m.done=true;m.date=cp.lastUpdated}
+    if(m.id==='pub5'&&cp.pubs>=5&&!m.done){m.done=true;m.date=cp.lastUpdated}
+    if(m.id==='conference'&&cp.conferences>=1&&!m.done){m.done=true;m.date=cp.lastUpdated}
+    if(m.id==='leadership'&&cp.leadership>=1&&!m.done){m.done=true;m.date=cp.lastUpdated}
+    if((m.id==='step1'||m.id==='step2')&&cp.step2&&!m.done){m.done=true;m.date=cp.lastUpdated}
+    if(m.id==='step2'&&parseInt(cp.step2)>0&&!m.done){m.done=true;m.date=cp.lastUpdated}
+  });
+
+  saveUser();
+  document.getElementById('modal-update-profile').classList.add('hidden');
+
+  // Generate personalized update message
+  var delta=newScores.competitiveness-oldScores.competitiveness;
+  var msg='';
+  if(delta>0) msg='Your competitiveness score increased from '+oldScores.competitiveness+' to '+newScores.competitiveness+' (+'+delta+'). ';
+  else if(delta<0) msg='Your competitiveness score changed from '+oldScores.competitiveness+' to '+newScores.competitiveness+'. ';
+  else msg='Your competitiveness score remains at '+newScores.competitiveness+'. ';
+
+  // Find biggest remaining gap
+  var actions=getScoreActions(cp,newScores);
+  if(actions.length>0) msg+=actions[0].action+' could add '+actions[0].gain+' points.';
+
+  notify(msg);
+  renderDashboard();
+  renderHome();
+}
+
+function saveUser(){
+  if(!U)return;
+  var u=DB.users.find(function(u){return u.id===U.id});
+  if(u){
+    u.careerProfile=U.careerProfile;
+    u.scoreHistory=U.scoreHistory;
+    u.toolHistory=U.toolHistory;
+    u.milestones=U.milestones;
+  }
+  saveDB();
+  localStorage.setItem('hw_session',JSON.stringify(U));
+  // Sync to Supabase
+  if(_supaClient&&U.email){
+    _supaClient.from('profiles').update({
+      career_profile:U.careerProfile,
+      score_history:U.scoreHistory,
+      milestones:U.milestones
+    }).eq('email',U.email.toLowerCase()).then(function(){}).catch(function(){});
+  }
+}
+
+// Record tool usage for strategy history
+function recordToolUse(toolName,score,summary){
+  if(!U)return;
+  if(!U.toolHistory) U.toolHistory=[];
+  U.toolHistory.push({date:new Date().toISOString(),tool:toolName,score:score||null,summary:summary||''});
+  saveUser();
+}
+
+
 function renderHome(){
   if(!U)return;
+  renderDashboard();
   setDailyQuote();
   const t=TIERS[U.tier]||TIERS.free;
   const used=U.usage?.ai||0;const max=t.ai;
@@ -2026,6 +2510,7 @@ function mccSaveProfile(){
     _supaClient.from('profiles').update({notes:U.notes||[],mcc_profiles:U.mccProfiles}).eq('user_id',U.supaId||U.id).then(function(){}).catch(function(){});
   }
   notify('Competitiveness profile saved! Track your progress over time. 📈');
+  recordToolUse('Match Competitiveness Calculator',profile.score||null,'Saved competitiveness profile for '+(profile.spec||'unknown specialty'));
 }
 
 // ===== CAREER STRATEGY BUILDER (v15) =====
@@ -5022,6 +5507,7 @@ async function submitAudit(){
   document.getElementById('audit-form').classList.add('hidden');
   document.getElementById('audit-success').classList.remove('hidden');
   notify('Strategic audit submitted!');
+  recordToolUse('Strategic Audit',null,'Strategic audit submitted for review');
   notifyAdmin(payload);
 }
 
@@ -5270,6 +5756,7 @@ async function submitPivot(){
   document.getElementById('pivot-form').classList.add('hidden');
   document.getElementById('pivot-success').classList.remove('hidden');
   notify('Decision Engine report submitted!');
+  recordToolUse('Career Pivot Decision Engine',readiness+'/4','Pivot readiness: '+readyLabel);
   notifyAdmin(payload);
 }
 

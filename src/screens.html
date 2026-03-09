@@ -53,6 +53,71 @@ Sign Out</button>
 </div>
 </div>
 
+<!-- ===== CAREER DASHBOARD ===== -->
+<div id="career-dashboard" style="padding:16px 24px 0">
+
+<!-- Dashboard Header -->
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+<div>
+<div style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:3px">📊 Career Dashboard</div>
+<p id="dash-subtitle" style="font-size:11px;color:var(--text3);margin:0">Track your progress. See what's next.</p>
+</div>
+<button onclick="showUpdateProfile()" style="font-size:10px;color:var(--accent);background:none;border:1px solid rgba(200,168,124,.2);padding:6px 12px;border-radius:100px;cursor:pointer;white-space:nowrap;font-weight:600;letter-spacing:.3px">Update Profile ↻</button>
+</div>
+
+<!-- Score Cards Row -->
+<div id="dash-scores" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px"></div>
+
+<!-- Progress Graph -->
+<div id="dash-graph-wrap" class="card" style="padding:16px;margin-bottom:14px;display:none">
+<div style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Progress Over Time</div>
+<div id="dash-graph" style="height:140px;position:relative"></div>
+</div>
+
+<!-- How to Improve -->
+<div id="dash-actions" class="card" style="padding:16px;margin-bottom:14px;display:none">
+<div style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">🎯 Actions That Increase Your Score</div>
+<div id="dash-action-list"></div>
+</div>
+
+<!-- Peer Benchmarking -->
+<div id="dash-benchmark" class="card" style="padding:16px;margin-bottom:14px;display:none">
+<div style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">📈 Peer Benchmarking</div>
+<div id="dash-bench-list"></div>
+</div>
+
+<!-- Milestone Tracker -->
+<div id="dash-milestones" class="card" style="padding:16px;margin-bottom:14px;display:none">
+<div style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">✅ Career Milestones</div>
+<div id="dash-milestone-list"></div>
+</div>
+
+<!-- Strategy History -->
+<div id="dash-history" class="card" style="padding:16px;margin-bottom:14px;display:none">
+<div style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">📋 Your Strategy History</div>
+<div id="dash-history-list"></div>
+</div>
+
+<!-- Last Updated + Reassessment Prompt -->
+<div id="dash-reassess" style="text-align:center;margin-bottom:8px;display:none">
+<div id="dash-last-updated" style="font-size:10px;color:var(--text3);margin-bottom:8px"></div>
+<button onclick="showUpdateProfile()" style="padding:10px 24px;font-size:12px;font-weight:600;color:var(--accent);background:var(--accent-dim);border:1px solid rgba(200,168,124,.2);border-radius:10px;cursor:pointer">🔄 Update Your Career Profile — Recalculate All Scores</button>
+</div>
+
+</div>
+
+<!-- Update Profile Modal -->
+<div id="modal-update-profile" class="hidden" style="position:fixed;top:0;left:0;right:0;bottom:0;z-index:100;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center;padding:24px">
+<div style="background:var(--bg);border-radius:16px;max-width:480px;width:100%;max-height:85vh;overflow-y:auto;padding:28px 24px">
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+<div style="font-size:16px;font-weight:600;color:var(--text);font-family:var(--font-serif)">Update Career Profile</div>
+<button onclick="document.getElementById('modal-update-profile').classList.add('hidden')" style="background:none;border:none;color:var(--text3);font-size:20px;cursor:pointer;padding:4px">✕</button>
+</div>
+<div id="update-profile-fields"></div>
+<button onclick="saveUpdatedProfile()" class="btn btn-a" style="width:100%;margin-top:16px">Recalculate My Scores →</button>
+</div>
+</div>
+
 <!-- Strategic Toolkit — Moved up -->
 <div style="padding:20px 24px 0">
 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">

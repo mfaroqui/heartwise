@@ -623,10 +623,10 @@ function initCareerProfile(){
   if(!U.scoreHistory) U.scoreHistory=[];
   if(!U.toolHistory) U.toolHistory=[];
   if(!U.milestones) U.milestones=getDefaultMilestones(U.role||U.profile?.stage||'student');
-  if(!U.careerProfile.lastUpdated&&U.profile){
-    // Seed from onboarding profile
-    var p=U.profile;
-    U.careerProfile.stage=p.stage||'student';
+  if(!U.careerProfile.lastUpdated){
+    // Seed from onboarding profile if available
+    var p=U.profile||{};
+    U.careerProfile.stage=p.stage||U.role||'student';
     U.careerProfile.specialty=p.spec||'';
     U.careerProfile.goal=p.goal||'';
     U.careerProfile.step1=p.score1||'';

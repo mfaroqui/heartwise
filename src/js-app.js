@@ -985,25 +985,151 @@ function showUpdateProfile(){
   initCareerProfile();
   var cp=U.careerProfile;
   var stage=cp.stage||'student';
+  var goal=cp.goal||'';
   var h='';
-  h+='<div class="fg"><label>Training Stage</label><select id="up-stage"><option value="student"'+(stage==='student'?' selected':'')+'>Medical Student</option><option value="resident"'+(stage==='resident'?' selected':'')+'>Resident</option><option value="fellow"'+(stage==='fellow'?' selected':'')+'>Fellow</option><option value="attending"'+(stage==='attending'?' selected':'')+'>Attending</option></select></div>';
-  h+='<div class="fg"><label>Target / Current Specialty</label><input type="text" id="up-spec" value="'+(cp.specialty||'')+'" placeholder="e.g., Cardiology"></div>';
-  if(stage==='student'||stage==='resident'){
-    h+='<div class="fg"><label>USMLE Step 1 / COMLEX Level 1</label><input type="text" id="up-step1" value="'+(cp.step1||'')+'" placeholder="e.g., Pass, 230"></div>';
-  }
-  h+='<div class="fg"><label>USMLE Step 2 CK / COMLEX Level 2</label><input type="text" id="up-step2" value="'+(cp.step2||'')+'" placeholder="e.g., 252"></div>';
-  h+='<div class="fg"><label>Number of Publications</label><input type="number" id="up-pubs" value="'+(cp.pubs||0)+'" min="0"></div>';
-  h+='<div class="fg"><label>Conference Presentations</label><input type="number" id="up-conferences" value="'+(cp.conferences||0)+'" min="0"></div>';
-  h+='<div class="fg"><label>Leadership Roles</label><input type="number" id="up-leadership" value="'+(cp.leadership||0)+'" min="0"></div>';
-  h+='<div class="fg"><label>Volunteer Activities</label><input type="number" id="up-volunteer" value="'+(cp.volunteer||0)+'" min="0"></div>';
-  h+='<div class="fg"><label>Research Projects</label><input type="number" id="up-research" value="'+(cp.research||0)+'" min="0"></div>';
-  h+='<div class="fg"><label>Letters of Recommendation Strength</label><select id="up-lor"><option value="">Select</option><option value="strong"'+(cp.lorStrength==='strong'?' selected':'')+'>Strong (department chair, well-known faculty)</option><option value="moderate"'+(cp.lorStrength==='moderate'?' selected':'')+'>Moderate (attending, good relationship)</option><option value="weak"'+(cp.lorStrength==='weak'?' selected':'')+'>Weak (limited interaction)</option></select></div>';
-  if(stage==='attending'||stage==='fellow'){
-    h+='<div class="fg"><label>Current Compensation</label><input type="text" id="up-comp" value="'+(cp.comp||'')+'" placeholder="e.g., $350,000"></div>';
-    h+='<div class="fg"><label>Student Loan Balance</label><input type="text" id="up-debt" value="'+(cp.debt||'')+'" placeholder="e.g., $280,000"></div>';
-  }
+
+  // Stage selector
+  h+='<div class="fg"><label>Training Stage</label><select id="up-stage" onchange="updateProfileFields()"><option value="student"'+(stage==='student'?' selected':'')+'>Medical Student</option><option value="resident"'+(stage==='resident'?' selected':'')+'>Resident</option><option value="fellow"'+(stage==='fellow'?' selected':'')+'>Fellow</option><option value="attending"'+(stage==='attending'?' selected':'')+'>Attending</option></select></div>';
+
+  // Goal selector
+  h+='<div class="fg"><label>Primary Career Goal</label><select id="up-goal" onchange="updateProfileFields()"><option value="">Select your focus</option>';
+  h+='<option value="specialty"'+(goal==='specialty'?' selected':'')+'>Choosing a Specialty</option>';
+  h+='<option value="match"'+(goal==='match'?' selected':'')+'>Matching into Residency/Fellowship</option>';
+  h+='<option value="contract"'+(goal==='contract'?' selected':'')+'>Negotiating a Job Offer</option>';
+  h+='<option value="finance"'+(goal==='finance'?' selected':'')+'>Financial Planning & Wealth</option>';
+  h+='<option value="direction"'+(goal==='direction'?' selected':'')+'>Career Direction / Pivot</option>';
+  h+='</select></div>';
+
+  // Dynamic fields container
+  h+='<div id="up-dynamic"></div>';
+
   document.getElementById('update-profile-fields').innerHTML=h;
   document.getElementById('modal-update-profile').classList.remove('hidden');
+  updateProfileFields();
+}
+
+function updateProfileFields(){
+  var cp=U.careerProfile||{};
+  var stage=document.getElementById('up-stage').value;
+  var goal=document.getElementById('up-goal').value;
+  var h='';
+
+  // Section: Specialty
+  h+='<div class="fg"><label>Target / Current Specialty</label><input type="text" id="up-spec" value="'+(cp.specialty||'')+'" placeholder="e.g., Cardiology, Dermatology"></div>';
+
+  // --- STUDENT-SPECIFIC ---
+  if(stage==='student'){
+    h+='<div style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin:16px 0 8px;padding-top:12px;border-top:1px solid var(--border)">Academic Profile</div>';
+    h+='<div class="fg"><label>USMLE Step 1 / COMLEX Level 1</label><input type="text" id="up-step1" value="'+(cp.step1||'')+'" placeholder="e.g., Pass, 230"></div>';
+    h+='<div class="fg"><label>USMLE Step 2 CK / COMLEX Level 2</label><input type="text" id="up-step2" value="'+(cp.step2||'')+'" placeholder="e.g., 252"><div style="font-size:9px;color:var(--text3);margin-top:3px">Most important score for match competitiveness</div></div>';
+    h+='<div class="fg"><label>Current Year</label><select id="up-pgy"><option value="">Select</option><option value="MS1"'+(cp.pgy==='MS1'?' selected':'')+'>MS-1</option><option value="MS2"'+(cp.pgy==='MS2'?' selected':'')+'>MS-2</option><option value="MS3"'+(cp.pgy==='MS3'?' selected':'')+'>MS-3</option><option value="MS4"'+(cp.pgy==='MS4'?' selected':'')+'>MS-4</option></select></div>';
+
+    h+='<div style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin:16px 0 8px;padding-top:12px;border-top:1px solid var(--border)">Application Strength</div>';
+    h+='<div class="fg"><label>Publications (peer-reviewed)</label><input type="number" id="up-pubs" value="'+(cp.pubs||0)+'" min="0"></div>';
+    h+='<div class="fg"><label>Research Projects (active or completed)</label><input type="number" id="up-research" value="'+(cp.research||0)+'" min="0"></div>';
+    h+='<div class="fg"><label>Conference Presentations (poster or oral)</label><input type="number" id="up-conferences" value="'+(cp.conferences||0)+'" min="0"></div>';
+    h+='<div class="fg"><label>Leadership Roles (clubs, orgs, committees)</label><input type="number" id="up-leadership" value="'+(cp.leadership||0)+'" min="0"></div>';
+    h+='<div class="fg"><label>Volunteer / Community Service Activities</label><input type="number" id="up-volunteer" value="'+(cp.volunteer||0)+'" min="0"></div>';
+    h+='<div class="fg"><label>Letters of Recommendation Strength</label><select id="up-lor"><option value="">Select</option><option value="strong"'+(cp.lorStrength==='strong'?' selected':'')+'>Strong — department chair, well-known in field</option><option value="moderate"'+(cp.lorStrength==='moderate'?' selected':'')+'>Moderate — attending, good relationship</option><option value="weak"'+(cp.lorStrength==='weak'?' selected':'')+'>Still securing</option></select></div>';
+    h+='<div class="fg"><label>Away Rotations Completed</label><input type="number" id="up-aways" value="'+(cp.aways||0)+'" min="0"></div>';
+
+    if(goal==='match'||goal==='specialty'){
+      h+='<div style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin:16px 0 8px;padding-top:12px;border-top:1px solid var(--border)">Match Strategy</div>';
+      h+='<div class="fg"><label>Number of Programs You Plan to Apply To</label><input type="number" id="up-programs" value="'+(cp.programs||'')+'" placeholder="e.g., 30"></div>';
+      h+='<div class="fg"><label>AOA / Gold Humanism Honor Society</label><select id="up-honors"><option value="">Select</option><option value="aoa"'+(cp.honors==='aoa'?' selected':'')+'>AOA Member</option><option value="ghhs"'+(cp.honors==='ghhs'?' selected':'')+'>GHHS Member</option><option value="both"'+(cp.honors==='both'?' selected':'')+'>Both</option><option value="none"'+(cp.honors==='none'?' selected':'')+'>Neither</option></select></div>';
+    }
+  }
+
+  // --- RESIDENT-SPECIFIC ---
+  if(stage==='resident'){
+    h+='<div style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin:16px 0 8px;padding-top:12px;border-top:1px solid var(--border)">Training Details</div>';
+    h+='<div class="fg"><label>PGY Level</label><select id="up-pgy"><option value="">Select</option><option value="PGY1"'+(cp.pgy==='PGY1'?' selected':'')+'>PGY-1</option><option value="PGY2"'+(cp.pgy==='PGY2'?' selected':'')+'>PGY-2</option><option value="PGY3"'+(cp.pgy==='PGY3'?' selected':'')+'>PGY-3</option><option value="PGY4"'+(cp.pgy==='PGY4'?' selected':'')+'>PGY-4</option><option value="PGY5"'+(cp.pgy==='PGY5'?' selected':'')+'>PGY-5</option></select></div>';
+    h+='<div class="fg"><label>USMLE Step 2 CK Score</label><input type="text" id="up-step2" value="'+(cp.step2||'')+'" placeholder="e.g., 256"></div>';
+    h+='<div class="fg"><label>USMLE Step 3 Completed?</label><select id="up-step3"><option value="">Select</option><option value="yes"'+(cp.step3==='yes'?' selected':'')+'>Yes</option><option value="no"'+(cp.step3==='no'?' selected':'')+'>Not yet</option></select></div>';
+
+    h+='<div style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin:16px 0 8px;padding-top:12px;border-top:1px solid var(--border)">Academic & Research</div>';
+    h+='<div class="fg"><label>Publications (peer-reviewed)</label><input type="number" id="up-pubs" value="'+(cp.pubs||0)+'" min="0"></div>';
+    h+='<div class="fg"><label>Research Projects</label><input type="number" id="up-research" value="'+(cp.research||0)+'" min="0"></div>';
+    h+='<div class="fg"><label>Conference Presentations</label><input type="number" id="up-conferences" value="'+(cp.conferences||0)+'" min="0"></div>';
+    h+='<div class="fg"><label>Leadership Roles (chief, committee, QI lead)</label><input type="number" id="up-leadership" value="'+(cp.leadership||0)+'" min="0"></div>';
+    h+='<div class="fg"><label>Letters of Recommendation Strength</label><select id="up-lor"><option value="">Select</option><option value="strong"'+(cp.lorStrength==='strong'?' selected':'')+'>Strong — PD, division chief, nationally known</option><option value="moderate"'+(cp.lorStrength==='moderate'?' selected':'')+'>Moderate — attending, good relationship</option><option value="weak"'+(cp.lorStrength==='weak'?' selected':'')+'>Still securing</option></select></div>';
+
+    if(goal==='match'||goal==='specialty'){
+      h+='<div style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin:16px 0 8px;padding-top:12px;border-top:1px solid var(--border)">Fellowship Strategy</div>';
+      h+='<div class="fg"><label>Target Fellowship</label><input type="text" id="up-fellowship" value="'+(cp.fellowship||'')+'" placeholder="e.g., Cardiology, GI, Pulm/Crit"></div>';
+      h+='<div class="fg"><label>Programs Planning to Apply</label><input type="number" id="up-programs" value="'+(cp.programs||'')+'" placeholder="e.g., 20"></div>';
+    }
+    if(goal==='contract'||goal==='finance'){
+      h+='<div style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin:16px 0 8px;padding-top:12px;border-top:1px solid var(--border)">Financial Snapshot</div>';
+      h+='<div class="fg"><label>Current Resident Salary</label><input type="text" id="up-comp" value="'+(cp.comp||'')+'" placeholder="e.g., $65,000"></div>';
+      h+='<div class="fg"><label>Student Loan Balance</label><input type="text" id="up-debt" value="'+(cp.debt||'')+'" placeholder="e.g., $280,000"></div>';
+    }
+  }
+
+  // --- FELLOW-SPECIFIC ---
+  if(stage==='fellow'){
+    h+='<div style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin:16px 0 8px;padding-top:12px;border-top:1px solid var(--border)">Fellowship Details</div>';
+    h+='<div class="fg"><label>Fellowship Year</label><select id="up-pgy"><option value="">Select</option><option value="F1"'+(cp.pgy==='F1'?' selected':'')+'>Fellow Year 1</option><option value="F2"'+(cp.pgy==='F2'?' selected':'')+'>Fellow Year 2</option><option value="F3"'+(cp.pgy==='F3'?' selected':'')+'>Fellow Year 3</option></select></div>';
+    h+='<div class="fg"><label>Board Certification Status</label><select id="up-boards"><option value="">Select</option><option value="certified"'+(cp.boards==='certified'?' selected':'')+'>Board Certified</option><option value="eligible"'+(cp.boards==='eligible'?' selected':'')+'>Board Eligible</option><option value="pending"'+(cp.boards==='pending'?' selected':'')+'>Exam Pending</option></select></div>';
+
+    h+='<div style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin:16px 0 8px;padding-top:12px;border-top:1px solid var(--border)">Academic Profile</div>';
+    h+='<div class="fg"><label>Publications (peer-reviewed)</label><input type="number" id="up-pubs" value="'+(cp.pubs||0)+'" min="0"></div>';
+    h+='<div class="fg"><label>First-Author Publications</label><input type="number" id="up-firstauthor" value="'+(cp.firstauthor||0)+'" min="0"></div>';
+    h+='<div class="fg"><label>Conference Presentations</label><input type="number" id="up-conferences" value="'+(cp.conferences||0)+'" min="0"></div>';
+    h+='<div class="fg"><label>Research Projects</label><input type="number" id="up-research" value="'+(cp.research||0)+'" min="0"></div>';
+    h+='<div class="fg"><label>Leadership Roles</label><input type="number" id="up-leadership" value="'+(cp.leadership||0)+'" min="0"></div>';
+
+    h+='<div style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin:16px 0 8px;padding-top:12px;border-top:1px solid var(--border)">Financial & Career</div>';
+    h+='<div class="fg"><label>Expected Attending Compensation</label><input type="text" id="up-comp" value="'+(cp.comp||'')+'" placeholder="e.g., $400,000"></div>';
+    h+='<div class="fg"><label>Student Loan Balance</label><input type="text" id="up-debt" value="'+(cp.debt||'')+'" placeholder="e.g., $250,000"></div>';
+
+    if(goal==='contract'){
+      h+='<div class="fg"><label>Offers Currently Evaluating</label><input type="number" id="up-offers" value="'+(cp.offers||0)+'" min="0" placeholder="0"></div>';
+      h+='<div class="fg"><label>Practice Setting Preference</label><select id="up-practice"><option value="">Select</option><option value="academic"'+(cp.practice==='academic'?' selected':'')+'>Academic</option><option value="private"'+(cp.practice==='private'?' selected':'')+'>Private Practice</option><option value="employed"'+(cp.practice==='employed'?' selected':'')+'>Hospital Employed</option><option value="unsure"'+(cp.practice==='unsure'?' selected':'')+'>Exploring Options</option></select></div>';
+    }
+  }
+
+  // --- ATTENDING-SPECIFIC ---
+  if(stage==='attending'){
+    h+='<div style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin:16px 0 8px;padding-top:12px;border-top:1px solid var(--border)">Current Position</div>';
+    h+='<div class="fg"><label>Years in Practice</label><input type="number" id="up-yearsout" value="'+(cp.yearsout||'')+'" min="0" placeholder="e.g., 3"></div>';
+    h+='<div class="fg"><label>Practice Setting</label><select id="up-practice"><option value="">Select</option><option value="academic"'+(cp.practice==='academic'?' selected':'')+'>Academic</option><option value="private"'+(cp.practice==='private'?' selected':'')+'>Private Practice</option><option value="employed"'+(cp.practice==='employed'?' selected':'')+'>Hospital Employed</option><option value="hybrid"'+(cp.practice==='hybrid'?' selected':'')+'>Hybrid / Locums</option></select></div>';
+    h+='<div class="fg"><label>Board Certification Status</label><select id="up-boards"><option value="">Select</option><option value="certified"'+(cp.boards==='certified'?' selected':'')+'>Board Certified</option><option value="recert"'+(cp.boards==='recert'?' selected':'')+'>Recertification Due</option><option value="lapsed"'+(cp.boards==='lapsed'?' selected':'')+'>Lapsed</option></select></div>';
+
+    h+='<div style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin:16px 0 8px;padding-top:12px;border-top:1px solid var(--border)">Financial Profile</div>';
+    h+='<div class="fg"><label>Current Total Compensation</label><input type="text" id="up-comp" value="'+(cp.comp||'')+'" placeholder="e.g., $450,000"></div>';
+    h+='<div class="fg"><label>Student Loan Balance</label><input type="text" id="up-debt" value="'+(cp.debt||'')+'" placeholder="e.g., $120,000 or $0"></div>';
+    h+='<div class="fg"><label>Estimated Net Worth</label><input type="text" id="up-networth" value="'+(cp.networth||'')+'" placeholder="e.g., $500,000"></div>';
+    h+='<div class="fg"><label>Annual Savings Rate</label><select id="up-savingsrate"><option value="">Select</option><option value="<10%"'+(cp.savingsrate==='<10%'?' selected':'')+'>Less than 10%</option><option value="10-20%"'+(cp.savingsrate==='10-20%'?' selected':'')+'>10-20%</option><option value="20-30%"'+(cp.savingsrate==='20-30%'?' selected':'')+'>20-30%</option><option value=">30%"'+(cp.savingsrate==='>30%'?' selected':'')+'>More than 30%</option></select></div>';
+
+    if(goal==='contract'){
+      h+='<div style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin:16px 0 8px;padding-top:12px;border-top:1px solid var(--border)">Contract Details</div>';
+      h+='<div class="fg"><label>Compensation Model</label><select id="up-compmodel"><option value="">Select</option><option value="salary"'+(cp.compmodel==='salary'?' selected':'')+'>Salary Only</option><option value="rvu"'+(cp.compmodel==='rvu'?' selected':'')+'>RVU-Based</option><option value="hybrid"'+(cp.compmodel==='hybrid'?' selected':'')+'>Salary + RVU Bonus</option><option value="eat"'+(cp.compmodel==='eat'?' selected':'')+'>Eat-What-You-Kill</option></select></div>';
+      h+='<div class="fg"><label>Non-Compete Clause?</label><select id="up-noncompete"><option value="">Select</option><option value="yes"'+(cp.noncompete==='yes'?' selected':'')+'>Yes</option><option value="no"'+(cp.noncompete==='no'?' selected':'')+'>No</option></select></div>';
+    }
+    if(goal==='direction'){
+      h+='<div style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin:16px 0 8px;padding-top:12px;border-top:1px solid var(--border)">Career Direction</div>';
+      h+='<div class="fg"><label>Satisfaction with Current Role (1-10)</label><input type="number" id="up-satisfaction" value="'+(cp.satisfaction||'')+'" min="1" max="10" placeholder="1-10"></div>';
+      h+='<div class="fg"><label>Considering a Change?</label><select id="up-considering"><option value="">Select</option><option value="active"'+(cp.considering==='active'?' selected':'')+'>Actively exploring</option><option value="curious"'+(cp.considering==='curious'?' selected':'')+'>Curious but not committed</option><option value="no"'+(cp.considering==='no'?' selected':'')+'>No, just optimizing current path</option></select></div>';
+    }
+
+    h+='<div style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin:16px 0 8px;padding-top:12px;border-top:1px solid var(--border)">Academic Activity</div>';
+    h+='<div class="fg"><label>Publications (career total)</label><input type="number" id="up-pubs" value="'+(cp.pubs||0)+'" min="0"></div>';
+    h+='<div class="fg"><label>Conference Presentations</label><input type="number" id="up-conferences" value="'+(cp.conferences||0)+'" min="0"></div>';
+    h+='<div class="fg"><label>Leadership / Committee Roles</label><input type="number" id="up-leadership" value="'+(cp.leadership||0)+'" min="0"></div>';
+  }
+
+  // Common: volunteer (students/residents only already have it above)
+  if(stage==='fellow'||stage==='attending'){
+    h+='<div class="fg" style="display:none"><input type="number" id="up-volunteer" value="'+(cp.volunteer||0)+'"></div>';
+    h+='<div class="fg" style="display:none"><input type="number" id="up-research" value="'+(cp.research||0)+'"></div>';
+  }
+  // Hidden fallbacks for fields that might not be shown
+  if(stage!=='student'&&stage!=='resident') h+='<input type="hidden" id="up-step1" value="'+(cp.step1||'')+'">';
+  if(!document.getElementById('up-step2')){/* already rendered */}
+  if(stage!=='student') h+='<input type="hidden" id="up-aways" value="'+(cp.aways||0)+'">';
+
+  document.getElementById('up-dynamic').innerHTML=h;
 }
 
 function saveUpdatedProfile(){
@@ -1011,17 +1137,37 @@ function saveUpdatedProfile(){
   var cp=U.careerProfile;
   var oldScores=calcDashScores(cp);
   cp.stage=document.getElementById('up-stage').value;
+  cp.goal=document.getElementById('up-goal').value;
   cp.specialty=document.getElementById('up-spec').value.trim();
-  var s1=document.getElementById('up-step1');if(s1)cp.step1=s1.value.trim();
-  cp.step2=document.getElementById('up-step2').value.trim();
-  cp.pubs=parseInt(document.getElementById('up-pubs').value)||0;
-  cp.conferences=parseInt(document.getElementById('up-conferences').value)||0;
-  cp.leadership=parseInt(document.getElementById('up-leadership').value)||0;
-  cp.volunteer=parseInt(document.getElementById('up-volunteer').value)||0;
-  cp.research=parseInt(document.getElementById('up-research').value)||0;
-  cp.lorStrength=document.getElementById('up-lor').value;
-  var compEl=document.getElementById('up-comp');if(compEl)cp.comp=compEl.value.trim();
-  var debtEl=document.getElementById('up-debt');if(debtEl)cp.debt=debtEl.value.trim();
+  // Safe getter
+  function gv(id){var el=document.getElementById(id);return el?el.value.trim():'';}
+  function gi(id){var el=document.getElementById(id);return el?parseInt(el.value)||0:0;}
+  cp.step1=gv('up-step1');
+  cp.step2=gv('up-step2');
+  cp.pubs=gi('up-pubs');
+  cp.conferences=gi('up-conferences');
+  cp.leadership=gi('up-leadership');
+  cp.volunteer=gi('up-volunteer');
+  cp.research=gi('up-research');
+  cp.lorStrength=gv('up-lor');
+  cp.pgy=gv('up-pgy');
+  cp.aways=gi('up-aways');
+  cp.programs=gi('up-programs');
+  cp.honors=gv('up-honors');
+  cp.step3=gv('up-step3');
+  cp.fellowship=gv('up-fellowship');
+  cp.firstauthor=gi('up-firstauthor');
+  cp.boards=gv('up-boards');
+  cp.offers=gi('up-offers');
+  cp.practice=gv('up-practice');
+  cp.comp=gv('up-comp');
+  cp.debt=gv('up-debt');
+  cp.networth=gv('up-networth');
+  cp.savingsrate=gv('up-savingsrate');
+  cp.compmodel=gv('up-compmodel');
+  cp.noncompete=gv('up-noncompete');
+  cp.satisfaction=gv('up-satisfaction');
+  cp.considering=gv('up-considering');
   cp.lastUpdated=new Date().toISOString();
 
   // Recalculate scores

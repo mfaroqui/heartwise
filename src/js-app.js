@@ -4471,6 +4471,21 @@ function obToStep3(){
   if(!name||!email||!pass){notify('Fill in name, email, and password.',1);return}
   if(pass.length<8){notify('Password must be at least 8 characters.',1);return}
   if(DB.users.find(u=>u.email.toLowerCase()===email.toLowerCase())){notify('Email already registered. Sign in instead.',1);return}
+  // Check Supabase for existing account (catches cross-device reuse)
+  if(_supaClient){
+    _supaClient.from('profiles').select('email,trial_end').eq('email',email.toLowerCase()).then(function(res){
+      if(res.data&&res.data.length>0){
+        notify('An account with this email already exists. Please sign in.',1);
+        go('pg-login');
+        return;
+      }
+      obFinishStep3(name,email,pass);
+    }).catch(function(){obFinishStep3(name,email,pass)});
+  }else{
+    obFinishStep3(name,email,pass);
+  }
+}
+function obFinishStep3(name,email,pass){
   obProfile={name,email,pass,stage:obStage,spec:document.getElementById('ob-spec').value,inst:document.getElementById('ob-inst').value.trim(),goal:document.getElementById('ob-goal').value};
   // Collect dynamic fields
   const df=['ob-score1','ob-score2','ob-pubs','ob-lead','ob-pgy','ob-present','ob-comp','ob-debt','ob-practice'];
@@ -4571,6 +4586,41 @@ function genReport(){
 }
 function obComplete(){
   const p=obProfile;
+  // === TRIAL ABUSE PREVENTION ===
+  // 1. Check if email already used
+  const existingUser=DB.users.find(function(u){return u.email.toLowerCase()===p.email.toLowerCase()});
+  if(existingUser){
+    notify('An account with this email already exists. Please sign in instead.',1);
+    go('pg-login');
+    return;
+  }
+  // 2. Check if this device already used a trial (localStorage fingerprint)
+  var trialHistory=JSON.parse(localStorage.getItem('hw_trial_history')||'[]');
+  var deviceTrialUsed=localStorage.getItem('hw_trial_used');
+  if(deviceTrialUsed==='1'||trialHistory.length>0){
+    // Device already used a trial — create account but as free tier, no trial
+    const roleMap={premed:'student',student:'student',resident:'resident',fellow:'fellow',attending:'attending',switching:'other'};
+    const reportSnapshot=captureReportData(p);
+    const user={id:'u'+DB.nextUserId++,name:p.name,email:p.email.toLowerCase(),pass:p.pass,role:roleMap[p.stage]||'student',tier:'free',isTrial:false,institution:p.inst,usage:{ai:0,credits:0,month:new Date().getMonth()},profile:p,signupDate:new Date().toISOString(),report:reportSnapshot,notes:[],trialUsedOnDevice:true};
+    DB.users.push(user);saveDB();
+    if(_supaClient){
+      _supaClient.auth.signUp({email:p.email.toLowerCase(),password:p.pass,options:{data:{name:p.name}}}).catch(function(){});
+      _supaClient.from('profiles').insert([{
+        user_id:user.id,name:p.name,email:p.email.toLowerCase(),role:roleMap[p.stage]||'student',
+        tier:'free',institution:p.inst||'',stage:p.stage,specialty:p.spec||'',goal:p.goal||'',
+        score:reportSnapshot.score,grade:reportSnapshot.grade,
+        strengths:reportSnapshot.strengths,gaps:reportSnapshot.gaps,
+        profile_data:p,trial_previously_used:true
+      }]).then(function(res){if(res.error)console.warn('Profile sync error',res.error)});
+    }
+    U=user;localStorage.setItem('hw_session',JSON.stringify(U));
+    trialHistory.push({email:p.email.toLowerCase(),date:new Date().toISOString(),blocked:true});
+    localStorage.setItem('hw_trial_history',JSON.stringify(trialHistory));
+    enterApp();showDisc();
+    notify('Welcome! A trial was previously used on this device. You\'ve been signed up on the free Explorer plan. Subscribe to unlock all tools.',1);
+    return;
+  }
+  // 3. Normal first-time trial
   // Create user with trial
   const roleMap={premed:'student',student:'student',resident:'resident',fellow:'fellow',attending:'attending',switching:'other'};
   const trialEnd=new Date();trialEnd.setHours(trialEnd.getHours()+48);
@@ -4591,6 +4641,11 @@ function obComplete(){
     }]).then(function(res){if(res.error)console.warn('Profile sync error',res.error)});
   }
   U=user;localStorage.setItem('hw_session',JSON.stringify(U));
+  // Mark device as trial-used
+  localStorage.setItem('hw_trial_used','1');
+  var trialHistory=JSON.parse(localStorage.getItem('hw_trial_history')||'[]');
+  trialHistory.push({email:p.email.toLowerCase(),date:new Date().toISOString()});
+  localStorage.setItem('hw_trial_history',JSON.stringify(trialHistory));
   enterApp();showDisc();
   notify('Welcome! Your 48-hour full access is now active. Every tool. Every feature. The clock is ticking. ⚡');
 }

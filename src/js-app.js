@@ -6848,138 +6848,58 @@ function levGenAI(wfId,userInput){
     var sl={student:'medical student',resident:'resident',fellow:'fellow',attending:'attending'};
     stage=sl[U.careerProfile.stage]||stage;
   }
+  var inp=userInput.substring(0,300);
 
-  // Each workflow generates teaching-oriented, strategic responses
   var R={
     'lev-study':{
-      approach:'Here\'s the strategic approach most trainees miss: passive review has roughly a 10% retention rate. Active recall \u2014 generating questions, teaching back, practice testing \u2014 pushes retention above 75% (Karpicke & Blunt, Science, 2011). The goal isn\'t to read more. It\'s to convert everything you read into retrievable knowledge.',
-      framework:[
-        'Break your material into concept blocks \u2014 each block should be one testable idea, not a chapter',
-        'For each block, write one "why" question (mechanism), one "what if" question (clinical scenario), and one "compare" question (differential)',
-        'Use spaced repetition: review at 1 day, 3 days, 7 days, then 21 days \u2014 this is where retention compounds',
-        'Teach each concept to someone (or explain it out loud to yourself) \u2014 the generation effect is one of the strongest learning tools in cognitive science',
-        'Track which concepts you get wrong repeatedly \u2014 these are your actual weak spots, not the ones you think they are'
-      ],
-      tailored:'Based on what you described: "'+userInput.substring(0,200)+'" \u2014 here\'s how I\'d prioritize. Focus on converting your weakest areas into active questions first. The strong areas will maintain with minimal review. Build a question bank as you go \u2014 this becomes your personal board prep that no commercial product can match because it\'s built around YOUR gaps.',
-      nextSteps:'Start today: take the single topic you feel least confident about and generate 10 questions from it. Review them tomorrow. That one habit, repeated daily, will transform your retention within 2 weeks.',
-      whyItWorks:'You\'re not just studying \u2014 you\'re learning how to learn strategically. This approach scales to every exam, every rotation, your entire career. The physicians who seem to "know everything" aren\'t smarter; they have better learning systems.'
+      answer:'Here\u2019s the move: stop re-reading. Take whatever you described and convert it into questions. For every concept, write one "why does this happen" question and one "what would you do if" clinical scenario. Active recall has a 75% retention rate vs 10% for passive reading (Karpicke & Blunt, Science 2011). Review your questions at day 1, 3, 7, and 21.',
+      aiTip:'Use HeartWise to generate board-style questions from any topic instantly. Instead of spending an hour making flashcards, describe the topic in the Ask tool and request practice questions with explanations. You can generate a full week of active recall material in 5 minutes.',
+      nextStep:'Take the single topic you feel least confident about right now. Go to Ask, type it in, and request 10 practice questions with explanations. Review them tomorrow.'
     },
     'lev-simplify':{
-      approach:'The Feynman Technique is the most powerful learning tool most trainees never use: if you can\'t explain something simply, you don\'t actually understand it. We\'re going to break down your concept at three levels \u2014 intuitive, mechanistic, and board-ready \u2014 because real understanding means moving fluidly between all three.',
-      framework:[
-        'Level 1 \u2014 Analogy: find a real-world comparison that captures the core mechanism (this is how you\'ll explain it to patients and remember it under pressure)',
-        'Level 2 \u2014 Mechanism: map out the pathophysiology step by step, identifying where it can go wrong at each stage',
-        'Level 3 \u2014 Clinical correlation: connect to presentation, diagnosis, treatment, and the specific board-question traps for this topic',
-        'Identify the "confusion points" \u2014 where does this topic overlap with similar concepts? That overlap is where board questions live',
-        'Create a one-sentence summary that captures the essence \u2014 if you can say it in one sentence, you own it'
-      ],
-      tailored:'You asked about: "'+userInput.substring(0,200)+'" \u2014 the fact that this is confusing means you\'re at the edge of your understanding, which is exactly where learning happens. Most people avoid confusion; strategic learners run toward it. Let\'s break this down systematically.',
-      nextSteps:'After working through this, try explaining the concept to a colleague without notes. Where you stumble is where your understanding has gaps. Come back and run those gaps through this tool again.',
-      whyItWorks:'You\'re building a multi-level mental model. Attendings who seem to "just know" the answer are accessing these layered models built over years. You\'re accelerating that process.'
+      answer:'If a concept is confusing, you\u2019re probably trying to memorize it instead of understanding it. Break it into three layers: (1) a simple analogy a patient could understand, (2) the actual mechanism step by step, and (3) the clinical correlation \u2014 how it shows up in patients and on boards. If you can explain it simply, you own it.',
+      aiTip:'Use HeartWise Ask to get any concept explained at multiple levels. Type the topic and ask for a simple analogy, the mechanism, and board-relevant clinical pearls. It\u2019s like having a tutor who can explain anything at exactly the level you need.',
+      nextStep:'Pick the concept that confused you most recently. Go to Ask and type: "Explain [topic] with a simple analogy, then the mechanism, then clinical pearls for boards."'
     },
     'lev-case':{
-      approach:'Clinical reasoning isn\'t about knowing more facts \u2014 it\'s about pattern recognition and structured decision-making under uncertainty. Croskerry (2009) showed that diagnostic errors most often come from cognitive biases, not knowledge gaps. This tool trains you to think systematically through cases, building the pattern library that separates strong clinicians from average ones.',
-      framework:[
-        'Start with the chief complaint and build a problem representation \u2014 one sentence that captures age, acuity, and key features',
-        'Generate an illness script: what conditions match this pattern? Prioritize by probability AND severity (don\'t miss the zebra that kills)',
-        'Identify the 2-3 tests or findings that would most change your differential \u2014 this is diagnostic efficiency',
-        'At each decision point, explicitly state your reasoning before looking at results \u2014 this builds metacognition',
-        'After the case, review: what did you anchor on too early? What did you almost miss? These patterns are your real learning'
-      ],
-      tailored:'For your case: "'+userInput.substring(0,200)+'" \u2014 let\'s build this into a structured reasoning exercise. The goal isn\'t just getting the right answer; it\'s developing a reproducible approach you can apply to any undifferentiated patient.',
-      nextSteps:'Run 2-3 cases per week in your weakest clinical area. Track your decision points and which cognitive biases tripped you up. After a month, you\'ll notice your reasoning speed and accuracy improving measurably.',
-      whyItWorks:'Every case you reason through systematically adds to your pattern library. This is the same process that makes experienced clinicians seem "intuitive" \u2014 they\'re not guessing, they\'re pattern-matching from thousands of cases. You\'re building that library faster.'
+      answer:'Clinical reasoning comes from structured case exposure, not textbooks. The key is deliberate practice: build a problem representation (one sentence capturing the key features), generate a differential ranked by probability AND severity, then identify the 2\u20133 tests that would most change your thinking. Do this with 2\u20133 cases per week in your weak areas.',
+      aiTip:'Use HeartWise Ask to generate realistic cases on demand. Ask for "a challenging [specialty] case with decision points" and work through it step by step. You can practice more cases in a week than most rotations provide in a month.',
+      nextStep:'Go to Ask and type: "Give me a challenging '+spec+' case. Present the chief complaint and vitals first, then let me work through the differential step by step."'
     },
     'lev-research':{
-      approach:'The trainees who publish consistently aren\'t necessarily smarter researchers \u2014 they\'ve learned to identify feasible projects and execute efficiently. The key insight: your first few publications don\'t need to be groundbreaking. They need to be DONE. A published case series beats an unfinished RCT every time.',
-      framework:[
-        'Identify 3 clinical observations from your recent rotations that made you think "that\'s interesting" \u2014 each one is a potential project',
-        'For each observation, ask: is there existing data I could analyze retrospectively? (EHR data, registries, quality improvement databases)',
-        'Design the simplest study that answers a meaningful question \u2014 case series > cohort > RCT in terms of feasibility for trainees',
-        'Write a one-page proposal: background (3 sentences), question, methods, expected timeline, what you need from a mentor',
-        'Approach 2-3 potential mentors with the proposal IN HAND \u2014 initiative is the single biggest differentiator'
-      ],
-      tailored:'Based on your situation: "'+userInput.substring(0,200)+'" \u2014 here\'s the strategic approach. Don\'t wait for the perfect project or the perfect mentor. Start with what\'s feasible NOW and build momentum. Research productivity is about velocity, not perfection.',
-      nextSteps:'This week: write down 3 clinical observations. Next week: check if retrospective data exists for any of them. Week 3: draft a one-page proposal for the most feasible one. Week 4: send it to a potential mentor.',
-      whyItWorks:'You\'re learning the research pipeline \u2014 from observation to question to study to publication. This skill compounds. Your fifth project will take a fraction of the time your first one did.'
+      answer:'Don\u2019t wait for the perfect project or perfect mentor. Look at your last 3 rotations \u2014 what made you think "that\u2019s interesting"? Each of those observations is a potential project. The simplest path: find a clinical question, check if retrospective data exists (EHR, registry), write a one-page proposal, and approach a faculty member WITH the proposal in hand. Initiative is the differentiator.',
+      aiTip:'Use HeartWise Ask to brainstorm research questions in your area of interest. Describe what you\u2019ve observed clinically and ask for feasible study designs. You can walk into a mentor meeting with a drafted proposal instead of a vague interest \u2014 that\u2019s what gets you a "yes."',
+      nextStep:'Go to Ask and type: "I\u2019m a '+stage+' in '+spec+'. Help me turn this clinical observation into a feasible research question: [your observation]."'
     },
     'lev-lit':{
-      approach:'Attendings who seem to know every trial aren\'t reading 50 papers a week. They\'ve built a framework for rapidly extracting what matters: study design, population, primary endpoint, effect size, limitations, and practice impact. That\'s it. Everything else is noise for clinical purposes.',
-      framework:[
-        'For any topic, identify the 3-5 landmark trials that changed practice \u2014 not every study, just the ones that moved guidelines',
-        'For each trial, extract: population (who was studied), intervention (what was tested), comparison (against what), outcome (primary endpoint), and number needed to treat/harm',
-        'Identify the limitations that matter clinically: was the population representative? Was the endpoint meaningful? Was follow-up adequate?',
-        'Map how guidelines changed based on this evidence \u2014 this connects trials to practice',
-        'Know the "board trap" for each trial \u2014 the counterintuitive finding or limitation that gets tested'
-      ],
-      tailored:'For your topic: "'+userInput.substring(0,200)+'" \u2014 let\'s build your framework for discussing this evidence intelligently. The goal isn\'t memorization; it\'s having a structured way to evaluate any evidence you encounter.',
-      nextSteps:'Practice this framework on 3 topics this week. By the end, you should be able to discuss the key evidence for any topic in under 2 minutes \u2014 which is exactly what\'s expected on rounds and in interviews.',
-      whyItWorks:'You\'re building an evidence evaluation framework that works for ANY topic, not just this one. This is how academic physicians stay current without drowning in literature.'
+      answer:'You don\u2019t need to read every paper. For any topic, know 3\u20135 landmark trials: who was studied, what was tested, primary endpoint result, key limitations, and how guidelines changed. That\u2019s it. An attending who "knows the literature" is doing exactly this \u2014 extracting what matters and skipping the rest.',
+      aiTip:'Use HeartWise Ask before journal club or a new rotation. Type the topic and ask for the landmark trials with results and limitations. You\u2019ll be able to discuss the evidence intelligently in 5 minutes instead of 5 hours of reading.',
+      nextStep:'Go to Ask and type: "What are the landmark trials on [your topic]? For each, give me the population, primary result, and main limitation."'
     },
     'lev-fellowship':{
-      approach:'The fellowship match is a strategic game, and the sooner you understand the rules, the better you play it. NRMP data consistently shows that the top factors are: (1) LOR quality, (2) research productivity, (3) away rotation performance, and (4) clinical grades. Notice what\'s NOT at the top \u2014 board scores alone don\'t differentiate at competitive programs.',
-      framework:[
-        'Build an honest self-assessment across all domains: research (publications, abstracts), clinical (scores, evaluations), letters (who can genuinely advocate for you), and unique factors',
-        'Reverse-engineer timelines from your target match year \u2014 work 3 months ahead of every deadline',
-        'Create a tiered program list (reach/target/safety) based on realistic assessment, not aspirational thinking',
-        'Identify your 2-3 highest-leverage improvement areas \u2014 strengthening a weakness matters more than polishing a strength',
-        'Plan away rotations at programs where you\'re competitive AND interested \u2014 treat every day there as a month-long interview'
-      ],
-      tailored:'Given your situation: "'+userInput.substring(0,200)+'" \u2014 let\'s be strategic. The key is honest self-assessment followed by targeted action. Most trainees either underestimate themselves (and don\'t apply broadly enough) or overestimate (and don\'t prepare enough).',
-      nextSteps:'This month: complete an honest self-assessment across all domains. Next month: identify your top 2 gaps and create a concrete plan to close them. Month 3: finalize your program list and letter writer strategy.',
-      whyItWorks:'You\'re approaching the match as a strategic project, not a passive hope. The trainees who match into top programs don\'t leave it to chance \u2014 they plan systematically, exactly like this.'
+      answer:'The fellowship match is strategic. NRMP data shows what matters most: (1) letter quality, (2) research productivity, (3) away rotation performance. Build an honest self-assessment across these domains, identify your top 2 gaps, and close them aggressively. Work backward from your match year \u2014 3 months ahead of every deadline.',
+      aiTip:'Use HeartWise frameworks to run your actual competitiveness score. Then use Ask to build a personalized timeline working backward from your match date. The combination gives you a data-driven strategy instead of guesswork.',
+      nextStep:'Run the Match Competitiveness Calculator in Frameworks first. Then go to Ask with your results and type: "Based on these scores, what are my highest-leverage improvements for '+spec+' fellowship?"'
     },
     'lev-network':{
-      approach:'Strategic networking isn\'t about collecting contacts \u2014 it\'s about building genuine relationships with people who will advocate for you when it matters. The research is clear: mentorship and advocacy are among the strongest predictors of career advancement in academic medicine (Sambunjak et al., JAMA 2006).',
-      framework:[
-        'Identify 5-10 physicians whose career paths you actually want \u2014 not just people who are famous, but people whose daily work life appeals to you',
-        'Research their recent work before reaching out \u2014 specificity is what separates a good cold email from spam',
-        'Ask for 15 minutes, not mentorship \u2014 the word "mentor" is intimidating. A brief conversation is not.',
-        'Follow up with value: share a relevant paper, update them on progress from their advice, or connect them with someone useful',
-        'Build a relationship map: who knows who? One strong connection opens doors to three more.'
-      ],
-      tailored:'For your situation: "'+userInput.substring(0,200)+'" \u2014 the barrier here isn\'t access. Faculty respond to initiative and specificity. A well-crafted 3-sentence email gets a response 40-50% of the time. Most trainees never send it.',
-      nextSteps:'This week: identify 3 people you\'d genuinely want to learn from. Draft a specific, concise email to one of them. Send it. That\'s it \u2014 one email this week.',
-      whyItWorks:'You\'re building the skill of strategic relationship-building, which is arguably the most important career skill that\'s never formally taught in medicine.'
+      answer:'Strategic networking isn\u2019t collecting contacts \u2014 it\u2019s building relationships with people who will advocate for you. Research their recent work before reaching out. Ask for 15 minutes, not "mentorship." Follow up with value (a relevant paper, a progress update). One well-crafted email gets a response 40\u201350% of the time. Most trainees never send it.',
+      aiTip:'Use HeartWise Ask to draft specific, professional outreach emails. Describe who you\u2019re reaching out to and why, and get a concise email you can customize. Removes the biggest barrier \u2014 not knowing what to say.',
+      nextStep:'Go to Ask and type: "Draft a professional 3-sentence email to a '+spec+' faculty member. I\u2019m a '+stage+' interested in [their research area]. Keep it under 100 words."'
     },
     'lev-productivity':{
-      approach:'For every hour of direct patient care, physicians spend nearly 2 hours on documentation and admin (Sinsky et al., Ann Intern Med 2016). The answer isn\'t working harder \u2014 it\'s building systems that eliminate, automate, or batch low-value work so you can focus on what actually requires your clinical judgment.',
-      framework:[
-        'Do a 3-day time audit \u2014 track every 30-minute block. The gap between perceived and actual time use will surprise you.',
-        'Identify your top 3 time drains \u2014 for most trainees it\'s documentation, meeting prep, and context-switching',
-        'For each drain, ask: can I template it? Batch it? Delegate it? Eliminate it entirely?',
-        'Implement time-blocking: protect dedicated blocks for deep work (research, studying) like you would a procedure',
-        'Build once, use many: every template, system, or process you create saves cumulative hours over your career'
-      ],
-      tailored:'Based on what you described: "'+userInput.substring(0,200)+'" \u2014 let\'s build a specific system for this. The goal is to get you a reusable solution, not a one-time fix.',
-      nextSteps:'Start with your single biggest time drain. Build one template or system for it this week. Next week, tackle the second one. Small wins compound fast.',
-      whyItWorks:'You\'re not just saving time today \u2014 you\'re building the habit of systems thinking. The physicians who seem to "get everything done" aren\'t more disciplined; they have better systems.'
+      answer:'For every hour of patient care, physicians spend ~2 hours on admin (Sinsky et al., Ann Intern Med 2016). The fix isn\u2019t working harder \u2014 it\u2019s building templates for recurring work, batching similar tasks, and protecting blocks for deep work. Start with your single biggest time drain and systematize it.',
+      aiTip:'Use HeartWise Ask to generate templates, lecture outlines, patient handouts, and study materials in minutes instead of hours. The structure comes from the tool; the clinical judgment comes from you. That\u2019s the split.',
+      nextStep:'Go to Ask with your biggest time drain. If it\u2019s lectures: "Create a 15-slide outline on [topic] with learning objectives and 2 case examples." If it\u2019s notes: "Create a template for [note type] in '+spec+'."'
     },
     'lev-career-sim':{
-      approach:'Most career decisions in medicine are made with surprisingly little data \u2014 rotation impressions, anecdotes from attendings, and gut feeling. The physicians who make the best long-term decisions model the outcomes: compensation trajectories, lifestyle, market demand, geographic flexibility, and burnout rates across paths.',
-      framework:[
-        'Define your decision variables: what actually matters to you? (Income, lifestyle, intellectual stimulation, patient relationships, geographic flexibility, job security)',
-        'Rank them honestly \u2014 most people say lifestyle matters most but optimize for prestige. Know your real priorities.',
-        'For each path, model 5, 10, and 20-year trajectories across your top variables',
-        'Talk to physicians 5-10 years into each path \u2014 their perspective is worth more than any data',
-        'Identify the reversible vs. irreversible elements of each decision \u2014 some choices close doors permanently'
-      ],
-      tailored:'For your decision: "'+userInput.substring(0,200)+'" \u2014 let\'s model this with actual data instead of assumptions. The goal is to make this decision with clarity, not certainty \u2014 certainty doesn\'t exist, but informed confidence does.',
-      nextSteps:'Write down your top 3 decision variables. Then research the 10-year trajectory for each option across those variables. Make the decision from data, not anxiety.',
-      whyItWorks:'You\'re building a decision framework that works for every major career choice \u2014 not just this one. Fellowship, job selection, practice model, geographic moves \u2014 the same framework applies.'
+      answer:'Most career decisions are made on anecdotes and gut feeling. Model it instead: define what actually matters to you (income, lifestyle, geography, intellectual stimulation), rank those honestly, then compare your options across each variable over 5, 10, and 20 years. Talk to physicians 5\u201310 years into each path \u2014 their perspective is worth more than any data.',
+      aiTip:'Use the Financial Trajectory Simulator in HeartWise Frameworks for precise 30-year compensation modeling. Then use Ask to compare lifestyle, market demand, and burnout data across your options. Decision-making with data, not anxiety.',
+      nextStep:'Run the Financial Trajectory Simulator in Frameworks for each path you\u2019re considering. Then go to Ask: "Compare '+spec+' vs [alternative] across lifestyle, job market, and burnout data over 10 years."'
     },
     'lev-brand':{
-      approach:'Physician-educators who build a professional platform aren\'t hobbyists \u2014 they\'re creating career leverage that compounds over decades. A strong professional presence opens doors to speaking invitations, collaborations, leadership roles, and opportunities you can\'t even see yet. Starting during training gives you a massive head start.',
-      framework:[
-        'Pick ONE platform and ONE niche \u2014 specificity wins. "Cardiology for residents" beats "medical education" every time.',
-        'Create a content system, not individual posts: batch-produce content in 2-hour blocks, schedule distribution',
-        'The 3-1 rule: 3 educational/value posts for every 1 personal/opinion post',
-        'Repurpose everything: one topic becomes a thread, an infographic, a short video, and a blog post',
-        'Engage genuinely with others in your space \u2014 community building matters more than follower counts'
-      ],
-      tailored:'Based on your idea: "'+userInput.substring(0,200)+'" \u2014 this has real potential. The key is starting before you feel ready. Your perspective as a trainee is uniquely valuable to other trainees \u2014 you don\'t need to be an expert, you need to be one step ahead and willing to share.',
-      nextSteps:'This week: set up your platform and post your first piece of content. It doesn\'t need to be perfect. It needs to exist. Commit to one post per week for 4 weeks, then evaluate.',
-      whyItWorks:'You\'re building a professional asset that compounds. The physician who starts posting during residency and maintains it for 5 years has a platform most attendings never build. That\'s leverage.'
+      answer:'Pick ONE platform and ONE niche. "'+spec+' for '+stage+'s" beats "medical education" every time. Post once a week consistently. The 3-1 rule: 3 educational posts for every 1 personal one. You don\u2019t need to be an expert \u2014 documenting your learning journey is genuinely valuable to people one step behind you.',
+      aiTip:'Use HeartWise Ask to batch-generate content ideas, outlines, and hooks. Describe your niche and ask for 10 content ideas with hooks and formats. What used to take an evening of brainstorming takes 5 minutes.',
+      nextStep:'Go to Ask and type: "Give me 10 educational content ideas for a '+stage+' posting about '+spec+' on [platform]. For each, give me a hook and format (carousel, video, thread)."'
     }
   };
   return R[wfId]||null;
@@ -7110,16 +7030,20 @@ function levSubmit(wfId,ev){
 
   // Render response inline
   var respEl=document.getElementById('lev-resp-'+wfId);
-  var h='<div class="ai-resp" style="margin-top:16px">';
-  h+='<div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border)"><span style="font-size:11px;font-weight:600;color:var(--blue);text-transform:uppercase;letter-spacing:1px">Strategic Guidance</span></div>';
-  h+='<h4>\ud83d\udcda Strategic Approach</h4><p>'+resp.approach+'</p>';
-  h+='<h4>\ud83d\udee0\ufe0f Framework</h4><ol>'+resp.framework.map(function(s){return '<li>'+s+'</li>'}).join('')+'</ol>';
-  h+='<h4>\ud83c\udfaf Tailored to You</h4><p>'+resp.tailored+'</p>';
-  h+='<h4>\ud83d\udcdd Next Steps</h4><p>'+resp.nextSteps+'</p>';
-  h+='<div style="padding:14px 16px;background:rgba(92,184,154,.06);border:1px solid rgba(92,184,154,.12);border-radius:10px;margin-top:12px">';
-  h+='<div style="font-size:10px;font-weight:600;color:var(--green);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">\ud83d\udca1 Why This Works</div>';
-  h+='<p style="font-size:13px;color:var(--text2);line-height:1.6;margin:0">'+resp.whyItWorks+'</p></div>';
-  h+='<div style="margin-top:12px;font-size:10px;color:var(--text3);font-style:italic;line-height:1.5">This is AI-generated strategic guidance designed to teach you how to approach this type of challenge. No physician review credits were used.</div>';
+  var h='<div style="margin-top:16px">';
+  h+='<div style="padding:18px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;margin-bottom:12px">';
+  h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">\ud83d\udcac Straight Answer</div>';
+  h+='<p style="font-size:14px;color:var(--text);line-height:1.7;margin:0">'+resp.answer+'</p>';
+  h+='</div>';
+  h+='<div style="padding:18px;background:linear-gradient(160deg,rgba(100,149,237,.06),rgba(100,149,237,.02));border:1px solid rgba(100,149,237,.15);border-radius:12px;margin-bottom:12px">';
+  h+='<div style="font-size:11px;font-weight:600;color:var(--blue);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">\u26a1 How HeartWise Can Help</div>';
+  h+='<p style="font-size:14px;color:var(--text2);line-height:1.7;margin:0">'+resp.aiTip+'</p>';
+  h+='</div>';
+  h+='<div style="padding:18px;background:rgba(92,184,154,.06);border:1px solid rgba(92,184,154,.12);border-radius:12px">';
+  h+='<div style="font-size:11px;font-weight:600;color:var(--green);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">\ud83c\udfaf Do This Now</div>';
+  h+='<p style="font-size:14px;color:var(--text2);line-height:1.7;margin:0">'+resp.nextStep+'</p>';
+  h+='</div>';
+  h+='<div style="margin-top:10px;font-size:10px;color:var(--text3);font-style:italic;text-align:center">No physician credits used</div>';
   h+='</div>';
   respEl.innerHTML=h;
   respEl.style.display='';

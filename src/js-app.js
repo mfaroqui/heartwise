@@ -6737,12 +6737,12 @@ function misNewType(){
   document.getElementById('mis-tool').scrollIntoView({behavior:'smooth',block:'start'});
 }
 
+
 // ===== STRATEGIC LEVERAGE (Elite Only) =====
 var _levQuizAnswers=[null,null,null,null,null];
 var _levScoreMap={never:0,rarely:1,sometimes:2,daily:3};
 var _levCurrentFilter='all';
 
-// Quiz question → workflow mapping
 var _levQuizWorkflowMap=[
   ['lev-study','lev-simplify','lev-case'],
   ['lev-research','lev-lit'],
@@ -6756,72 +6756,49 @@ var LEV_WORKFLOWS=[
     id:'lev-study',num:'01',icon:'\ud83c\udfaf',title:'Study Accelerator',
     cat:'learning',difficulty:'starter',
     tagline:'Convert any material into active recall in minutes.',
-    message:'Reading textbooks cover-to-cover and sitting through board review courses is how the last generation studied. The trainees pulling ahead right now convert any source material \u2014 guidelines, lectures, textbook chapters \u2014 into active learning on demand. Whether you\u2019re at a top-10 program or an international graduate, the playing field has never been more level.',
-    prompts:[
-      {label:'Convert material into board prep',text:'Take the following material and convert it into 15 board-style questions with detailed explanations and 10 clinical scenarios that test application, not memorization. Include key concept summaries for each question.\n\n[Paste: guideline, lecture notes, or textbook chapter]',output:['Board-style questions with explanations','Clinical scenario vignettes','Key concept summaries']},
-      {label:'Build a study schedule',text:'I have [X weeks] until [board exam / rotation exam]. Create an optimized study schedule for these topics: [list topics]. Prioritize high-yield material and build in spaced repetition.',output:['Day-by-day schedule','High-yield prioritization','Spaced repetition checkpoints']}
-    ],
-    result:'Material that took hours to review becomes active recall in minutes. Passive reading has a 10% retention rate \u2014 converting to questions pushes retention above 75%.',
-    tip:'Use this every time you finish a lecture or read a guideline. The 5 minutes it takes to generate questions saves hours of re-reading later.'
+    message:'The trainees pulling ahead right now convert source material into active learning on demand. This tool teaches you how to break down any topic into high-yield questions, clinical scenarios, and study plans.',
+    placeholder:'Describe what you\'re studying — e.g., "I have Step 2 in 6 weeks and I\'m weak on cardiology pharmacology" or "I need to prep for my nephrology rotation starting Monday"',
+    catMap:'study'
   },
   {
     id:'lev-simplify',num:'02',icon:'\ud83e\udde0',title:'Concept Simplifier',
     cat:'learning',difficulty:'starter',
     tagline:'Understand any topic at three levels of depth.',
-    message:'The best teachers explain complex ideas at multiple levels. You can do the same \u2014 generate tiered explanations from intuitive analogies to board-level precision. This builds real understanding, not surface memorization.',
-    prompts:[
-      {label:'Tiered explanation',text:'Explain [SPEC_TOPIC] in 3 levels:\n\n1. As if I\u2019m a 5-year-old\n2. As if I\u2019m a medical student\n3. As if I\u2019m preparing for boards\n\nInclude a clinical pearl at each level.',output:['Intuitive analogy','Mechanistic pathophysiology','Board-ready clinical correlations']},
-      {label:'Compare confusing topics',text:'Compare and contrast [Topic A] vs [Topic B] in a structured format. Include: pathophysiology differences, clinical presentation, key diagnostic findings, treatment approach, and the most common board question traps.',output:['Side-by-side comparison','Diagnostic differentiators','Board question trap alerts']}
-    ],
-    result:'One difficult topic becomes three levels of understanding. You fill knowledge gaps you didn\u2019t know you had.',
-    tip:'Run the top 10 topics for your next rotation through this before you start. You\u2019ll walk in with deeper understanding than most co-residents.'
+    message:'The best teachers explain complex ideas at multiple levels. Tell us what you\'re struggling with and we\'ll break it down from intuitive analogy to board-level precision.',
+    placeholder:'What concept are you struggling with? e.g., "I can\'t wrap my head around the renin-angiotensin system" or "Heart failure classification keeps confusing me"',
+    catMap:'study'
   },
   {
     id:'lev-case',num:'03',icon:'\ud83e\uddd1\u200d\u2695\ufe0f',title:'Case Simulator',
     cat:'learning',difficulty:'intermediate',
-    tagline:'Practice clinical reasoning on demand.',
-    message:'Clinical reasoning is built through case exposure, not textbooks. The trainees who perform best on rounds and boards have seen more scenarios. Now you can generate unlimited cases in any specialty.',
-    prompts:[
-      {label:'Generate an interactive case',text:'Create a challenging SPEC_SPECIALTY clinical case. Include:\n\u2022 Patient presentation with history and physical\n\u2022 Initial labs and imaging\n\u2022 Three treatment decision points\n\nAsk me questions step-by-step like a board exam. Wait for my answer before revealing the next step.',output:['Realistic patient presentation','Labs, imaging, and vitals','Step-by-step clinical decisions','Board-style questioning']},
-      {label:'Diagnostic reasoning drill',text:'Present me with an undifferentiated patient case in SPEC_SPECIALTY. Give me the chief complaint, vitals, and initial exam only. Let me ask for tests one at a time with realistic results. Don\u2019t reveal the diagnosis until I commit to one.',output:['Realistic diagnostic challenge','Interactive test ordering','Reasoning feedback']}
-    ],
-    result:'Trains the exact reasoning pattern tested on boards and evaluated by attendings. Run 2\u20133 cases per week in your weakest area.',
-    tip:'Track which decision points trip you up across cases. Those patterns are your real learning gaps.'
+    tagline:'Practice clinical reasoning with realistic cases.',
+    message:'Clinical reasoning is built through case exposure. Describe the type of case you want to practice and we\'ll generate a realistic clinical scenario with decision points.',
+    placeholder:'What kind of case do you want? e.g., "Acute chest pain in a 55yo diabetic male" or "Give me a challenging heart failure case for boards"',
+    catMap:'clinical'
   },
   {
     id:'lev-research',num:'04',icon:'\ud83d\udd2c',title:'Research Idea Generator',
     cat:'research',difficulty:'intermediate',
-    tagline:'Show up to mentors with proposals, not empty hands.',
-    message:'Most trainees wait for a mentor to hand them a project. The ones with 5+ publications by graduation generated ideas themselves and approached faculty with proposals ready to go.',
-    prompts:[
-      {label:'Find research gaps',text:'What are the top 10 unanswered research questions in SPEC_SPECIALTY? For each:\n\u2022 Why it matters clinically\n\u2022 What data currently exists\n\u2022 What type of study could address it\n\u2022 Feasibility for a trainee',output:['Ranked research gaps','Evidence summary','Study type recommendations','Feasibility assessment']},
-      {label:'Design a study',text:'Design a retrospective study using [EHR/registry data] to investigate [research question]. Include:\n\u2022 Hypothesis\n\u2022 Study design and population\n\u2022 Primary and secondary endpoints\n\u2022 Statistical approach\n\u2022 Expected timeline',output:['Complete study proposal','Defined endpoints','Statistical plan','Timeline']}
-    ],
-    result:'You walk into a mentor meeting with a one-page proposal instead of a vague interest. Faculty respond to initiative.',
-    tip:'Generate 3\u20135 ideas, pick the most feasible, draft a one-page proposal. Then approach the mentor.'
+    tagline:'Walk into mentor meetings with proposals, not empty hands.',
+    message:'The trainees with 5+ publications by graduation don\'t wait for projects to be handed to them. Describe your interests and situation, and we\'ll help you identify feasible research opportunities.',
+    placeholder:'Describe your research situation — e.g., "I\'m a PGY-2 interested in outcomes research but don\'t have a mentor yet" or "I want to publish before fellowship apps in 8 months"',
+    catMap:'research'
   },
   {
     id:'lev-lit',num:'05',icon:'\ud83d\udcda',title:'Literature Synthesizer',
     cat:'research',difficulty:'starter',
     tagline:'Know the key trials on any topic in minutes.',
-    message:'You don\u2019t need to read every paper. You need to know which trials matter, what they found, and the limitations. This is how attendings stay current \u2014 and how you prepare for rounds and journal club without 20 hours of reading.',
-    prompts:[
-      {label:'Summarize landmark trials',text:'Summarize the most important clinical trials on [topic in SPEC_SPECIALTY]. For each:\n\u2022 Trial name and year\n\u2022 Population studied\n\u2022 Primary endpoint and result\n\u2022 Key secondary findings\n\u2022 Main limitations\n\u2022 Guideline changes',output:['Trial-by-trial summaries','Effect sizes','Limitations','Guideline impact']},
-      {label:'Resolve conflicting evidence',text:'Two studies on [topic] reached different conclusions: [Study A] and [Study B]. Compare: population differences, methodology, endpoints, statistical power. Explain why results conflict and which should guide practice.',output:['Methodology comparison','Conflict explanation','Practice recommendation']}
-    ],
-    result:'Intelligently discuss any trial set in minutes. This impresses on rounds and in fellowship interviews.',
-    tip:'Before journal club or a new rotation, run the top 5 trials through this.'
+    message:'You don\'t need to read every paper. Tell us the topic and we\'ll identify which trials matter, what they found, and how to discuss them intelligently.',
+    placeholder:'What topic do you need to know the literature on? e.g., "SGLT2 inhibitors in heart failure" or "I have journal club on DAPA-HF next week"',
+    catMap:'research'
   },
   {
     id:'lev-fellowship',num:'06',icon:'\ud83c\udfc6',title:'Fellowship Strategy Builder',
     cat:'career',difficulty:'intermediate',
-    tagline:'Benchmark yourself against the competition.',
-    message:'The fellowship match is strategic. You need to know exactly where you stand and build a plan that plays to your strengths.',
-    prompts:[
-      {label:'Assess your competitiveness',text:'What factors make an applicant competitive for SPEC_SPECIALTY fellowship? Break down:\n\u2022 Research benchmarks (publications, first-author)\n\u2022 Clinical metrics (board scores, evaluations)\n\u2022 Letters of recommendation expectations\n\u2022 Program preferences\n\u2022 Red flags\n\u2022 What separates the top 10%',output:['Competitiveness benchmarks','PD priorities','Red flags','Top applicant differentiators']}
-    ],
-    result:'A clear benchmark to measure against. Then use HeartWise framework tools to track your actual progress.',
-    tip:'After this, use the Match Competitiveness Calculator in Frameworks for your real score.',
+    tagline:'Build a strategic plan to match into your target fellowship.',
+    message:'The fellowship match is strategic. Describe where you are and where you want to be, and we\'ll help you identify gaps, build a timeline, and prioritize.',
+    placeholder:'Tell us about your fellowship goals — e.g., "I\'m an IM PGY-1 targeting cardiology, have 1 pub, Step 2 252" or "I\'m deciding between GI and pulm/crit"',
+    catMap:'fellowship',
     linkText:'Evaluate Your Competitiveness \u2192',
     linkAction:'navTo(\'scr-vault\')'
   },
@@ -6829,52 +6806,184 @@ var LEV_WORKFLOWS=[
     id:'lev-network',num:'07',icon:'\ud83e\udd1d',title:'Networking Strategist',
     cat:'career',difficulty:'starter',
     tagline:'Build strategic relationships, not random contacts.',
-    message:'The trainees who match into top programs aren\u2019t just better on paper \u2014 they\u2019re better connected. Strategic networking is building genuine relationships with people who advocate for you when it matters.',
-    prompts:[
-      {label:'Build a networking plan',text:'How should a SPEC_STAGE strategically network to match into SPEC_SPECIALTY? Include:\n\u2022 Which conferences to attend and how to maximize them\n\u2022 How to identify research collaborators\n\u2022 Mentorship outreach strategy\n\u2022 Timeline for each activity',output:['Conference strategy','Collaboration roadmap','Outreach plan','Timeline']},
-      {label:'Draft a mentor email',text:'Draft a professional email to a potential research mentor in SPEC_SPECIALTY. I\u2019m a SPEC_STAGE interested in [research area]. Under 150 words, specific about their work, clear about the ask, respectful of their time.',output:['Ready-to-send email','Customization notes','Follow-up timing']}
-    ],
-    result:'A concrete networking plan and ready-to-use email templates. Send 2 per month \u2014 even a 25% response rate gives you 6 new mentors or collaborators in a year.',
-    tip:'The barrier isn\u2019t access. It\u2019s knowing what to say. This removes that barrier.'
+    message:'The trainees who match top programs aren\'t just better on paper \u2014 they\'re better connected. Tell us your goals and we\'ll help you build a concrete networking plan.',
+    placeholder:'What networking challenge are you facing? e.g., "I want to find a research mentor at another institution" or "I have a conference next month and don\'t know how to approach faculty"',
+    catMap:'career'
   },
   {
     id:'lev-productivity',num:'08',icon:'\ud83d\ude80',title:'Productivity Multiplier',
     cat:'productivity',difficulty:'starter',
-    tagline:'Automate the work that doesn\u2019t need your clinical judgment.',
-    message:'Lecture prep, presentations, patient education, research summaries \u2014 these eat hours that could go toward learning, research, or rest. Automate the structure, then add your clinical insight.',
-    prompts:[
-      {label:'Generate a lecture outline',text:'Create a 15-slide lecture outline on [topic in SPEC_SPECIALTY]. Include:\n\u2022 Learning objectives\n\u2022 Slide-by-slide content\n\u2022 2\u20133 case examples\n\u2022 Key images to source\n\u2022 Take-home points\n\u2022 3 discussion questions',output:['Complete slide structure','Content per slide','Case integration','Discussion questions']},
-      {label:'Patient education handout',text:'Create a patient-friendly explanation of [condition/procedure in SPEC_SPECIALTY] at a 6th-grade reading level. Include what it is, why treatment is needed, what to expect, key warning signs, and when to call the doctor. Format as a one-page handout.',output:['Patient-friendly handout','Appropriate reading level','Clear action items']}
-    ],
-    result:'A lecture that took 4 hours now takes 30 minutes of editing. Spend your time on clinical thinking \u2014 the part only you can do.',
-    tip:'Start with the task you dread most. For most trainees, that\u2019s lecture prep or creating study material.'
+    tagline:'Automate the work that doesn\'t need your clinical judgment.',
+    message:'Lecture prep, presentations, patient education \u2014 these eat hours. Describe what\'s eating your time and we\'ll help you build systems to get it back.',
+    placeholder:'What\'s taking up too much of your time? e.g., "I need to create a 20-min lecture on atrial fibrillation for interns" or "I spend 3 hours on notes every night"',
+    catMap:'productivity'
   },
   {
     id:'lev-career-sim',num:'09',icon:'\ud83d\udcca',title:'Career Path Modeler',
     cat:'career',difficulty:'advanced',
     tagline:'Make career decisions with data, not assumptions.',
-    message:'Most trainees choose specialties based on limited rotation exposure and opinions. Model the outcomes \u2014 lifestyle, income, training commitment, flexibility \u2014 before committing.',
-    prompts:[
-      {label:'Compare career trajectories',text:'Compare the 10-year career trajectory for SPEC_SPECIALTY vs [Alternative Specialty] across:\n\u2022 Training length and intensity\n\u2022 Compensation trajectory (years 1, 5, 10)\n\u2022 Lifestyle and call burden\n\u2022 Job market demand\n\u2022 Geographic flexibility\n\u2022 Burnout and satisfaction data',output:['Side-by-side comparison','Compensation projections','Lifestyle analysis','Market demand']}
-    ],
-    result:'Career decisions backed by data. Then use the Financial Trajectory Simulator for precise 30-year projections.',
-    tip:'Run this before any major career decision. Compare at least 2\u20133 options side-by-side.',
+    message:'Most trainees choose paths based on limited exposure and opinions. Describe your decision and we\'ll help you model the outcomes \u2014 lifestyle, compensation, market demand.',
+    placeholder:'What career decision are you weighing? e.g., "Academic vs private practice cardiology" or "Should I do an extra year of training for interventional?"',
+    catMap:'career',
     linkText:'Model Financial Trajectory \u2192',
     linkAction:'navTo(\'scr-vault\')'
   },
   {
     id:'lev-brand',num:'10',icon:'\ud83c\udf1f',title:'Personal Brand Builder',
     cat:'productivity',difficulty:'advanced',
-    tagline:'Start building your platform while you\u2019re still training.',
-    message:'Physicians who build education platforms and digital presence aren\u2019t hobbyists \u2014 they\u2019re building career leverage that compounds. Starting as a trainee gives you a massive head start.',
-    prompts:[
-      {label:'Generate content ideas',text:'Generate 10 educational social media content ideas on [topic in SPEC_SPECIALTY]. For each:\n\u2022 Hook / first line\n\u2022 Key teaching point\n\u2022 Visual format (infographic, carousel, video)\n\u2022 Call to action\n\u2022 Relevant hashtags',output:['10 content ideas','Hook lines','Format recommendations','Hashtag strategy']},
-      {label:'Plan a content series',text:'Create a 10-episode outline for a [podcast/YouTube series] on [topic]. For each: title, 3 discussion points, potential guest type, target length.',output:['Series outline','Discussion points','Guest strategy','Content calendar']}
-    ],
-    result:'Go from "I should post something" to a month of content planned in one sitting.',
-    tip:'You don\u2019t need to be an expert. Document your learning journey \u2014 trainees at your level will find it valuable.'
+    tagline:'Start building your professional platform during training.',
+    message:'Physicians with a professional presence aren\'t hobbyists \u2014 they\'re building career leverage that compounds. Tell us your interests and we\'ll help you create a plan.',
+    placeholder:'What do you want to build? e.g., "I want to start a medical education Instagram account" or "I\'m thinking about starting a podcast on cardiology for residents"',
+    catMap:'career'
   }
 ];
+
+// Generate leverage AI response (no credits consumed)
+function levGenAI(wfId,userInput){
+  var wf=LEV_WORKFLOWS.find(function(w){return w.id===wfId});
+  if(!wf)return null;
+  var spec='your specialty',stage='trainee';
+  if(U&&U.careerProfile){
+    spec=U.careerProfile.specialty||spec;
+    var sl={student:'medical student',resident:'resident',fellow:'fellow',attending:'attending'};
+    stage=sl[U.careerProfile.stage]||stage;
+  }
+
+  // Each workflow generates teaching-oriented, strategic responses
+  var R={
+    'lev-study':{
+      approach:'Here\'s the strategic approach most trainees miss: passive review has roughly a 10% retention rate. Active recall \u2014 generating questions, teaching back, practice testing \u2014 pushes retention above 75% (Karpicke & Blunt, Science, 2011). The goal isn\'t to read more. It\'s to convert everything you read into retrievable knowledge.',
+      framework:[
+        'Break your material into concept blocks \u2014 each block should be one testable idea, not a chapter',
+        'For each block, write one "why" question (mechanism), one "what if" question (clinical scenario), and one "compare" question (differential)',
+        'Use spaced repetition: review at 1 day, 3 days, 7 days, then 21 days \u2014 this is where retention compounds',
+        'Teach each concept to someone (or explain it out loud to yourself) \u2014 the generation effect is one of the strongest learning tools in cognitive science',
+        'Track which concepts you get wrong repeatedly \u2014 these are your actual weak spots, not the ones you think they are'
+      ],
+      tailored:'Based on what you described: "'+userInput.substring(0,200)+'" \u2014 here\'s how I\'d prioritize. Focus on converting your weakest areas into active questions first. The strong areas will maintain with minimal review. Build a question bank as you go \u2014 this becomes your personal board prep that no commercial product can match because it\'s built around YOUR gaps.',
+      nextSteps:'Start today: take the single topic you feel least confident about and generate 10 questions from it. Review them tomorrow. That one habit, repeated daily, will transform your retention within 2 weeks.',
+      whyItWorks:'You\'re not just studying \u2014 you\'re learning how to learn strategically. This approach scales to every exam, every rotation, your entire career. The physicians who seem to "know everything" aren\'t smarter; they have better learning systems.'
+    },
+    'lev-simplify':{
+      approach:'The Feynman Technique is the most powerful learning tool most trainees never use: if you can\'t explain something simply, you don\'t actually understand it. We\'re going to break down your concept at three levels \u2014 intuitive, mechanistic, and board-ready \u2014 because real understanding means moving fluidly between all three.',
+      framework:[
+        'Level 1 \u2014 Analogy: find a real-world comparison that captures the core mechanism (this is how you\'ll explain it to patients and remember it under pressure)',
+        'Level 2 \u2014 Mechanism: map out the pathophysiology step by step, identifying where it can go wrong at each stage',
+        'Level 3 \u2014 Clinical correlation: connect to presentation, diagnosis, treatment, and the specific board-question traps for this topic',
+        'Identify the "confusion points" \u2014 where does this topic overlap with similar concepts? That overlap is where board questions live',
+        'Create a one-sentence summary that captures the essence \u2014 if you can say it in one sentence, you own it'
+      ],
+      tailored:'You asked about: "'+userInput.substring(0,200)+'" \u2014 the fact that this is confusing means you\'re at the edge of your understanding, which is exactly where learning happens. Most people avoid confusion; strategic learners run toward it. Let\'s break this down systematically.',
+      nextSteps:'After working through this, try explaining the concept to a colleague without notes. Where you stumble is where your understanding has gaps. Come back and run those gaps through this tool again.',
+      whyItWorks:'You\'re building a multi-level mental model. Attendings who seem to "just know" the answer are accessing these layered models built over years. You\'re accelerating that process.'
+    },
+    'lev-case':{
+      approach:'Clinical reasoning isn\'t about knowing more facts \u2014 it\'s about pattern recognition and structured decision-making under uncertainty. Croskerry (2009) showed that diagnostic errors most often come from cognitive biases, not knowledge gaps. This tool trains you to think systematically through cases, building the pattern library that separates strong clinicians from average ones.',
+      framework:[
+        'Start with the chief complaint and build a problem representation \u2014 one sentence that captures age, acuity, and key features',
+        'Generate an illness script: what conditions match this pattern? Prioritize by probability AND severity (don\'t miss the zebra that kills)',
+        'Identify the 2-3 tests or findings that would most change your differential \u2014 this is diagnostic efficiency',
+        'At each decision point, explicitly state your reasoning before looking at results \u2014 this builds metacognition',
+        'After the case, review: what did you anchor on too early? What did you almost miss? These patterns are your real learning'
+      ],
+      tailored:'For your case: "'+userInput.substring(0,200)+'" \u2014 let\'s build this into a structured reasoning exercise. The goal isn\'t just getting the right answer; it\'s developing a reproducible approach you can apply to any undifferentiated patient.',
+      nextSteps:'Run 2-3 cases per week in your weakest clinical area. Track your decision points and which cognitive biases tripped you up. After a month, you\'ll notice your reasoning speed and accuracy improving measurably.',
+      whyItWorks:'Every case you reason through systematically adds to your pattern library. This is the same process that makes experienced clinicians seem "intuitive" \u2014 they\'re not guessing, they\'re pattern-matching from thousands of cases. You\'re building that library faster.'
+    },
+    'lev-research':{
+      approach:'The trainees who publish consistently aren\'t necessarily smarter researchers \u2014 they\'ve learned to identify feasible projects and execute efficiently. The key insight: your first few publications don\'t need to be groundbreaking. They need to be DONE. A published case series beats an unfinished RCT every time.',
+      framework:[
+        'Identify 3 clinical observations from your recent rotations that made you think "that\'s interesting" \u2014 each one is a potential project',
+        'For each observation, ask: is there existing data I could analyze retrospectively? (EHR data, registries, quality improvement databases)',
+        'Design the simplest study that answers a meaningful question \u2014 case series > cohort > RCT in terms of feasibility for trainees',
+        'Write a one-page proposal: background (3 sentences), question, methods, expected timeline, what you need from a mentor',
+        'Approach 2-3 potential mentors with the proposal IN HAND \u2014 initiative is the single biggest differentiator'
+      ],
+      tailored:'Based on your situation: "'+userInput.substring(0,200)+'" \u2014 here\'s the strategic approach. Don\'t wait for the perfect project or the perfect mentor. Start with what\'s feasible NOW and build momentum. Research productivity is about velocity, not perfection.',
+      nextSteps:'This week: write down 3 clinical observations. Next week: check if retrospective data exists for any of them. Week 3: draft a one-page proposal for the most feasible one. Week 4: send it to a potential mentor.',
+      whyItWorks:'You\'re learning the research pipeline \u2014 from observation to question to study to publication. This skill compounds. Your fifth project will take a fraction of the time your first one did.'
+    },
+    'lev-lit':{
+      approach:'Attendings who seem to know every trial aren\'t reading 50 papers a week. They\'ve built a framework for rapidly extracting what matters: study design, population, primary endpoint, effect size, limitations, and practice impact. That\'s it. Everything else is noise for clinical purposes.',
+      framework:[
+        'For any topic, identify the 3-5 landmark trials that changed practice \u2014 not every study, just the ones that moved guidelines',
+        'For each trial, extract: population (who was studied), intervention (what was tested), comparison (against what), outcome (primary endpoint), and number needed to treat/harm',
+        'Identify the limitations that matter clinically: was the population representative? Was the endpoint meaningful? Was follow-up adequate?',
+        'Map how guidelines changed based on this evidence \u2014 this connects trials to practice',
+        'Know the "board trap" for each trial \u2014 the counterintuitive finding or limitation that gets tested'
+      ],
+      tailored:'For your topic: "'+userInput.substring(0,200)+'" \u2014 let\'s build your framework for discussing this evidence intelligently. The goal isn\'t memorization; it\'s having a structured way to evaluate any evidence you encounter.',
+      nextSteps:'Practice this framework on 3 topics this week. By the end, you should be able to discuss the key evidence for any topic in under 2 minutes \u2014 which is exactly what\'s expected on rounds and in interviews.',
+      whyItWorks:'You\'re building an evidence evaluation framework that works for ANY topic, not just this one. This is how academic physicians stay current without drowning in literature.'
+    },
+    'lev-fellowship':{
+      approach:'The fellowship match is a strategic game, and the sooner you understand the rules, the better you play it. NRMP data consistently shows that the top factors are: (1) LOR quality, (2) research productivity, (3) away rotation performance, and (4) clinical grades. Notice what\'s NOT at the top \u2014 board scores alone don\'t differentiate at competitive programs.',
+      framework:[
+        'Build an honest self-assessment across all domains: research (publications, abstracts), clinical (scores, evaluations), letters (who can genuinely advocate for you), and unique factors',
+        'Reverse-engineer timelines from your target match year \u2014 work 3 months ahead of every deadline',
+        'Create a tiered program list (reach/target/safety) based on realistic assessment, not aspirational thinking',
+        'Identify your 2-3 highest-leverage improvement areas \u2014 strengthening a weakness matters more than polishing a strength',
+        'Plan away rotations at programs where you\'re competitive AND interested \u2014 treat every day there as a month-long interview'
+      ],
+      tailored:'Given your situation: "'+userInput.substring(0,200)+'" \u2014 let\'s be strategic. The key is honest self-assessment followed by targeted action. Most trainees either underestimate themselves (and don\'t apply broadly enough) or overestimate (and don\'t prepare enough).',
+      nextSteps:'This month: complete an honest self-assessment across all domains. Next month: identify your top 2 gaps and create a concrete plan to close them. Month 3: finalize your program list and letter writer strategy.',
+      whyItWorks:'You\'re approaching the match as a strategic project, not a passive hope. The trainees who match into top programs don\'t leave it to chance \u2014 they plan systematically, exactly like this.'
+    },
+    'lev-network':{
+      approach:'Strategic networking isn\'t about collecting contacts \u2014 it\'s about building genuine relationships with people who will advocate for you when it matters. The research is clear: mentorship and advocacy are among the strongest predictors of career advancement in academic medicine (Sambunjak et al., JAMA 2006).',
+      framework:[
+        'Identify 5-10 physicians whose career paths you actually want \u2014 not just people who are famous, but people whose daily work life appeals to you',
+        'Research their recent work before reaching out \u2014 specificity is what separates a good cold email from spam',
+        'Ask for 15 minutes, not mentorship \u2014 the word "mentor" is intimidating. A brief conversation is not.',
+        'Follow up with value: share a relevant paper, update them on progress from their advice, or connect them with someone useful',
+        'Build a relationship map: who knows who? One strong connection opens doors to three more.'
+      ],
+      tailored:'For your situation: "'+userInput.substring(0,200)+'" \u2014 the barrier here isn\'t access. Faculty respond to initiative and specificity. A well-crafted 3-sentence email gets a response 40-50% of the time. Most trainees never send it.',
+      nextSteps:'This week: identify 3 people you\'d genuinely want to learn from. Draft a specific, concise email to one of them. Send it. That\'s it \u2014 one email this week.',
+      whyItWorks:'You\'re building the skill of strategic relationship-building, which is arguably the most important career skill that\'s never formally taught in medicine.'
+    },
+    'lev-productivity':{
+      approach:'For every hour of direct patient care, physicians spend nearly 2 hours on documentation and admin (Sinsky et al., Ann Intern Med 2016). The answer isn\'t working harder \u2014 it\'s building systems that eliminate, automate, or batch low-value work so you can focus on what actually requires your clinical judgment.',
+      framework:[
+        'Do a 3-day time audit \u2014 track every 30-minute block. The gap between perceived and actual time use will surprise you.',
+        'Identify your top 3 time drains \u2014 for most trainees it\'s documentation, meeting prep, and context-switching',
+        'For each drain, ask: can I template it? Batch it? Delegate it? Eliminate it entirely?',
+        'Implement time-blocking: protect dedicated blocks for deep work (research, studying) like you would a procedure',
+        'Build once, use many: every template, system, or process you create saves cumulative hours over your career'
+      ],
+      tailored:'Based on what you described: "'+userInput.substring(0,200)+'" \u2014 let\'s build a specific system for this. The goal is to get you a reusable solution, not a one-time fix.',
+      nextSteps:'Start with your single biggest time drain. Build one template or system for it this week. Next week, tackle the second one. Small wins compound fast.',
+      whyItWorks:'You\'re not just saving time today \u2014 you\'re building the habit of systems thinking. The physicians who seem to "get everything done" aren\'t more disciplined; they have better systems.'
+    },
+    'lev-career-sim':{
+      approach:'Most career decisions in medicine are made with surprisingly little data \u2014 rotation impressions, anecdotes from attendings, and gut feeling. The physicians who make the best long-term decisions model the outcomes: compensation trajectories, lifestyle, market demand, geographic flexibility, and burnout rates across paths.',
+      framework:[
+        'Define your decision variables: what actually matters to you? (Income, lifestyle, intellectual stimulation, patient relationships, geographic flexibility, job security)',
+        'Rank them honestly \u2014 most people say lifestyle matters most but optimize for prestige. Know your real priorities.',
+        'For each path, model 5, 10, and 20-year trajectories across your top variables',
+        'Talk to physicians 5-10 years into each path \u2014 their perspective is worth more than any data',
+        'Identify the reversible vs. irreversible elements of each decision \u2014 some choices close doors permanently'
+      ],
+      tailored:'For your decision: "'+userInput.substring(0,200)+'" \u2014 let\'s model this with actual data instead of assumptions. The goal is to make this decision with clarity, not certainty \u2014 certainty doesn\'t exist, but informed confidence does.',
+      nextSteps:'Write down your top 3 decision variables. Then research the 10-year trajectory for each option across those variables. Make the decision from data, not anxiety.',
+      whyItWorks:'You\'re building a decision framework that works for every major career choice \u2014 not just this one. Fellowship, job selection, practice model, geographic moves \u2014 the same framework applies.'
+    },
+    'lev-brand':{
+      approach:'Physician-educators who build a professional platform aren\'t hobbyists \u2014 they\'re creating career leverage that compounds over decades. A strong professional presence opens doors to speaking invitations, collaborations, leadership roles, and opportunities you can\'t even see yet. Starting during training gives you a massive head start.',
+      framework:[
+        'Pick ONE platform and ONE niche \u2014 specificity wins. "Cardiology for residents" beats "medical education" every time.',
+        'Create a content system, not individual posts: batch-produce content in 2-hour blocks, schedule distribution',
+        'The 3-1 rule: 3 educational/value posts for every 1 personal/opinion post',
+        'Repurpose everything: one topic becomes a thread, an infographic, a short video, and a blog post',
+        'Engage genuinely with others in your space \u2014 community building matters more than follower counts'
+      ],
+      tailored:'Based on your idea: "'+userInput.substring(0,200)+'" \u2014 this has real potential. The key is starting before you feel ready. Your perspective as a trainee is uniquely valuable to other trainees \u2014 you don\'t need to be an expert, you need to be one step ahead and willing to share.',
+      nextSteps:'This week: set up your platform and post your first piece of content. It doesn\'t need to be perfect. It needs to exist. Commit to one post per week for 4 weeks, then evaluate.',
+      whyItWorks:'You\'re building a professional asset that compounds. The physician who starts posting during residency and maintains it for 5 years has a platform most attendings never build. That\'s leverage.'
+    }
+  };
+  return R[wfId]||null;
+}
 
 function levToggleQuiz(){
   var body=document.getElementById('lev-quiz-body');
@@ -6916,7 +7025,6 @@ function levCalcScore(){
   badge.style.background=color==='var(--green)'?'rgba(92,184,154,.15)':color==='var(--accent)'?'var(--accent-dim)':'rgba(196,77,86,.15)';
   badge.style.color=color;
 
-  // Build personalized recommendations based on weak quiz answers
   var recs=[];
   _levQuizAnswers.forEach(function(a,i){
     if(a==='never'||a==='rarely'){
@@ -6938,7 +7046,6 @@ function levCalcScore(){
     recsEl.innerHTML=rh;
   }else{recsEl.innerHTML=''}
 
-  // Save
   if(U){
     if(!U.leverageScores)U.leverageScores=[];
     U.leverageScores.push({date:new Date().toISOString(),score:score,label:label,answers:_levQuizAnswers.slice()});
@@ -6979,8 +7086,7 @@ function levToggleWorkflow(id){
   card.classList.toggle('expanded');
 }
 
-function levMarkTried(wfId,ev){
-  if(ev)ev.stopPropagation();
+function levMarkTried(wfId){
   if(!U)return;
   if(!U.leverageTried)U.leverageTried=[];
   if(U.leverageTried.indexOf(wfId)===-1){
@@ -6988,41 +7094,45 @@ function levMarkTried(wfId,ev){
     saveUser();
   }
   levUpdateProgress();
-  var btn=document.getElementById('lev-try-'+wfId);
-  if(btn){btn.outerHTML='<span class="lev-tried-badge" style="background:rgba(92,184,154,.15);color:var(--green)">\u2713 Used</span>'}
 }
 
-function levUsePrompt(wfId,promptIdx,ev){
-  ev.stopPropagation();
-  var wf=LEV_WORKFLOWS.find(function(w){return w.id===wfId});
-  if(!wf)return;
-  var p=wf.prompts[promptIdx];if(!p)return;
-  var text=levPersonalizePrompt(p.text);
-  // Map workflow categories to Ask screen categories
-  var catMap={learning:'study',research:'research',career:'career',productivity:'career'};
-  levMarkTried(wfId,null);
-  // Navigate to Ask screen and prefill
-  navTo('scr-ask');
-  setTimeout(function(){
-    var coreEl=document.getElementById('q-core');
-    if(coreEl)coreEl.value=text;
-    var catEl=document.getElementById('q-cat');
-    if(catEl&&catMap[wf.cat])catEl.value=catMap[wf.cat];
-    var contextEl=document.getElementById('q-context');
-    if(contextEl)contextEl.value='[Via Strategic Leverage: '+wf.title+']';
-  },100);
-  notify('Prompt loaded — review and submit when ready');
-}
+function levSubmit(wfId,ev){
+  if(ev)ev.stopPropagation();
+  var input=document.getElementById('lev-input-'+wfId);
+  if(!input)return;
+  var text=input.value.trim();
+  if(!text||text.length<10){notify('Describe your situation in more detail (min 10 characters)',1);return}
 
-function levPersonalizePrompt(text){
-  if(U&&U.careerProfile){
-    var cp=U.careerProfile;
-    var spec=cp.specialty||'your specialty';
-    var stageLabels={student:'medical student',resident:'resident',fellow:'fellow',attending:'attending'};
-    var stage=stageLabels[cp.stage]||'trainee';
-    return text.replace(/SPEC_SPECIALTY/g,spec).replace(/SPEC_TOPIC/g,'a topic in '+spec).replace(/SPEC_STAGE/g,stage);
-  }
-  return text.replace(/SPEC_SPECIALTY/g,'[your specialty]').replace(/SPEC_TOPIC/g,'[your topic]').replace(/SPEC_STAGE/g,'[your training level]');
+  var resp=levGenAI(wfId,text);
+  if(!resp){notify('Something went wrong',1);return}
+
+  levMarkTried(wfId);
+
+  // Render response inline
+  var respEl=document.getElementById('lev-resp-'+wfId);
+  var h='<div class="ai-resp" style="margin-top:16px">';
+  h+='<div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border)"><span style="font-size:11px;font-weight:600;color:var(--blue);text-transform:uppercase;letter-spacing:1px">Strategic Guidance</span></div>';
+  h+='<h4>\ud83d\udcda Strategic Approach</h4><p>'+resp.approach+'</p>';
+  h+='<h4>\ud83d\udee0\ufe0f Framework</h4><ol>'+resp.framework.map(function(s){return '<li>'+s+'</li>'}).join('')+'</ol>';
+  h+='<h4>\ud83c\udfaf Tailored to You</h4><p>'+resp.tailored+'</p>';
+  h+='<h4>\ud83d\udcdd Next Steps</h4><p>'+resp.nextSteps+'</p>';
+  h+='<div style="padding:14px 16px;background:rgba(92,184,154,.06);border:1px solid rgba(92,184,154,.12);border-radius:10px;margin-top:12px">';
+  h+='<div style="font-size:10px;font-weight:600;color:var(--green);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">\ud83d\udca1 Why This Works</div>';
+  h+='<p style="font-size:13px;color:var(--text2);line-height:1.6;margin:0">'+resp.whyItWorks+'</p></div>';
+  h+='<div style="margin-top:12px;font-size:10px;color:var(--text3);font-style:italic;line-height:1.5">This is AI-generated strategic guidance designed to teach you how to approach this type of challenge. No physician review credits were used.</div>';
+  h+='</div>';
+  respEl.innerHTML=h;
+  respEl.style.display='';
+
+  // Save to leverage history
+  if(!U.leverageHistory)U.leverageHistory=[];
+  U.leverageHistory.push({wfId:wfId,input:text.substring(0,500),date:new Date().toISOString()});
+  if(U.leverageHistory.length>50)U.leverageHistory=U.leverageHistory.slice(-50);
+  saveUser();
+
+  // Update the button
+  var btn=document.getElementById('lev-btn-'+wfId);
+  if(btn){btn.textContent='Get New Guidance';btn.style.background='var(--bg3)';btn.style.color='var(--accent)';btn.style.border='1px solid rgba(200,168,124,.3)'}
 }
 
 function levFilter(cat,btn){
@@ -7048,13 +7158,13 @@ function renderLeverage(){
   var hasAccess=(U.tier==='elite'&&!U.isTrial)||U.tier==='admin';
   var isCore=U.tier==='core';
   if(!hasAccess&&!isCore){
-    document.getElementById('lev-workflow-list').innerHTML='<div style="text-align:center;padding:40px 20px"><div style="font-size:48px;margin-bottom:16px">\ud83d\udd12</div><div style="font-size:16px;font-weight:600;color:var(--text);margin-bottom:8px">Elite Strategy Members Only</div><p style="font-size:13px;color:var(--text3);line-height:1.6;margin-bottom:20px">The Strategic Leverage playbook is available exclusively to Elite Strategy subscribers.</p><button class="btn btn-a" onclick="navTo(\'scr-profile\');showUpgrade()" style="max-width:240px;margin:0 auto">View Elite Plan \u2192</button></div>';
+    document.getElementById('lev-workflow-list').innerHTML='<div style="text-align:center;padding:40px 20px"><div style="font-size:48px;margin-bottom:16px">\ud83d\udd12</div><div style="font-size:16px;font-weight:600;color:var(--text);margin-bottom:8px">Elite Strategy Members Only</div><p style="font-size:13px;color:var(--text3);line-height:1.6;margin-bottom:20px">Strategic Leverage tools are available exclusively to Elite Strategy subscribers.</p><button class="btn btn-a" onclick="navTo(\'scr-profile\');showUpgrade()" style="max-width:240px;margin:0 auto">View Elite Plan \u2192</button></div>';
     return;
   }
   if(isCore){
     document.getElementById('lev-quiz-section').style.display='none';
     document.getElementById('lev-progress-bar').style.display='none';
-    document.getElementById('lev-workflow-list').innerHTML='<div style="text-align:center;padding:48px 24px"><div style="font-size:52px;margin-bottom:16px">\u26a1</div><div style="font-family:var(--font-serif);font-size:22px;font-weight:600;color:var(--text);margin-bottom:10px">This Is Where Elite Trainees Separate Themselves</div><p style="font-size:14px;color:var(--text2);line-height:1.7;margin-bottom:8px;max-width:380px;margin-left:auto;margin-right:auto">10 advanced workflows for learning, research, networking, and strategy \u2014 the same approaches top trainees are already using.</p><p style="font-size:13px;color:var(--text3);line-height:1.6;margin-bottom:24px;max-width:380px;margin-left:auto;margin-right:auto">Exclusive to Elite Strategy members. Not available during the trial.</p><div style="display:flex;flex-direction:column;gap:10px;max-width:280px;margin:0 auto"><button class="btn btn-a" onclick="navTo(\'scr-profile\');showUpgrade()">Upgrade to Elite \u2192</button><button style="font-size:12px;color:var(--text3);background:none;border:none;cursor:pointer;padding:8px" onclick="navTo(\'scr-vault\')">Browse Free Frameworks</button></div></div>';
+    document.getElementById('lev-workflow-list').innerHTML='<div style="text-align:center;padding:48px 24px"><div style="font-size:52px;margin-bottom:16px">\u26a1</div><div style="font-family:var(--font-serif);font-size:22px;font-weight:600;color:var(--text);margin-bottom:10px">This Is Where Elite Trainees Separate Themselves</div><p style="font-size:14px;color:var(--text2);line-height:1.7;margin-bottom:8px;max-width:380px;margin-left:auto;margin-right:auto">10 interactive strategy tools for learning, research, networking, and career planning \u2014 each one teaches you how to think about the problem, not just gives you an answer.</p><p style="font-size:13px;color:var(--text3);line-height:1.6;margin-bottom:24px;max-width:380px;margin-left:auto;margin-right:auto">Exclusive to Elite Strategy members. Not available during the trial.</p><div style="display:flex;flex-direction:column;gap:10px;max-width:280px;margin:0 auto"><button class="btn btn-a" onclick="navTo(\'scr-profile\');showUpgrade()">Upgrade to Elite \u2192</button><button style="font-size:12px;color:var(--text3);background:none;border:none;cursor:pointer;padding:8px" onclick="navTo(\'scr-vault\')">Browse Free Frameworks</button></div></div>';
     return;
   }
   // Full access
@@ -7089,14 +7199,14 @@ function renderLeverage(){
     quizBody.style.display='';quizArrow.style.transform='rotate(90deg)';
   }
 
-  // Render workflows
+  // Render workflow cards
   var tried=U.leverageTried||[];
   var diffLabels={starter:'Starter',intermediate:'Intermediate',advanced:'Advanced'};
   var diffColors={starter:'var(--green)',intermediate:'var(--accent)',advanced:'var(--red)'};
   var h='';
   LEV_WORKFLOWS.forEach(function(wf){
     var isTried=tried.indexOf(wf.id)!==-1;
-    var triedBadge=isTried?'<span class="lev-tried-badge" style="background:rgba(92,184,154,.15);color:var(--green)">\u2713 Used</span>':'<button id="lev-try-'+wf.id+'" class="lev-tried-badge" style="background:var(--bg3);color:var(--text3);cursor:pointer;border:1px solid var(--border)" onclick="levMarkTried(\''+wf.id+'\',event)">Mark as used</button>';
+    var triedBadge=isTried?'<span class="lev-tried-badge" style="background:rgba(92,184,154,.15);color:var(--green)">\u2713 Used</span>':'';
 
     h+='<div class="lev-wf-card" id="'+wf.id+'" data-cat="'+wf.cat+'" onclick="levToggleWorkflow(\''+wf.id+'\')">';
     h+='<div style="display:flex;gap:14px;align-items:flex-start">';
@@ -7116,30 +7226,21 @@ function renderLeverage(){
     h+='<div class="lev-wf-detail" onclick="event.stopPropagation()">';
     h+='<p style="font-size:14px;color:var(--text2);line-height:1.7;margin-bottom:16px">'+wf.message+'</p>';
 
-    wf.prompts.forEach(function(p,pi){
-      h+='<div style="margin-bottom:16px">';
-      h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">\u2728 '+p.label+'</div>';
-      var displayText=levPersonalizePrompt(p.text);
-      h+='<div class="lev-prompt" style="position:relative">'+displayText.replace(/\n/g,'<br>')+'</div>';
-      h+='<button class="btn btn-a" onclick="levUsePrompt(\''+wf.id+'\','+pi+',event)" style="padding:10px 20px;font-size:13px;font-weight:600;width:100%;border-radius:10px;margin-top:8px">Run in HeartWise \u2192</button>';
-      h+='<div class="lev-output"><div style="font-size:10px;font-weight:600;color:var(--green);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">What you\u2019ll get:</div><ul style="list-style:none;padding:0;margin:0">';
-      p.output.forEach(function(o){h+='<li style="font-size:13px;color:var(--text2);padding:3px 0">\u2022 '+o+'</li>'});
-      h+='</ul></div></div>';
-    });
+    // Input area
+    h+='<div style="margin-bottom:12px">';
+    h+='<label style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:8px">Describe Your Situation</label>';
+    h+='<textarea id="lev-input-'+wf.id+'" placeholder="'+wf.placeholder+'" style="width:100%;min-height:80px;padding:12px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:14px;line-height:1.6;resize:vertical;font-family:inherit" onclick="event.stopPropagation()"></textarea>';
+    h+='</div>';
+    h+='<button id="lev-btn-'+wf.id+'" class="btn btn-a" onclick="levSubmit(\''+wf.id+'\',event)" style="padding:12px 20px;font-size:14px;font-weight:600;width:100%;border-radius:10px">Get Strategic Guidance \u2192</button>';
 
-    // Result
-    h+='<div style="padding:14px 16px;background:rgba(92,184,154,.06);border:1px solid rgba(92,184,154,.12);border-radius:10px;margin-bottom:12px">';
-    h+='<div style="font-size:10px;font-weight:600;color:var(--green);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">\ud83c\udfaf Result</div>';
-    h+='<p style="font-size:13px;color:var(--text2);line-height:1.6;margin:0">'+wf.result+'</p></div>';
-
-    // Tip
-    h+='<div class="lev-tip">';
-    h+='<div style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">\ud83d\udca1 Pro Tip</div>';
-    h+='<p style="font-size:13px;color:var(--text2);line-height:1.6;margin:0">'+wf.tip+'</p></div>';
+    // Response area (hidden until generated)
+    h+='<div id="lev-resp-'+wf.id+'" style="display:none"></div>';
 
     if(wf.linkText){
       h+='<button onclick="event.stopPropagation();'+wf.linkAction+'" style="margin-top:14px;padding:10px 20px;background:var(--accent-dim);border:1px solid rgba(200,168,124,.2);border-radius:8px;color:var(--accent);font-size:13px;font-weight:600;cursor:pointer;width:100%;text-align:center">'+wf.linkText+'</button>';
     }
+
+    h+='<div style="margin-top:12px;font-size:11px;color:var(--text3);text-align:center">\u2728 No physician credits used \u2014 use as many times as you want</div>';
 
     h+='</div>'; // detail
     h+='</div>'; // card

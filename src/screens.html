@@ -628,6 +628,70 @@ Sign Out</button>
 </div>
 </div>
 
+<!-- About HeartWise Section -->
+<div style="margin-top:8px;margin-bottom:4px">
+<div style="font-size:9px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:1.5px;padding:0 4px 8px">About HeartWise</div>
+</div>
+
+<div style="margin-bottom:12px">
+<div class="card" style="cursor:pointer;padding:16px 20px" onclick="toggleFounderBio()">
+<div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:14px">👨‍⚕️ Meet the Founder</span><span style="color:var(--text3)">›</span></div>
+</div>
+</div>
+
+<!-- Founder Bio (collapsible) -->
+<div id="founder-bio" class="hidden" style="margin-bottom:12px">
+<div class="card" style="padding:24px;text-align:center">
+<img src="founder.jpg" alt="Dr. Mouzam Faroqui" style="width:90px;height:90px;border-radius:50%;object-fit:cover;object-position:center center;margin:0 auto 14px;display:block;border:3px solid rgba(200,168,124,.25);box-shadow:0 4px 20px rgba(0,0,0,.3)">
+<div class="serif" style="font-size:18px;font-weight:600;margin-bottom:4px">Mouzam Faroqui, MD, FACC</div>
+<div style="font-size:12px;color:var(--accent);font-weight:500;margin-bottom:14px">Practicing Physician · Founder of HeartWise</div>
+<div style="display:flex;flex-direction:column;align-items:center;gap:5px;margin-bottom:16px">
+<span style="font-size:11px;color:var(--text3)">🗽 NYC-Trained Physician</span>
+<span style="font-size:11px;color:var(--text3)">🏥 Former Chief Resident / Fellow</span>
+<span style="font-size:11px;color:var(--text3)">📍 Practicing Physician — Houston, TX</span>
+<span style="font-size:11px;color:var(--text3)">📊 20+ Years in Medicine</span>
+</div>
+<p style="font-size:12px;color:var(--text2);line-height:1.7;font-weight:300;margin:0 auto 14px;max-width:420px;text-align:left">From medical student to Chief Resident and cardiology fellow, my career required navigating complex decisions about training, specialization, finances, and long-term strategy.</p>
+<p style="font-size:12px;color:var(--text2);line-height:1.7;font-weight:300;margin:0 auto 14px;max-width:420px;text-align:left">I built HeartWise to help medical students, residents, and physicians make those decisions with structured frameworks, financial trajectory tools, and physician-built strategy.</p>
+<div style="padding:14px;background:linear-gradient(160deg,#f5f0e8,#ece5d8);border:1px solid rgba(200,168,124,.2);border-radius:8px">
+<p style="font-size:13px;color:#1a1620;line-height:1.7;font-weight:600;font-style:italic;margin:0;font-family:var(--font-serif)">"The decisions that shape your career shouldn't be made in the dark."</p>
+</div>
+</div>
+</div>
+
+<div style="margin-bottom:12px">
+<div class="card" style="cursor:pointer;padding:16px 20px" onclick="toggleWhyNotGpt()">
+<div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:14px">🤖 Why Not ChatGPT?</span><span style="color:var(--text3)">›</span></div>
+</div>
+</div>
+
+<!-- Why Not ChatGPT (collapsible) -->
+<div id="why-not-gpt" class="hidden" style="margin-bottom:12px">
+<div class="card" style="padding:20px">
+<div style="overflow-x:auto">
+<table style="width:100%;border-collapse:collapse;font-size:11px;border:1px solid var(--border);border-radius:10px;overflow:hidden">
+<thead>
+<tr style="background:var(--bg2)">
+<th style="text-align:left;padding:10px 12px;color:var(--text3);font-size:10px;font-weight:600"></th>
+<th style="text-align:center;padding:10px 8px;color:var(--red);font-size:10px;font-weight:600">ChatGPT / Claude</th>
+<th style="text-align:center;padding:10px 8px;color:var(--accent);font-size:10px;font-weight:600">HeartWise</th>
+</tr>
+</thead>
+<tbody>
+<tr style="border-top:1px solid var(--border)"><td style="padding:8px 12px;color:var(--text2)">Physician-specific context</td><td style="text-align:center;color:var(--red)">✗</td><td style="text-align:center;color:var(--green)">✓</td></tr>
+<tr style="border-top:1px solid var(--border);background:var(--bg2)"><td style="padding:8px 12px;color:var(--text2)">Competitive benchmarking</td><td style="text-align:center;color:var(--red)">✗</td><td style="text-align:center;color:var(--green)">✓</td></tr>
+<tr style="border-top:1px solid var(--border)"><td style="padding:8px 12px;color:var(--text2)">MGMA / RVU data models</td><td style="text-align:center;color:var(--red)">✗</td><td style="text-align:center;color:var(--green)">✓</td></tr>
+<tr style="border-top:1px solid var(--border);background:var(--bg2)"><td style="padding:8px 12px;color:var(--text2)">Saved progress & tracking</td><td style="text-align:center;color:var(--red)">✗</td><td style="text-align:center;color:var(--green)">✓</td></tr>
+<tr style="border-top:1px solid var(--border)"><td style="padding:8px 12px;color:var(--text2)">Interactive decision tools</td><td style="text-align:center;color:var(--red)">✗</td><td style="text-align:center;color:var(--green)">✓</td></tr>
+<tr style="border-top:1px solid var(--border);background:var(--bg2)"><td style="padding:8px 12px;color:var(--text2)">Physician-reviewed guidance</td><td style="text-align:center;color:var(--red)">✗</td><td style="text-align:center;color:var(--green)">✓</td></tr>
+<tr style="border-top:1px solid var(--border)"><td style="padding:8px 12px;color:var(--text2)">Career stage personalization</td><td style="text-align:center;color:var(--red)">✗</td><td style="text-align:center;color:var(--green)">✓</td></tr>
+</tbody>
+</table>
+</div>
+<p style="font-size:11px;color:var(--text2);text-align:center;margin:14px 0 0;line-height:1.6">You don't need more answers. <strong style="color:var(--accent)">You need better strategy.</strong></p>
+</div>
+</div>
+
 <div style="margin-bottom:12px">
 <div class="card" style="cursor:pointer;padding:16px 20px" onclick="showDisc()">
 <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:14px">⚕️ Disclaimer</span><span style="color:var(--text3)">›</span></div>

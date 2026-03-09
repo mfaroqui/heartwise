@@ -3948,6 +3948,8 @@ function showUpgrade(){
 function toggleNotifSettings(){document.getElementById('notif-settings').classList.toggle('hidden')}
 
 function toggleContactForm(){document.getElementById('contact-form').classList.toggle('hidden')}
+function toggleFounderBio(){document.getElementById('founder-bio').classList.toggle('hidden')}
+function toggleWhyNotGpt(){document.getElementById('why-not-gpt').classList.toggle('hidden')}
 function selectContactCat(el){var form=document.getElementById('contact-form');form.querySelectorAll('label[onclick]').forEach(function(l){l.style.borderColor='var(--border)'});el.style.borderColor='var(--accent)';var r=el.querySelector('input[type=radio]');if(r)r.checked=true}
 
 // Email notification to admin via Supabase Edge Function

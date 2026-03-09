@@ -345,7 +345,6 @@ function go(id){
   });
   const el=document.getElementById(id);if(el){el.classList.remove('hidden');el.style.display=''}
   if(id==='pg-signup'){go('pg-onboard');return}
-  document.getElementById('main-nav').classList.remove('on');
   // Scroll to top on page change
   window.scrollTo(0,0);
   if(el)el.scrollTop=0;
@@ -505,7 +504,6 @@ async function doNewPassword(e){
 
 function enterApp(){
   go('main-app');
-  document.getElementById('main-nav').classList.add('on');
   if(!U.usage)U.usage={ai:0,credits:TIERS[U.tier]?.credits||0,month:new Date().getMonth()};
   if(U.usage.month!==new Date().getMonth()){U.usage.ai=0;U.usage.credits=TIERS[U.tier]?.credits||0;U.usage.month=new Date().getMonth()}
   // Check trial expiration

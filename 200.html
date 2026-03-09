@@ -91,8 +91,7 @@ a:hover{color:var(--accent2)}
 .fg select{appearance:none;cursor:pointer}
 
 /* ===== BOTTOM NAV ===== */
-.nav{position:fixed;bottom:0;left:0;right:0;background:var(--glass);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-top:1px solid var(--border);display:none;justify-content:space-around;padding:8px 0 26px;z-index:100}
-.nav.on{display:flex}
+.nav{position:sticky;top:0;left:0;right:0;background:var(--glass);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid var(--border);display:flex;justify-content:space-around;padding:10px 0;z-index:200}
 .ni{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:9px;font-weight:500;color:var(--text3);cursor:pointer;padding:8px 12px;background:none;border:none;transition:color .25s;letter-spacing:.8px;text-transform:uppercase;font-family:var(--font-ui)}
 .ni.on,.ni:hover{color:var(--accent)}
 .ni svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
@@ -272,7 +271,7 @@ a:hover{color:var(--accent2)}
 .hiw-step:hover .hiw-icon-float{transform:scale(1.15)}
 
 /* Safe areas */
-@supports(padding-top:env(safe-area-inset-top)){.hdr{padding-top:calc(20px + env(safe-area-inset-top))}.nav{padding-bottom:calc(8px + env(safe-area-inset-bottom))}.hero{padding-top:calc(160px + env(safe-area-inset-top))}.topbar{padding-top:calc(20px + env(safe-area-inset-top))}}
+@supports(padding-top:env(safe-area-inset-top)){.hdr{padding-top:calc(20px + env(safe-area-inset-top))}.hero{padding-top:calc(160px + env(safe-area-inset-top))}.topbar{padding-top:calc(20px + env(safe-area-inset-top))}}
 ::-webkit-scrollbar{width:3px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:rgba(200,168,124,.15);border-radius:3px}
 .intake-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.intake-grid .fg{margin-bottom:12px}
 .review-banner{background:var(--accent-dim);border:1px solid rgba(200,168,124,.12);border-radius:var(--r2);padding:18px;margin-bottom:22px;display:flex;align-items:center;gap:14px}
@@ -1915,6 +1914,17 @@ ChatGPT and Claude are powerful AI tools — but they're general-purpose. <stron
 Sign Out</button>
 </div>
 
+<!-- NAV -->
+<nav class="nav" id="main-nav">
+<button class="ni on" data-scr="scr-home" onclick="navTo('scr-home',this)"><svg><use href="#i-home"/></svg>Home</button>
+<button class="ni" data-scr="scr-ask" onclick="navTo('scr-ask',this)"><svg><use href="#i-plus"/></svg>Ask</button>
+<button class="ni" data-scr="scr-archive" onclick="navTo('scr-archive',this)"><svg><use href="#i-archive"/></svg>Archive</button>
+<button class="ni" data-scr="scr-vault" onclick="navTo('scr-vault',this)"><svg><use href="#i-lock"/></svg>Frameworks</button>
+<button class="ni" data-scr="scr-leverage" id="nav-leverage" style="display:none" onclick="navTo('scr-leverage',this)"><svg><use href="#i-zap"/></svg>Leverage</button>
+<button class="ni" data-scr="scr-profile" onclick="navTo('scr-profile',this)"><svg><use href="#i-user"/></svg>Profile</button>
+<button class="ni" data-scr="scr-admin" id="nav-admin" style="display:none" onclick="navTo('scr-admin',this)"><svg><use href="#i-settings"/></svg>Admin</button>
+</nav>
+
 <!-- HOME SCREEN -->
 <div id="scr-home" class="scr on">
 <div class="hdr">
@@ -2952,16 +2962,7 @@ Sign Out</button>
 <div id="admin-content" class="pad"></div>
 </div>
 
-<!-- NAV -->
-<nav class="nav" id="main-nav">
-<button class="ni on" data-scr="scr-home" onclick="navTo('scr-home',this)"><svg><use href="#i-home"/></svg>Home</button>
-<button class="ni" data-scr="scr-ask" onclick="navTo('scr-ask',this)"><svg><use href="#i-plus"/></svg>Ask</button>
-<button class="ni" data-scr="scr-archive" onclick="navTo('scr-archive',this)"><svg><use href="#i-archive"/></svg>Archive</button>
-<button class="ni" data-scr="scr-vault" onclick="navTo('scr-vault',this)"><svg><use href="#i-lock"/></svg>Frameworks</button>
-<button class="ni" data-scr="scr-leverage" id="nav-leverage" style="display:none" onclick="navTo('scr-leverage',this)"><svg><use href="#i-zap"/></svg>Leverage</button>
-<button class="ni" data-scr="scr-profile" onclick="navTo('scr-profile',this)"><svg><use href="#i-user"/></svg>Profile</button>
-<button class="ni" data-scr="scr-admin" id="nav-admin" style="display:none" onclick="navTo('scr-admin',this)"><svg><use href="#i-settings"/></svg>Admin</button>
-</nav>
+<!-- NAV moved to top -->
 </div>
 
 
@@ -4924,7 +4925,6 @@ function go(id){
   });
   const el=document.getElementById(id);if(el){el.classList.remove('hidden');el.style.display=''}
   if(id==='pg-signup'){go('pg-onboard');return}
-  document.getElementById('main-nav').classList.remove('on');
   // Scroll to top on page change
   window.scrollTo(0,0);
   if(el)el.scrollTop=0;
@@ -5084,7 +5084,6 @@ async function doNewPassword(e){
 
 function enterApp(){
   go('main-app');
-  document.getElementById('main-nav').classList.add('on');
   if(!U.usage)U.usage={ai:0,credits:TIERS[U.tier]?.credits||0,month:new Date().getMonth()};
   if(U.usage.month!==new Date().getMonth()){U.usage.ai=0;U.usage.credits=TIERS[U.tier]?.credits||0;U.usage.month=new Date().getMonth()}
   // Check trial expiration

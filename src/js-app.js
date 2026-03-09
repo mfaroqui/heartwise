@@ -398,7 +398,7 @@ window.addEventListener('popstate',function(e){
   _skipPush=false;
 });
 
-// Push state when modal opens so back button closes it
+// Push state when modal opens so back button closes it + scroll to top
 (function(){
   var modal=document.getElementById('modal-q');
   if(!modal)return;
@@ -406,6 +406,9 @@ window.addEventListener('popstate',function(e){
     muts.forEach(function(m){
       if(m.attributeName==='class'&&!modal.classList.contains('hidden')){
         history.pushState({modal:true},'',null);
+        // Scroll modal content to top whenever it opens
+        var inner=modal.querySelector('.modal');
+        if(inner)inner.scrollTop=0;
       }
     });
   });
@@ -1166,6 +1169,9 @@ function showUpdateProfile(){
 
   document.getElementById('update-profile-fields').innerHTML=h;
   document.getElementById('modal-update-profile').classList.remove('hidden');
+  // Scroll update profile modal to top
+  var upModal=document.querySelector('#modal-update-profile > div');
+  if(upModal)upModal.scrollTop=0;
   updateProfileFields();
 }
 
@@ -3154,6 +3160,9 @@ function openFramework(id){
   if(!content){notify('Framework content loading...',1);return}
   document.getElementById('modal-q-content').innerHTML=content;
   document.getElementById('modal-q').classList.remove('hidden');
+  // Scroll modal to top
+  var modalInner=document.querySelector('#modal-q .modal');
+  if(modalInner)modalInner.scrollTop=0;
   if(id==='v1')setTimeout(frcUpdate,50);
   if(id==='v4')setTimeout(function(){rvuModelChange();rvuUpdate()},50);
   if(id==='v7')setTimeout(roiUpdate,50);

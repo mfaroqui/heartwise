@@ -5456,7 +5456,7 @@ function getScoreActions(cp,scores){
 
   // ===== MEDICAL STUDENT =====
   if(stage==='student'){
-    if(goal==='match'||goal==='specialty'||!goal){
+    if(goal==='match'||goal==='specialty'){
       if(s2>0&&s2<bench.step2) actions.push({action:'Improve Step 2 CK from '+s2+' toward '+bench.step2+' (avg matched '+spec+')',gain:'+'+(Math.min(15,Math.ceil((bench.step2-s2)/2))),priority:'high'});
       else if(!s2) actions.push({action:'Complete Step 2 CK — most important score for match',gain:'+10 to +25',priority:'high'});
       if(pubs<Math.ceil(bench.pubs)) actions.push({action:'Publish '+(pubs===0?'your first research article':pubs+1+' total publications')+' (avg matched: '+bench.pubs+')',gain:'+'+Math.min(8,(Math.ceil(bench.pubs)-pubs)*4),priority:'high'});
@@ -5472,6 +5472,8 @@ function getScoreActions(cp,scores){
       actions.push({action:'Run the Financial Trajectory Simulator for your target specialties',gain:'Clarity',priority:'high'});
       actions.push({action:'Start a budget — track spending during medical school',gain:'Foundation',priority:'medium'});
       actions.push({action:'Open a Roth IRA if you have any earned income',gain:'Compound growth',priority:'medium'});
+      actions.push({action:'Compare lifetime earnings across your top specialty choices',gain:'$1M+ decision',priority:'high'});
+      actions.push({action:'Learn the basics of disability insurance — lock in trainee rates',gain:'Protection',priority:'medium'});
     }
     if(goal==='direction'){
       actions.push({action:'Run the Specialty Fit Analyzer — match values to specialties',gain:'Clarity',priority:'high'});
@@ -5479,11 +5481,21 @@ function getScoreActions(cp,scores){
       actions.push({action:'Compare financial trajectories for your top 3 specialties',gain:'Data',priority:'medium'});
       actions.push({action:'Talk to residents in each specialty about lifestyle realities',gain:'Perspective',priority:'medium'});
     }
+    if(goal==='contract'){
+      actions.push({action:'Learn contract terminology — use the Contract Intelligence Tool',gain:'Knowledge',priority:'high'});
+      actions.push({action:'Understand the difference between salary, RVU, and hybrid models',gain:'Foundation',priority:'high'});
+      actions.push({action:'Run the Financial Trajectory Simulator to see how contracts impact wealth',gain:'Clarity',priority:'medium'});
+    }
+    if(!goal){
+      actions.push({action:'Set your primary career goal in your profile to get specific actions',gain:'Focus',priority:'high'});
+      actions.push({action:'Run the Specialty Fit Analyzer to clarify your direction',gain:'Clarity',priority:'high'});
+      actions.push({action:'Explore the Framework Library — discover which tools help you most',gain:'Awareness',priority:'medium'});
+    }
   }
 
   // ===== RESIDENT =====
   if(stage==='resident'){
-    if(goal==='match'||goal==='specialty'||!goal){
+    if(goal==='match'||goal==='specialty'){
       if(pubs<Math.ceil(bench.pubs)) actions.push({action:'Publish '+(pubs===0?'your first paper':pubs+1+' total')+ ' — avg matched '+(spec||'fellow')+': '+bench.pubs+' pubs',gain:'+'+Math.min(8,(Math.ceil(bench.pubs)-pubs)*4),priority:'high'});
       if(conf<Math.ceil(bench.conferences)) actions.push({action:'Present at a national conference ('+Math.ceil(bench.conferences)+' avg for matched applicants)',gain:'+'+Math.min(4,(Math.ceil(bench.conferences)-conf)*2),priority:'high'});
       if(cp.lorStrength!=='strong') actions.push({action:'Secure strong fellowship LORs from division chief or PD',gain:'+5',priority:'high'});
@@ -5499,11 +5511,12 @@ function getScoreActions(cp,scores){
       actions.push({action:'Understand RVU compensation — run the RVU Modeler',gain:'Insight',priority:'medium'});
     }
     if(goal==='finance'){
-      var debt=parseInt(String(cp.debt||'0').replace(/[^0-9]/g,''))||0;
-      if(debt>200000) actions.push({action:'Evaluate PSLF eligibility — could save $200K+',gain:'Saves $200K+',priority:'high'});
+      var debtR=parseInt(String(cp.debt||'0').replace(/[^0-9]/g,''))||0;
+      if(debtR>200000) actions.push({action:'Evaluate PSLF eligibility — could save $200K+',gain:'Saves $200K+',priority:'high'});
       actions.push({action:'Run your 30-year financial trajectory for target specialty',gain:'Roadmap',priority:'high'});
       actions.push({action:'Get disability insurance while still in training (lower rates)',gain:'Protection',priority:'high'});
       actions.push({action:'Start tracking net worth monthly — build the habit',gain:'Awareness',priority:'medium'});
+      actions.push({action:'Calculate your loan interest rate vs investment returns — optimize',gain:'$50K+ impact',priority:'medium'});
     }
     if(goal==='direction'){
       actions.push({action:'Run the Specialty Fit Analyzer with updated values',gain:'Clarity',priority:'high'});
@@ -5511,11 +5524,16 @@ function getScoreActions(cp,scores){
       actions.push({action:'Talk to attendings in 2 specialties you\'re considering',gain:'Perspective',priority:'medium'});
       actions.push({action:'Compare financial trajectories of current vs new path',gain:'Insight',priority:'medium'});
     }
+    if(!goal){
+      actions.push({action:'Set your primary career goal in your profile to get specific actions',gain:'Focus',priority:'high'});
+      actions.push({action:'Explore the Framework Library — discover which tools help you most',gain:'Awareness',priority:'high'});
+      actions.push({action:'Run the Match Competitiveness Calculator for your target',gain:'Baseline',priority:'medium'});
+    }
   }
 
   // ===== FELLOW =====
   if(stage==='fellow'){
-    if(goal==='match'||goal==='specialty'||!goal){
+    if(goal==='match'||goal==='specialty'){
       if(fa<3) actions.push({action:'Publish '+(fa+1)+' first-author papers (critical for advanced fellowship)',gain:'+6',priority:'high'});
       if(pubs<6) actions.push({action:'Reach '+(pubs+2)+' total publications',gain:'+4',priority:'high'});
       if(conf<2) actions.push({action:'Present at ACC/AHA/specialty national meeting',gain:'+3',priority:'high'});
@@ -5530,50 +5548,61 @@ function getScoreActions(cp,scores){
       if(cp.boards!=='certified') actions.push({action:'Complete board certification before job negotiations',gain:'Credibility',priority:'medium'});
     }
     if(goal==='finance'){
-      var debt=parseInt(String(cp.debt||'0').replace(/[^0-9]/g,''))||0;
+      var debtF=parseInt(String(cp.debt||'0').replace(/[^0-9]/g,''))||0;
       actions.push({action:'Model your attending income trajectory — plan before you earn',gain:'$500K+ impact',priority:'high'});
-      if(debt>0) actions.push({action:'Finalize PSLF vs refinance decision before attending salary starts',gain:'Saves $100K+',priority:'high'});
+      if(debtF>0) actions.push({action:'Finalize PSLF vs refinance decision before attending salary starts',gain:'Saves $100K+',priority:'high'});
       actions.push({action:'Plan to live like a fellow for 2-3 years after graduating',gain:'$1M+ by age 45',priority:'high'});
       actions.push({action:'Set up disability and life insurance',gain:'Protection',priority:'medium'});
+      actions.push({action:'Open backdoor Roth IRA — maximize tax-advantaged space',gain:'$50K+ over 20 years',priority:'medium'});
     }
     if(goal==='direction'){
       actions.push({action:'Run the Career Pivot Decision Engine — model the financial cost',gain:'Data',priority:'high'});
       actions.push({action:'Re-run the Specialty Fit Analyzer with updated values',gain:'Clarity',priority:'high'});
       actions.push({action:'Submit a Strategic Audit to Dr. Faroqui for structured review',gain:'Expert input',priority:'medium'});
     }
+    if(!goal){
+      actions.push({action:'Set your primary career goal to get personalized actions',gain:'Focus',priority:'high'});
+      actions.push({action:'Score your upcoming contract with the Contract Intelligence Tool',gain:'Preparation',priority:'high'});
+      actions.push({action:'Run your 30-year financial trajectory',gain:'Roadmap',priority:'medium'});
+    }
   }
 
   // ===== ATTENDING =====
   if(stage==='attending'){
-    if(goal==='contract'||!goal){
-      var comp=parseInt(String(cp.comp||'0').replace(/[^0-9]/g,''))||0;
-      if(comp>0) actions.push({action:'Benchmark your compensation against MGMA data for '+(spec||'your specialty'),gain:'Know your worth',priority:'high'});
+    if(goal==='contract'){
+      var compA=parseInt(String(cp.comp||'0').replace(/[^0-9]/g,''))||0;
+      if(compA>0) actions.push({action:'Benchmark your compensation against MGMA data for '+(spec||'your specialty'),gain:'Know your worth',priority:'high'});
       actions.push({action:'Score your current contract with the Contract Intelligence Tool',gain:'Risk awareness',priority:'high'});
       actions.push({action:'Practice renegotiation with Mock Interview Simulator',gain:'+$30K-$100K/yr',priority:'high'});
       if(cp.noncompete==='yes') actions.push({action:'Review non-compete clause with healthcare attorney',gain:'Protection',priority:'medium'});
       if(cp.compmodel==='salary') actions.push({action:'Explore RVU-based compensation — model with RVU Calculator',gain:'Potential +$80K+',priority:'medium'});
     }
     if(goal==='finance'){
-      var debt=parseInt(String(cp.debt||'0').replace(/[^0-9]/g,''))||0;
-      var nw=parseInt(String(cp.networth||'0').replace(/[^0-9]/g,''))||0;
+      var debtA=parseInt(String(cp.debt||'0').replace(/[^0-9]/g,''))||0;
       actions.push({action:'Run your 30-year financial trajectory — are you on track?',gain:'Roadmap',priority:'high'});
       if(cp.savingsrate==='<10%'||cp.savingsrate==='10-20%') actions.push({action:'Increase savings rate to 20%+ of gross income',gain:'$1M+ by age 55',priority:'high'});
-      if(debt>100000) actions.push({action:'Accelerate loan payoff — '+(debt>200000?'consider refinancing':'aggressive payoff plan'),gain:'Saves $'+Math.round(debt*0.15/1000)+'K+ in interest',priority:'high'});
+      if(debtA>100000) actions.push({action:'Accelerate loan payoff — '+(debtA>200000?'consider refinancing':'aggressive payoff plan'),gain:'Saves $'+Math.round(debtA*0.15/1000)+'K+ in interest',priority:'high'});
       actions.push({action:'Review tax optimization — max all tax-advantaged accounts',gain:'$20K+/yr in tax savings',priority:'medium'});
       actions.push({action:'Update estate plan (will, trust, beneficiaries)',gain:'Protection',priority:'medium'});
+      actions.push({action:'Evaluate investment allocation — are you too conservative?',gain:'Growth',priority:'medium'});
     }
     if(goal==='direction'){
-      var sat=parseInt(cp.satisfaction)||0;
-      if(sat>0&&sat<6) actions.push({action:'Run the Career Pivot Decision Engine — your satisfaction is '+sat+'/10',gain:'Clarity',priority:'high'});
+      var satA=parseInt(cp.satisfaction)||0;
+      if(satA>0&&satA<6) actions.push({action:'Run the Career Pivot Decision Engine — your satisfaction is '+satA+'/10',gain:'Clarity',priority:'high'});
       actions.push({action:'Re-run the Specialty Fit Analyzer — priorities change over time',gain:'Self-awareness',priority:'high'});
       actions.push({action:'Submit a Strategic Audit to Dr. Faroqui',gain:'Expert guidance',priority:'high'});
       actions.push({action:'Compare financial trajectories: stay vs pivot',gain:'Data',priority:'medium'});
       if(cp.considering==='active') actions.push({action:'Build a 12-month financial bridge plan before making a move',gain:'Safety net',priority:'high'});
     }
-    if(goal==='specialty'){
+    if(goal==='specialty'||goal==='match'){
       actions.push({action:'Run the Specialty Fit Analyzer with current values and priorities',gain:'Clarity',priority:'high'});
       actions.push({action:'Model the financial cost of retraining with Financial Simulator',gain:'Data',priority:'high'});
       actions.push({action:'Use the Career Pivot Decision Engine for structured analysis',gain:'Framework',priority:'medium'});
+    }
+    if(!goal){
+      actions.push({action:'Set your primary career goal to get personalized actions',gain:'Focus',priority:'high'});
+      actions.push({action:'Score your current contract with the Contract Intelligence Tool',gain:'Baseline',priority:'high'});
+      actions.push({action:'Run your 30-year financial trajectory',gain:'Roadmap',priority:'medium'});
     }
   }
 

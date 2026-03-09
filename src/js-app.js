@@ -6998,10 +6998,20 @@ function levUsePrompt(wfId,promptIdx,ev){
   if(!wf)return;
   var p=wf.prompts[promptIdx];if(!p)return;
   var text=levPersonalizePrompt(p.text);
-  navigator.clipboard.writeText(text).then(function(){
-    notify('Prompt copied \u2014 paste into ChatGPT, Claude, or any tool');
-    levMarkTried(wfId,ev);
-  }).catch(function(){notify('Couldn\u2019t copy \u2014 try manually',1)});
+  // Map workflow categories to Ask screen categories
+  var catMap={learning:'study',research:'research',career:'career',productivity:'career'};
+  levMarkTried(wfId,null);
+  // Navigate to Ask screen and prefill
+  navTo('scr-ask');
+  setTimeout(function(){
+    var coreEl=document.getElementById('q-core');
+    if(coreEl)coreEl.value=text;
+    var catEl=document.getElementById('q-cat');
+    if(catEl&&catMap[wf.cat])catEl.value=catMap[wf.cat];
+    var contextEl=document.getElementById('q-context');
+    if(contextEl)contextEl.value='[Via Strategic Leverage: '+wf.title+']';
+  },100);
+  notify('Prompt loaded — review and submit when ready');
 }
 
 function levPersonalizePrompt(text){
@@ -7013,13 +7023,6 @@ function levPersonalizePrompt(text){
     return text.replace(/SPEC_SPECIALTY/g,spec).replace(/SPEC_TOPIC/g,'a topic in '+spec).replace(/SPEC_STAGE/g,stage);
   }
   return text.replace(/SPEC_SPECIALTY/g,'[your specialty]').replace(/SPEC_TOPIC/g,'[your topic]').replace(/SPEC_STAGE/g,'[your training level]');
-}
-
-function levCopyPrompt(btn,rawText){
-  var text=levPersonalizePrompt(rawText);
-  navigator.clipboard.writeText(text).then(function(){
-    btn.textContent='Copied!';setTimeout(function(){btn.textContent='Copy'},1500);
-  }).catch(function(){});
 }
 
 function levFilter(cat,btn){
@@ -7115,13 +7118,11 @@ function renderLeverage(){
 
     wf.prompts.forEach(function(p,pi){
       h+='<div style="margin-bottom:16px">';
-      h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">';
-      h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px">\u2728 '+p.label+'</div>';
-      h+='<button class="btn btn-a" onclick="levUsePrompt(\''+wf.id+'\','+pi+',event)" style="padding:6px 14px;font-size:11px;min-width:auto;width:auto;border-radius:8px">Use This \u2192</button>';
-      h+='</div>';
+      h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">\u2728 '+p.label+'</div>';
       var displayText=levPersonalizePrompt(p.text);
-      h+='<div class="lev-prompt"><button class="lev-prompt-copy" onclick="levCopyPrompt(this,'+JSON.stringify(p.text).replace(/'/g,"\\'")+')">Copy</button>'+displayText.replace(/\n/g,'<br>')+'</div>';
-      h+='<div class="lev-output"><div style="font-size:10px;font-weight:600;color:var(--green);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">What you get:</div><ul style="list-style:none;padding:0;margin:0">';
+      h+='<div class="lev-prompt" style="position:relative">'+displayText.replace(/\n/g,'<br>')+'</div>';
+      h+='<button class="btn btn-a" onclick="levUsePrompt(\''+wf.id+'\','+pi+',event)" style="padding:10px 20px;font-size:13px;font-weight:600;width:100%;border-radius:10px;margin-top:8px">Run in HeartWise \u2192</button>';
+      h+='<div class="lev-output"><div style="font-size:10px;font-weight:600;color:var(--green);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">What you\u2019ll get:</div><ul style="list-style:none;padding:0;margin:0">';
       p.output.forEach(function(o){h+='<li style="font-size:13px;color:var(--text2);padding:3px 0">\u2022 '+o+'</li>'});
       h+='</ul></div></div>';
     });

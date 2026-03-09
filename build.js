@@ -29,3 +29,11 @@ console.log('Built index.html:', (fs.statSync(outPath).size / 1024).toFixed(1), 
 // Copy to 200.html
 fs.copyFileSync(outPath, path.join(__dirname, '200.html'));
 console.log('Copied to 200.html');
+
+// Sync to deploy/
+const deployDir = path.join(__dirname, 'deploy');
+if (fs.existsSync(deployDir)) {
+  fs.copyFileSync(outPath, path.join(deployDir, 'index.html'));
+  fs.copyFileSync(path.join(__dirname, '200.html'), path.join(deployDir, '200.html'));
+  console.log('Synced to deploy/');
+}

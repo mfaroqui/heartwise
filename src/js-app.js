@@ -261,7 +261,66 @@ function hookShowResults(){
   document.getElementById('hook-demos').innerHTML=dhtml;
 
   document.getElementById('hook-results').style.display='';
+  var liveDemo=document.getElementById('hook-live-demo');
+  if(liveDemo)liveDemo.style.display='';
   setTimeout(function(){document.getElementById('hook-results').scrollIntoView({behavior:'smooth',block:'nearest'})},100);
+}
+
+var _demoLevUses=parseInt(localStorage.getItem('hw_demo_lev_uses')||'0');
+function demoLevRun(){
+  if(_demoLevUses>=2){
+    document.getElementById('demo-lev-input').style.display='none';
+    document.getElementById('demo-lev-btn').style.display='none';
+    document.getElementById('demo-lev-result').style.display='none';
+    document.getElementById('demo-lev-limit').style.display='';
+    return;
+  }
+  var input=document.getElementById('demo-lev-input');
+  if(!input)return;
+  var text=input.value.trim();
+  if(!text||text.length<3){notify('Enter a medical concept to simplify',1);return}
+  var btn=document.getElementById('demo-lev-btn');
+  btn.textContent='Thinking...';btn.disabled=true;
+
+  setTimeout(function(){
+    var topic=text.substring(0,200);
+    var answer='Break "'+topic+'" into three layers. First, the simple version a patient could understand: think of it as '+
+      (topic.length>20?'a system where ':'a process that ')+
+      'the body uses to maintain balance. Second, the mechanism: this involves specific physiological pathways with measurable parameters that change predictably under different conditions. '+
+      'Third, the clinical relevance: understanding this concept explains why certain drugs work, why certain symptoms appear, and what to look for on boards.';
+    var aiTip='Use HeartWise Ask to get any concept broken down at the level you need. Type the topic and ask for a simple analogy, the step-by-step mechanism, and clinical pearls for boards. It adapts to your training level.';
+    var nextStep='Go to Ask and type: "Explain '+topic+' with a simple analogy, then the mechanism, then clinical pearls for boards." You\'ll get a breakdown you can actually teach back.';
+
+    var h='<div style="border-top:1px solid var(--border);padding-top:14px">';
+    h+='<div style="margin-bottom:14px"><div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Direct Answer</div>';
+    h+='<p style="font-size:13px;color:var(--text2);line-height:1.7;margin:0">'+answer+'</p></div>';
+    h+='<div style="margin-bottom:14px;padding:12px 14px;background:rgba(200,168,124,.06);border:1px solid rgba(200,168,124,.12);border-radius:8px">';
+    h+='<div style="font-size:11px;font-weight:600;color:var(--accent);margin-bottom:4px">💡 How to go deeper with HeartWise</div>';
+    h+='<p style="font-size:12px;color:var(--text2);line-height:1.6;margin:0">'+aiTip+'</p></div>';
+    h+='<div><div style="font-size:11px;font-weight:600;color:var(--green);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Your Next Step</div>';
+    h+='<p style="font-size:12px;color:var(--text2);line-height:1.6;margin:0">'+nextStep+'</p></div>';
+    if(_demoLevUses===0){
+      h+='<div style="text-align:center;margin-top:16px;padding-top:14px;border-top:1px solid var(--border)">';
+      h+='<div style="font-size:12px;color:var(--text3);margin-bottom:8px">This is 1 of 10 strategic tools. Try one more, or:</div>';
+      h+='<button onclick="go(\'pg-onboard\')" class="btn btn-a btn-sm" style="width:auto;padding:10px 24px">Start Free Trial →</button></div>';
+    }else{
+      h+='<div style="text-align:center;margin-top:16px;padding-top:14px;border-top:1px solid var(--border)">';
+      h+='<div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:8px">Like what you see?</div>';
+      h+='<button onclick="go(\'pg-onboard\')" style="padding:12px 32px;font-size:14px;font-weight:600;color:#0a0a0f;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:10px;cursor:pointer">Start 48-Hour Free Access →</button>';
+      h+='<p style="font-size:11px;color:var(--text3);margin-top:8px">No credit card required.</p></div>';
+    }
+    h+='</div>';
+    document.getElementById('demo-lev-result').innerHTML=h;
+    document.getElementById('demo-lev-result').style.display='';
+    _demoLevUses++;
+    localStorage.setItem('hw_demo_lev_uses',String(_demoLevUses));
+    btn.textContent='Simplify This Concept →';btn.disabled=false;
+    if(_demoLevUses>=2){
+      input.value='';input.placeholder='Sign up to keep using this tool...';input.disabled=true;
+      btn.textContent='Start Free Trial →';btn.onclick=function(){go('pg-onboard')};
+    }
+    document.getElementById('demo-lev-result').scrollIntoView({behavior:'smooth',block:'nearest'});
+  },800);
 }
 
 document.addEventListener('click',function(e){

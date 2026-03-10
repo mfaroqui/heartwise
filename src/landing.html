@@ -172,6 +172,30 @@
 <!-- Demo previews -->
 <div id="hook-demos" style="display:flex;flex-direction:column;gap:14px;margin-bottom:24px"></div>
 
+<!-- Interactive Leverage Demo -->
+<div id="hook-live-demo" style="display:none;margin-bottom:24px">
+<div style="text-align:center;margin-bottom:14px">
+<div style="font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px">✦ Try it yourself</div>
+<div style="font-size:15px;font-weight:600;color:var(--text);line-height:1.4">See what a Leverage tool actually does</div>
+</div>
+<div style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:20px;position:relative;overflow:hidden">
+<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+<span style="font-size:20px">🧠</span>
+<div>
+<div style="font-size:14px;font-weight:600;color:var(--text)">Concept Simplifier</div>
+<div style="font-size:11px;color:var(--text3)">Break down any complex medical concept into layers you can actually teach</div>
+</div>
+</div>
+<textarea id="demo-lev-input" placeholder="Try it — enter any medical concept (e.g. Frank-Starling mechanism, RAAS pathway, heart failure with preserved EF...)" style="width:100%;min-height:70px;padding:12px 14px;background:var(--bg);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:14px;line-height:1.6;resize:vertical;font-family:inherit;box-sizing:border-box" onclick="event.stopPropagation()"></textarea>
+<button id="demo-lev-btn" onclick="demoLevRun()" style="margin-top:10px;padding:12px 28px;font-size:14px;font-weight:600;color:#0a0a0f;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:10px;cursor:pointer;width:100%">Simplify This Concept →</button>
+<div id="demo-lev-result" style="display:none;margin-top:14px"></div>
+<div id="demo-lev-limit" style="display:none;text-align:center;padding:16px;margin-top:14px">
+<div style="font-size:13px;color:var(--text2);margin-bottom:10px">You've used your free previews. Sign up to unlock all 10 tools.</div>
+<button onclick="go('pg-onboard')" class="btn btn-a" style="max-width:260px;margin:0 auto">Start 48-Hour Free Access →</button>
+</div>
+</div>
+</div>
+
 <!-- Personalization reminder + CTA -->
 <div style="text-align:center;padding:18px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;margin-bottom:16px">
 <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:6px">Ready to see <em>your</em> numbers?</div>

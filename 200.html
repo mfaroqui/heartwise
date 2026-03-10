@@ -2838,7 +2838,7 @@ Sign Out</button>
 </div>
 
 <!-- Hero -->
-<div style="padding:20px 24px 0">
+<div id="lev-hero" style="padding:20px 24px 0">
 <div style="background:linear-gradient(160deg,#f5f0e8,#ece5d8);border:1px solid rgba(200,168,124,.35);border-radius:16px;padding:32px 28px;position:relative;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,.15)">
 <div style="position:absolute;top:-30%;right:-15%;width:180px;height:180px;background:radial-gradient(circle,rgba(200,168,124,.2),transparent 65%);border-radius:50%"></div>
 <div style="position:absolute;bottom:-20%;left:-10%;width:140px;height:140px;background:radial-gradient(circle,rgba(200,168,124,.12),transparent 60%);border-radius:50%"></div>
@@ -11586,17 +11586,23 @@ function renderLeverage(){
   if(!U)return;
   var hasAccess=(U.tier==='elite'&&!U.isTrial)||U.tier==='admin';
   var isCore=U.tier==='core';
+  var hero=document.getElementById('lev-hero');
   if(!hasAccess&&!isCore){
+    if(hero)hero.style.display='none';
+    document.getElementById('lev-quiz-section').style.display='none';
+    document.getElementById('lev-progress-bar').style.display='none';
     document.getElementById('lev-workflow-list').innerHTML='<div style="text-align:center;padding:40px 20px"><div style="font-size:48px;margin-bottom:16px">\ud83d\udd12</div><div style="font-size:16px;font-weight:600;color:var(--text);margin-bottom:8px">Elite Strategy Members Only</div><p style="font-size:13px;color:var(--text3);line-height:1.6;margin-bottom:20px">Strategic Leverage tools are available exclusively to Elite Strategy subscribers.</p><button class="btn btn-a" onclick="navTo(\'scr-profile\');showUpgrade()" style="max-width:240px;margin:0 auto">View Elite Plan \u2192</button></div>';
     return;
   }
   if(isCore){
+    if(hero)hero.style.display='none';
     document.getElementById('lev-quiz-section').style.display='none';
     document.getElementById('lev-progress-bar').style.display='none';
     document.getElementById('lev-workflow-list').innerHTML='<div style="text-align:center;padding:48px 24px"><div style="font-size:40px;margin-bottom:16px">\ud83d\udd12</div><div style="font-family:var(--font-serif);font-size:20px;font-weight:600;color:var(--text);margin-bottom:12px">Strategic Leverage is an Elite Feature</div><p style="font-size:14px;color:var(--text2);line-height:1.7;margin-bottom:24px;max-width:380px;margin-left:auto;margin-right:auto">This section includes 10 interactive strategy tools covering research, networking, career planning, and more. It\u2019s available exclusively with an Elite Strategy subscription.</p><div style="display:flex;flex-direction:column;gap:10px;max-width:280px;margin:0 auto"><button class="btn btn-a" onclick="navTo(\'scr-profile\');showUpgrade()">View Elite Plan \u2192</button><button style="font-size:12px;color:var(--text3);background:none;border:none;cursor:pointer;padding:8px" onclick="navTo(\'scr-vault\')">Browse Free Frameworks</button></div></div>';
     return;
   }
   // Full access
+  if(hero)hero.style.display='';
   document.getElementById('lev-quiz-section').style.display='';
   document.getElementById('lev-progress-bar').style.display='';
   if(!U.leverageTried)U.leverageTried=[];

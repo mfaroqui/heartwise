@@ -6969,17 +6969,23 @@ function renderLeverage(){
   if(!U)return;
   var hasAccess=(U.tier==='elite'&&!U.isTrial)||U.tier==='admin';
   var isCore=U.tier==='core';
+  var hero=document.getElementById('lev-hero');
   if(!hasAccess&&!isCore){
+    if(hero)hero.style.display='none';
+    document.getElementById('lev-quiz-section').style.display='none';
+    document.getElementById('lev-progress-bar').style.display='none';
     document.getElementById('lev-workflow-list').innerHTML='<div style="text-align:center;padding:40px 20px"><div style="font-size:48px;margin-bottom:16px">\ud83d\udd12</div><div style="font-size:16px;font-weight:600;color:var(--text);margin-bottom:8px">Elite Strategy Members Only</div><p style="font-size:13px;color:var(--text3);line-height:1.6;margin-bottom:20px">Strategic Leverage tools are available exclusively to Elite Strategy subscribers.</p><button class="btn btn-a" onclick="navTo(\'scr-profile\');showUpgrade()" style="max-width:240px;margin:0 auto">View Elite Plan \u2192</button></div>';
     return;
   }
   if(isCore){
+    if(hero)hero.style.display='none';
     document.getElementById('lev-quiz-section').style.display='none';
     document.getElementById('lev-progress-bar').style.display='none';
     document.getElementById('lev-workflow-list').innerHTML='<div style="text-align:center;padding:48px 24px"><div style="font-size:40px;margin-bottom:16px">\ud83d\udd12</div><div style="font-family:var(--font-serif);font-size:20px;font-weight:600;color:var(--text);margin-bottom:12px">Strategic Leverage is an Elite Feature</div><p style="font-size:14px;color:var(--text2);line-height:1.7;margin-bottom:24px;max-width:380px;margin-left:auto;margin-right:auto">This section includes 10 interactive strategy tools covering research, networking, career planning, and more. It\u2019s available exclusively with an Elite Strategy subscription.</p><div style="display:flex;flex-direction:column;gap:10px;max-width:280px;margin:0 auto"><button class="btn btn-a" onclick="navTo(\'scr-profile\');showUpgrade()">View Elite Plan \u2192</button><button style="font-size:12px;color:var(--text3);background:none;border:none;cursor:pointer;padding:8px" onclick="navTo(\'scr-vault\')">Browse Free Frameworks</button></div></div>';
     return;
   }
   // Full access
+  if(hero)hero.style.display='';
   document.getElementById('lev-quiz-section').style.display='';
   document.getElementById('lev-progress-bar').style.display='';
   if(!U.leverageTried)U.leverageTried=[];

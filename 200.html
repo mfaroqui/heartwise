@@ -5268,8 +5268,8 @@ function enterApp(){
   b.textContent=U.tier==='admin'?'MENTOR':TIERS[U.tier]?.name?.toUpperCase()||'FREE';
   document.getElementById('welcome-msg').textContent='Welcome, Dr. '+U.name.split(' ').pop();
   document.getElementById('nav-admin').style.display=U.tier==='admin'?'':'none';
-  // Show Leverage tab for elite (non-trial), core, and admin
-  var showLev=(U.tier==='elite'&&!U.isTrial)||U.tier==='core'||U.tier==='admin';
+  // Show Leverage tab for elite (non-trial) and admin only
+  var showLev=(U.tier==='elite'&&!U.isTrial)||U.tier==='admin';
   document.getElementById('nav-leverage').style.display=showLev?'':'none';
   document.getElementById('upgrade-prompt').style.display=U.tier==='free'?'':'none';
   var topUpgrade=document.getElementById('topbar-upgrade');

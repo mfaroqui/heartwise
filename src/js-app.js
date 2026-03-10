@@ -5042,9 +5042,23 @@ function renderAdmin(){
     c.innerHTML='<div class="stats" style="padding:0"><div class="st"><div class="st-n">'+total+'</div><div class="st-l">Total</div></div><div class="st"><div class="st-n">'+ans+'</div><div class="st-l">Reviewed</div></div><div class="st"><div class="st-n">'+pend+'</div><div class="st-l">Pending</div></div><div class="st"><div class="st-n">'+userCount2+'</div><div class="st-l">Members</div></div></div><div class="sec" style="padding:20px 0 14px">By Category</div>'+Object.entries(cats).map(([k,v])=>'<div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px"><span>'+(CATS[k]||k)+'</span><span style="color:var(--text3)">'+v+'</span></div>').join('');
   }
 }
-function adminTab(tab,btn){curAdminTab=tab;document.querySelectorAll('.atab').forEach(t=>t.classList.remove('on'));btn.classList.add('on');
+function adminTab(tab,btn){curAdminTab=tab;document.querySelectorAll('.atab').forEach(function(t){t.classList.remove('on')});if(btn)btn.classList.add('on');
   // Load from Supabase for all admin tabs
-  if(_supaClient){loadAdminDataFromSupabase(tab)}else{renderAdmin()}
+  if(_supaClient){loadAdminDataFromSupabase(tab)}else{try{renderAdmin()}catch(e){console.error('renderAdmin error',e)}}
+}
+
+function openAdmin(){
+  // Direct admin open — bypasses navTo completely
+  document.querySelectorAll('.scr').forEach(function(s){s.style.display='none'});
+  var admin=document.getElementById('scr-admin');
+  if(admin){admin.style.display='block'}
+  document.querySelectorAll('.ni').forEach(function(n){
+    n.classList.remove('on');
+    if(n.getAttribute('data-scr')==='scr-admin')n.classList.add('on');
+  });
+  window.scrollTo(0,0);
+  curAdminTab=curAdminTab||'queue';
+  if(_supaClient){loadAdminDataFromSupabase(curAdminTab)}else{try{renderAdmin()}catch(e){console.error(e)}}
 }
 
 async function loadAdminDataFromSupabase(tab){

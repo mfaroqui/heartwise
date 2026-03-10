@@ -1920,7 +1920,7 @@ Sign Out</button>
 <button class="ni" data-scr="scr-vault" onclick="navTo('scr-vault',this)"><svg><use href="#i-lock"/></svg>Frameworks</button>
 <button class="ni" data-scr="scr-leverage" id="nav-leverage" style="display:none" onclick="navTo('scr-leverage',this)"><svg><use href="#i-zap"/></svg>Leverage</button>
 <button class="ni" data-scr="scr-profile" onclick="navTo('scr-profile',this)"><svg><use href="#i-user"/></svg>Profile</button>
-<button class="ni" data-scr="scr-admin" id="nav-admin" style="display:none" onclick="navTo('scr-admin',this)"><svg><use href="#i-settings"/></svg>Admin</button>
+<button class="ni" data-scr="scr-admin" id="nav-admin" style="display:none" onclick="openAdmin()"><svg><use href="#i-settings"/></svg>Admin</button>
 </nav>
 
 <!-- HOME SCREEN -->
@@ -2948,17 +2948,23 @@ Sign Out</button>
 
 <!-- ADMIN SCREEN -->
 <div id="scr-admin" class="scr">
-<div class="hdr"><div class="hdr-t serif" style="font-size:20px">Admin Panel</div><span class="badge b-admin">MENTOR</span></div>
-<div style="padding:0 24px">
-<div class="admin-tabs" style="display:flex;gap:4px;overflow-x:auto;padding:12px 0;border-bottom:1px solid var(--border)">
+<div style="padding:20px 24px 100px">
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+<div style="display:flex;align-items:center;gap:10px">
+<div style="font-family:var(--font-serif);font-size:22px;font-weight:600;color:var(--text)">Admin Panel</div>
+<span class="badge b-admin">MENTOR</span>
+</div>
+<button onclick="navTo('scr-home')" style="font-size:12px;color:var(--text3);background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:6px 14px;cursor:pointer">← Back</button>
+</div>
+<div style="display:flex;gap:6px;overflow-x:auto;padding-bottom:12px;border-bottom:1px solid var(--border);margin-bottom:16px">
 <button class="atab on" onclick="adminTab('queue',this)">Queue</button>
 <button class="atab" onclick="adminTab('reviewed',this)">Published</button>
 <button class="atab" onclick="adminTab('users',this)">Users</button>
 <button class="atab" onclick="adminTab('messages',this)">Messages</button>
 <button class="atab" onclick="adminTab('stats',this)">Stats</button>
 </div>
-<div id="admin-info" style="font-size:12px;color:var(--text3);margin:12px 0">Loading admin data...</div>
-<div id="admin-content" style="padding-bottom:100px">
+<div id="admin-info" style="font-size:12px;color:var(--text3);margin-bottom:16px">Loading admin data...</div>
+<div id="admin-content">
 <div style="text-align:center;padding:40px;color:var(--text3)">Loading...</div>
 </div>
 </div>
@@ -9624,9 +9630,23 @@ function renderAdmin(){
     c.innerHTML='<div class="stats" style="padding:0"><div class="st"><div class="st-n">'+total+'</div><div class="st-l">Total</div></div><div class="st"><div class="st-n">'+ans+'</div><div class="st-l">Reviewed</div></div><div class="st"><div class="st-n">'+pend+'</div><div class="st-l">Pending</div></div><div class="st"><div class="st-n">'+userCount2+'</div><div class="st-l">Members</div></div></div><div class="sec" style="padding:20px 0 14px">By Category</div>'+Object.entries(cats).map(([k,v])=>'<div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px"><span>'+(CATS[k]||k)+'</span><span style="color:var(--text3)">'+v+'</span></div>').join('');
   }
 }
-function adminTab(tab,btn){curAdminTab=tab;document.querySelectorAll('.atab').forEach(t=>t.classList.remove('on'));btn.classList.add('on');
+function adminTab(tab,btn){curAdminTab=tab;document.querySelectorAll('.atab').forEach(function(t){t.classList.remove('on')});if(btn)btn.classList.add('on');
   // Load from Supabase for all admin tabs
-  if(_supaClient){loadAdminDataFromSupabase(tab)}else{renderAdmin()}
+  if(_supaClient){loadAdminDataFromSupabase(tab)}else{try{renderAdmin()}catch(e){console.error('renderAdmin error',e)}}
+}
+
+function openAdmin(){
+  // Direct admin open — bypasses navTo completely
+  document.querySelectorAll('.scr').forEach(function(s){s.style.display='none'});
+  var admin=document.getElementById('scr-admin');
+  if(admin){admin.style.display='block'}
+  document.querySelectorAll('.ni').forEach(function(n){
+    n.classList.remove('on');
+    if(n.getAttribute('data-scr')==='scr-admin')n.classList.add('on');
+  });
+  window.scrollTo(0,0);
+  curAdminTab=curAdminTab||'queue';
+  if(_supaClient){loadAdminDataFromSupabase(curAdminTab)}else{try{renderAdmin()}catch(e){console.error(e)}}
 }
 
 async function loadAdminDataFromSupabase(tab){

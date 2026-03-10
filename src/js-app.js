@@ -4664,566 +4664,374 @@ function handleCheckoutReturn(){
   }
 }
 
+
 // ===== ADMIN =====
-
-// Merge local + Supabase questions, deduplicate by question text
-function getAdminQuestions(){
-  var all=[];
-  var seen={};
-  // Supabase questions first (authoritative)
-  if(_sbQuestions&&_sbQuestions.length){
-    _sbQuestions.forEach(function(q){
-      var key=(q.question||'').substring(0,50).toLowerCase();
-      if(!seen[key]){
-        seen[key]=true;
-        all.push({
-          id:q.id,_sbId:q.id,
-          userId:q.user_id,userEmail:q.user_email,
-          author:q.author,role:q.role||'',
-          cat:q.cat||'career',
-          q:q.question,question:q.question,
-          ai:q.ai_response,ai_response:q.ai_response,
-          status:q.status||'pending',
-          reviewNote:q.review_note,review_note:q.review_note,
-          wantsReview:q.wants_review,wants_review:q.wants_review,
-          anon:q.anon,
-          date:q.date?q.date.split('T')[0]:'',
-          user_email:q.user_email
-        });
-      }
-    });
-  }
-  // Local questions (if not already in Supabase)
-  DB.questions.forEach(function(q){
-    var key=(q.q||'').substring(0,50).toLowerCase();
-    if(!seen[key]){
-      seen[key]=true;
-      all.push(q);
-    }
-  });
-  return all;
-}
-
-// Publish review — works for both local and Supabase questions
-async function publishAdminReview(qId){
-  var ta=document.getElementById('rev-'+qId);
-  if(!ta||!ta.value.trim()){notify('Add review commentary',1);return}
-  var reviewText=ta.value.trim();
-
-  if(typeof qId==='string'&&qId.startsWith('sb_')){
-    // Supabase question
-    var sbId=parseInt(qId.replace('sb_',''));
-    if(_supaClient){
-      var{error}=await _supaClient.from('questions').update({
-        review_note:reviewText,
-        status:'reviewed'
-      }).eq('id',sbId);
-      if(error){notify('Failed to save review: '+error.message,1);return}
-      // Update local cache
-      if(_sbQuestions){
-        var sq=_sbQuestions.find(function(q){return q.id===sbId});
-        if(sq){sq.review_note=reviewText;sq.status='reviewed'}
-      }
-      // Send notification to user
-      var q=_sbQuestions?_sbQuestions.find(function(q){return q.id===sbId}):null;
-      if(q&&q.user_email){
-        sendUserNotification(q.user_id||'',q.user_email,'review',
-          'Dr. Faroqui reviewed your question',
-          reviewText.substring(0,200)+(reviewText.length>200?'...':''));
-      }
-      notify('Review published! \u2728');
-      renderAdmin();
-    }
-  }else{
-    // Local question — use existing publishReview
-    publishReview(typeof qId==='string'?parseInt(qId):qId);
-  }
-}
-
-function renderAdmin(){
-  const c=document.getElementById('admin-content');
-  var allQ=getAdminQuestions();
-  const reviewedThisWeek=allQ.filter(q=>q.status==='reviewed').length;
-  var pendingCount=allQ.filter(q=>q.status==='pending'||q.status==='answered').length;
-  if(curAdminTab==='messages'){
-    document.getElementById('admin-info').innerHTML='<div style="display:flex;justify-content:space-between;align-items:center"><span>User messages and feedback.</span><span style="color:var(--accent);font-weight:600">'+(DB.messages?DB.messages.filter(m=>!m.read).length:0)+' unread</span></div>';
-  }else if(curAdminTab==='users'){
-    var userCount=(_sbProfiles&&_sbProfiles.length)?_sbProfiles.length:DB.users.length;
-    document.getElementById('admin-info').innerHTML='<div style="display:flex;justify-content:space-between;align-items:center"><span>All registered users and their strategic reports.</span><span style="color:var(--accent);font-weight:600">'+userCount+' total</span></div>';
-  }else if(curAdminTab==='queue'){
-    document.getElementById('admin-info').innerHTML='<div style="display:flex;justify-content:space-between;align-items:center"><span>Questions awaiting your review.</span><span style="color:var(--accent);font-weight:600">'+pendingCount+' pending</span></div>';
-  }else{
-    document.getElementById('admin-info').innerHTML='<div style="display:flex;justify-content:space-between;align-items:center"><span>Published reviews.</span><span style="color:var(--accent);font-weight:600">'+reviewedThisWeek+' reviewed</span></div>';
-  }
-  if(curAdminTab==='queue'){
-    // Merge local + Supabase questions
-    var allQ=getAdminQuestions();
-    const pending=allQ.filter(q=>q.status==='pending'||q.status==='answered');
-    c.innerHTML=pending.length?pending.map(function(q){
-      var qId=q._sbId?'sb_'+q._sbId:q.id;
-      var ai=q.ai||q.ai_response;
-      var h='<div class="card" style="margin-bottom:12px">';
-      h+='<div class="qc-top"><span class="qc-author">'+(q.anon?'Anonymous':q.author)+'</span>';
-      h+='<span class="tag '+(({student:'t-student',resident:'t-resident',fellow:'t-fellow'})[q.role]||'')+'">'+q.role+'</span>';
-      if(q.user_email){h+='<span style="font-size:10px;color:var(--text3);margin-left:8px">'+q.user_email+'</span>'}
-      h+='</div>';
-      h+='<span class="tag t-cat">'+q.cat+'</span>';
-      h+='<div class="qc-q" style="margin:10px 0">'+(q.q||q.question)+'</div>';
-      h+='<div style="font-size:11px;color:var(--text3);margin-bottom:12px">'+(q.date||'')+(q.wantsReview||q.wants_review?' \u2022 \u2b50 Review Requested':'')+'</div>';
-      if(ai){
-        var diag=typeof ai==='object'?ai.diag:ai;
-        h+='<details style="margin-bottom:12px"><summary style="font-size:12px;color:var(--accent);cursor:pointer">View AI Draft</summary>';
-        h+='<div class="ai-resp" style="margin-top:8px;font-size:13px;max-height:300px;overflow-y:auto"><p>'+diag+'</p></div></details>';
-      }
-      h+='<div class="abox"><textarea id="rev-'+qId+'" placeholder="Add review commentary..."></textarea>';
-      h+='<div style="display:flex;align-items:center;gap:12px;margin-top:12px">';
-      h+='<label style="font-size:12px;color:var(--text2);display:flex;align-items:center;gap:6px"><input type="checkbox" id="share-'+qId+'" checked> Share in archive</label>';
-      h+='<div style="flex:1"></div>';
-      h+='<button class="btn btn-a btn-sm" onclick="publishAdminReview(\''+qId+'\')">Publish</button>';
-      h+='</div></div></div>';
-      return h;
-    }).join(''):'<div style="text-align:center;padding:40px;color:var(--text3)">\u2705 All caught up!</div>';
-  }else if(curAdminTab==='reviewed'){
-    var allQ=getAdminQuestions();
-    const reviewed=allQ.filter(q=>q.status==='reviewed').sort((a,b)=>(b.date||'').localeCompare(a.date||''));
-    if(reviewed.length){
-      c.innerHTML=reviewed.map(function(q){
-        var ai=q.ai||q.ai_response;
-        var revNote=q.reviewNote||q.review_note;
-        var h='<div class="card" style="margin-bottom:12px">';
-        h+='<div class="qc-top"><span class="qc-author">'+(q.anon?'Anonymous':q.author)+'</span>';
-        h+='<span class="tag '+(({student:'t-student',resident:'t-resident',fellow:'t-fellow'})[q.role]||'')+'">'+q.role+'</span></div>';
-        h+='<span class="tag t-cat">'+q.cat+'</span>';
-        h+='<div class="qc-q" style="margin:10px 0">'+(q.q||q.question)+'</div>';
-        h+='<div style="font-size:11px;color:var(--text3);margin-bottom:8px">'+(q.date||'')+'</div>';
-        if(revNote){
-          h+='<div style="padding:12px;background:rgba(106,191,75,.06);border:1px solid rgba(106,191,75,.15);border-radius:8px;margin-top:8px">';
-          h+='<div style="font-size:10px;font-weight:600;color:var(--green);margin-bottom:4px">\u2705 YOUR REVIEW</div>';
-          h+='<p style="font-size:12px;color:var(--text2);line-height:1.6;margin:0">'+revNote+'</p></div>';
-        }
-        h+='</div>';
-        return h;
-      }).join('');
-    }else{
-      c.innerHTML='<div style="text-align:center;padding:40px;color:var(--text3)">No reviewed questions.</div>';
-    }
-  }else if(curAdminTab==='users'){
-    // Use Supabase profiles if available, otherwise local
-    var users;
-    if(_sbProfiles&&_sbProfiles.length){
-      users=_sbProfiles;
-      c.innerHTML=users.map(function(u){
-        var h='<div class="card" style="margin-bottom:14px;padding:18px">';
-        var signDate=u.signup_date?new Date(u.signup_date).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}):u.created_at?new Date(u.created_at).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}):'—';
-        var tierColor=u.tier==='core'?'var(--accent)':u.tier==='elite'?'var(--green)':'var(--text3)';
-        h+='<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">';
-        h+='<div><div style="font-weight:600;font-size:14px">'+(u.name||'Unknown')+'</div>';
-        h+='<div style="font-size:11px;color:var(--text3)">'+(u.email||'')+'</div></div>';
-        h+='<div style="text-align:right"><span class="tag" style="color:'+tierColor+';border-color:'+tierColor+'">'+(u.tier||'free').toUpperCase()+'</span>';
-        h+='<div style="font-size:10px;color:var(--text3);margin-top:4px">Joined '+signDate+'</div></div></div>';
-        // Profile tags
-        h+='<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">';
-        if(u.stage)h+='<span class="tag t-cat" style="font-size:10px">'+u.stage+'</span>';
-        if(u.specialty)h+='<span class="tag t-cat" style="font-size:10px">'+u.specialty+'</span>';
-        if(u.goal)h+='<span class="tag" style="font-size:10px">Goal: '+u.goal+'</span>';
-        if(u.institution)h+='<span class="tag" style="font-size:10px">'+u.institution+'</span>';
-        h+='</div>';
-        // Report
-        if(u.score){
-          var sc=u.score>=70?'var(--green)':u.score>=45?'var(--accent)':'var(--red)';
-          h+='<div style="padding:12px;background:var(--bg2);border-radius:8px;margin-bottom:10px">';
-          h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">';
-          h+='<span style="font-size:12px;font-weight:600">Signup Assessment</span>';
-          h+='<span style="font-size:14px;font-weight:700;color:'+sc+'">'+u.score+'/95 — '+(u.grade||'')+'</span></div>';
-          if(u.strengths&&u.strengths.length){
-            h+='<div style="font-size:11px;color:var(--green);margin-bottom:4px">✦ '+u.strengths.join(' • ')+'</div>';
-          }
-          if(u.gaps&&u.gaps.length){
-            h+='<div style="font-size:11px;color:var(--red)">⚡ '+u.gaps.join(' • ')+'</div>';
-          }
-          h+='</div>';
-        }
-        // Profile data details
-        if(u.profile_data){
-          var pd=u.profile_data;
-          h+='<details style="margin-bottom:8px"><summary style="font-size:12px;color:var(--accent);cursor:pointer">Full Profile Data</summary>';
-          h+='<div style="margin-top:8px;padding:10px;background:var(--bg2);border-radius:6px;font-size:11px;color:var(--text2);line-height:1.8">';
-          Object.entries(pd).forEach(function(kv){if(kv[1]&&kv[0]!=='pass')h+='<div><strong>'+kv[0]+':</strong> '+kv[1]+'</div>'});
-          h+='</div></details>';
-        }
-        // Admin notes from Supabase
-        var notes=u.notes||[];
-        h+='<details style="margin-bottom:8px"><summary style="font-size:12px;color:var(--accent);cursor:pointer">Notes & Progress ('+notes.length+')</summary>';
-        h+='<div style="margin-top:10px">';
-        if(notes.length){
-          notes.forEach(function(n){
-            h+='<div style="padding:8px 12px;background:var(--bg2);border-radius:6px;margin-bottom:6px;border-left:2px solid var(--accent)">';
-            h+='<p style="font-size:12px;color:var(--text2);margin:0;line-height:1.5">'+n.text+'</p>';
-            h+='<span style="font-size:10px;color:var(--text3)">'+new Date(n.date).toLocaleDateString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'})+'</span></div>';
-          });
-        }
-        h+='<div style="display:flex;gap:8px;margin-top:8px">';
-        h+='<input type="text" id="sbnote-'+u.id+'" placeholder="Add a note..." style="flex:1;font-size:12px;padding:8px 12px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text)">';
-        h+='<button class="btn btn-a btn-sm" onclick="addSupabaseNote(\''+u.id+'\')">Add</button>';
-        h+='</div></div></details>';
-        // Goal progress section
-        var goalProgress=null;
-        if(u.notes){
-          var gn=u.notes.find(function(n){return n.type==='goal_progress'});
-          if(gn)goalProgress=gn;
-        }
-        if(goalProgress&&goalProgress.data){
-          var gd=goalProgress.data;
-          var doneCount=0;var blockedCount=0;var totalTracked=0;
-          Object.keys(gd).forEach(function(k){
-            if(k.startsWith('_'))return;
-            totalTracked++;
-            if(gd[k].status==='done')doneCount++;
-            if(gd[k].status==='blocked')blockedCount++;
-          });
-          if(totalTracked>0){
-            h+='<div style="padding:10px 14px;background:'+(blockedCount>0?'rgba(239,68,68,.04)':'rgba(106,191,75,.04)')+';border:1px solid '+(blockedCount>0?'rgba(239,68,68,.12)':'rgba(106,191,75,.12)')+';border-radius:8px;margin-bottom:10px">';
-            h+='<div style="display:flex;justify-content:space-between;align-items:center">';
-            h+='<span style="font-size:11px;font-weight:600;color:var(--text)">📈 Goal Progress</span>';
-            h+='<span style="font-size:11px;color:var(--text3)">'+doneCount+' done · '+blockedCount+' blocked · '+(totalTracked-doneCount-blockedCount)+' in progress</span></div>';
-            // Show blockers if any
-            Object.keys(gd).forEach(function(k){
-              if(k.startsWith('_'))return;
-              if(gd[k].status==='blocked'&&gd[k].blocker){
-                h+='<div style="margin-top:6px;font-size:11px;color:var(--red)">🚩 '+gd[k].blocker+'</div>';
-              }
-            });
-            if(gd._lastCheckin){
-              h+='<div style="margin-top:6px;font-size:10px;color:var(--text3)">Last check-in: '+new Date(gd._lastCheckin).toLocaleDateString('en-US',{month:'short',day:'numeric'})+'</div>';
-            }
-            h+='</div>';
-          }
-        }
-        // Message User button + Tier control
-        h+='<div style="display:flex;gap:8px;align-items:center;margin-top:10px;flex-wrap:wrap">';
-        h+='<button class="btn btn-sm" onclick="adminMessageUser(\''+u.email+'\',\''+(u.name||'').replace(/'/g,"\\'")+'\')" style="font-size:11px;padding:8px 14px;border:1px solid var(--accent);border-radius:6px;color:var(--accent)">\ud83d\udce9 Message</button>';
-        h+='<select onchange="adminChangeTier(\''+u.id+'\',this.value)" style="font-size:11px;padding:7px 10px;border:1px solid var(--border);border-radius:6px;background:var(--bg2);color:var(--text)">';
-        h+='<option value="" disabled selected>Change Tier</option>';
-        h+='<option value="free"'+(u.tier==='free'?' style="font-weight:600"':'')+'>Explorer (Free)</option>';
-        h+='<option value="core"'+(u.tier==='core'?' style="font-weight:600"':'')+'>Core ($15/mo)</option>';
-        h+='<option value="elite"'+(u.tier==='elite'?' style="font-weight:600"':'')+'>Elite ($99/mo)</option>';
-        h+='</select>';
-        h+='</div>';
-        h+='</div>';
-        return h;
-      }).join('');
-      return;
-    }
-    // Fallback to local DB
-    users=DB.users.filter(u=>u.id!=='admin').sort((a,b)=>(b.signupDate||'').localeCompare(a.signupDate||''));
-    if(!users.length){
-      c.innerHTML='<div style="text-align:center;padding:40px;color:var(--text3)">No users yet.</div>';
-    }else{
-      c.innerHTML=users.map(function(u){
-        var h='<div class="card" style="margin-bottom:14px;padding:18px">';
-        // Header
-        var signDate=u.signupDate?new Date(u.signupDate).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}):'—';
-        var tierColor=u.tier==='core'?'var(--accent)':u.tier==='elite'?'var(--green)':'var(--text3)';
-        h+='<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">';
-        h+='<div><div style="font-weight:600;font-size:14px">'+u.name+'</div>';
-        h+='<div style="font-size:11px;color:var(--text3)">'+u.email+'</div></div>';
-        h+='<div style="text-align:right"><span class="tag" style="color:'+tierColor+';border-color:'+tierColor+'">'+u.tier.toUpperCase()+'</span>';
-        h+='<div style="font-size:10px;color:var(--text3);margin-top:4px">Joined '+signDate+'</div></div></div>';
-        // Profile info
-        var p=u.profile||{};
-        h+='<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">';
-        if(p.stage)h+='<span class="tag t-cat" style="font-size:10px">'+p.stage+'</span>';
-        if(p.spec)h+='<span class="tag t-cat" style="font-size:10px">'+p.spec+'</span>';
-        if(p.goal)h+='<span class="tag" style="font-size:10px">Goal: '+p.goal+'</span>';
-        if(u.institution)h+='<span class="tag" style="font-size:10px">'+u.institution+'</span>';
-        h+='</div>';
-        // Report snapshot
-        if(u.report){
-          var r=u.report;
-          var sc=r.score>=70?'var(--green)':r.score>=45?'var(--accent)':'var(--red)';
-          h+='<div style="padding:12px;background:var(--bg2);border-radius:8px;margin-bottom:10px">';
-          h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">';
-          h+='<span style="font-size:12px;font-weight:600">Signup Assessment</span>';
-          h+='<span style="font-size:14px;font-weight:700;color:'+sc+'">'+r.score+'/95 — '+r.grade+'</span></div>';
-          if(r.strengths&&r.strengths.length){
-            h+='<div style="font-size:11px;color:var(--green);margin-bottom:4px">✦ '+r.strengths.join(' • ')+'</div>';
-          }
-          if(r.gaps&&r.gaps.length){
-            h+='<div style="font-size:11px;color:var(--red)">⚡ '+r.gaps.join(' • ')+'</div>';
-          }
-          h+='</div>';
-        }
-        // Usage stats
-        var aiUsed=u.usage?u.usage.ai:0;
-        var qCount=DB.questions.filter(function(q){return q.userId===u.id}).length;
-        h+='<div style="display:flex;gap:16px;font-size:11px;color:var(--text3);margin-bottom:12px">';
-        h+='<span>AI Used: <strong style="color:var(--text2)">'+aiUsed+'</strong></span>';
-        h+='<span>Questions: <strong style="color:var(--text2)">'+qCount+'</strong></span>';
-        if(u.trialEnd)h+='<span>Trial Ends: <strong style="color:var(--text2)">'+new Date(u.trialEnd).toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'})+'</strong></span>';
-        h+='</div>';
-        // Admin notes
-        h+='<details style="margin-bottom:8px"><summary style="font-size:12px;color:var(--accent);cursor:pointer">Notes & Progress Tracking</summary>';
-        h+='<div style="margin-top:10px">';
-        if(u.notes&&u.notes.length){
-          u.notes.forEach(function(n){
-            h+='<div style="padding:8px 12px;background:var(--bg2);border-radius:6px;margin-bottom:6px;border-left:2px solid var(--accent)">';
-            h+='<p style="font-size:12px;color:var(--text2);margin:0;line-height:1.5">'+n.text+'</p>';
-            h+='<span style="font-size:10px;color:var(--text3)">'+new Date(n.date).toLocaleDateString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'})+'</span></div>';
-          });
-        }
-        h+='<div style="display:flex;gap:8px;margin-top:8px">';
-        h+='<input type="text" id="unote-'+u.id+'" placeholder="Add a note about this user..." style="flex:1;font-size:12px;padding:8px 12px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text)">';
-        h+='<button class="btn btn-a btn-sm" onclick="addUserNote(\''+u.id+'\')">Add</button>';
-        h+='</div></div></details>';
-        // Tier management
-        h+='<div style="display:flex;gap:8px;align-items:center">';
-        h+='<select id="tier-'+u.id+'" style="font-size:11px;padding:6px 10px;border:1px solid var(--border);border-radius:6px;background:var(--bg2);color:var(--text)">';
-        h+='<option value="free"'+(u.tier==='free'?' selected':'')+'>Free</option>';
-        h+='<option value="core"'+(u.tier==='core'?' selected':'')+'>Core</option>';
-        h+='<option value="elite"'+(u.tier==='elite'?' selected':'')+'>Elite</option>';
-        h+='</select>';
-        h+='<button class="btn btn-a btn-sm" onclick="updateUserTier(\''+u.id+'\')" style="font-size:11px">Update Tier</button>';
-        h+='</div>';
-        h+='</div>';
-        return h;
-      }).join('');
-    }
-  }else if(curAdminTab==='messages'){
-    // Use Supabase messages if available
-    var msgs=_sbMessages&&_sbMessages.length?_sbMessages:(DB.messages||[]).slice().reverse();
-    if(!msgs.length){
-      c.innerHTML='<div style="text-align:center;padding:40px;color:var(--text3)">📭 No messages yet.</div>';
-    }else{
-      var isSB=_sbMessages&&_sbMessages.length;
-      c.innerHTML=msgs.map(function(m,idx){
-        var msgId=isSB?m.id:((DB.messages.length-1)-idx);
-        var typeLabel={career:'🎯 Career/Strategy',finance:'💰 Finance/Comp',contract:'📋 Contract/Negotiation','pivot-report':'📊 Pivot Report',audit:'🎯 Strategic Audit',bug:'🐛 Bug',suggestion:'💡 Suggestion',question:'❓ Question',feedback:'📝 Feedback',progress:'📈 Progress Update',other:'📎 Other'};
-        var isRead=m.read?'':'border-left:3px solid var(--accent);';
-        var d=m.date?new Date(m.date).toLocaleDateString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}):'';
-        var h='<div class="card" style="margin-bottom:12px;'+isRead+'">';
-        h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">';
-        h+='<div><span style="font-weight:600;font-size:13px">'+(m.user_name||'Unknown')+'</span><span style="color:var(--text3);font-size:11px;margin-left:8px">'+(m.user_email||'')+'</span></div>';
-        h+='<span style="font-size:10px;color:var(--text3)">'+d+'</span></div>';
-        h+='<span class="tag t-cat" style="margin-bottom:8px;display:inline-block;font-size:10px">'+(typeLabel[m.type]||m.type)+'</span>';
-        // Detect HTML reports vs plain text
-        var isHTML=m.message&&m.message.trim().charAt(0)==='<';
-        if(isHTML){
-          h+='<div style="margin-bottom:12px">'+m.message+'</div>';
-        }else{
-          h+='<p style="font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:12px;white-space:pre-wrap">'+m.message+'</p>';
-        }
-        var replies=m.replies||[];
-        if(replies.length){
-          replies.forEach(function(r){
-            h+='<div style="margin-left:16px;padding:10px 14px;background:var(--bg2);border-radius:8px;margin-bottom:8px;border-left:2px solid var(--green)">';
-            h+='<div style="font-size:10px;color:var(--green);font-weight:600;margin-bottom:4px">YOUR REPLY</div>';
-            h+='<p style="font-size:12px;color:var(--text2);line-height:1.6;margin:0">'+r.text+'</p>';
-            h+='<span style="font-size:10px;color:var(--text3)">'+new Date(r.date).toLocaleDateString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'})+'</span></div>';
-          });
-        }
-        h+='<div style="display:flex;gap:8px;align-items:center">';
-        h+='<input type="text" id="reply-'+msgId+'" placeholder="Type a reply..." style="flex:1;font-size:12px;padding:8px 12px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text)">';
-        if(isSB){
-          h+='<button class="btn btn-a btn-sm" onclick="replyToSupabaseMessage('+m.id+')">Reply</button>';
-          if(!m.read)h+='<button class="btn btn-sm" onclick="markSupabaseMessageRead('+m.id+')" style="font-size:11px;padding:6px 10px;border:1px solid var(--border);border-radius:6px;color:var(--text3)">✓ Read</button>';
-        }else{
-          h+='<button class="btn btn-a btn-sm" onclick="replyToMessage('+msgId+')">Reply</button>';
-          if(!m.read)h+='<button class="btn btn-sm" onclick="markMessageRead('+msgId+')" style="font-size:11px;padding:6px 10px;border:1px solid var(--border);border-radius:6px;color:var(--text3)">✓ Read</button>';
-        }
-        h+='</div></div>';
-        return h;
-      }).join('');
-    }
-  }else{
-    var allQ2=getAdminQuestions();
-    const total=allQ2.length,ans=allQ2.filter(q=>q.status==='reviewed').length,pend=allQ2.filter(q=>q.status==='pending'||q.status==='answered').length;
-    var userCount2=(_sbProfiles&&_sbProfiles.length)?_sbProfiles.length:DB.users.length;
-    const cats={};allQ2.forEach(q=>{cats[q.cat]=(cats[q.cat]||0)+1});
-    c.innerHTML='<div class="stats" style="padding:0"><div class="st"><div class="st-n">'+total+'</div><div class="st-l">Total</div></div><div class="st"><div class="st-n">'+ans+'</div><div class="st-l">Reviewed</div></div><div class="st"><div class="st-n">'+pend+'</div><div class="st-l">Pending</div></div><div class="st"><div class="st-n">'+userCount2+'</div><div class="st-l">Members</div></div></div><div class="sec" style="padding:20px 0 14px">By Category</div>'+Object.entries(cats).map(([k,v])=>'<div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px"><span>'+(CATS[k]||k)+'</span><span style="color:var(--text3)">'+v+'</span></div>').join('');
-  }
-}
-function adminTab(tab,btn){curAdminTab=tab;document.querySelectorAll('.atab').forEach(function(t){t.classList.remove('on')});if(btn)btn.classList.add('on');
-  // Load from Supabase for all admin tabs
-  if(_supaClient){loadAdminDataFromSupabase(tab)}else{try{renderAdmin()}catch(e){console.error('renderAdmin error',e)}}
-}
+curAdminTab='dashboard';
+var _sbProfiles=null;
+var _sbMessages=null;
+var _sbQuestions=null;
+var _admUserFilter={country:'',stage:'',plan:'',search:''};
+var _admSelectedUser=null;
 
 function openAdmin(){
   document.getElementById('admin-overlay').style.display='block';
   document.body.style.overflow='hidden';
   window.scrollTo(0,0);
-  // Highlight current tier
-  document.querySelectorAll('.tier-sw').forEach(function(b){b.style.background='var(--bg3)';b.style.color='var(--text3)';b.style.borderColor='var(--border)'});
-  var cur=document.getElementById('ts-'+(U.tier||'free'));
-  if(cur){cur.style.background='var(--accent)';cur.style.color='#0a0a0f';cur.style.borderColor='var(--accent)'}
-  document.getElementById('ts-current').textContent='Currently: '+(U.tier||'free').toUpperCase();
-  curAdminTab=curAdminTab||'queue';
-  if(_supaClient){loadAdminDataFromSupabase(curAdminTab)}else{try{renderAdmin()}catch(e){console.error(e)}}
+  admUpdateTierButtons();
+  curAdminTab='dashboard';
+  document.querySelectorAll('#admin-overlay .atab').forEach(function(t,i){t.classList.toggle('on',i===0)});
+  admLoadData();
 }
 function closeAdmin(){
   document.getElementById('admin-overlay').style.display='none';
   document.body.style.overflow='';
+  _admSelectedUser=null;
+}
+function admUpdateTierButtons(){
+  document.querySelectorAll('.tier-sw').forEach(function(b){b.style.background='var(--bg3)';b.style.color='var(--text3)';b.style.borderColor='var(--border)'});
+  var cur=document.getElementById('ts-'+(U.tier||'free'));
+  if(cur){cur.style.background='var(--accent)';cur.style.color='#0a0a0f';cur.style.borderColor='var(--accent)'}
+  var el=document.getElementById('ts-current');
+  if(el)el.textContent='Current: '+(U.tier||'free').toUpperCase();
 }
 function adminSwitchTier(tier){
-  U.tier=tier;
-  if(tier==='elite')U.isTrial=false;
+  U.tier=tier;if(tier==='elite')U.isTrial=false;
   localStorage.setItem('hw_session',JSON.stringify(U));
-  // Update UI
-  document.querySelectorAll('.tier-sw').forEach(function(b){b.style.background='var(--bg3)';b.style.color='var(--text3)';b.style.borderColor='var(--border)'});
-  var cur=document.getElementById('ts-'+tier);
-  if(cur){cur.style.background='var(--accent)';cur.style.color='#0a0a0f';cur.style.borderColor='var(--accent)'}
-  document.getElementById('ts-current').textContent='Switched to: '+tier.toUpperCase();
-  // Update nav visibility
+  admUpdateTierButtons();
   var levTab=document.getElementById('nav-leverage');
-  if(levTab){
-    var showLev=(tier==='elite'&&!U.isTrial)||tier==='core'||tier==='admin';
-    levTab.style.display=showLev?'':'none';
-  }
-  var admTab=document.getElementById('nav-admin');
-  // Always keep admin nav visible — founder needs access from any tier
-  if(admTab)admTab.style.display='';
+  if(levTab){levTab.style.display=((tier==='elite'&&!U.isTrial)||tier==='core'||tier==='admin')?'':'none'}
   notify('Switched to '+tier.toUpperCase());
 }
-
-async function loadAdminDataFromSupabase(tab){
-  const c=document.getElementById('admin-content');
+function adminTab(tab,btn){
+  curAdminTab=tab;_admSelectedUser=null;
+  document.querySelectorAll('#admin-overlay .atab').forEach(function(t){t.classList.remove('on')});
+  if(btn)btn.classList.add('on');
+  admLoadData();
+}
+async function admLoadData(){
+  var c=document.getElementById('admin-content');
+  if(!c)return;
   c.innerHTML='<div style="text-align:center;padding:40px;color:var(--text3)">Loading...</div>';
   try{
-    if(tab==='users'){
-      const{data,error}=await _supaClient.from('profiles').select('*').order('created_at',{ascending:false});
-      if(!error&&data&&data.length){
-        _sbProfiles=data;
-      }
+    if(typeof _supaClient!=='undefined'&&_supaClient){
+      if(!_sbProfiles){var r1=await _supaClient.from('profiles').select('*').order('created_at',{ascending:false});if(!r1.error&&r1.data)_sbProfiles=r1.data}
+      if(!_sbQuestions){var r2=await _supaClient.from('questions').select('*').order('date',{ascending:false});if(!r2.error&&r2.data)_sbQuestions=r2.data}
+      if(!_sbMessages){var r3=await _supaClient.from('messages').select('*').order('date',{ascending:false});if(!r3.error&&r3.data)_sbMessages=r3.data}
     }
-    if(tab==='messages'){
-      const{data,error}=await _supaClient.from('messages').select('*').neq('type','notification').order('date',{ascending:false});
-      if(!error&&data&&data.length){
-        _sbMessages=data;
-      }
-    }
-    if(tab==='queue'||tab==='reviewed'){
-      const{data,error}=await _supaClient.from('questions').select('*').order('date',{ascending:false});
-      if(!error&&data&&data.length){
-        _sbQuestions=data;
-      }
-    }
-  }catch(ex){console.warn('Supabase load error',ex)}
-  try{renderAdmin()}catch(ex2){console.warn('renderAdmin error',ex2);c.innerHTML='<div style="text-align:center;padding:40px;color:var(--red)">Error loading admin data. Try refreshing.</div>'}
+  }catch(e){console.warn('Admin data load:',e)}
+  try{admRenderMetrics();admRender()}catch(e){console.error('Admin render:',e);c.innerHTML='<div style="padding:40px;text-align:center;color:#c44d56">Render error. Check console.</div>'}
+}
+function admGetUsers(){return (_sbProfiles&&_sbProfiles.length)?_sbProfiles:(DB.users||[])}
+function admGetQuestions(){
+  var all=[],seen={};
+  if(_sbQuestions&&_sbQuestions.length){_sbQuestions.forEach(function(q){var k=(q.question||'').substring(0,50).toLowerCase();if(!seen[k]){seen[k]=1;all.push(q)}})}
+  (DB.questions||[]).forEach(function(q){var k=(q.q||'').substring(0,50).toLowerCase();if(!seen[k]){seen[k]=1;all.push(q)}});
+  return all;
+}
+function admGetMessages(){
+  if(_sbMessages&&_sbMessages.length)return _sbMessages.filter(function(m){return m.type!=='notification'});
+  return (DB.messages||[]).slice().reverse();
+}
+function admRenderMetrics(){
+  var users=admGetUsers(),qs=admGetQuestions();
+  var tot=users.length;
+  var fr=users.filter(function(u){return !u.tier||u.tier==='free'}).length;
+  var co=users.filter(function(u){return u.tier==='core'}).length;
+  var el=users.filter(function(u){return u.tier==='elite'}).length;
+  var tr=users.filter(function(u){return u.is_trial||u.isTrial}).length;
+  var ca=users.filter(function(u){return u.cancelled||u.status==='cancelled'}).length;
+  var mrr=(co*15)+(el*99);
+  var tai=0;users.forEach(function(u){if(u.usage&&u.usage.ai)tai+=u.usage.ai;if(u.ai_used)tai+=u.ai_used});
+  var act=users.filter(function(u){var d=u.last_active||u.lastActive;return d&&(Date.now()-new Date(d).getTime())<30*86400000}).length;
+  var m=document.getElementById('adm-metrics');
+  if(!m)return;
+  m.innerHTML=
+    '<div class="adm-metric"><div class="num">'+tot+'</div><div class="lbl">Total Users</div></div>'+
+    '<div class="adm-metric"><div class="num" style="color:var(--green)">'+act+'</div><div class="lbl">Active (30d)</div></div>'+
+    '<div class="adm-metric"><div class="num" style="color:var(--accent)">$'+mrr.toLocaleString()+'</div><div class="lbl">Monthly Rev</div></div>'+
+    '<div class="adm-metric"><div class="num">'+tai+'</div><div class="lbl">AI Questions</div></div>'+
+    '<div class="adm-metric"><div class="num">'+qs.length+'</div><div class="lbl">Questions</div></div>'+
+    '<div class="adm-metric"><div class="num" style="color:var(--text3)">'+fr+'</div><div class="lbl">Free</div></div>'+
+    '<div class="adm-metric"><div class="num" style="color:var(--accent)">'+co+'</div><div class="lbl">Core</div></div>'+
+    '<div class="adm-metric"><div class="num" style="color:var(--green)">'+el+'</div><div class="lbl">Elite</div></div>'+
+    '<div class="adm-metric"><div class="num" style="color:#5ba8d0">'+tr+'</div><div class="lbl">Trial</div></div>'+
+    '<div class="adm-metric"><div class="num" style="color:#c44d56">'+ca+'</div><div class="lbl">Cancelled</div></div>';
+}
+function admRender(){
+  var c=document.getElementById('admin-content');
+  if(!c)return;
+  if(curAdminTab==='dashboard')admRenderDashboard(c);
+  else if(curAdminTab==='users')admRenderUsers(c);
+  else if(curAdminTab==='queue')admRenderQueue(c);
+  else if(curAdminTab==='feedback')admRenderFeedback(c);
+  else if(curAdminTab==='analytics')admRenderAnalytics(c);
+  else if(curAdminTab==='cancellations')admRenderCancellations(c);
 }
 
-var _sbProfiles=null;
-var _sbMessages=null;
-var _sbQuestions=null;
+// ---- DASHBOARD ----
+function admRenderDashboard(c){
+  var users=admGetUsers(),qs=admGetQuestions(),msgs=admGetMessages();
+  var pending=qs.filter(function(q){return q.status==='pending'||q.status==='answered'});
+  var unread=msgs.filter(function(m){return !m.read});
+  var h='<div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:12px">Overview</div>';
+  if(pending.length||unread.length){
+    h+='<div class="adm-card" style="border-left:3px solid var(--accent)">';
+    if(pending.length)h+='<div style="font-size:13px;color:var(--accent);margin-bottom:4px">⚡ '+pending.length+' question'+(pending.length>1?'s':'')+' awaiting review</div>';
+    if(unread.length)h+='<div style="font-size:13px;color:#5ba8d0">💬 '+unread.length+' unread message'+(unread.length>1?'s':'')+'</div>';
+    h+='</div>';
+  }
+  var co=users.filter(function(u){return u.tier==='core'}).length;
+  var el=users.filter(function(u){return u.tier==='elite'}).length;
+  h+='<div class="adm-card"><div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:10px">Revenue Breakdown</div>';
+  h+='<div style="display:flex;gap:20px;font-size:13px;color:var(--text2)">';
+  h+='<div>Core: <strong>'+co+'</strong> × $15 = <strong style="color:var(--accent)">$'+(co*15)+'</strong></div>';
+  h+='<div>Elite: <strong>'+el+'</strong> × $99 = <strong style="color:var(--green)">$'+(el*99)+'</strong></div></div></div>';
 
-function addUserNote(userId){
-  var input=document.getElementById('unote-'+userId);
-  if(!input||!input.value.trim())return;
-  var user=DB.users.find(function(u){return u.id===userId});
-  if(!user)return;
-  if(!user.notes)user.notes=[];
-  user.notes.push({text:input.value.trim(),date:new Date().toISOString()});
-  saveDB();
-  notify('Note added');
-  renderAdmin();
+  h+='<div style="font-size:12px;font-weight:600;color:var(--text);margin:16px 0 8px">Recent Signups</div>';
+  users.slice(0,5).forEach(function(u){
+    var d=u.created_at||u.signup_date||'';if(d)d=new Date(d).toLocaleDateString('en-US',{month:'short',day:'numeric'});
+    h+='<div class="adm-card" style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;cursor:pointer" onclick="admShowUser(\''+u.id+'\')">';
+    h+='<div><span style="font-size:13px;font-weight:600;color:var(--text)">'+(u.name||'Unknown')+'</span> <span style="font-size:11px;color:var(--text3)">'+(u.email||'')+'</span></div>';
+    h+='<div style="display:flex;align-items:center;gap:8px"><span class="tag" style="font-size:10px">'+(u.tier||'free').toUpperCase()+'</span><span style="font-size:10px;color:var(--text3)">'+d+'</span></div></div>';
+  });
+  c.innerHTML=h;
 }
 
-function updateUserTier(userId){
-  var sel=document.getElementById('tier-'+userId);
-  if(!sel)return;
-  var user=DB.users.find(function(u){return u.id===userId});
-  if(!user)return;
-  user.tier=sel.value;
-  saveDB();
-  notify('Tier updated to '+sel.value.toUpperCase());
-  renderAdmin();
+// ---- USERS ----
+function admRenderUsers(c){
+  if(_admSelectedUser)return admRenderUserDetail(c);
+  var users=admGetUsers();
+  var h='<div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">';
+  h+='<select class="adm-filter" onchange="_admUserFilter.plan=this.value;admRender()"><option value="">All Plans</option><option value="free">Free</option><option value="core">Core</option><option value="elite">Elite</option></select>';
+  h+='<select class="adm-filter" onchange="_admUserFilter.stage=this.value;admRender()"><option value="">All Stages</option><option value="student">Student</option><option value="resident">Resident</option><option value="fellow">Fellow</option><option value="attending">Attending</option></select>';
+  h+='<input class="adm-filter" type="text" placeholder="Search name/email..." oninput="_admUserFilter.search=this.value;admRender()" style="flex:1;min-width:150px" value="'+(_admUserFilter.search||'')+'">';
+  h+='</div>';
+  var filtered=users.filter(function(u){
+    if(_admUserFilter.plan&&(u.tier||'free')!==_admUserFilter.plan)return false;
+    if(_admUserFilter.stage){var s=(u.stage||u.training_stage||(u.profile_data&&u.profile_data.stage)||'').toLowerCase();if(s!==_admUserFilter.stage)return false}
+    if(_admUserFilter.search){var q=_admUserFilter.search.toLowerCase();if(!(u.name||'').toLowerCase().includes(q)&&!(u.email||'').toLowerCase().includes(q))return false}
+    return true;
+  });
+  h+='<div style="font-size:11px;color:var(--text3);margin-bottom:8px">'+filtered.length+' user'+(filtered.length!==1?'s':'')+'</div>';
+  h+='<div style="overflow-x:auto"><table class="adm-table"><thead><tr><th>Name</th><th>Email</th><th>Stage</th><th>Plan</th><th>AI</th><th>Joined</th><th></th></tr></thead><tbody>';
+  filtered.forEach(function(u){
+    var stage=u.stage||u.training_stage||(u.profile_data&&u.profile_data.stage)||'—';
+    var tierColor=u.tier==='elite'?'var(--green)':u.tier==='core'?'var(--accent)':'var(--text3)';
+    var aiUsed=u.ai_used||(u.usage&&u.usage.ai)||0;
+    var joined=u.created_at||u.signup_date||'';if(joined)joined=new Date(joined).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'2-digit'});
+    h+='<tr><td><a href="#" onclick="event.preventDefault();admShowUser(\''+u.id+'\')" style="color:var(--accent);text-decoration:none;font-weight:600">'+(u.name||'Unknown')+'</a></td>';
+    h+='<td style="font-size:11px">'+(u.email||'')+'</td><td>'+stage+'</td>';
+    h+='<td><span style="color:'+tierColor+';font-weight:600">'+(u.tier||'free').toUpperCase()+'</span></td>';
+    h+='<td>'+aiUsed+'</td><td style="font-size:11px">'+joined+'</td>';
+    h+='<td><button onclick="admShowUser(\''+u.id+'\')" style="font-size:10px;padding:4px 10px;border:1px solid var(--border);border-radius:4px;background:var(--bg3);color:var(--text3);cursor:pointer">View</button></td></tr>';
+  });
+  h+='</tbody></table></div>';
+  c.innerHTML=h;
 }
 
-function replyToMessage(idx){
-  var input=document.getElementById('reply-'+idx);
-  if(!input||!input.value.trim())return;
-  if(!DB.messages||!DB.messages[idx])return;
-  if(!DB.messages[idx].replies)DB.messages[idx].replies=[];
-  DB.messages[idx].replies.push({text:input.value.trim(),date:new Date().toISOString()});
-  DB.messages[idx].read=true;
-  saveDB();
-  notify('Reply sent');
-  renderAdmin();
+function admShowUser(id){
+  _admSelectedUser=id;curAdminTab='users';
+  document.querySelectorAll('#admin-overlay .atab').forEach(function(t){t.classList.remove('on');if(t.textContent==='Users')t.classList.add('on')});
+  admRender();
 }
 
-function markMessageRead(idx){
-  if(!DB.messages||!DB.messages[idx])return;
-  DB.messages[idx].read=true;
-  saveDB();
-  renderAdmin();
+// ---- USER DETAIL ----
+function admRenderUserDetail(c){
+  var users=admGetUsers();
+  var u=users.find(function(x){return x.id===_admSelectedUser||x.id==_admSelectedUser});
+  if(!u){c.innerHTML='<div style="padding:20px;color:var(--text3)">User not found.</div>';return}
+  var qs=admGetQuestions().filter(function(q){return q.user_id===u.id||q.userId===u.id||q.user_email===u.email});
+  var stage=u.stage||u.training_stage||(u.profile_data&&u.profile_data.stage)||'—';
+  var spec=u.specialty||(u.profile_data&&u.profile_data.specialty)||'—';
+  var goal=u.goal||(u.profile_data&&u.profile_data.goal)||'—';
+  var country=u.country||(u.profile_data&&u.profile_data.country)||'—';
+  var aiUsed=u.ai_used||(u.usage&&u.usage.ai)||0;
+  var joined=u.created_at||u.signup_date||'';if(joined)joined=new Date(joined).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+  var lastAct=u.last_active||u.lastActive||'';if(lastAct)lastAct=new Date(lastAct).toLocaleDateString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'});
+
+  var h='<button onclick="_admSelectedUser=null;admRender()" style="font-size:12px;color:var(--accent);background:none;border:none;cursor:pointer;padding:0;margin-bottom:16px">← Back to Users</button>';
+  // Profile card
+  h+='<div class="adm-card">';
+  h+='<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px">';
+  h+='<div><div style="font-size:18px;font-weight:700;color:var(--text)">'+(u.name||'Unknown')+'</div>';
+  h+='<div style="font-size:12px;color:var(--text3)">'+(u.email||'')+'</div></div>';
+  var tc=u.tier==='elite'?'var(--green)':u.tier==='core'?'var(--accent)':'var(--text3)';
+  h+='<span style="color:'+tc+';font-weight:700;font-size:14px">'+(u.tier||'free').toUpperCase()+'</span></div>';
+  h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:13px">';
+  h+='<div><span style="color:var(--text3)">Stage:</span> <strong>'+stage+'</strong></div>';
+  h+='<div><span style="color:var(--text3)">Specialty:</span> <strong>'+spec+'</strong></div>';
+  h+='<div><span style="color:var(--text3)">Goal:</span> <strong>'+goal+'</strong></div>';
+  h+='<div><span style="color:var(--text3)">Country:</span> <strong>'+country+'</strong></div>';
+  h+='<div><span style="color:var(--text3)">Joined:</span> <strong>'+joined+'</strong></div>';
+  h+='<div><span style="color:var(--text3)">Last Active:</span> <strong>'+(lastAct||'—')+'</strong></div>';
+  h+='<div><span style="color:var(--text3)">AI Used:</span> <strong>'+aiUsed+'</strong></div>';
+  h+='<div><span style="color:var(--text3)">Questions:</span> <strong>'+qs.length+'</strong></div></div>';
+  // Assessment
+  if(u.score){
+    var sc=u.score>=70?'var(--green)':u.score>=45?'var(--accent)':'#c44d56';
+    h+='<div style="margin-top:12px;padding:10px 14px;background:var(--bg3);border-radius:8px">';
+    h+='<span style="font-size:12px;font-weight:600">Assessment: </span>';
+    h+='<span style="font-size:14px;font-weight:700;color:'+sc+'">'+u.score+'/95 — '+(u.grade||'')+'</span>';
+    if(u.strengths&&u.strengths.length)h+='<div style="font-size:11px;color:var(--green);margin-top:4px">✦ '+u.strengths.join(' • ')+'</div>';
+    if(u.gaps&&u.gaps.length)h+='<div style="font-size:11px;color:#c44d56;margin-top:2px">⚡ '+u.gaps.join(' • ')+'</div>';
+    h+='</div>';
+  }
+  h+='</div>';
+
+  // Admin controls
+  h+='<div class="adm-card"><div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:12px">Admin Controls</div>';
+  h+='<div style="display:flex;gap:8px;flex-wrap:wrap">';
+  h+='<select id="adm-tier-'+u.id+'" style="font-size:12px;padding:8px 12px;border:1px solid var(--border);border-radius:6px;background:var(--bg3);color:var(--text)">';
+  h+='<option value="free"'+((u.tier||'free')==='free'?' selected':'')+'>Free</option>';
+  h+='<option value="core"'+(u.tier==='core'?' selected':'')+'>Core</option>';
+  h+='<option value="elite"'+(u.tier==='elite'?' selected':'')+'>Elite</option>';
+  h+='<option value="admin"'+(u.tier==='admin'?' selected':'')+'>Admin</option></select>';
+  h+='<button onclick="admChangeTier(\''+u.id+'\')" class="btn btn-a btn-sm">Update Tier</button>';
+  h+='<button onclick="admResetAI(\''+u.id+'\')" style="font-size:12px;padding:8px 14px;border:1px solid var(--border);border-radius:6px;background:var(--bg3);color:var(--text);cursor:pointer">Reset AI</button>';
+  h+='<button onclick="admExtendTrial(\''+u.id+'\')" style="font-size:12px;padding:8px 14px;border:1px solid var(--border);border-radius:6px;background:var(--bg3);color:var(--text);cursor:pointer">+48h Trial</button>';
+  h+='<button onclick="admDisableUser(\''+u.id+'\')" style="font-size:12px;padding:8px 14px;border:1px solid #c44d56;border-radius:6px;background:rgba(196,77,86,.1);color:#c44d56;cursor:pointer">Disable</button>';
+  h+='</div></div>';
+
+  // Notes
+  var notes=u.notes||[];
+  h+='<div class="adm-card"><div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:8px">Notes ('+notes.length+')</div>';
+  notes.forEach(function(n){
+    h+='<div style="padding:8px 12px;background:var(--bg3);border-radius:6px;margin-bottom:6px;border-left:2px solid var(--accent)">';
+    h+='<p style="font-size:12px;color:var(--text2);line-height:1.5;margin:0">'+(n.text||'')+'</p>';
+    h+='<span style="font-size:10px;color:var(--text3)">'+new Date(n.date).toLocaleDateString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'})+'</span></div>';
+  });
+  h+='<div style="display:flex;gap:8px;margin-top:8px">';
+  h+='<input type="text" id="adm-note-'+u.id+'" placeholder="Add a note..." style="flex:1;font-size:12px;padding:8px 12px;border:1px solid var(--border);border-radius:8px;background:var(--bg3);color:var(--text)">';
+  h+='<button onclick="admAddNote(\''+u.id+'\')" class="btn btn-a btn-sm">Add</button></div></div>';
+
+  // Questions history
+  if(qs.length){
+    h+='<div class="adm-card"><div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:8px">Questions ('+qs.length+')</div>';
+    qs.slice(0,10).forEach(function(q){
+      h+='<div style="padding:8px 0;border-bottom:1px solid var(--border);font-size:12px">';
+      h+='<div style="color:var(--text2)">'+(q.question||q.q||'').substring(0,120)+'</div>';
+      h+='<span style="font-size:10px;color:var(--text3)">'+(q.cat||'')+' · '+(q.date?q.date.split('T')[0]:'')+' · '+(q.status||'')+'</span></div>';
+    });
+    h+='</div>';
+  }
+  c.innerHTML=h;
 }
 
-async function addSupabaseNote(profileId){
-  var input=document.getElementById('sbnote-'+profileId);
-  if(!input||!input.value.trim()||!_supaClient)return;
+// ---- ADMIN ACTIONS ----
+async function admChangeTier(uid){
+  var sel=document.getElementById('adm-tier-'+uid);if(!sel)return;var t=sel.value;
+  if(typeof _supaClient!=='undefined'&&_supaClient){
+    var r=await _supaClient.from('profiles').update({tier:t}).eq('id',uid);
+    if(r.error){notify('Failed: '+r.error.message,1);return}
+    var u=_sbProfiles?_sbProfiles.find(function(p){return p.id===uid}):null;if(u)u.tier=t;
+  }else{var u=(DB.users||[]).find(function(x){return x.id===uid});if(u){u.tier=t;saveDB()}}
+  notify('Tier → '+t.toUpperCase());admRender();
+}
+async function admResetAI(uid){
+  if(typeof _supaClient!=='undefined'&&_supaClient){
+    await _supaClient.from('profiles').update({ai_used:0}).eq('id',uid);
+    var u=_sbProfiles?_sbProfiles.find(function(p){return p.id===uid}):null;if(u)u.ai_used=0;
+  }else{var u=(DB.users||[]).find(function(x){return x.id===uid});if(u&&u.usage){u.usage.ai=0;saveDB()}}
+  notify('AI limit reset');admRender();
+}
+async function admExtendTrial(uid){
+  var e=new Date(Date.now()+48*3600000).toISOString();
+  if(typeof _supaClient!=='undefined'&&_supaClient){
+    await _supaClient.from('profiles').update({trial_end:e,is_trial:true}).eq('id',uid);
+    var u=_sbProfiles?_sbProfiles.find(function(p){return p.id===uid}):null;if(u){u.trial_end=e;u.is_trial=true}
+  }else{var u=(DB.users||[]).find(function(x){return x.id===uid});if(u){u.trialEnd=e;u.isTrial=true;saveDB()}}
+  notify('Trial extended +48h');admRender();
+}
+async function admDisableUser(uid){
+  if(!confirm('Disable this user? They will lose access.'))return;
+  if(typeof _supaClient!=='undefined'&&_supaClient){
+    await _supaClient.from('profiles').update({tier:'disabled',status:'disabled'}).eq('id',uid);
+    var u=_sbProfiles?_sbProfiles.find(function(p){return p.id===uid}):null;if(u){u.tier='disabled';u.status='disabled'}
+  }else{var u=(DB.users||[]).find(function(x){return x.id===uid});if(u){u.tier='disabled';saveDB()}}
+  notify('User disabled');admRender();
+}
+async function admAddNote(uid){
+  var input=document.getElementById('adm-note-'+uid);if(!input||!input.value.trim())return;
   var note={text:input.value.trim(),date:new Date().toISOString()};
-  // Find profile in cached data and update
-  var profile=_sbProfiles?_sbProfiles.find(function(p){return p.id===profileId}):null;
-  if(!profile)return;
-  var notes=profile.notes||[];
-  notes.push(note);
-  var{error}=await _supaClient.from('profiles').update({notes:notes}).eq('id',profileId);
-  if(error){notify('Failed to save note',1);return}
-  profile.notes=notes;
-  notify('Note added');
-  renderAdmin();
+  if(typeof _supaClient!=='undefined'&&_supaClient){
+    var u=_sbProfiles?_sbProfiles.find(function(p){return p.id===uid}):null;if(!u)return;
+    var notes=u.notes||[];notes.push(note);
+    await _supaClient.from('profiles').update({notes:notes}).eq('id',uid);u.notes=notes;
+  }else{var u=(DB.users||[]).find(function(x){return x.id===uid});if(!u)return;if(!u.notes)u.notes=[];u.notes.push(note);saveDB()}
+  notify('Note added');admRender();
 }
 
-async function replyToSupabaseMessage(msgId){
-  var input=document.getElementById('reply-'+msgId);
-  if(!input||!input.value.trim()||!_supaClient)return;
-  var reply={text:input.value.trim(),date:new Date().toISOString()};
-  var msg=_sbMessages?_sbMessages.find(function(m){return m.id===msgId}):null;
-  if(!msg)return;
-  var replies=msg.replies||[];
-  replies.push(reply);
-  var{error}=await _supaClient.from('messages').update({replies:replies,read:true}).eq('id',msgId);
-  if(error){notify('Failed to send reply',1);return}
-  msg.replies=replies;
-  msg.read=true;
-  // Notify user that their message got a reply
-  sendUserNotification(msg.user_id||'',msg.user_email||'','direct',
-    'Dr. Faroqui replied to your message',
-    reply.text.substring(0,200)+(reply.text.length>200?'...':''));
-  notify('Reply sent');
-  renderAdmin();
+// ---- QUEUE ----
+function admRenderQueue(c){
+  var qs=admGetQuestions();
+  var pending=qs.filter(function(q){return q.status==='pending'||q.status==='answered'});
+  var reviewed=qs.filter(function(q){return q.status==='reviewed'});
+  var h='<div style="display:flex;gap:12px;margin-bottom:16px"><div class="adm-metric" style="flex:1"><div class="num" style="color:var(--accent)">'+pending.length+'</div><div class="lbl">Pending</div></div><div class="adm-metric" style="flex:1"><div class="num" style="color:var(--green)">'+reviewed.length+'</div><div class="lbl">Reviewed</div></div></div>';
+  if(!pending.length){h+='<div style="text-align:center;padding:40px;color:var(--text3)">✅ All caught up!</div>'}
+  else{pending.forEach(function(q){
+    var qId=q.id,ai=q.ai_response||q.ai,diag=typeof ai==='object'?ai.diag:(typeof ai==='string'?ai:'');
+    h+='<div class="adm-card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><div><span style="font-weight:600;font-size:13px;color:var(--text)">'+(q.author||'Anon')+'</span> <span style="font-size:11px;color:var(--text3)">'+(q.user_email||'')+'</span></div><span style="font-size:10px;color:var(--text3)">'+(q.date?q.date.split('T')[0]:'')+'</span></div>';
+    h+='<div style="display:flex;gap:6px;margin-bottom:8px"><span class="tag t-cat" style="font-size:10px">'+(q.cat||'')+'</span>';
+    if(q.wants_review||q.wantsReview)h+='<span style="font-size:10px;color:var(--accent)">⭐ Review Requested</span>';
+    h+='</div><div style="font-size:14px;color:var(--text2);line-height:1.6;margin-bottom:12px">'+(q.question||q.q||'')+'</div>';
+    if(diag)h+='<details style="margin-bottom:10px"><summary style="font-size:11px;color:var(--accent);cursor:pointer">View AI Draft</summary><div style="margin-top:8px;padding:12px;background:var(--bg3);border-radius:8px;font-size:12px;color:var(--text2);line-height:1.6;max-height:200px;overflow-y:auto">'+diag+'</div></details>';
+    h+='<textarea id="adm-rev-'+qId+'" placeholder="Write your review..." style="width:100%;min-height:60px;padding:10px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;line-height:1.5;resize:vertical;font-family:inherit;margin-bottom:8px"></textarea>';
+    h+='<div style="display:flex;gap:8px"><button onclick="admPublishReview(\''+qId+'\')" class="btn btn-a btn-sm">Publish Review</button><button onclick="admMarkComplete(\''+qId+'\')" style="font-size:11px;padding:6px 12px;border:1px solid var(--green);border-radius:6px;background:rgba(92,184,154,.1);color:var(--green);cursor:pointer">Mark Complete</button></div></div>';
+  })}
+  if(reviewed.length){h+='<div style="font-size:12px;font-weight:600;color:var(--text);margin:20px 0 10px">Recently Reviewed</div>';reviewed.slice(0,10).forEach(function(q){var rn=q.review_note||q.reviewNote||'';h+='<div class="adm-card" style="padding:12px 14px"><div style="font-size:13px;color:var(--text2);margin-bottom:4px">'+(q.question||q.q||'').substring(0,100)+'</div>';if(rn)h+='<div style="font-size:12px;color:var(--green);border-left:2px solid var(--green);padding-left:10px;margin-top:6px">'+rn.substring(0,150)+'</div>';h+='<span style="font-size:10px;color:var(--text3)">'+(q.date?q.date.split('T')[0]:'')+' \u00b7 '+(q.author||'')+'</span></div>'})}
+  c.innerHTML=h;
+}
+async function admPublishReview(qId){var ta=document.getElementById('adm-rev-'+qId);if(!ta||!ta.value.trim()){notify('Write review first',1);return}var t=ta.value.trim();if(_supaClient){var{error}=await _supaClient.from('questions').update({review_note:t,status:'reviewed'}).eq('id',qId);if(error){notify('Failed',1);return}if(_sbQuestions){var q=_sbQuestions.find(function(x){return x.id==qId});if(q){q.review_note=t;q.status='reviewed'}}}else{var q=(DB.questions||[]).find(function(x){return x.id==qId});if(q){q.reviewNote=t;q.status='reviewed';saveDB()}}notify('Published \u2728');admRender()}
+async function admMarkComplete(qId){if(_supaClient){await _supaClient.from('questions').update({status:'reviewed'}).eq('id',qId);if(_sbQuestions){var q=_sbQuestions.find(function(x){return x.id==qId});if(q)q.status='reviewed'}}else{var q=(DB.questions||[]).find(function(x){return x.id==qId});if(q){q.status='reviewed';saveDB()}}notify('Complete');admRender()}
+
+function admRenderFeedback(c){
+  var msgs=admGetMessages();if(!msgs.length){c.innerHTML='<div style="text-align:center;padding:40px;color:var(--text3)">\ud83d\udced No feedback yet.</div>';return}
+  var unread=msgs.filter(function(m){return !m.read}).length;var isSB=_sbMessages&&_sbMessages.length;
+  var h='<div style="font-size:11px;color:var(--text3);margin-bottom:12px">'+msgs.length+' messages \u00b7 '+unread+' unread</div>';
+  msgs.forEach(function(m){
+    var tl={career:'\ud83c\udfaf Career',finance:'\ud83d\udcb0 Finance',contract:'\ud83d\udccb Contract',bug:'\ud83d\udc1b Bug',suggestion:'\ud83d\udca1 Suggestion',question:'\u2753 Question',feedback:'\ud83d\udcdd Feedback',progress:'\ud83d\udcc8 Progress',other:'\ud83d\udcce Other'};
+    var d=m.date?new Date(m.date).toLocaleDateString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}):'';
+    h+='<div class="adm-card" style="'+(m.read?'':'border-left:3px solid var(--accent);')+'"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><div><span style="font-weight:600;font-size:13px">'+(m.user_name||'Unknown')+'</span> <span style="font-size:11px;color:var(--text3)">'+(m.user_email||'')+'</span></div><span style="font-size:10px;color:var(--text3)">'+d+'</span></div>';
+    h+='<span class="tag t-cat" style="font-size:10px;margin-bottom:8px;display:inline-block">'+(tl[m.type]||m.type||'Msg')+'</span>';
+    h+='<p style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:10px;white-space:pre-wrap">'+(m.message||'')+'</p>';
+    (m.replies||[]).forEach(function(r){h+='<div style="margin-left:14px;padding:8px 12px;background:var(--bg3);border-radius:6px;margin-bottom:6px;border-left:2px solid var(--green)"><div style="font-size:10px;color:var(--green);font-weight:600;margin-bottom:2px">YOUR REPLY</div><p style="font-size:12px;color:var(--text2);line-height:1.5;margin:0">'+r.text+'</p></div>'});
+    h+='<div style="display:flex;gap:8px;align-items:center"><input type="text" id="adm-reply-'+m.id+'" placeholder="Reply..." style="flex:1;font-size:12px;padding:8px 12px;border:1px solid var(--border);border-radius:6px;background:var(--bg3);color:var(--text)"><button onclick="admReply(\''+m.id+'\','+(isSB?'true':'false')+')" class="btn btn-a btn-sm">Reply</button>';
+    if(!m.read)h+='<button onclick="admMarkRead(\''+m.id+'\','+(isSB?'true':'false')+')" style="font-size:10px;padding:5px 10px;border:1px solid var(--border);border-radius:4px;background:var(--bg3);color:var(--text3);cursor:pointer">\u2713</button>';
+    h+='</div></div>';
+  });c.innerHTML=h;
+}
+async function admReply(id,isSB){var input=document.getElementById('adm-reply-'+id);if(!input||!input.value.trim())return;var r={text:input.value.trim(),date:new Date().toISOString()};if(isSB&&_supaClient){var msg=_sbMessages?_sbMessages.find(function(m){return m.id==id}):null;if(!msg)return;var rr=msg.replies||[];rr.push(r);await _supaClient.from('messages').update({replies:rr,read:true}).eq('id',id);msg.replies=rr;msg.read=true}else{var idx=parseInt(id);if(DB.messages&&DB.messages[idx]){if(!DB.messages[idx].replies)DB.messages[idx].replies=[];DB.messages[idx].replies.push(r);DB.messages[idx].read=true;saveDB()}}notify('Reply sent');admRender()}
+async function admMarkRead(id,isSB){if(isSB&&_supaClient){await _supaClient.from('messages').update({read:true}).eq('id',id);var msg=_sbMessages?_sbMessages.find(function(m){return m.id==id}):null;if(msg)msg.read=true}else{var idx=parseInt(id);if(DB.messages&&DB.messages[idx]){DB.messages[idx].read=true;saveDB()}}admRender()}
+
+function admRenderAnalytics(c){
+  var users=admGetUsers(),qs=admGetQuestions();
+  var h='<div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:12px">AI Usage by User</div>';
+  var aiUsers=users.map(function(u){return{name:u.name||'Unknown',email:u.email||'',tier:(u.tier||'free'),ai:u.ai_used||(u.usage&&u.usage.ai)||0,limit:u.tier==='elite'?999:u.tier==='core'?50:2}}).filter(function(u){return u.ai>0}).sort(function(a,b){return b.ai-a.ai});
+  if(aiUsers.length){
+    h+='<div style="overflow-x:auto"><table class="adm-table"><thead><tr><th>User</th><th>Plan</th><th>Used</th><th>Limit</th><th>%</th></tr></thead><tbody>';
+    aiUsers.slice(0,20).forEach(function(u){var pct=u.limit===999?0:Math.round(u.ai/u.limit*100);var bc=pct>=90?'var(--red)':pct>=60?'var(--accent)':'var(--green)';h+='<tr><td><strong>'+u.name+'</strong><br><span style="font-size:10px;color:var(--text3)">'+u.email+'</span></td><td>'+u.tier.toUpperCase()+'</td><td>'+u.ai+'</td><td>'+(u.limit===999?'\u221e':u.limit)+'</td><td><div style="width:60px;height:6px;background:var(--bg3);border-radius:3px;overflow:hidden"><div style="height:100%;width:'+Math.min(pct,100)+'%;background:'+bc+'"></div></div></td></tr>'});
+    h+='</tbody></table></div>';
+  }else h+='<div style="padding:20px;text-align:center;color:var(--text3)">No AI usage data.</div>';
+  h+='<div style="font-size:14px;font-weight:600;color:var(--text);margin:24px 0 12px">Question Categories</div>';
+  var cats={};qs.forEach(function(q){var cat=q.cat||'other';cats[cat]=(cats[cat]||0)+1});
+  var CL={career:'Career',study:'Study',clinical:'Clinical',research:'Research',finance:'Financial',fellowship:'Fellowship',contract:'Contract',productivity:'Productivity'};
+  var sorted=Object.entries(cats).sort(function(a,b){return b[1]-a[1]});
+  if(sorted.length){var mx=sorted[0][1];sorted.forEach(function(kv){var pct=Math.round(kv[1]/mx*100);h+='<div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--border)"><div style="width:100px;font-size:12px;color:var(--text2)">'+(CL[kv[0]]||kv[0])+'</div><div style="flex:1;height:8px;background:var(--bg3);border-radius:4px;overflow:hidden"><div style="height:100%;width:'+pct+'%;background:var(--accent);border-radius:4px"></div></div><div style="font-size:12px;font-weight:600;color:var(--text);width:30px;text-align:right">'+kv[1]+'</div></div>'})}
+  if(typeof LEV_WORKFLOWS!=='undefined'){
+    h+='<div style="font-size:14px;font-weight:600;color:var(--text);margin:24px 0 12px">Leverage Tools</div>';
+    var lc={};users.forEach(function(u){(u.leverageTried||u.leverage_tried||[]).forEach(function(id){lc[id]=(lc[id]||0)+1})});
+    LEV_WORKFLOWS.forEach(function(wf){var cnt=lc[wf.id]||0;var pct=Math.round(cnt/(users.length||1)*100);h+='<div style="display:flex;align-items:center;gap:12px;padding:6px 0;border-bottom:1px solid var(--border)"><div style="width:20px;font-size:14px">'+wf.icon+'</div><div style="width:130px;font-size:12px;color:var(--text2)">'+wf.title+'</div><div style="flex:1;height:6px;background:var(--bg3);border-radius:3px;overflow:hidden"><div style="height:100%;width:'+pct+'%;background:var(--green)"></div></div><div style="font-size:12px;font-weight:600;width:25px;text-align:right">'+cnt+'</div></div>'})}
+  c.innerHTML=h;
 }
 
-async function markSupabaseMessageRead(msgId){
-  if(!_supaClient)return;
-  var{error}=await _supaClient.from('messages').update({read:true}).eq('id',msgId);
-  if(!error){
-    var msg=_sbMessages?_sbMessages.find(function(m){return m.id===msgId}):null;
-    if(msg)msg.read=true;
-  }
-  renderAdmin();
-}
-
-function publishReview(id){
-  const ta=document.getElementById('rev-'+id);
-  if(!ta||!ta.value.trim()){notify('Add review commentary',1);return}
-  const q=DB.questions.find(q=>q.id===id);
-  if(q){
-    q.reviewNote=ta.value.trim();
-    q.status='reviewed';
-    q.reviewDate=new Date().toISOString().split('T')[0];
-    const shareBox=document.getElementById('share-'+id);
-    q.shareInArchive=shareBox?shareBox.checked:true;
-    saveDB();notify('Review published! \u2728');renderAdmin();
-    // Sync review to Supabase
-    if(_supaClient&&q.sbId){
-      _supaClient.from('questions').update({
-        review_note:q.reviewNote,status:'reviewed'
-      }).eq('id',q.sbId).then(function(){}).catch(function(ex){console.warn('Review sync',ex)});
-    }
-    // Create in-app notification for the user
-    sendUserNotification(q.userId,q.userEmail||'','review',
-      'Dr. Faroqui reviewed your question',
-      q.reviewNote.substring(0,200)+(q.reviewNote.length>200?'...':''));
-  }
+function admRenderCancellations(c){
+  var users=admGetUsers();
+  var cancelled=users.filter(function(u){return u.cancelled||u.status==='cancelled'||u.tier==='disabled'});
+  if(!cancelled.length){c.innerHTML='<div style="text-align:center;padding:40px;color:var(--text3)">No cancellations.</div>';return}
+  var h='<div style="font-size:11px;color:var(--text3);margin-bottom:12px">'+cancelled.length+' cancellation'+(cancelled.length!==1?'s':'')+'</div>';
+  h+='<div style="overflow-x:auto"><table class="adm-table"><thead><tr><th>User</th><th>Prev Plan</th><th>Date</th><th>Reason</th></tr></thead><tbody>';
+  cancelled.forEach(function(u){var reason=u.cancel_reason||u.cancelReason||'No reason';var cd=u.cancel_date||u.cancelDate||'';if(cd)cd=new Date(cd).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});h+='<tr><td><strong>'+(u.name||'Unknown')+'</strong><br><span style="font-size:10px;color:var(--text3)">'+(u.email||'')+'</span></td><td>'+(u.previous_tier||u.previousTier||'\u2014')+'</td><td>'+(cd||'\u2014')+'</td><td style="font-size:12px;color:var(--text2)">'+reason+'</td></tr>'});
+  h+='</tbody></table></div>';c.innerHTML=h;
 }
 
 // ===== IN-APP NOTIFICATIONS =====

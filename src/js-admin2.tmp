@@ -1,0 +1,255 @@
+){return q.status==='reviewed'});
+
+  var h='<div style="display:flex;gap:12px;margin-bottom:16px">';
+  h+='<div class="adm-metric" style="flex:1"><div class="num" style="color:var(--accent)">'+pending.length+'</div><div class="lbl">Pending</div></div>';
+  h+='<div class="adm-metric" style="flex:1"><div class="num" style="color:var(--green)">'+reviewed.length+'</div><div class="lbl">Reviewed</div></div>';
+  h+='</div>';
+
+  if(!pending.length){
+    h+='<div style="text-align:center;padding:40px;color:var(--text3)">✅ All caught up — no pending questions.</div>';
+  }else{
+    pending.forEach(function(q){
+      var qId=q.id;
+      var ai=q.ai_response||q.ai;
+      var diag=typeof ai==='object'?ai.diag:(typeof ai==='string'?ai:'');
+      h+='<div class="adm-card">';
+      h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">';
+      h+='<div><span style="font-weight:600;font-size:13px;color:var(--text)">'+(q.author||'Anonymous')+'</span>';
+      h+=' <span style="font-size:11px;color:var(--text3)">'+(q.user_email||q.userEmail||'')+'</span></div>';
+      h+='<span style="font-size:10px;color:var(--text3)">'+(q.date?q.date.split('T')[0]:'')+'</span></div>';
+      h+='<div style="display:flex;gap:6px;margin-bottom:8px"><span class="tag t-cat" style="font-size:10px">'+(q.cat||'')+'</span>';
+      if(q.wants_review||q.wantsReview)h+='<span style="font-size:10px;color:var(--accent)">⭐ Review Requested</span>';
+      h+='</div>';
+      h+='<div style="font-size:14px;color:var(--text2);line-height:1.6;margin-bottom:12px">'+(q.question||q.q||'')+'</div>';
+      if(diag){
+        h+='<details style="margin-bottom:10px"><summary style="font-size:11px;color:var(--accent);cursor:pointer">View AI Draft</summary>';
+        h+='<div style="margin-top:8px;padding:12px;background:var(--bg3);border-radius:8px;font-size:12px;color:var(--text2);line-height:1.6;max-height:200px;overflow-y:auto">'+diag+'</div></details>';
+      }
+      h+='<textarea id="adm-rev-'+qId+'" placeholder="Write your review..." style="width:100%;min-height:60px;padding:10px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;line-height:1.5;resize:vertical;font-family:inherit;margin-bottom:8px"></textarea>';
+      h+='<div style="display:flex;gap:8px;align-items:center">';
+      h+='<button onclick="admPublishReview(\''+qId+'\')" class="btn btn-a btn-sm">Publish Review</button>';
+      h+='<button onclick="admMarkComplete(\''+qId+'\')" style="font-size:11px;padding:6px 12px;border:1px solid var(--green);border-radius:6px;background:rgba(92,184,154,.1);color:var(--green);cursor:pointer">Mark Complete</button>';
+      h+='</div></div>';
+    });
+  }
+
+  // Reviewed section
+  if(reviewed.length){
+    h+='<div style="font-size:12px;font-weight:600;color:var(--text);margin:20px 0 10px">Recently Reviewed</div>';
+    reviewed.slice(0,10).forEach(function(q){
+      var revNote=q.review_note||q.reviewNote||'';
+      h+='<div class="adm-card" style="padding:12px 14px">';
+      h+='<div style="font-size:13px;color:var(--text2);margin-bottom:4px">'+(q.question||q.q||'').substring(0,100)+'</div>';
+      if(revNote)h+='<div style="font-size:12px;color:var(--green);border-left:2px solid var(--green);padding-left:10px;margin-top:6px">'+revNote.substring(0,150)+'</div>';
+      h+='<span style="font-size:10px;color:var(--text3)">'+(q.date?q.date.split('T')[0]:'')+' · '+(q.author||'')+'</span>';
+      h+='</div>';
+    });
+  }
+  c.innerHTML=h;
+}
+
+async function admPublishReview(qId){
+  var ta=document.getElementById('adm-rev-'+qId);
+  if(!ta||!ta.value.trim()){notify('Write a review first',1);return}
+  var text=ta.value.trim();
+  if(_supaClient){
+    var{error}=await _supaClient.from('questions').update({review_note:text,status:'reviewed'}).eq('id',qId);
+    if(error){notify('Failed: '+error.message,1);return}
+    if(_sbQuestions){var q=_sbQuestions.find(function(x){return x.id==qId});if(q){q.review_note=text;q.status='reviewed'}}
+  }else{
+    var q=(DB.questions||[]).find(function(x){return x.id==qId});
+    if(q){q.reviewNote=text;q.status='reviewed';saveDB()}
+  }
+  notify('Review published ✨');
+  admRender();
+}
+
+async function admMarkComplete(qId){
+  if(_supaClient){
+    await _supaClient.from('questions').update({status:'reviewed'}).eq('id',qId);
+    if(_sbQuestions){var q=_sbQuestions.find(function(x){return x.id==qId});if(q)q.status='reviewed'}
+  }else{
+    var q=(DB.questions||[]).find(function(x){return x.id==qId});
+    if(q){q.status='reviewed';saveDB()}
+  }
+  notify('Marked complete');
+  admRender();
+}
+
+// ---- FEEDBACK TAB ----
+function admRenderFeedback(c){
+  var msgs=admGetMessages();
+  if(!msgs.length){
+    c.innerHTML='<div style="text-align:center;padding:40px;color:var(--text3)">📭 No feedback yet.</div>';
+    return;
+  }
+  var unread=msgs.filter(function(m){return !m.read}).length;
+  var h='<div style="font-size:11px;color:var(--text3);margin-bottom:12px">'+msgs.length+' message'+(msgs.length!==1?'s':'')+' · '+unread+' unread</div>';
+  var isSB=_sbMessages&&_sbMessages.length;
+
+  msgs.forEach(function(m){
+    var isRead=m.read;
+    var typeLabels={career:'🎯 Career',finance:'💰 Finance',contract:'📋 Contract',bug:'🐛 Bug',suggestion:'💡 Suggestion',question:'❓ Question',feedback:'📝 Feedback',progress:'📈 Progress',other:'📎 Other'};
+    var d=m.date?new Date(m.date).toLocaleDateString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}):'';
+
+    h+='<div class="adm-card" style="'+(isRead?'':'border-left:3px solid var(--accent);')+'">';
+    h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">';
+    h+='<div><span style="font-weight:600;font-size:13px;color:var(--text)">'+(m.user_name||'Unknown')+'</span>';
+    h+=' <span style="font-size:11px;color:var(--text3)">'+(m.user_email||'')+'</span></div>';
+    h+='<span style="font-size:10px;color:var(--text3)">'+d+'</span></div>';
+    h+='<span class="tag t-cat" style="font-size:10px;margin-bottom:8px;display:inline-block">'+(typeLabels[m.type]||m.type||'Message')+'</span>';
+
+    var isHTML=m.message&&m.message.trim().charAt(0)==='<';
+    if(isHTML){h+='<div style="margin-bottom:10px;font-size:13px">'+m.message+'</div>'}
+    else{h+='<p style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:10px;white-space:pre-wrap">'+(m.message||'')+'</p>'}
+
+    // Replies
+    var replies=m.replies||[];
+    replies.forEach(function(r){
+      h+='<div style="margin-left:14px;padding:8px 12px;background:var(--bg3);border-radius:6px;margin-bottom:6px;border-left:2px solid var(--green)">';
+      h+='<div style="font-size:10px;color:var(--green);font-weight:600;margin-bottom:2px">YOUR REPLY</div>';
+      h+='<p style="font-size:12px;color:var(--text2);line-height:1.5;margin:0">'+r.text+'</p>';
+      h+='<span style="font-size:10px;color:var(--text3)">'+new Date(r.date).toLocaleDateString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'})+'</span></div>';
+    });
+
+    h+='<div style="display:flex;gap:8px;align-items:center">';
+    h+='<input type="text" id="adm-reply-'+m.id+'" placeholder="Reply..." style="flex:1;font-size:12px;padding:8px 12px;border:1px solid var(--border);border-radius:6px;background:var(--bg3);color:var(--text)">';
+    h+='<button onclick="admReply(\''+m.id+'\','+(isSB?'true':'false')+')" class="btn btn-a btn-sm">Reply</button>';
+    if(!isRead)h+='<button onclick="admMarkRead(\''+m.id+'\','+(isSB?'true':'false')+')" style="font-size:10px;padding:5px 10px;border:1px solid var(--border);border-radius:4px;background:var(--bg3);color:var(--text3);cursor:pointer">✓</button>';
+    h+='</div></div>';
+  });
+  c.innerHTML=h;
+}
+
+async function admReply(msgId,isSB){
+  var input=document.getElementById('adm-reply-'+msgId);
+  if(!input||!input.value.trim())return;
+  var reply={text:input.value.trim(),date:new Date().toISOString()};
+  if(isSB&&_supaClient){
+    var msg=_sbMessages?_sbMessages.find(function(m){return m.id==msgId}):null;
+    if(!msg)return;
+    var replies=msg.replies||[];replies.push(reply);
+    await _supaClient.from('messages').update({replies:replies,read:true}).eq('id',msgId);
+    msg.replies=replies;msg.read=true;
+  }else{
+    var idx=parseInt(msgId);
+    if(DB.messages&&DB.messages[idx]){
+      if(!DB.messages[idx].replies)DB.messages[idx].replies=[];
+      DB.messages[idx].replies.push(reply);
+      DB.messages[idx].read=true;
+      saveDB();
+    }
+  }
+  notify('Reply sent');admRender();
+}
+
+async function admMarkRead(msgId,isSB){
+  if(isSB&&_supaClient){
+    await _supaClient.from('messages').update({read:true}).eq('id',msgId);
+    var msg=_sbMessages?_sbMessages.find(function(m){return m.id==msgId}):null;
+    if(msg)msg.read=true;
+  }else{
+    var idx=parseInt(msgId);
+    if(DB.messages&&DB.messages[idx]){DB.messages[idx].read=true;saveDB()}
+  }
+  admRender();
+}
+
+// ---- ANALYTICS TAB ----
+function admRenderAnalytics(c){
+  var users=admGetUsers();
+  var qs=admGetQuestions();
+
+  // AI Usage per user
+  var h='<div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:12px">AI Usage by User</div>';
+  var aiUsers=users.map(function(u){
+    return{name:u.name||'Unknown',email:u.email||'',tier:(u.tier||'free'),ai:u.ai_used||(u.usage&&u.usage.ai)||0,limit:u.tier==='elite'?999:u.tier==='core'?50:2};
+  }).filter(function(u){return u.ai>0}).sort(function(a,b){return b.ai-a.ai});
+
+  if(aiUsers.length){
+    h+='<div style="overflow-x:auto"><table class="adm-table"><thead><tr><th>User</th><th>Plan</th><th>AI Used</th><th>Limit</th><th>Usage</th></tr></thead><tbody>';
+    aiUsers.slice(0,20).forEach(function(u){
+      var pct=u.limit===999?0:Math.round(u.ai/u.limit*100);
+      var barColor=pct>=90?'var(--red)':pct>=60?'var(--accent)':'var(--green)';
+      h+='<tr><td><strong>'+u.name+'</strong><br><span style="font-size:10px;color:var(--text3)">'+u.email+'</span></td>';
+      h+='<td>'+u.tier.toUpperCase()+'</td>';
+      h+='<td>'+u.ai+'</td>';
+      h+='<td>'+(u.limit===999?'∞':u.limit)+'</td>';
+      h+='<td><div style="width:80px;height:6px;background:var(--bg3);border-radius:3px;overflow:hidden"><div style="height:100%;width:'+Math.min(pct,100)+'%;background:'+barColor+';border-radius:3px"></div></div></td>';
+      h+='</tr>';
+    });
+    h+='</tbody></table></div>';
+  }else{
+    h+='<div style="padding:20px;text-align:center;color:var(--text3)">No AI usage data yet.</div>';
+  }
+
+  // Tool Usage
+  h+='<div style="font-size:14px;font-weight:600;color:var(--text);margin:24px 0 12px">Framework Tool Usage</div>';
+  var catCounts={};
+  qs.forEach(function(q){var cat=q.cat||'other';catCounts[cat]=(catCounts[cat]||0)+1});
+  var CATS_LABELS={career:'Career Strategy',study:'Study & Learning',clinical:'Clinical Cases',research:'Research',finance:'Financial',fellowship:'Fellowship',contract:'Contract',productivity:'Productivity'};
+  var sorted=Object.entries(catCounts).sort(function(a,b){return b[1]-a[1]});
+  if(sorted.length){
+    var maxVal=sorted[0][1];
+    sorted.forEach(function(kv){
+      var pct=Math.round(kv[1]/maxVal*100);
+      h+='<div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--border)">';
+      h+='<div style="width:120px;font-size:12px;color:var(--text2)">'+(CATS_LABELS[kv[0]]||kv[0])+'</div>';
+      h+='<div style="flex:1;height:8px;background:var(--bg3);border-radius:4px;overflow:hidden"><div style="height:100%;width:'+pct+'%;background:var(--accent);border-radius:4px"></div></div>';
+      h+='<div style="font-size:12px;font-weight:600;color:var(--text);width:40px;text-align:right">'+kv[1]+'</div>';
+      h+='</div>';
+    });
+  }else{
+    h+='<div style="padding:20px;text-align:center;color:var(--text3)">No tool usage data yet.</div>';
+  }
+
+  // Leverage Tool Usage
+  h+='<div style="font-size:14px;font-weight:600;color:var(--text);margin:24px 0 12px">Leverage Tool Usage</div>';
+  var levCounts={};
+  users.forEach(function(u){
+    var tried=u.leverageTried||u.leverage_tried||[];
+    tried.forEach(function(id){levCounts[id]=(levCounts[id]||0)+1});
+  });
+  if(typeof LEV_WORKFLOWS!=='undefined'&&LEV_WORKFLOWS.length){
+    LEV_WORKFLOWS.forEach(function(wf){
+      var count=levCounts[wf.id]||0;
+      var maxLev=users.length||1;
+      var pct=Math.round(count/maxLev*100);
+      h+='<div style="display:flex;align-items:center;gap:12px;padding:6px 0;border-bottom:1px solid var(--border)">';
+      h+='<div style="width:24px;font-size:16px">'+wf.icon+'</div>';
+      h+='<div style="width:140px;font-size:12px;color:var(--text2)">'+wf.title+'</div>';
+      h+='<div style="flex:1;height:6px;background:var(--bg3);border-radius:3px;overflow:hidden"><div style="height:100%;width:'+pct+'%;background:var(--green);border-radius:3px"></div></div>';
+      h+='<div style="font-size:12px;font-weight:600;color:var(--text);width:30px;text-align:right">'+count+'</div>';
+      h+='</div>';
+    });
+  }
+  c.innerHTML=h;
+}
+
+// ---- CANCELLATIONS TAB ----
+function admRenderCancellations(c){
+  var users=admGetUsers();
+  var cancelled=users.filter(function(u){return u.cancelled||u.status==='cancelled'||u.tier==='disabled'});
+
+  if(!cancelled.length){
+    c.innerHTML='<div style="text-align:center;padding:40px;color:var(--text3)">No cancellations recorded.</div>';
+    return;
+  }
+
+  var h='<div style="font-size:11px;color:var(--text3);margin-bottom:12px">'+cancelled.length+' cancellation'+(cancelled.length!==1?'s':'')+'</div>';
+  h+='<div style="overflow-x:auto"><table class="adm-table"><thead><tr><th>User</th><th>Previous Plan</th><th>Cancel Date</th><th>Reason</th></tr></thead><tbody>';
+  cancelled.forEach(function(u){
+    var reason=u.cancel_reason||u.cancelReason||'No reason provided';
+    var cancelDate=u.cancel_date||u.cancelDate||'';
+    if(cancelDate)cancelDate=new Date(cancelDate).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+    h+='<tr>';
+    h+='<td><strong>'+(u.name||'Unknown')+'</strong><br><span style="font-size:10px;color:var(--text3)">'+(u.email||'')+'</span></td>';
+    h+='<td>'+(u.previous_tier||u.previousTier||'—')+'</td>';
+    h+='<td>'+(cancelDate||'—')+'</td>';
+    h+='<td style="font-size:12px;color:var(--text2)">'+reason+'</td>';
+    h+='</tr>';
+  });
+  h+='</tbody></table></div>';
+  c.innerHTML=h;
+}
+

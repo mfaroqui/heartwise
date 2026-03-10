@@ -7047,46 +7047,24 @@ function renderLeverage(){
   var workflows=document.getElementById('lev-workflows');
   var wfList=document.getElementById('lev-workflow-list');
   if(!hasAccess){
-    // Hide elite-only interactive sections
+    // Show static HTML gate, hide interactive sections
     if(hero)hero.style.display='none';
     if(filters)filters.style.display='none';
     if(quiz)quiz.style.display='none';
     if(progress)progress.style.display='none';
-    if(workflows)workflows.style.padding='0 24px 40px';
-    // Build preview with tool examples
-    var gateHtml='<div style="padding:24px 0">';
-    gateHtml+='<div style="text-align:center;margin-bottom:24px">';
-    gateHtml+='<div style="font-family:var(--font-serif);font-size:20px;font-weight:600;color:var(--text);margin-bottom:8px">Strategic Leverage Tools</div>';
-    gateHtml+='<p style="font-size:13px;color:var(--text2);line-height:1.6;max-width:360px;margin:0 auto">10 interactive tools to accelerate your learning, research, career planning, and productivity. Here\u2019s what\u2019s inside:</p>';
-    gateHtml+='</div>';
-    // Tool preview cards
-    var previews=typeof LEV_WORKFLOWS!=='undefined'?LEV_WORKFLOWS:[];
-    previews.forEach(function(wf){
-      gateHtml+='<div style="display:flex;align-items:flex-start;gap:12px;padding:14px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;margin-bottom:8px;opacity:0.85">';
-      gateHtml+='<div style="font-size:22px;flex-shrink:0;margin-top:2px">'+wf.icon+'</div>';
-      gateHtml+='<div style="flex:1;min-width:0">';
-      gateHtml+='<div style="font-size:14px;font-weight:600;color:var(--text)">'+wf.title+'</div>';
-      gateHtml+='<div style="font-size:12px;color:var(--text3);line-height:1.5;margin-top:2px">'+wf.tagline+'</div>';
-      gateHtml+='</div>';
-      gateHtml+='<div style="flex-shrink:0;padding:4px 10px;border-radius:6px;background:rgba(200,168,124,.08);border:1px solid rgba(200,168,124,.15);font-size:10px;font-weight:600;color:var(--accent);white-space:nowrap">\ud83d\udd12 Elite</div>';
-      gateHtml+='</div>';
-    });
-    // Upgrade CTA
-    gateHtml+='<div style="text-align:center;padding:28px 0 8px">';
-    gateHtml+='<p style="font-size:14px;color:var(--text2);line-height:1.6;margin-bottom:16px;max-width:340px;margin-left:auto;margin-right:auto">These tools are available exclusively with an Elite Strategy subscription.</p>';
-    gateHtml+='<button class="btn btn-a" onclick="navTo(\'scr-profile\');showUpgrade()" style="max-width:280px;margin:0 auto;padding:14px 32px;font-size:15px">Upgrade to Elite \u2192</button>';
-    gateHtml+='<div style="margin-top:10px"><button style="font-size:12px;color:var(--text3);background:none;border:none;cursor:pointer;padding:8px" onclick="navTo(\'scr-vault\')">Browse Free Frameworks</button></div>';
-    gateHtml+='</div></div>';
-    if(wfList)wfList.innerHTML=gateHtml;
-    else if(workflows)workflows.innerHTML='<div id="lev-workflow-list">'+gateHtml+'</div>';
+    if(workflows)workflows.style.display='none';
+    var gate=document.getElementById('lev-gate');
+    if(gate)gate.style.display='';
     return;
   }
   // Full access
+  var gate=document.getElementById('lev-gate');
+  if(gate)gate.style.display='none';
   if(hero)hero.style.display='';
   if(filters)filters.style.display='';
   if(quiz)quiz.style.display='';
   if(progress)progress.style.display='';
-  if(workflows)workflows.style.padding='12px 24px 100px';
+  if(workflows){workflows.style.display='';workflows.style.padding='12px 24px 100px'}
   if(!U.leverageTried)U.leverageTried=[];
   levUpdateProgress();
 

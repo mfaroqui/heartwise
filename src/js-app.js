@@ -437,6 +437,24 @@ async function doLogin(e){
         }
         // Ensure admin tier is always set for admin email
         if(email===AE.toLowerCase()&&user.tier!=='admin'){user.tier='admin';user.role='admin';saveDB()}
+        // Sync trial status from Supabase profile
+        try{
+          var prof=await _supaClient.from('profiles').select('tier,is_trial,trial_end').eq('email',email).limit(1);
+          if(!prof.error&&prof.data&&prof.data.length>0){
+            var sp=prof.data[0];
+            if(sp.trial_end){
+              var now=new Date(),end=new Date(sp.trial_end);
+              if(now>=end&&(sp.is_trial||user.isTrial)){
+                user.tier='free';user.isTrial=false;
+                await _supaClient.from('profiles').update({tier:'free',is_trial:false}).eq('email',email);
+                saveDB();
+              }else if(sp.is_trial){
+                user.tier=sp.tier||'elite';user.isTrial=true;user.trialEnd=sp.trial_end;
+              }
+            }
+            if(sp.tier&&!sp.is_trial&&sp.tier!=='free'){user.tier=sp.tier;user.isTrial=false}
+          }
+        }catch(ex2){console.warn('Trial sync:',ex2)}
         U=user;if(!U.usage)U.usage={ai:0,credits:TIERS[U.tier]?.credits||0,month:new Date().getMonth()};
         localStorage.setItem('hw_session',JSON.stringify(U));
         if(!localStorage.getItem('hw_disc_'+U.id)){enterApp();showDisc()}else{enterApp()}
@@ -517,6 +535,9 @@ function enterApp(){
       U.tier='free';U.isTrial=false;
       const u=DB.users.find(u=>u.id===U.id);if(u){u.tier='free';u.isTrial=false}
       saveDB();localStorage.setItem('hw_session',JSON.stringify(U));
+      if(typeof _supaClient!=='undefined'&&_supaClient){
+        _supaClient.from('profiles').update({tier:'free',is_trial:false}).eq('email',U.email).then(function(){});
+      }
       notify('Your trial has ended. Upgrade to keep full access.',1);
     }
   }
@@ -610,6 +631,9 @@ function updateTrialBanner(){
     U.tier='free';U.isTrial=false;
     var u=DB.users.find(function(u){return u.id===U.id});if(u){u.tier='free';u.isTrial=false}
     saveDB();localStorage.setItem('hw_session',JSON.stringify(U));
+    if(typeof _supaClient!=='undefined'&&_supaClient){
+      _supaClient.from('profiles').update({tier:'free',is_trial:false}).eq('email',U.email).then(function(){});
+    }
     el.innerHTML='<div style="display:flex;align-items:center;gap:12px"><span style="font-size:18px">⏰</span><div style="flex:1"><div style="font-size:13px;font-weight:600;color:var(--red)">Your trial has ended</div><div style="font-size:11px;color:var(--text2);margin-top:2px">Subscribe now to keep full access to every tool.</div></div><button class="btn btn-a btn-sm" onclick="navTo(\'scr-profile\');showUpgrade()" style="flex-shrink:0;width:auto">Subscribe →</button></div>';
     if(_trialInterval){clearInterval(_trialInterval);_trialInterval=null}
     enterApp();
@@ -5368,15 +5392,29 @@ function genReport(){
   // Animate bars after render
   setTimeout(()=>{document.querySelectorAll('.mb-fill').forEach(b=>{const w=b.style.width;b.style.width='0%';setTimeout(()=>b.style.width=w,50)})},100);
 }
-function obComplete(){
+async function obComplete(){
   const p=obProfile;
   // === TRIAL ABUSE PREVENTION ===
-  // 1. Check if email already used
+  // 1. Check if email already used (local)
   const existingUser=DB.users.find(function(u){return u.email.toLowerCase()===p.email.toLowerCase()});
   if(existingUser){
     notify('An account with this email already exists. Please sign in instead.',1);
     go('pg-login');
     return;
+  }
+  // 1b. Check if email already exists in Supabase (prevents re-trial from different device)
+  if(typeof _supaClient!=='undefined'&&_supaClient){
+    try{
+      var sbCheck=await _supaClient.from('profiles').select('id,email,tier,trial_end').eq('email',p.email.toLowerCase()).limit(1);
+      if(!sbCheck.error&&sbCheck.data&&sbCheck.data.length>0){
+        var existing=sbCheck.data[0];
+        if(existing.trial_end||existing.tier!=='free'){
+          notify('An account with this email already exists. Please sign in.',1);
+          go('pg-login');
+          return;
+        }
+      }
+    }catch(e){console.warn('Supabase trial check:',e)}
   }
   // 2. Check if this device already used a trial (localStorage fingerprint)
   var trialHistory=JSON.parse(localStorage.getItem('hw_trial_history')||'[]');

@@ -2084,6 +2084,22 @@ Sign Out</button>
 </div>
 </div>
 
+<!-- Strategic Leverage Upsell (Core users only — hidden by default, shown via JS) -->
+<div id="leverage-upsell" style="display:none;padding:0 24px 16px">
+<div style="background:linear-gradient(160deg,rgba(26,22,32,.03),rgba(42,37,48,.02));border:1px solid rgba(200,168,124,.2);border-radius:var(--r3);padding:24px;position:relative;overflow:hidden">
+<div style="position:absolute;top:-20%;right:-8%;width:120px;height:120px;background:radial-gradient(circle,rgba(200,168,124,.08),transparent 60%);border-radius:50%"></div>
+<div style="position:relative">
+<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+<span style="font-size:18px">⚡</span>
+<div style="font-family:var(--font-serif);font-size:16px;font-weight:600;color:var(--text)">AI is not a search engine.</div>
+</div>
+<p style="font-size:12px;color:var(--text2);line-height:1.7;margin:0 0 10px">Most physicians use AI the way they use Google — typing in a question and hoping for a good answer. That's not how you get ahead. The physicians who will separate themselves from their peers are the ones who learn <strong style="color:var(--text)">what to ask, how to frame it, and how to turn the output into action.</strong></p>
+<p style="font-size:12px;color:var(--text2);line-height:1.7;margin:0 0 14px">Elite members get access to <strong style="color:var(--text)">10 Strategic Leverage tools</strong> — structured workflows like the Study Accelerator, Case Simulator, Research Idea Generator, and more — designed to teach you how to use AI as a competitive advantage, not a crutch.</p>
+<button onclick="navTo('scr-profile');showUpgrade()" style="width:100%;padding:12px;font-size:13px;font-weight:600;background:linear-gradient(135deg,var(--accent2),var(--accent));color:#0a0a0f;border:none;border-radius:var(--r2);cursor:pointer;letter-spacing:.3px">Explore Elite Strategy →</button>
+</div>
+</div>
+</div>
+
 <!-- Submit a Question + Usage -->
 <div style="padding:0 24px 20px">
 <div style="background:linear-gradient(160deg,#f5f0e8,#ece5d8);border-radius:var(--r3);padding:24px;position:relative;overflow:hidden">
@@ -5278,6 +5294,9 @@ function enterApp(){
     else if(U.tier==='core'){topUpgrade.style.display='';topUpgrade.textContent='Upgrade to Elite';topUpgrade.onclick=function(){navTo('scr-profile');showUpgrade()}}
     else{topUpgrade.style.display='none'}
   }
+  // Show leverage upsell for core users only
+  var levUpsell=document.getElementById('leverage-upsell');
+  if(levUpsell)levUpsell.style.display=U.tier==='core'?'':'none';
   // Check for pending plan from landing page
   const pendingPlan=sessionStorage.getItem('hw_pending_plan');
   if(pendingPlan){

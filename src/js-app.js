@@ -616,6 +616,9 @@ function enterApp(){
     else if(U.tier==='core'){topUpgrade.style.display='';topUpgrade.textContent='Upgrade to Elite';topUpgrade.onclick=function(){navTo('scr-profile');showUpgrade()}}
     else{topUpgrade.style.display='none'}
   }
+  // Show leverage upsell for core users only
+  var levUpsell=document.getElementById('leverage-upsell');
+  if(levUpsell)levUpsell.style.display=U.tier==='core'?'':'none';
   // Check for pending plan from landing page
   const pendingPlan=sessionStorage.getItem('hw_pending_plan');
   if(pendingPlan){

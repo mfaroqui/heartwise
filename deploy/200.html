@@ -2946,15 +2946,17 @@ Sign Out</button>
 </div>
 </div>
 
-<!-- ADMIN SCREEN -->
-<div id="scr-admin" class="scr">
-<div style="padding:20px 24px 100px">
+<!-- ADMIN SCREEN - sits outside main-app as overlay -->
+</div>
+
+<div id="admin-overlay" style="display:none;position:fixed;inset:0;z-index:9000;background:var(--bg);overflow-y:auto">
+<div style="max-width:800px;margin:0 auto;padding:20px 24px 100px">
 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
 <div style="display:flex;align-items:center;gap:10px">
 <div style="font-family:var(--font-serif);font-size:22px;font-weight:600;color:var(--text)">Admin Panel</div>
-<span class="badge b-admin">MENTOR</span>
+<span style="display:inline-block;padding:3px 10px;border-radius:6px;font-size:10px;font-weight:700;letter-spacing:.5px;background:rgba(100,149,237,.15);color:var(--blue)">MENTOR</span>
 </div>
-<button onclick="navTo('scr-home')" style="font-size:12px;color:var(--text3);background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:6px 14px;cursor:pointer">← Back</button>
+<button onclick="closeAdmin()" style="font-size:13px;color:var(--text3);background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:8px 16px;cursor:pointer;font-weight:600">✕ Close</button>
 </div>
 <div style="display:flex;gap:6px;overflow-x:auto;padding-bottom:12px;border-bottom:1px solid var(--border);margin-bottom:16px">
 <button class="atab on" onclick="adminTab('queue',this)">Queue</button>
@@ -2968,9 +2970,6 @@ Sign Out</button>
 <div style="text-align:center;padding:40px;color:var(--text3)">Loading...</div>
 </div>
 </div>
-</div>
-
-<!-- NAV moved to top -->
 </div>
 
 
@@ -4962,7 +4961,7 @@ function navTo(scr,btn){
   if(scr==='scr-home')renderHome();
   if(scr==='scr-archive')renderArchive();
   if(scr==='scr-vault')renderVault();
-  if(scr==='scr-admin'){try{if(_supaClient){loadAdminDataFromSupabase(curAdminTab)}else{renderAdmin()}}catch(e){console.error('Admin load error:',e)}}
+  if(scr==='scr-admin'){openAdmin();return}
   if(scr==='scr-ask')updateAskScreen();
   if(scr==='scr-profile')renderProfile();
   if(scr==='scr-leverage')renderLeverage();
@@ -9636,17 +9635,15 @@ function adminTab(tab,btn){curAdminTab=tab;document.querySelectorAll('.atab').fo
 }
 
 function openAdmin(){
-  // Direct admin open — bypasses navTo completely
-  document.querySelectorAll('.scr').forEach(function(s){s.style.display='none'});
-  var admin=document.getElementById('scr-admin');
-  if(admin){admin.style.display='block'}
-  document.querySelectorAll('.ni').forEach(function(n){
-    n.classList.remove('on');
-    if(n.getAttribute('data-scr')==='scr-admin')n.classList.add('on');
-  });
+  document.getElementById('admin-overlay').style.display='block';
+  document.body.style.overflow='hidden';
   window.scrollTo(0,0);
   curAdminTab=curAdminTab||'queue';
   if(_supaClient){loadAdminDataFromSupabase(curAdminTab)}else{try{renderAdmin()}catch(e){console.error(e)}}
+}
+function closeAdmin(){
+  document.getElementById('admin-overlay').style.display='none';
+  document.body.style.overflow='';
 }
 
 async function loadAdminDataFromSupabase(tab){

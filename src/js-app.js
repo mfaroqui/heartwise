@@ -374,7 +374,7 @@ function navTo(scr,btn){
   if(scr==='scr-home')renderHome();
   if(scr==='scr-archive')renderArchive();
   if(scr==='scr-vault')renderVault();
-  if(scr==='scr-admin'){try{if(_supaClient){loadAdminDataFromSupabase(curAdminTab)}else{renderAdmin()}}catch(e){console.error('Admin load error:',e)}}
+  if(scr==='scr-admin'){openAdmin();return}
   if(scr==='scr-ask')updateAskScreen();
   if(scr==='scr-profile')renderProfile();
   if(scr==='scr-leverage')renderLeverage();
@@ -5048,17 +5048,15 @@ function adminTab(tab,btn){curAdminTab=tab;document.querySelectorAll('.atab').fo
 }
 
 function openAdmin(){
-  // Direct admin open — bypasses navTo completely
-  document.querySelectorAll('.scr').forEach(function(s){s.style.display='none'});
-  var admin=document.getElementById('scr-admin');
-  if(admin){admin.style.display='block'}
-  document.querySelectorAll('.ni').forEach(function(n){
-    n.classList.remove('on');
-    if(n.getAttribute('data-scr')==='scr-admin')n.classList.add('on');
-  });
+  document.getElementById('admin-overlay').style.display='block';
+  document.body.style.overflow='hidden';
   window.scrollTo(0,0);
   curAdminTab=curAdminTab||'queue';
   if(_supaClient){loadAdminDataFromSupabase(curAdminTab)}else{try{renderAdmin()}catch(e){console.error(e)}}
+}
+function closeAdmin(){
+  document.getElementById('admin-overlay').style.display='none';
+  document.body.style.overflow='';
 }
 
 async function loadAdminDataFromSupabase(tab){

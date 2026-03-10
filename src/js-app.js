@@ -6891,7 +6891,12 @@ function levScrollToWorkflow(id){
 function levToggleWorkflow(id){
   var card=document.getElementById(id);
   if(!card)return;
-  card.classList.toggle('expanded');
+  var wasExpanded=card.classList.contains('expanded');
+  // Close all other open cards
+  document.querySelectorAll('.lev-wf-card.expanded').forEach(function(c){if(c.id!==id)c.classList.remove('expanded')});
+  // Toggle clicked card
+  if(wasExpanded)card.classList.remove('expanded');
+  else card.classList.add('expanded');
 }
 
 function levMarkTried(wfId){

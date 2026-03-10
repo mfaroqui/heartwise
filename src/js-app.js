@@ -374,7 +374,7 @@ function navTo(scr,btn){
   if(scr==='scr-home')renderHome();
   if(scr==='scr-archive')renderArchive();
   if(scr==='scr-vault')renderVault();
-  if(scr==='scr-admin'){if(_supaClient){loadAdminDataFromSupabase(curAdminTab)}else{renderAdmin()}}
+  if(scr==='scr-admin'){try{if(_supaClient){loadAdminDataFromSupabase(curAdminTab)}else{renderAdmin()}}catch(e){console.error('Admin load error:',e)}}
   if(scr==='scr-ask')updateAskScreen();
   if(scr==='scr-profile')renderProfile();
   if(scr==='scr-leverage')renderLeverage();

@@ -5066,7 +5066,7 @@ async function loadAdminDataFromSupabase(tab){
       }
     }
   }catch(ex){console.warn('Supabase load error',ex)}
-  renderAdmin();
+  try{renderAdmin()}catch(ex2){console.warn('renderAdmin error',ex2);c.innerHTML='<div style="text-align:center;padding:40px;color:var(--red)">Error loading admin data. Try refreshing.</div>'}
 }
 
 var _sbProfiles=null;

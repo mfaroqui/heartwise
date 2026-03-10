@@ -5249,7 +5249,11 @@ function enterApp(){
   document.getElementById('nav-leverage').style.display=showLev?'':'none';
   document.getElementById('upgrade-prompt').style.display=U.tier==='free'?'':'none';
   var topUpgrade=document.getElementById('topbar-upgrade');
-  if(topUpgrade)topUpgrade.style.display=(U.tier==='free'||U.isTrial)?'':'none';
+  if(topUpgrade){
+    if(U.tier==='free'||U.isTrial){topUpgrade.style.display='';topUpgrade.textContent='Subscribe';topUpgrade.onclick=function(){navTo('scr-profile');showUpgrade()}}
+    else if(U.tier==='core'){topUpgrade.style.display='';topUpgrade.textContent='Upgrade to Elite';topUpgrade.onclick=function(){navTo('scr-profile');showUpgrade()}}
+    else{topUpgrade.style.display='none'}
+  }
   // Check for pending plan from landing page
   const pendingPlan=sessionStorage.getItem('hw_pending_plan');
   if(pendingPlan){

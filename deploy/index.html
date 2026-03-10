@@ -9358,7 +9358,7 @@ function admRenderMetrics(){
   var el=users.filter(function(u){return u.tier==='elite'}).length;
   var tr=users.filter(function(u){return u.is_trial||u.isTrial}).length;
   var ca=users.filter(function(u){return u.cancelled||u.status==='cancelled'}).length;
-  var mrr=(co*15)+(el*99);
+  var mrr=0; // Revenue tracked via Stripe only
   var tai=0;users.forEach(function(u){if(u.usage&&u.usage.ai)tai+=u.usage.ai;if(u.ai_used)tai+=u.ai_used});
   var act=users.filter(function(u){var d=u.last_active||u.lastActive;return d&&(Date.now()-new Date(d).getTime())<30*86400000}).length;
   var m=document.getElementById('adm-metrics');
@@ -9400,10 +9400,11 @@ function admRenderDashboard(c){
   }
   var co=users.filter(function(u){return u.tier==='core'}).length;
   var el=users.filter(function(u){return u.tier==='elite'}).length;
-  h+='<div class="adm-card"><div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:10px">Revenue Breakdown</div>';
+  h+='<div class="adm-card"><div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:10px">Subscribers</div>';
   h+='<div style="display:flex;gap:20px;font-size:13px;color:var(--text2)">';
-  h+='<div>Core: <strong>'+co+'</strong> × $15 = <strong style="color:var(--accent)">$'+(co*15)+'</strong></div>';
-  h+='<div>Elite: <strong>'+el+'</strong> × $99 = <strong style="color:var(--green)">$'+(el*99)+'</strong></div></div></div>';
+  h+='<div>Core: <strong>'+co+'</strong> ($15/mo)</div>';
+  h+='<div>Elite: <strong>'+el+'</strong> ($99/mo)</div></div>';
+  h+='<div style="font-size:11px;color:var(--text3);margin-top:8px">Revenue tracked via Stripe — connect Stripe dashboard for actuals</div></div>';
 
   h+='<div style="font-size:12px;font-weight:600;color:var(--text);margin:16px 0 8px">Recent Signups</div>';
   users.slice(0,5).forEach(function(u){

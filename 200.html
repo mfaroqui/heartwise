@@ -4935,8 +4935,11 @@ function go(id){
 }
 
 function navTo(scr,btn){
+  try{
   document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));
-  document.getElementById(scr).classList.add('on');
+  var target=document.getElementById(scr);
+  if(target)target.classList.add('on');
+  else{console.error('navTo: screen not found:',scr);return}
   if(btn){document.querySelectorAll('.ni').forEach(n=>n.classList.remove('on'));btn.classList.add('on')}
   else{
     document.querySelectorAll('.ni').forEach(n=>{
@@ -4958,6 +4961,7 @@ function navTo(scr,btn){
   // Close any open modals
   var modal=document.getElementById('modal-q');if(modal&&!modal.classList.contains('hidden')){modal.classList.add('hidden')}
   if(!_skipPush&&scr!==_lastScr){history.pushState({page:'main-app',scr:scr},'',null);_lastScr=scr}
+  }catch(ex){console.error('navTo error:',ex);var fallback=document.getElementById('scr-home');if(fallback)fallback.classList.add('on')}
 }
 
 window.addEventListener('popstate',function(e){

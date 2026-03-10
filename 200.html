@@ -4938,13 +4938,13 @@ function go(id){
 
 function navTo(scr,btn){
   try{
-  document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));
+  document.querySelectorAll('.scr').forEach(function(s){s.style.display='none'});
   var target=document.getElementById(scr);
-  if(target)target.classList.add('on');
+  if(target){target.style.display='block'}
   else{console.error('navTo: screen not found:',scr);return}
-  if(btn){document.querySelectorAll('.ni').forEach(n=>n.classList.remove('on'));btn.classList.add('on')}
+  if(btn){document.querySelectorAll('.ni').forEach(function(n){n.classList.remove('on')});btn.classList.add('on')}
   else{
-    document.querySelectorAll('.ni').forEach(n=>{
+    document.querySelectorAll('.ni').forEach(function(n){
       n.classList.remove('on');
       if(n.getAttribute('data-scr')===scr)n.classList.add('on');
     });

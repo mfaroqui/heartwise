@@ -1936,9 +1936,12 @@ ChatGPT and Claude are powerful AI tools — but they're general-purpose. <stron
 <div class="logo-mark" style="width:24px;height:24px"><svg style="width:16px;height:16px"><use href="#i-heart"/></svg></div>
 <span style="font-family:var(--font-serif);font-size:15px;font-weight:600;color:var(--text);letter-spacing:.3px">HeartWise</span>
 </div>
+<div style="display:flex;align-items:center;gap:8px">
+<button id="topbar-upgrade" onclick="navTo('scr-profile');showUpgrade()" style="display:none;padding:6px 14px;font-size:11px;font-weight:600;color:#0a0a0f;background:var(--accent);border:none;border-radius:8px;cursor:pointer;letter-spacing:.3px">Subscribe</button>
 <button onclick="doLogout()" style="display:flex;align-items:center;gap:6px;padding:6px 14px;font-size:11px;font-weight:600;color:var(--text3);background:var(--bg2);border:1px solid var(--border);border-radius:8px;cursor:pointer;transition:all .2s;letter-spacing:.3px" onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--accent)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text3)'">
 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
 Sign Out</button>
+</div>
 </div>
 
 <!-- NAV -->
@@ -5245,6 +5248,8 @@ function enterApp(){
   var showLev=(U.tier==='elite'&&!U.isTrial)||U.tier==='core'||U.tier==='admin';
   document.getElementById('nav-leverage').style.display=showLev?'':'none';
   document.getElementById('upgrade-prompt').style.display=U.tier==='free'?'':'none';
+  var topUpgrade=document.getElementById('topbar-upgrade');
+  if(topUpgrade)topUpgrade.style.display=(U.tier==='free'||U.isTrial)?'':'none';
   // Check for pending plan from landing page
   const pendingPlan=sessionStorage.getItem('hw_pending_plan');
   if(pendingPlan){

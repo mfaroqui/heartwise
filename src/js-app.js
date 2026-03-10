@@ -610,6 +610,8 @@ function enterApp(){
   var showLev=(U.tier==='elite'&&!U.isTrial)||U.tier==='core'||U.tier==='admin';
   document.getElementById('nav-leverage').style.display=showLev?'':'none';
   document.getElementById('upgrade-prompt').style.display=U.tier==='free'?'':'none';
+  var topUpgrade=document.getElementById('topbar-upgrade');
+  if(topUpgrade)topUpgrade.style.display=(U.tier==='free'||U.isTrial)?'':'none';
   // Check for pending plan from landing page
   const pendingPlan=sessionStorage.getItem('hw_pending_plan');
   if(pendingPlan){

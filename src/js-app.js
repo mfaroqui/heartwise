@@ -5051,12 +5051,36 @@ function openAdmin(){
   document.getElementById('admin-overlay').style.display='block';
   document.body.style.overflow='hidden';
   window.scrollTo(0,0);
+  // Highlight current tier
+  document.querySelectorAll('.tier-sw').forEach(function(b){b.style.background='var(--bg3)';b.style.color='var(--text3)';b.style.borderColor='var(--border)'});
+  var cur=document.getElementById('ts-'+(U.tier||'free'));
+  if(cur){cur.style.background='var(--accent)';cur.style.color='#0a0a0f';cur.style.borderColor='var(--accent)'}
+  document.getElementById('ts-current').textContent='Currently: '+(U.tier||'free').toUpperCase();
   curAdminTab=curAdminTab||'queue';
   if(_supaClient){loadAdminDataFromSupabase(curAdminTab)}else{try{renderAdmin()}catch(e){console.error(e)}}
 }
 function closeAdmin(){
   document.getElementById('admin-overlay').style.display='none';
   document.body.style.overflow='';
+}
+function adminSwitchTier(tier){
+  U.tier=tier;
+  if(tier==='elite')U.isTrial=false;
+  localStorage.setItem('hw_session',JSON.stringify(U));
+  // Update UI
+  document.querySelectorAll('.tier-sw').forEach(function(b){b.style.background='var(--bg3)';b.style.color='var(--text3)';b.style.borderColor='var(--border)'});
+  var cur=document.getElementById('ts-'+tier);
+  if(cur){cur.style.background='var(--accent)';cur.style.color='#0a0a0f';cur.style.borderColor='var(--accent)'}
+  document.getElementById('ts-current').textContent='Switched to: '+tier.toUpperCase();
+  // Update nav visibility
+  var levTab=document.getElementById('nav-leverage');
+  if(levTab){
+    var showLev=(tier==='elite'&&!U.isTrial)||tier==='core'||tier==='admin';
+    levTab.style.display=showLev?'':'none';
+  }
+  var admTab=document.getElementById('nav-admin');
+  if(admTab)admTab.style.display=(tier==='admin')?'':'none';
+  notify('Switched to '+tier.toUpperCase()+' tier');
 }
 
 async function loadAdminDataFromSupabase(tab){

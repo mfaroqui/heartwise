@@ -2,10 +2,33 @@
 // Assembles HeartWise app from src/ parts into index.html
 const fs = require('fs');
 const path = require('path');
+const { execSync } = require('child_process');
 const dir = path.join(__dirname, 'src');
 
 const read = f => fs.readFileSync(path.join(dir, f), 'utf8');
 
+// ===== STEP 1: Assemble JS =====
+const jsFiles = ['js-data.js', 'js-vault.js', 'js-app.js'];
+const jsParts = jsFiles.map(f => read(f));
+const combinedJS = jsParts.join('\n');
+
+// ===== STEP 2: Syntax check BEFORE building =====
+const tmpFile = path.join(__dirname, '.build-check.tmp.js');
+fs.writeFileSync(tmpFile, combinedJS);
+try {
+  execSync(`node --check "${tmpFile}"`, { stdio: 'pipe' });
+  fs.unlinkSync(tmpFile);
+} catch (err) {
+  fs.unlinkSync(tmpFile);
+  const stderr = err.stderr ? err.stderr.toString() : err.message;
+  console.error('\n❌ BUILD FAILED — JavaScript syntax error detected!\n');
+  console.error(stderr);
+  console.error('\nFix the error above before deploying. The old build is untouched.\n');
+  process.exit(1);
+}
+console.log('✅ JavaScript syntax check passed');
+
+// ===== STEP 3: Assemble HTML =====
 const html = [
   read('head.html'),
   read('styles.html'),
@@ -14,14 +37,31 @@ const html = [
   read('auth.html'),
   read('screens.html'),
   '\n<script>\n',
-  read('js-data.js'),
-  '\n',
-  read('js-vault.js'),
-  '\n',
-  read('js-app.js'),
+  combinedJS,
   '\n<\/script>\n<\/body>\n<\/html>\n'
 ].join('\n');
 
+// ===== STEP 4: Validate HTML has required elements =====
+const checks = [
+  { name: 'Supabase init', pattern: 'supabase.createClient' },
+  { name: 'Login function', pattern: 'function doLogin(' },
+  { name: 'App entry', pattern: 'function enterApp(' },
+  { name: 'Database init', pattern: 'function initDB(' }
+];
+let allGood = true;
+checks.forEach(c => {
+  if (html.indexOf(c.pattern) === -1) {
+    console.error(`❌ Missing required element: ${c.name} (pattern: ${c.pattern})`);
+    allGood = false;
+  }
+});
+if (!allGood) {
+  console.error('\n❌ BUILD FAILED — Missing required app elements. The old build is untouched.\n');
+  process.exit(1);
+}
+console.log('✅ HTML integrity check passed');
+
+// ===== STEP 5: Write output =====
 const outPath = path.join(__dirname, 'index.html');
 fs.writeFileSync(outPath, html);
 console.log('Built index.html:', (fs.statSync(outPath).size / 1024).toFixed(1), 'KB');

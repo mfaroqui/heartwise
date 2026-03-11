@@ -267,7 +267,7 @@ async function sendEmail(subject: string, html: string, to: string, name: string
       "Authorization": "Bearer re_Wzrmyu7Y_3uL6Ks2gh6mESGecy2GJj8Mo",
     },
     body: JSON.stringify({
-      from: "HeartWise <onboarding@resend.dev>",
+      from: "HeartWise <noreply@heartwisementor.com>",
       to: to,
       subject: subject,
       html: html,

@@ -65,7 +65,7 @@ Deno.serve(async (req: Request) => {
         "Authorization": "Bearer re_Wzrmyu7Y_3uL6Ks2gh6mESGecy2GJj8Mo",
       },
       body: JSON.stringify({
-        from: "HeartWise <onboarding@resend.dev>",
+        from: "HeartWise <noreply@heartwisementor.com>",
         to: "heartwisementor@gmail.com",
         subject: "HeartWise: " + label + " from " + (user_name || "Unknown"),
         html: '<div style="font-family:system-ui,sans-serif;max-width:600px;margin:0 auto;padding:20px"><div style="background:#1a1620;padding:20px;border-radius:12px 12px 0 0;color:#f0ece6"><h2 style="color:#c8a87c;margin:0 0 4px;font-size:18px">' + label + '</h2><p style="color:#b8b3ac;margin:0;font-size:13px">From: ' + (user_name || "Unknown") + " (" + (user_email || "") + ')</p></div><div style="padding:20px;background:#f8f6f2;border-radius:0 0 12px 12px;border:1px solid #e8e4de;border-top:none"><div style="font-size:14px;line-height:1.7;color:#2a2520;white-space:pre-wrap">' + safe + '</div></div><p style="font-size:11px;color:#999;margin-top:16px;text-align:center">Log in to HeartWise Admin → Messages to reply.</p></div>',

@@ -722,6 +722,19 @@ a:hover{color:var(--accent2)}
 @media(max-width:520px){
   .hw-compare-row>div:last-child{grid-template-columns:1fr!important}
 }
+/* Upgrade float hover */
+#upgrade-float-btn:hover{transform:scale(1.05);box-shadow:0 6px 28px rgba(200,168,124,.35)}
+/* Blurred results overlay for free users */
+.hw-blur-gate{position:relative}
+.hw-blur-gate .hw-blur-content{filter:blur(6px);pointer-events:none;user-select:none;-webkit-user-select:none}
+.hw-blur-gate .hw-blur-overlay{position:absolute;top:0;left:0;right:0;bottom:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(9,9,14,.7);border-radius:10px;z-index:2;padding:32px 20px;text-align:center}
+.hw-blur-overlay .hw-blur-icon{font-size:36px;margin-bottom:12px}
+.hw-blur-overlay .hw-blur-title{font-size:16px;font-weight:700;color:var(--text);margin-bottom:6px;font-family:var(--font-serif)}
+.hw-blur-overlay .hw-blur-sub{font-size:12px;color:var(--text3);margin-bottom:16px;line-height:1.5;max-width:280px}
+.hw-blur-overlay .hw-blur-cta{padding:12px 28px;font-size:13px;font-weight:700;background:linear-gradient(135deg,var(--accent2),var(--accent));color:#0a0a0f;border:none;border-radius:8px;cursor:pointer;letter-spacing:.3px;transition:transform .15s}
+.hw-blur-overlay .hw-blur-cta:hover{transform:scale(1.03)}
+/* Adjust main-app bottom padding when sticky bar is showing */
+body.has-upgrade-bar #main-app{padding-bottom:70px}
 </style>
 <body>
 <svg style="display:none">
@@ -3099,6 +3112,24 @@ Sign Out</button>
 </div>
 </div>
 
+<!-- Sticky Upgrade Bar (Free users) -->
+<div id="upgrade-sticky-bar" class="hidden" style="position:fixed;bottom:0;left:0;right:0;z-index:900;background:linear-gradient(135deg,#12111a,#171622);border-top:1px solid rgba(200,168,124,.25);padding:12px 20px;display:flex;align-items:center;justify-content:center;gap:14px;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)">
+<div style="display:flex;align-items:center;gap:10px;flex:1;max-width:600px">
+<span style="font-size:18px">🔓</span>
+<div style="flex:1">
+<div style="font-size:13px;font-weight:600;color:var(--text)">Unlock all 15+ career tools</div>
+<div style="font-size:11px;color:var(--text3)" id="upgrade-bar-sub">Core — $29/mo or $249/year</div>
+</div>
+<button onclick="navTo('scr-profile');showUpgrade()" style="padding:10px 22px;font-size:12px;font-weight:700;background:linear-gradient(135deg,var(--accent2),var(--accent));color:#0a0a0f;border:none;border-radius:8px;cursor:pointer;white-space:nowrap;letter-spacing:.3px">Upgrade Now</button>
+</div>
+</div>
+
+<!-- Floating Upgrade Button (Core users) -->
+<div id="upgrade-float-btn" class="hidden" onclick="navTo('scr-profile');showUpgrade()" style="position:fixed;bottom:24px;right:24px;z-index:900;padding:10px 18px;background:linear-gradient(135deg,var(--accent2),var(--accent));color:#0a0a0f;border-radius:40px;cursor:pointer;font-size:11px;font-weight:700;letter-spacing:.3px;box-shadow:0 4px 20px rgba(200,168,124,.25);display:flex;align-items:center;gap:8px;transition:transform .2s,box-shadow .2s">
+<span style="font-size:14px">⭐</span>
+<span>Get Mentorship</span>
+</div>
+
 
 <script>
 
@@ -5448,6 +5479,53 @@ function enterApp(){
   navTo('scr-home');
   // Check for unread notifications
   checkNotifBadge();
+  // Show upgrade elements based on tier
+  showUpgradeElements();
+}
+
+// ===== UPGRADE ELEMENTS =====
+function showUpgradeElements(){
+  var stickyBar=document.getElementById('upgrade-sticky-bar');
+  var floatBtn=document.getElementById('upgrade-float-btn');
+  if(!stickyBar||!floatBtn)return;
+
+  if(U.tier==='free'){
+    // Sticky bottom bar for free users
+    stickyBar.classList.remove('hidden');
+    document.body.classList.add('has-upgrade-bar');
+    // Update remaining analyses count
+    var t=TIERS.free;
+    var remaining=Math.max(0,t.ai-(U.usage?U.usage.ai:0));
+    document.getElementById('upgrade-bar-sub').textContent=remaining+' of '+t.ai+' free analyses remaining — Core $29/mo';
+    floatBtn.classList.add('hidden');
+  } else if(U.tier==='core'){
+    // Floating button for core users
+    stickyBar.classList.add('hidden');
+    document.body.classList.remove('has-upgrade-bar');
+    floatBtn.classList.remove('hidden');
+  } else {
+    // Mentorship/admin — hide everything
+    stickyBar.classList.add('hidden');
+    floatBtn.classList.add('hidden');
+    document.body.classList.remove('has-upgrade-bar');
+  }
+}
+
+// Blur gate: wraps tool results for free users with a blurred preview + CTA overlay
+function applyBlurGate(resultsEl){
+  if(!U||U.tier!=='free')return false;
+  if(!resultsEl||!resultsEl.innerHTML)return false;
+
+  var content=resultsEl.innerHTML;
+  resultsEl.innerHTML='<div class="hw-blur-gate">'
+    +'<div class="hw-blur-content">'+content+'</div>'
+    +'<div class="hw-blur-overlay">'
+    +'<div class="hw-blur-icon">🔒</div>'
+    +'<div class="hw-blur-title">Your analysis is ready</div>'
+    +'<div class="hw-blur-sub">Upgrade to Core to see your full results, recommendations, and action plan.</div>'
+    +'<button class="hw-blur-cta" onclick="navTo(\'scr-profile\');showUpgrade();closeModal(\'modal-q\')">Unlock Full Results — $29/mo</button>'
+    +'</div></div>';
+  return true;
 }
 
 // ===== RENDER HOME =====
@@ -7098,6 +7176,7 @@ function crsCalc(){
   }
 
   document.getElementById('crs-results').innerHTML=h;
+  applyBlurGate(document.getElementById('crs-results'));
 }
 
 // ===== OFFER COMPARISON MATRIX (v3) =====
@@ -7388,6 +7467,7 @@ function ocmCompare(){
   h+='</div></div>';
 
   document.getElementById('ocm-results').innerHTML=h;
+  applyBlurGate(document.getElementById('ocm-results'));
   document.getElementById('ocm-results').scrollIntoView({behavior:'smooth',block:'start'});
 }
 
@@ -7503,6 +7583,7 @@ function sfaUpdate(){
   });
   h+='<p style="font-size:10px;color:var(--text3);font-style:italic;margin-top:12px">This analysis is directional guidance based on your preferences. Shadow, rotate, and talk to physicians in each field before committing.</p>';
   document.getElementById('sfa-results').innerHTML=h;
+  applyBlurGate(document.getElementById('sfa-results'));
 }
 
 // ===== MATCH COMPETITIVENESS CALCULATOR (v14) =====
@@ -8008,6 +8089,7 @@ function mccCalculate(){
 
   h+='<p style="font-size:10px;color:var(--text3);font-style:italic;margin-top:14px">Based on NRMP Charting Outcomes and specialty match data. Match probabilities are estimates based on aggregate data — individual outcomes depend on interview performance, program fit, geographic preferences, and intangible factors.</p>';
   document.getElementById('mcc-results').innerHTML=h;
+  applyBlurGate(document.getElementById('mcc-results'));
   document.getElementById('mcc-results').scrollIntoView({behavior:'smooth',block:'start'});
 }
 
@@ -8113,9 +8195,8 @@ function csbGenerate(){
   h+='<div style="font-size:11px;color:var(--text3)">Submit a Strategic Audit for Dr. Faroqui\u2019s personalized assessment.</div></div>';
 
   document.getElementById('csb-results').innerHTML=h;
-}
-
-// ===== TOOLKIT QUIZ =====
+  applyBlurGate(document.getElementById('csb-results'));
+}// ===== TOOLKIT QUIZ =====
 var quizAnswers={stage:null,goal:null,urgency:null};
 
 // Recommendation engine: maps (stage, goal) → ordered tool IDs with rationale
@@ -8667,6 +8748,7 @@ function frcUpdate(){
   document.getElementById('frc-grade').textContent=gl;
   document.getElementById('frc-grade').style.color=gc;
   document.getElementById('frc-interp').innerHTML=gi;
+  applyBlurGate(document.getElementById('frc-interp'));
 }
 
 // ===== PROFILE =====
@@ -9592,6 +9674,7 @@ function ciCalc(){
   }
 
   out.innerHTML+='<p style="font-size:10px;color:var(--text3);margin-top:16px;line-height:1.6;font-style:italic">Based on MGMA 2024 Provider Compensation Report. This is a modeling tool \u2014 not legal advice. Always have a physician contract attorney review your specific contract terms.</p>';
+  applyBlurGate(out);
 }
 
 // ===== FINANCIAL TRAJECTORY SIMULATOR =====
@@ -9785,6 +9868,7 @@ function ftCalc(){
   }else{
     insEl.innerHTML=debtSection;
   }
+  applyBlurGate(insEl);
   }else{
     insEl.innerHTML='<p style="font-size:12px;color:var(--text3);text-align:center;padding:12px">Configure a scenario to see insights.</p>';
   }
@@ -11834,6 +11918,7 @@ function misGrade(){
   h+='</div>';
 
   document.getElementById('mis-feedback').innerHTML=h;
+  applyBlurGate(document.getElementById('mis-feedback'));
   document.getElementById('mis-feedback').scrollIntoView({behavior:'smooth',block:'start'});
 }
 

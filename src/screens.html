@@ -1139,3 +1139,21 @@ Sign Out</button>
 
 </div>
 </div>
+
+<!-- Sticky Upgrade Bar (Free users) -->
+<div id="upgrade-sticky-bar" class="hidden" style="position:fixed;bottom:0;left:0;right:0;z-index:900;background:linear-gradient(135deg,#12111a,#171622);border-top:1px solid rgba(200,168,124,.25);padding:12px 20px;display:flex;align-items:center;justify-content:center;gap:14px;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)">
+<div style="display:flex;align-items:center;gap:10px;flex:1;max-width:600px">
+<span style="font-size:18px">🔓</span>
+<div style="flex:1">
+<div style="font-size:13px;font-weight:600;color:var(--text)">Unlock all 15+ career tools</div>
+<div style="font-size:11px;color:var(--text3)" id="upgrade-bar-sub">Core — $29/mo or $249/year</div>
+</div>
+<button onclick="navTo('scr-profile');showUpgrade()" style="padding:10px 22px;font-size:12px;font-weight:700;background:linear-gradient(135deg,var(--accent2),var(--accent));color:#0a0a0f;border:none;border-radius:8px;cursor:pointer;white-space:nowrap;letter-spacing:.3px">Upgrade Now</button>
+</div>
+</div>
+
+<!-- Floating Upgrade Button (Core users) -->
+<div id="upgrade-float-btn" class="hidden" onclick="navTo('scr-profile');showUpgrade()" style="position:fixed;bottom:24px;right:24px;z-index:900;padding:10px 18px;background:linear-gradient(135deg,var(--accent2),var(--accent));color:#0a0a0f;border-radius:40px;cursor:pointer;font-size:11px;font-weight:700;letter-spacing:.3px;box-shadow:0 4px 20px rgba(200,168,124,.25);display:flex;align-items:center;gap:8px;transition:transform .2s,box-shadow .2s">
+<span style="font-size:14px">⭐</span>
+<span>Get Mentorship</span>
+</div>

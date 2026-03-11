@@ -653,6 +653,53 @@ function enterApp(){
   navTo('scr-home');
   // Check for unread notifications
   checkNotifBadge();
+  // Show upgrade elements based on tier
+  showUpgradeElements();
+}
+
+// ===== UPGRADE ELEMENTS =====
+function showUpgradeElements(){
+  var stickyBar=document.getElementById('upgrade-sticky-bar');
+  var floatBtn=document.getElementById('upgrade-float-btn');
+  if(!stickyBar||!floatBtn)return;
+
+  if(U.tier==='free'){
+    // Sticky bottom bar for free users
+    stickyBar.classList.remove('hidden');
+    document.body.classList.add('has-upgrade-bar');
+    // Update remaining analyses count
+    var t=TIERS.free;
+    var remaining=Math.max(0,t.ai-(U.usage?U.usage.ai:0));
+    document.getElementById('upgrade-bar-sub').textContent=remaining+' of '+t.ai+' free analyses remaining — Core $29/mo';
+    floatBtn.classList.add('hidden');
+  } else if(U.tier==='core'){
+    // Floating button for core users
+    stickyBar.classList.add('hidden');
+    document.body.classList.remove('has-upgrade-bar');
+    floatBtn.classList.remove('hidden');
+  } else {
+    // Mentorship/admin — hide everything
+    stickyBar.classList.add('hidden');
+    floatBtn.classList.add('hidden');
+    document.body.classList.remove('has-upgrade-bar');
+  }
+}
+
+// Blur gate: wraps tool results for free users with a blurred preview + CTA overlay
+function applyBlurGate(resultsEl){
+  if(!U||U.tier!=='free')return false;
+  if(!resultsEl||!resultsEl.innerHTML)return false;
+
+  var content=resultsEl.innerHTML;
+  resultsEl.innerHTML='<div class="hw-blur-gate">'
+    +'<div class="hw-blur-content">'+content+'</div>'
+    +'<div class="hw-blur-overlay">'
+    +'<div class="hw-blur-icon">🔒</div>'
+    +'<div class="hw-blur-title">Your analysis is ready</div>'
+    +'<div class="hw-blur-sub">Upgrade to Core to see your full results, recommendations, and action plan.</div>'
+    +'<button class="hw-blur-cta" onclick="navTo(\'scr-profile\');showUpgrade();closeModal(\'modal-q\')">Unlock Full Results — $29/mo</button>'
+    +'</div></div>';
+  return true;
 }
 
 // ===== RENDER HOME =====
@@ -2303,6 +2350,7 @@ function crsCalc(){
   }
 
   document.getElementById('crs-results').innerHTML=h;
+  applyBlurGate(document.getElementById('crs-results'));
 }
 
 // ===== OFFER COMPARISON MATRIX (v3) =====
@@ -2593,6 +2641,7 @@ function ocmCompare(){
   h+='</div></div>';
 
   document.getElementById('ocm-results').innerHTML=h;
+  applyBlurGate(document.getElementById('ocm-results'));
   document.getElementById('ocm-results').scrollIntoView({behavior:'smooth',block:'start'});
 }
 
@@ -2708,6 +2757,7 @@ function sfaUpdate(){
   });
   h+='<p style="font-size:10px;color:var(--text3);font-style:italic;margin-top:12px">This analysis is directional guidance based on your preferences. Shadow, rotate, and talk to physicians in each field before committing.</p>';
   document.getElementById('sfa-results').innerHTML=h;
+  applyBlurGate(document.getElementById('sfa-results'));
 }
 
 // ===== MATCH COMPETITIVENESS CALCULATOR (v14) =====
@@ -3213,6 +3263,7 @@ function mccCalculate(){
 
   h+='<p style="font-size:10px;color:var(--text3);font-style:italic;margin-top:14px">Based on NRMP Charting Outcomes and specialty match data. Match probabilities are estimates based on aggregate data — individual outcomes depend on interview performance, program fit, geographic preferences, and intangible factors.</p>';
   document.getElementById('mcc-results').innerHTML=h;
+  applyBlurGate(document.getElementById('mcc-results'));
   document.getElementById('mcc-results').scrollIntoView({behavior:'smooth',block:'start'});
 }
 
@@ -3318,9 +3369,8 @@ function csbGenerate(){
   h+='<div style="font-size:11px;color:var(--text3)">Submit a Strategic Audit for Dr. Faroqui\u2019s personalized assessment.</div></div>';
 
   document.getElementById('csb-results').innerHTML=h;
-}
-
-// ===== TOOLKIT QUIZ =====
+  applyBlurGate(document.getElementById('csb-results'));
+}// ===== TOOLKIT QUIZ =====
 var quizAnswers={stage:null,goal:null,urgency:null};
 
 // Recommendation engine: maps (stage, goal) → ordered tool IDs with rationale
@@ -3872,6 +3922,7 @@ function frcUpdate(){
   document.getElementById('frc-grade').textContent=gl;
   document.getElementById('frc-grade').style.color=gc;
   document.getElementById('frc-interp').innerHTML=gi;
+  applyBlurGate(document.getElementById('frc-interp'));
 }
 
 // ===== PROFILE =====
@@ -4797,6 +4848,7 @@ function ciCalc(){
   }
 
   out.innerHTML+='<p style="font-size:10px;color:var(--text3);margin-top:16px;line-height:1.6;font-style:italic">Based on MGMA 2024 Provider Compensation Report. This is a modeling tool \u2014 not legal advice. Always have a physician contract attorney review your specific contract terms.</p>';
+  applyBlurGate(out);
 }
 
 // ===== FINANCIAL TRAJECTORY SIMULATOR =====
@@ -4990,6 +5042,7 @@ function ftCalc(){
   }else{
     insEl.innerHTML=debtSection;
   }
+  applyBlurGate(insEl);
   }else{
     insEl.innerHTML='<p style="font-size:12px;color:var(--text3);text-align:center;padding:12px">Configure a scenario to see insights.</p>';
   }
@@ -7039,6 +7092,7 @@ function misGrade(){
   h+='</div>';
 
   document.getElementById('mis-feedback').innerHTML=h;
+  applyBlurGate(document.getElementById('mis-feedback'));
   document.getElementById('mis-feedback').scrollIntoView({behavior:'smooth',block:'start'});
 }
 

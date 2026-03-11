@@ -5031,7 +5031,7 @@ let DB,U=null,curFilter='all',curAdminTab='queue';
 
 function initDB(){
   const seed={
-    users:[{id:'admin',name:'Dr. Mouzam Faroqui',email:AE,pass:'admin123',role:'admin',tier:'admin',institution:'Houston Medical Center'}],
+    users:[{id:'admin',name:'Dr. Mouzam Faroqui',email:AE,pass:'__supabase__',role:'admin',tier:'admin',institution:'Houston Medical Center'}],
     questions:SEED_Q.concat(LEGACY_Q).concat(PENDING_Q),
     nextId:300,nextUserId:2
   };
@@ -10201,14 +10201,14 @@ async function obComplete(){
     // Device already used a trial — create account but as free tier, no trial
     const roleMap={premed:'student',student:'student',resident:'resident',fellow:'fellow',attending:'attending',switching:'other'};
     const reportSnapshot=captureReportData(p);
-    const user={id:'u'+DB.nextUserId++,name:p.name,email:p.email.toLowerCase(),pass:p.pass,role:roleMap[p.stage]||'student',tier:'free',isTrial:false,institution:p.inst,usage:{ai:0,credits:0,month:new Date().getMonth()},profile:p,signupDate:new Date().toISOString(),report:reportSnapshot,notes:[],trialUsedOnDevice:true};
+    const user={id:'u'+DB.nextUserId++,name:p.name,email:p.email.toLowerCase(),pass:p.pass,role:roleMap[p.stage]||'student',tier:'free',isTrial:false,institution:p.inst,usage:{ai:0,credits:0,month:new Date().getMonth()},profile:safeProfileData(p),signupDate:new Date().toISOString(),report:reportSnapshot,notes:[],trialUsedOnDevice:true};
     DB.users.push(user);saveDB();
     var _profilePayload2={
       user_id:user.id,name:p.name,email:p.email.toLowerCase(),role:roleMap[p.stage]||'student',
       tier:'free',institution:p.inst||'',stage:p.stage,specialty:p.spec||'',goal:p.goal||'',
       score:reportSnapshot.score,grade:reportSnapshot.grade,
       strengths:reportSnapshot.strengths,gaps:reportSnapshot.gaps,
-      profile_data:p
+      profile_data:safeProfileData(p)
     };
     if(_supaClient){
       _supaClient.auth.signUp({email:p.email.toLowerCase(),password:p.pass,options:{data:{name:p.name}}}).catch(function(){});
@@ -10231,7 +10231,7 @@ async function obComplete(){
   const trialEnd=new Date();trialEnd.setHours(trialEnd.getHours()+48);
   // Capture report snapshot
   const reportSnapshot=captureReportData(p);
-  const user={id:'u'+DB.nextUserId++,name:p.name,email:p.email.toLowerCase(),pass:p.pass,role:roleMap[p.stage]||'student',tier:'elite',trialEnd:trialEnd.toISOString(),isTrial:true,institution:p.inst,usage:{ai:0,credits:0,month:new Date().getMonth()},profile:p,signupDate:new Date().toISOString(),report:reportSnapshot,notes:[]};
+  const user={id:'u'+DB.nextUserId++,name:p.name,email:p.email.toLowerCase(),pass:p.pass,role:roleMap[p.stage]||'student',tier:'elite',trialEnd:trialEnd.toISOString(),isTrial:true,institution:p.inst,usage:{ai:0,credits:0,month:new Date().getMonth()},profile:safeProfileData(p),signupDate:new Date().toISOString(),report:reportSnapshot,notes:[]};
   DB.users.push(user);saveDB();
   // Sync to Supabase — client-side first, server-side fallback
   var _profilePayload={
@@ -10240,7 +10240,7 @@ async function obComplete(){
     score:reportSnapshot.score,grade:reportSnapshot.grade,
     strengths:reportSnapshot.strengths,gaps:reportSnapshot.gaps,
     trial_end:trialEnd.toISOString(),
-    profile_data:p
+    profile_data:safeProfileData(p)
   };
   if(_supaClient){
     _supaClient.auth.signUp({email:p.email.toLowerCase(),password:p.pass,options:{data:{name:p.name}}}).catch(()=>{});
@@ -10259,6 +10259,13 @@ async function obComplete(){
   localStorage.setItem('hw_trial_history',JSON.stringify(trialHistory));
   enterApp();showDisc();
   notify('Welcome! Your 48-hour full access is now active. Every tool. Every feature. The clock is ticking. ⚡');
+}
+
+// Strip sensitive fields from profile data before storing
+function safeProfileData(p){
+  var safe={};
+  for(var k in p){if(p.hasOwnProperty(k)&&k!=='pass'&&k!=='password')safe[k]=p[k]}
+  return safe;
 }
 
 function captureReportData(p){

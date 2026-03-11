@@ -351,6 +351,28 @@ try{_supaClient=supabase.createClient(SUPABASE_URL,SUPABASE_KEY)}catch(e){consol
 // ===== APP STATE =====
 let DB,U=null,curFilter='all',curAdminTab='queue';
 
+// ===== ERROR REPORTING =====
+// Logs client-side errors to the messages table so admin can see failures
+var _errQueue=[],_errSending=false;
+function logError(context,err){
+  var msg='[CLIENT ERROR] '+context+': '+(err&&err.message||String(err));
+  console.warn(msg);
+  _errQueue.push({user_name:'System',user_email:U?U.email:'unknown',type:'bug',message:msg.substring(0,1000),date:new Date().toISOString()});
+  if(!_errSending)_flushErrors();
+}
+function _flushErrors(){
+  if(!_errQueue.length){_errSending=false;return}
+  _errSending=true;
+  var batch=_errQueue.splice(0,5);
+  var next=function(){setTimeout(_flushErrors,2000)};
+  if(_supaClient){
+    Promise.all(batch.map(function(e){return _supaClient.from('messages').insert([e]).catch(function(){})})).then(next).catch(next);
+  }else{next()}
+}
+// Global error handler for uncaught errors
+window.addEventListener('error',function(e){logError('Uncaught',e.error||e.message)});
+window.addEventListener('unhandledrejection',function(e){logError('UnhandledPromise',e.reason)});
+
 function initDB(){
   const seed={
     users:[{id:'admin',name:'Dr. Mouzam Faroqui',email:AE,pass:'__supabase__',role:'admin',tier:'admin',institution:'Houston Medical Center'}],
@@ -1490,7 +1512,7 @@ function saveUser(){
       career_profile:U.careerProfile,
       score_history:U.scoreHistory,
       milestones:U.milestones
-    }).eq('email',U.email.toLowerCase()).then(function(){}).catch(function(){});
+    }).eq('email',U.email.toLowerCase()).then(function(){}).catch(function(e){logError('profileUpdate',e)});
   }
 }
 
@@ -2939,7 +2961,7 @@ function mccSaveProfile(){
   saveDB();
   // Sync to Supabase
   if(_supaClient&&U.supaId){
-    _supaClient.from('profiles').update({notes:U.notes||[],mcc_profiles:U.mccProfiles}).eq('user_id',U.supaId||U.id).then(function(){}).catch(function(){});
+    _supaClient.from('profiles').update({notes:U.notes||[],mcc_profiles:U.mccProfiles}).eq('user_id',U.supaId||U.id).then(function(){}).catch(function(e){logError('profileNotesUpdate',e)});
   }
   notify('Competitiveness profile saved! Track your progress over time. 📈');
   recordToolUse('Match Competitiveness Calculator',profile.score||null,'Saved competitiveness profile for '+(profile.spec||'unknown specialty'));
@@ -4128,7 +4150,7 @@ async function submitGoalCheckin(){
     date:new Date().toISOString()
   };
   if(_supaClient){
-    await _supaClient.from('messages').insert([payload]).catch(function(){});
+    await _supaClient.from('messages').insert([payload]).catch(function(e){logError('messageInsert',e)});
   }
   if(!DB.messages)DB.messages=[];
   DB.messages.push(payload);
@@ -4161,7 +4183,7 @@ function reportGoalUpdate(goalId,action,detail){
     date:new Date().toISOString()
   };
   if(_supaClient){
-    _supaClient.from('messages').insert([payload]).then(function(){}).catch(function(){});
+    _supaClient.from('messages').insert([payload]).then(function(){}).catch(function(e){logError('messageInsert',e)});
   }
 }
 
@@ -4206,7 +4228,7 @@ function notifyAdmin(payload){
       type:payload.type||'other',
       message:payload.message||''
     })
-  }).catch(function(){});
+  }).catch(function(e){logError("notifyAdmin",e)});
 }
 
 // Server-side profile sync — reliable fallback for when client-side insert fails
@@ -5290,7 +5312,7 @@ async function showMyMessages(){
       h+='</div></div></div>';
       // Mark as read
       if(!n.read&&n.id&&_supaClient){
-        _supaClient.from('messages').update({read:true}).eq('id',n.id).then(function(){}).catch(function(){});
+        _supaClient.from('messages').update({read:true}).eq('id',n.id).then(function(){}).catch(function(e){logError('messageReadUpdate',e)});
       }
     });
 
@@ -5658,7 +5680,7 @@ function acceptDisc(){
           message:'TOS v2026-03-08 agreed at '+agreement.agreed_at+' | UA: '+agreement.user_agent,
           date:agreement.agreed_at,
           read:true
-        }]).catch(function(){});
+        }]).catch(function(e){logError('tosInsert',e)});
       });
     }
   }

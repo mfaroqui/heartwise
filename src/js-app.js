@@ -4209,6 +4209,18 @@ function notifyAdmin(payload){
   }).catch(function(){});
 }
 
+// Server-side profile sync — reliable fallback for when client-side insert fails
+function syncProfileToServer(profileData){
+  fetch('https://kqyvfykbnboesskxovtw.supabase.co/functions/v1/sync-profile',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY},
+    body:JSON.stringify(profileData)
+  }).then(function(r){return r.json()}).then(function(d){
+    if(d.error)console.warn('Profile sync-profile error:',d.error);
+    else console.log('Profile synced server-side:',d.action);
+  }).catch(function(e){console.warn('Profile sync-profile failed:',e)});
+}
+
 async function sendContactMessage(e){
   e.preventDefault();
   var radio=document.querySelector('input[name="contact-cat"]:checked');
@@ -5513,15 +5525,20 @@ async function obComplete(){
     const reportSnapshot=captureReportData(p);
     const user={id:'u'+DB.nextUserId++,name:p.name,email:p.email.toLowerCase(),pass:p.pass,role:roleMap[p.stage]||'student',tier:'free',isTrial:false,institution:p.inst,usage:{ai:0,credits:0,month:new Date().getMonth()},profile:p,signupDate:new Date().toISOString(),report:reportSnapshot,notes:[],trialUsedOnDevice:true};
     DB.users.push(user);saveDB();
+    var _profilePayload2={
+      user_id:user.id,name:p.name,email:p.email.toLowerCase(),role:roleMap[p.stage]||'student',
+      tier:'free',institution:p.inst||'',stage:p.stage,specialty:p.spec||'',goal:p.goal||'',
+      score:reportSnapshot.score,grade:reportSnapshot.grade,
+      strengths:reportSnapshot.strengths,gaps:reportSnapshot.gaps,
+      profile_data:p
+    };
     if(_supaClient){
       _supaClient.auth.signUp({email:p.email.toLowerCase(),password:p.pass,options:{data:{name:p.name}}}).catch(function(){});
-      _supaClient.from('profiles').insert([{
-        user_id:user.id,name:p.name,email:p.email.toLowerCase(),role:roleMap[p.stage]||'student',
-        tier:'free',institution:p.inst||'',stage:p.stage,specialty:p.spec||'',goal:p.goal||'',
-        score:reportSnapshot.score,grade:reportSnapshot.grade,
-        strengths:reportSnapshot.strengths,gaps:reportSnapshot.gaps,
-        profile_data:p,trial_previously_used:true
-      }]).then(function(res){if(res.error)console.warn('Profile sync error',res.error)});
+      _supaClient.from('profiles').insert([_profilePayload2]).then(function(res){
+        if(res.error){console.warn('Client profile insert failed, trying server-side:',res.error);syncProfileToServer(_profilePayload2)}
+      }).catch(function(){syncProfileToServer(_profilePayload2)});
+    }else{
+      syncProfileToServer(_profilePayload2);
     }
     U=user;localStorage.setItem('hw_session',JSON.stringify(U));
     trialHistory.push({email:p.email.toLowerCase(),date:new Date().toISOString(),blocked:true});
@@ -5538,17 +5555,23 @@ async function obComplete(){
   const reportSnapshot=captureReportData(p);
   const user={id:'u'+DB.nextUserId++,name:p.name,email:p.email.toLowerCase(),pass:p.pass,role:roleMap[p.stage]||'student',tier:'elite',trialEnd:trialEnd.toISOString(),isTrial:true,institution:p.inst,usage:{ai:0,credits:0,month:new Date().getMonth()},profile:p,signupDate:new Date().toISOString(),report:reportSnapshot,notes:[]};
   DB.users.push(user);saveDB();
-  // Sync to Supabase
+  // Sync to Supabase — client-side first, server-side fallback
+  var _profilePayload={
+    user_id:user.id,name:p.name,email:p.email.toLowerCase(),role:roleMap[p.stage]||'student',
+    tier:'elite',is_trial:true,institution:p.inst||'',stage:p.stage,specialty:p.spec||'',goal:p.goal||'',
+    score:reportSnapshot.score,grade:reportSnapshot.grade,
+    strengths:reportSnapshot.strengths,gaps:reportSnapshot.gaps,
+    trial_end:trialEnd.toISOString(),
+    profile_data:p
+  };
   if(_supaClient){
     _supaClient.auth.signUp({email:p.email.toLowerCase(),password:p.pass,options:{data:{name:p.name}}}).catch(()=>{});
-    _supaClient.from('profiles').insert([{
-      user_id:user.id,name:p.name,email:p.email.toLowerCase(),role:roleMap[p.stage]||'student',
-      tier:'elite',institution:p.inst||'',stage:p.stage,specialty:p.spec||'',goal:p.goal||'',
-      score:reportSnapshot.score,grade:reportSnapshot.grade,
-      strengths:reportSnapshot.strengths,gaps:reportSnapshot.gaps,
-      trial_end:trialEnd.toISOString(),
-      profile_data:p
-    }]).then(function(res){if(res.error)console.warn('Profile sync error',res.error)});
+    _supaClient.from('profiles').insert([_profilePayload]).then(function(res){
+      if(res.error){console.warn('Client profile insert failed, trying server-side:',res.error);syncProfileToServer(_profilePayload)}
+    }).catch(function(){syncProfileToServer(_profilePayload)});
+  }else{
+    // No Supabase client — go straight to server-side
+    syncProfileToServer(_profilePayload);
   }
   U=user;localStorage.setItem('hw_session',JSON.stringify(U));
   // Mark device as trial-used

@@ -2810,7 +2810,7 @@ function mccToggleMode(mode){
     specWrap.style.display='block';felSpecWrap.style.display='none';
   } else {
     felBtn.style.background='var(--accent)';felBtn.style.color='var(--bg)';
-.background='none';resBtn.style.color='var(--accent)';
+    resBtn.style.background='none';resBtn.style.color='var(--accent)';
     resFields.style.display='none';felFields.style.display='block';
     specWrap.style.display='none';felSpecWrap.style.display='block';
   }

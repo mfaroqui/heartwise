@@ -1,3 +1,5 @@
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", {
@@ -10,7 +12,38 @@ Deno.serve(async (req: Request) => {
   }
 
   try {
-    const { user_name, user_email, type, message } = await req.json();
+    const { user_name, user_email, type, message, store } = await req.json();
+
+    // If store flag is set, insert message into database server-side
+    if (store) {
+      try {
+        const supaUrl = Deno.env.get("SUPABASE_URL") || "https://kqyvfykbnboesskxovtw.supabase.co";
+        const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+        if (serviceKey) {
+          const sb = createClient(supaUrl, serviceKey);
+          await sb.from("messages").insert([{
+            user_name: user_name || "Unknown",
+            user_email: user_email || "",
+            type: type || "other",
+            message: message || "",
+            replies: [],
+            read: false,
+            date: new Date().toISOString(),
+          }]);
+        }
+      } catch (dbErr) {
+        console.error("DB insert failed:", dbErr);
+        // Continue to send email even if DB insert fails
+      }
+    }
+
+    // Skip email for progress-type messages (goal completions etc.)
+    if (type === "progress") {
+      return new Response(JSON.stringify({ success: true, skipped: "progress" }), {
+        headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
+      });
+    }
+
     const TL: Record<string, string> = {
       career: "🎯 Career/Strategy",
       finance: "💰 Finance/Comp",

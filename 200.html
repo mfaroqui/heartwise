@@ -8913,20 +8913,40 @@ async function sendContactMessage(e){
     message:msg,
     date:new Date().toISOString()
   };
-  // Store in Supabase
-  if(_supaClient){
-    try{
-      await _supaClient.from('messages').insert([payload]);
-    }catch(ex){console.warn('Message store failed',ex)}
-  }
-  // Also store locally
+
+  // Store locally first (always works)
   if(!DB.messages)DB.messages=[];
   DB.messages.push(payload);saveDB();
   document.getElementById('contact-msg').value='';
   document.getElementById('contact-form').classList.add('hidden');
   notify('Message sent! Thank you for your feedback. 🙏');
-  // Email notification to admin
-  notifyAdmin(payload);
+
+  // Server-side: edge function stores in DB + sends email notification in one call
+  // This is the reliable path — even if the user's browser kills the request,
+  // the server handles both storage and notification atomically
+  var edgeOk=false;
+  try{
+    var res=await fetch('https://kqyvfykbnboesskxovtw.supabase.co/functions/v1/notify-email',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY},
+      body:JSON.stringify({
+        user_name:payload.user_name,
+        user_email:payload.user_email,
+        type:payload.type,
+        message:payload.message,
+        store:true
+      })
+    });
+    if(res.ok)edgeOk=true;
+  }catch(ex){console.warn('Edge function failed',ex)}
+
+  // Fallback: if edge function failed, try direct DB insert + separate email
+  if(!edgeOk){
+    if(_supaClient){
+      try{await _supaClient.from('messages').insert([payload])}catch(ex){console.warn('Fallback DB insert failed',ex)}
+    }
+    notifyAdmin(payload);
+  }
 }
 
 function toggleAccountSettings(){

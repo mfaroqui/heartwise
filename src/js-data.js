@@ -1,7 +1,7 @@
 // This gets inlined into the HTML via build script
 // ===== CONFIG =====
 const AE='mfaroqui@gmail.com';
-const TIERS={free:{name:'Explorer',ai:2,credits:0},core:{name:'Core',ai:50,credits:0},elite:{name:'Elite Strategy',ai:999,credits:2},admin:{name:'Admin',ai:999,credits:999}};
+const TIERS={free:{name:'Explorer',ai:3,credits:0},core:{name:'Core',ai:100,credits:0},elite:{name:'Mentorship',ai:999,credits:2},admin:{name:'Admin',ai:999,credits:999}};
 const CATS={career:'Career Strategy',fellowship:'Fellowship Positioning',contract:'Contract Negotiation',finance:'Income & Financial Leverage',clinical:'Clinical Education',productivity:'Productivity Systems',wellness:'Performance Sustainability'};
 
 // ===== SEED DATA (Structured AI Format) =====
@@ -257,9 +257,9 @@ const VAULT_ITEMS=[
 {id:'v13',title:'Specialty Fit Analyzer',desc:'Determine which specialty fits your personality, goals, and lifestyle preferences',icon:'🔬',tier:'core'},
 {id:'v14',title:'Match Competitiveness Calculator',desc:'Estimate your match likelihood based on board scores, research, and school tier',icon:'🏆',tier:'core'},
 {id:'v15',title:'Career Strategy Builder',desc:'Build a step-by-step roadmap to reach your target specialty or career goal',icon:'🗂️',tier:'core'},
-{id:'v16',title:'Mock Interview Simulator',desc:'Practice with real interview questions for your specialty and stage — get honest feedback on your answers',icon:'🎙️',tier:'elite'},
-{id:'v9',title:'Strategic Audit Template',desc:'The exact intake framework used in Elite Strategy sessions',icon:'📝',tier:'elite'},
-{id:'v10',title:'Career Pivot Decision Engine',desc:'Structured framework for specialty switches and practice model changes',icon:'⚡',tier:'elite'},
-{id:'v11',title:'Financial Trajectory Simulator',desc:'30-year wealth projection with debt payoff timeline by specialty and practice type',icon:'💰',tier:'elite'},
-{id:'v12',title:'Contract Intelligence Tool',desc:'Input your offer details and get a competitiveness score, risk flags, and negotiation strategy',icon:'📝',tier:'elite'}
+{id:'v16',title:'Mock Interview Simulator',desc:'Practice with real interview questions for your specialty and stage — get honest feedback on your answers',icon:'🎙️',tier:'core'},
+{id:'v9',title:'Strategic Audit Template',desc:'The exact intake framework used in Mentorship strategy sessions',icon:'📝',tier:'core'},
+{id:'v10',title:'Career Pivot Decision Engine',desc:'Structured framework for specialty switches and practice model changes',icon:'⚡',tier:'core'},
+{id:'v11',title:'Financial Trajectory Simulator',desc:'30-year wealth projection with debt payoff timeline by specialty and practice type',icon:'💰',tier:'core'},
+{id:'v12',title:'Contract Intelligence Tool',desc:'Input your offer details and get a competitiveness score, risk flags, and negotiation strategy',icon:'📝',tier:'core'}
 ];

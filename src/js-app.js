@@ -628,14 +628,14 @@ function enterApp(){
   b.textContent=U.tier==='admin'?'MENTOR':TIERS[U.tier]?.name?.toUpperCase()||'FREE';
   document.getElementById('welcome-msg').textContent='Welcome, Dr. '+U.name.split(' ').pop();
   document.getElementById('nav-admin').style.display=U.tier==='admin'?'':'none';
-  // Show Leverage tab for elite (non-trial) and admin only
+  // Show Leverage tab for mentorship (non-trial) and admin only
   var showLev=(U.tier==='elite'&&!U.isTrial)||U.tier==='admin';
   document.getElementById('nav-leverage').style.display=showLev?'':'none';
   document.getElementById('upgrade-prompt').style.display=U.tier==='free'?'':'none';
   var topUpgrade=document.getElementById('topbar-upgrade');
   if(topUpgrade){
     if(U.tier==='free'||U.isTrial){topUpgrade.style.display='';topUpgrade.textContent='Subscribe';topUpgrade.onclick=function(){navTo('scr-profile');showUpgrade()}}
-    else if(U.tier==='core'){topUpgrade.style.display='';topUpgrade.textContent='Upgrade to Elite';topUpgrade.onclick=function(){navTo('scr-profile');showUpgrade()}}
+    else if(U.tier==='core'){topUpgrade.style.display='';topUpgrade.textContent='Upgrade to Mentorship';topUpgrade.onclick=function(){navTo('scr-profile');showUpgrade()}}
     else{topUpgrade.style.display='none'}
   }
   // Show leverage upsell for core users only
@@ -1680,7 +1680,7 @@ function submitQ(){
   if(!cat){notify('Select a category',1);return}
   if(!core||core.length<10){notify('Enter your core question (min 10 chars)',1);return}
   const t=TIERS[U.tier]||TIERS.free;
-  if(U.usage.ai>=t.ai&&t.ai!==999){notify('AI responses used up this month. Upgrade for more.',1);return}
+  if(U.usage.ai>=t.ai&&t.ai!==999){notify('Career intelligence analyses used up this month. Upgrade for more.',1);return}
   const anon=document.getElementById('q-anon-tog').classList.contains('on');
   const wantsReview=document.getElementById('q-review-tog').classList.contains('on');
   const context=document.getElementById('q-context').value.trim();
@@ -1702,7 +1702,7 @@ function submitQ(){
   ['q-level','q-cat','q-core','q-constraints','q-tried','q-context'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=''});
   document.getElementById('q-review-tog').classList.remove('on');
   document.getElementById('q-anon-tog').classList.remove('on');
-  notify(wantsReview?'Submitted for Doctor Review':'AI response generated!');
+  notify(wantsReview?'Submitted for Doctor Review':'Career intelligence analysis generated!');
   if(!wantsReview)showQuestion(q.id);else navTo('scr-home');
 }
 
@@ -3437,7 +3437,7 @@ function quizShowResults(){
     html+='<div style="flex-shrink:0;width:38px;height:38px;border-radius:10px;background:'+(i===0?'linear-gradient(135deg,var(--accent),var(--accent2))':'var(--bg3)')+';display:flex;align-items:center;justify-content:center;font-size:18px'+(i===0?';color:#0a0a0f':'')+'">'+item.icon+'</div>';
     html+='<div style="flex:1;min-width:0">';
     html+='<div style="display:flex;align-items:center;gap:6px;margin-bottom:3px"><span style="font-size:13px;font-weight:600;color:var(--text)">'+item.title+'</span>';
-    if(mentOnly) html+='<span style="font-size:8px;padding:2px 6px;border-radius:100px;background:var(--accent-dim);color:var(--accent);font-weight:600;letter-spacing:.5px">ELITE</span>';
+    if(mentOnly) html+='<span style="font-size:8px;padding:2px 6px;border-radius:100px;background:var(--accent-dim);color:var(--accent);font-weight:600;letter-spacing:.5px">MENTORSHIP</span>';
     if(locked) html+='<span style="font-size:12px">🔒</span>';
     html+='</div>';
     html+='<div style="font-size:11px;color:var(--accent);line-height:1.5">'+rec.why+'</div>';
@@ -3534,7 +3534,7 @@ function renderVault(){
       onclick='onclick="openFramework(\''+v.id+'\')"';
     }
     var tierBadge='';
-    if(v.tier==='elite') tierBadge=' <span style="font-size:8px;padding:2px 6px;border-radius:100px;background:linear-gradient(135deg,var(--accent2),var(--accent));color:#0a0a0f;font-weight:700;letter-spacing:.5px;vertical-align:middle">ELITE</span>';
+    if(v.tier==='elite') tierBadge=' <span style="font-size:8px;padding:2px 6px;border-radius:100px;background:linear-gradient(135deg,var(--accent2),var(--accent));color:#0a0a0f;font-weight:700;letter-spacing:.5px;vertical-align:middle">MENTORSHIP</span>';
     return '<div class="vault-card '+(locked?'':'unlocked')+'" '+onclick+'><div class="v-icon">'+v.icon+'</div><div class="v-info"><h3>'+v.title+tierBadge+'</h3><p>'+v.desc+'</p></div><div class="v-lock">'+(locked?'\ud83d\udd12':'\ud83d\udcc4')+'</div></div>';
   }
 
@@ -3676,7 +3676,7 @@ var ELITE_PREVIEWS={
 v9:{
   title:'Strategic Audit Template',
   icon:'\ud83d\udcdd',
-  desc:'The exact intake framework used in Elite Strategy sessions. Complete every section and submit directly to Dr. Faroqui for a structured strategic review.',
+  desc:'The exact intake framework used in Mentorship strategy sessions. Complete every section and submit directly to Dr. Faroqui for a structured strategic review.',
   sections:[
     {name:'Part 1: Current Position',items:['Current training level / position','Institution strengths and limitations','Financial situation (debt, savings, obligations)','CV snapshot (publications, scores, leadership)','What are you known for?']},
     {name:'Part 2: The Decision',items:['What specific decision are you facing?','What are all your options?','What is the timeline?','What have you already tried?','What\'s holding you back?']},
@@ -3727,7 +3727,7 @@ function previewEliteFramework(id){
   h+='<div style="text-align:center;padding:32px 20px;margin:-20px -20px 24px;background:linear-gradient(160deg,rgba(200,168,124,.1),rgba(200,168,124,.03));border-radius:12px 12px 0 0;border-bottom:1px solid rgba(200,168,124,.15)">';
   h+='<div style="font-size:44px;margin-bottom:12px">'+preview.icon+'</div>';
   h+='<h3 class="serif" style="font-size:22px;font-weight:600;margin-bottom:10px;color:var(--text)">'+preview.title+'</h3>';
-  h+='<div style="display:inline-block;padding:4px 12px;background:linear-gradient(135deg,var(--accent2),var(--accent));border-radius:20px;font-size:10px;font-weight:600;color:#0a0a0f;letter-spacing:.5px;text-transform:uppercase">Elite Strategy</div>';
+  h+='<div style="display:inline-block;padding:4px 12px;background:linear-gradient(135deg,var(--accent2),var(--accent));border-radius:20px;font-size:10px;font-weight:600;color:#0a0a0f;letter-spacing:.5px;text-transform:uppercase">Mentorship</div>';
   h+='</div>';
 
   h+='<p style="font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:24px;text-align:center">'+preview.desc+'</p>';
@@ -3763,7 +3763,7 @@ function previewEliteFramework(id){
 
   // Value proposition
   h+='<div style="padding:16px;background:linear-gradient(135deg,rgba(200,168,124,.06),rgba(200,168,124,.02));border:1px solid rgba(200,168,124,.15);border-radius:10px;margin-bottom:20px">';
-  h+='<div style="font-size:12px;font-weight:600;color:var(--accent);margin-bottom:8px">\u2728 Why Elite members use this</div>';
+  h+='<div style="font-size:12px;font-weight:600;color:var(--accent);margin-bottom:8px">\u2728 Why Mentorship members use this</div>';
   if(id==='v9'){
     h+='<p style="font-size:12px;color:var(--text2);line-height:1.7;margin:0">The Strategic Audit eliminates guesswork from career decisions. Instead of a vague email to a mentor, you get a structured analysis reviewed by a physician who\'s navigated these exact crossroads. Most members say it\'s the single most valuable tool on the platform.</p>';
   }else{
@@ -3773,8 +3773,8 @@ function previewEliteFramework(id){
 
   // CTA
   h+='<div style="text-align:center">';
-  h+='<button class="btn btn-a" onclick="closeModal(\'modal-q\');navTo(\'scr-profile\');showUpgrade()" style="width:100%;padding:14px;font-size:14px;font-weight:600">Unlock Elite Strategy \u2014 $99/mo</button>';
-  h+='<p style="font-size:11px;color:var(--text3);margin-top:10px">Includes 2 physician review credits, all frameworks, and direct access to Dr. Faroqui.</p>';
+  h+='<button class="btn btn-a" onclick="closeModal(\'modal-q\');navTo(\'scr-profile\');showUpgrade()" style="width:100%;padding:14px;font-size:14px;font-weight:600">Unlock Mentorship \u2014 $149/mo</button>';
+  h+='<p style="font-size:11px;color:var(--text3);margin-top:10px">Includes 2 physician-reviewed answers, all frameworks, and direct access to Dr. Faroqui.</p>';
   h+='</div></div>';
   
   document.getElementById('modal-q-content').innerHTML=h;
@@ -4481,7 +4481,7 @@ function showUpgrade(){
     document.getElementById('sub-status').textContent='Active';
     const renew=U.tier==='elite'?'Renews monthly':'Renews monthly';
     document.getElementById('sub-renew').textContent=renew+' \u2022 Auto-renewal on';
-    document.getElementById('sub-usage-summary').textContent='Unlimited AI assessments / '+t.credits+' review credits per month';
+    document.getElementById('sub-usage-summary').textContent=(t.ai===999?'Unlimited':t.ai)+' career intelligence analyses / '+t.credits+' physician-reviewed answers per month';
   }else{document.getElementById('sub-manage').classList.add('hidden')}
 }
 function toggleNotifSettings(){document.getElementById('notif-settings').classList.toggle('hidden')}
@@ -5183,7 +5183,7 @@ function admRenderMetrics(){
     '<div class="adm-metric"><div class="num">'+qs.length+'</div><div class="lbl">Questions</div></div>'+
     '<div class="adm-metric"><div class="num" style="color:var(--text3)">'+fr+'</div><div class="lbl">Free</div></div>'+
     '<div class="adm-metric"><div class="num" style="color:var(--accent)">'+co+'</div><div class="lbl">Core</div></div>'+
-    '<div class="adm-metric"><div class="num" style="color:var(--green)">'+el+'</div><div class="lbl">Elite</div></div>'+
+    '<div class="adm-metric"><div class="num" style="color:var(--green)">'+el+'</div><div class="lbl">Mentorship</div></div>'+
     '<div class="adm-metric"><div class="num" style="color:#5ba8d0">'+tr+'</div><div class="lbl">Trial</div></div>'+
     '<div class="adm-metric"><div class="num" style="color:#c44d56">'+ca+'</div><div class="lbl">Cancelled</div></div>';
 }
@@ -5214,8 +5214,8 @@ function admRenderDashboard(c){
   var el=users.filter(function(u){return u.tier==='elite'}).length;
   h+='<div class="adm-card"><div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:10px">Subscribers</div>';
   h+='<div style="display:flex;gap:20px;font-size:13px;color:var(--text2)">';
-  h+='<div>Core: <strong>'+co+'</strong> ($15/mo)</div>';
-  h+='<div>Elite: <strong>'+el+'</strong> ($99/mo)</div></div>';
+  h+='<div>Core: <strong>'+co+'</strong> ($29/mo)</div>';
+  h+='<div>Mentorship: <strong>'+el+'</strong> ($149/mo)</div></div>';
   h+='<div style="font-size:11px;color:var(--text3);margin-top:8px">Revenue tracked via Stripe — connect Stripe dashboard for actuals</div></div>';
 
   h+='<div style="font-size:12px;font-weight:600;color:var(--text);margin:16px 0 8px">Recent Signups</div>';
@@ -5233,7 +5233,7 @@ function admRenderUsers(c){
   if(_admSelectedUser)return admRenderUserDetail(c);
   var users=admGetUsers();
   var h='<div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">';
-  h+='<select class="adm-filter" onchange="_admUserFilter.plan=this.value;admRender()"><option value="">All Plans</option><option value="free">Free</option><option value="core">Core</option><option value="elite">Elite</option></select>';
+  h+='<select class="adm-filter" onchange="_admUserFilter.plan=this.value;admRender()"><option value="">All Plans</option><option value="free">Free</option><option value="core">Core</option><option value="elite">Mentorship</option></select>';
   h+='<select class="adm-filter" onchange="_admUserFilter.stage=this.value;admRender()"><option value="">All Stages</option><option value="student">Student</option><option value="resident">Resident</option><option value="fellow">Fellow</option><option value="attending">Attending</option></select>';
   h+='<input class="adm-filter" type="text" placeholder="Search name/email..." oninput="_admUserFilter.search=this.value;admRender()" style="flex:1;min-width:150px" value="'+(_admUserFilter.search||'')+'">';
   h+='</div>';
@@ -5315,7 +5315,7 @@ function admRenderUserDetail(c){
   h+='<select id="adm-tier-'+u.id+'" style="font-size:12px;padding:8px 12px;border:1px solid var(--border);border-radius:6px;background:var(--bg3);color:var(--text)">';
   h+='<option value="free"'+((u.tier||'free')==='free'?' selected':'')+'>Free</option>';
   h+='<option value="core"'+(u.tier==='core'?' selected':'')+'>Core</option>';
-  h+='<option value="elite"'+(u.tier==='elite'?' selected':'')+'>Elite</option>';
+  h+='<option value="elite"'+(u.tier==='elite'?' selected':'')+'>Mentorship</option>';
   h+='<option value="admin"'+(u.tier==='admin'?' selected':'')+'>Admin</option></select>';
   h+='<button onclick="admChangeTier(\''+u.id+'\')" class="btn btn-a btn-sm">Update Tier</button>';
   h+='<button onclick="admResetAI(\''+u.id+'\')" style="font-size:12px;padding:8px 14px;border:1px solid var(--border);border-radius:6px;background:var(--bg3);color:var(--text);cursor:pointer">Reset AI</button>';

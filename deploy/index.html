@@ -2038,6 +2038,12 @@ Sign Out</button>
 <!-- Score Cards Row -->
 <div id="dash-scores" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px"></div>
 
+<!-- Score Refresh Prompt -->
+<div id="dash-score-refresh" style="display:none;margin-bottom:14px"></div>
+
+<!-- Peer Activity -->
+<div id="dash-peer-activity" style="display:none;margin-bottom:14px"></div>
+
 <!-- Progress Graph -->
 <div id="dash-graph-wrap" class="card" style="padding:16px;margin-bottom:14px;display:none">
 <div style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Progress Over Time</div>
@@ -5823,12 +5829,47 @@ function renderDashboard(){
   });
   document.getElementById('dash-scores').innerHTML=sh;
 
+  // Score Refresh Prompt — show if scores are older than 30 days
+  var refreshEl=document.getElementById('dash-score-refresh');
+  if(refreshEl){
+    var lastUpdate=cp.lastUpdated?new Date(cp.lastUpdated):null;
+    var daysSince=lastUpdate?Math.floor((new Date()-lastUpdate)/86400000):999;
+    if(daysSince>=30){
+      refreshEl.style.display='';
+      refreshEl.innerHTML='<div style="display:flex;align-items:center;gap:10px;padding:14px 16px;background:linear-gradient(160deg,rgba(200,168,124,.06),rgba(200,168,124,.02));border:1px solid rgba(200,168,124,.2);border-radius:10px;cursor:pointer" onclick="showUpdateProfile()">'
+        +'<span style="font-size:16px">🔄</span>'
+        +'<div style="flex:1"><div style="font-size:12px;font-weight:600;color:var(--accent)">Your scores are '+daysSince+' days old</div>'
+        +'<div style="font-size:11px;color:var(--text3);margin-top:2px">A lot can change in a month. Update your profile to recalculate.</div></div>'
+        +'<span style="font-size:12px;font-weight:600;color:var(--accent)">Update →</span></div>';
+    }else{
+      refreshEl.style.display='none';
+    }
+  }
+
   // Progress Graph
   if(U.scoreHistory.length>1){
     document.getElementById('dash-graph-wrap').style.display='';
     renderProgressGraph(U.scoreHistory);
   }else{
     document.getElementById('dash-graph-wrap').style.display='none';
+  }
+
+  // Peer Activity Card — show how many users in their specialty are active
+  var peerEl=document.getElementById('dash-peer-activity');
+  if(peerEl&&cp.specialty&&(U.tier==='core'||U.tier==='elite'||U.tier==='admin')){
+    var specName=cp.specialty.charAt(0).toUpperCase()+cp.specialty.slice(1);
+    var userScore=scores.competitiveness||0;
+    var pctile=userScore>=80?'top 15%':userScore>=65?'top 35%':userScore>=50?'top 55%':'building';
+    peerEl.style.display='';
+    peerEl.innerHTML='<div class="card" style="padding:14px 16px">'
+      +'<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">'
+      +'<span style="font-size:14px">📊</span>'
+      +'<span style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:1px">Peer Benchmarking</span></div>'
+      +'<div style="font-size:13px;color:var(--text);line-height:1.6">Your competitiveness score of <strong style="color:var(--accent)">'+userScore+'</strong> puts you in the <strong style="color:var(--accent)">'+pctile+'</strong> of '+specName+' applicants on HeartWise.</div>'
+      +'<div style="font-size:11px;color:var(--text3);margin-top:6px">Scores update as you improve your profile. <span style="cursor:pointer;color:var(--accent)" onclick="showUpdateProfile()">Refresh now →</span></div>'
+      +'</div>';
+  }else if(peerEl){
+    peerEl.style.display='none';
   }
 
   // Actions

@@ -1130,14 +1130,21 @@ v13:`<h3 class="serif">Specialty Fit Analyzer</h3>
 </div>`,
 
 v14:`<h3 class="serif">Match Competitiveness Calculator</h3>
-<p style="color:var(--text3);font-size:12px;margin-bottom:20px">Comprehensive competitiveness analysis with NRMP benchmarking, probability outlook, and strategic recommendations.</p>
+<p style="color:var(--text3);font-size:12px;margin-bottom:20px">Comprehensive competitiveness analysis with match probability, pre-ERAS action plan, LOR strategy, and specialty-specific benchmarking.</p>
 <div id="mcc-tool" style="font-size:13px">
+
+<!-- Mode Toggle: Residency vs Fellowship -->
+<input type="hidden" id="mcc-mode" value="residency">
+<div style="display:flex;gap:0;margin-bottom:20px;border:1px solid rgba(200,168,124,.25);border-radius:10px;overflow:hidden">
+<button id="mcc-btn-residency" onclick="mccToggleMode('residency')" style="flex:1;padding:12px;font-size:13px;font-weight:600;border:none;cursor:pointer;background:var(--accent);color:var(--bg);transition:all .2s">🎓 Residency Match</button>
+<button id="mcc-btn-fellowship" onclick="mccToggleMode('fellowship')" style="flex:1;padding:12px;font-size:13px;font-weight:600;border:none;cursor:pointer;background:none;color:var(--accent);transition:all .2s">🏥 Fellowship Match</button>
+</div>
 
 <!-- Section 1: Academic Profile -->
 <div style="margin-bottom:20px">
 <div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid rgba(200,168,124,.15)">📚 Academic Profile</div>
 
-<div style="padding:10px 0;border-bottom:1px solid var(--border)">
+<div id="mcc-spec-wrap" style="padding:10px 0;border-bottom:1px solid var(--border)">
 <div style="margin-bottom:4px"><strong>Target Specialty</strong></div>
 <select id="mcc-spec" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
 <option value="">Select specialty...</option>
@@ -1162,9 +1169,38 @@ v14:`<h3 class="serif">Match Competitiveness Calculator</h3>
 </select>
 </div>
 
+<div id="mcc-fel-spec-wrap" style="padding:10px 0;border-bottom:1px solid var(--border);display:none">
+<div style="margin-bottom:4px"><strong>Target Fellowship</strong></div>
+<select id="mcc-fel-spec" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
+<option value="">Select fellowship...</option>
+<optgroup label="Internal Medicine Subspecialties">
+<option value="cardiology">Cardiovascular Disease</option>
+<option value="gi">Gastroenterology</option>
+<option value="pulm_crit">Pulmonary & Critical Care</option>
+<option value="heme_onc">Hematology/Oncology</option>
+<option value="nephrology">Nephrology</option>
+<option value="rheumatology">Rheumatology</option>
+<option value="endocrinology">Endocrinology</option>
+<option value="id">Infectious Disease</option>
+</optgroup>
+<optgroup label="Cardiology Subspecialties">
+<option value="interventional_cardio">Interventional Cardiology</option>
+<option value="ep">Clinical Cardiac Electrophysiology</option>
+<option value="advanced_hf">Advanced Heart Failure & Transplant</option>
+</optgroup>
+<optgroup label="GI Subspecialties">
+<option value="transplant_hep">Transplant Hepatology</option>
+</optgroup>
+<optgroup label="Surgical Subspecialties">
+<option value="sports_med">Sports Medicine</option>
+<option value="critical_care_surg">Surgical Critical Care</option>
+</optgroup>
+</select>
+</div>
+
 <div style="padding:10px 0;border-bottom:1px solid var(--border)">
-<div style="margin-bottom:4px"><strong>Step 2 CK Score</strong></div>
-<div style="font-size:10px;color:var(--text3);margin-bottom:6px">Most competitive specialties have average Step 2 CK scores between 245–260.</div>
+<div style="margin-bottom:4px"><strong>Step 2 CK / Step 3 Score</strong></div>
+<div style="font-size:10px;color:var(--text3);margin-bottom:6px">Most competitive specialties have average scores between 235–260. For fellowship, Step 3 is also considered.</div>
 <input type="number" id="mcc-step2" placeholder="e.g., 255" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px;box-sizing:border-box">
 </div>
 
@@ -1191,6 +1227,7 @@ v14:`<h3 class="serif">Match Competitiveness Calculator</h3>
 </select>
 </div>
 
+<div id="mcc-residency-fields">
 <div style="padding:10px 0">
 <div style="margin-bottom:4px"><strong>AOA / Clerkship Performance</strong></div>
 <select id="mcc-aoa" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
@@ -1202,13 +1239,60 @@ v14:`<h3 class="serif">Match Competitiveness Calculator</h3>
 </div>
 </div>
 
+<!-- Fellowship-specific fields -->
+<div id="mcc-fellowship-fields" style="display:none">
+<div style="padding:10px 0;border-bottom:1px solid var(--border)">
+<div style="margin-bottom:4px"><strong>Current Residency Year</strong></div>
+<select id="mcc-fel-resyear" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
+<option value="">Select...</option>
+<option value="pgy2">PGY-2 (applying early)</option>
+<option value="pgy3">PGY-3 (standard application year)</option>
+<option value="chief">Chief Resident / PGY-4+</option>
+<option value="fellow">Current Fellow (applying for advanced fellowship)</option>
+<option value="attending">Attending (returning for fellowship)</option>
+</select>
+</div>
+
+<div style="padding:10px 0;border-bottom:1px solid var(--border)">
+<div style="margin-bottom:4px"><strong>Residency Program Reputation</strong></div>
+<div style="font-size:10px;color:var(--text3);margin-bottom:6px">Your training institution influences fellowship directors' perception significantly</div>
+<select id="mcc-fel-progrep" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
+<option value="">Select...</option>
+<option value="top10">Top 10 academic program (e.g., Mass General, Hopkins, UCSF)</option>
+<option value="top30">Top 30 academic program</option>
+<option value="academic">Academic program (university-affiliated)</option>
+<option value="community_teach">Community program with teaching affiliation</option>
+<option value="community">Community program</option>
+</select>
+</div>
+
+<div style="padding:10px 0;border-bottom:1px solid var(--border)">
+<div style="margin-bottom:4px"><strong>First-Author Publications</strong></div>
+<div style="font-size:10px;color:var(--text3);margin-bottom:6px">First-author papers carry significantly more weight in fellowship applications</div>
+<input type="number" id="mcc-fel-firstauthor" placeholder="e.g., 3" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px;box-sizing:border-box">
+</div>
+
+<div style="padding:10px 0">
+<div style="margin-bottom:4px"><strong>Procedural Experience</strong></div>
+<div style="font-size:10px;color:var(--text3);margin-bottom:6px">Relevant for procedural fellowships (Cardiology, GI, Interventional, etc.)</div>
+<select id="mcc-fel-procedural" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
+<option value="">Select...</option>
+<option value="extensive">Extensive — 50+ logged procedures relevant to fellowship</option>
+<option value="moderate">Moderate — 20-50 procedures</option>
+<option value="minimal">Minimal — fewer than 20 procedures</option>
+</select>
+</div>
+</div>
+
+</div>
+
 <!-- Section 2: Application Strength -->
 <div style="margin-bottom:20px">
 <div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid rgba(200,168,124,.15)">💪 Application Strength</div>
 
 <div style="padding:10px 0;border-bottom:1px solid var(--border)">
-<div style="margin-bottom:4px"><strong>Research Publications / Abstracts</strong></div>
-<div style="font-size:10px;color:var(--text3);margin-bottom:6px">Highly competitive specialties often report 5+ research experiences.</div>
+<div style="margin-bottom:4px"><strong>Total Research Publications / Abstracts</strong></div>
+<div style="font-size:10px;color:var(--text3);margin-bottom:6px">Include peer-reviewed papers, case reports, abstracts, and posters. Competitive fellowships often expect 8-15+.</div>
 <select id="mcc-pubs" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
 <option value="0">0 — None</option>
 <option value="1">1-2 abstracts / posters</option>
@@ -1220,11 +1304,12 @@ v14:`<h3 class="serif">Match Competitiveness Calculator</h3>
 
 <div style="padding:10px 0;border-bottom:1px solid var(--border)">
 <div style="margin-bottom:4px"><strong>Letters of Recommendation</strong></div>
+<div style="font-size:10px;color:var(--text3);margin-bottom:6px">See the LOR strategy in your results for tips on securing letters from subspecialty leaders</div>
 <select id="mcc-lors" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
 <option value="">Select...</option>
 <option value="avg">Average — from attendings who know you</option>
 <option value="strong">Strong — from recognized faculty in the field</option>
-<option value="notable">From well-known / nationally recognized faculty</option>
+<option value="notable">From nationally recognized subspecialty leaders</option>
 </select>
 </div>
 
@@ -1234,7 +1319,7 @@ v14:`<h3 class="serif">Match Competitiveness Calculator</h3>
 <option value="">Select...</option>
 <option value="none">None / minimal involvement</option>
 <option value="some">Some leadership roles</option>
-<option value="significant">Significant leadership (president, chief, national)</option>
+<option value="significant">Significant leadership (chief, QI lead, national org, committee chair)</option>
 </select>
 </div>
 </div>
@@ -1245,13 +1330,13 @@ v14:`<h3 class="serif">Match Competitiveness Calculator</h3>
 
 <div style="padding:10px 0;border-bottom:1px solid var(--border)">
 <div style="margin-bottom:4px"><strong>Number of Programs Applying To</strong></div>
-<div style="font-size:10px;color:var(--text3);margin-bottom:6px">Competitive specialties: 50–80+ programs. Less competitive: 15–30.</div>
+<div style="font-size:10px;color:var(--text3);margin-bottom:6px">Competitive specialties/fellowships: 40–80+ programs. Less competitive: 10–30.</div>
 <input type="number" id="mcc-programs" placeholder="e.g., 40" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px;box-sizing:border-box">
 </div>
 
 <div style="padding:10px 0">
 <div style="margin-bottom:4px"><strong>Away Rotations at Target Programs</strong></div>
-<div style="font-size:10px;color:var(--text3);margin-bottom:6px">Away rotations can significantly boost your chances at specific programs.</div>
+<div style="font-size:10px;color:var(--text3);margin-bottom:6px">Away rotations are essentially month-long interviews. Critical for competitive specialties and fellowships.</div>
 <select id="mcc-aways" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
 <option value="0">None planned</option>
 <option value="1">1 rotation</option>

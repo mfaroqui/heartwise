@@ -2711,99 +2711,234 @@ function sfaUpdate(){
 }
 
 // ===== MATCH COMPETITIVENESS CALCULATOR (v14) =====
+
+// Residency specialty data (NRMP-referenced)
+var mccResidencyData={
+  im:{name:'Internal Medicine',matchRate:94,avgStep:235,avgPubs:4,compLevel:'low',recPrograms:15,positions:9500,applicants:12000},
+  fm:{name:'Family Medicine',matchRate:93,avgStep:227,avgPubs:3,compLevel:'low',recPrograms:15,positions:4800,applicants:5500},
+  peds:{name:'Pediatrics',matchRate:88,avgStep:233,avgPubs:4,compLevel:'low',recPrograms:20,positions:2900,applicants:3500},
+  em:{name:'Emergency Medicine',matchRate:82,avgStep:240,avgPubs:5,compLevel:'moderate',recPrograms:25,positions:2700,applicants:4200},
+  psych:{name:'Psychiatry',matchRate:87,avgStep:233,avgPubs:4,compLevel:'moderate',recPrograms:20,positions:2100,applicants:3300},
+  neuro:{name:'Neurology',matchRate:90,avgStep:237,avgPubs:5,compLevel:'moderate',recPrograms:20,positions:940,applicants:1200},
+  rads:{name:'Radiology',matchRate:85,avgStep:248,avgPubs:6,compLevel:'moderate',recPrograms:30,positions:1100,applicants:1500},
+  anes:{name:'Anesthesiology',matchRate:87,avgStep:242,avgPubs:5,compLevel:'moderate',recPrograms:25,positions:1800,applicants:2400},
+  path:{name:'Pathology',matchRate:85,avgStep:240,avgPubs:4,compLevel:'low',recPrograms:20,positions:600,applicants:800},
+  gen_surg:{name:'General Surgery',matchRate:83,avgStep:245,avgPubs:7,compLevel:'moderate',recPrograms:40,positions:1500,applicants:2800},
+  ortho:{name:'Orthopedic Surgery',matchRate:75,avgStep:252,avgPubs:10,compLevel:'high',recPrograms:60,positions:880,applicants:1350},
+  uro:{name:'Urology',matchRate:78,avgStep:250,avgPubs:9,compLevel:'high',recPrograms:50,positions:380,applicants:600},
+  ent:{name:'ENT',matchRate:76,avgStep:252,avgPubs:8,compLevel:'high',recPrograms:50,positions:370,applicants:550},
+  ophtho:{name:'Ophthalmology',matchRate:72,avgStep:252,avgPubs:9,compLevel:'very_high',recPrograms:60,positions:500,applicants:750},
+  derm:{name:'Dermatology',matchRate:68,avgStep:255,avgPubs:12,compLevel:'very_high',recPrograms:70,positions:500,applicants:850},
+  plastics:{name:'Plastic Surgery',matchRate:70,avgStep:254,avgPubs:11,compLevel:'very_high',recPrograms:60,positions:200,applicants:400},
+  nsurg:{name:'Neurosurgery',matchRate:72,avgStep:250,avgPubs:15,compLevel:'very_high',recPrograms:60,positions:240,applicants:400},
+  ir:{name:'Interventional Radiology',matchRate:80,avgStep:250,avgPubs:7,compLevel:'high',recPrograms:40,positions:200,applicants:300}
+};
+
+// Fellowship-specific data (NRMP specialty match + program-level data)
+var mccFellowshipData={
+  cardiology:{name:'Cardiovascular Disease',matchRate:72,avgStep:245,avgPubs:12,compLevel:'very_high',recPrograms:50,positions:900,applicants:1400,
+    topPrograms:['Cleveland Clinic','Mass General','Johns Hopkins','Mayo Clinic','Duke','UCSF','Brigham & Women\'s','Penn','Columbia','Northwestern'],
+    keyFactors:'Procedural case logs, cath lab interest, CV research volume, program director LOR',
+    erasMonth:'July (ERAS opens)',submitMonth:'August-September',interviewSeason:'October-January',matchDay:'December (NRMP fellowship match)'},
+  gi:{name:'Gastroenterology',matchRate:68,avgStep:242,avgPubs:10,compLevel:'very_high',recPrograms:45,positions:600,applicants:1000,
+    topPrograms:['Mass General','Johns Hopkins','Mayo Clinic','Penn','UCSF','Mount Sinai','Columbia','Michigan','Brigham & Women\'s','UCLA'],
+    keyFactors:'Endoscopy interest, GI-specific research, strong IM residency, PD letter',
+    erasMonth:'July',submitMonth:'August-September',interviewSeason:'October-January',matchDay:'December'},
+  pulm_crit:{name:'Pulmonary & Critical Care',matchRate:82,avgStep:238,avgPubs:7,compLevel:'moderate',recPrograms:30,positions:700,applicants:950,
+    topPrograms:['Johns Hopkins','UCSF','Brigham & Women\'s','Penn','Duke','Mass General','Yale','Michigan','Northwestern','Pittsburgh'],
+    keyFactors:'ICU experience, ventilator management, procedural competence, research in lung disease or critical care',
+    erasMonth:'July',submitMonth:'August-September',interviewSeason:'October-January',matchDay:'December'},
+  heme_onc:{name:'Hematology/Oncology',matchRate:74,avgStep:240,avgPubs:11,compLevel:'high',recPrograms:40,positions:600,applicants:900,
+    topPrograms:['Dana-Farber/Brigham','Memorial Sloan Kettering','MD Anderson','Johns Hopkins','UCSF','Penn','Stanford','Michigan','Mayo Clinic','Fred Hutchinson/UW'],
+    keyFactors:'Oncology research volume, clinical trial experience, tumor boards, strong IM foundation',
+    erasMonth:'July',submitMonth:'August-September',interviewSeason:'October-January',matchDay:'December'},
+  nephrology:{name:'Nephrology',matchRate:92,avgStep:230,avgPubs:4,compLevel:'low',recPrograms:15,positions:550,applicants:650,
+    topPrograms:['Brigham & Women\'s','UCSF','Johns Hopkins','Penn','Yale','Vanderbilt','Mayo Clinic','Columbia','Michigan','Stanford'],
+    keyFactors:'Interest in kidney physiology, dialysis exposure, transplant interest, dedicated research',
+    erasMonth:'July',submitMonth:'August-September',interviewSeason:'October-January',matchDay:'December'},
+  rheumatology:{name:'Rheumatology',matchRate:78,avgStep:235,avgPubs:6,compLevel:'moderate',recPrograms:25,positions:250,applicants:380,
+    topPrograms:['Brigham & Women\'s','Johns Hopkins','UCSF','Hospital for Special Surgery','Mayo Clinic','Penn','Michigan','Stanford','NYU','Duke'],
+    keyFactors:'Autoimmune disease research, clinical rheumatology experience, musculoskeletal exam skills',
+    erasMonth:'July',submitMonth:'August-September',interviewSeason:'October-January',matchDay:'December'},
+  endocrinology:{name:'Endocrinology',matchRate:88,avgStep:232,avgPubs:5,compLevel:'low',recPrograms:15,positions:400,applicants:500,
+    topPrograms:['Mass General','Joslin/Beth Israel','Mayo Clinic','UCSF','Johns Hopkins','Penn','NIH','Michigan','Brigham & Women\'s','UCLA'],
+    keyFactors:'Diabetes management, thyroid expertise, research in metabolic disease, clinical volume',
+    erasMonth:'July',submitMonth:'August-September',interviewSeason:'October-January',matchDay:'December'},
+  id:{name:'Infectious Disease',matchRate:85,avgStep:232,avgPubs:5,compLevel:'low',recPrograms:15,positions:450,applicants:600,
+    topPrograms:['Johns Hopkins','UCSF','Mass General','Emory','Penn','Duke','NIH','Stanford','Columbia','Brigham & Women\'s'],
+    keyFactors:'ID research, antimicrobial stewardship experience, global health interest, HIV/TB exposure',
+    erasMonth:'July',submitMonth:'August-September',interviewSeason:'October-January',matchDay:'December'},
+  ep:{name:'Clinical Cardiac Electrophysiology',matchRate:80,avgStep:248,avgPubs:14,compLevel:'very_high',recPrograms:30,positions:220,applicants:320,
+    topPrograms:['Cleveland Clinic','Penn','Johns Hopkins','Duke','Brigham & Women\'s','Michigan','Mayo Clinic','NYU','Cedars-Sinai','Stanford'],
+    keyFactors:'Cardiology fellowship first, EP lab case volume, device experience, EP-focused research',
+    erasMonth:'Varies (after cardiology fellowship)',submitMonth:'Varies',interviewSeason:'Varies',matchDay:'Varies'},
+  interventional_cardio:{name:'Interventional Cardiology',matchRate:75,avgStep:248,avgPubs:15,compLevel:'very_high',recPrograms:35,positions:280,applicants:420,
+    topPrograms:['Cleveland Clinic','Columbia','Mass General','Emory','Mayo Clinic','Cedars-Sinai','Mount Sinai','Duke','Penn','Stanford'],
+    keyFactors:'Cardiology fellowship first, cath lab volume, structural heart exposure, interventional research',
+    erasMonth:'Varies',submitMonth:'Varies',interviewSeason:'Varies',matchDay:'Varies'},
+  advanced_hf:{name:'Advanced Heart Failure & Transplant',matchRate:82,avgStep:245,avgPubs:12,compLevel:'high',recPrograms:20,positions:130,applicants:180,
+    topPrograms:['Cleveland Clinic','Brigham & Women\'s','Columbia','Duke','Stanford','Penn','Cedars-Sinai','Mass General','Michigan','UCSF'],
+    keyFactors:'Cardiology fellowship first, heart failure management, MCS/LVAD experience, transplant exposure',
+    erasMonth:'Varies',submitMonth:'Varies',interviewSeason:'Varies',matchDay:'Varies'},
+  transplant_hep:{name:'Transplant Hepatology',matchRate:85,avgStep:235,avgPubs:7,compLevel:'moderate',recPrograms:20,positions:80,applicants:110,
+    topPrograms:['Mount Sinai','UCSF','Mayo Clinic','Johns Hopkins','Michigan','Columbia','Duke','Mass General','Penn','UCLA'],
+    keyFactors:'GI fellowship first, liver disease expertise, transplant exposure, hepatology research',
+    erasMonth:'Varies',submitMonth:'Varies',interviewSeason:'Varies',matchDay:'Varies'},
+  sports_med:{name:'Sports Medicine',matchRate:80,avgStep:240,avgPubs:5,compLevel:'moderate',recPrograms:25,positions:300,applicants:450,
+    topPrograms:['Hospital for Special Surgery','Andrews Institute','Mayo Clinic','Kerlan-Jobe','UPMC','Steadman Clinic','Duke','Rush','Stanford','Cleveland Clinic'],
+    keyFactors:'MSK exam skills, team physician experience, sports-specific research, procedural skill',
+    erasMonth:'July',submitMonth:'August-September',interviewSeason:'October-January',matchDay:'December'},
+  critical_care_surg:{name:'Surgical Critical Care',matchRate:88,avgStep:242,avgPubs:5,compLevel:'moderate',recPrograms:15,positions:250,applicants:320,
+    topPrograms:['Michigan','Johns Hopkins','Penn','Pittsburgh','Duke','Mass General','Maryland','Stanford','Emory','USC'],
+    keyFactors:'Surgical residency, ICU performance, trauma exposure, critical care research',
+    erasMonth:'July',submitMonth:'August-September',interviewSeason:'October-January',matchDay:'December'}
+};
+
+// Toggle between residency and fellowship mode
+function mccToggleMode(mode){
+  document.getElementById('mcc-mode').value=mode;
+  var resBtn=document.getElementById('mcc-btn-residency');
+  var felBtn=document.getElementById('mcc-btn-fellowship');
+  var resFields=document.getElementById('mcc-residency-fields');
+  var felFields=document.getElementById('mcc-fellowship-fields');
+  var specWrap=document.getElementById('mcc-spec-wrap');
+  var felSpecWrap=document.getElementById('mcc-fel-spec-wrap');
+  if(mode==='residency'){
+    resBtn.style.background='var(--accent)';resBtn.style.color='var(--bg)';
+    felBtn.style.background='none';felBtn.style.color='var(--accent)';
+    resFields.style.display='block';felFields.style.display='none';
+    specWrap.style.display='block';felSpecWrap.style.display='none';
+  } else {
+    felBtn.style.background='var(--accent)';felBtn.style.color='var(--bg)';
+.background='none';resBtn.style.color='var(--accent)';
+    resFields.style.display='none';felFields.style.display='block';
+    specWrap.style.display='none';felSpecWrap.style.display='block';
+  }
+  document.getElementById('mcc-results').innerHTML='';
+}
+
 function mccCalculate(){
-  var spec=document.getElementById('mcc-spec').value;
+  var mode=document.getElementById('mcc-mode').value||'residency';
+  var isFellowship=mode==='fellowship';
+  var spec,sd;
+
+  if(isFellowship){
+    spec=document.getElementById('mcc-fel-spec').value;
+    sd=mccFellowshipData[spec];
+  } else {
+    spec=document.getElementById('mcc-spec').value;
+    sd=mccResidencyData[spec];
+  }
+
   var step2=parseInt(document.getElementById('mcc-step2').value)||0;
   var pubs=parseInt(document.getElementById('mcc-pubs').value)||0;
   var school=document.getElementById('mcc-school').value;
   var bg=document.getElementById('mcc-background').value;
-  var aoa=document.getElementById('mcc-aoa').value;
   var lors=document.getElementById('mcc-lors').value;
   var leadership=document.getElementById('mcc-leadership').value;
   var programs=parseInt(document.getElementById('mcc-programs').value)||0;
   var aways=parseInt(document.getElementById('mcc-aways').value)||0;
+
+  // Fellowship-specific fields
+  var felResYear='',felProgramRep='',felProceduralExp='',felFirstAuthor=0;
+  if(isFellowship){
+    felResYear=document.getElementById('mcc-fel-resyear').value;
+    felProgramRep=document.getElementById('mcc-fel-progrep').value;
+    felProceduralExp=document.getElementById('mcc-fel-procedural').value;
+    felFirstAuthor=parseInt(document.getElementById('mcc-fel-firstauthor').value)||0;
+  }
+
+  var aoa=isFellowship?'':document.getElementById('mcc-aoa').value;
+
   if(!spec||!step2||!school||!bg){notify('Please complete at least the Academic Profile section',1);return}
-
-  // NRMP-referenced specialty data
-  var specData={
-    im:{name:'Internal Medicine',matchRate:94,avgStep:235,avgPubs:4,compLevel:'low',recPrograms:15},
-    fm:{name:'Family Medicine',matchRate:93,avgStep:227,avgPubs:3,compLevel:'low',recPrograms:15},
-    peds:{name:'Pediatrics',matchRate:88,avgStep:233,avgPubs:4,compLevel:'low',recPrograms:20},
-    em:{name:'Emergency Medicine',matchRate:82,avgStep:240,avgPubs:5,compLevel:'moderate',recPrograms:25},
-    psych:{name:'Psychiatry',matchRate:87,avgStep:233,avgPubs:4,compLevel:'moderate',recPrograms:20},
-    neuro:{name:'Neurology',matchRate:90,avgStep:237,avgPubs:5,compLevel:'moderate',recPrograms:20},
-    rads:{name:'Radiology',matchRate:85,avgStep:248,avgPubs:6,compLevel:'moderate',recPrograms:30},
-    anes:{name:'Anesthesiology',matchRate:87,avgStep:242,avgPubs:5,compLevel:'moderate',recPrograms:25},
-    path:{name:'Pathology',matchRate:85,avgStep:240,avgPubs:4,compLevel:'low',recPrograms:20},
-    gen_surg:{name:'General Surgery',matchRate:83,avgStep:245,avgPubs:7,compLevel:'moderate',recPrograms:40},
-    ortho:{name:'Orthopedic Surgery',matchRate:75,avgStep:252,avgPubs:10,compLevel:'high',recPrograms:60},
-    uro:{name:'Urology',matchRate:78,avgStep:250,avgPubs:9,compLevel:'high',recPrograms:50},
-    ent:{name:'ENT',matchRate:76,avgStep:252,avgPubs:8,compLevel:'high',recPrograms:50},
-    ophtho:{name:'Ophthalmology',matchRate:72,avgStep:252,avgPubs:9,compLevel:'very_high',recPrograms:60},
-    derm:{name:'Dermatology',matchRate:68,avgStep:255,avgPubs:12,compLevel:'very_high',recPrograms:70},
-    plastics:{name:'Plastic Surgery',matchRate:70,avgStep:254,avgPubs:11,compLevel:'very_high',recPrograms:60},
-    nsurg:{name:'Neurosurgery',matchRate:72,avgStep:250,avgPubs:15,compLevel:'very_high',recPrograms:60},
-    ir:{name:'Interventional Radiology',matchRate:80,avgStep:250,avgPubs:7,compLevel:'high',recPrograms:40}
-  };
-
-  var sd=specData[spec];
   if(!sd)return;
 
   // ===== SCORING ENGINE (0-100) =====
   var score=0;
   var factors=[];
+  var pubLabels=['None','1-2','3-5','6-10','10+'];
 
-  // Step 2 CK (max 30 pts)
+  // Step 2 CK / Step 3 (max 25 pts for fellowship, 30 for residency)
+  var stepMax=isFellowship?25:30;
   var stepDiff=step2-sd.avgStep;
   var stepPts=0;
-  if(stepDiff>=20)stepPts=30;
-  else if(stepDiff>=10)stepPts=25;
-  else if(stepDiff>=5)stepPts=20;
-  else if(stepDiff>=0)stepPts=15;
-  else if(stepDiff>=-5)stepPts=10;
-  else if(stepDiff>=-10)stepPts=5;
+  if(stepDiff>=20)stepPts=stepMax;
+  else if(stepDiff>=10)stepPts=Math.round(stepMax*0.83);
+  else if(stepDiff>=5)stepPts=Math.round(stepMax*0.67);
+  else if(stepDiff>=0)stepPts=Math.round(stepMax*0.5);
+  else if(stepDiff>=-5)stepPts=Math.round(stepMax*0.33);
+  else if(stepDiff>=-10)stepPts=Math.round(stepMax*0.17);
   else stepPts=0;
   score+=stepPts;
-  factors.push({name:'Step 2 CK',value:step2,benchmark:sd.avgStep,pts:stepPts,max:30,status:stepDiff>=0?'above':'below',color:stepPts>=20?'#6abf4b':stepPts>=10?'#c8a87c':'#ef4444'});
+  factors.push({name:isFellowship?'Board Scores (Step 2/3)':'Step 2 CK',value:step2,benchmark:sd.avgStep,pts:stepPts,max:stepMax,status:stepDiff>=0?'above':'below',color:stepPts>=stepMax*0.67?'#6abf4b':stepPts>=stepMax*0.33?'#c8a87c':'#ef4444'});
 
-  // Research (max 20 pts)
-  var pubMap=[0,1.5,4,8,12];
-  var actualPubs=pubMap[pubs]||0;
+  // Research (max 20 pts residency, 25 pts fellowship)
+  var pubMax=isFellowship?25:20;
   var pubPts=0;
-  if(pubs>=4)pubPts=20;
-  else if(pubs>=3)pubPts=16;
-  else if(pubs>=2)pubPts=12;
-  else if(pubs>=1)pubPts=6;
+  if(pubs>=4)pubPts=pubMax;
+  else if(pubs>=3)pubPts=Math.round(pubMax*0.8);
+  else if(pubs>=2)pubPts=Math.round(pubMax*0.6);
+  else if(pubs>=1)pubPts=Math.round(pubMax*0.3);
   else pubPts=0;
+  // Fellowship first-author bonus
+  if(isFellowship&&felFirstAuthor>=3)pubPts=Math.min(pubMax,pubPts+3);
+  else if(isFellowship&&felFirstAuthor>=1)pubPts=Math.min(pubMax,pubPts+1);
   score+=pubPts;
-  var pubLabels=['None','1-2','3-5','6-10','10+'];
-  factors.push({name:'Research',value:pubLabels[pubs],benchmark:sd.avgPubs+' avg',pts:pubPts,max:20,color:pubPts>=12?'#6abf4b':pubPts>=6?'#c8a87c':'#ef4444'});
+  var researchLabel=pubLabels[pubs]+(isFellowship&&felFirstAuthor>0?' ('+felFirstAuthor+' first-author)':'');
+  factors.push({name:'Research Output',value:researchLabel,benchmark:sd.avgPubs+' avg',pts:pubPts,max:pubMax,color:pubPts>=pubMax*0.6?'#6abf4b':pubPts>=pubMax*0.3?'#c8a87c':'#ef4444'});
 
-  // School + Background (max 15 pts)
+  // School + Background (max 15 pts residency, 10 pts fellowship — matters less for fellowship)
+  var schoolMax=isFellowship?10:15;
   var schoolPts=0;
-  if(school==='top20')schoolPts=15;
-  else if(school==='top50')schoolPts=12;
-  else if(school==='mid')schoolPts=8;
-  else if(school==='do')schoolPts=4;
-  else if(school==='img')schoolPts=2;
-  // Background modifier
-  if(bg==='usmd')schoolPts=Math.min(15,schoolPts+2);
+  if(school==='top20')schoolPts=schoolMax;
+  else if(school==='top50')schoolPts=Math.round(schoolMax*0.8);
+  else if(school==='mid')schoolPts=Math.round(schoolMax*0.53);
+  else if(school==='do')schoolPts=Math.round(schoolMax*0.27);
+  else if(school==='img')schoolPts=Math.round(schoolMax*0.13);
+  if(bg==='usmd')schoolPts=Math.min(schoolMax,schoolPts+Math.round(schoolMax*0.13));
   else if(bg==='usdo')schoolPts=Math.max(0,schoolPts-1);
   else if(bg==='usimg')schoolPts=Math.max(0,schoolPts-2);
-  else if(bg==='nonusimg')schoolPts=Math.max(0,schoolPts-4);
+  else if(bg==='nonusimg')schoolPts=Math.max(0,schoolPts-Math.round(schoolMax*0.27));
   score+=schoolPts;
   var bgLabels={usmd:'US MD',usdo:'US DO',usimg:'US IMG',nonusimg:'Non-US IMG'};
   var schoolLabels={top20:'Top 20',top50:'Top 50',mid:'Mid-tier',do:'DO',img:'IMG'};
-  factors.push({name:'School & Background',value:(schoolLabels[school]||'')+' / '+(bgLabels[bg]||''),pts:schoolPts,max:15,color:schoolPts>=10?'#6abf4b':schoolPts>=6?'#c8a87c':'#ef4444'});
+  factors.push({name:'School & Background',value:(schoolLabels[school]||'')+' / '+(bgLabels[bg]||''),pts:schoolPts,max:schoolMax,color:schoolPts>=schoolMax*0.67?'#6abf4b':schoolPts>=schoolMax*0.4?'#c8a87c':'#ef4444'});
 
-  // AOA / Clerkship (max 10 pts)
-  var aoaPts=0;
-  if(aoa==='aoa')aoaPts=10;
-  else if(aoa==='honors')aoaPts=7;
-  else if(aoa==='pass')aoaPts=3;
-  score+=aoaPts;
-  var aoaLabels={aoa:'AOA',honors:'Multiple Honors',pass:'High Pass / Pass'};
-  factors.push({name:'Clerkship Performance',value:aoaLabels[aoa]||'Not specified',pts:aoaPts,max:10,color:aoaPts>=7?'#6abf4b':aoaPts>=3?'#c8a87c':'#ef4444'});
+  if(!isFellowship){
+    // AOA / Clerkship (max 10 pts) — residency only
+    var aoaPts=0;
+    if(aoa==='aoa')aoaPts=10;
+    else if(aoa==='honors')aoaPts=7;
+    else if(aoa==='pass')aoaPts=3;
+    score+=aoaPts;
+    var aoaLabels={aoa:'AOA',honors:'Multiple Honors',pass:'High Pass / Pass'};
+    factors.push({name:'Clerkship Performance',value:aoaLabels[aoa]||'Not specified',pts:aoaPts,max:10,color:aoaPts>=7?'#6abf4b':aoaPts>=3?'#c8a87c':'#ef4444'});
+  }
+
+  if(isFellowship){
+    // Residency program reputation (max 15 pts) — fellowship only
+    var repPts=0;
+    if(felProgramRep==='top10')repPts=15;
+    else if(felProgramRep==='top30')repPts=12;
+    else if(felProgramRep==='academic')repPts=8;
+    else if(felProgramRep==='community_teach')repPts=5;
+    else if(felProgramRep==='community')repPts=2;
+    score+=repPts;
+    var repLabels={top10:'Top 10 Academic',top30:'Top 30 Academic',academic:'Academic Program',community_teach:'Community w/ Teaching',community:'Community Program'};
+    factors.push({name:'Residency Program Reputation',value:repLabels[felProgramRep]||'Not specified',pts:repPts,max:15,color:repPts>=10?'#6abf4b':repPts>=5?'#c8a87c':'#ef4444'});
+
+    // Procedural experience (max 5 pts) — for procedural fellowships
+    var procSpec=['cardiology','gi','interventional_cardio','ep','advanced_hf','pulm_crit','sports_med','critical_care_surg'];
+    if(procSpec.indexOf(spec)>=0){
+      var procPts=0;
+      if(felProceduralExp==='extensive')procPts=5;
+      else if(felProceduralExp==='moderate')procPts=3;
+      else if(felProceduralExp==='minimal')procPts=1;
+      score+=procPts;
+      var procLabels={extensive:'Extensive (logged 50+ procedures)',moderate:'Moderate (20-50 procedures)',minimal:'Minimal (<20 procedures)'};
+      factors.push({name:'Procedural Experience',value:procLabels[felProceduralExp]||'Not specified',pts:procPts,max:5,color:procPts>=3?'#6abf4b':procPts>=1?'#c8a87c':'#ef4444'});
+    }
+  }
 
   // Letters (max 10 pts)
   var lorPts=0;
@@ -2811,7 +2946,7 @@ function mccCalculate(){
   else if(lors==='strong')lorPts=7;
   else if(lors==='avg')lorPts=4;
   score+=lorPts;
-  factors.push({name:'Letters of Rec',value:lors==='notable'?'Well-known faculty':lors==='strong'?'Strong':lors==='avg'?'Average':'Not specified',pts:lorPts,max:10,color:lorPts>=7?'#6abf4b':lorPts>=4?'#c8a87c':'#ef4444'});
+  factors.push({name:'Letters of Rec',value:lors==='notable'?'From nationally recognized leaders':lors==='strong'?'Strong — recognized in the field':lors==='avg'?'Average — local attendings':'Not specified',pts:lorPts,max:10,color:lorPts>=7?'#6abf4b':lorPts>=4?'#c8a87c':'#ef4444'});
 
   // Leadership (max 5 pts)
   var leadPts=0;
@@ -2819,7 +2954,7 @@ function mccCalculate(){
   else if(leadership==='some')leadPts=3;
   else leadPts=0;
   score+=leadPts;
-  factors.push({name:'Leadership',value:leadership==='significant'?'Significant':leadership==='some'?'Some':'None',pts:leadPts,max:5,color:leadPts>=3?'#6abf4b':'#c8a87c'});
+  factors.push({name:'Leadership',value:leadership==='significant'?'Significant (chief, national, QI lead)':leadership==='some'?'Some':'None',pts:leadPts,max:5,color:leadPts>=3?'#6abf4b':'#c8a87c'});
 
   // Strategy: Programs + Aways (max 10 pts)
   var stratPts=0;
@@ -2830,16 +2965,25 @@ function mccCalculate(){
   stratPts+=Math.min(5,aways*2);
   stratPts=Math.min(10,stratPts);
   score+=stratPts;
-  factors.push({name:'Application Strategy',value:programs+' programs, '+aways+' aways',pts:stratPts,max:10,color:stratPts>=7?'#6abf4b':stratPts>=4?'#c8a87c':'#ef4444'});
+  factors.push({name:'Application Strategy',value:programs+' programs, '+aways+' aways/rotations',pts:stratPts,max:10,color:stratPts>=7?'#6abf4b':stratPts>=4?'#c8a87c':'#ef4444'});
 
   score=Math.max(5,Math.min(100,score));
 
-  // ===== MATCH OUTLOOK =====
-  var outlook,topProb,midProb,commProb;
-  if(score>=85){outlook='Highly Competitive';topProb='High';midProb='Very High';commProb='Very High';}
-  else if(score>=65){outlook='Competitive';topProb='Moderate';midProb='High';commProb='Very High';}
-  else if(score>=50){outlook='Borderline';topProb='Low';midProb='Moderate';commProb='High';}
-  else{outlook='High Risk';topProb='Very Low';midProb='Low';commProb='Moderate';}
+  // ===== MATCH PROBABILITY ENGINE =====
+  // Calculate actual estimated match probability based on score + specialty data
+  var baseRate=sd.matchRate;
+  var matchProb,topProb,midProb,commProb;
+  if(score>=85){matchProb=Math.min(99,baseRate+8);topProb=Math.min(85,Math.round(baseRate*0.75));midProb=Math.min(95,Math.round(baseRate*0.95));commProb=Math.min(99,baseRate+5);}
+  else if(score>=70){matchProb=Math.min(95,baseRate+3);topProb=Math.min(60,Math.round(baseRate*0.5));midProb=Math.min(90,Math.round(baseRate*0.85));commProb=Math.min(98,baseRate+4);}
+  else if(score>=55){matchProb=Math.max(40,baseRate-10);topProb=Math.max(10,Math.round(baseRate*0.2));midProb=Math.max(45,Math.round(baseRate*0.55));commProb=Math.min(90,Math.round(baseRate*0.8));}
+  else{matchProb=Math.max(20,baseRate-25);topProb=Math.max(3,Math.round(baseRate*0.08));midProb=Math.max(20,Math.round(baseRate*0.3));commProb=Math.max(50,Math.round(baseRate*0.55));}
+
+  // ===== MATCH OUTLOOK LABELS =====
+  var outlook;
+  if(score>=85)outlook='Highly Competitive';
+  else if(score>=65)outlook='Competitive';
+  else if(score>=50)outlook='Borderline';
+  else outlook='High Risk';
 
   var scoreColor=score>=85?'#6abf4b':score>=65?'#c8a87c':score>=50?'#e8a33c':'#ef4444';
 
@@ -2848,7 +2992,7 @@ function mccCalculate(){
 
   // 1. Competitiveness Score
   h+='<div style="text-align:center;padding:28px;background:var(--bg2);border:1px solid '+scoreColor+';border-radius:14px;margin-bottom:16px">';
-  h+='<div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:10px">'+sd.name+' — Competitiveness Score</div>';
+  h+='<div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:10px">'+(isFellowship?'Fellowship':'Residency')+' — '+sd.name+'</div>';
   h+='<div style="position:relative;width:120px;height:120px;margin:0 auto 12px">';
   h+='<svg viewBox="0 0 120 120" style="transform:rotate(-90deg)"><circle cx="60" cy="60" r="52" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="8"/><circle cx="60" cy="60" r="52" fill="none" stroke="'+scoreColor+'" stroke-width="8" stroke-dasharray="'+Math.round(score*3.27)+' 327" stroke-linecap="round"/></svg>';
   h+='<div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center"><div style="font-size:36px;font-weight:700;color:'+scoreColor+';font-family:var(--font-serif)">'+score+'</div><div style="font-size:10px;color:var(--text3)">/ 100</div></div>';
@@ -2858,15 +3002,41 @@ function mccCalculate(){
   h+='<span>85+ Highly Competitive</span><span>65–84 Competitive</span><span>50–64 Borderline</span><span>&lt;50 High Risk</span></div>';
   h+='</div>';
 
-  // 2. Match Outlook
+  // 2. Match Probability — now with percentages
   h+='<div style="margin-bottom:16px;padding:16px;background:var(--bg2);border-radius:10px;border:1px solid var(--border)">';
-  h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">📊 Match Outlook</div>';
-  var probColor=function(p){return p==='Very High'||p==='High'?'#6abf4b':p==='Moderate'?'#c8a87c':'#ef4444'};
-  h+='<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center">';
-  h+='<div style="padding:12px;background:var(--bg3);border-radius:8px"><div style="font-size:10px;color:var(--text3);margin-bottom:4px">Top-tier</div><div style="font-size:13px;font-weight:600;color:'+probColor(topProb)+'">'+topProb+'</div></div>';
-  h+='<div style="padding:12px;background:var(--bg3);border-radius:8px"><div style="font-size:10px;color:var(--text3);margin-bottom:4px">Mid-tier</div><div style="font-size:13px;font-weight:600;color:'+probColor(midProb)+'">'+midProb+'</div></div>';
-  h+='<div style="padding:12px;background:var(--bg3);border-radius:8px"><div style="font-size:10px;color:var(--text3);margin-bottom:4px">Community</div><div style="font-size:13px;font-weight:600;color:'+probColor(commProb)+'">'+commProb+'</div></div>';
-  h+='</div></div>';
+  h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">📊 Estimated Match Probability</div>';
+  var probColorFn=function(p){return p>=70?'#6abf4b':p>=40?'#c8a87c':'#ef4444'};
+  h+='<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center;margin-bottom:10px">';
+  h+='<div style="padding:12px;background:var(--bg3);border-radius:8px"><div style="font-size:10px;color:var(--text3);margin-bottom:4px">Top-tier Programs</div><div style="font-size:20px;font-weight:700;color:'+probColorFn(topProb)+'">'+topProb+'%</div></div>';
+  h+='<div style="padding:12px;background:var(--bg3);border-radius:8px"><div style="font-size:10px;color:var(--text3);margin-bottom:4px">Mid-tier Programs</div><div style="font-size:20px;font-weight:700;color:'+probColorFn(midProb)+'">'+midProb+'%</div></div>';
+  h+='<div style="padding:12px;background:var(--bg3);border-radius:8px"><div style="font-size:10px;color:var(--text3);margin-bottom:4px">Community Programs</div><div style="font-size:20px;font-weight:700;color:'+probColorFn(commProb)+'">'+commProb+'%</div></div>';
+  h+='</div>';
+  h+='<div style="text-align:center;padding:10px;background:var(--bg3);border-radius:8px"><div style="font-size:10px;color:var(--text3);margin-bottom:2px">Overall Match Likelihood</div><div style="font-size:24px;font-weight:700;color:'+probColorFn(matchProb)+'">'+matchProb+'%</div></div>';
+  h+='<div style="font-size:9px;color:var(--text3);margin-top:6px;text-align:center">Based on your profile vs. '+sd.positions+' positions / ~'+sd.applicants+' applicants nationally</div>';
+  h+='</div>';
+
+  // 2b. Fellowship-specific: top programs + key success factors
+  if(isFellowship&&sd.topPrograms){
+    h+='<div style="margin-bottom:16px;padding:16px;background:var(--bg2);border-radius:10px;border:1px solid var(--border)">';
+    h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">🏥 Top '+sd.name+' Programs</div>';
+    h+='<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px">';
+    sd.topPrograms.forEach(function(p,i){
+      h+='<span style="font-size:11px;padding:4px 10px;background:var(--bg3);border-radius:6px;color:'+(i<3?'var(--accent)':'var(--text2)')+'">'+p+'</span>';
+    });
+    h+='</div>';
+    h+='<div style="font-size:11px;color:var(--text2);line-height:1.6"><strong style="color:var(--accent)">What top programs look for:</strong> '+sd.keyFactors+'</div>';
+    if(sd.erasMonth){
+      h+='<div style="margin-top:10px;padding:10px;background:var(--bg3);border-radius:6px">';
+      h+='<div style="font-size:10px;font-weight:600;color:var(--accent);margin-bottom:6px">📅 Application Timeline</div>';
+      h+='<div style="font-size:11px;color:var(--text2);line-height:1.8">';
+      h+='ERAS Opens: <strong>'+sd.erasMonth+'</strong><br>';
+      h+='Submit Applications: <strong>'+sd.submitMonth+'</strong><br>';
+      h+='Interview Season: <strong>'+sd.interviewSeason+'</strong><br>';
+      h+='Match Day: <strong>'+sd.matchDay+'</strong>';
+      h+='</div></div>';
+    }
+    h+='</div>';
+  }
 
   // 3. Factor Breakdown
   h+='<div style="margin-bottom:16px;padding:16px;background:var(--bg2);border-radius:10px;border:1px solid var(--border)">';
@@ -2881,15 +3051,17 @@ function mccCalculate(){
   });
   h+='</div>';
 
-  // 4. NRMP Benchmark Comparison
+  // 4. Benchmark Comparison
   h+='<div style="margin-bottom:16px;padding:16px;background:var(--bg2);border-radius:10px;border:1px solid var(--border)">';
-  h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">📈 NRMP Benchmark — '+sd.name+'</div>';
-  h+='<div style="font-size:10px;color:var(--text3);margin-bottom:10px">Average matched applicant profile (NRMP Charting Outcomes)</div>';
+  h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">📈 '+(isFellowship?'Fellowship':'NRMP')+' Benchmark — '+sd.name+'</div>';
+  h+='<div style="font-size:10px;color:var(--text3);margin-bottom:10px">Average matched applicant profile'+(isFellowship?' (NRMP Specialty Match data)':' (NRMP Charting Outcomes)')+'</div>';
   var benchmarks=[
-    {label:'Step 2 CK',yours:step2,avg:sd.avgStep,unit:''},
+    {label:isFellowship?'Board Score (Step 2/3)':'Step 2 CK',yours:step2,avg:sd.avgStep,unit:''},
     {label:'Research Experiences',yours:pubLabels[pubs],avg:sd.avgPubs,unit:''},
+    {label:'Overall Match Rate',yours:score>=65?'Above avg':'Below avg',avg:sd.matchRate+'%',unit:''},
     {label:'Programs Applied',yours:programs||'—',avg:sd.recPrograms+' rec.',unit:''}
   ];
+  if(isFellowship)benchmarks.push({label:'Positions Available',yours:'—',avg:sd.positions,unit:''});
   benchmarks.forEach(function(b){
     var yourVal=typeof b.yours==='number'?b.yours:b.yours;
     var diff=typeof b.yours==='number'&&typeof b.avg==='number'?b.yours-b.avg:null;
@@ -2901,47 +3073,116 @@ function mccCalculate(){
   });
   h+='</div>';
 
-  // 5. Strategy Recommendations
+  // 5. Pre-ERAS Strategic Action Plan
   h+='<div style="margin-bottom:16px;padding:16px;background:var(--bg2);border-radius:10px;border-left:3px solid var(--accent)">';
-  h+='<div style="font-size:11px;font-weight:600;color:var(--accent);margin-bottom:10px">🎯 Strategy Recommendations</div>';
+  h+='<div style="font-size:11px;font-weight:600;color:var(--accent);margin-bottom:4px">📋 Pre-ERAS Strategic Action Plan</div>';
+  h+='<div style="font-size:10px;color:var(--text3);margin-bottom:12px">Key steps to maximize your application before submission</div>';
+
+  var timeline=[];
+  // Phase 1: 12-6 months out
+  var phase1=[];
+  if(pubs<=2)phase1.push({task:'Start 1-2 targeted research projects in '+sd.name,detail:'Focus on case reports or retrospective studies — fastest to publish',priority:'high'});
+  if(pubs<=1&&(sd.compLevel==='high'||sd.compLevel==='very_high'))phase1.push({task:'Secure a research mentor in '+sd.name,detail:'Reach out to faculty with active research. Offer to help with data collection on existing projects',priority:'high'});
+  if(lors!=='notable'&&lors!=='strong')phase1.push({task:'Identify and cultivate relationships with LOR writers',detail:'You need 3-4 strong letters. Start working with faculty who can speak to your clinical skill and dedication',priority:'high'});
+  if(!isFellowship&&aoa!=='aoa'&&aoa!=='honors'&&sd.compLevel==='very_high')phase1.push({task:'Maximize remaining clerkship performance',detail:'Honors in '+sd.name+'-related rotations carry significant weight',priority:'high'});
+  if(isFellowship)phase1.push({task:'Discuss fellowship plans with your PD early',detail:'Your program director\'s support and letter are often the most important factor in fellowship match',priority:'high'});
+  phase1.push({task:'Build a specialty-specific CV',detail:'Tailor your CV to highlight '+sd.name+' experiences, research, and clinical rotations',priority:'medium'});
+
+  // Phase 2: 6-3 months out
+  var phase2=[];
+  if(aways<1&&(sd.compLevel==='high'||sd.compLevel==='very_high'))phase2.push({task:'Apply for away rotations at 2-3 target programs',detail:'Away rotations are your best chance to get noticed. Apply early — spots fill fast',priority:'high'});
+  phase2.push({task:'Draft personal statement — start early',detail:'Get feedback from 3+ people. Your PS should explain WHY this specialty and what drives you',priority:'high'});
+  if(pubs<=2)phase2.push({task:'Submit abstracts to national conferences',detail:'Even poster presentations show scholarly activity. Target specialty-specific conferences',priority:'medium'});
+  if(isFellowship)phase2.push({task:'Attend national specialty conferences',detail:'Networking at conferences can lead to interview invitations and visibility with fellowship directors',priority:'medium'});
+
+  // Phase 3: 3-0 months out (pre-ERAS)
+  var phase3=[];
+  phase3.push({task:'Finalize your program list — research each program',detail:'Apply to '+sd.recPrograms+'+ programs. Know each program\'s strengths, case volume, and faculty',priority:'high'});
+  phase3.push({task:'Request all letters of recommendation',detail:'Give writers 4-6 weeks minimum. Provide your CV, PS draft, and specific program info',priority:'high'});
+  phase3.push({task:'ERAS application — submit on Day 1',detail:'First-day submission signals commitment. Have everything ready before ERAS opens',priority:'high'});
+  if(isFellowship)phase3.push({task:'Update fellowship-specific CV with procedure logs',detail:'Include specific case numbers, procedures performed, and clinical volumes',priority:'medium'});
+  phase3.push({task:'Prepare for interviews — mock practice',detail:'Start mock interviews early. Know your application inside out. Prepare 3-5 questions for each program',priority:'medium'});
+
+  // Render timeline
+  var phases=[{title:'12–6 Months Before ERAS',items:phase1,icon:'🔴'},{title:'6–3 Months Before ERAS',items:phase2,icon:'🟡'},{title:'3–0 Months Before Submission',items:phase3,icon:'🟢'}];
+  phases.forEach(function(p){
+    if(p.items.length===0)return;
+    h+='<div style="margin-bottom:14px">';
+    h+='<div style="font-size:11px;font-weight:600;color:var(--text);margin-bottom:8px">'+p.icon+' '+p.title+'</div>';
+    p.items.forEach(function(item){
+      var priColor=item.priority==='high'?'#ef4444':'#c8a87c';
+      h+='<div style="padding:8px 10px;margin-bottom:4px;background:var(--bg3);border-radius:6px;border-left:3px solid '+priColor+'">';
+      h+='<div style="font-size:12px;font-weight:600;color:var(--text)">'+item.task+'</div>';
+      h+='<div style="font-size:10px;color:var(--text3);margin-top:2px">'+item.detail+'</div>';
+      h+='</div>';
+    });
+    h+='</div>';
+  });
+  h+='</div>';
+
+  // 6. LOR Strategy — How to Secure Letters from Subspecialty Leaders
+  h+='<div style="margin-bottom:16px;padding:16px;background:linear-gradient(160deg,rgba(200,168,124,.06),rgba(200,168,124,.01));border:1px solid rgba(200,168,124,.2);border-radius:10px">';
+  h+='<div style="font-size:11px;font-weight:600;color:var(--accent);margin-bottom:4px">✉️ How to Secure Strong Letters from Subspecialty Leaders</div>';
+  h+='<div style="font-size:10px;color:var(--text3);margin-bottom:12px">Letters from recognized leaders can transform a borderline application into a competitive one</div>';
+
+  var lorStrats=[];
+  lorStrats.push({step:'Start Early — Build the Relationship',detail:'Identify 2-3 faculty leaders in '+sd.name+' at least 6 months before ERAS. Attend their lectures, participate in their clinics, and show genuine intellectual curiosity. The best LORs come from attendings who have worked with you directly.',icon:'👋'});
+  lorStrats.push({step:'Contribute to Their Research',detail:'Ask to help with an ongoing project — even chart reviews or data entry. Co-authoring a paper or abstract with a nationally known faculty member creates a strong bond AND adds to your CV simultaneously.',icon:'🔬'});
+  lorStrats.push({step:'Be the Resident/Student They Remember',detail:'Read before cases. Follow up on patients. Ask thoughtful questions. Send brief updates on interesting outcomes. The small things — punctuality, preparation, follow-through — separate you from the crowd.',icon:'⭐'});
+  lorStrats.push({step:'The Ask: Be Specific and Make It Easy',detail:'When requesting the letter, provide: (1) your updated CV, (2) personal statement draft, (3) a bullet list of shared experiences they can reference, (4) your program list with deadlines. Ask: "Would you be able to write me a strong letter?" — this gives them an out if they can\'t.',icon:'📝'});
+  if(isFellowship)lorStrats.push({step:'Program Director Letter is Critical',detail:'For fellowship applications, your residency PD\'s letter often carries the most weight. Meet with your PD early to discuss fellowship plans. Share your goals, timeline, and the specific programs you\'re targeting.',icon:'🎯'});
+  lorStrats.push({step:'Follow Up and Thank',detail:'Send a reminder 3 weeks before the deadline. After match, send a personal thank-you note regardless of outcome. These relationships last your entire career.',icon:'🙏'});
+
+  lorStrats.forEach(function(s){
+    h+='<div style="display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)">';
+    h+='<span style="font-size:16px;flex-shrink:0;margin-top:2px">'+s.icon+'</span>';
+    h+='<div><div style="font-size:12px;font-weight:600;color:var(--text)">'+s.step+'</div>';
+    h+='<div style="font-size:10px;color:var(--text3);margin-top:2px;line-height:1.5">'+s.detail+'</div></div>';
+    h+='</div>';
+  });
+  h+='</div>';
+
+  // 7. Strategy Recommendations (context-aware)
+  h+='<div style="margin-bottom:16px;padding:16px;background:var(--bg2);border-radius:10px;border-left:3px solid var(--accent)">';
+  h+='<div style="font-size:11px;font-weight:600;color:var(--accent);margin-bottom:10px">🎯 Personalized Strategy Recommendations</div>';
   h+='<ul style="font-size:12px;color:var(--text2);line-height:2;padding-left:16px;margin:0">';
   var recs=[];
-  if(stepDiff<-10)recs.push('Your Step 2 CK is '+Math.abs(stepDiff)+' points below the specialty average — strongly consider retaking or adjusting target specialty');
-  else if(stepDiff<0)recs.push('Step 2 CK is slightly below average — still competitive, but every point helps');
-  if(pubs<=1&&(sd.compLevel==='high'||sd.compLevel==='very_high'))recs.push('Research is a critical gap — aim for '+Math.max(5,sd.avgPubs)+' publications for '+sd.name);
-  else if(pubs<=1)recs.push('Increase research output — 2-3 publications strengthens any application');
-  if(aways<1&&(sd.compLevel==='high'||sd.compLevel==='very_high'))recs.push('Complete at least 1-2 away rotations at target programs — this is essential for competitive specialties');
-  else if(aways<1)recs.push('Consider 1 away rotation at a top-choice program to demonstrate interest');
-  if(programs<sd.recPrograms)recs.push('Apply to at least '+sd.recPrograms+' programs — you currently plan '+programs);
-  if(bg==='nonusimg'||bg==='usimg')recs.push('As an IMG, strong Step scores, US clinical experience, and research are critical differentiators');
-  if(lors!=='notable'&&lors!=='strong'&&(sd.compLevel==='high'||sd.compLevel==='very_high'))recs.push('Secure letters from well-known faculty in '+sd.name+' — this significantly impacts rank list placement');
-  if(aoa!=='aoa'&&aoa!=='honors'&&(sd.compLevel==='very_high'))recs.push('AOA or strong honors are common among matched applicants in '+sd.name);
-  if(leadership!=='significant')recs.push('Strengthen leadership profile — meaningful roles demonstrate initiative beyond academics');
-  if(score>=85)recs.push('Strong position — focus on interview preparation and thoughtful rank list strategy');
+  if(stepDiff<-10)recs.push('<strong>Board Score Gap:</strong> Your score is '+Math.abs(stepDiff)+' points below the specialty average. Consider focused board prep or explore specialties where your score is more competitive');
+  else if(stepDiff<0)recs.push('<strong>Board Score:</strong> Slightly below average — still competitive, but improving by even 5 points can shift your profile significantly');
+  if(pubs<=1&&(sd.compLevel==='high'||sd.compLevel==='very_high'))recs.push('<strong>Research is a Critical Gap:</strong> Aim for '+Math.max(5,sd.avgPubs)+' publications for '+sd.name+'. Start with case reports (fastest turnaround), then target retrospective studies');
+  else if(pubs<=1)recs.push('<strong>Research:</strong> 2-3 publications will strengthen your application. Consider quality improvement projects — they count and are faster than bench research');
+  if(isFellowship&&felProgramRep==='community')recs.push('<strong>Residency Background:</strong> Community program applicants should focus extra on research output and away rotations to demonstrate academic commitment');
+  if(isFellowship&&felFirstAuthor<1&&sd.compLevel!=='low')recs.push('<strong>First-Author Papers:</strong> Fellowship programs weigh first-author publications heavily. Even one first-author paper in '+sd.name+' significantly strengthens your application');
+  if(aways<1&&(sd.compLevel==='high'||sd.compLevel==='very_high'))recs.push('<strong>Away Rotations:</strong> Complete 1-2 rotations at your top-choice programs. This is how '+sd.name+' programs get to know you — it\'s essentially a month-long interview');
+  else if(aways<1)recs.push('<strong>Away Rotations:</strong> Consider at least 1 away rotation at a top-choice program to demonstrate interest and build connections');
+  if(programs<sd.recPrograms)recs.push('<strong>Program List:</strong> Apply to at least '+sd.recPrograms+' programs. You currently plan '+programs+' — casting a wider net is especially important for competitive specialties');
+  if(bg==='nonusimg'||bg==='usimg')recs.push('<strong>IMG Strategy:</strong> Focus on strong board scores, US clinical experience, and research as key differentiators. Target IMG-friendly programs while still applying broadly');
+  if(lors!=='notable'&&lors!=='strong'&&(sd.compLevel==='high'||sd.compLevel==='very_high'))recs.push('<strong>Letters of Recommendation:</strong> For '+sd.name+', letters from nationally recognized faculty can make or break your application. See the LOR strategy section above');
+  if(!isFellowship&&aoa!=='aoa'&&aoa!=='honors'&&sd.compLevel==='very_high')recs.push('<strong>Clerkship Performance:</strong> AOA or multiple Honors are common among matched applicants in '+sd.name+'. Maximize your remaining clinical rotations');
+  if(leadership!=='significant')recs.push('<strong>Leadership:</strong> Add meaningful leadership — chief resident, QI project lead, committee chair, or national organization role');
+  if(score>=85)recs.push('<strong>Strong Position:</strong> Focus your energy on interview preparation, thoughtful rank list strategy, and program-specific fit');
+  if(isFellowship&&sd.compLevel==='very_high')recs.push('<strong>Networking:</strong> Attend the national '+sd.name+' conference. Introduce yourself to fellowship directors. Follow up with a brief email after meeting them');
   if(recs.length===0)recs.push('Solid application overall — focus on interview performance and personal statement quality');
   recs.forEach(function(r){h+='<li>'+r+'</li>'});
   h+='</ul></div>';
 
-  // 6. Scenario Simulation
+  // 8. What-If Scenarios
   h+='<div style="margin-bottom:16px;padding:16px;background:linear-gradient(160deg,rgba(200,168,124,.04),rgba(200,168,124,.01));border:1px solid rgba(200,168,124,.15);border-radius:10px">';
   h+='<div style="font-size:11px;font-weight:600;color:var(--accent);margin-bottom:10px">🔬 What-If Scenarios</div>';
-  h+='<div style="font-size:11px;color:var(--text3);margin-bottom:10px">See how improvements change your score.</div>';
-  // Simulate Step +10
+  h+='<div style="font-size:11px;color:var(--text3);margin-bottom:10px">See how improvements change your score and match probability.</div>';
   var simStep=step2+10;
-  var simStepDiff=simStep-sd.avgStep;
-  var simStepPts=simStepDiff>=20?30:simStepDiff>=10?25:simStepDiff>=5?20:simStepDiff>=0?15:simStepDiff>=-5?10:simStepDiff>=-10?5:0;
-  var simScoreStep=score-stepPts+simStepPts;
-  // Simulate pubs +1 tier
-  var simPubPts=Math.min(20,[0,6,12,16,20][Math.min(4,pubs+1)]);
-  var simScorePub=score-pubPts+simPubPts;
-  // Simulate strong LORs
+  var simStepDiff2=simStep-sd.avgStep;
+  var simStepPts2=simStepDiff2>=20?stepMax:simStepDiff2>=10?Math.round(stepMax*0.83):simStepDiff2>=5?Math.round(stepMax*0.67):simStepDiff2>=0?Math.round(stepMax*0.5):simStepDiff2>=-5?Math.round(stepMax*0.33):simStepDiff2>=-10?Math.round(stepMax*0.17):0;
+  var simScoreStep=score-stepPts+simStepPts2;
+  var simPubPts2=Math.min(pubMax,[0,Math.round(pubMax*0.3),Math.round(pubMax*0.6),Math.round(pubMax*0.8),pubMax][Math.min(4,pubs+1)]);
+  var simScorePub=score-pubPts+simPubPts2;
   var simLorPts=lors==='notable'?lorPts:10;
   var simScoreLor=score-lorPts+simLorPts;
 
   h+='<div style="display:flex;flex-direction:column;gap:6px">';
   if(step2<270){
     var stepGain=simScoreStep-score;
-    h+='<div style="display:flex;justify-content:space-between;padding:8px 10px;background:var(--bg2);border-radius:6px;font-size:12px"><span>Step 2 CK '+step2+' → '+simStep+'</span><span style="color:'+(stepGain>0?'#6abf4b':'var(--text3)')+';font-weight:600">Score: '+score+' → '+simScoreStep+(stepGain>0?' (+'+stepGain+')':'')+'</span></div>';
+    h+='<div style="display:flex;justify-content:space-between;padding:8px 10px;background:var(--bg2);border-radius:6px;font-size:12px"><span>Board score '+step2+' → '+simStep+'</span><span style="color:'+(stepGain>0?'#6abf4b':'var(--text3)')+';font-weight:600">Score: '+score+' → '+simScoreStep+(stepGain>0?' (+'+stepGain+')':'')+'</span></div>';
   }
   if(pubs<4){
     var pubGain=simScorePub-score;
@@ -2949,17 +3190,17 @@ function mccCalculate(){
   }
   if(lors!=='notable'){
     var lorGain=simScoreLor-score;
-    h+='<div style="display:flex;justify-content:space-between;padding:8px 10px;background:var(--bg2);border-radius:6px;font-size:12px"><span>Stronger LORs → well-known faculty</span><span style="color:'+(lorGain>0?'#6abf4b':'var(--text3)')+';font-weight:600">Score: '+score+' → '+simScoreLor+(lorGain>0?' (+'+lorGain+')':'')+'</span></div>';
+    h+='<div style="display:flex;justify-content:space-between;padding:8px 10px;background:var(--bg2);border-radius:6px;font-size:12px"><span>Stronger LORs → nationally recognized leaders</span><span style="color:'+(lorGain>0?'#6abf4b':'var(--text3)')+';font-weight:600">Score: '+score+' → '+simScoreLor+(lorGain>0?' (+'+lorGain+')':'')+'</span></div>';
   }
   h+='</div>';
   h+='<div style="font-size:10px;color:var(--text3);margin-top:8px;font-style:italic">Adjust your inputs above and re-analyze to see exact score changes.</div>';
   h+='</div>';
 
-  // 7. Save Profile
+  // 9. Save Profile
   h+='<div style="text-align:center;margin-bottom:16px"><button onclick="mccSaveProfile()" class="btn" style="font-size:12px;padding:10px 24px;border:1px solid rgba(200,168,124,.25);color:var(--accent);background:none;cursor:pointer;border-radius:8px">💾 Save Competitiveness Profile</button>';
   h+='<div style="font-size:10px;color:var(--text3);margin-top:6px">Track improvements as your application strengthens.</div></div>';
 
-  // 8. Related Tools
+  // 10. Related Tools
   h+='<div style="padding:16px;background:var(--bg2);border-radius:10px;border:1px solid var(--border)">';
   h+='<div style="font-size:11px;font-weight:600;color:var(--accent);margin-bottom:10px">🔗 Recommended Next Tools</div>';
   var related=[{id:'v7',icon:'📊',title:'Research ROI Calculator',why:'Maximize research impact before you apply'},{id:'v15',icon:'🗺️',title:'Career Strategy Builder',why:'Build a timeline for your remaining milestones'},{id:'v16',icon:'🎤',title:'Mock Interview Simulator',why:'Practice the questions programs will ask you'}];
@@ -2970,36 +3211,44 @@ function mccCalculate(){
   });
   h+='</div>';
 
-  h+='<p style="font-size:10px;color:var(--text3);font-style:italic;margin-top:14px">Based on NRMP Charting Outcomes data. This is directional guidance, not a guarantee. Individual circumstances, interview performance, and intangible factors significantly impact match outcomes.</p>';
+  h+='<p style="font-size:10px;color:var(--text3);font-style:italic;margin-top:14px">Based on NRMP Charting Outcomes and specialty match data. Match probabilities are estimates based on aggregate data — individual outcomes depend on interview performance, program fit, geographic preferences, and intangible factors.</p>';
   document.getElementById('mcc-results').innerHTML=h;
   document.getElementById('mcc-results').scrollIntoView({behavior:'smooth',block:'start'});
 }
 
 function mccSaveProfile(){
   if(!U)return;
+  var mode=document.getElementById('mcc-mode').value||'residency';
+  var isFellowship=mode==='fellowship';
   var profile={
     date:new Date().toISOString(),
-    spec:document.getElementById('mcc-spec').value,
+    mode:mode,
+    spec:isFellowship?document.getElementById('mcc-fel-spec').value:document.getElementById('mcc-spec').value,
     step2:document.getElementById('mcc-step2').value,
     pubs:document.getElementById('mcc-pubs').value,
     school:document.getElementById('mcc-school').value,
     background:document.getElementById('mcc-background').value,
-    aoa:document.getElementById('mcc-aoa').value,
+    aoa:isFellowship?'':document.getElementById('mcc-aoa').value,
     lors:document.getElementById('mcc-lors').value,
     leadership:document.getElementById('mcc-leadership').value,
     programs:document.getElementById('mcc-programs').value,
     aways:document.getElementById('mcc-aways').value
   };
+  if(isFellowship){
+    profile.felResYear=document.getElementById('mcc-fel-resyear').value;
+    profile.felProgramRep=document.getElementById('mcc-fel-progrep').value;
+    profile.felProceduralExp=document.getElementById('mcc-fel-procedural').value;
+    profile.felFirstAuthor=document.getElementById('mcc-fel-firstauthor').value;
+  }
   if(!U.mccProfiles)U.mccProfiles=[];
   U.mccProfiles.push(profile);
   localStorage.setItem('hw_session',JSON.stringify(U));
   saveDB();
-  // Sync to Supabase
   if(_supaClient&&U.supaId){
     _supaClient.from('profiles').update({notes:U.notes||[],mcc_profiles:U.mccProfiles}).eq('user_id',U.supaId||U.id).then(function(){}).catch(function(e){logError('profileNotesUpdate',e)});
   }
   notify('Competitiveness profile saved! Track your progress over time. 📈');
-  recordToolUse('Match Competitiveness Calculator',profile.score||null,'Saved competitiveness profile for '+(profile.spec||'unknown specialty'));
+  recordToolUse('Match Competitiveness Calculator',profile.score||null,'Saved '+(isFellowship?'fellowship':'residency')+' competitiveness profile for '+(profile.spec||'unknown specialty'));
 }
 
 // ===== CAREER STRATEGY BUILDER (v15) =====

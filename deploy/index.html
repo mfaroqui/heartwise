@@ -2003,78 +2003,86 @@ Sign Out</button>
 <span id="user-badge" class="badge b-free">FREE</span>
 </div>
 
-<!-- Compact Welcome + Quote -->
-<div style="padding:16px 24px 0">
-<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-<div>
-<h2 id="welcome-msg" style="font-family:var(--font-serif);font-size:18px;font-weight:600;color:var(--text);margin:0;line-height:1.3">Welcome back</h2>
-<p id="dash-subtitle" style="font-size:11px;color:var(--text3);margin:2px 0 0">Track your progress. See what's next.</p>
+<!-- ===== HERO — Ivory Welcome with Tagline + Quote ===== -->
+<div style="padding:18px 24px 0">
+<div style="background:linear-gradient(160deg,#f5f0e8,#ece5d8,#f0ebe3);border-radius:16px;padding:24px 22px 20px;position:relative;overflow:hidden">
+<div style="position:absolute;top:-40%;right:-18%;width:220px;height:220px;background:radial-gradient(circle,rgba(200,168,124,.15),transparent 60%);border-radius:50%"></div>
+<div style="position:absolute;bottom:-30%;left:-12%;width:160px;height:160px;background:radial-gradient(circle,rgba(200,168,124,.08),transparent 60%);border-radius:50%"></div>
+<div style="position:relative">
+<h2 id="welcome-msg" style="font-family:var(--font-serif);font-size:17px;font-weight:400;color:#4a4540;margin:0 0 6px;line-height:1.3;letter-spacing:.2px">Welcome back</h2>
+<p style="font-family:var(--font-serif);font-size:20px;color:#1a1620;line-height:1.4;font-weight:600;margin:0 0 4px;letter-spacing:.2px">Your career is too important for guesswork.</p>
+<p id="dash-subtitle" style="font-size:11px;color:#6a6560;line-height:1.5;margin:0"></p>
 </div>
-<button onclick="showUpdateProfile()" style="font-size:10px;color:#0a0a0f;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;padding:8px 16px;border-radius:8px;cursor:pointer;white-space:nowrap;font-weight:700;letter-spacing:.3px">✏️ Update</button>
+<div id="daily-quote" style="margin-top:14px;padding-top:14px;border-top:1px solid rgba(160,140,110,.2);position:relative">
+<p style="font-size:15px;color:#2a2520;line-height:1.6;font-family:var(--font-serif);font-weight:500;font-style:italic;margin:0;letter-spacing:.2px" id="quote-text"></p>
+<p style="font-size:10px;color:#9a8a72;margin:8px 0 0;font-weight:600;letter-spacing:.8px;text-transform:uppercase" id="quote-author"></p>
+</div>
 </div>
 </div>
 
 <!-- Trial Countdown Banner -->
-<div id="trial-countdown-banner" style="margin:0 24px 12px;padding:14px 18px;border-radius:var(--r);border:1px solid rgba(200,168,124,.2);background:var(--accent-dim);display:none"></div>
+<div id="trial-countdown-banner" style="margin:12px 24px 0;padding:14px 18px;border-radius:var(--r);border:1px solid rgba(200,168,124,.2);background:var(--accent-dim);display:none"></div>
 
 <!-- Trial: No physician reviews note -->
-<div id="trial-review-note" style="margin:0 24px 12px;display:none">
+<div id="trial-review-note" style="margin:12px 24px 0;display:none">
 <div style="padding:12px 16px;border-radius:var(--r);border-color:rgba(139,173,196,.15);background:var(--blue-dim);display:flex;align-items:flex-start;gap:8px">
 <span style="font-size:13px;flex-shrink:0">ℹ️</span>
 <div style="font-size:11px;color:var(--text2);line-height:1.5">Trial access — physician review credits available with paid plans. Explore every tool during your 48 hours.</div>
 </div>
 </div>
 
-<!-- ===== THIS WEEK'S FOCUS (most important — first thing they see) ===== -->
+<!-- ===== THIS WEEK'S FOCUS ===== -->
+<div style="padding:14px 24px 0">
+<div id="weekly-focus" style="margin-bottom:0;display:none"></div>
+</div>
+
+<!-- ===== SCORE CARDS — Compact Single Row ===== -->
+<div id="career-dashboard" style="padding:14px 24px 0">
+<div id="dash-scores" style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px;margin-bottom:12px"></div>
+<div id="dash-score-refresh" style="display:none;margin-bottom:10px"></div>
+</div>
+
+<!-- ===== QUICK ACTIONS ===== -->
 <div style="padding:0 24px">
-<div id="weekly-focus" style="margin-bottom:12px;display:none"></div>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px">
+<div style="background:linear-gradient(160deg,rgba(200,168,124,.08),rgba(200,168,124,.03));border:1px solid rgba(200,168,124,.15);border-radius:12px;padding:14px 10px;cursor:pointer;text-align:center;transition:transform .15s" onclick="navTo('scr-vault')" onmouseenter="this.style.transform='scale(1.02)'" onmouseleave="this.style.transform='scale(1)'">
+<div style="font-size:22px;margin-bottom:5px">🧭</div>
+<div style="font-size:11px;font-weight:600;color:var(--text)">Frameworks</div>
+<div style="font-size:9px;color:var(--accent);margin-top:3px;font-weight:500">15+ tools</div>
 </div>
-
-<!-- ===== SCORE CARDS + LOGIN STREAK (compact row) ===== -->
-<div id="career-dashboard" style="padding:0 24px">
-<div id="dash-scores" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px"></div>
-<div id="dash-score-refresh" style="display:none;margin-bottom:12px"></div>
-<div id="login-streak" style="margin-bottom:12px"></div>
+<div style="background:linear-gradient(160deg,rgba(200,168,124,.08),rgba(200,168,124,.03));border:1px solid rgba(200,168,124,.15);border-radius:12px;padding:14px 10px;cursor:pointer;text-align:center;transition:transform .15s" onclick="navTo('scr-ask')" onmouseenter="this.style.transform='scale(1.02)'" onmouseleave="this.style.transform='scale(1)'">
+<div style="font-size:22px;margin-bottom:5px">🧠</div>
+<div style="font-size:11px;font-weight:600;color:var(--text)">Ask a Question</div>
+<div style="font-size:9px;color:var(--accent);margin-top:3px;font-weight:500">AI strategy</div>
 </div>
-
-<!-- ===== QUICK ACTIONS (always visible, easy access) ===== -->
-<div style="padding:0 24px 12px">
-<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
-<div class="card" style="padding:12px;cursor:pointer;text-align:center" onclick="navTo('scr-vault')">
-<div style="font-size:20px;margin-bottom:4px">🧭</div>
-<div style="font-size:10px;font-weight:600;color:var(--text)">Frameworks</div>
-<div style="font-size:9px;color:var(--text3);margin-top:2px">15+ tools</div>
-</div>
-<div class="card" style="padding:12px;cursor:pointer;text-align:center" onclick="navTo('scr-ask')">
-<div style="font-size:20px;margin-bottom:4px">🧠</div>
-<div style="font-size:10px;font-weight:600;color:var(--text)">Ask</div>
-<div style="font-size:9px;color:var(--text3);margin-top:2px">AI strategy</div>
-</div>
-<div class="card" style="padding:12px;cursor:pointer;text-align:center" onclick="showPrivateStrategyModal()">
-<div style="font-size:20px;margin-bottom:4px">🎯</div>
-<div style="font-size:10px;font-weight:600;color:var(--text)">1-on-1</div>
-<div style="font-size:9px;color:var(--text3);margin-top:2px">Dr. Faroqui</div>
+<div style="background:linear-gradient(160deg,rgba(200,168,124,.08),rgba(200,168,124,.03));border:1px solid rgba(200,168,124,.15);border-radius:12px;padding:14px 10px;cursor:pointer;text-align:center;transition:transform .15s" onclick="showPrivateStrategyModal()" onmouseenter="this.style.transform='scale(1.02)'" onmouseleave="this.style.transform='scale(1)'">
+<div style="font-size:22px;margin-bottom:5px">🎯</div>
+<div style="font-size:11px;font-weight:600;color:var(--text)">1-on-1 Strategy</div>
+<div style="font-size:9px;color:var(--accent);margin-top:3px;font-weight:500">Dr. Faroqui</div>
 </div>
 </div>
 </div>
 
-<!-- ===== TOOL PROGRESS + UPCOMING DEADLINES (side by side on desktop, stacked on mobile) ===== -->
+<!-- ===== TOOL PROGRESS + UPCOMING DEADLINES ===== -->
 <div style="padding:0 24px">
 <div id="tool-progress" style="margin-bottom:12px;display:none"></div>
 <div id="upcoming-deadlines" style="margin-bottom:12px;display:none"></div>
 </div>
 
-<!-- ===== WEEKLY INSIGHT + TOOL OF THE WEEK ===== -->
+<!-- ===== TOOL OF THE WEEK + LOGIN STREAK ===== -->
 <div style="padding:0 24px">
-<div id="weekly-tip" style="margin-bottom:12px"></div>
 <div id="tool-of-week" style="margin-bottom:12px"></div>
+<div id="login-streak" style="margin-bottom:12px"></div>
 </div>
+
+<!-- Weekly tip placeholder (hidden — removed from visible layout) -->
+<div id="weekly-tip" style="display:none"></div>
 
 <!-- ===== DEEPER ANALYTICS (collapsible) ===== -->
 <div style="padding:0 24px">
 <div id="dash-detail-toggle" style="display:none;margin-bottom:12px">
-<div onclick="toggleDashDetails()" style="display:flex;align-items:center;justify-content:center;gap:6px;padding:10px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;cursor:pointer;font-size:11px;color:var(--text3);font-weight:500">
-<span id="dash-detail-arrow">▸</span> Detailed Analytics — Progress Graph, Benchmarking, Milestones, History
+<div onclick="toggleDashDetails()" style="display:flex;align-items:center;justify-content:center;gap:6px;padding:10px;background:linear-gradient(160deg,rgba(200,168,124,.06),rgba(200,168,124,.02));border:1px solid rgba(200,168,124,.15);border-radius:10px;cursor:pointer;font-size:11px;color:var(--text2);font-weight:500;transition:background .15s">
+<span id="dash-detail-arrow">▸</span> Detailed Analytics
 </div>
 </div>
 <div id="dash-details" style="display:none">
@@ -2105,6 +2113,19 @@ Sign Out</button>
 </div>
 </div>
 
+<!-- ===== UPDATE PROFILE + LAST UPDATED ===== -->
+<div style="padding:0 24px 14px">
+<div id="dash-update-bar" style="display:none">
+<div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:linear-gradient(160deg,rgba(200,168,124,.08),rgba(200,168,124,.03));border:1px solid rgba(200,168,124,.15);border-radius:10px">
+<div>
+<div style="font-size:11px;font-weight:600;color:var(--text)">📊 Career Profile</div>
+<div id="dash-last-updated-bar" style="font-size:10px;color:var(--text3);margin-top:2px"></div>
+</div>
+<button onclick="showUpdateProfile()" style="font-size:10px;color:#0a0a0f;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;padding:8px 16px;border-radius:8px;cursor:pointer;font-weight:700;letter-spacing:.3px">Update →</button>
+</div>
+</div>
+</div>
+
 <!-- Update Profile Modal -->
 <div id="modal-update-profile" class="hidden" style="position:fixed;top:0;left:0;right:0;bottom:0;z-index:100;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center;padding:24px">
 <div style="background:var(--bg);border-radius:16px;max-width:480px;width:100%;max-height:85vh;overflow-y:auto;padding:28px 24px">
@@ -2114,14 +2135,6 @@ Sign Out</button>
 </div>
 <div id="update-profile-fields"></div>
 <button onclick="saveUpdatedProfile()" class="btn btn-a" style="width:100%;margin-top:16px">Recalculate My Scores →</button>
-</div>
-</div>
-
-<!-- Daily Quote (small, at bottom — a nice touch, not the hero) -->
-<div style="padding:0 24px 12px">
-<div id="daily-quote" style="padding:12px 16px;background:var(--bg2);border-radius:8px;border-left:3px solid rgba(200,168,124,.3)">
-<p style="font-size:13px;color:var(--text2);line-height:1.6;font-family:var(--font-serif);font-style:italic;margin:0" id="quote-text"></p>
-<p style="font-size:9px;color:var(--text3);margin:6px 0 0;font-weight:600;letter-spacing:.5px;text-transform:uppercase" id="quote-author"></p>
 </div>
 </div>
 </div>
@@ -5976,14 +5989,21 @@ function renderDashboard(){
   scoreItems.forEach(function(si){
     var val=scores[si.key]||0;
     var delta=prev?val-(prev[si.key]||0):0;
-    var deltaStr=delta>0?'<span style="color:var(--green);font-size:10px;font-weight:600">↑ +'+delta+'</span>':delta<0?'<span style="color:var(--red);font-size:10px;font-weight:600">↓ '+delta+'</span>':'';
+    var deltaStr=delta>0?'<span style="color:var(--green);font-size:8px;font-weight:600">+'+delta+'</span>':delta<0?'<span style="color:var(--red);font-size:8px;font-weight:600">'+delta+'</span>':'';
     var color=val>=75?'var(--green)':val>=55?'var(--accent)':'var(--red)';
-    sh+='<div class="card" style="padding:14px;text-align:center">';
-    sh+='<div style="font-size:14px;margin-bottom:4px">'+si.icon+'</div>';
-    sh+='<div style="font-size:24px;font-weight:700;color:'+color+';font-family:var(--font-serif)">'+val+'</div>';
-    sh+='<div style="font-size:10px;color:var(--text3);margin-bottom:2px">'+si.label+'</div>';
-    sh+=deltaStr;
-    sh+='<div style="margin-top:6px;height:4px;background:var(--bg3);border-radius:2px;overflow:hidden"><div style="height:100%;width:'+val+'%;background:'+color+';border-radius:2px"></div></div>';
+    // SVG ring
+    var r=22,circ=2*Math.PI*r,offset=circ-(val/100)*circ;
+    var ringColor=val>=75?'#6aaa64':val>=55?'#c8a87c':'#c06060';
+    sh+='<div style="text-align:center;padding:10px 4px">';
+    sh+='<div style="position:relative;width:52px;height:52px;margin:0 auto 6px">';
+    sh+='<svg viewBox="0 0 52 52" style="width:52px;height:52px;transform:rotate(-90deg)">';
+    sh+='<circle cx="26" cy="26" r="'+r+'" fill="none" stroke="var(--bg3)" stroke-width="4"/>';
+    sh+='<circle cx="26" cy="26" r="'+r+'" fill="none" stroke="'+ringColor+'" stroke-width="4" stroke-linecap="round" stroke-dasharray="'+circ.toFixed(1)+'" stroke-dashoffset="'+offset.toFixed(1)+'" style="transition:stroke-dashoffset .8s ease"/>';
+    sh+='</svg>';
+    sh+='<div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:14px;font-weight:700;color:'+color+';font-family:var(--font-serif)">'+val+'</div>';
+    sh+='</div>';
+    sh+='<div style="font-size:9px;font-weight:600;color:var(--text2);letter-spacing:.2px;line-height:1.2">'+si.label+'</div>';
+    if(deltaStr) sh+='<div style="margin-top:2px">'+deltaStr+'</div>';
     sh+='</div>';
   });
   document.getElementById('dash-scores').innerHTML=sh;
@@ -6111,13 +6131,23 @@ function renderDashboard(){
     document.getElementById('dash-history').style.display='none';
   }
 
-  // Reassessment prompt
+  // Update bar at bottom
   var lastUp=new Date(cp.lastUpdated);
   var daysSince=Math.floor((new Date()-lastUp)/(1000*60*60*24));
+  var updateBar=document.getElementById('dash-update-bar');
+  if(updateBar){
+    updateBar.style.display='';
+    var barText='Last updated: '+lastUp.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+    if(daysSince>90) barText+=' — ⚠️ time to refresh';
+    var barTextEl=document.getElementById('dash-last-updated-bar');
+    if(barTextEl) barTextEl.textContent=barText;
+  }
+  // Legacy reassess element
   var reassessEl=document.getElementById('dash-reassess');
   if(reassessEl){
     reassessEl.style.display='';
-    document.getElementById('dash-last-updated').textContent='Last updated: '+lastUp.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})+(daysSince>90?' — ⚠️ Consider updating your profile':'');
+    var luEl=document.getElementById('dash-last-updated');
+    if(luEl) luEl.textContent='Last updated: '+lastUp.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})+(daysSince>90?' — ⚠️ Consider updating':'');
   }
 
   // Show detail toggle if there's any detailed data
@@ -6477,15 +6507,13 @@ function renderHome(){
 
   // Render dynamic engagement sections (Core, Mentorship, and trial users only)
   var _hasPlan=U.tier==='core'||U.tier==='elite'||U.tier==='admin'||U.isTrial;
-  // DEBUG: log to console what's happening
-  console.log('[HW-DEBUG] renderHome tier='+U.tier+' hasPlan='+_hasPlan+' careerProfile='+(U.careerProfile?'yes':'no')+' stage='+(U.careerProfile?U.careerProfile.stage:'none'));
   if(_hasPlan){
-    try{renderWeeklyFocus();console.log('[HW-DEBUG] WeeklyFocus rendered')}catch(e){console.error('WeeklyFocus:',e)}
-    try{renderToolProgress();console.log('[HW-DEBUG] ToolProgress rendered')}catch(e){console.error('ToolProgress:',e)}
-    try{renderUpcomingDeadlines();console.log('[HW-DEBUG] Deadlines rendered')}catch(e){console.error('Deadlines:',e)}
-    try{renderWeeklyTip();console.log('[HW-DEBUG] WeeklyTip rendered')}catch(e){console.error('WeeklyTip:',e)}
-    try{renderToolOfWeek();console.log('[HW-DEBUG] ToolOfWeek rendered')}catch(e){console.error('ToolOfWeek:',e)}
-    try{renderLoginStreak();console.log('[HW-DEBUG] LoginStreak rendered')}catch(e){console.error('LoginStreak:',e)}
+    try{renderWeeklyFocus()}catch(e){console.error('WeeklyFocus:',e)}
+    try{renderToolProgress()}catch(e){console.error('ToolProgress:',e)}
+    try{renderUpcomingDeadlines()}catch(e){console.error('Deadlines:',e)}
+    try{renderWeeklyTip()}catch(e){console.error('WeeklyTip:',e)}
+    try{renderToolOfWeek()}catch(e){console.error('ToolOfWeek:',e)}
+    try{renderLoginStreak()}catch(e){console.error('LoginStreak:',e)}
   } else {
     // Hide all dynamic sections for free users
     ['weekly-focus','tool-progress','upcoming-deadlines','weekly-tip','tool-of-week','login-streak'].forEach(function(id){

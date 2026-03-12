@@ -1160,14 +1160,21 @@ function renderDashboard(){
   scoreItems.forEach(function(si){
     var val=scores[si.key]||0;
     var delta=prev?val-(prev[si.key]||0):0;
-    var deltaStr=delta>0?'<span style="color:var(--green);font-size:10px;font-weight:600">↑ +'+delta+'</span>':delta<0?'<span style="color:var(--red);font-size:10px;font-weight:600">↓ '+delta+'</span>':'';
+    var deltaStr=delta>0?'<span style="color:var(--green);font-size:8px;font-weight:600">+'+delta+'</span>':delta<0?'<span style="color:var(--red);font-size:8px;font-weight:600">'+delta+'</span>':'';
     var color=val>=75?'var(--green)':val>=55?'var(--accent)':'var(--red)';
-    sh+='<div class="card" style="padding:14px;text-align:center">';
-    sh+='<div style="font-size:14px;margin-bottom:4px">'+si.icon+'</div>';
-    sh+='<div style="font-size:24px;font-weight:700;color:'+color+';font-family:var(--font-serif)">'+val+'</div>';
-    sh+='<div style="font-size:10px;color:var(--text3);margin-bottom:2px">'+si.label+'</div>';
-    sh+=deltaStr;
-    sh+='<div style="margin-top:6px;height:4px;background:var(--bg3);border-radius:2px;overflow:hidden"><div style="height:100%;width:'+val+'%;background:'+color+';border-radius:2px"></div></div>';
+    // SVG ring
+    var r=22,circ=2*Math.PI*r,offset=circ-(val/100)*circ;
+    var ringColor=val>=75?'#6aaa64':val>=55?'#c8a87c':'#c06060';
+    sh+='<div style="text-align:center;padding:10px 4px">';
+    sh+='<div style="position:relative;width:52px;height:52px;margin:0 auto 6px">';
+    sh+='<svg viewBox="0 0 52 52" style="width:52px;height:52px;transform:rotate(-90deg)">';
+    sh+='<circle cx="26" cy="26" r="'+r+'" fill="none" stroke="var(--bg3)" stroke-width="4"/>';
+    sh+='<circle cx="26" cy="26" r="'+r+'" fill="none" stroke="'+ringColor+'" stroke-width="4" stroke-linecap="round" stroke-dasharray="'+circ.toFixed(1)+'" stroke-dashoffset="'+offset.toFixed(1)+'" style="transition:stroke-dashoffset .8s ease"/>';
+    sh+='</svg>';
+    sh+='<div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:14px;font-weight:700;color:'+color+';font-family:var(--font-serif)">'+val+'</div>';
+    sh+='</div>';
+    sh+='<div style="font-size:9px;font-weight:600;color:var(--text2);letter-spacing:.2px;line-height:1.2">'+si.label+'</div>';
+    if(deltaStr) sh+='<div style="margin-top:2px">'+deltaStr+'</div>';
     sh+='</div>';
   });
   document.getElementById('dash-scores').innerHTML=sh;
@@ -1295,13 +1302,23 @@ function renderDashboard(){
     document.getElementById('dash-history').style.display='none';
   }
 
-  // Reassessment prompt
+  // Update bar at bottom
   var lastUp=new Date(cp.lastUpdated);
   var daysSince=Math.floor((new Date()-lastUp)/(1000*60*60*24));
+  var updateBar=document.getElementById('dash-update-bar');
+  if(updateBar){
+    updateBar.style.display='';
+    var barText='Last updated: '+lastUp.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+    if(daysSince>90) barText+=' — ⚠️ time to refresh';
+    var barTextEl=document.getElementById('dash-last-updated-bar');
+    if(barTextEl) barTextEl.textContent=barText;
+  }
+  // Legacy reassess element
   var reassessEl=document.getElementById('dash-reassess');
   if(reassessEl){
     reassessEl.style.display='';
-    document.getElementById('dash-last-updated').textContent='Last updated: '+lastUp.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})+(daysSince>90?' — ⚠️ Consider updating your profile':'');
+    var luEl=document.getElementById('dash-last-updated');
+    if(luEl) luEl.textContent='Last updated: '+lastUp.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})+(daysSince>90?' — ⚠️ Consider updating':'');
   }
 
   // Show detail toggle if there's any detailed data
@@ -1661,15 +1678,13 @@ function renderHome(){
 
   // Render dynamic engagement sections (Core, Mentorship, and trial users only)
   var _hasPlan=U.tier==='core'||U.tier==='elite'||U.tier==='admin'||U.isTrial;
-  // DEBUG: log to console what's happening
-  console.log('[HW-DEBUG] renderHome tier='+U.tier+' hasPlan='+_hasPlan+' careerProfile='+(U.careerProfile?'yes':'no')+' stage='+(U.careerProfile?U.careerProfile.stage:'none'));
   if(_hasPlan){
-    try{renderWeeklyFocus();console.log('[HW-DEBUG] WeeklyFocus rendered')}catch(e){console.error('WeeklyFocus:',e)}
-    try{renderToolProgress();console.log('[HW-DEBUG] ToolProgress rendered')}catch(e){console.error('ToolProgress:',e)}
-    try{renderUpcomingDeadlines();console.log('[HW-DEBUG] Deadlines rendered')}catch(e){console.error('Deadlines:',e)}
-    try{renderWeeklyTip();console.log('[HW-DEBUG] WeeklyTip rendered')}catch(e){console.error('WeeklyTip:',e)}
-    try{renderToolOfWeek();console.log('[HW-DEBUG] ToolOfWeek rendered')}catch(e){console.error('ToolOfWeek:',e)}
-    try{renderLoginStreak();console.log('[HW-DEBUG] LoginStreak rendered')}catch(e){console.error('LoginStreak:',e)}
+    try{renderWeeklyFocus()}catch(e){console.error('WeeklyFocus:',e)}
+    try{renderToolProgress()}catch(e){console.error('ToolProgress:',e)}
+    try{renderUpcomingDeadlines()}catch(e){console.error('Deadlines:',e)}
+    try{renderWeeklyTip()}catch(e){console.error('WeeklyTip:',e)}
+    try{renderToolOfWeek()}catch(e){console.error('ToolOfWeek:',e)}
+    try{renderLoginStreak()}catch(e){console.error('LoginStreak:',e)}
   } else {
     // Hide all dynamic sections for free users
     ['weekly-focus','tool-progress','upcoming-deadlines','weekly-tip','tool-of-week','login-streak'].forEach(function(id){

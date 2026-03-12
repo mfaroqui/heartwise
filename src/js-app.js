@@ -5223,6 +5223,12 @@ function admGetMessages(){
 function admRenderMetrics(){
   var users=admGetUsers(),qs=admGetQuestions();
   var tot=users.length;
+  // Warn if no users loaded — likely a data fetch issue, not real deletion
+  if(tot===0){
+    var m=document.getElementById('adm-metrics');
+    if(m)m.innerHTML='<div style="padding:16px;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);border-radius:10px;text-align:center;grid-column:1/-1"><div style="font-size:14px;font-weight:600;color:var(--red);margin-bottom:4px">⚠️ No users loaded</div><div style="font-size:12px;color:var(--text3)">This is likely a database connection issue, not data loss. Users are safe in Supabase. Try refreshing the page.</div></div>';
+    return;
+  }
   var fr=users.filter(function(u){return !u.tier||u.tier==='free'}).length;
   var co=users.filter(function(u){return u.tier==='core'}).length;
   var el=users.filter(function(u){return u.tier==='elite'}).length;

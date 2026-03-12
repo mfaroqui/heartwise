@@ -5975,7 +5975,7 @@ function renderDashboard(){
   // Subtitle
   var stageLabel={student:'Medical Student',resident:'Resident',fellow:'Fellow',attending:'Attending Physician'}[stage]||'Physician';
   var specLabel=cp.specialty?' · '+(cp.specialty.charAt(0).toUpperCase()+cp.specialty.slice(1)):'';
-  document.getElementById('dash-subtitle').textContent=stageLabel+specLabel+' — track your progress, see what\'s next.';
+  document.getElementById('dash-subtitle').textContent='';
 
   // Score Cards
   var prev=U.scoreHistory.length>1?U.scoreHistory[U.scoreHistory.length-2].scores:null;
@@ -6633,7 +6633,7 @@ function renderToolProgress(){
     var h='<div class="card" style="padding:16px">';
     h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">';
     h+='<span style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px">🧭 Tool Progress</span>';
-    h+='<span style="font-size:12px;font-weight:700;color:var(--text3)">0 / '+total+'</span>';
+    h+='<span style="display:flex;align-items:center;gap:8px"><span style="font-size:12px;font-weight:700;color:var(--text3)">0 / '+total+'</span><span onclick="navTo(\'scr-vault\')" style="font-size:10px;color:var(--accent);font-weight:600;cursor:pointer;text-decoration:underline">Frameworks →</span></span>';
     h+='</div>';
     h+='<div style="height:8px;background:var(--bg3);border-radius:4px;overflow:hidden;margin-bottom:10px"><div style="height:100%;width:0%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:4px"></div></div>';
     h+='<div style="font-size:12px;color:var(--text2);line-height:1.5;margin-bottom:8px">You haven\'t used any tools yet. <strong>The more tools you run, the sharper your strategy gets.</strong> Each one builds on the last.</div>';
@@ -6648,7 +6648,7 @@ function renderToolProgress(){
   var h='<div class="card" style="padding:16px">';
   h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">';
   h+='<span style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px">🧭 Tool Progress</span>';
-  h+='<span style="font-size:12px;font-weight:700;color:var(--accent)">'+used+' / '+total+'</span>';
+  h+='<span style="display:flex;align-items:center;gap:8px"><span style="font-size:12px;font-weight:700;color:var(--accent)">'+used+' / '+total+'</span><span onclick="navTo(\'scr-vault\')" style="font-size:10px;color:var(--accent);font-weight:600;cursor:pointer;text-decoration:underline">Frameworks →</span></span>';
   h+='</div>';
   h+='<div style="height:8px;background:var(--bg3);border-radius:4px;overflow:hidden;margin-bottom:10px"><div style="height:100%;width:'+pct+'%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:4px;transition:width .5s"></div></div>';
   if(nextTool){

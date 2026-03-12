@@ -162,6 +162,7 @@ v2:`<h3 class="serif">Contract Risk Scorecard</h3>
 <p style="font-size:10px;color:var(--text3);text-align:center;margin-bottom:20px">All data stays on your device. Nothing is sent to a server.</p>
 
 <div id="crs-results"></div>
+<div style="text-align:center;margin-top:8px"><button onclick="showSavedScenarios('Contract Review Scorecard')" style="background:none;border:none;color:var(--accent);font-size:11px;cursor:pointer;padding:6px 12px;opacity:.7;transition:opacity .15s" onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='.7'">📊 View Saved Scenarios</button></div>
 </div>`,
 
 v3:`<h3 class="serif">Offer Comparison Matrix</h3>
@@ -225,6 +226,7 @@ v3:`<h3 class="serif">Offer Comparison Matrix</h3>
 <p style="font-size:10px;color:var(--text3);text-align:center;margin-bottom:20px">All data stays on your device. Nothing is sent to a server.</p>
 
 <div id="ocm-results"></div>
+<div style="text-align:center;margin-top:8px"><button onclick="showSavedScenarios('Offer Comparison Matrix')" style="background:none;border:none;color:var(--accent);font-size:11px;cursor:pointer;padding:6px 12px;opacity:.7;transition:opacity .15s" onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='.7'">📊 View Saved Scenarios</button></div>
 </div>`,
 
 v4:`<h3>RVU Compensation Calculator</h3>
@@ -1126,6 +1128,7 @@ v13:`<h3 class="serif">Specialty Fit Analyzer</h3>
 </div>
 
 <div id="sfa-results" style="margin-top:20px"></div>
+<div style="text-align:center;margin-top:8px"><button onclick="showSavedScenarios('Specialty Fit Analyzer')" style="background:none;border:none;color:var(--accent);font-size:11px;cursor:pointer;padding:6px 12px;opacity:.7;transition:opacity .15s" onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='.7'">📊 View Saved Scenarios</button></div>
 
 </div>`,
 
@@ -1349,6 +1352,7 @@ v14:`<h3 class="serif">Match Competitiveness Calculator</h3>
 <button onclick="mccCalculate()" class="btn btn-a" style="width:100%;padding:14px;font-size:14px;font-weight:600">Analyze My Competitiveness →</button>
 
 <div id="mcc-results" style="margin-top:20px"></div>
+<div style="text-align:center;margin-top:8px"><button onclick="showSavedScenarios('Match Competitiveness Calculator')" style="background:none;border:none;color:var(--accent);font-size:11px;cursor:pointer;padding:6px 12px;opacity:.7;transition:opacity .15s" onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='.7'">📊 View Saved Scenarios</button></div>
 
 </div>`,
 
@@ -1419,6 +1423,7 @@ v15:`<h3 class="serif">Career Strategy Builder</h3>
 <button onclick="csbGenerate()" class="btn btn-a" style="width:100%;margin-top:16px;padding:14px">Build My Roadmap →</button>
 
 <div id="csb-results" style="margin-top:20px"></div>
+<div style="text-align:center;margin-top:8px"><button onclick="showSavedScenarios('Career Strategy Builder')" style="background:none;border:none;color:var(--accent);font-size:11px;cursor:pointer;padding:6px 12px;opacity:.7;transition:opacity .15s" onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='.7'">📊 View Saved Scenarios</button></div>
 
 </div>`
 };

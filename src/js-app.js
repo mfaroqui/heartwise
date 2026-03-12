@@ -831,6 +831,8 @@ function initCareerProfile(){
   if(!U.careerProfile) U.careerProfile={};
   if(!U.scoreHistory) U.scoreHistory=[];
   if(!U.toolHistory) U.toolHistory=[];
+  if(!U.weeklyGoals) U.weeklyGoals=[];
+  if(!U.checkins) U.checkins=[];
   if(!U.milestones) U.milestones=getDefaultMilestones(U.role||U.profile?.stage||'student');
   if(!U.careerProfile.lastUpdated){
     // Seed from onboarding profile if available
@@ -2784,6 +2786,11 @@ function crsCalc(){
 
   document.getElementById('crs-results').innerHTML=h;
   applyBlurGate(document.getElementById('crs-results'));
+  // Save scenario for compare
+  var crsHighlights=[grade+' — '+pct+'%'];
+  reds.forEach(function(f){crsHighlights.push('🔴 '+f.cat+': '+f.text)});
+  yellows.slice(0,3).forEach(function(f){crsHighlights.push('🟡 '+f.cat+': '+f.text)});
+  recordToolUse('Contract Review Scorecard',pct+'%',grade+' ('+pct+'%)',{inputs:{Answered:answered+'/'+total},highlights:crsHighlights});
 }
 
 // ===== OFFER COMPARISON MATRIX (v3) =====
@@ -3076,6 +3083,10 @@ function ocmCompare(){
   document.getElementById('ocm-results').innerHTML=h;
   applyBlurGate(document.getElementById('ocm-results'));
   document.getElementById('ocm-results').scrollIntoView({behavior:'smooth',block:'start'});
+  // Save scenario for compare
+  var ocmInputs={'Offer A':aN,'A Salary':'$'+(a.salary/1000).toFixed(0)+'K','Offer B':bN,'B Salary':'$'+(b.salary/1000).toFixed(0)+'K','A Location':a.loc||'—','B Location':b.loc||'—'};
+  var ocmHL=[winner+' wins Year 1: $'+(cA.totalWithRetire>cB.totalWithRetire?cA.totalWithRetire:cB.totalWithRetire).toLocaleString(),aN+': $'+(cA.totalWithRetire/1000).toFixed(0)+'K total comp',bN+': $'+(cB.totalWithRetire/1000).toFixed(0)+'K total comp'];
+  recordToolUse('Offer Comparison Matrix',null,winner+' wins by $'+Math.round(Math.abs(cA.totalWithRetire-cB.totalWithRetire)/1000)+'K',{inputs:ocmInputs,highlights:ocmHL});
 }
 
 function renderOfferAnalysis(name,color,analysis){
@@ -3191,6 +3202,10 @@ function sfaUpdate(){
   h+='<p style="font-size:10px;color:var(--text3);font-style:italic;margin-top:12px">This analysis is directional guidance based on your preferences. Shadow, rotate, and talk to physicians in each field before committing.</p>';
   document.getElementById('sfa-results').innerHTML=h;
   applyBlurGate(document.getElementById('sfa-results'));
+  // Save scenario for compare
+  var sfaInputs={'Patient Interaction':q1,'Procedural':q2,'Priority':q3,'Intellectual':q4,'Setting':q5,'Uncertainty':q6};
+  var sfaHL=[];top.forEach(function(s,i){sfaHL.push('#'+(i+1)+' '+s.name+' — '+s.comp)});
+  recordToolUse('Specialty Fit Analyzer',null,'Top: '+top[0].name,{inputs:sfaInputs,highlights:sfaHL});
 }
 
 // ===== MATCH COMPETITIVENESS CALCULATOR (v14) =====
@@ -3698,6 +3713,12 @@ function mccCalculate(){
   document.getElementById('mcc-results').innerHTML=h;
   applyBlurGate(document.getElementById('mcc-results'));
   document.getElementById('mcc-results').scrollIntoView({behavior:'smooth',block:'start'});
+  // Save scenario data for compare feature
+  var mccInputs={Specialty:sd.name,Mode:isFellowship?'Fellowship':'Residency',Step2:step2,Publications:pubs,School:school,Background:bg,LORs:lors,Leadership:leadership,Programs:programs,Aways:aways};
+  if(isFellowship){mccInputs['Residency Year']=felResYear;mccInputs['Program Rep']=felProgramRep;mccInputs['Procedural Exp']=felProceduralExp;mccInputs['First Author']=felFirstAuthor}
+  var mccHighlights=[outlook+' — '+score+'/100','Overall match: '+matchProb+'%','Top-tier: '+topProb+'% | Mid-tier: '+midProb+'% | Community: '+commProb+'%'];
+  factors.forEach(function(f){if(f.pts<f.max*0.4) mccHighlights.push('⚠ '+f.name+': '+f.pts+'/'+f.max)});
+  recordToolUse('Match Competitiveness Calculator',score,outlook+' for '+sd.name,{inputs:mccInputs,highlights:mccHighlights});
 }
 
 function mccSaveProfile(){
@@ -3732,7 +3753,6 @@ function mccSaveProfile(){
     _supaClient.from('profiles').update({notes:U.notes||[],mcc_profiles:U.mccProfiles}).eq('user_id',U.supaId||U.id).then(function(){}).catch(function(e){logError('profileNotesUpdate',e)});
   }
   notify('Competitiveness profile saved! Track your progress over time. 📈');
-  recordToolUse('Match Competitiveness Calculator',profile.score||null,'Saved '+(isFellowship?'fellowship':'residency')+' competitiveness profile for '+(profile.spec||'unknown specialty'));
 }
 
 // ===== CAREER STRATEGY BUILDER (v15) =====
@@ -3803,6 +3823,11 @@ function csbGenerate(){
 
   document.getElementById('csb-results').innerHTML=h;
   applyBlurGate(document.getElementById('csb-results'));
+  // Save scenario for compare
+  var nowLabels={ms1:'MS-1',ms2:'MS-2',ms3:'MS-3',ms4:'MS-4',pgy1:'PGY-1',pgy2:'PGY-2',pgy3:'PGY-3',fellow:'Fellow',attending:'Attending'};
+  var csbInputs={'Current Stage':nowLabels[now]||now,'Target':tName,'Research':research+' pubs','Urgency':urgency};
+  var csbHL=[];phases.forEach(function(p){csbHL.push(p.time+': '+p.title)});
+  recordToolUse('Career Strategy Builder',null,tName+' roadmap',{inputs:csbInputs,highlights:csbHL});
 }// ===== TOOLKIT QUIZ =====
 var quizAnswers={stage:null,goal:null,urgency:null};
 
@@ -7049,7 +7074,11 @@ async function submitPivot(){
   document.getElementById('pivot-form').classList.add('hidden');
   document.getElementById('pivot-success').classList.remove('hidden');
   notify('Decision Engine report submitted!');
-  recordToolUse('Career Pivot Decision Engine',readiness+'/4','Pivot readiness: '+readyLabel);
+  var pivotInputs={'Cause':causeLabel+(causeOther?' — '+causeOther:''),'Burnout':burnout?burnout.value:'—','Training Years':yrs,'Training Cost':'$'+trainCost.toLocaleString()};
+  var pivotHL=['Readiness: '+readyLabel+' ('+readiness+'/4)'];
+  checks.forEach(function(c){pivotHL.push((c.done?'✅':'❌')+' '+c.label)});
+  if(options.length){var best=options.slice().sort(function(a,b){return parseFloat(b.avg)-parseFloat(a.avg)})[0];pivotHL.push('Top option: '+best.label+' ('+best.avg+')')}
+  recordToolUse('Career Pivot Decision Engine',readiness+'/4','Pivot readiness: '+readyLabel,{inputs:pivotInputs,highlights:pivotHL});
   notifyAdmin(payload);
 }
 

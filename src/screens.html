@@ -33,99 +33,106 @@ Sign Out</button>
 <span id="user-badge" class="badge b-free">FREE</span>
 </div>
 
-<!-- Hero Welcome — Ivory Contrast -->
-<div style="padding:20px 24px 0">
-<div style="background:linear-gradient(160deg,#f5f0e8,#ece5d8,#f0ebe3);border-radius:var(--r3);padding:32px 28px;position:relative;overflow:hidden">
-<div style="position:absolute;top:-40%;right:-20%;width:250px;height:250px;background:radial-gradient(circle,rgba(200,168,124,.15),transparent 60%);border-radius:50%"></div>
-<div style="position:absolute;bottom:-30%;left:-15%;width:180px;height:180px;background:radial-gradient(circle,rgba(200,168,124,.08),transparent 60%);border-radius:50%"></div>
-<div style="position:relative">
-<h2 id="welcome-msg" style="font-family:var(--font-serif);font-size:20px;font-weight:400;color:#4a4540;margin-bottom:10px;line-height:1.3;letter-spacing:.2px">Welcome back</h2>
-<p style="font-family:var(--font-serif);font-size:22px;color:#1a1620;line-height:1.4;font-weight:600;margin-bottom:8px;letter-spacing:.2px">Your career is too important for guesswork.</p>
-<p style="font-size:13px;color:#5a554e;line-height:1.7;font-weight:400;margin-bottom:0">HeartWise provides career intelligence tools built by physicians to help you navigate training, contracts, and long-term financial strategy.</p>
-<button onclick="navTo('scr-vault')" style="margin-top:18px;width:100%;padding:14px;font-size:14px;font-weight:600;background:linear-gradient(135deg,#1a1620,#2a2530);color:#f5f0e8;border-radius:var(--r2);cursor:pointer;border:none;letter-spacing:.3px;font-family:var(--font-body)">Start Your Career Analysis →</button>
+<!-- Compact Welcome + Quote -->
+<div style="padding:16px 24px 0">
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+<div>
+<h2 id="welcome-msg" style="font-family:var(--font-serif);font-size:18px;font-weight:600;color:var(--text);margin:0;line-height:1.3">Welcome back</h2>
+<p id="dash-subtitle" style="font-size:11px;color:var(--text3);margin:2px 0 0">Track your progress. See what's next.</p>
 </div>
-<div id="daily-quote" style="margin-top:20px;padding-top:18px;border-top:1px solid rgba(160,140,110,.2);position:relative">
-<p style="font-size:17px;color:#2a2520;line-height:1.7;font-family:var(--font-serif);font-weight:500;font-style:italic;margin:0;letter-spacing:.2px" id="quote-text"></p>
-<p style="font-size:11px;color:#9a8a72;margin:10px 0 0;font-weight:600;letter-spacing:1px;text-transform:uppercase" id="quote-author"></p>
-</div>
+<button onclick="showUpdateProfile()" style="font-size:10px;color:#0a0a0f;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;padding:8px 16px;border-radius:8px;cursor:pointer;white-space:nowrap;font-weight:700;letter-spacing:.3px">✏️ Update</button>
 </div>
 </div>
 
 <!-- Trial Countdown Banner -->
-<div id="trial-countdown-banner" style="margin:16px 24px 0;padding:16px 20px;border-radius:var(--r);border:1px solid rgba(200,168,124,.2);background:var(--accent-dim);display:none"></div>
+<div id="trial-countdown-banner" style="margin:0 24px 12px;padding:14px 18px;border-radius:var(--r);border:1px solid rgba(200,168,124,.2);background:var(--accent-dim);display:none"></div>
 
 <!-- Trial: No physician reviews note -->
-<div id="trial-review-note" style="margin:16px 24px 0;display:none">
-<div class="card" style="padding:16px 18px;border-color:rgba(139,173,196,.15);background:var(--blue-dim)">
-<div style="display:flex;align-items:flex-start;gap:10px">
-<span style="font-size:14px;flex-shrink:0;margin-top:1px">ℹ️</span>
-<div>
-<div style="font-size:12px;font-weight:500;color:var(--blue);margin-bottom:3px">Trial Access Note</div>
-<div style="font-size:11px;color:var(--text2);line-height:1.6">Direct physician review credits are available with paid plans. During your trial, explore every tool, run simulations, and build your strategy — physician-reviewed responses become available when you subscribe.</div>
+<div id="trial-review-note" style="margin:0 24px 12px;display:none">
+<div style="padding:12px 16px;border-radius:var(--r);border-color:rgba(139,173,196,.15);background:var(--blue-dim);display:flex;align-items:flex-start;gap:8px">
+<span style="font-size:13px;flex-shrink:0">ℹ️</span>
+<div style="font-size:11px;color:var(--text2);line-height:1.5">Trial access — physician review credits available with paid plans. Explore every tool during your 48 hours.</div>
 </div>
+</div>
+
+<!-- ===== THIS WEEK'S FOCUS (most important — first thing they see) ===== -->
+<div style="padding:0 24px">
+<div id="weekly-focus" style="margin-bottom:12px;display:none"></div>
+</div>
+
+<!-- ===== SCORE CARDS + LOGIN STREAK (compact row) ===== -->
+<div id="career-dashboard" style="padding:0 24px">
+<div id="dash-scores" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px"></div>
+<div id="dash-score-refresh" style="display:none;margin-bottom:12px"></div>
+<div id="login-streak" style="margin-bottom:12px"></div>
+</div>
+
+<!-- ===== QUICK ACTIONS (always visible, easy access) ===== -->
+<div style="padding:0 24px 12px">
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+<div class="card" style="padding:12px;cursor:pointer;text-align:center" onclick="navTo('scr-vault')">
+<div style="font-size:20px;margin-bottom:4px">🧭</div>
+<div style="font-size:10px;font-weight:600;color:var(--text)">Frameworks</div>
+<div style="font-size:9px;color:var(--text3);margin-top:2px">15+ tools</div>
+</div>
+<div class="card" style="padding:12px;cursor:pointer;text-align:center" onclick="navTo('scr-ask')">
+<div style="font-size:20px;margin-bottom:4px">🧠</div>
+<div style="font-size:10px;font-weight:600;color:var(--text)">Ask</div>
+<div style="font-size:9px;color:var(--text3);margin-top:2px">AI strategy</div>
+</div>
+<div class="card" style="padding:12px;cursor:pointer;text-align:center" onclick="showPrivateStrategyModal()">
+<div style="font-size:20px;margin-bottom:4px">🎯</div>
+<div style="font-size:10px;font-weight:600;color:var(--text)">1-on-1</div>
+<div style="font-size:9px;color:var(--text3);margin-top:2px">Dr. Faroqui</div>
 </div>
 </div>
 </div>
 
-<!-- ===== CAREER DASHBOARD ===== -->
-<div id="career-dashboard" style="padding:16px 24px 0">
-
-<!-- Dashboard Header — Prominent -->
-<div style="padding:20px;background:linear-gradient(160deg,rgba(200,168,124,.06),rgba(200,168,124,.02));border:1.5px solid rgba(200,168,124,.2);border-radius:14px;margin-bottom:16px">
-<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
-<div>
-<div style="font-size:18px;font-weight:700;color:var(--text);font-family:var(--font-serif);letter-spacing:.2px">📊 Career Dashboard</div>
-<p id="dash-subtitle" style="font-size:11px;color:var(--text3);margin:4px 0 0">Track your progress. See what's next.</p>
-</div>
-<button onclick="showUpdateProfile()" style="font-size:11px;color:#0a0a0f;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;padding:10px 20px;border-radius:10px;cursor:pointer;white-space:nowrap;font-weight:700;letter-spacing:.3px;box-shadow:0 2px 8px rgba(200,168,124,.3)">✏️ Update Profile</button>
-</div>
+<!-- ===== TOOL PROGRESS + UPCOMING DEADLINES (side by side on desktop, stacked on mobile) ===== -->
+<div style="padding:0 24px">
+<div id="tool-progress" style="margin-bottom:12px;display:none"></div>
+<div id="upcoming-deadlines" style="margin-bottom:12px;display:none"></div>
 </div>
 
-<!-- Score Cards Row -->
-<div id="dash-scores" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px"></div>
+<!-- ===== WEEKLY INSIGHT + TOOL OF THE WEEK ===== -->
+<div style="padding:0 24px">
+<div id="weekly-tip" style="margin-bottom:12px"></div>
+<div id="tool-of-week" style="margin-bottom:12px"></div>
+</div>
 
-<!-- Score Refresh Prompt -->
-<div id="dash-score-refresh" style="display:none;margin-bottom:14px"></div>
-
-<!-- Peer Activity -->
-<div id="dash-peer-activity" style="display:none;margin-bottom:14px"></div>
-
-<!-- Progress Graph -->
-<div id="dash-graph-wrap" class="card" style="padding:16px;margin-bottom:14px;display:none">
+<!-- ===== DEEPER ANALYTICS (collapsible) ===== -->
+<div style="padding:0 24px">
+<div id="dash-detail-toggle" style="display:none;margin-bottom:12px">
+<div onclick="toggleDashDetails()" style="display:flex;align-items:center;justify-content:center;gap:6px;padding:10px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;cursor:pointer;font-size:11px;color:var(--text3);font-weight:500">
+<span id="dash-detail-arrow">▸</span> Detailed Analytics — Progress Graph, Benchmarking, Milestones, History
+</div>
+</div>
+<div id="dash-details" style="display:none">
+<div id="dash-peer-activity" style="display:none;margin-bottom:12px"></div>
+<div id="dash-graph-wrap" class="card" style="padding:14px;margin-bottom:12px;display:none">
 <div style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Progress Over Time</div>
 <div id="dash-graph" style="height:140px;position:relative"></div>
 </div>
-
-<!-- How to Improve -->
-<div id="dash-actions" class="card" style="padding:16px;margin-bottom:14px;display:none">
+<div id="dash-actions" class="card" style="padding:14px;margin-bottom:12px;display:none">
 <div style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">🎯 Actions That Increase Your Score</div>
 <div id="dash-action-list"></div>
 </div>
-
-<!-- Peer Benchmarking -->
-<div id="dash-benchmark" class="card" style="padding:16px;margin-bottom:14px;display:none">
+<div id="dash-benchmark" class="card" style="padding:14px;margin-bottom:12px;display:none">
 <div style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">📈 Peer Benchmarking</div>
 <div id="dash-bench-list"></div>
 </div>
-
-<!-- Milestone Tracker -->
-<div id="dash-milestones" class="card" style="padding:16px;margin-bottom:14px;display:none">
+<div id="dash-milestones" class="card" style="padding:14px;margin-bottom:12px;display:none">
 <div style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">✅ Career Milestones</div>
 <div id="dash-milestone-list"></div>
 </div>
-
-<!-- Strategy History -->
-<div id="dash-history" class="card" style="padding:16px;margin-bottom:14px;display:none">
+<div id="dash-history" class="card" style="padding:14px;margin-bottom:12px;display:none">
 <div style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">📋 Your Strategy History</div>
 <div id="dash-history-list"></div>
 </div>
-
-<!-- Last Updated + Reassessment Prompt -->
-<div id="dash-reassess" style="text-align:center;margin-bottom:8px;display:none">
-<div id="dash-last-updated" style="font-size:10px;color:var(--text3);margin-bottom:8px"></div>
-<button onclick="showUpdateProfile()" style="padding:14px 28px;font-size:13px;font-weight:700;color:#0a0a0f;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:12px;cursor:pointer;width:100%;box-shadow:0 2px 8px rgba(200,168,124,.3)">✏️ Update Your Career Profile — Recalculate All Scores</button>
+<div id="dash-reassess" style="text-align:center;margin-bottom:12px;display:none">
+<div id="dash-last-updated" style="font-size:10px;color:var(--text3);margin-bottom:6px"></div>
 </div>
-
+</div>
 </div>
 
 <!-- Update Profile Modal -->
@@ -140,42 +147,12 @@ Sign Out</button>
 </div>
 </div>
 
-<!-- Quick Actions -->
-<div style="padding:16px 24px 0">
-
-<!-- This Week's Focus -->
-<div id="weekly-focus" style="margin-bottom:14px;display:none"></div>
-
-<!-- Tool Progress Tracker -->
-<div id="tool-progress" style="margin-bottom:14px;display:none"></div>
-
-<!-- Upcoming Deadlines -->
-<div id="upcoming-deadlines" style="margin-bottom:14px;display:none"></div>
-
-<!-- Weekly Career Insight -->
-<div id="weekly-tip" style="margin-bottom:14px"></div>
-
-<!-- Tool of the Week -->
-<div id="tool-of-week" style="margin-bottom:14px"></div>
-
-<!-- Login Streak -->
-<div id="login-streak" style="margin-bottom:14px"></div>
-
-<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px">
-<div class="card" style="padding:14px;cursor:pointer;text-align:center" onclick="navTo('scr-vault')">
-<div style="font-size:22px;margin-bottom:6px">🧭</div>
-<div style="font-size:11px;font-weight:600;color:var(--text)">Frameworks</div>
-<div style="font-size:9px;color:var(--text3);margin-top:3px">16 tools</div>
+<!-- Daily Quote (small, at bottom — a nice touch, not the hero) -->
+<div style="padding:0 24px 12px">
+<div id="daily-quote" style="padding:12px 16px;background:var(--bg2);border-radius:8px;border-left:3px solid rgba(200,168,124,.3)">
+<p style="font-size:13px;color:var(--text2);line-height:1.6;font-family:var(--font-serif);font-style:italic;margin:0" id="quote-text"></p>
+<p style="font-size:9px;color:var(--text3);margin:6px 0 0;font-weight:600;letter-spacing:.5px;text-transform:uppercase" id="quote-author"></p>
 </div>
-<div class="card" style="padding:14px;cursor:pointer;text-align:center" onclick="navTo('scr-ask')">
-<div style="font-size:22px;margin-bottom:6px">🧠</div>
-<div style="font-size:11px;font-weight:600;color:var(--text)">Ask a Question</div>
-<div style="font-size:9px;color:var(--text3);margin-top:3px">AI strategy</div>
-</div>
-<div class="card" style="padding:14px;cursor:pointer;text-align:center" onclick="showPrivateStrategyModal()">
-<div style="font-size:22px;margin-bottom:6px">🎯</div>
-<div style="font-size:11px;font-weight:600;color:var(--text)">Private Strategy</div>
-<div style="font-size:9px;color:var(--text3);margin-top:3px">1-on-1</div>
 </div>
 </div>
 </div>

@@ -1298,8 +1298,18 @@ function renderDashboard(){
   // Reassessment prompt
   var lastUp=new Date(cp.lastUpdated);
   var daysSince=Math.floor((new Date()-lastUp)/(1000*60*60*24));
-  document.getElementById('dash-reassess').style.display='';
-  document.getElementById('dash-last-updated').textContent='Last updated: '+lastUp.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})+(daysSince>90?' — ⚠️ Consider updating your profile':'');
+  var reassessEl=document.getElementById('dash-reassess');
+  if(reassessEl){
+    reassessEl.style.display='';
+    document.getElementById('dash-last-updated').textContent='Last updated: '+lastUp.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})+(daysSince>90?' — ⚠️ Consider updating your profile':'');
+  }
+
+  // Show detail toggle if there's any detailed data
+  var detailToggle=document.getElementById('dash-detail-toggle');
+  if(detailToggle){
+    var hasDetails=U.scoreHistory.length>1||(U.toolHistory&&U.toolHistory.length)||(U.milestones&&U.milestones.length)||cp.specialty;
+    detailToggle.style.display=hasDetails?'':'none';
+  }
 }
 
 function renderProgressGraph(history){
@@ -1666,6 +1676,15 @@ function renderHome(){
       var el=document.getElementById(id);if(el)el.style.display='none';
     });
   }
+}
+
+// Toggle detailed analytics section
+function toggleDashDetails(){
+  var d=document.getElementById('dash-details');
+  var a=document.getElementById('dash-detail-arrow');
+  if(!d)return;
+  if(d.style.display==='none'){d.style.display='';a.textContent='▾'}
+  else{d.style.display='none';a.textContent='▸'}
 }
 
 // ===== DYNAMIC ENGAGEMENT SECTIONS =====

@@ -1632,6 +1632,273 @@ function renderHome(){
       steps.forEach(function(s){s.classList.add('visible')});
     }
   },100);
+
+  // Render dynamic engagement sections
+  renderWeeklyFocus();
+  renderToolProgress();
+  renderUpcomingDeadlines();
+  renderWeeklyTip();
+  renderToolOfWeek();
+  renderLoginStreak();
+}
+
+// ===== DYNAMIC ENGAGEMENT SECTIONS =====
+
+// 1. This Week's Focus — single personalized action item
+function renderWeeklyFocus(){
+  var el=document.getElementById('weekly-focus');
+  if(!el||!U)return;
+  var cp=U.careerProfile||{};
+  var stage=cp.stage||'student';
+  var goal=cp.goal||'';
+  var toolsUsed=(U.toolHistory||[]).map(function(t){return t.tool});
+
+  var focus=null;
+  var now=new Date();
+  var month=now.getMonth(); // 0-indexed
+
+  // Stage + goal based focus
+  if(stage==='student'||stage==='resident'){
+    if(goal==='match'||goal==='fellowship'){
+      if(month>=4&&month<=6&&toolsUsed.indexOf('Match Competitiveness Calculator')<0)
+        focus={icon:'🏆',title:'Run the Match Competitiveness Calculator',sub:'ERAS opens soon. Know exactly where you stand before you apply.',tool:'v14',urgency:'high'};
+      else if(toolsUsed.indexOf('Research ROI Calculator')<0)
+        focus={icon:'🔬',title:'Calculate your Research ROI',sub:'Find out which research activities will move the needle most for your application.',tool:'v7',urgency:'medium'};
+      else if(toolsUsed.indexOf('Mock Interview Simulator')<0)
+        focus={icon:'🎤',title:'Practice with the Mock Interview Simulator',sub:'Most applicants walk into interviews cold. Don\'t be one of them.',tool:'v16',urgency:'medium'};
+      else
+        focus={icon:'📊',title:'Update your career profile',sub:'Your scores may have changed — new pubs, rotations, or letters can shift your competitiveness.',action:'profile',urgency:'low'};
+    } else if(goal==='specialty'){
+      if(toolsUsed.indexOf('Specialty Fit Analyzer')<0)
+        focus={icon:'🧬',title:'Take the Specialty Fit Analyzer',sub:'Data-driven specialty matching based on your personality, priorities, and lifestyle goals.',tool:'v13',urgency:'high'};
+      else
+        focus={icon:'🔮',title:'Compare financial trajectories by specialty',sub:'See how your specialty choice impacts lifetime earnings and net worth.',tool:'v11',urgency:'medium'};
+    }
+  } else if(stage==='fellow'){
+    if(toolsUsed.indexOf('Contract Intelligence Tool')<0)
+      focus={icon:'📝',title:'Score your upcoming contract offer',sub:'You\'re approaching job offers. Know if the terms are competitive before you sign.',tool:'v12',urgency:'high'};
+    else if(toolsUsed.indexOf('Financial Trajectory Simulator')<0)
+      focus={icon:'💰',title:'Model your 30-year financial trajectory',sub:'Training is almost over. See how different paths impact your long-term wealth.',tool:'v11',urgency:'medium'};
+  } else if(stage==='attending'){
+    if(toolsUsed.indexOf('Contract Intelligence Tool')<0)
+      focus={icon:'📝',title:'Analyze your current contract',sub:'Most physicians leave $50K+ on the table. Find out if you\'re one of them.',tool:'v12',urgency:'high'};
+    else if(goal==='direction')
+      focus={icon:'⚡',title:'Run the Career Pivot Decision Engine',sub:'Explore whether a change makes sense — with data, not just gut feeling.',tool:'v10',urgency:'medium'};
+    else
+      focus={icon:'💰',title:'Update your financial trajectory',sub:'Market conditions change. Re-run your projections with current data.',tool:'v11',urgency:'low'};
+  }
+
+  // Fallback
+  if(!focus){
+    var unused=VAULT_ITEMS.filter(function(v){return toolsUsed.indexOf(v.title)<0});
+    if(unused.length>0){
+      var pick=unused[0];
+      focus={icon:pick.icon,title:'Try: '+pick.title,sub:pick.desc,tool:pick.id,urgency:'medium'};
+    }
+  }
+
+  if(!focus){el.style.display='none';return}
+
+  var urgColor=focus.urgency==='high'?'#ef4444':focus.urgency==='medium'?'var(--accent)':'var(--text3)';
+  var urgLabel=focus.urgency==='high'?'⚡ Do this now':focus.urgency==='medium'?'📌 This week':'💡 When you have time';
+  var onclick=focus.tool?'openFramework(\''+focus.tool+'\')':focus.action==='profile'?'showUpdateProfile()':'';
+
+  el.style.display='';
+  el.innerHTML='<div onclick="'+onclick+'" style="padding:18px;background:linear-gradient(160deg,rgba(200,168,124,.08),rgba(200,168,124,.02));border:1.5px solid rgba(200,168,124,.25);border-radius:12px;cursor:pointer;transition:border-color .2s">'
+    +'<div style="display:flex;align-items:center;gap:6px;margin-bottom:8px"><span style="font-size:10px;font-weight:700;color:'+urgColor+';text-transform:uppercase;letter-spacing:1px">'+urgLabel+'</span></div>'
+    +'<div style="display:flex;align-items:flex-start;gap:12px">'
+    +'<span style="font-size:28px;flex-shrink:0">'+focus.icon+'</span>'
+    +'<div><div style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:4px;font-family:var(--font-serif)">'+focus.title+'</div>'
+    +'<div style="font-size:12px;color:var(--text3);line-height:1.5">'+focus.sub+'</div></div>'
+    +'</div></div>';
+}
+
+// 2. Tool Progress Tracker
+function renderToolProgress(){
+  var el=document.getElementById('tool-progress');
+  if(!el||!U)return;
+  if(U.tier==='free'&&!U.isTrial){el.style.display='none';return}
+
+  var toolsUsed=[];
+  (U.toolHistory||[]).forEach(function(t){
+    if(toolsUsed.indexOf(t.tool)<0) toolsUsed.push(t.tool);
+  });
+  var total=VAULT_ITEMS.length;
+  var used=0;
+  var nextTool=null;
+  VAULT_ITEMS.forEach(function(v){
+    var found=toolsUsed.some(function(t){return t===v.title});
+    if(found) used++;
+    else if(!nextTool) nextTool=v;
+  });
+
+  if(used===0){el.style.display='none';return}
+
+  var pct=Math.round(used/total*100);
+  el.style.display='';
+  var h='<div class="card" style="padding:16px">';
+  h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">';
+  h+='<span style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px">🧭 Tool Progress</span>';
+  h+='<span style="font-size:12px;font-weight:700;color:var(--accent)">'+used+' / '+total+'</span>';
+  h+='</div>';
+  h+='<div style="height:8px;background:var(--bg3);border-radius:4px;overflow:hidden;margin-bottom:10px"><div style="height:100%;width:'+pct+'%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:4px;transition:width .5s"></div></div>';
+  if(nextTool){
+    h+='<div onclick="openFramework(\''+nextTool.id+'\')" style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--bg3);border-radius:8px;cursor:pointer;transition:background .2s">';
+    h+='<span style="font-size:16px">'+nextTool.icon+'</span>';
+    h+='<div style="flex:1"><div style="font-size:12px;font-weight:600;color:var(--text)">Next: '+nextTool.title+'</div>';
+    h+='<div style="font-size:10px;color:var(--text3)">'+nextTool.desc.substring(0,60)+'…</div></div>';
+    h+='<span style="font-size:12px;color:var(--accent)">→</span></div>';
+  }
+  h+='</div>';
+  el.innerHTML=h;
+}
+
+// 3. Upcoming Deadlines
+function renderUpcomingDeadlines(){
+  var el=document.getElementById('upcoming-deadlines');
+  if(!el||!U)return;
+  var cp=U.careerProfile||{};
+  var stage=cp.stage||'student';
+  var now=new Date();
+  var month=now.getMonth();
+  var year=now.getFullYear();
+
+  var deadlines=[];
+  // Universal deadlines based on academic calendar
+  if(stage==='student'||stage==='resident'){
+    if(month<=5) deadlines.push({date:'Jul '+year,label:'ERAS Opens — fellowship/residency applications',icon:'📋',months:6-month});
+    if(month<=7) deadlines.push({date:'Sep '+year,label:'ERAS Submission Window — submit Day 1',icon:'🚀',months:8-month});
+    if(month>=8||month<=1) deadlines.push({date:'Mar '+(month>=8?year+1:year),label:'Match Day',icon:'🎉',months:month>=8?(14-month):(2-month)});
+    if(month<=3) deadlines.push({date:'Apr '+year,label:'SOAP / Scramble period',icon:'⚡',months:3-month});
+  }
+  if(stage==='student'){
+    if(month<=5) deadlines.push({date:'Jun-Aug '+year,label:'Away rotation application period',icon:'🏥',months:Math.max(0,5-month)});
+  }
+  if(stage==='fellow'||stage==='attending'){
+    if(month<=2||month>=10) deadlines.push({date:'Jan-Mar '+(month>=10?year+1:year),label:'Peak contract negotiation season',icon:'📝',months:month>=10?(12-month+2):(2-month)});
+  }
+
+  // Filter to upcoming only (next 6 months)
+  deadlines=deadlines.filter(function(d){return d.months>=0&&d.months<=6});
+  deadlines.sort(function(a,b){return a.months-b.months});
+
+  if(deadlines.length===0){el.style.display='none';return}
+
+  el.style.display='';
+  var h='<div class="card" style="padding:16px">';
+  h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">📅 Upcoming Deadlines</div>';
+  deadlines.forEach(function(d,i){
+    var urgColor=d.months<=1?'var(--red)':d.months<=3?'var(--accent)':'var(--text3)';
+    var timeLabel=d.months===0?'This month':d.months===1?'Next month':'In '+d.months+' months';
+    h+='<div style="display:flex;align-items:center;gap:10px;padding:8px 0;'+(i<deadlines.length-1?'border-bottom:1px solid var(--border)':'')+'">';
+    h+='<span style="font-size:16px">'+d.icon+'</span>';
+    h+='<div style="flex:1"><div style="font-size:12px;color:var(--text)">'+d.label+'</div>';
+    h+='<div style="font-size:10px;color:var(--text3)">'+d.date+'</div></div>';
+    h+='<span style="font-size:10px;font-weight:600;color:'+urgColor+';white-space:nowrap">'+timeLabel+'</span>';
+    h+='</div>';
+  });
+  h+='</div>';
+  el.innerHTML=h;
+}
+
+// 4. Weekly Career Insight — rotates weekly
+function renderWeeklyTip(){
+  var el=document.getElementById('weekly-tip');
+  if(!el)return;
+  var tips=[
+    {tip:'The single biggest predictor of match success isn\'t Step scores — it\'s the strength of your letters of recommendation. Invest in relationships with faculty who can speak to your clinical ability.',source:'NRMP Program Director Survey'},
+    {tip:'Physicians who negotiate their first contract earn an average of $30,000 more per year than those who accept the initial offer. That\'s $900,000+ over a 30-year career.',source:'Medscape Physician Compensation Report'},
+    {tip:'Away rotations at your top-choice program are essentially a month-long interview. Programs rank applicants they\'ve worked with significantly higher.',source:'Match Data Analysis'},
+    {tip:'The difference between a 10% and 20% savings rate during your first 5 attending years can mean $2M+ more at retirement, thanks to compound growth.',source:'HeartWise Financial Modeling'},
+    {tip:'First-author publications carry 3-4x more weight than middle-author papers in fellowship applications. One strong first-author paper beats five middle authorships.',source:'Fellowship Program Director Surveys'},
+    {tip:'Most physicians wait until they receive an offer to think about negotiation. The best negotiators start building leverage 12-18 months before their contract date.',source:'Physician Career Strategy'},
+    {tip:'Non-compete clauses cost physicians an average of $400K in lost income when enforced. Always negotiate the radius, duration, and carve-outs.',source:'AMA Physician Contract Analysis'},
+    {tip:'Disability insurance premiums increase 2-4% per year of age. Buying during residency with an own-occupation rider can save you $50K+ over the policy lifetime.',source:'Financial Planning for Physicians'},
+    {tip:'The physicians who match into the most competitive specialties have one thing in common: they started preparing 18-24 months before application season, not 6.',source:'Match Strategy Research'},
+    {tip:'Tail coverage costs $20K-$80K depending on specialty. If your contract doesn\'t specify who pays, you\'re on the hook. Always get this in writing.',source:'Physician Contract Advisors'},
+    {tip:'Research shows that residents who use structured career planning tools make decisions they\'re 40% more satisfied with 5 years later compared to those who wing it.',source:'Medical Career Satisfaction Studies'},
+    {tip:'The average physician changes jobs 3-4 times in their career. Each transition is a negotiation opportunity. Master the skill once, benefit for decades.',source:'Physician Career Trends'}
+  ];
+  var weekNum=Math.floor((new Date()-new Date(new Date().getFullYear(),0,1))/(7*86400000));
+  var tip=tips[weekNum%tips.length];
+
+  el.innerHTML='<div class="card" style="padding:16px;border-left:3px solid var(--accent)">'
+    +'<div style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">💡 Weekly Career Insight</div>'
+    +'<div style="font-size:13px;color:var(--text);line-height:1.6;font-style:italic">"'+tip.tip+'"</div>'
+    +'<div style="font-size:10px;color:var(--text3);margin-top:6px">— '+tip.source+'</div>'
+    +'</div>';
+}
+
+// 5. Tool of the Week spotlight
+function renderToolOfWeek(){
+  var el=document.getElementById('tool-of-week');
+  if(!el)return;
+  var weekNum=Math.floor((new Date()-new Date(new Date().getFullYear(),0,1))/(7*86400000));
+  var tool=VAULT_ITEMS[weekNum%VAULT_ITEMS.length];
+  if(!tool)return;
+
+  var toolsUsed=(U.toolHistory||[]).map(function(t){return t.tool});
+  var alreadyUsed=toolsUsed.indexOf(tool.title)>=0;
+
+  el.innerHTML='<div onclick="openFramework(\''+tool.id+'\')" class="card" style="padding:16px;cursor:pointer;border:1px solid rgba(200,168,124,.15);transition:border-color .2s">'
+    +'<div style="display:flex;align-items:center;gap:6px;margin-bottom:8px">'
+    +'<span style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px">⭐ Tool of the Week</span>'
+    +(alreadyUsed?'<span style="font-size:9px;padding:2px 8px;background:rgba(106,191,75,.1);color:var(--green);border-radius:10px;font-weight:600">Used ✓</span>':'')
+    +'</div>'
+    +'<div style="display:flex;align-items:center;gap:12px">'
+    +'<span style="font-size:28px">'+tool.icon+'</span>'
+    +'<div><div style="font-size:14px;font-weight:600;color:var(--text)">'+tool.title+'</div>'
+    +'<div style="font-size:11px;color:var(--text3);line-height:1.4;margin-top:2px">'+tool.desc+'</div></div>'
+    +'</div>'
+    +(alreadyUsed?'<div style="font-size:11px;color:var(--accent);margin-top:8px;font-weight:500">Re-run with updated data →</div>':'<div style="font-size:11px;color:var(--accent);margin-top:8px;font-weight:500">Try it now →</div>')
+    +'</div>';
+}
+
+// 6. Login Streak
+function renderLoginStreak(){
+  var el=document.getElementById('login-streak');
+  if(!el||!U)return;
+
+  // Track login days
+  if(!U.loginDays) U.loginDays=[];
+  var today=new Date().toISOString().split('T')[0];
+  if(U.loginDays.indexOf(today)<0){
+    U.loginDays.push(today);
+    // Keep last 90 days only
+    if(U.loginDays.length>90) U.loginDays=U.loginDays.slice(-90);
+    localStorage.setItem('hw_session',JSON.stringify(U));
+  }
+
+  // Calculate current streak
+  var sorted=U.loginDays.slice().sort().reverse();
+  var streak=0;
+  var checkDate=new Date();
+  for(var i=0;i<sorted.length;i++){
+    var d=sorted[i];
+    var expected=checkDate.toISOString().split('T')[0];
+    if(d===expected){
+      streak++;
+      checkDate.setDate(checkDate.getDate()-1);
+    } else if(i===0){
+      // Allow today or yesterday as start
+      checkDate.setDate(checkDate.getDate()-1);
+      expected=checkDate.toISOString().split('T')[0];
+      if(d===expected){streak++;checkDate.setDate(checkDate.getDate()-1)}
+      else break;
+    } else break;
+  }
+
+  if(streak<2){el.style.display='none';return}
+
+  var msg=streak>=14?'🏆 Incredible dedication!':streak>=7?'🔥 You\'re on fire!':streak>=3?'💪 Building momentum!':'';
+  var flames='';for(var f=0;f<Math.min(streak,7);f++)flames+='🔥';
+
+  el.style.display='';
+  el.innerHTML='<div class="card" style="padding:12px 16px;display:flex;align-items:center;gap:12px">'
+    +'<div style="font-size:24px;font-weight:700;color:var(--accent);font-family:var(--font-serif);min-width:36px;text-align:center">'+streak+'</div>'
+    +'<div style="flex:1"><div style="font-size:12px;font-weight:600;color:var(--text)">Day Streak '+flames+'</div>'
+    +'<div style="font-size:10px;color:var(--text3)">'+msg+' Keep checking in to build your career strategy.</div></div>'
+    +'</div>';
 }
 
 function renderQCard(q){

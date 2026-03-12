@@ -1685,7 +1685,7 @@ function syncToSupabase(){
   // Try sync-session edge function (uses service role, no column issues)
   fetch('https://kqyvfykbnboesskxovtw.supabase.co/functions/v1/sync-session',{
     method:'POST',
-    headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY},
+    headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY},
     body:JSON.stringify({email:U.email,action:'save',session_data:sessionData})
   }).then(function(r){return r.json()}).then(function(d){
     if(d.error)console.warn('Session sync:',d.error);
@@ -1695,7 +1695,7 @@ function syncToSupabase(){
 function loadFromSupabase(email,callback){
   fetch('https://kqyvfykbnboesskxovtw.supabase.co/functions/v1/sync-session',{
     method:'POST',
-    headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY},
+    headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY},
     body:JSON.stringify({email:email,action:'load'})
   }).then(function(r){return r.json()}).then(function(d){
     if(d.found&&d.profile){callback(d.profile)}

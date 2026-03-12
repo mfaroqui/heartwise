@@ -63,6 +63,7 @@ Sign Out</button>
 
 <!-- ===== THIS WEEK'S FOCUS ===== -->
 <div style="padding:14px 24px 0">
+<div id="whats-changed" style="margin-bottom:12px;display:none"></div>
 <div id="weekly-focus" style="margin-bottom:0;display:none"></div>
 </div>
 
@@ -89,6 +90,15 @@ Sign Out</button>
 <div style="font-size:22px;margin-bottom:5px">🎯</div>
 <div style="font-size:11px;font-weight:600;color:var(--text)">1-on-1 Strategy</div>
 <div style="font-size:9px;color:var(--accent);margin-top:3px;font-weight:500">Dr. Faroqui</div>
+</div>
+</div>
+<!-- Check-in + Report row -->
+<div id="checkin-report-row" style="display:none;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;margin-bottom:4px">
+<div onclick="showWeeklyCheckin()" style="padding:10px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;cursor:pointer;text-align:center;transition:border-color .15s" onmouseenter="this.style.borderColor='var(--accent)'" onmouseleave="this.style.borderColor='var(--border)'">
+<span style="font-size:14px">📋</span><span style="font-size:11px;font-weight:600;color:var(--text);margin-left:6px">Weekly Check-in</span>
+</div>
+<div onclick="generateMonthlyReport()" style="padding:10px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;cursor:pointer;text-align:center;transition:border-color .15s" onmouseenter="this.style.borderColor='var(--accent)'" onmouseleave="this.style.borderColor='var(--border)'">
+<span style="font-size:14px">📊</span><span style="font-size:11px;font-weight:600;color:var(--text);margin-left:6px">Monthly Report</span>
 </div>
 </div>
 </div>

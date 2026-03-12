@@ -2041,6 +2041,7 @@ Sign Out</button>
 
 <!-- ===== THIS WEEK'S FOCUS ===== -->
 <div style="padding:14px 24px 0">
+<div id="whats-changed" style="margin-bottom:12px;display:none"></div>
 <div id="weekly-focus" style="margin-bottom:0;display:none"></div>
 </div>
 
@@ -2067,6 +2068,15 @@ Sign Out</button>
 <div style="font-size:22px;margin-bottom:5px">🎯</div>
 <div style="font-size:11px;font-weight:600;color:var(--text)">1-on-1 Strategy</div>
 <div style="font-size:9px;color:var(--accent);margin-top:3px;font-weight:500">Dr. Faroqui</div>
+</div>
+</div>
+<!-- Check-in + Report row -->
+<div id="checkin-report-row" style="display:none;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;margin-bottom:4px">
+<div onclick="showWeeklyCheckin()" style="padding:10px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;cursor:pointer;text-align:center;transition:border-color .15s" onmouseenter="this.style.borderColor='var(--accent)'" onmouseleave="this.style.borderColor='var(--border)'">
+<span style="font-size:14px">📋</span><span style="font-size:11px;font-weight:600;color:var(--text);margin-left:6px">Weekly Check-in</span>
+</div>
+<div onclick="generateMonthlyReport()" style="padding:10px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;cursor:pointer;text-align:center;transition:border-color .15s" onmouseenter="this.style.borderColor='var(--accent)'" onmouseleave="this.style.borderColor='var(--border)'">
+<span style="font-size:14px">📊</span><span style="font-size:11px;font-weight:600;color:var(--text);margin-left:6px">Monthly Report</span>
 </div>
 </div>
 </div>
@@ -6527,6 +6537,9 @@ function syncToSupabase(){
     toolHistory:U.toolHistory||[],
     milestones:U.milestones||[],
     loginDays:U.loginDays||[],
+    weeklyGoals:U.weeklyGoals||[],
+    checkins:U.checkins||[],
+    lastCheckin:U.lastCheckin||null,
     usage:U.usage||{},
     tier:U.tier,
     isTrial:U.isTrial||false,
@@ -6554,10 +6567,13 @@ function loadFromSupabase(email,callback){
 }
 
 // Record tool usage for strategy history
-function recordToolUse(toolName,score,summary){
+function recordToolUse(toolName,score,summary,resultData){
   if(!U)return;
   if(!U.toolHistory) U.toolHistory=[];
-  U.toolHistory.push({date:new Date().toISOString(),tool:toolName,score:score||null,summary:summary||''});
+  var entry={date:new Date().toISOString(),tool:toolName,score:score||null,summary:summary||''};
+  if(resultData) entry.data=resultData;
+  U.toolHistory.push(entry);
+  if(U.toolHistory.length>100) U.toolHistory=U.toolHistory.slice(-100);
   saveUser();
 }
 
@@ -6602,17 +6618,22 @@ function renderHome(){
   // Render dynamic engagement sections (Core, Mentorship, and trial users only)
   var _hasPlan=U.tier==='core'||U.tier==='elite'||U.tier==='admin'||U.isTrial;
   if(_hasPlan){
+    try{renderWhatsChanged()}catch(e){console.error('WhatsChanged:',e)}
     try{renderWeeklyFocus()}catch(e){console.error('WeeklyFocus:',e)}
     try{renderToolProgress()}catch(e){console.error('ToolProgress:',e)}
     try{renderUpcomingDeadlines()}catch(e){console.error('Deadlines:',e)}
     try{renderWeeklyTip()}catch(e){console.error('WeeklyTip:',e)}
     try{renderToolOfWeek()}catch(e){console.error('ToolOfWeek:',e)}
     try{renderLoginStreak()}catch(e){console.error('LoginStreak:',e)}
+    // Show check-in + report buttons
+    var ciRow=document.getElementById('checkin-report-row');
+    if(ciRow)ciRow.style.display='grid';
   } else {
     // Hide all dynamic sections for free users
-    ['weekly-focus','tool-progress','upcoming-deadlines','weekly-tip','tool-of-week','login-streak'].forEach(function(id){
+    ['weekly-focus','tool-progress','upcoming-deadlines','weekly-tip','tool-of-week','login-streak','whats-changed'].forEach(function(id){
       var el=document.getElementById(id);if(el)el.style.display='none';
     });
+    var ciRow=document.getElementById('checkin-report-row');if(ciRow)ciRow.style.display='none';
   }
 }
 
@@ -12874,6 +12895,149 @@ function renderLeverage(){
   document.getElementById('lev-workflow-list').innerHTML=h;
   }catch(ex){console.error('renderLeverage error:',ex);var wl=document.getElementById('lev-workflow-list');if(wl)wl.innerHTML='<div style="padding:40px;text-align:center;color:#c44d56">Error: '+ex.message+'</div>'}
 }
+
+// ===== SAVED SCENARIOS + COMPARE =====
+function getSavedScenarios(toolName){if(!U||!U.toolHistory)return[];return U.toolHistory.filter(function(t){return t.tool===toolName&&t.data}).slice(-10)}
+function showSavedScenarios(toolName){
+  var sc=getSavedScenarios(toolName);
+  if(!sc.length){notify('No saved scenarios yet. Run the tool first.');return}
+  var h='<div style="padding:20px"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px"><div style="font-size:16px;font-weight:600;color:var(--text);font-family:var(--font-serif)">📊 Saved Scenarios</div><button onclick="closeModal(\'modal-q\')" style="background:none;border:none;color:var(--text3);font-size:18px;cursor:pointer">✕</button></div>';
+  h+='<div style="font-size:11px;color:var(--text3);margin-bottom:14px">'+toolName+' — '+sc.length+' saved</div>';
+  if(sc.length>=2){
+    h+='<div style="margin-bottom:14px;padding:12px;background:linear-gradient(160deg,rgba(200,168,124,.08),rgba(200,168,124,.03));border:1px solid rgba(200,168,124,.15);border-radius:10px"><div style="font-size:11px;font-weight:600;color:var(--accent);margin-bottom:8px">Compare Two Runs</div><div style="display:flex;gap:8px;align-items:center">';
+    h+='<select id="sc-a" style="flex:1;padding:8px;border:1px solid var(--border);border-radius:6px;background:var(--bg);color:var(--text);font-size:11px">';
+    sc.forEach(function(s,i){h+='<option value="'+i+'">'+new Date(s.date).toLocaleDateString('en-US',{month:'short',day:'numeric'})+' — '+(s.summary||'Run '+(i+1))+'</option>'});
+    h+='</select><span style="color:var(--text3);font-size:11px">vs</span><select id="sc-b" style="flex:1;padding:8px;border:1px solid var(--border);border-radius:6px;background:var(--bg);color:var(--text);font-size:11px">';
+    sc.forEach(function(s,i){h+='<option value="'+i+'"'+(i===sc.length-1?' selected':'')+'>'+new Date(s.date).toLocaleDateString('en-US',{month:'short',day:'numeric'})+' — '+(s.summary||'Run '+(i+1))+'</option>'});
+    h+='</select><button onclick="compareScenarios(\''+toolName.replace(/'/g,"\\'")+'\',document.getElementById(\'sc-a\').value,document.getElementById(\'sc-b\').value)" style="padding:8px 14px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#0a0a0f;border:none;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer">Compare</button></div></div>';
+  }
+  sc.slice().reverse().forEach(function(s,ri){var i=sc.length-1-ri;var d=new Date(s.date);
+    h+='<div class="card" style="padding:14px;margin-bottom:8px;cursor:pointer" onclick="viewScenario(\''+toolName.replace(/'/g,"\\'")+'\','+i+')">';
+    h+='<div style="display:flex;justify-content:space-between;align-items:center"><div><div style="font-size:12px;font-weight:600;color:var(--text)">'+(s.summary||'Run '+(i+1))+'</div>';
+    h+='<div style="font-size:10px;color:var(--text3);margin-top:2px">'+d.toLocaleDateString('en-US',{month:'long',day:'numeric',hour:'numeric',minute:'2-digit'})+'</div></div>';
+    if(s.score) h+='<div style="font-size:14px;font-weight:700;color:var(--accent)">'+s.score+'</div>';
+    h+='</div></div>';
+  });
+  h+='</div>';
+  document.getElementById('modal-q-content').innerHTML=h;document.getElementById('modal-q').classList.remove('hidden');
+}
+function viewScenario(toolName,idx){
+  var sc=getSavedScenarios(toolName);if(!sc[idx])return;var s=sc[idx];var d=new Date(s.date);
+  var h='<div style="padding:20px"><div style="display:flex;justify-content:space-between;margin-bottom:16px"><div><div style="font-size:16px;font-weight:600;color:var(--text);font-family:var(--font-serif)">'+(s.summary||toolName)+'</div><div style="font-size:10px;color:var(--text3);margin-top:2px">'+d.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})+'</div></div><button onclick="showSavedScenarios(\''+toolName.replace(/'/g,"\\'")+'\');return" style="background:none;border:none;color:var(--accent);font-size:12px;cursor:pointer;font-weight:600">← Back</button></div>';
+  if(s.data&&s.data.inputs){h+='<div style="margin-bottom:14px"><div style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Inputs</div>';
+    Object.keys(s.data.inputs).forEach(function(k){var v=s.data.inputs[k];if(v===''||v===null||v===undefined)return;h+='<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border);font-size:11px"><span style="color:var(--text3)">'+k+'</span><span style="color:var(--text);font-weight:500">'+v+'</span></div>'});h+='</div>'}
+  if(s.score) h+='<div style="margin-bottom:14px;text-align:center;padding:16px;background:var(--bg2);border-radius:10px"><div style="font-size:10px;color:var(--text3);margin-bottom:4px">Score</div><div style="font-size:28px;font-weight:700;color:var(--accent);font-family:var(--font-serif)">'+s.score+'</div></div>';
+  if(s.data&&s.data.highlights){h+='<div><div style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Key Results</div>';s.data.highlights.forEach(function(hl){h+='<div style="font-size:12px;color:var(--text);line-height:1.6;padding:3px 0">• '+hl+'</div>'});h+='</div>'}
+  h+='</div>';document.getElementById('modal-q-content').innerHTML=h;
+}
+function compareScenarios(toolName,ai,bi){
+  var sc=getSavedScenarios(toolName);var a=sc[parseInt(ai)],b=sc[parseInt(bi)];
+  if(!a||!b){notify('Select two scenarios',1);return}
+  if(ai===bi){notify('Pick two different runs',1);return}
+  var dA=new Date(a.date),dB=new Date(b.date);
+  var h='<div style="padding:20px"><div style="display:flex;justify-content:space-between;margin-bottom:16px"><div style="font-size:16px;font-weight:600;color:var(--text);font-family:var(--font-serif)">📊 Comparison</div><button onclick="showSavedScenarios(\''+toolName.replace(/'/g,"\\'")+'\');return" style="background:none;border:none;color:var(--accent);font-size:12px;cursor:pointer;font-weight:600">← Back</button></div>';
+  h+='<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px;font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase"><div></div><div style="text-align:center">'+dA.toLocaleDateString('en-US',{month:'short',day:'numeric'})+'</div><div style="text-align:center">'+dB.toLocaleDateString('en-US',{month:'short',day:'numeric'})+'</div></div>';
+  if(a.score||b.score){h+='<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;padding:10px 0;border-bottom:1px solid var(--border)"><div style="font-size:11px;font-weight:600;color:var(--text)">Score</div><div style="text-align:center;font-size:18px;font-weight:700;color:var(--accent);font-family:var(--font-serif)">'+(a.score||'—')+'</div><div style="text-align:center;font-size:18px;font-weight:700;color:var(--accent2);font-family:var(--font-serif)">'+(b.score||'—')+'</div></div>'}
+  if(a.data&&a.data.inputs&&b.data&&b.data.inputs){var keys={};Object.keys(a.data.inputs).forEach(function(k){keys[k]=1});Object.keys(b.data.inputs).forEach(function(k){keys[k]=1});
+    Object.keys(keys).forEach(function(k){var av=a.data.inputs[k]||'—',bv=b.data.inputs[k]||'—';var diff=String(av)!==String(bv);h+='<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);font-size:11px;'+(diff?'background:rgba(200,168,124,.05)':'')+'"><div style="color:var(--text3)">'+k+'</div><div style="text-align:center;color:var(--text);font-weight:'+(diff?'600':'400')+'">'+av+'</div><div style="text-align:center;color:var(--text);font-weight:'+(diff?'600':'400')+'">'+bv+'</div></div>'})}
+  h+='</div>';document.getElementById('modal-q-content').innerHTML=h;
+}
+
+// ===== WEEKLY CHECK-IN =====
+function showWeeklyCheckin(){
+  if(!U)return;if(!U.weeklyGoals)U.weeklyGoals=[];if(!U.checkins)U.checkins=[];
+  var h='<div style="padding:24px"><div style="text-align:center;margin-bottom:20px"><div style="font-size:32px;margin-bottom:8px">📋</div><div style="font-size:18px;font-weight:600;color:var(--text);font-family:var(--font-serif)">Weekly Check-in</div><div style="font-size:12px;color:var(--text3);margin-top:4px">2 minutes. Update your trajectory.</div></div>';
+  var lastGoal=U.weeklyGoals.length?U.weeklyGoals[U.weeklyGoals.length-1]:null;
+  if(lastGoal&&lastGoal.status==='active'){
+    h+='<div style="margin-bottom:16px"><div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Last Week\'s Goal</div>';
+    h+='<div style="padding:10px 14px;background:var(--bg2);border-radius:8px;font-size:12px;color:var(--text);margin-bottom:8px">"'+lastGoal.goal+'"</div>';
+    h+='<div style="display:flex;gap:8px"><input type="hidden" id="ci-status" value="">';
+    h+='<button onclick="this.parentElement.querySelectorAll(\'button\').forEach(function(b){b.style.borderColor=\'var(--border)\';b.style.background=\'var(--bg)\'});this.style.borderColor=\'var(--green)\';this.style.background=\'rgba(106,170,100,.1)\';document.getElementById(\'ci-status\').value=\'completed\'" style="flex:1;padding:10px;border:2px solid var(--border);border-radius:8px;background:var(--bg);cursor:pointer;font-size:11px;font-weight:600;color:var(--green)">✅ Done</button>';
+    h+='<button onclick="this.parentElement.querySelectorAll(\'button\').forEach(function(b){b.style.borderColor=\'var(--border)\';b.style.background=\'var(--bg)\'});this.style.borderColor=\'var(--accent)\';this.style.background=\'rgba(200,168,124,.1)\';document.getElementById(\'ci-status\').value=\'progress\'" style="flex:1;padding:10px;border:2px solid var(--border);border-radius:8px;background:var(--bg);cursor:pointer;font-size:11px;font-weight:600;color:var(--accent)">🔄 In Progress</button>';
+    h+='<button onclick="this.parentElement.querySelectorAll(\'button\').forEach(function(b){b.style.borderColor=\'var(--border)\';b.style.background=\'var(--bg)\'});this.style.borderColor=\'var(--red)\';this.style.background=\'rgba(192,96,96,.1)\';document.getElementById(\'ci-status\').value=\'missed\'" style="flex:1;padding:10px;border:2px solid var(--border);border-radius:8px;background:var(--bg);cursor:pointer;font-size:11px;font-weight:600;color:var(--red)">❌ Missed</button>';
+    h+='</div></div>';
+  }
+  h+='<div style="margin-bottom:16px"><div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Any New Developments?</div><div style="font-size:10px;color:var(--text3);margin-bottom:6px">Offers, interviews, publications, scores, decisions...</div><textarea id="ci-dev" rows="3" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-size:12px;resize:vertical;font-family:var(--font-body)" placeholder="e.g., Got an interview at Hopkins, Step 2 came back 255..."></textarea></div>';
+  h+='<div style="margin-bottom:20px"><div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">This Week\'s Goal</div><input type="text" id="ci-goal" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-size:12px;font-family:var(--font-body)" placeholder="e.g., Submit 2 fellowship apps, finish abstract..."></div>';
+  h+='<button onclick="submitCheckin()" style="width:100%;padding:14px;background:linear-gradient(135deg,#1a1620,#2a2530);color:#f5f0e8;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer">Save Check-in →</button></div>';
+  document.getElementById('modal-q-content').innerHTML=h;document.getElementById('modal-q').classList.remove('hidden');
+}
+function submitCheckin(){
+  if(!U)return;if(!U.weeklyGoals)U.weeklyGoals=[];if(!U.checkins)U.checkins=[];
+  var st=document.getElementById('ci-status');var statusVal=st?st.value:'';
+  var dev=document.getElementById('ci-dev');var devVal=dev?dev.value.trim():'';
+  var goal=document.getElementById('ci-goal');var goalVal=goal?goal.value.trim():'';
+  U.checkins.push({date:new Date().toISOString(),status:statusVal,developments:devVal,goal:goalVal});
+  if(U.checkins.length>52)U.checkins=U.checkins.slice(-52);
+  if(statusVal&&U.weeklyGoals.length)U.weeklyGoals[U.weeklyGoals.length-1].status=statusVal;
+  if(goalVal){U.weeklyGoals.push({goal:goalVal,date:new Date().toISOString(),status:'active'});if(U.weeklyGoals.length>52)U.weeklyGoals=U.weeklyGoals.slice(-52)}
+  U.lastCheckin=new Date().toISOString();saveUser();closeModal('modal-q');
+  notify('Check-in saved! Stay focused this week. 💪');renderHome();
+}
+
+// ===== "YOUR STATUS" — WHAT CHANGED FEED =====
+function renderWhatsChanged(){
+  var el=document.getElementById('whats-changed');if(!el||!U)return;
+  if(U.tier==='free'&&!U.isTrial){el.style.display='none';return}
+  var now=new Date();var items=[];var cp=U.careerProfile||{};var stage=cp.stage||'student';
+  if(U.weeklyGoals&&U.weeklyGoals.length){var cur=U.weeklyGoals[U.weeklyGoals.length-1];if(cur.status==='active')items.push({icon:'🎯',text:'This week: <strong>'+cur.goal+'</strong>'})}
+  var lc=U.lastCheckin?new Date(U.lastCheckin):null;if(!lc||Math.floor((now-lc)/86400000)>=7)items.push({icon:'📋',text:'<span onclick="showWeeklyCheckin()" style="color:var(--accent);cursor:pointer;text-decoration:underline">Weekly check-in ready</span> — 2 min'});
+  if(cp.lastUpdated){var age=Math.floor((now-new Date(cp.lastUpdated))/86400000);if(age>=30)items.push({icon:'🔄',text:'Scores are <strong>'+age+'d old</strong>. <span onclick="showUpdateProfile()" style="color:var(--accent);cursor:pointer;text-decoration:underline">Refresh</span>'})}
+  var m=now.getMonth();var alerts={student:[{m:8,t:'ERAS opens soon — personal statement ready?'},{m:2,t:'Match Day this month! 🎉'},{m:6,t:'Away rotation season'}],resident:[{m:5,t:'Fellowship apps opening soon'},{m:9,t:'Contract season — run Contract Intelligence'}],fellow:[{m:9,t:'Job search — analyze every offer'}],attending:[{m:0,t:'New year — review financial trajectory'},{m:9,t:'Contract renewal season'}]};
+  (alerts[stage]||alerts.student).forEach(function(a){if(a.m===m)items.push({icon:'📅',text:a.t})});
+  if(U.toolHistory&&U.toolHistory.length){var lt=U.toolHistory[U.toolHistory.length-1];items.push({icon:'🧭',text:'Last ran <strong>'+lt.tool+'</strong>'+(lt.score?' ('+lt.score+')':'')})}
+  if(!items.length){el.style.display='none';return}
+  el.style.display='';
+  var h='<div style="padding:14px 16px;background:linear-gradient(160deg,rgba(200,168,124,.06),rgba(200,168,124,.02));border:1px solid rgba(200,168,124,.15);border-radius:12px">';
+  h+='<div style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">📌 Your Status</div>';
+  items.forEach(function(it){h+='<div style="display:flex;align-items:flex-start;gap:8px;padding:4px 0;font-size:12px;color:var(--text);line-height:1.5"><span style="flex-shrink:0">'+it.icon+'</span><span>'+it.text+'</span></div>'});
+  h+='</div>';el.innerHTML=h;
+}
+
+// ===== MONTHLY CAREER REPORT =====
+function generateMonthlyReport(){
+  if(!U)return;var cp=U.careerProfile||{};var now=new Date();
+  var monthName=now.toLocaleDateString('en-US',{month:'long',year:'numeric'});
+  var sl={student:'Medical Student',resident:'Resident',fellow:'Fellow',attending:'Attending Physician'}[cp.stage]||'Physician';
+  var spec=cp.specialty?(cp.specialty.charAt(0).toUpperCase()+cp.specialty.slice(1)):'';
+  var scores=U.scoreHistory&&U.scoreHistory.length?U.scoreHistory[U.scoreHistory.length-1].scores:{};
+  var prev=U.scoreHistory&&U.scoreHistory.length>1?U.scoreHistory[U.scoreHistory.length-2].scores:null;
+  var mTools=(U.toolHistory||[]).filter(function(t){var td=new Date(t.date);return td.getMonth()===now.getMonth()&&td.getFullYear()===now.getFullYear()});
+  var total=VAULT_ITEMS?VAULT_ITEMS.length:15;
+  var uniq=[];(U.toolHistory||[]).forEach(function(t){if(uniq.indexOf(t.tool)<0)uniq.push(t.tool)});
+  var mCheckins=(U.checkins||[]).filter(function(c){var cd=new Date(c.date);return cd.getMonth()===now.getMonth()});
+  var goalsHit=(U.weeklyGoals||[]).filter(function(g){return g.status==='completed'&&new Date(g.date).getMonth()===now.getMonth()}).length;
+  var h='<div style="padding:24px;max-width:600px;margin:0 auto">';
+  h+='<div style="text-align:center;margin-bottom:24px;padding-bottom:20px;border-bottom:2px solid rgba(200,168,124,.2)"><div style="font-size:12px;color:var(--accent);font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px">HeartWise Career Report</div><div style="font-size:24px;font-weight:600;color:var(--text);font-family:var(--font-serif)">'+monthName+'</div><div style="font-size:13px;color:var(--text3);margin-top:4px">'+U.name+' · '+sl+(spec?' · '+spec:'')+'</div></div>';
+  h+='<div style="margin-bottom:20px"><div style="font-size:12px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Career Scores</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">';
+  [{k:'competitiveness',l:'Competitiveness',i:'🏆'},{k:'research',l:'Research',i:'🔬'},{k:'readiness',l:'Readiness',i:'🎯'},{k:'financial',l:'Financial',i:'💰'}].forEach(function(si){
+    var v=scores[si.k]||0;var d=prev?(v-(prev[si.k]||0)):0;var ds=d>0?'<span style="color:var(--green)">↑+'+d+'</span>':d<0?'<span style="color:var(--red)">↓'+d+'</span>':'';
+    var c=v>=75?'var(--green)':v>=55?'var(--accent)':'var(--red)';
+    h+='<div style="padding:12px;background:var(--bg2);border-radius:8px;text-align:center"><div style="font-size:12px;margin-bottom:4px">'+si.i+'</div><div style="font-size:22px;font-weight:700;color:'+c+';font-family:var(--font-serif)">'+v+'</div><div style="font-size:10px;color:var(--text3)">'+si.l+'</div>'+(ds?'<div style="margin-top:2px">'+ds+'</div>':'')+'</div>'});
+  h+='</div></div>';
+  h+='<div style="margin-bottom:20px"><div style="font-size:12px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Monthly Activity</div><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">';
+  h+='<div style="padding:12px;background:var(--bg2);border-radius:8px;text-align:center"><div style="font-size:20px;font-weight:700;color:var(--text)">'+mTools.length+'</div><div style="font-size:10px;color:var(--text3)">Tools Run</div></div>';
+  h+='<div style="padding:12px;background:var(--bg2);border-radius:8px;text-align:center"><div style="font-size:20px;font-weight:700;color:var(--text)">'+mCheckins.length+'</div><div style="font-size:10px;color:var(--text3)">Check-ins</div></div>';
+  h+='<div style="padding:12px;background:var(--bg2);border-radius:8px;text-align:center"><div style="font-size:20px;font-weight:700;color:var(--text)">'+goalsHit+'</div><div style="font-size:10px;color:var(--text3)">Goals Hit</div></div></div></div>';
+  var pct=Math.round((uniq.length/total)*100);
+  h+='<div style="margin-bottom:20px"><div style="font-size:12px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Tool Coverage</div>';
+  h+='<div style="font-size:11px;color:var(--text2);margin-bottom:6px">'+uniq.length+' of '+total+' tools explored ('+pct+'%)</div>';
+  h+='<div style="height:8px;background:var(--bg3);border-radius:4px;overflow:hidden"><div style="height:100%;width:'+pct+'%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:4px"></div></div></div>';
+  if(mCheckins.length){
+    h+='<div style="margin-bottom:20px"><div style="font-size:12px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Check-in Summary</div>';
+    mCheckins.forEach(function(ci){var cd=new Date(ci.date);
+      h+='<div style="padding:8px 0;border-bottom:1px solid var(--border);font-size:11px"><div style="color:var(--text3);margin-bottom:2px">'+cd.toLocaleDateString('en-US',{month:'short',day:'numeric'})+'</div>';
+      if(ci.goal) h+='<div style="color:var(--text)">Goal: '+ci.goal+'</div>';
+      if(ci.developments) h+='<div style="color:var(--text2);font-style:italic;margin-top:2px">'+ci.developments+'</div>';
+      h+='</div>'});
+    h+='</div>';
+  }
+  h+='<div style="text-align:center;padding-top:16px;border-top:1px solid var(--border)"><div style="font-size:10px;color:var(--text3);margin-bottom:12px">Generated by HeartWise · '+new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})+'</div>';
+  h+='<button onclick="printReport()" style="padding:10px 24px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#0a0a0f;border:none;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;margin-right:8px">🖨 Print / Save PDF</button>';
+  h+='<button onclick="closeModal(\'modal-q\')" style="padding:10px 24px;background:var(--bg2);color:var(--text);border:1px solid var(--border);border-radius:8px;font-size:12px;cursor:pointer">Close</button></div></div>';
+  document.getElementById('modal-q-content').innerHTML=h;document.getElementById('modal-q').classList.remove('hidden');
+}
+function printReport(){window.print()}
 
 
 </script>

@@ -6586,6 +6586,7 @@ function renderToolProgress(){
   var el=document.getElementById('tool-progress');
   if(!el||!U)return;
   if(U.tier==='free'&&!U.isTrial){el.style.display='none';return}
+  var cp=U.careerProfile||{};
 
   var toolsUsed=[];
   (U.toolHistory||[]).forEach(function(t){

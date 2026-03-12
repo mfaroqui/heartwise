@@ -1652,12 +1652,12 @@ function renderHome(){
   // Render dynamic engagement sections (Core, Mentorship, and trial users only)
   var _hasPlan=U.tier==='core'||U.tier==='elite'||U.tier==='admin'||U.isTrial;
   if(_hasPlan){
-    renderWeeklyFocus();
-    renderToolProgress();
-    renderUpcomingDeadlines();
-    renderWeeklyTip();
-    renderToolOfWeek();
-    renderLoginStreak();
+    try{renderWeeklyFocus()}catch(e){console.error('WeeklyFocus:',e)}
+    try{renderToolProgress()}catch(e){console.error('ToolProgress:',e)}
+    try{renderUpcomingDeadlines()}catch(e){console.error('Deadlines:',e)}
+    try{renderWeeklyTip()}catch(e){console.error('WeeklyTip:',e)}
+    try{renderToolOfWeek()}catch(e){console.error('ToolOfWeek:',e)}
+    try{renderLoginStreak()}catch(e){console.error('LoginStreak:',e)}
   } else {
     // Hide all dynamic sections for free users
     ['weekly-focus','tool-progress','upcoming-deadlines','weekly-tip','tool-of-week','login-streak'].forEach(function(id){

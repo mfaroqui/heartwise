@@ -100,6 +100,8 @@ a:hover{color:var(--accent2)}
 .t-student{background:var(--green-dim);color:var(--green)}.t-resident{background:var(--blue-dim);color:var(--blue)}.t-fellow{background:var(--accent-dim);color:var(--accent)}.t-cat{background:var(--bg4);color:var(--text3);font-size:10px;letter-spacing:.5px}.t-reviewed{background:var(--green-dim);color:var(--green)}.t-pending{background:var(--accent-dim);color:var(--accent)}
 
 .scr{display:none}.scr.on{display:block}
+#dash-scores{grid-template-columns:repeat(4,1fr)}
+@media(max-width:360px){#dash-scores{grid-template-columns:repeat(2,1fr)}}
 
 /* ========== LANDING ========== */
 .lp{overflow-y:auto;min-height:100vh;position:relative}

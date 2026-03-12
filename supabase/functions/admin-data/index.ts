@@ -33,20 +33,50 @@ Deno.serve(async (req: Request) => {
     }
 
     const sb = createClient(supaUrl, serviceKey);
+    const action = payload.action || "fetch";
 
-    // Fetch all profiles
+    // Admin migration action — add columns to profiles
+    if (action === "migrate") {
+      const { data, error } = await sb.rpc("exec_migration", {
+        sql_text: `
+          ALTER TABLE profiles ADD COLUMN IF NOT EXISTS session_data JSONB DEFAULT NULL;
+          ALTER TABLE profiles ADD COLUMN IF NOT EXISTS last_sync TIMESTAMPTZ DEFAULT NULL;
+        `
+      });
+      if (error) {
+        // Try direct approach — create a simple function first
+        const createFn = await fetch(`${supaUrl}/rest/v1/rpc/exec_migration`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${serviceKey}`,
+            "apikey": serviceKey,
+          },
+          body: JSON.stringify({ sql_text: "SELECT 1" }),
+        });
+        return new Response(JSON.stringify({ 
+          error: "Migration RPC not available. Please run this SQL in the Supabase SQL Editor:",
+          sql: "ALTER TABLE profiles ADD COLUMN IF NOT EXISTS session_data JSONB DEFAULT NULL; ALTER TABLE profiles ADD COLUMN IF NOT EXISTS last_sync TIMESTAMPTZ DEFAULT NULL;"
+        }), {
+          headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
+        });
+      }
+      return new Response(JSON.stringify({ action: "migrated", success: true }), {
+        headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
+      });
+    }
+
+    // Default: Fetch all data
     const { data: profiles, error: e1 } = await sb
       .from("profiles")
       .select("*")
       .order("created_at", { ascending: false });
 
-    // Fetch all questions
     const { data: questions, error: e2 } = await sb
       .from("questions")
       .select("*")
       .order("date", { ascending: false });
 
-    // Fetch all messages
     const { data: messages, error: e3 } = await sb
       .from("messages")
       .select("*")

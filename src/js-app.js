@@ -538,6 +538,21 @@ async function doLogin(e){
         }catch(ex2){console.warn('Trial sync:',ex2)}
         U=user;if(!U.usage)U.usage={ai:0,credits:TIERS[U.tier]?.credits||0,month:new Date().getMonth()};
         localStorage.setItem('hw_session',JSON.stringify(U));
+        // Restore session data from Supabase (career profile, tool history, etc.)
+        loadFromSupabase(email,function(profile){
+          if(profile&&profile.session_data){
+            var sd=typeof profile.session_data==='string'?JSON.parse(profile.session_data):profile.session_data;
+            if(sd.careerProfile&&(!U.careerProfile||!U.careerProfile.lastUpdated)){U.careerProfile=sd.careerProfile}
+            if(sd.scoreHistory&&sd.scoreHistory.length>0&&(!U.scoreHistory||U.scoreHistory.length===0)){U.scoreHistory=sd.scoreHistory}
+            if(sd.toolHistory&&sd.toolHistory.length>0&&(!U.toolHistory||U.toolHistory.length===0)){U.toolHistory=sd.toolHistory}
+            if(sd.milestones&&sd.milestones.length>0){U.milestones=sd.milestones}
+            if(sd.loginDays&&sd.loginDays.length>0){U.loginDays=sd.loginDays}
+            localStorage.setItem('hw_session',JSON.stringify(U));
+            var udb=DB.users.find(function(u){return u.id===U.id});
+            if(udb){udb.careerProfile=U.careerProfile;udb.scoreHistory=U.scoreHistory;udb.toolHistory=U.toolHistory;udb.milestones=U.milestones;saveDB()}
+            renderHome(); // Re-render with restored data
+          }
+        });
         if(!localStorage.getItem('hw_disc_'+U.id)){enterApp();showDisc()}else{enterApp()}
         return;
       }
@@ -551,6 +566,20 @@ async function doLogin(e){
   if(email===AE.toLowerCase()&&user.tier!=='admin'){user.tier='admin';user.role='admin';saveDB()}
   U=user;if(!U.usage)U.usage={ai:0,credits:TIERS[U.tier]?.credits||0,month:new Date().getMonth()};
   localStorage.setItem('hw_session',JSON.stringify(U));
+  // Try restoring session from Supabase
+  loadFromSupabase(email,function(profile){
+    if(profile&&profile.session_data){
+      var sd=typeof profile.session_data==='string'?JSON.parse(profile.session_data):profile.session_data;
+      if(sd.careerProfile&&(!U.careerProfile||!U.careerProfile.lastUpdated)){U.careerProfile=sd.careerProfile}
+      if(sd.scoreHistory&&sd.scoreHistory.length>0&&(!U.scoreHistory||U.scoreHistory.length===0)){U.scoreHistory=sd.scoreHistory}
+      if(sd.toolHistory&&sd.toolHistory.length>0&&(!U.toolHistory||U.toolHistory.length===0)){U.toolHistory=sd.toolHistory}
+      if(sd.milestones&&sd.milestones.length>0){U.milestones=sd.milestones}
+      localStorage.setItem('hw_session',JSON.stringify(U));
+      var udb=DB.users.find(function(u){return u.id===U.id});
+      if(udb){udb.careerProfile=U.careerProfile;udb.scoreHistory=U.scoreHistory;udb.toolHistory=U.toolHistory;udb.milestones=U.milestones;saveDB()}
+      renderHome();
+    }
+  });
   if(!localStorage.getItem('hw_disc_'+U.id)){enterApp();showDisc()}else{enterApp()}
 }
 
@@ -562,11 +591,26 @@ function doSignup(e){
   const role=document.getElementById('s-role').value;
   const inst=document.getElementById('s-inst').value.trim();
   if(DB.users.find(u=>u.email.toLowerCase()===email)){notify('Email already registered',1);return}
-  const user={id:'u'+DB.nextUserId++,name,email,pass,role,tier:'free',institution:inst,usage:{ai:0,credits:0,month:new Date().getMonth()}};
+  const user={id:'u'+DB.nextUserId++,name,email,pass,role,tier:'free',institution:inst,usage:{ai:0,credits:0,month:new Date().getMonth()},emailVerified:false};
   DB.users.push(user);saveDB();
-  if(_supaClient){_supaClient.auth.signUp({email,password:pass,options:{data:{name}}}).catch(()=>{})}
+  // Send verification email via Supabase
+  if(_supaClient){
+    _supaClient.auth.signUp({email,password:pass,options:{data:{name},emailRedirectTo:window.location.origin+window.location.pathname}}).then(function(res){
+      if(res.data&&res.data.user&&!res.data.session){
+        // Supabase requires email confirmation — show verification prompt
+        user.emailVerified=false;saveDB();
+      }else if(res.data&&res.data.session){
+        // Email confirmation disabled in Supabase — mark verified
+        user.emailVerified=true;saveDB();
+      }
+    }).catch(function(){});
+  }
   U=user;localStorage.setItem('hw_session',JSON.stringify(U));
   enterApp();showDisc();
+  // Show verification reminder
+  if(!user.emailVerified){
+    setTimeout(function(){notify('Check your email to verify your account',0)},2000);
+  }
 }
 
 function doLogout(){
@@ -1620,14 +1664,43 @@ function saveUser(){
   }
   saveDB();
   localStorage.setItem('hw_session',JSON.stringify(U));
-  // Sync to Supabase
-  if(_supaClient&&U.email){
-    _supaClient.from('profiles').update({
-      career_profile:U.careerProfile,
-      score_history:U.scoreHistory,
-      milestones:U.milestones
-    }).eq('email',U.email.toLowerCase()).then(function(){}).catch(function(e){logError('profileUpdate',e)});
-  }
+  // Debounced sync to Supabase
+  if(_syncTimer)clearTimeout(_syncTimer);
+  _syncTimer=setTimeout(syncToSupabase,3000);
+}
+var _syncTimer=null;
+function syncToSupabase(){
+  if(!U||!U.email)return;
+  var sessionData={
+    careerProfile:U.careerProfile||null,
+    scoreHistory:U.scoreHistory||[],
+    toolHistory:U.toolHistory||[],
+    milestones:U.milestones||[],
+    loginDays:U.loginDays||[],
+    usage:U.usage||{},
+    tier:U.tier,
+    isTrial:U.isTrial||false,
+    trialEnd:U.trialEnd||null
+  };
+  // Try sync-session edge function (uses service role, no column issues)
+  fetch('https://kqyvfykbnboesskxovtw.supabase.co/functions/v1/sync-session',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY},
+    body:JSON.stringify({email:U.email,action:'save',session_data:sessionData})
+  }).then(function(r){return r.json()}).then(function(d){
+    if(d.error)console.warn('Session sync:',d.error);
+  }).catch(function(e){console.warn('Session sync failed:',e)});
+}
+// Load session from Supabase on login (restores data across devices)
+function loadFromSupabase(email,callback){
+  fetch('https://kqyvfykbnboesskxovtw.supabase.co/functions/v1/sync-session',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY},
+    body:JSON.stringify({email:email,action:'load'})
+  }).then(function(r){return r.json()}).then(function(d){
+    if(d.found&&d.profile){callback(d.profile)}
+    else{callback(null)}
+  }).catch(function(e){console.warn('Session load failed:',e);callback(null)});
 }
 
 // Record tool usage for strategy history
@@ -1925,7 +1998,7 @@ function renderWeeklyTip(){
 // 5. Tool of the Week spotlight
 function renderToolOfWeek(){
   var el=document.getElementById('tool-of-week');
-  if(!el)return;
+  if(!el||!U)return;
   var weekNum=Math.floor((new Date()-new Date(new Date().getFullYear(),0,1))/(7*86400000));
   var tool=VAULT_ITEMS[weekNum%VAULT_ITEMS.length];
   if(!tool)return;
@@ -5401,10 +5474,39 @@ function ftCalc(){
 const STRIPE_PK='pk_test_51T5mX3PXNQA0ks87KmMtyTYTQZKBLJ6dE5U15eSBf97sK2ecqdU1DYjcJYpevRpdJnE1Xyi0Uow6PG2J8b4A8UCq004h8agh3H';
 const STRIPE_PRICES={
   core:'price_1T5rG5PXNQA0ks87NtjJVnYi',
+  core_annual:'price_ANNUAL_PLACEHOLDER',
   elite:'price_1T5rGQPXNQA0ks87WdzaewtE',
   audit:'price_1T5rGtPXNQA0ks8758d20r97',
   intensive:'price_1T5rHJPXNQA0ks87dGsOMuWM'
 };
+
+var _coreBillingAnnual=false;
+function toggleCoreBilling(force){
+  if(force==='monthly')_coreBillingAnnual=false;
+  else if(force==='annual')_coreBillingAnnual=true;
+  else _coreBillingAnnual=!_coreBillingAnnual;
+  var knob=document.getElementById('core-toggle-knob');
+  var moLabel=document.getElementById('core-toggle-mo');
+  var yrLabel=document.getElementById('core-toggle-yr');
+  var priceDisplay=document.getElementById('core-price-display');
+  var btn=document.getElementById('core-subscribe-btn');
+  if(knob)knob.style.left=_coreBillingAnnual?'20px':'2px';
+  if(moLabel){moLabel.style.color=_coreBillingAnnual?'var(--text3)':'var(--accent)';moLabel.style.fontWeight=_coreBillingAnnual?'500':'600'}
+  if(yrLabel){yrLabel.style.color=_coreBillingAnnual?'var(--accent)':'var(--text3)';yrLabel.style.fontWeight=_coreBillingAnnual?'600':'500'}
+  if(priceDisplay)priceDisplay.innerHTML=_coreBillingAnnual?'<div class="plan-p">$249<span> /year</span></div><div style="font-size:11px;color:var(--green);font-weight:600;margin-top:-4px;margin-bottom:4px">$20.75/mo — save $99 vs monthly</div>':'<div class="plan-p">$29<span> /mo</span></div>';
+  if(btn){btn.textContent=_coreBillingAnnual?'Get Core — $249/year':'Get Core — $29/mo';btn.setAttribute('onclick',_coreBillingAnnual?"subPlan('core_annual')":"subPlan('core')")}
+  // Also update landing page toggle if present
+  var lKnob=document.getElementById('lp-core-toggle-knob');
+  var lMo=document.getElementById('lp-core-toggle-mo');
+  var lYr=document.getElementById('lp-core-toggle-yr');
+  var lPrice=document.getElementById('lp-core-price-display');
+  var lBtn=document.getElementById('lp-core-subscribe-btn');
+  if(lKnob)lKnob.style.left=_coreBillingAnnual?'20px':'2px';
+  if(lMo){lMo.style.color=_coreBillingAnnual?'var(--text3)':'var(--accent)';lMo.style.fontWeight=_coreBillingAnnual?'500':'600'}
+  if(lYr){lYr.style.color=_coreBillingAnnual?'var(--accent)':'var(--text3)';lYr.style.fontWeight=_coreBillingAnnual?'600':'500'}
+  if(lPrice)lPrice.innerHTML=_coreBillingAnnual?'<div class="plan-p">$249<span> /year</span></div><div style="font-size:11px;color:var(--green);font-weight:600;margin-top:-4px;margin-bottom:4px">$20.75/mo — save $99 vs monthly</div>':'<div class="plan-p">$29<span> /mo</span></div>';
+  if(lBtn){lBtn.textContent=_coreBillingAnnual?'Get Core — $249/year':'Get Core — $29/mo';lBtn.setAttribute('onclick',_coreBillingAnnual?"planSignup('core_annual')":"planSignup('core')")}
+}
 
 // Landing page plan signup: if logged in → Stripe, if not → onboard with plan intent
 function planSignup(plan){
@@ -5445,6 +5547,8 @@ function subPlan(plan){
   if(!U){notify('Please sign in first.',1);return}
   if(plan==='core'){
     startCheckout(STRIPE_PRICES.core,'subscription');
+  }else if(plan==='core_annual'){
+    startCheckout(STRIPE_PRICES.core_annual,'subscription');
   }else if(plan==='elite'){
     startCheckout(STRIPE_PRICES.elite,'subscription');
   }else if(plan==='audit'){
@@ -5526,14 +5630,7 @@ function admUpdateTierButtons(){
   var el=document.getElementById('ts-current');
   if(el)el.textContent='Current: '+(U.tier||'free').toUpperCase();
 }
-function adminSwitchTier(tier){
-  U.tier=tier;if(tier==='elite')U.isTrial=false;
-  localStorage.setItem('hw_session',JSON.stringify(U));
-  admUpdateTierButtons();
-  var levTab=document.getElementById('nav-leverage');
-  if(levTab){levTab.style.display=((tier==='elite'&&!U.isTrial)||tier==='core'||tier==='admin')?'':'none'}
-  notify('Switched to '+tier.toUpperCase());
-}
+// adminSwitchTier defined earlier (~line 4297) — removed duplicate
 function adminTab(tab,btn){
   curAdminTab=tab;_admSelectedUser=null;
   document.querySelectorAll('#admin-overlay .atab').forEach(function(t){t.classList.remove('on')});
@@ -6263,7 +6360,7 @@ async function obComplete(){
       profile_data:safeProfileData(p)
     };
     if(_supaClient){
-      _supaClient.auth.signUp({email:p.email.toLowerCase(),password:p.pass,options:{data:{name:p.name}}}).catch(function(){});
+      _supaClient.auth.signUp({email:p.email.toLowerCase(),password:p.pass,options:{data:{name:p.name},emailRedirectTo:window.location.origin+window.location.pathname}}).catch(function(){});
       _supaClient.from('profiles').insert([_profilePayload2]).then(function(res){
         if(res.error){console.warn('Client profile insert failed, trying server-side:',res.error);syncProfileToServer(_profilePayload2)}
       }).catch(function(){syncProfileToServer(_profilePayload2)});
@@ -6295,7 +6392,7 @@ async function obComplete(){
     profile_data:safeProfileData(p)
   };
   if(_supaClient){
-    _supaClient.auth.signUp({email:p.email.toLowerCase(),password:p.pass,options:{data:{name:p.name}}}).catch(()=>{});
+    _supaClient.auth.signUp({email:p.email.toLowerCase(),password:p.pass,options:{data:{name:p.name},emailRedirectTo:window.location.origin+window.location.pathname}}).catch(()=>{});
     _supaClient.from('profiles').insert([_profilePayload]).then(function(res){
       if(res.error){console.warn('Client profile insert failed, trying server-side:',res.error);syncProfileToServer(_profilePayload)}
     }).catch(function(){syncProfileToServer(_profilePayload)});

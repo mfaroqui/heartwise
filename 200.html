@@ -6490,13 +6490,15 @@ function renderHome(){
 
   // Render dynamic engagement sections (Core, Mentorship, and trial users only)
   var _hasPlan=U.tier==='core'||U.tier==='elite'||U.tier==='admin'||U.isTrial;
+  // DEBUG: log to console what's happening
+  console.log('[HW-DEBUG] renderHome tier='+U.tier+' hasPlan='+_hasPlan+' careerProfile='+(U.careerProfile?'yes':'no')+' stage='+(U.careerProfile?U.careerProfile.stage:'none'));
   if(_hasPlan){
-    try{renderWeeklyFocus()}catch(e){console.error('WeeklyFocus:',e)}
-    try{renderToolProgress()}catch(e){console.error('ToolProgress:',e)}
-    try{renderUpcomingDeadlines()}catch(e){console.error('Deadlines:',e)}
-    try{renderWeeklyTip()}catch(e){console.error('WeeklyTip:',e)}
-    try{renderToolOfWeek()}catch(e){console.error('ToolOfWeek:',e)}
-    try{renderLoginStreak()}catch(e){console.error('LoginStreak:',e)}
+    try{renderWeeklyFocus();console.log('[HW-DEBUG] WeeklyFocus rendered')}catch(e){console.error('WeeklyFocus:',e)}
+    try{renderToolProgress();console.log('[HW-DEBUG] ToolProgress rendered')}catch(e){console.error('ToolProgress:',e)}
+    try{renderUpcomingDeadlines();console.log('[HW-DEBUG] Deadlines rendered')}catch(e){console.error('Deadlines:',e)}
+    try{renderWeeklyTip();console.log('[HW-DEBUG] WeeklyTip rendered')}catch(e){console.error('WeeklyTip:',e)}
+    try{renderToolOfWeek();console.log('[HW-DEBUG] ToolOfWeek rendered')}catch(e){console.error('ToolOfWeek:',e)}
+    try{renderLoginStreak();console.log('[HW-DEBUG] LoginStreak rendered')}catch(e){console.error('LoginStreak:',e)}
   } else {
     // Hide all dynamic sections for free users
     ['weekly-focus','tool-progress','upcoming-deadlines','weekly-tip','tool-of-week','login-streak'].forEach(function(id){

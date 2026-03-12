@@ -5185,10 +5185,26 @@ async function admLoadData(){
   if(!c)return;
   c.innerHTML='<div style="text-align:center;padding:40px;color:var(--text3)">Loading...</div>';
   try{
-    if(typeof _supaClient!=='undefined'&&_supaClient){
-      if(!_sbProfiles){var r1=await _supaClient.from('profiles').select('*').order('created_at',{ascending:false});if(!r1.error&&r1.data)_sbProfiles=r1.data}
-      if(!_sbQuestions){var r2=await _supaClient.from('questions').select('*').order('date',{ascending:false});if(!r2.error&&r2.data)_sbQuestions=r2.data}
-      if(!_sbMessages){var r3=await _supaClient.from('messages').select('*').order('date',{ascending:false});if(!r3.error&&r3.data)_sbMessages=r3.data}
+    if(typeof _supaClient!=='undefined'&&_supaClient&&U.email){
+      // Use admin-data edge function (bypasses RLS)
+      if(!_sbProfiles||!_sbQuestions||!_sbMessages){
+        var admResp=await fetch(SUPABASE_URL+'/functions/v1/admin-data',{
+          method:'POST',
+          headers:{'Content-Type':'application/json','Authorization':'Bearer '+SUPABASE_KEY},
+          body:JSON.stringify({email:U.email})
+        });
+        if(admResp.ok){
+          var admData=await admResp.json();
+          if(admData.profiles)_sbProfiles=admData.profiles;
+          if(admData.questions)_sbQuestions=admData.questions;
+          if(admData.messages)_sbMessages=admData.messages;
+        } else {
+          // Fallback to direct queries (may return empty due to RLS)
+          if(!_sbProfiles){var r1=await _supaClient.from('profiles').select('*').order('created_at',{ascending:false});if(!r1.error&&r1.data)_sbProfiles=r1.data}
+          if(!_sbQuestions){var r2=await _supaClient.from('questions').select('*').order('date',{ascending:false});if(!r2.error&&r2.data)_sbQuestions=r2.data}
+          if(!_sbMessages){var r3=await _supaClient.from('messages').select('*').order('date',{ascending:false});if(!r3.error&&r3.data)_sbMessages=r3.data}
+        }
+      }
     }
   }catch(e){console.warn('Admin data load:',e)}
   try{admRenderMetrics();admRender()}catch(e){console.error('Admin render:',e);c.innerHTML='<div style="padding:40px;text-align:center;color:#c44d56">Render error. Check console.</div>'}

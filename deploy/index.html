@@ -722,8 +722,6 @@ a:hover{color:var(--accent2)}
 @media(max-width:520px){
   .hw-compare-row>div:last-child{grid-template-columns:1fr!important}
 }
-/* Upgrade float hover */
-#upgrade-float-btn:hover{transform:scale(1.05);box-shadow:0 6px 28px rgba(200,168,124,.35)}
 /* Blurred results overlay for free users */
 .hw-blur-gate{position:relative}
 .hw-blur-gate .hw-blur-content{filter:blur(6px);pointer-events:none;user-select:none;-webkit-user-select:none}
@@ -3124,11 +3122,7 @@ Sign Out</button>
 </div>
 </div>
 
-<!-- Floating Upgrade Button (Core users) -->
-<div id="upgrade-float-btn" class="hidden" onclick="navTo('scr-profile');showUpgrade()" style="position:fixed;bottom:24px;right:24px;z-index:900;padding:10px 18px;background:linear-gradient(135deg,var(--accent2),var(--accent));color:#0a0a0f;border-radius:40px;cursor:pointer;font-size:11px;font-weight:700;letter-spacing:.3px;box-shadow:0 4px 20px rgba(200,168,124,.25);display:flex;align-items:center;gap:8px;transition:transform .2s,box-shadow .2s">
-<span style="font-size:14px">⭐</span>
-<span>Get Mentorship</span>
-</div>
+
 
 
 <script>
@@ -5486,27 +5480,16 @@ function enterApp(){
 // ===== UPGRADE ELEMENTS =====
 function showUpgradeElements(){
   var stickyBar=document.getElementById('upgrade-sticky-bar');
-  var floatBtn=document.getElementById('upgrade-float-btn');
-  if(!stickyBar||!floatBtn)return;
+  if(!stickyBar)return;
 
   if(U.tier==='free'){
-    // Sticky bottom bar for free users
     stickyBar.classList.remove('hidden');
     document.body.classList.add('has-upgrade-bar');
-    // Update remaining analyses count
     var t=TIERS.free;
     var remaining=Math.max(0,t.ai-(U.usage?U.usage.ai:0));
     document.getElementById('upgrade-bar-sub').textContent=remaining+' of '+t.ai+' free analyses remaining — Core $29/mo';
-    floatBtn.classList.add('hidden');
-  } else if(U.tier==='core'){
-    // Floating button for core users
-    stickyBar.classList.add('hidden');
-    document.body.classList.remove('has-upgrade-bar');
-    floatBtn.classList.remove('hidden');
   } else {
-    // Mentorship/admin — hide everything
     stickyBar.classList.add('hidden');
-    floatBtn.classList.add('hidden');
     document.body.classList.remove('has-upgrade-bar');
   }
 }

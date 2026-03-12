@@ -660,27 +660,16 @@ function enterApp(){
 // ===== UPGRADE ELEMENTS =====
 function showUpgradeElements(){
   var stickyBar=document.getElementById('upgrade-sticky-bar');
-  var floatBtn=document.getElementById('upgrade-float-btn');
-  if(!stickyBar||!floatBtn)return;
+  if(!stickyBar)return;
 
   if(U.tier==='free'){
-    // Sticky bottom bar for free users
     stickyBar.classList.remove('hidden');
     document.body.classList.add('has-upgrade-bar');
-    // Update remaining analyses count
     var t=TIERS.free;
     var remaining=Math.max(0,t.ai-(U.usage?U.usage.ai:0));
     document.getElementById('upgrade-bar-sub').textContent=remaining+' of '+t.ai+' free analyses remaining — Core $29/mo';
-    floatBtn.classList.add('hidden');
-  } else if(U.tier==='core'){
-    // Floating button for core users
-    stickyBar.classList.add('hidden');
-    document.body.classList.remove('has-upgrade-bar');
-    floatBtn.classList.remove('hidden');
   } else {
-    // Mentorship/admin — hide everything
     stickyBar.classList.add('hidden');
-    floatBtn.classList.add('hidden');
     document.body.classList.remove('has-upgrade-bar');
   }
 }

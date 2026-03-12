@@ -1121,16 +1121,21 @@ function renderDashboard(){
   var cp=U.careerProfile;
   if(!cp||!cp.lastUpdated){
     document.getElementById('career-dashboard').style.display='none';
-    // Show a prompt to complete their profile
+    // Show a prompt to complete their profile (paid/trial users only)
     var focusEl=document.getElementById('weekly-focus');
     if(focusEl){
-      focusEl.style.display='';
-      focusEl.innerHTML='<div onclick="showUpdateProfile()" style="padding:20px;background:linear-gradient(160deg,rgba(200,168,124,.1),rgba(200,168,124,.03));border:2px solid rgba(200,168,124,.3);border-radius:14px;cursor:pointer;text-align:center">'
-        +'<div style="font-size:32px;margin-bottom:10px">📊</div>'
-        +'<div style="font-size:16px;font-weight:700;color:var(--text);font-family:var(--font-serif);margin-bottom:6px">Set Up Your Career Profile</div>'
-        +'<div style="font-size:13px;color:var(--text2);line-height:1.6;max-width:360px;margin:0 auto 12px">Tell us your training stage, specialty, and goals — and HeartWise will personalize your entire experience. Better data = better recommendations.</div>'
-        +'<div style="font-size:12px;color:var(--accent);font-weight:600">Takes 2 minutes → personalized dashboard, deadlines, and weekly focus ✨</div>'
-        +'</div>';
+      var _hasPlan2=U.tier==='core'||U.tier==='elite'||U.tier==='admin'||U.isTrial;
+      if(_hasPlan2){
+        focusEl.style.display='';
+        focusEl.innerHTML='<div onclick="showUpdateProfile()" style="padding:20px;background:linear-gradient(160deg,rgba(200,168,124,.1),rgba(200,168,124,.03));border:2px solid rgba(200,168,124,.3);border-radius:14px;cursor:pointer;text-align:center">'
+          +'<div style="font-size:32px;margin-bottom:10px">📊</div>'
+          +'<div style="font-size:16px;font-weight:700;color:var(--text);font-family:var(--font-serif);margin-bottom:6px">Set Up Your Career Profile</div>'
+          +'<div style="font-size:13px;color:var(--text2);line-height:1.6;max-width:360px;margin:0 auto 12px">Tell us your training stage, specialty, and goals — and HeartWise will personalize your entire experience. Better data = better recommendations.</div>'
+          +'<div style="font-size:12px;color:var(--accent);font-weight:600">Takes 2 minutes → personalized dashboard, deadlines, and weekly focus ✨</div>'
+          +'</div>';
+      } else {
+        focusEl.style.display='none';
+      }
     }
     return;
   }
@@ -1644,13 +1649,21 @@ function renderHome(){
     }
   },100);
 
-  // Render dynamic engagement sections
-  renderWeeklyFocus();
-  renderToolProgress();
-  renderUpcomingDeadlines();
-  renderWeeklyTip();
-  renderToolOfWeek();
-  renderLoginStreak();
+  // Render dynamic engagement sections (Core, Mentorship, and trial users only)
+  var _hasPlan=U.tier==='core'||U.tier==='elite'||U.tier==='admin'||U.isTrial;
+  if(_hasPlan){
+    renderWeeklyFocus();
+    renderToolProgress();
+    renderUpcomingDeadlines();
+    renderWeeklyTip();
+    renderToolOfWeek();
+    renderLoginStreak();
+  } else {
+    // Hide all dynamic sections for free users
+    ['weekly-focus','tool-progress','upcoming-deadlines','weekly-tip','tool-of-week','login-streak'].forEach(function(id){
+      var el=document.getElementById(id);if(el)el.style.display='none';
+    });
+  }
 }
 
 // ===== DYNAMIC ENGAGEMENT SECTIONS =====

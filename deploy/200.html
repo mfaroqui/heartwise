@@ -5960,6 +5960,17 @@ function renderDashboard(){
   var cp=U.careerProfile;
   if(!cp||!cp.lastUpdated){
     document.getElementById('career-dashboard').style.display='none';
+    // Show a prompt to complete their profile
+    var focusEl=document.getElementById('weekly-focus');
+    if(focusEl){
+      focusEl.style.display='';
+      focusEl.innerHTML='<div onclick="showUpdateProfile()" style="padding:20px;background:linear-gradient(160deg,rgba(200,168,124,.1),rgba(200,168,124,.03));border:2px solid rgba(200,168,124,.3);border-radius:14px;cursor:pointer;text-align:center">'
+        +'<div style="font-size:32px;margin-bottom:10px">📊</div>'
+        +'<div style="font-size:16px;font-weight:700;color:var(--text);font-family:var(--font-serif);margin-bottom:6px">Set Up Your Career Profile</div>'
+        +'<div style="font-size:13px;color:var(--text2);line-height:1.6;max-width:360px;margin:0 auto 12px">Tell us your training stage, specialty, and goals — and HeartWise will personalize your entire experience. Better data = better recommendations.</div>'
+        +'<div style="font-size:12px;color:var(--accent);font-weight:600">Takes 2 minutes → personalized dashboard, deadlines, and weekly focus ✨</div>'
+        +'</div>';
+    }
     return;
   }
   document.getElementById('career-dashboard').style.display='';
@@ -6527,6 +6538,11 @@ function renderWeeklyFocus(){
       focus={icon:'💰',title:'Update your financial trajectory',sub:'Market conditions change. Re-run your projections with current data.',tool:'v11',urgency:'low'};
   }
 
+  // Nudge to complete profile if stage/goal missing
+  if(!stage||stage==='student'&&!goal){
+    if(!focus) focus={icon:'📊',title:'Complete your career profile',sub:'The more you tell us, the better your experience. Set your stage, specialty, and goals to unlock personalized deadlines, weekly focus, and smarter tool recommendations.',action:'profile',urgency:'high'};
+  }
+
   // Fallback
   if(!focus){
     var unused=VAULT_ITEMS.filter(function(v){return toolsUsed.indexOf(v.title)<0});
@@ -6571,7 +6587,21 @@ function renderToolProgress(){
     else if(!nextTool) nextTool=v;
   });
 
-  if(used===0){el.style.display='none';return}
+  if(used===0){
+    // Show encouragement + profile nudge if no tools used yet
+    el.style.display='';
+    var h='<div class="card" style="padding:16px">';
+    h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">';
+    h+='<span style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px">🧭 Tool Progress</span>';
+    h+='<span style="font-size:12px;font-weight:700;color:var(--text3)">0 / '+total+'</span>';
+    h+='</div>';
+    h+='<div style="height:8px;background:var(--bg3);border-radius:4px;overflow:hidden;margin-bottom:10px"><div style="height:100%;width:0%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:4px"></div></div>';
+    h+='<div style="font-size:12px;color:var(--text2);line-height:1.5;margin-bottom:8px">You haven\'t used any tools yet. <strong>The more tools you run, the sharper your strategy gets.</strong> Each one builds on the last.</div>';
+    if(!cp.stage||!cp.goal) h+='<div style="font-size:11px;color:var(--accent);font-weight:500">💡 Tip: <span onclick="showUpdateProfile()" style="cursor:pointer;text-decoration:underline">Complete your profile</span> first — we\'ll recommend the right tools for your stage.</div>';
+    h+='</div>';
+    el.innerHTML=h;
+    return;
+  }
 
   var pct=Math.round(used/total*100);
   el.style.display='';
@@ -6621,7 +6651,20 @@ function renderUpcomingDeadlines(){
   deadlines=deadlines.filter(function(d){return d.months>=0&&d.months<=6});
   deadlines.sort(function(a,b){return a.months-b.months});
 
-  if(deadlines.length===0){el.style.display='none';return}
+  if(deadlines.length===0){
+    // If no deadlines because profile is incomplete, prompt
+    if(!cp.stage){
+      el.style.display='';
+      el.innerHTML='<div class="card" style="padding:14px;cursor:pointer" onclick="showUpdateProfile()">'
+        +'<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">📅 Upcoming Deadlines</div>'
+        +'<div style="font-size:12px;color:var(--text3);line-height:1.5">Set your training stage to see personalized deadlines — ERAS, Match Day, contract season, and more.</div>'
+        +'<div style="font-size:11px;color:var(--accent);margin-top:6px;font-weight:500">Update Profile →</div>'
+        +'</div>';
+    } else {
+      el.style.display='none';
+    }
+    return;
+  }
 
   el.style.display='';
   var h='<div class="card" style="padding:16px">';

@@ -59,6 +59,38 @@ if (!allGood) {
   console.error('\n❌ BUILD FAILED — Missing required app elements. The old build is untouched.\n');
   process.exit(1);
 }
+// ===== STEP 4b: Validate screen nesting =====
+const screensHtml = read('screens.html');
+const scrLines = screensHtml.split('\n');
+let scrDepth = 0;
+const scrScreens = [];
+for (let i = 0; i < scrLines.length; i++) {
+  const line = scrLines[i];
+  const opens = (line.match(/<div[\s>]/g) || []).length;
+  const closes = (line.match(/<\/div>/g) || []).length;
+  scrDepth += opens - closes;
+  const scrMatch = line.match(/id="(scr-[^"]+)"/);
+  if (scrMatch) scrScreens.push({ scr: scrMatch[1], line: i + 1, depth: scrDepth });
+}
+// All screens should be at the same depth (inside main-app)
+const expectedDepth = scrScreens.length > 0 ? scrScreens[0].depth : null;
+let nestingOk = true;
+scrScreens.forEach(s => {
+  if (s.depth !== expectedDepth) {
+    console.error(`❌ Screen ${s.scr} at line ${s.line} has depth ${s.depth} (expected ${expectedDepth}) — broken nesting!`);
+    nestingOk = false;
+  }
+});
+if (!nestingOk) {
+  console.error('\n❌ BUILD FAILED — Screen div nesting is broken. Navigation will not work.\n');
+  process.exit(1);
+}
+if (scrDepth < 0) {
+  console.error(`❌ BUILD FAILED — screens.html has ${Math.abs(scrDepth)} extra </div> tags (final depth: ${scrDepth})\n`);
+  process.exit(1);
+}
+console.log(`✅ Screen nesting check passed (${scrScreens.length} screens, all at depth ${expectedDepth})`);
+
 console.log('✅ HTML integrity check passed');
 
 // ===== STEP 5: Write output =====

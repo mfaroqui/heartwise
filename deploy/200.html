@@ -2081,8 +2081,10 @@ Sign Out</button>
 <!-- ===== DEEPER ANALYTICS (collapsible) ===== -->
 <div style="padding:0 24px">
 <div id="dash-detail-toggle" style="display:none;margin-bottom:12px">
-<div onclick="toggleDashDetails()" style="display:flex;align-items:center;justify-content:center;gap:6px;padding:10px;background:linear-gradient(160deg,rgba(200,168,124,.06),rgba(200,168,124,.02));border:1px solid rgba(200,168,124,.15);border-radius:10px;cursor:pointer;font-size:11px;color:var(--text2);font-weight:500;transition:background .15s">
-<span id="dash-detail-arrow">▸</span> Detailed Analytics
+<div onclick="toggleDashDetails()" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:14px 20px;background:linear-gradient(135deg,#1a1620,#2a2530);border-radius:12px;cursor:pointer;font-size:12px;color:#f5f0e8;font-weight:600;letter-spacing:.3px;transition:opacity .15s;position:relative;overflow:hidden" onmouseenter="this.style.opacity='0.9'" onmouseleave="this.style.opacity='1'">
+<div style="position:absolute;top:-30%;right:-8%;width:100px;height:100px;background:radial-gradient(circle,rgba(200,168,124,.12),transparent 60%);border-radius:50%"></div>
+<span style="position:relative">📈</span>
+<span style="position:relative"><span id="dash-detail-arrow">▸</span> Detailed Analytics — Graph, Benchmarks, Milestones</span>
 </div>
 </div>
 <div id="dash-details" style="display:none">
@@ -2116,12 +2118,15 @@ Sign Out</button>
 <!-- ===== UPDATE PROFILE + LAST UPDATED ===== -->
 <div style="padding:0 24px 14px">
 <div id="dash-update-bar" style="display:none">
-<div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:linear-gradient(160deg,rgba(200,168,124,.08),rgba(200,168,124,.03));border:1px solid rgba(200,168,124,.15);border-radius:10px">
+<div onclick="showUpdateProfile()" style="cursor:pointer;padding:16px 20px;background:linear-gradient(160deg,#f5f0e8,#ece5d8);border-radius:14px;position:relative;overflow:hidden">
+<div style="position:absolute;top:-30%;right:-10%;width:120px;height:120px;background:radial-gradient(circle,rgba(200,168,124,.15),transparent 60%);border-radius:50%"></div>
+<div style="position:relative;display:flex;align-items:center;justify-content:space-between">
 <div>
-<div style="font-size:11px;font-weight:600;color:var(--text)">📊 Career Profile</div>
-<div id="dash-last-updated-bar" style="font-size:10px;color:var(--text3);margin-top:2px"></div>
+<div style="font-size:14px;font-weight:700;color:#1a1620;font-family:var(--font-serif)">📊 Update Career Profile</div>
+<div id="dash-last-updated-bar" style="font-size:11px;color:#6a6560;margin-top:3px"></div>
 </div>
-<button onclick="showUpdateProfile()" style="font-size:10px;color:#0a0a0f;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;padding:8px 16px;border-radius:8px;cursor:pointer;font-weight:700;letter-spacing:.3px">Update →</button>
+<div style="background:linear-gradient(135deg,#1a1620,#2a2530);color:#f5f0e8;padding:10px 20px;border-radius:10px;font-size:12px;font-weight:700;letter-spacing:.3px;white-space:nowrap">Recalculate →</div>
+</div>
 </div>
 </div>
 </div>

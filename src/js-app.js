@@ -4903,8 +4903,28 @@ function adminSwitchTier(tier){
   saveDB();localStorage.setItem('hw_session',JSON.stringify(U));
   // Keep admin nav visible regardless of tier
   document.getElementById('nav-admin').style.display='';
-  enterApp();
-  navTo('scr-profile');
+  // Update badge and upgrade elements without full enterApp() navigation
+  var b=document.getElementById('user-badge');
+  var bc={free:'b-free',core:'b-core',elite:'b-pro',admin:'b-admin'};
+  if(b){b.className='badge '+(bc[tier]||'b-free');b.textContent=tier==='admin'?'MENTOR':t.name.toUpperCase()||'FREE'}
+  var showLev=(tier==='elite')||tier==='admin';
+  document.getElementById('nav-leverage').style.display=showLev?'':'none';
+  document.getElementById('upgrade-prompt').style.display=tier==='free'?'':'none';
+  var topUpgrade=document.getElementById('topbar-upgrade');
+  if(topUpgrade){
+    if(tier==='free'){topUpgrade.style.display='';topUpgrade.textContent='Subscribe'}
+    else if(tier==='core'){topUpgrade.style.display='';topUpgrade.textContent='Upgrade to Mentorship'}
+    else{topUpgrade.style.display='none'}
+  }
+  showUpgradeElements();
+  renderHome();
+  // If admin overlay is open, update tier buttons and stay in admin
+  var adminOverlay=document.getElementById('admin-overlay');
+  if(adminOverlay&&adminOverlay.style.display==='block'){
+    admUpdateTierButtons();
+  }else{
+    navTo('scr-profile');
+  }
   var note=document.getElementById('admin-tier-note');
   if(note)note.textContent=tier==='admin'?'Reset to full admin access.':'Now viewing as '+t.name+'. Admin panel still accessible.';
   notify('Switched to '+t.name);

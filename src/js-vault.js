@@ -1364,12 +1364,12 @@ v14:`<h3 class="serif">Match Competitiveness Calculator</h3>
 </div>`,
 
 v15:`<h3 class="serif">Career Strategy Builder</h3>
-<p style="color:var(--text3);font-size:12px;margin-bottom:20px">Build a step-by-step roadmap to reach your target specialty or career goal. Generates a personalized timeline with milestones.</p>
+<p style="color:var(--text3);font-size:12px;margin-bottom:20px">Build a detailed, personalized roadmap. The more you share, the more specific your plan.</p>
 <div id="csb-tool" style="font-size:13px">
 
 <div style="padding:14px 0;border-bottom:1px solid var(--border)">
 <div style="margin-bottom:6px"><strong>Where are you now?</strong></div>
-<select id="csb-now" onchange="csbUpdate()" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
+<select id="csb-now" onchange="csbStageChange()" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
 <option value="">Select current stage...</option>
 <option value="ms1">MS1-MS2 (Pre-clinical)</option>
 <option value="ms3">MS3-MS4 (Clinical)</option>
@@ -1383,10 +1383,11 @@ v15:`<h3 class="serif">Career Strategy Builder</h3>
 
 <div style="padding:14px 0;border-bottom:1px solid var(--border)">
 <div style="margin-bottom:6px"><strong>Target Specialty / Goal</strong></div>
-<select id="csb-target" onchange="csbUpdate()" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
+<select id="csb-target" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
 <option value="">Select target...</option>
 <option value="cards">Cardiology</option>
 <option value="ic">Interventional Cardiology</option>
+<option value="ep">Electrophysiology</option>
 <option value="gi">Gastroenterology</option>
 <option value="pulm">Pulmonary/Critical Care</option>
 <option value="heme">Hematology/Oncology</option>
@@ -1401,6 +1402,8 @@ v15:`<h3 class="serif">Career Strategy Builder</h3>
 <option value="rads">Radiology</option>
 <option value="gen_surg">General Surgery</option>
 <option value="em">Emergency Medicine</option>
+<option value="fm">Family Medicine</option>
+<option value="psych">Psychiatry</option>
 <option value="academic">Academic Medicine</option>
 <option value="private">Private Practice</option>
 <option value="admin">Healthcare Administration</option>
@@ -1408,23 +1411,145 @@ v15:`<h3 class="serif">Career Strategy Builder</h3>
 </div>
 
 <div style="padding:14px 0;border-bottom:1px solid var(--border)">
-<div style="margin-bottom:6px"><strong>Current Research Output</strong></div>
-<select id="csb-research" onchange="csbUpdate()" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
-<option value="0">No research yet</option>
-<option value="1">1-2 abstracts</option>
-<option value="2">3-5 publications</option>
-<option value="3">6+ publications</option>
-</select>
-</div>
-
-<div style="padding:14px 0;border-bottom:1px solid var(--border)">
 <div style="margin-bottom:6px"><strong>Timeline Urgency</strong></div>
-<select id="csb-urgency" onchange="csbUpdate()" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
+<select id="csb-urgency" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
 <option value="">Select...</option>
 <option value="1">Applying this cycle</option>
 <option value="2">Applying next cycle (1 year out)</option>
 <option value="3">2+ years to prepare</option>
 </select>
+</div>
+
+<!-- Dynamic fields that appear after stage is selected -->
+<div id="csb-detail-fields" style="display:none">
+
+<div id="csb-boards-section" style="padding:14px 0;border-bottom:1px solid var(--border)">
+<div style="margin-bottom:6px"><strong>Board Scores</strong></div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+<div><label style="font-size:10px;color:var(--text3);display:block;margin-bottom:4px">Step 1 / Level 1</label>
+<input id="csb-step1" type="text" placeholder="e.g. 230, Pass" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:6px;background:var(--bg2);color:var(--text);font-size:12px;box-sizing:border-box"></div>
+<div><label style="font-size:10px;color:var(--text3);display:block;margin-bottom:4px">Step 2 CK / Level 2</label>
+<input id="csb-step2" type="text" placeholder="e.g. 255, 248" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:6px;background:var(--bg2);color:var(--text);font-size:12px;box-sizing:border-box"></div>
+</div>
+<div style="margin-top:6px"><label style="font-size:10px;color:var(--text3);display:block;margin-bottom:4px">DO student?</label>
+<select id="csb-do" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:6px;background:var(--bg2);color:var(--text);font-size:12px">
+<option value="no">No — MD</option>
+<option value="yes">Yes — DO</option>
+</select></div>
+</div>
+
+<div style="padding:14px 0;border-bottom:1px solid var(--border)">
+<div style="margin-bottom:6px"><strong>Research Output</strong></div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+<div><label style="font-size:10px;color:var(--text3);display:block;margin-bottom:4px">First-author pubs</label>
+<select id="csb-first-auth" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:6px;background:var(--bg2);color:var(--text);font-size:12px">
+<option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3-4</option><option value="5">5+</option>
+</select></div>
+<div><label style="font-size:10px;color:var(--text3);display:block;margin-bottom:4px">Other pubs/abstracts</label>
+<select id="csb-other-pubs" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:6px;background:var(--bg2);color:var(--text);font-size:12px">
+<option value="0">0</option><option value="1">1-2</option><option value="3">3-5</option><option value="6">6+</option>
+</select></div>
+</div>
+</div>
+
+<div style="padding:14px 0;border-bottom:1px solid var(--border)">
+<div style="margin-bottom:6px"><strong>Letters of Recommendation</strong></div>
+<select id="csb-lors" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
+<option value="">Select...</option>
+<option value="none">Haven't identified writers yet</option>
+<option value="generic">Have writers but not specialty-specific</option>
+<option value="partial">1-2 specialty-specific writers secured</option>
+<option value="strong">3+ specialty-specific writers — strong relationships</option>
+</select>
+</div>
+
+<div id="csb-clinical-section" style="padding:14px 0;border-bottom:1px solid var(--border)">
+<div style="margin-bottom:6px"><strong>Clinical Performance</strong></div>
+<select id="csb-clinical" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
+<option value="">Select...</option>
+<option value="below">Below expectations in some areas</option>
+<option value="avg">Meets expectations / average evaluations</option>
+<option value="good">Above average — consistently positive feedback</option>
+<option value="top">Top of class / honors in most rotations</option>
+</select>
+</div>
+
+<div id="csb-away-section" style="padding:14px 0;border-bottom:1px solid var(--border)">
+<div style="margin-bottom:6px"><strong>Away Rotations / Visiting Electives</strong></div>
+<select id="csb-aways" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
+<option value="0">None planned or completed</option>
+<option value="planned">Planned but not yet completed</option>
+<option value="1">Completed 1</option>
+<option value="2">Completed 2+</option>
+</select>
+</div>
+
+<div style="padding:14px 0;border-bottom:1px solid var(--border)">
+<div style="margin-bottom:6px"><strong>Leadership & Extracurriculars</strong></div>
+<select id="csb-leadership" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
+<option value="none">No leadership roles</option>
+<option value="minor">Minor roles (committee member, volunteer)</option>
+<option value="moderate">Meaningful roles (club president, QI lead)</option>
+<option value="strong">Major roles (chief resident, national committee, founded organization)</option>
+</select>
+</div>
+
+<div id="csb-ps-section" style="padding:14px 0;border-bottom:1px solid var(--border)">
+<div style="margin-bottom:6px"><strong>Personal Statement</strong></div>
+<select id="csb-ps" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
+<option value="none">Haven't started</option>
+<option value="draft1">First draft done</option>
+<option value="revising">Multiple drafts / getting feedback</option>
+<option value="done">Polished and finalized</option>
+</select>
+</div>
+
+<div style="padding:14px 0;border-bottom:1px solid var(--border)">
+<div style="margin-bottom:6px"><strong>Geographic Preference</strong></div>
+<select id="csb-geo" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
+<option value="flexible">Flexible — will go anywhere for the best fit</option>
+<option value="region">Prefer a specific region but open to others</option>
+<option value="limited">Geographically limited (family, partner, personal)</option>
+</select>
+</div>
+
+<div id="csb-setting-section" style="padding:14px 0;border-bottom:1px solid var(--border)">
+<div style="margin-bottom:6px"><strong>Preferred Practice Setting</strong> <span style="font-size:10px;color:var(--text3)">(long-term)</span></div>
+<select id="csb-setting" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
+<option value="unsure">Not sure yet</option>
+<option value="academic">Academic — teaching, research, lower pay</option>
+<option value="employed">Employed — hospital/health system, work-life balance</option>
+<option value="private">Private practice — higher income ceiling, business risk</option>
+</select>
+</div>
+
+<div style="padding:14px 0;border-bottom:1px solid var(--border)">
+<div style="margin-bottom:6px"><strong>What's your biggest concern?</strong></div>
+<select id="csb-concern" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
+<option value="">Select...</option>
+<option value="research">Not enough research</option>
+<option value="scores">Board scores aren't competitive</option>
+<option value="letters">Weak or no specialty-specific letters</option>
+<option value="clinical">Clinical evaluations aren't strong</option>
+<option value="time">Running out of time before application</option>
+<option value="direction">Not sure if this is the right specialty</option>
+<option value="networking">Haven't built connections at target programs</option>
+<option value="finance">Financial concerns about the path</option>
+<option value="confidence">Imposter syndrome / confidence</option>
+<option value="none">No major concerns — just need a plan</option>
+</select>
+</div>
+
+<div style="padding:14px 0;border-bottom:1px solid var(--border)">
+<div style="margin-bottom:6px"><strong>How many programs are you considering?</strong></div>
+<select id="csb-programs" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
+<option value="0">Haven't built a list yet</option>
+<option value="narrow">1-5 (very targeted)</option>
+<option value="moderate">6-15 (typical range)</option>
+<option value="broad">16+ (casting a wide net)</option>
+</select>
+</div>
+
 </div>
 
 <button onclick="csbGenerate()" class="btn btn-a" style="width:100%;margin-top:16px;padding:14px">Build My Roadmap →</button>

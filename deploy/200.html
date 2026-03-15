@@ -4816,12 +4816,12 @@ v14:`<h3 class="serif">Match Competitiveness Calculator</h3>
 </div>`,
 
 v15:`<h3 class="serif">Career Strategy Builder</h3>
-<p style="color:var(--text3);font-size:12px;margin-bottom:20px">Build a step-by-step roadmap to reach your target specialty or career goal. Generates a personalized timeline with milestones.</p>
+<p style="color:var(--text3);font-size:12px;margin-bottom:20px">Build a detailed, personalized roadmap. The more you share, the more specific your plan.</p>
 <div id="csb-tool" style="font-size:13px">
 
 <div style="padding:14px 0;border-bottom:1px solid var(--border)">
 <div style="margin-bottom:6px"><strong>Where are you now?</strong></div>
-<select id="csb-now" onchange="csbUpdate()" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
+<select id="csb-now" onchange="csbStageChange()" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
 <option value="">Select current stage...</option>
 <option value="ms1">MS1-MS2 (Pre-clinical)</option>
 <option value="ms3">MS3-MS4 (Clinical)</option>
@@ -4835,10 +4835,11 @@ v15:`<h3 class="serif">Career Strategy Builder</h3>
 
 <div style="padding:14px 0;border-bottom:1px solid var(--border)">
 <div style="margin-bottom:6px"><strong>Target Specialty / Goal</strong></div>
-<select id="csb-target" onchange="csbUpdate()" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
+<select id="csb-target" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
 <option value="">Select target...</option>
 <option value="cards">Cardiology</option>
 <option value="ic">Interventional Cardiology</option>
+<option value="ep">Electrophysiology</option>
 <option value="gi">Gastroenterology</option>
 <option value="pulm">Pulmonary/Critical Care</option>
 <option value="heme">Hematology/Oncology</option>
@@ -4853,6 +4854,8 @@ v15:`<h3 class="serif">Career Strategy Builder</h3>
 <option value="rads">Radiology</option>
 <option value="gen_surg">General Surgery</option>
 <option value="em">Emergency Medicine</option>
+<option value="fm">Family Medicine</option>
+<option value="psych">Psychiatry</option>
 <option value="academic">Academic Medicine</option>
 <option value="private">Private Practice</option>
 <option value="admin">Healthcare Administration</option>
@@ -4860,23 +4863,145 @@ v15:`<h3 class="serif">Career Strategy Builder</h3>
 </div>
 
 <div style="padding:14px 0;border-bottom:1px solid var(--border)">
-<div style="margin-bottom:6px"><strong>Current Research Output</strong></div>
-<select id="csb-research" onchange="csbUpdate()" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
-<option value="0">No research yet</option>
-<option value="1">1-2 abstracts</option>
-<option value="2">3-5 publications</option>
-<option value="3">6+ publications</option>
-</select>
-</div>
-
-<div style="padding:14px 0;border-bottom:1px solid var(--border)">
 <div style="margin-bottom:6px"><strong>Timeline Urgency</strong></div>
-<select id="csb-urgency" onchange="csbUpdate()" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
+<select id="csb-urgency" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
 <option value="">Select...</option>
 <option value="1">Applying this cycle</option>
 <option value="2">Applying next cycle (1 year out)</option>
 <option value="3">2+ years to prepare</option>
 </select>
+</div>
+
+<!-- Dynamic fields that appear after stage is selected -->
+<div id="csb-detail-fields" style="display:none">
+
+<div id="csb-boards-section" style="padding:14px 0;border-bottom:1px solid var(--border)">
+<div style="margin-bottom:6px"><strong>Board Scores</strong></div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+<div><label style="font-size:10px;color:var(--text3);display:block;margin-bottom:4px">Step 1 / Level 1</label>
+<input id="csb-step1" type="text" placeholder="e.g. 230, Pass" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:6px;background:var(--bg2);color:var(--text);font-size:12px;box-sizing:border-box"></div>
+<div><label style="font-size:10px;color:var(--text3);display:block;margin-bottom:4px">Step 2 CK / Level 2</label>
+<input id="csb-step2" type="text" placeholder="e.g. 255, 248" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:6px;background:var(--bg2);color:var(--text);font-size:12px;box-sizing:border-box"></div>
+</div>
+<div style="margin-top:6px"><label style="font-size:10px;color:var(--text3);display:block;margin-bottom:4px">DO student?</label>
+<select id="csb-do" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:6px;background:var(--bg2);color:var(--text);font-size:12px">
+<option value="no">No — MD</option>
+<option value="yes">Yes — DO</option>
+</select></div>
+</div>
+
+<div style="padding:14px 0;border-bottom:1px solid var(--border)">
+<div style="margin-bottom:6px"><strong>Research Output</strong></div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+<div><label style="font-size:10px;color:var(--text3);display:block;margin-bottom:4px">First-author pubs</label>
+<select id="csb-first-auth" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:6px;background:var(--bg2);color:var(--text);font-size:12px">
+<option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3-4</option><option value="5">5+</option>
+</select></div>
+<div><label style="font-size:10px;color:var(--text3);display:block;margin-bottom:4px">Other pubs/abstracts</label>
+<select id="csb-other-pubs" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:6px;background:var(--bg2);color:var(--text);font-size:12px">
+<option value="0">0</option><option value="1">1-2</option><option value="3">3-5</option><option value="6">6+</option>
+</select></div>
+</div>
+</div>
+
+<div style="padding:14px 0;border-bottom:1px solid var(--border)">
+<div style="margin-bottom:6px"><strong>Letters of Recommendation</strong></div>
+<select id="csb-lors" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
+<option value="">Select...</option>
+<option value="none">Haven't identified writers yet</option>
+<option value="generic">Have writers but not specialty-specific</option>
+<option value="partial">1-2 specialty-specific writers secured</option>
+<option value="strong">3+ specialty-specific writers — strong relationships</option>
+</select>
+</div>
+
+<div id="csb-clinical-section" style="padding:14px 0;border-bottom:1px solid var(--border)">
+<div style="margin-bottom:6px"><strong>Clinical Performance</strong></div>
+<select id="csb-clinical" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
+<option value="">Select...</option>
+<option value="below">Below expectations in some areas</option>
+<option value="avg">Meets expectations / average evaluations</option>
+<option value="good">Above average — consistently positive feedback</option>
+<option value="top">Top of class / honors in most rotations</option>
+</select>
+</div>
+
+<div id="csb-away-section" style="padding:14px 0;border-bottom:1px solid var(--border)">
+<div style="margin-bottom:6px"><strong>Away Rotations / Visiting Electives</strong></div>
+<select id="csb-aways" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
+<option value="0">None planned or completed</option>
+<option value="planned">Planned but not yet completed</option>
+<option value="1">Completed 1</option>
+<option value="2">Completed 2+</option>
+</select>
+</div>
+
+<div style="padding:14px 0;border-bottom:1px solid var(--border)">
+<div style="margin-bottom:6px"><strong>Leadership & Extracurriculars</strong></div>
+<select id="csb-leadership" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
+<option value="none">No leadership roles</option>
+<option value="minor">Minor roles (committee member, volunteer)</option>
+<option value="moderate">Meaningful roles (club president, QI lead)</option>
+<option value="strong">Major roles (chief resident, national committee, founded organization)</option>
+</select>
+</div>
+
+<div id="csb-ps-section" style="padding:14px 0;border-bottom:1px solid var(--border)">
+<div style="margin-bottom:6px"><strong>Personal Statement</strong></div>
+<select id="csb-ps" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
+<option value="none">Haven't started</option>
+<option value="draft1">First draft done</option>
+<option value="revising">Multiple drafts / getting feedback</option>
+<option value="done">Polished and finalized</option>
+</select>
+</div>
+
+<div style="padding:14px 0;border-bottom:1px solid var(--border)">
+<div style="margin-bottom:6px"><strong>Geographic Preference</strong></div>
+<select id="csb-geo" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
+<option value="flexible">Flexible — will go anywhere for the best fit</option>
+<option value="region">Prefer a specific region but open to others</option>
+<option value="limited">Geographically limited (family, partner, personal)</option>
+</select>
+</div>
+
+<div id="csb-setting-section" style="padding:14px 0;border-bottom:1px solid var(--border)">
+<div style="margin-bottom:6px"><strong>Preferred Practice Setting</strong> <span style="font-size:10px;color:var(--text3)">(long-term)</span></div>
+<select id="csb-setting" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
+<option value="unsure">Not sure yet</option>
+<option value="academic">Academic — teaching, research, lower pay</option>
+<option value="employed">Employed — hospital/health system, work-life balance</option>
+<option value="private">Private practice — higher income ceiling, business risk</option>
+</select>
+</div>
+
+<div style="padding:14px 0;border-bottom:1px solid var(--border)">
+<div style="margin-bottom:6px"><strong>What's your biggest concern?</strong></div>
+<select id="csb-concern" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
+<option value="">Select...</option>
+<option value="research">Not enough research</option>
+<option value="scores">Board scores aren't competitive</option>
+<option value="letters">Weak or no specialty-specific letters</option>
+<option value="clinical">Clinical evaluations aren't strong</option>
+<option value="time">Running out of time before application</option>
+<option value="direction">Not sure if this is the right specialty</option>
+<option value="networking">Haven't built connections at target programs</option>
+<option value="finance">Financial concerns about the path</option>
+<option value="confidence">Imposter syndrome / confidence</option>
+<option value="none">No major concerns — just need a plan</option>
+</select>
+</div>
+
+<div style="padding:14px 0;border-bottom:1px solid var(--border)">
+<div style="margin-bottom:6px"><strong>How many programs are you considering?</strong></div>
+<select id="csb-programs" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
+<option value="0">Haven't built a list yet</option>
+<option value="narrow">1-5 (very targeted)</option>
+<option value="moderate">6-15 (typical range)</option>
+<option value="broad">16+ (casting a wide net)</option>
+</select>
+</div>
+
 </div>
 
 <button onclick="csbGenerate()" class="btn btn-a" style="width:100%;margin-top:16px;padding:14px">Build My Roadmap →</button>
@@ -8647,56 +8772,293 @@ function mccSaveProfile(){
 }
 
 // ===== CAREER STRATEGY BUILDER (v15) =====
+function csbStageChange(){
+  var now=document.getElementById('csb-now').value;
+  var detail=document.getElementById('csb-detail-fields');
+  if(!now){if(detail)detail.style.display='none';return}
+  if(detail)detail.style.display='';
+  var showBoards=now!=='fellow'&&now!=='attending';
+  var showAways=now==='ms3'||now==='intern'||now==='resident'||now==='senior';
+  var showPS=now!=='fellow'&&now!=='attending';
+  var showClinical=now!=='ms1';
+  var showSetting=now==='fellow'||now==='attending';
+  var el;
+  el=document.getElementById('csb-boards-section');if(el)el.style.display=showBoards?'':'none';
+  el=document.getElementById('csb-away-section');if(el)el.style.display=showAways?'':'none';
+  el=document.getElementById('csb-ps-section');if(el)el.style.display=showPS?'':'none';
+  el=document.getElementById('csb-clinical-section');if(el)el.style.display=showClinical?'':'none';
+  el=document.getElementById('csb-setting-section');if(el)el.style.display=showSetting?'':'none';
+}
 function csbUpdate(){}
 function csbGenerate(){
   var now=document.getElementById('csb-now').value;
   var target=document.getElementById('csb-target').value;
-  var research=parseInt(document.getElementById('csb-research').value)||0;
   var urgency=document.getElementById('csb-urgency').value;
-  if(!now||!target||!urgency){notify('Complete all fields to build your roadmap',1);return}
+  if(!now||!target||!urgency){notify('Complete at least stage, target, and timeline to build your roadmap',1);return}
 
-  var targetNames={cards:'Cardiology',ic:'Interventional Cardiology',gi:'Gastroenterology',pulm:'Pulmonary/Critical Care',heme:'Hematology/Oncology',endo:'Endocrinology',rheum:'Rheumatology',neph:'Nephrology',id:'Infectious Disease',ortho:'Orthopedic Surgery',nsurg:'Neurosurgery',derm:'Dermatology',ophtho:'Ophthalmology',rads:'Radiology',gen_surg:'General Surgery',em:'Emergency Medicine',academic:'Academic Medicine',private:'Private Practice',admin:'Healthcare Administration'};
+  var step1=document.getElementById('csb-step1')?document.getElementById('csb-step1').value.trim():'';
+  var step2=document.getElementById('csb-step2')?document.getElementById('csb-step2').value.trim():'';
+  var isDO=(document.getElementById('csb-do')?document.getElementById('csb-do').value:'no')==='yes';
+  var firstAuth=parseInt(document.getElementById('csb-first-auth')?document.getElementById('csb-first-auth').value:'0')||0;
+  var otherPubs=parseInt(document.getElementById('csb-other-pubs')?document.getElementById('csb-other-pubs').value:'0')||0;
+  var totalResearch=firstAuth+otherPubs;
+  var lors=document.getElementById('csb-lors')?document.getElementById('csb-lors').value:'';
+  var clinical=document.getElementById('csb-clinical')?document.getElementById('csb-clinical').value:'';
+  var aways=document.getElementById('csb-aways')?document.getElementById('csb-aways').value:'0';
+  var leadership=document.getElementById('csb-leadership')?document.getElementById('csb-leadership').value:'none';
+  var ps=document.getElementById('csb-ps')?document.getElementById('csb-ps').value:'none';
+  var geo=document.getElementById('csb-geo')?document.getElementById('csb-geo').value:'flexible';
+  var setting=document.getElementById('csb-setting')?document.getElementById('csb-setting').value:'unsure';
+  var concern=document.getElementById('csb-concern')?document.getElementById('csb-concern').value:'';
+  var programs=document.getElementById('csb-programs')?document.getElementById('csb-programs').value:'0';
 
+  var targetNames={cards:'Cardiology',ic:'Interventional Cardiology',ep:'Electrophysiology',gi:'Gastroenterology',pulm:'Pulmonary/Critical Care',heme:'Hematology/Oncology',endo:'Endocrinology',rheum:'Rheumatology',neph:'Nephrology',id:'Infectious Disease',ortho:'Orthopedic Surgery',nsurg:'Neurosurgery',derm:'Dermatology',ophtho:'Ophthalmology',rads:'Radiology',gen_surg:'General Surgery',em:'Emergency Medicine',fm:'Family Medicine',psych:'Psychiatry',academic:'Academic Medicine',private:'Private Practice',admin:'Healthcare Administration'};
   var tName=targetNames[target]||target;
+  var competitive=['cards','ic','ep','gi','derm','ortho','nsurg','ophtho','rads'];
+  var isCompetitive=competitive.indexOf(target)>=0;
 
-  // Generate timeline phases
+  // ===== ASSESSMENT =====
+  var strengths=[];var gaps=[];var warnings=[];
+  var s1=parseInt(step1)||0;var s2=parseInt(step2)||0;
+  if(s2>=250){strengths.push('Step 2 CK is competitive ('+s2+')')}
+  else if(s2>=240&&isCompetitive){gaps.push('Step 2 of '+s2+' is acceptable but below competitive median for '+tName+'. Some programs screen at 240-250.')}
+  else if(s2>0&&s2<240&&isCompetitive){warnings.push('Step 2 CK of '+s2+' is below the competitive threshold for '+tName+'. This will limit your program list.')}
+  if(s1>=240&&isCompetitive){strengths.push('Step 1 score is strong ('+s1+')')}
+  else if(s1>0&&s1<230&&isCompetitive){gaps.push('Step 1 of '+s1+' may screen you out at some '+tName+' programs')}
+  if(isDO&&isCompetitive){warnings.push('As a DO applicant targeting '+tName+', you\'ll need to be strategic. Focus on DO-friendly programs and strengthen every other category.')}
+
+  if(firstAuth>=3){strengths.push('Strong first-author research ('+firstAuth+' publications)')}
+  else if(firstAuth>=1&&isCompetitive){gaps.push('You have '+firstAuth+' first-author pub(s). Competitive '+tName+' applicants typically have 3+.')}
+  if(firstAuth===0&&isCompetitive){warnings.push('No first-author publications is a significant gap for '+tName+'. This should be your #1 priority.')}
+  else if(firstAuth===0&&totalResearch===0){gaps.push('No research output yet. Even less competitive specialties value 1-2 publications.')}
+  if(totalResearch>=6){strengths.push('Extensive research portfolio ('+totalResearch+'+ items)')}
+
+  if(lors==='strong'){strengths.push('Strong specialty-specific letters secured')}
+  else if(lors==='partial'){gaps.push('Need more specialty-specific writers. Aim for 3-4 total with at least one prominent name in '+tName+'.')}
+  else if(lors==='generic'){warnings.push('Generic letters won\'t cut it for '+tName+'. You need specialty-specific writers who know your clinical work.')}
+  else if(lors==='none'){warnings.push('No letter writers identified yet. This needs to be an immediate priority.')}
+
+  if(clinical==='top'){strengths.push('Exceptional clinical evaluations')}
+  else if(clinical==='good'){strengths.push('Strong clinical performance')}
+  else if(clinical==='avg'){gaps.push('Average clinical evals won\'t differentiate you. Seek specific feedback from attendings.')}
+  else if(clinical==='below'){warnings.push('Below-average clinical evaluations are a red flag. Address this immediately.')}
+
+  if(aways==='2'){strengths.push('Multiple away rotations completed')}
+  else if(aways==='1'){strengths.push('One away rotation completed')}
+  else if(aways==='0'&&isCompetitive&&(now==='resident'||now==='senior')){warnings.push('No away rotations for '+tName+' is risky. Programs prefer applicants they\'ve worked with.')}
+
+  if(leadership==='strong'){strengths.push('Significant leadership experience')}
+  else if(leadership==='moderate'){strengths.push('Meaningful leadership roles')}
+  else if(leadership==='none'){gaps.push('No leadership roles. Even one QI project or committee chair strengthens your application.')}
+
+  if(ps==='done'){strengths.push('Personal statement finalized')}
+  else if(ps==='none'&&urgency==='1'){warnings.push('Applying this cycle with no personal statement draft. Start this week.')}
+  else if(ps==='draft1'&&urgency==='1'){gaps.push('First draft only — plan for 5+ revisions before submitting.')}
+
+  if(programs==='0'){gaps.push('No program list built. Research programs: match data, faculty interests, geography.')}
+  else if(programs==='narrow'&&isCompetitive){warnings.push('Only 1-5 programs is very risky for '+tName+'. Most competitive applicants apply to 15-20+.')}
+  else if(programs==='broad'){strengths.push('Broad program list for strategic coverage')}
+
+  if(geo==='limited'&&isCompetitive){warnings.push('Geographic limitations significantly reduce options for competitive specialties.')}
+  if(concern==='direction'){warnings.push('If you\'re unsure about '+tName+', explore that before committing. Run the Specialty Fit Analyzer.')}
+
+  // ===== TIMELINE PHASES =====
   var phases=[];
+
   if(now==='ms1'||now==='ms2'){
-    phases.push({time:'Now \u2013 6 months',title:'Build Your Foundation',items:['Excel in pre-clinical coursework \u2014 build habits that carry through','Join 1-2 interest groups related to '+tName,'Find a research mentor in the field','Start reading about '+tName+' career paths']});
-    phases.push({time:'6 \u2013 12 months',title:'Start Building Evidence',items:['Begin a research project (case report or QI project)','Shadow physicians in '+tName+' \u2014 2-3 different settings','Take leadership in a relevant student organization','Prepare for Step 1 with discipline']});
-    phases.push({time:'12 \u2013 24 months',title:'Strengthen Your Application',items:['Submit first abstract to a national conference','Get involved in clinical experiences related to '+tName,'Build relationships with 2-3 potential letter writers','Start personal statement brainstorming']});
-  }else if(now==='ms3'){
-    phases.push({time:'Now \u2013 3 months',title:'Clinical Excellence',items:['Honor key clinical rotations \u2014 especially relevant to '+tName,'Begin or continue research project with publication timeline','Identify and cultivate 3 letter writers','Prepare for Step 2 CK']});
-    phases.push({time:'3 \u2013 6 months',title:'Application Assembly',items:['Draft personal statement (aim for 5+ revisions)','Build tiered program list (reach/target/safety)','Submit abstracts to relevant society meetings','Schedule away rotations at 1-2 target programs']});
-    phases.push({time:'6 \u2013 12 months',title:'Application & Interview Season',items:['Submit ERAS application early','Prepare for interviews with mock sessions','Send thank-you/interest emails strategically','Finalize rank list with honest self-assessment']});
-  }else if(now==='intern'||now==='resident'){
-    phases.push({time:'Now \u2013 3 months',title:'Position Yourself',items:['Declare your interest in '+tName+' to your PD','Start or accelerate research in '+tName,'Identify specialty-specific letter writers','Network at department events and conferences']});
-    if(urgency==='1'){
-      phases.push({time:'3 \u2013 6 months',title:'Execute Rapidly',items:['Submit at least 1 abstract to ACC, AHA, DDW, or relevant society','Finalize all letters of recommendation','Complete personal statement (5+ drafts)','Schedule away rotations']});
-      phases.push({time:'6 \u2013 9 months',title:'Application Window',items:['Submit ERAS on day 1','Interview strategically \u2014 15-20+ programs','Send focused interest emails after interviews','Build your rank list thoughtfully']});
-    }else{
-      phases.push({time:'3 \u2013 12 months',title:'Build Deliberately',items:['Aim for 2-3 first-author publications in '+tName,'Present at 1-2 national conferences','Complete 1-2 away rotations at target programs','Mentor-match with someone who matched where you want to go']});
-      phases.push({time:'12 \u2013 18 months',title:'Application Year',items:['Submit a competitive application with strong research portfolio','Interview broadly but with intention','Personal statement should tell a clear narrative','Have 3-4 strong, specialty-specific letters']});
+    var p1=[];
+    p1.push('Excel in pre-clinical coursework \u2014 build study habits that carry through clerkships');
+    if(totalResearch===0)p1.push('Find a research mentor in '+tName+' \u2014 start with a case report or lit review (2-3 month project)');
+    else p1.push('Continue research \u2014 aim for a first-author manuscript in progress');
+    p1.push('Join the '+tName+' interest group and attend grand rounds regularly');
+    if(lors==='none')p1.push('Start identifying potential letter writers \u2014 attend office hours, volunteer for projects');
+    p1.push('Shadow 2-3 physicians in '+tName+' across different settings');
+    phases.push({time:'Now \u2013 6 months',title:'Build Your Foundation',items:p1});
+
+    var p2=[];
+    p2.push('Submit at least 1 abstract to a national conference');
+    if(firstAuth===0)p2.push('Start a first-author research project \u2014 highest ROI activity for your application');
+    p2.push('Take on a leadership position in a relevant organization');
+    if(isCompetitive)p2.push('Begin Step 1 preparation early \u2014 a strong score opens doors');
+    p2.push('Explore summer research opportunities at other institutions');
+    phases.push({time:'6 \u2013 12 months',title:'Build Evidence',items:p2});
+
+    phases.push({time:'12 \u2013 24 months',title:'Position for Clinical Years',items:[
+      'Crush Step 1 \u2014 still a screening tool even as pass/fail evolves',
+      'Enter clerkships planning to honor rotations relevant to '+tName,
+      'Have 2-3 letter writers identified with real relationships',
+      'Aim for 2+ publications/abstracts by start of MS3',
+      'Begin personal statement brainstorming \u2014 journal key moments'
+    ]});
+  }
+
+  else if(now==='ms3'){
+    var p1=[];
+    p1.push('Honor medicine/surgery clerkships \u2014 PDs look at these first');
+    if(s2===0)p1.push('Prepare for Step 2 CK \u2014 target '+(isCompetitive?'250+':'240+')+' for '+tName);
+    if(firstAuth===0)p1.push('Start a first-author project immediately \u2014 case report has fastest turnaround (2-4 months)');
+    else p1.push('Push current research toward publication. Submit manuscripts now.');
+    if(lors==='none'||lors==='generic')p1.push('Identify 3 specialty-specific letter writers NOW. Ask early \u2014 give them 8+ weeks.');
+    else if(lors==='partial')p1.push('Finalize remaining letter writers. At least one from a prominent name.');
+    if(aways==='0')p1.push('Apply for away rotations at 1-2 target programs');
+    phases.push({time:'Now \u2013 3 months',title:'Clinical Excellence + Application Prep',items:p1});
+
+    var p2=[];
+    if(ps==='none')p2.push('Write your personal statement. Then revise 5+ times with faculty and peer feedback.');
+    else if(ps==='draft1')p2.push('Revise personal statement aggressively \u2014 get 3+ rounds of feedback.');
+    p2.push('Build tiered program list: '+(isCompetitive?'5-7 reach, 8-10 target, 5-7 safety':'4-6 reach, 6-8 target, 3-5 safety'));
+    if(aways==='planned'||aways==='0')p2.push('Complete away rotations \u2014 treat every day like a month-long interview');
+    p2.push('Submit abstracts to relevant society meetings');
+    if(programs==='0')p2.push('Research programs: match rates, faculty interests, culture, location');
+    if(geo==='limited')p2.push('With geographic limits, strengthen every other area to compensate for fewer options');
+    phases.push({time:'3 \u2013 6 months',title:'Application Assembly',items:p2});
+
+    phases.push({time:'6 \u2013 12 months',title:'Application Season',items:[
+      'Submit ERAS on day 1 \u2014 early applicants get more interview invitations',
+      'Prepare with Mock Interview Simulator \u2014 practice 3+ full sessions',
+      'Send strategic follow-up emails after each interview (specific, not generic)',
+      'Build rank list honestly \u2014 where would you be happiest for 3+ years?',
+      'Track every interaction in a spreadsheet: programs, contacts, follow-ups'
+    ]});
+  }
+
+  else if(now==='intern'||now==='resident'||now==='senior'){
+    var p1=[];
+    p1.push('Make your interest in '+tName+' clear to your PD \u2014 ask for relevant rotations');
+    if(firstAuth===0){
+      p1.push('Research is your biggest gap. Start a first-author project THIS MONTH.');
+      if(urgency==='1')p1.push('\u26a0\ufe0f Applying this cycle with no first-author pubs: target 1 case report + 2-3 abstracts before ERAS');
+    }else if(firstAuth<3&&isCompetitive){
+      p1.push('Push for '+(3-firstAuth)+' more first-author publications. Target manuscript submission within 3 months.');
     }
-  }else if(now==='fellow'){
-    phases.push({time:'Now \u2013 6 months',title:'Define Your Attending Path',items:['Clarify: academic vs private vs employed','Research compensation benchmarks (MGMA) for '+tName,'Network at conferences for job opportunities','Start conversations with potential employers']});
-    phases.push({time:'6 \u2013 12 months',title:'Contract & Position Search',items:['Use the Contract Intelligence Tool on any offers','Compare offers systematically','Negotiate with MGMA data as leverage','Plan your post-fellowship financial strategy']});
-  }else{
-    phases.push({time:'Now \u2013 3 months',title:'Strategic Assessment',items:['Evaluate your current position honestly','Benchmark your compensation against MGMA data','Identify what needs to change \u2014 role, setting, or specialty','Talk to 2-3 physicians who\u2019ve made similar moves']});
-    phases.push({time:'3 \u2013 6 months',title:'Build Your Plan',items:['Calculate the financial impact of any transition','Test the new direction \u2014 moonlight, consult, or shadow','Build a 12-month financial bridge if pivoting','Strengthen your network in the target area']});
-    phases.push({time:'6 \u2013 12 months',title:'Execute',items:['Make a decision with a clear timeline','Negotiate your next position with data','Set up your financial foundation for the transition','Submit a Strategic Audit if you need structured guidance']});
+    if(lors==='none'||lors==='generic')p1.push('Securing specialty-specific letters is urgent \u2014 work closely with '+tName+' attendings starting now');
+    p1.push('Network aggressively \u2014 '+tName+' conferences, reach out to fellows at target programs');
+    if(isDO)p1.push('Research DO-friendly programs specifically. Talk to DO graduates who matched in '+tName+'.');
+    phases.push({time:'Now \u2013 3 months',title:'Position Yourself',items:p1});
+
+    if(urgency==='1'){
+      var p2=[];
+      p2.push('Submit at least 2-3 abstracts to national meetings');
+      if(lors!=='strong')p2.push('Finalize ALL letters of recommendation \u2014 follow up if needed');
+      if(ps!=='done')p2.push('Personal statement must be done. '+(ps==='none'?'Start AND finish it this month.':'Get 3+ rounds of feedback and finalize.'));
+      if(aways==='0'&&isCompetitive)p2.push('Schedule at least 1 away rotation \u2014 late but still possible');
+      p2.push('Apply to '+(isCompetitive?'20-25+':'12-18')+' programs to maximize interview invitations');
+      phases.push({time:'3 \u2013 6 months',title:'Execute \u2014 Application Window',items:p2});
+      phases.push({time:'6 \u2013 9 months',title:'Interview & Match',items:[
+        'Submit ERAS on day one. No delays.',
+        'Mock Interview Simulator \u2014 practice 3+ full sessions',
+        'Send targeted interest emails after each interview',
+        'Rank by where you\'d be happiest for 3+ years, not prestige',
+        'If couples matching, start coordinating NOW'
+      ]});
+    }else{
+      var p2=[];
+      p2.push('Aim for 2-3 first-author publications in '+tName+' over the next year');
+      p2.push('Present at 1-2 national conferences \u2014 poster or podium');
+      if(aways==='0')p2.push('Complete 1-2 away rotations at target programs');
+      p2.push('Build deep relationships with 3-4 letter writers through sustained clinical work');
+      if(leadership==='none'||leadership==='minor')p2.push('Take on a meaningful leadership role \u2014 chief resident, QI lead, committee chair');
+      phases.push({time:'3 \u2013 12 months',title:'Build Deliberately',items:p2});
+      phases.push({time:'12 \u2013 18 months',title:'Application Year',items:[
+        'Submit competitive ERAS with strong research and specialty-specific letters',
+        'Apply to '+(isCompetitive?'18-25':'12-18')+' programs tiered by competitiveness',
+        'Personal statement: clear, specific narrative about WHY '+tName,
+        'Interview broadly but prepared \u2014 know each program before you walk in',
+        'Track rank list criteria: mentorship, research, case volume, location, culture'
+      ]});
+    }
   }
 
-  // Research gap warning
-  var researchGap='';
-  if(research<2&&(target==='cards'||target==='ic'||target==='gi'||target==='derm'||target==='ortho'||target==='nsurg'||target==='ophtho')){
-    researchGap='<div style="padding:12px;background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.15);border-radius:8px;margin-bottom:16px;font-size:12px;color:var(--red)"><strong>\u26a0\ufe0f Research Gap:</strong> '+tName+' is research-heavy. With your current output, prioritize getting at least 2-3 publications before applying.</div>';
+  else if(now==='fellow'){
+    phases.push({time:'Now \u2013 6 months',title:'Define Your Attending Path',items:[
+      'Clarify: '+(setting==='academic'?'academic medicine \u2014 teaching, research, intellectual freedom':(setting==='private'?'private practice \u2014 higher income, business ownership':'academic vs private vs employed \u2014 each has different lifestyles and compensation')),
+      'Research MGMA benchmarks for '+tName+' \u2014 know your market value',
+      'Network at conferences \u2014 most jobs come through connections, not job boards',
+      'Start conversations with potential employers 6-12 months before fellowship ends',
+      setting==='academic'?'Build academic portfolio: publications, grants, teaching evals':'Identify geographic markets with high demand and favorable compensation'
+    ]});
+    phases.push({time:'6 \u2013 12 months',title:'Contract Negotiation',items:[
+      'Run every offer through the Contract Intelligence Tool',
+      'Compare offers using the Offer Comparison Matrix',
+      'Negotiate with data: MGMA percentiles, regional benchmarks, call frequency, tail coverage',
+      'Key terms: base salary, RVU rate, non-compete, tail insurance, CME, signing bonus',
+      'Physician contract attorney review before signing ($2-3.5K \u2014 always worth it)',
+      'Financial Trajectory Simulator \u2014 see 30-year impact of each option'
+    ]});
+    phases.push({time:'Final 3 months',title:'Transition Planning',items:[
+      'Financial foundation: disability insurance, retirement accounts, PSLF decision',
+      '3-Year Leverage Strategy \u2014 Year 1 spending habits determine your trajectory',
+      geo==='limited'?'With geographic limits, ensure offer is competitive for local market':'Consider locations strategically \u2014 some markets pay 40-60% more',
+      'Visit your new institution before starting \u2014 meet colleagues, understand culture'
+    ]});
   }
 
-  var h='<div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:6px">\ud83d\udccd Roadmap to '+tName+'</div>';
-  h+='<p style="font-size:11px;color:var(--text3);margin-bottom:16px">From '+now.toUpperCase()+' \u2192 '+tName+' \u2022 '+(urgency==='1'?'Applying this cycle':'Timeline: '+urgency+' year(s)')+'</p>';
-  h+=researchGap;
+  else if(now==='attending'){
+    phases.push({time:'Now \u2013 3 months',title:'Strategic Assessment',items:[
+      'Evaluate honestly \u2014 are you where you want to be in 5 years?',
+      'Benchmark compensation: RVU Calculator + MGMA comparison',
+      'Identify what needs to change: compensation, practice type, location, or work-life balance',
+      'Talk to 2-3 physicians who\'ve made the transition you\'re considering',
+      'Run the Financial Trajectory Simulator to see long-term wealth trajectory'
+    ]});
+    phases.push({time:'3 \u2013 6 months',title:'Build Your Plan',items:[
+      'Calculate financial impact: lost income during transition, retraining costs, ramp-up time',
+      'Build a 12-month financial bridge if changing practice types',
+      'Network in the target space \u2014 conferences, connect with physicians already there',
+      'If pivoting: understand retraining requirements, credentialing, timeline',
+      'Update CV and professional narrative for the new direction'
+    ]});
+    phases.push({time:'6 \u2013 12 months',title:'Execute the Transition',items:[
+      'Set a specific decision date \u2014 open-ended "maybe someday" never happens',
+      'Negotiate next position using data and the Contract Intelligence Tool',
+      'Set up financial safeguards: emergency fund, moonlighting if needed',
+      'Consider a Strategic Audit for Dr. Faroqui\'s personalized assessment',
+      'Execute. The cost of staying in the wrong position compounds every year.'
+    ]});
+  }
 
+  // ===== BUILD OUTPUT =====
+  var h='';
+  var nowLabels={ms1:'MS-1/2',ms2:'MS-1/2',ms3:'MS-3/4',intern:'PGY-1',resident:'PGY-2/3',senior:'PGY-4+',fellow:'Fellow',attending:'Attending'};
+
+  // Header
+  h+='<div style="text-align:center;padding:20px;background:linear-gradient(160deg,rgba(200,168,124,.1),rgba(200,168,124,.03));border:1px solid rgba(200,168,124,.15);border-radius:14px;margin-bottom:20px">';
+  h+='<div style="font-size:11px;color:var(--accent);font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px">Your Career Roadmap</div>';
+  h+='<div style="font-size:20px;font-weight:600;color:var(--text);font-family:var(--font-serif);margin-bottom:4px">\ud83d\udccd '+tName+'</div>';
+  h+='<div style="font-size:12px;color:var(--text3)">From '+(nowLabels[now]||now)+' \u2022 '+(urgency==='1'?'Applying this cycle':'Timeline: '+urgency+' year(s)')+(isDO?' \u2022 DO':'')+'</div>';
+  h+='</div>';
+
+  // Assessment card
+  if(strengths.length||gaps.length||warnings.length){
+    h+='<div style="margin-bottom:20px;padding:16px;background:var(--bg2);border:1px solid var(--border);border-radius:12px">';
+    h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">\ud83c\udfaf Application Assessment</div>';
+    if(strengths.length){h+='<div style="margin-bottom:10px">';strengths.forEach(function(s){h+='<div style="font-size:12px;color:var(--green);line-height:1.6;padding:3px 0">\u2705 '+s+'</div>'});h+='</div>'}
+    if(gaps.length){h+='<div style="margin-bottom:10px">';gaps.forEach(function(g){h+='<div style="font-size:12px;color:var(--accent);line-height:1.6;padding:3px 0">\u26a0\ufe0f '+g+'</div>'});h+='</div>'}
+    if(warnings.length){h+='<div style="padding:10px;background:rgba(239,68,68,.05);border:1px solid rgba(239,68,68,.12);border-radius:8px">';warnings.forEach(function(w){h+='<div style="font-size:12px;color:var(--red);line-height:1.6;padding:3px 0">\ud83d\udea9 '+w+'</div>'});h+='</div>'}
+    h+='</div>';
+  }
+
+  // Concern coaching
+  var concernLabels={research:'Not Enough Research',scores:'Board Score Concerns',letters:'Weak Letters',clinical:'Clinical Performance',time:'Running Out of Time',direction:'Specialty Uncertainty',networking:'Networking Gap',finance:'Financial Concerns',confidence:'Imposter Syndrome'};
+  var concernAdvice={
+    research:'Focus on high-ROI research: case reports (2-4 months), retrospective studies (4-6 months), conference abstracts (fastest CV lines). One first-author paper outweighs five middle-author papers.',
+    scores:'Board scores are one data point, not your destiny. Strengthen every other category to compensate. Research which programs have hard cutoffs and adjust your list.',
+    letters:'Letters are often the #1 factor. You need writers who know you personally, are in your specialty, and can cite specific clinical examples. Start now \u2014 don\'t wait until the deadline.',
+    clinical:'Ask your PD for honest feedback. Create a specific improvement plan. Document improvement over time. One bad rotation doesn\'t define you \u2014 but a pattern does.',
+    time:'Ruthless prioritization wins. Focus on the 2-3 highest-impact items: research submissions, letter writers, personal statement. Everything else is secondary.',
+    direction:'Get data, not more opinions. Shadow in 2-3 specialties. Ask attendings 5-10 years in: "What do you wish you knew?" Run the Specialty Fit Analyzer.',
+    networking:'Most opportunities come through connections. Attend conferences. Email faculty with specific compliments about their research. Follow up after meetings.',
+    finance:'Run the Financial Trajectory Simulator. Factor in training length, debt, geography, and practice type differences. Career and financial decisions are inseparable.',
+    confidence:'Every physician feels this. You\'re here building a strategy \u2014 that\'s evidence of competence. Focus on objective metrics. Track progress. Celebrate wins.'
+  };
+  if(concern&&concern!=='none'&&concernAdvice[concern]){
+    h+='<div style="margin-bottom:20px;padding:16px;background:linear-gradient(160deg,rgba(200,168,124,.06),rgba(200,168,124,.02));border:1px solid rgba(200,168,124,.15);border-radius:12px">';
+    h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">\ud83d\udca1 Addressing: '+concernLabels[concern]+'</div>';
+    h+='<div style="font-size:12px;color:var(--text2);line-height:1.7">'+concernAdvice[concern]+'</div></div>';
+  }
+
+  // Timeline
+  h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:14px">\ud83d\udcc5 Your Timeline</div>';
   phases.forEach(function(phase,i){
     h+='<div style="position:relative;padding-left:28px;padding-bottom:'+(i<phases.length-1?'20px':'0')+'">';
     if(i<phases.length-1)h+='<div style="position:absolute;left:8px;top:20px;bottom:0;width:2px;background:var(--border)"></div>';
@@ -8708,18 +9070,46 @@ function csbGenerate(){
     h+='</ul></div>';
   });
 
+  // Recommended next tools
+  var nextTools=[];
+  if(firstAuth===0||totalResearch<3)nextTools.push({id:'v7',icon:'\u2696\ufe0f',name:'Research ROI Calculator',why:'See where your research portfolio stands'});
+  if(now!=='fellow'&&now!=='attending')nextTools.push({id:'v14',icon:'\ud83c\udfc6',name:'Match Competitiveness Calculator',why:'Check your match probability with current stats'});
+  if(now==='fellow'||now==='attending')nextTools.push({id:'v12',icon:'\ud83d\udcdd',name:'Contract Intelligence Tool',why:'Score any contract offer before responding'});
+  if(concern==='direction')nextTools.push({id:'v13',icon:'\ud83d\udd2c',name:'Specialty Fit Analyzer',why:'Find which specialties match your personality'});
+  if(concern==='finance'||now==='fellow'||now==='attending')nextTools.push({id:'v11',icon:'\ud83d\udcb0',name:'Financial Trajectory Simulator',why:'See 30-year financial impact of your choices'});
+  if(now!=='ms1'&&now!=='ms2')nextTools.push({id:'v16',icon:'\ud83c\udfa4',name:'Mock Interview Simulator',why:'Practice real interview questions'});
+
+  if(nextTools.length){
+    h+='<div style="margin-top:20px;padding:16px;background:var(--bg2);border:1px solid var(--border);border-radius:12px">';
+    h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">\ud83e\udde0 Recommended Next Steps</div>';
+    nextTools.slice(0,4).forEach(function(t){
+      h+='<div onclick="openFramework(\''+t.id+'\')" style="display:flex;align-items:center;gap:10px;padding:10px;margin-bottom:6px;background:var(--bg3);border-radius:8px;cursor:pointer;transition:background .2s" onmouseenter="this.style.background=\'rgba(200,168,124,.08)\'" onmouseleave="this.style.background=\'var(--bg3)\'">';
+      h+='<span style="font-size:18px">'+t.icon+'</span><div><div style="font-size:12px;font-weight:600;color:var(--text)">'+t.name+'</div><div style="font-size:10px;color:var(--text3)">'+t.why+'</div></div></div>';
+    });
+    h+='</div>';
+  }
+
   h+='<div style="margin-top:20px;padding:14px;background:var(--accent-dim);border:1px solid rgba(200,168,124,.15);border-radius:10px;text-align:center">';
   h+='<div style="font-size:12px;color:var(--accent);font-weight:600;margin-bottom:4px">Want expert review of your roadmap?</div>';
   h+='<div style="font-size:11px;color:var(--text3)">Submit a Strategic Audit for Dr. Faroqui\u2019s personalized assessment.</div></div>';
 
   document.getElementById('csb-results').innerHTML=h;
   applyBlurGate(document.getElementById('csb-results'));
-  // Save scenario for compare
-  var nowLabels={ms1:'MS-1',ms2:'MS-2',ms3:'MS-3',ms4:'MS-4',pgy1:'PGY-1',pgy2:'PGY-2',pgy3:'PGY-3',fellow:'Fellow',attending:'Attending'};
-  var csbInputs={'Current Stage':nowLabels[now]||now,'Target':tName,'Research':research+' pubs','Urgency':urgency};
-  var csbHL=[];phases.forEach(function(p){csbHL.push(p.time+': '+p.title)});
-  recordToolUse('Career Strategy Builder',null,tName+' roadmap',{inputs:csbInputs,highlights:csbHL});
-}// ===== TOOLKIT QUIZ =====
+
+  var csbInputs={'Stage':nowLabels[now]||now,'Target':tName,'Timeline':urgency==='1'?'This cycle':urgency+' year(s)'};
+  if(step1)csbInputs['Step 1']=step1;if(step2)csbInputs['Step 2']=step2;
+  if(isDO)csbInputs['DO']='Yes';
+  csbInputs['First-Author']=firstAuth;csbInputs['Total Research']=totalResearch;
+  if(lors)csbInputs['Letters']=lors;if(clinical)csbInputs['Clinical']=clinical;
+  if(concern)csbInputs['Concern']=concernLabels[concern]||concern;
+  var csbHL=[];
+  if(strengths.length)csbHL.push(strengths.length+' strengths identified');
+  if(gaps.length)csbHL.push(gaps.length+' gaps to address');
+  if(warnings.length)csbHL.push(warnings.length+' warnings');
+  phases.forEach(function(p){csbHL.push(p.time+': '+p.title)});
+  recordToolUse('Career Strategy Builder',null,tName+' roadmap ('+phases.length+' phases)',{inputs:csbInputs,highlights:csbHL});
+}
+// ===== TOOLKIT QUIZ =====
 var quizAnswers={stage:null,goal:null,urgency:null};
 
 // Recommendation engine: maps (stage, goal) → ordered tool IDs with rationale

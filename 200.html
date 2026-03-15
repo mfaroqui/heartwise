@@ -4833,176 +4833,7 @@ v15:`<h3 class="serif">Career Strategy Builder</h3>
 </select>
 </div>
 
-<div style="padding:14px 0;border-bottom:1px solid var(--border)">
-<div style="margin-bottom:6px"><strong>Target Specialty / Goal</strong></div>
-<select id="csb-target" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
-<option value="">Select target...</option>
-<option value="cards">Cardiology</option>
-<option value="ic">Interventional Cardiology</option>
-<option value="ep">Electrophysiology</option>
-<option value="gi">Gastroenterology</option>
-<option value="pulm">Pulmonary/Critical Care</option>
-<option value="heme">Hematology/Oncology</option>
-<option value="endo">Endocrinology</option>
-<option value="rheum">Rheumatology</option>
-<option value="neph">Nephrology</option>
-<option value="id">Infectious Disease</option>
-<option value="ortho">Orthopedic Surgery</option>
-<option value="nsurg">Neurosurgery</option>
-<option value="derm">Dermatology</option>
-<option value="ophtho">Ophthalmology</option>
-<option value="rads">Radiology</option>
-<option value="gen_surg">General Surgery</option>
-<option value="em">Emergency Medicine</option>
-<option value="fm">Family Medicine</option>
-<option value="psych">Psychiatry</option>
-<option value="academic">Academic Medicine</option>
-<option value="private">Private Practice</option>
-<option value="admin">Healthcare Administration</option>
-</select>
-</div>
-
-<div style="padding:14px 0;border-bottom:1px solid var(--border)">
-<div style="margin-bottom:6px"><strong>Timeline Urgency</strong></div>
-<select id="csb-urgency" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
-<option value="">Select...</option>
-<option value="1">Applying this cycle</option>
-<option value="2">Applying next cycle (1 year out)</option>
-<option value="3">2+ years to prepare</option>
-</select>
-</div>
-
-<!-- Dynamic fields that appear after stage is selected -->
-<div id="csb-detail-fields" style="display:none">
-
-<div id="csb-boards-section" style="padding:14px 0;border-bottom:1px solid var(--border)">
-<div style="margin-bottom:6px"><strong>Board Scores</strong></div>
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-<div><label style="font-size:10px;color:var(--text3);display:block;margin-bottom:4px">Step 1 / Level 1</label>
-<input id="csb-step1" type="text" placeholder="e.g. 230, Pass" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:6px;background:var(--bg2);color:var(--text);font-size:12px;box-sizing:border-box"></div>
-<div><label style="font-size:10px;color:var(--text3);display:block;margin-bottom:4px">Step 2 CK / Level 2</label>
-<input id="csb-step2" type="text" placeholder="e.g. 255, 248" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:6px;background:var(--bg2);color:var(--text);font-size:12px;box-sizing:border-box"></div>
-</div>
-<div style="margin-top:6px"><label style="font-size:10px;color:var(--text3);display:block;margin-bottom:4px">DO student?</label>
-<select id="csb-do" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:6px;background:var(--bg2);color:var(--text);font-size:12px">
-<option value="no">No — MD</option>
-<option value="yes">Yes — DO</option>
-</select></div>
-</div>
-
-<div style="padding:14px 0;border-bottom:1px solid var(--border)">
-<div style="margin-bottom:6px"><strong>Research Output</strong></div>
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-<div><label style="font-size:10px;color:var(--text3);display:block;margin-bottom:4px">First-author pubs</label>
-<select id="csb-first-auth" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:6px;background:var(--bg2);color:var(--text);font-size:12px">
-<option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3-4</option><option value="5">5+</option>
-</select></div>
-<div><label style="font-size:10px;color:var(--text3);display:block;margin-bottom:4px">Other pubs/abstracts</label>
-<select id="csb-other-pubs" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:6px;background:var(--bg2);color:var(--text);font-size:12px">
-<option value="0">0</option><option value="1">1-2</option><option value="3">3-5</option><option value="6">6+</option>
-</select></div>
-</div>
-</div>
-
-<div style="padding:14px 0;border-bottom:1px solid var(--border)">
-<div style="margin-bottom:6px"><strong>Letters of Recommendation</strong></div>
-<select id="csb-lors" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
-<option value="">Select...</option>
-<option value="none">Haven't identified writers yet</option>
-<option value="generic">Have writers but not specialty-specific</option>
-<option value="partial">1-2 specialty-specific writers secured</option>
-<option value="strong">3+ specialty-specific writers — strong relationships</option>
-</select>
-</div>
-
-<div id="csb-clinical-section" style="padding:14px 0;border-bottom:1px solid var(--border)">
-<div style="margin-bottom:6px"><strong>Clinical Performance</strong></div>
-<select id="csb-clinical" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
-<option value="">Select...</option>
-<option value="below">Below expectations in some areas</option>
-<option value="avg">Meets expectations / average evaluations</option>
-<option value="good">Above average — consistently positive feedback</option>
-<option value="top">Top of class / honors in most rotations</option>
-</select>
-</div>
-
-<div id="csb-away-section" style="padding:14px 0;border-bottom:1px solid var(--border)">
-<div style="margin-bottom:6px"><strong>Away Rotations / Visiting Electives</strong></div>
-<select id="csb-aways" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
-<option value="0">None planned or completed</option>
-<option value="planned">Planned but not yet completed</option>
-<option value="1">Completed 1</option>
-<option value="2">Completed 2+</option>
-</select>
-</div>
-
-<div style="padding:14px 0;border-bottom:1px solid var(--border)">
-<div style="margin-bottom:6px"><strong>Leadership & Extracurriculars</strong></div>
-<select id="csb-leadership" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
-<option value="none">No leadership roles</option>
-<option value="minor">Minor roles (committee member, volunteer)</option>
-<option value="moderate">Meaningful roles (club president, QI lead)</option>
-<option value="strong">Major roles (chief resident, national committee, founded organization)</option>
-</select>
-</div>
-
-<div id="csb-ps-section" style="padding:14px 0;border-bottom:1px solid var(--border)">
-<div style="margin-bottom:6px"><strong>Personal Statement</strong></div>
-<select id="csb-ps" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
-<option value="none">Haven't started</option>
-<option value="draft1">First draft done</option>
-<option value="revising">Multiple drafts / getting feedback</option>
-<option value="done">Polished and finalized</option>
-</select>
-</div>
-
-<div style="padding:14px 0;border-bottom:1px solid var(--border)">
-<div style="margin-bottom:6px"><strong>Geographic Preference</strong></div>
-<select id="csb-geo" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
-<option value="flexible">Flexible — will go anywhere for the best fit</option>
-<option value="region">Prefer a specific region but open to others</option>
-<option value="limited">Geographically limited (family, partner, personal)</option>
-</select>
-</div>
-
-<div id="csb-setting-section" style="padding:14px 0;border-bottom:1px solid var(--border)">
-<div style="margin-bottom:6px"><strong>Preferred Practice Setting</strong> <span style="font-size:10px;color:var(--text3)">(long-term)</span></div>
-<select id="csb-setting" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
-<option value="unsure">Not sure yet</option>
-<option value="academic">Academic — teaching, research, lower pay</option>
-<option value="employed">Employed — hospital/health system, work-life balance</option>
-<option value="private">Private practice — higher income ceiling, business risk</option>
-</select>
-</div>
-
-<div style="padding:14px 0;border-bottom:1px solid var(--border)">
-<div style="margin-bottom:6px"><strong>What's your biggest concern?</strong></div>
-<select id="csb-concern" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
-<option value="">Select...</option>
-<option value="research">Not enough research</option>
-<option value="scores">Board scores aren't competitive</option>
-<option value="letters">Weak or no specialty-specific letters</option>
-<option value="clinical">Clinical evaluations aren't strong</option>
-<option value="time">Running out of time before application</option>
-<option value="direction">Not sure if this is the right specialty</option>
-<option value="networking">Haven't built connections at target programs</option>
-<option value="finance">Financial concerns about the path</option>
-<option value="confidence">Imposter syndrome / confidence</option>
-<option value="none">No major concerns — just need a plan</option>
-</select>
-</div>
-
-<div style="padding:14px 0;border-bottom:1px solid var(--border)">
-<div style="margin-bottom:6px"><strong>How many programs are you considering?</strong></div>
-<select id="csb-programs" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
-<option value="0">Haven't built a list yet</option>
-<option value="narrow">1-5 (very targeted)</option>
-<option value="moderate">6-15 (typical range)</option>
-<option value="broad">16+ (casting a wide net)</option>
-</select>
-</div>
-
-</div>
+<div id="csb-dynamic-fields"></div>
 
 <button onclick="csbGenerate()" class="btn btn-a" style="width:100%;margin-top:16px;padding:14px">Build My Roadmap →</button>
 
@@ -8774,22 +8605,239 @@ function mccSaveProfile(){
 // ===== CAREER STRATEGY BUILDER (v15) =====
 function csbStageChange(){
   var now=document.getElementById('csb-now').value;
-  var detail=document.getElementById('csb-detail-fields');
-  if(!now){if(detail)detail.style.display='none';return}
-  if(detail)detail.style.display='';
-  var showBoards=now!=='fellow'&&now!=='attending';
-  var showAways=now==='ms3'||now==='intern'||now==='resident'||now==='senior';
-  var showPS=now!=='fellow'&&now!=='attending';
-  var showClinical=now!=='ms1';
-  var showSetting=now==='fellow'||now==='attending';
-  var el;
-  el=document.getElementById('csb-boards-section');if(el)el.style.display=showBoards?'':'none';
-  el=document.getElementById('csb-away-section');if(el)el.style.display=showAways?'':'none';
-  el=document.getElementById('csb-ps-section');if(el)el.style.display=showPS?'':'none';
-  el=document.getElementById('csb-clinical-section');if(el)el.style.display=showClinical?'':'none';
-  el=document.getElementById('csb-setting-section');if(el)el.style.display=showSetting?'':'none';
+  var df=document.getElementById('csb-dynamic-fields');
+  if(!now||!df){if(df)df.innerHTML='';return}
+
+  var isStudent=now==='ms1'||now==='ms3';
+  var isResident=now==='intern'||now==='resident'||now==='senior';
+  var isFellow=now==='fellow';
+  var isAttending=now==='attending';
+  var isTrainee=isStudent||isResident;
+
+  var sel='style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px"';
+  var sel2='style="width:100%;padding:8px;border:1px solid var(--border);border-radius:6px;background:var(--bg2);color:var(--text);font-size:12px"';
+  var inp='style="width:100%;padding:8px;border:1px solid var(--border);border-radius:6px;background:var(--bg2);color:var(--text);font-size:12px;box-sizing:border-box"';
+  var sec='style="padding:14px 0;border-bottom:1px solid var(--border)"';
+  var lbl='style="font-size:10px;color:var(--text3);display:block;margin-bottom:4px"';
+  var h='';
+
+  // ----- TARGET -----
+  if(isFellow||isAttending){
+    h+='<div '+sec+'><div style="margin-bottom:6px"><strong>'+(isFellow?'What type of position are you seeking?':'What change are you considering?')+'</strong></div>';
+    h+='<select id="csb-target" '+sel+'><option value="">Select...</option>';
+    if(isFellow){
+      h+='<option value="academic">Academic position — teaching + research</option>';
+      h+='<option value="employed">Employed — hospital/health system</option>';
+      h+='<option value="private">Private practice — partnership track</option>';
+      h+='<option value="hybrid">Hybrid — part academic, part private</option>';
+    }else{
+      h+='<option value="newjob">New position — same specialty</option>';
+      h+='<option value="academic">Transition to academic medicine</option>';
+      h+='<option value="private">Transition to private practice</option>';
+      h+='<option value="employed">Transition to employed model</option>';
+      h+='<option value="admin">Healthcare administration / leadership</option>';
+      h+='<option value="pivot">Specialty change / additional training</option>';
+      h+='<option value="retire">Early retirement / part-time planning</option>';
+    }
+    h+='</select></div>';
+  }else{
+    h+='<div '+sec+'><div style="margin-bottom:6px"><strong>Target Specialty</strong></div>';
+    h+='<select id="csb-target" '+sel+'><option value="">Select target...</option>';
+    h+='<option value="cards">Cardiology</option><option value="ic">Interventional Cardiology</option><option value="ep">Electrophysiology</option>';
+    h+='<option value="gi">Gastroenterology</option><option value="pulm">Pulmonary/Critical Care</option><option value="heme">Hematology/Oncology</option>';
+    h+='<option value="endo">Endocrinology</option><option value="rheum">Rheumatology</option><option value="neph">Nephrology</option><option value="id">Infectious Disease</option>';
+    h+='<option value="ortho">Orthopedic Surgery</option><option value="nsurg">Neurosurgery</option><option value="derm">Dermatology</option>';
+    h+='<option value="ophtho">Ophthalmology</option><option value="rads">Radiology</option><option value="gen_surg">General Surgery</option>';
+    h+='<option value="em">Emergency Medicine</option><option value="fm">Family Medicine</option><option value="psych">Psychiatry</option>';
+    h+='</select></div>';
+  }
+
+  // ----- TIMELINE -----
+  h+='<div '+sec+'><div style="margin-bottom:6px"><strong>'+(isFellow?'When does your fellowship end?':(isAttending?'When do you want to make this change?':'Application Timeline'))+'</strong></div>';
+  h+='<select id="csb-urgency" '+sel+'><option value="">Select...</option>';
+  if(isFellow){
+    h+='<option value="1">Within 6 months</option><option value="2">6-12 months</option><option value="3">1+ year out</option>';
+  }else if(isAttending){
+    h+='<option value="1">As soon as possible</option><option value="2">Within the next year</option><option value="3">Planning 1-2 years out</option>';
+  }else{
+    h+='<option value="1">Applying this cycle</option><option value="2">Applying next cycle (1 year out)</option><option value="3">2+ years to prepare</option>';
+  }
+  h+='</select></div>';
+
+  // ----- STUDENT / RESIDENT SPECIFIC -----
+  if(isTrainee){
+    // Board scores
+    h+='<div '+sec+'><div style="margin-bottom:6px"><strong>'+(now==='ms1'?'Board Prep Status':'Board Scores')+'</strong></div>';
+    if(now==='ms1'){
+      h+='<select id="csb-step1" '+sel+'><option value="">Select...</option>';
+      h+='<option value="notstarted">Haven\'t started preparing</option><option value="studying">Currently studying</option><option value="strong">Performing well on practice exams</option>';
+      h+='</select>';
+      h+='<input id="csb-step2" type="hidden" value=""><input id="csb-do" type="hidden" value="no">';
+    }else{
+      h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">';
+      h+='<div><label '+lbl+'>Step 1 / Level 1</label><input id="csb-step1" type="text" placeholder="e.g. 230, Pass" '+inp+'></div>';
+      h+='<div><label '+lbl+'>Step 2 CK / Level 2</label><input id="csb-step2" type="text" placeholder="e.g. 255" '+inp+'></div></div>';
+      h+='<div style="margin-top:6px"><label '+lbl+'>MD or DO?</label><select id="csb-do" '+sel2+'><option value="no">MD</option><option value="yes">DO</option></select></div>';
+    }
+    h+='</div>';
+
+    // Research
+    h+='<div '+sec+'><div style="margin-bottom:6px"><strong>'+(now==='ms1'?'Research Experience':'Research Output')+'</strong></div>';
+    if(now==='ms1'){
+      h+='<select id="csb-first-auth" '+sel+'><option value="0">No research experience yet</option><option value="0">Involved in a project but no output yet</option><option value="1">1 publication or abstract</option><option value="2">2+ publications or abstracts</option></select>';
+      h+='<input id="csb-other-pubs" type="hidden" value="0">';
+    }else{
+      h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">';
+      h+='<div><label '+lbl+'>First-author publications</label><select id="csb-first-auth" '+sel2+'><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3-4</option><option value="5">5+</option></select></div>';
+      h+='<div><label '+lbl+'>Other (middle-author, abstracts)</label><select id="csb-other-pubs" '+sel2+'><option value="0">0</option><option value="1">1-2</option><option value="3">3-5</option><option value="6">6+</option></select></div></div>';
+    }
+    h+='</div>';
+
+    // LORs
+    h+='<div '+sec+'><div style="margin-bottom:6px"><strong>'+(now==='ms1'?'Faculty Relationships':'Letters of Recommendation')+'</strong></div>';
+    h+='<select id="csb-lors" '+sel+'><option value="">Select...</option>';
+    if(now==='ms1'){
+      h+='<option value="none">No faculty mentors yet</option><option value="generic">Know a few professors but no deep connections</option><option value="partial">1-2 faculty mentors in my target field</option><option value="strong">Strong relationships with multiple faculty</option>';
+    }else{
+      h+='<option value="none">Haven\'t identified writers yet</option><option value="generic">Have writers but not specialty-specific</option><option value="partial">1-2 specialty-specific writers secured</option><option value="strong">3+ specialty-specific writers with strong relationships</option>';
+    }
+    h+='</select></div>';
+
+    // Clinical (not for MS1)
+    if(now!=='ms1'){
+      h+='<div '+sec+'><div style="margin-bottom:6px"><strong>'+(now==='ms3'?'Clerkship Performance':'Clinical Evaluations')+'</strong></div>';
+      h+='<select id="csb-clinical" '+sel+'><option value="">Select...</option>';
+      if(now==='ms3'){
+        h+='<option value="below">Struggling in some clerkships</option><option value="avg">Passing all, honors in a few</option><option value="good">Honors in most clerkships</option><option value="top">Top of class / AOA-track</option>';
+      }else{
+        h+='<option value="below">Below expectations in some areas</option><option value="avg">Meets expectations</option><option value="good">Above average — consistently positive</option><option value="top">Outstanding — recognized by program</option>';
+      }
+      h+='</select></div>';
+    }
+
+    // Away rotations (MS3+)
+    if(now!=='ms1'){
+      h+='<div '+sec+'><div style="margin-bottom:6px"><strong>'+(now==='ms3'?'Sub-Internship / Away Rotations':'Away Rotations')+'</strong></div>';
+      h+='<select id="csb-aways" '+sel+'><option value="0">None planned or completed</option><option value="planned">Planned but not yet completed</option><option value="1">Completed 1</option><option value="2">Completed 2+</option></select></div>';
+    }
+
+    // Leadership
+    h+='<div '+sec+'><div style="margin-bottom:6px"><strong>'+(now==='ms1'?'Extracurricular Involvement':(isResident?'Leadership & Service':'Leadership & Extracurriculars'))+'</strong></div>';
+    h+='<select id="csb-leadership" '+sel+'>';
+    if(now==='ms1'){
+      h+='<option value="none">Not involved in anything yet</option><option value="minor">Member of clubs/interest groups</option><option value="moderate">Leadership in a student org or volunteer program</option><option value="strong">Founded an org, national role, or significant initiative</option>';
+    }else if(isResident){
+      h+='<option value="none">No leadership roles</option><option value="minor">Committee member, minor roles</option><option value="moderate">QI lead, education committee, curriculum development</option><option value="strong">Chief resident, national committee, program-level impact</option>';
+    }else{
+      h+='<option value="none">No leadership roles</option><option value="minor">Minor roles (committee, volunteer)</option><option value="moderate">Meaningful roles (club president, QI lead)</option><option value="strong">Major roles (chief, national committee, founded org)</option>';
+    }
+    h+='</select></div>';
+
+    // Personal statement
+    h+='<div '+sec+'><div style="margin-bottom:6px"><strong>Personal Statement</strong></div>';
+    h+='<select id="csb-ps" '+sel+'>';
+    if(now==='ms1'){
+      h+='<option value="none">Way too early to think about</option><option value="none">Thinking about my narrative but nothing written</option><option value="draft1">Started journaling key experiences</option>';
+    }else{
+      h+='<option value="none">Haven\'t started</option><option value="draft1">First draft done</option><option value="revising">Multiple drafts / getting feedback</option><option value="done">Polished and finalized</option>';
+    }
+    h+='</select></div>';
+
+    // Programs
+    h+='<div '+sec+'><div style="margin-bottom:6px"><strong>'+(now==='ms1'?'How many programs interest you?':'How many programs are you considering?')+'</strong></div>';
+    h+='<select id="csb-programs" '+sel+'><option value="0">Haven\'t built a list yet</option><option value="narrow">1-5 (very targeted)</option><option value="moderate">6-15</option><option value="broad">16+</option></select></div>';
+
+    // Geographic
+    h+='<div '+sec+'><div style="margin-bottom:6px"><strong>Geographic Flexibility</strong></div>';
+    h+='<select id="csb-geo" '+sel+'><option value="flexible">Will go anywhere for the best fit</option><option value="region">Prefer a region but open</option><option value="limited">Geographically limited (family, partner)</option></select></div>';
+
+    // Concern
+    h+='<div '+sec+'><div style="margin-bottom:6px"><strong>What worries you most?</strong></div>';
+    h+='<select id="csb-concern" '+sel+'><option value="">Select...</option>';
+    if(now==='ms1'){
+      h+='<option value="direction">Not sure which specialty to pursue</option><option value="research">No research experience yet</option><option value="scores">Worried about board scores</option><option value="networking">Don\'t know how to build connections</option><option value="confidence">Imposter syndrome</option><option value="finance">Debt / financial concerns</option><option value="none">No major concerns — just want a plan</option>';
+    }else{
+      h+='<option value="research">Not enough research</option><option value="scores">Board scores aren\'t competitive</option><option value="letters">Weak or no specialty-specific letters</option><option value="clinical">Clinical evaluations aren\'t strong</option><option value="time">Running out of time</option><option value="direction">Not sure about this specialty</option><option value="networking">Haven\'t built connections at target programs</option><option value="finance">Financial concerns</option><option value="confidence">Imposter syndrome</option><option value="none">No major concerns</option>';
+    }
+    h+='</select></div>';
+
+    // Hidden fields for fellow/attending-specific fields
+    h+='<input id="csb-setting" type="hidden" value="unsure">';
+  }
+
+  // ----- FELLOW SPECIFIC -----
+  if(isFellow){
+    h+='<div '+sec+'><div style="margin-bottom:6px"><strong>Current Subspecialty</strong></div>';
+    h+='<select id="csb-fellowship" '+sel+'><option value="">Select...</option>';
+    h+='<option value="cards">Cardiology</option><option value="ic">Interventional Cardiology</option><option value="ep">Electrophysiology</option>';
+    h+='<option value="gi">GI</option><option value="pulm">Pulm/Crit Care</option><option value="heme">Heme/Onc</option>';
+    h+='<option value="endo">Endocrinology</option><option value="rheum">Rheumatology</option><option value="neph">Nephrology</option>';
+    h+='<option value="id">Infectious Disease</option><option value="other">Other</option></select></div>';
+
+    h+='<div '+sec+'><div style="margin-bottom:6px"><strong>Preferred Practice Setting</strong></div>';
+    h+='<select id="csb-setting" '+sel+'><option value="unsure">Not sure yet</option>';
+    h+='<option value="academic">Academic — teaching, research, grants</option>';
+    h+='<option value="employed">Employed — hospital system, W2, predictable</option>';
+    h+='<option value="private">Private practice — highest earning potential, business risk</option></select></div>';
+
+    h+='<div '+sec+'><div style="margin-bottom:6px"><strong>Have you started your job search?</strong></div>';
+    h+='<select id="csb-jobsearch" '+sel+'><option value="no">Not yet</option><option value="early">Browsing but no conversations</option><option value="active">Talking to employers</option><option value="offers">Have offer(s) to evaluate</option></select></div>';
+
+    h+='<div '+sec+'><div style="margin-bottom:6px"><strong>How familiar are you with contract negotiation?</strong></div>';
+    h+='<select id="csb-contract-exp" '+sel+'><option value="none">Know nothing about contracts</option><option value="basic">Understand the basics (salary, benefits)</option><option value="moderate">Know about RVUs, non-competes, tail coverage</option><option value="strong">Very knowledgeable — have negotiated before</option></select></div>';
+
+    h+='<div '+sec+'><div style="margin-bottom:6px"><strong>Geographic Flexibility</strong></div>';
+    h+='<select id="csb-geo" '+sel+'><option value="flexible">Will go anywhere for the right opportunity</option><option value="region">Prefer a region</option><option value="limited">Must stay in a specific area</option></select></div>';
+
+    h+='<div '+sec+'><div style="margin-bottom:6px"><strong>What concerns you most about the transition?</strong></div>';
+    h+='<select id="csb-concern" '+sel+'><option value="">Select...</option>';
+    h+='<option value="finance">Not sure I\'ll be paid fairly</option><option value="contract">Don\'t know how to evaluate a contract</option><option value="networking">Don\'t have enough job connections</option><option value="direction">Not sure which practice type is right</option><option value="confidence">Imposter syndrome about being an attending</option><option value="none">No major concerns</option></select></div>';
+
+    // Hidden trainee fields
+    h+='<input id="csb-step1" type="hidden" value=""><input id="csb-step2" type="hidden" value=""><input id="csb-do" type="hidden" value="no">';
+    h+='<input id="csb-first-auth" type="hidden" value="0"><input id="csb-other-pubs" type="hidden" value="0">';
+    h+='<input id="csb-lors" type="hidden" value=""><input id="csb-clinical" type="hidden" value="">';
+    h+='<input id="csb-aways" type="hidden" value="0"><input id="csb-leadership" type="hidden" value="none">';
+    h+='<input id="csb-ps" type="hidden" value="none"><input id="csb-programs" type="hidden" value="0">';
+  }
+
+  // ----- ATTENDING SPECIFIC -----
+  if(isAttending){
+    h+='<div '+sec+'><div style="margin-bottom:6px"><strong>Current Practice Type</strong></div>';
+    h+='<select id="csb-current-setting" '+sel+'><option value="">Select...</option>';
+    h+='<option value="academic">Academic</option><option value="employed">Employed (hospital/health system)</option><option value="private">Private practice</option><option value="locums">Locum tenens</option></select></div>';
+
+    h+='<div '+sec+'><div style="margin-bottom:6px"><strong>Years in Practice</strong></div>';
+    h+='<select id="csb-years" '+sel+'><option value="1">0-2 years</option><option value="3">3-5 years</option><option value="6">6-10 years</option><option value="10">10+ years</option></select></div>';
+
+    h+='<div '+sec+'><div style="margin-bottom:6px"><strong>Are you satisfied with your current compensation?</strong></div>';
+    h+='<select id="csb-comp-sat" '+sel+'><option value="">Select...</option>';
+    h+='<option value="under">Significantly underpaid for my market</option><option value="below">Somewhat below market</option><option value="fair">Fair — at or near market rate</option><option value="above">Above market — compensation is not the issue</option></select></div>';
+
+    h+='<div '+sec+'><div style="margin-bottom:6px"><strong>What\'s driving this change?</strong></div>';
+    h+='<select id="csb-concern" '+sel+'><option value="">Select...</option>';
+    h+='<option value="finance">Want higher compensation</option><option value="burnout">Burnout / work-life balance</option><option value="growth">Career growth / advancement</option><option value="location">Want to relocate</option><option value="autonomy">Want more clinical autonomy</option><option value="direction">Considering a different specialty entirely</option><option value="retire">Planning transition to part-time / retirement</option><option value="none">Just exploring options</option></select></div>';
+
+    h+='<div '+sec+'><div style="margin-bottom:6px"><strong>Geographic Flexibility</strong></div>';
+    h+='<select id="csb-geo" '+sel+'><option value="flexible">Open to relocating</option><option value="region">Prefer to stay in region</option><option value="limited">Must stay in current area</option></select></div>';
+
+    h+='<div '+sec+'><div style="margin-bottom:6px"><strong>Preferred Practice Setting</strong> <span style="font-size:10px;color:var(--text3)">(target)</span></div>';
+    h+='<select id="csb-setting" '+sel+'><option value="unsure">Not sure yet</option>';
+    h+='<option value="academic">Academic</option><option value="employed">Employed</option><option value="private">Private practice</option><option value="locums">Locum tenens</option></select></div>';
+
+    // Hidden trainee fields
+    h+='<input id="csb-step1" type="hidden" value=""><input id="csb-step2" type="hidden" value=""><input id="csb-do" type="hidden" value="no">';
+    h+='<input id="csb-first-auth" type="hidden" value="0"><input id="csb-other-pubs" type="hidden" value="0">';
+    h+='<input id="csb-lors" type="hidden" value=""><input id="csb-clinical" type="hidden" value="">';
+    h+='<input id="csb-aways" type="hidden" value="0"><input id="csb-leadership" type="hidden" value="none">';
+    h+='<input id="csb-ps" type="hidden" value="none"><input id="csb-programs" type="hidden" value="0">';
+  }
+
+  df.innerHTML=h;
 }
 function csbUpdate(){}
+// Inline tool link helper for CSB roadmap
+function _csbTool(id,label){return '<span onclick="openFramework(\''+id+'\')" style="color:var(--accent);cursor:pointer;text-decoration:underline;font-weight:600">'+label+' \u2192</span>'}
 function csbGenerate(){
   var now=document.getElementById('csb-now').value;
   var target=document.getElementById('csb-target').value;
@@ -8877,9 +8925,9 @@ function csbGenerate(){
 
     var p2=[];
     p2.push('Submit at least 1 abstract to a national conference');
-    if(firstAuth===0)p2.push('Start a first-author research project \u2014 highest ROI activity for your application');
+    if(firstAuth===0)p2.push('Start a first-author research project \u2014 highest ROI activity for your application. '+_csbTool('v7','Check Research ROI'));
     p2.push('Take on a leadership position in a relevant organization');
-    if(isCompetitive)p2.push('Begin Step 1 preparation early \u2014 a strong score opens doors');
+    if(isCompetitive)p2.push('Begin Step 1 preparation early \u2014 a strong score opens doors. '+_csbTool('v14','Check Match Competitiveness'));
     p2.push('Explore summer research opportunities at other institutions');
     phases.push({time:'6 \u2013 12 months',title:'Build Evidence',items:p2});
 
@@ -8896,7 +8944,7 @@ function csbGenerate(){
     var p1=[];
     p1.push('Honor medicine/surgery clerkships \u2014 PDs look at these first');
     if(s2===0)p1.push('Prepare for Step 2 CK \u2014 target '+(isCompetitive?'250+':'240+')+' for '+tName);
-    if(firstAuth===0)p1.push('Start a first-author project immediately \u2014 case report has fastest turnaround (2-4 months)');
+    if(firstAuth===0)p1.push('Start a first-author project immediately \u2014 case report has fastest turnaround (2-4 months). '+_csbTool('v7','Check Research ROI'));
     else p1.push('Push current research toward publication. Submit manuscripts now.');
     if(lors==='none'||lors==='generic')p1.push('Identify 3 specialty-specific letter writers NOW. Ask early \u2014 give them 8+ weeks.');
     else if(lors==='partial')p1.push('Finalize remaining letter writers. At least one from a prominent name.');
@@ -8915,7 +8963,7 @@ function csbGenerate(){
 
     phases.push({time:'6 \u2013 12 months',title:'Application Season',items:[
       'Submit ERAS on day 1 \u2014 early applicants get more interview invitations',
-      'Prepare with Mock Interview Simulator \u2014 practice 3+ full sessions',
+      'Prepare with '+_csbTool('v16','Mock Interview Simulator')+' \u2014 practice 3+ full sessions',
       'Send strategic follow-up emails after each interview (specific, not generic)',
       'Build rank list honestly \u2014 where would you be happiest for 3+ years?',
       'Track every interaction in a spreadsheet: programs, contacts, follow-ups'
@@ -8926,7 +8974,7 @@ function csbGenerate(){
     var p1=[];
     p1.push('Make your interest in '+tName+' clear to your PD \u2014 ask for relevant rotations');
     if(firstAuth===0){
-      p1.push('Research is your biggest gap. Start a first-author project THIS MONTH.');
+      p1.push('Research is your biggest gap. Start a first-author project THIS MONTH. '+_csbTool('v7','Check Research ROI'));
       if(urgency==='1')p1.push('\u26a0\ufe0f Applying this cycle with no first-author pubs: target 1 case report + 2-3 abstracts before ERAS');
     }else if(firstAuth<3&&isCompetitive){
       p1.push('Push for '+(3-firstAuth)+' more first-author publications. Target manuscript submission within 3 months.');
@@ -8946,9 +8994,9 @@ function csbGenerate(){
       phases.push({time:'3 \u2013 6 months',title:'Execute \u2014 Application Window',items:p2});
       phases.push({time:'6 \u2013 9 months',title:'Interview & Match',items:[
         'Submit ERAS on day one. No delays.',
-        'Mock Interview Simulator \u2014 practice 3+ full sessions',
+        _csbTool('v16','Mock Interview Simulator')+' \u2014 practice 3+ full sessions',
         'Send targeted interest emails after each interview',
-        'Rank by where you\'d be happiest for 3+ years, not prestige',
+        'Rank by where you\'d be happiest for 3+ years, not prestige. '+_csbTool('v1','Check Fellowship Readiness'),
         'If couples matching, start coordinating NOW'
       ]});
     }else{
@@ -8960,10 +9008,10 @@ function csbGenerate(){
       if(leadership==='none'||leadership==='minor')p2.push('Take on a meaningful leadership role \u2014 chief resident, QI lead, committee chair');
       phases.push({time:'3 \u2013 12 months',title:'Build Deliberately',items:p2});
       phases.push({time:'12 \u2013 18 months',title:'Application Year',items:[
-        'Submit competitive ERAS with strong research and specialty-specific letters',
+        'Submit competitive ERAS with strong research and specialty-specific letters. '+_csbTool('v14','Check Match Competitiveness'),
         'Apply to '+(isCompetitive?'18-25':'12-18')+' programs tiered by competitiveness',
         'Personal statement: clear, specific narrative about WHY '+tName,
-        'Interview broadly but prepared \u2014 know each program before you walk in',
+        'Interview broadly but prepared \u2014 '+_csbTool('v16','Practice with Mock Interview Simulator'),
         'Track rank list criteria: mentorship, research, case volume, location, culture'
       ]});
     }
@@ -8978,12 +9026,12 @@ function csbGenerate(){
       setting==='academic'?'Build academic portfolio: publications, grants, teaching evals':'Identify geographic markets with high demand and favorable compensation'
     ]});
     phases.push({time:'6 \u2013 12 months',title:'Contract Negotiation',items:[
-      'Run every offer through the Contract Intelligence Tool',
-      'Compare offers using the Offer Comparison Matrix',
-      'Negotiate with data: MGMA percentiles, regional benchmarks, call frequency, tail coverage',
+      'Run every offer through the '+_csbTool('v12','Contract Intelligence Tool'),
+      'Compare offers using the '+_csbTool('v3','Offer Comparison Matrix'),
+      'Negotiate with data: MGMA percentiles, regional benchmarks. '+_csbTool('v4','Model RVU Compensation'),
       'Key terms: base salary, RVU rate, non-compete, tail insurance, CME, signing bonus',
       'Physician contract attorney review before signing ($2-3.5K \u2014 always worth it)',
-      'Financial Trajectory Simulator \u2014 see 30-year impact of each option'
+      _csbTool('v11','Financial Trajectory Simulator')+' \u2014 see 30-year impact of each option'
     ]});
     phases.push({time:'Final 3 months',title:'Transition Planning',items:[
       'Financial foundation: disability insurance, retirement accounts, PSLF decision',
@@ -8996,23 +9044,23 @@ function csbGenerate(){
   else if(now==='attending'){
     phases.push({time:'Now \u2013 3 months',title:'Strategic Assessment',items:[
       'Evaluate honestly \u2014 are you where you want to be in 5 years?',
-      'Benchmark compensation: RVU Calculator + MGMA comparison',
+      'Benchmark compensation: '+_csbTool('v4','RVU Calculator')+' + MGMA comparison',
       'Identify what needs to change: compensation, practice type, location, or work-life balance',
       'Talk to 2-3 physicians who\'ve made the transition you\'re considering',
-      'Run the Financial Trajectory Simulator to see long-term wealth trajectory'
+      'Run the '+_csbTool('v11','Financial Trajectory Simulator')+' to see long-term wealth trajectory'
     ]});
     phases.push({time:'3 \u2013 6 months',title:'Build Your Plan',items:[
       'Calculate financial impact: lost income during transition, retraining costs, ramp-up time',
       'Build a 12-month financial bridge if changing practice types',
       'Network in the target space \u2014 conferences, connect with physicians already there',
-      'If pivoting: understand retraining requirements, credentialing, timeline',
+      concern==='direction'?'If pivoting specialties: '+_csbTool('v10','Run the Career Pivot Decision Engine'):'If pivoting: understand retraining requirements, credentialing, timeline',
       'Update CV and professional narrative for the new direction'
     ]});
     phases.push({time:'6 \u2013 12 months',title:'Execute the Transition',items:[
       'Set a specific decision date \u2014 open-ended "maybe someday" never happens',
-      'Negotiate next position using data and the Contract Intelligence Tool',
+      'Negotiate next position using data and the '+_csbTool('v12','Contract Intelligence Tool'),
       'Set up financial safeguards: emergency fund, moonlighting if needed',
-      'Consider a Strategic Audit for Dr. Faroqui\'s personalized assessment',
+      'Consider a '+_csbTool('v9','Strategic Audit')+' for Dr. Faroqui\'s personalized assessment',
       'Execute. The cost of staying in the wrong position compounds every year.'
     ]});
   }
@@ -9046,9 +9094,9 @@ function csbGenerate(){
     letters:'Letters are often the #1 factor. You need writers who know you personally, are in your specialty, and can cite specific clinical examples. Start now \u2014 don\'t wait until the deadline.',
     clinical:'Ask your PD for honest feedback. Create a specific improvement plan. Document improvement over time. One bad rotation doesn\'t define you \u2014 but a pattern does.',
     time:'Ruthless prioritization wins. Focus on the 2-3 highest-impact items: research submissions, letter writers, personal statement. Everything else is secondary.',
-    direction:'Get data, not more opinions. Shadow in 2-3 specialties. Ask attendings 5-10 years in: "What do you wish you knew?" Run the Specialty Fit Analyzer.',
+    direction:'Get data, not more opinions. Shadow in 2-3 specialties. Ask attendings 5-10 years in: "What do you wish you knew?" Run the '+_csbTool('v13','Specialty Fit Analyzer')+'.',
     networking:'Most opportunities come through connections. Attend conferences. Email faculty with specific compliments about their research. Follow up after meetings.',
-    finance:'Run the Financial Trajectory Simulator. Factor in training length, debt, geography, and practice type differences. Career and financial decisions are inseparable.',
+    finance:'Run the '+_csbTool('v11','Financial Trajectory Simulator')+'. Factor in training length, debt, geography, and practice type differences. Career and financial decisions are inseparable.',
     confidence:'Every physician feels this. You\'re here building a strategy \u2014 that\'s evidence of competence. Focus on objective metrics. Track progress. Celebrate wins.'
   };
   if(concern&&concern!=='none'&&concernAdvice[concern]){

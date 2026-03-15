@@ -4381,6 +4381,12 @@ function frcUpdate(){
   document.getElementById('frc-grade').style.color=gc;
   document.getElementById('frc-interp').innerHTML=gi;
   applyBlurGate(document.getElementById('frc-interp'));
+  // Record with resultData for saved scenarios
+  var frcInputs={};var frcHL=[];
+  var frcLabels={1:'Research',2:'Letters',3:'Clinical',4:'Boards',5:'Leadership',6:'Networking',7:'Personal Statement'};
+  for(var fi=1;fi<=7;fi++){var fv=parseInt(document.getElementById('frc-r'+fi).value)||0;frcInputs[frcLabels[fi]]=fv+'/5';if(fv<=2)frcHL.push(frcLabels[fi]+': needs work ('+fv+'/5)')}
+  frcHL.unshift(gl+' — '+total+'/35');
+  recordToolUse('Fellowship Readiness Calculator',total+'/35',gl,{inputs:frcInputs,highlights:frcHL});
 }
 
 // ===== PROFILE =====
@@ -5307,6 +5313,12 @@ function ciCalc(){
 
   out.innerHTML+='<p style="font-size:10px;color:var(--text3);margin-top:16px;line-height:1.6;font-style:italic">Based on MGMA 2024 Provider Compensation Report. This is a modeling tool \u2014 not legal advice. Always have a physician contract attorney review your specific contract terms.</p>';
   applyBlurGate(out);
+  // Record with resultData for saved scenarios
+  var ciInputs={Specialty:FT_SPEC_NAMES[spec]||spec,Salary:'$'+salaryK+'K','RVU Rate':'$'+rvu,'Non-Compete':ncRadius+'mi / '+ncYears+'yr',Tail:tail,'Term Notice':termNotice+' days',Call:callFreq+(callComp==='yes'?' (comp)':''),'Ret Match':retMatch+'%',CME:'$'+cme,Signing:'$'+signing+'K'};
+  var ciHL=[scoreLabel+' ('+score+'/100)'];
+  details.forEach(function(d){if(d.color==='var(--red)')ciHL.push('🚩 '+d.label+': '+d.note)});
+  if(recs.length)ciHL.push(recs.length+' negotiation point'+(recs.length>1?'s':''));
+  recordToolUse('Contract Intelligence Tool',score+'/100',scoreLabel,{inputs:ciInputs,highlights:ciHL});
 }
 
 // ===== FINANCIAL TRAJECTORY SIMULATOR =====
@@ -5501,6 +5513,10 @@ function ftCalc(){
     insEl.innerHTML=debtSection;
   }
   applyBlurGate(insEl);
+  // Record with resultData for saved scenarios
+  var ftInputs={};var ftHL=[];
+  scenarios.forEach(function(s,i){var labels3=['A','B','C'];var last=projections[i][projections[i].length-1];ftInputs['Scenario '+labels3[i]]=s.label+' (save '+Math.round(s.saveRate*100)+'%)';ftHL.push(labels3[i]+': $'+(last.netWorth/1000000).toFixed(1)+'M net worth, $'+(last.cumEarnings/1000000).toFixed(1)+'M earnings')});
+  recordToolUse('Financial Trajectory Simulator',null,scenarios.length+' scenario'+(scenarios.length>1?'s':'')+' compared',{inputs:ftInputs,highlights:ftHL});
   }else{
     insEl.innerHTML='<p style="font-size:12px;color:var(--text3);text-align:center;padding:12px">Configure a scenario to see insights.</p>';
   }
@@ -6643,6 +6659,16 @@ function rvuUpdate(){
     });
     document.getElementById('rvu-scenarios').innerHTML=scenarios;
   }
+  // Record with resultData for saved scenarios
+  if(total>0){
+    var specKey=document.getElementById('rvu-spec').value;
+    var b=_rvuBenchmarks[specKey];
+    var rvuInputs={Specialty:b?b.name:specKey,Model:model,Volume:vol.toLocaleString()+' wRVUs',Rate:'$'+rate+'/wRVU'};
+    if(model==='base_bonus'){rvuInputs['Base Salary']='$'+base.toLocaleString();rvuInputs['Threshold']=thresh.toLocaleString()+' wRVUs'}
+    var rvuHL=['Total Compensation: $'+Math.round(total).toLocaleString()];
+    if(b){var diff=total-b.comp;rvuHL.push((diff>=0?'Above':'Below')+' MGMA median by $'+Math.abs(Math.round(diff)).toLocaleString())}
+    recordToolUse('RVU Compensation Calculator','$'+Math.round(total).toLocaleString(),'$'+Math.round(total/1000)+'K '+model,{inputs:rvuInputs,highlights:rvuHL});
+  }
 }
 
 // ===== RESEARCH ROI CALCULATOR =====
@@ -6732,6 +6758,12 @@ function roiUpdate(){
     advice='Keep building. Prioritize first-author work and conference abstracts — these have the highest ROI for your time investment.';
   }
   document.getElementById('roi-next').textContent=advice;
+  // Record with resultData for saved scenarios
+  if(totalItems>0){
+    var roiInputs={'First-Author':first,'Case Reports':cases,'Abstracts':abstracts,'Reviews':reviews,'Middle-Author':middle,'QI Projects':qi};
+    var roiHL=[grade,'Portfolio Score: '+userScore+'/'+optimalScore+' pts','Total Items: '+totalItems];
+    recordToolUse('Research ROI Calculator',pct+'%',grade,{inputs:roiInputs,highlights:roiHL});
+  }
 }
 
 // ===== STRATEGIC AUDIT SUBMISSION =====
@@ -7602,6 +7634,15 @@ function misGrade(){
   document.getElementById('mis-feedback').innerHTML=h;
   applyBlurGate(document.getElementById('mis-feedback'));
   document.getElementById('mis-feedback').scrollIntoView({behavior:'smooth',block:'start'});
+  // Record with resultData for saved scenarios
+  var misSpec=document.getElementById('mis-spec')?document.getElementById('mis-spec').value:'';
+  var misType=window._misType||'mixed';
+  var misInputs={Specialty:misSpec||'General',Type:misType,'Questions Answered':answered+'/'+questions.length};
+  var misHL=[overallLabel+' ('+avgScore+'/100)'];
+  if(strongCount)misHL.push(strongCount+' strong answer'+(strongCount>1?'s':''));
+  if(weakCount)misHL.push(weakCount+' weak answer'+(weakCount>1?'s':''));
+  if(totalRed)misHL.push(totalRed+' red flag'+(totalRed>1?'s':''));
+  recordToolUse('Mock Interview Simulator',avgScore+'/100',overallLabel,{inputs:misInputs,highlights:misHL});
 }
 
 function misNewType(){
@@ -8150,7 +8191,14 @@ function renderWhatsChanged(){
   if(U.tier==='free'&&!U.isTrial){el.style.display='none';return}
   var now=new Date();var items=[];var cp=U.careerProfile||{};var stage=cp.stage||'student';
   if(U.weeklyGoals&&U.weeklyGoals.length){var cur=U.weeklyGoals[U.weeklyGoals.length-1];if(cur.status==='active')items.push({icon:'🎯',text:'This week: <strong>'+cur.goal+'</strong>'})}
-  var lc=U.lastCheckin?new Date(U.lastCheckin):null;if(!lc||Math.floor((now-lc)/86400000)>=7)items.push({icon:'📋',text:'<span onclick="showWeeklyCheckin()" style="color:var(--accent);cursor:pointer;text-decoration:underline">Weekly check-in ready</span> — 2 min'});
+  var lc=U.lastCheckin?new Date(U.lastCheckin):null;
+  var daysSinceCheckin=lc?Math.floor((now-lc)/86400000):999;
+  var isMonday=now.getDay()===1;
+  if(isMonday&&daysSinceCheckin>=5){
+    items.unshift({icon:'📋',text:'<strong style="color:var(--accent)">Monday check-in!</strong> <span onclick="showWeeklyCheckin()" style="color:var(--accent);cursor:pointer;text-decoration:underline">Start your weekly check-in</span> — set this week\'s goal'});
+  }else if(daysSinceCheckin>=7){
+    items.push({icon:'📋',text:'<span onclick="showWeeklyCheckin()" style="color:var(--accent);cursor:pointer;text-decoration:underline">Weekly check-in ready</span> — 2 min'});
+  }
   if(cp.lastUpdated){var age=Math.floor((now-new Date(cp.lastUpdated))/86400000);if(age>=30)items.push({icon:'🔄',text:'Scores are <strong>'+age+'d old</strong>. <span onclick="showUpdateProfile()" style="color:var(--accent);cursor:pointer;text-decoration:underline">Refresh</span>'})}
   var m=now.getMonth();var alerts={student:[{m:8,t:'ERAS opens soon — personal statement ready?'},{m:2,t:'Match Day this month! 🎉'},{m:6,t:'Away rotation season'}],resident:[{m:5,t:'Fellowship apps opening soon'},{m:9,t:'Contract season — run Contract Intelligence'}],fellow:[{m:9,t:'Job search — analyze every offer'}],attending:[{m:0,t:'New year — review financial trajectory'},{m:9,t:'Contract renewal season'}]};
   (alerts[stage]||alerts.student).forEach(function(a){if(a.m===m)items.push({icon:'📅',text:a.t})});

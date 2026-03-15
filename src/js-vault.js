@@ -69,7 +69,8 @@ v1:`<h3>Fellowship Readiness Calculator</h3>
 <div id="frc-grade" style="font-size:16px;font-weight:600;margin-top:8px"></div>
 <div id="frc-interp" style="font-size:13px;color:var(--text2);margin-top:12px;line-height:1.7;text-align:left"></div>
 </div>
-<p style="font-size:10px;color:var(--text3);margin-top:12px;font-style:italic">Based on NRMP Charting Outcomes and program director surveys. Weighted scoring reflects relative importance per PD surveys.</p>`,
+<p style="font-size:10px;color:var(--text3);margin-top:12px;font-style:italic">Based on NRMP Charting Outcomes and program director surveys. Weighted scoring reflects relative importance per PD surveys.</p>
+<div style="text-align:center;margin-top:8px"><button onclick="showSavedScenarios('Fellowship Readiness Calculator')" style="background:none;border:none;color:var(--accent);font-size:11px;cursor:pointer;padding:6px 12px;opacity:.7;transition:opacity .15s" onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='.7'">📊 View Saved Scenarios</button></div>`,
 
 v2:`<h3 class="serif">Contract Risk Scorecard</h3>
 <p style="color:var(--text3);font-size:12px;margin-bottom:20px">Answer these questions about your contract. You'll get a risk score and specific flags to address before signing.</p>
@@ -365,7 +366,8 @@ v4:`<h3>RVU Compensation Calculator</h3>
 </div>
 
 <div style="padding:16px;background:var(--bg2);border-radius:8px;margin-top:16px"><p style="font-size:12px;color:var(--text2);line-height:1.6;margin:0"><strong>Year 1 reality:</strong> Most new attendings don't hit median wRVUs in year 1. It takes 12-18 months to build a full panel. Make sure your guarantee period covers the ramp-up.</p></div>
-<p style="font-size:10px;color:var(--text3);margin-top:12px;font-style:italic">Source: MGMA DataDive Provider Compensation 2024. Figures are approximate medians and vary by region, practice type, and payer mix.</p>`,
+<p style="font-size:10px;color:var(--text3);margin-top:12px;font-style:italic">Source: MGMA DataDive Provider Compensation 2024. Figures are approximate medians and vary by region, practice type, and payer mix.</p>
+<div style="text-align:center;margin-top:8px"><button onclick="showSavedScenarios('RVU Compensation Calculator')" style="background:none;border:none;color:var(--accent);font-size:11px;cursor:pointer;padding:6px 12px;opacity:.7;transition:opacity .15s" onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='.7'">📊 View Saved Scenarios</button></div>`,
 
 v5:`<h3>3-Year Financial Leverage Planner</h3>
 <p style="color:var(--text3);font-size:12px;margin-bottom:16px">The first 3 years after training determine your financial trajectory for the next 20.</p>
@@ -528,6 +530,7 @@ v7:`<h3>Research ROI Calculator</h3>
 <div style="font-size:11px;font-weight:600;color:var(--text3);margin-bottom:6px">OPTIMAL PORTFOLIO BENCHMARK</div>
 <p style="font-size:12px;color:var(--text2);line-height:1.7;margin:0">1-2 first-author papers + 2-3 abstracts + 1 case report = competitive applicant. Based on NRMP Charting Outcomes data for subspecialty fellowship matching.</p>
 </div>
+<div style="text-align:center;margin-top:8px"><button onclick="showSavedScenarios('Research ROI Calculator')" style="background:none;border:none;color:var(--accent);font-size:11px;cursor:pointer;padding:6px 12px;opacity:.7;transition:opacity .15s" onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='.7'">📊 View Saved Scenarios</button></div>
 </div>`,
 
 v8:`<h3>Income Leverage Playbook</h3>
@@ -625,6 +628,7 @@ v16:`<h3 class="serif">Mock Interview Simulator</h3>
 </div>
 
 <div id="mis-feedback"></div>
+<div style="text-align:center;margin-top:8px"><button onclick="showSavedScenarios('Mock Interview Simulator')" style="background:none;border:none;color:var(--accent);font-size:11px;cursor:pointer;padding:6px 12px;opacity:.7;transition:opacity .15s" onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='.7'">📊 View Saved Scenarios</button></div>
 </div>`,
 
 v9:`<h3>Strategic Audit Template</h3>
@@ -796,7 +800,8 @@ v10:`<h3>Career Pivot Decision Engine</h3>
 <div style="font-size:48px;margin-bottom:16px">\u2713</div>
 <h3 class="serif" style="font-size:20px;margin-bottom:8px">Report Submitted</h3>
 <p style="font-size:13px;color:var(--text2);line-height:1.6">Your Career Pivot Decision Engine report has been sent to Dr. Faroqui for review.</p>
-</div>`,
+</div>
+<div style="text-align:center;margin-top:8px"><button onclick="showSavedScenarios('Career Pivot Decision Engine')" style="background:none;border:none;color:var(--accent);font-size:11px;cursor:pointer;padding:6px 12px;opacity:.7;transition:opacity .15s" onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='.7'">📊 View Saved Scenarios</button></div>`,
 v12:`<div style="text-align:center;padding:28px 20px;margin:-20px -20px 24px;background:linear-gradient(160deg,rgba(200,168,124,.1),rgba(200,168,124,.03));border-radius:12px 12px 0 0;border-bottom:1px solid rgba(200,168,124,.15)">
 <div style="font-size:36px;margin-bottom:8px">\ud83d\udcdd</div>
 <h3 class="serif" style="font-size:22px;margin-bottom:4px">Contract Intelligence Tool</h3>
@@ -849,6 +854,7 @@ v12:`<div style="text-align:center;padding:28px 20px;margin:-20px -20px 24px;bac
 </div>
 
 <div id="ci-output" style="margin-top:24px"></div>
+<div style="text-align:center;margin-top:8px"><button onclick="showSavedScenarios('Contract Intelligence Tool')" style="background:none;border:none;color:var(--accent);font-size:11px;cursor:pointer;padding:6px 12px;opacity:.7;transition:opacity .15s" onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='.7'">📊 View Saved Scenarios</button></div>
 </div>`,
 
 v11:`<div style="text-align:center;padding:28px 20px;margin:-20px -20px 24px;background:linear-gradient(160deg,rgba(200,168,124,.1),rgba(200,168,124,.03));border-radius:12px 12px 0 0;border-bottom:1px solid rgba(200,168,124,.15)">
@@ -1050,6 +1056,7 @@ v11:`<div style="text-align:center;padding:28px 20px;margin:-20px -20px 24px;bac
 <div id="ft-insights" style="margin-bottom:20px"></div>
 
 <p style="font-size:10px;color:var(--text3);line-height:1.6;font-style:italic;margin-top:16px">Based on MGMA 2024 compensation data. Assumes 7% annual investment return, 3% annual salary growth, and $250K starting student debt. This is a modeling tool \u2014 not financial advice. Consult a financial professional for personalized planning.</p>
+<div style="text-align:center;margin-top:8px"><button onclick="showSavedScenarios('Financial Trajectory Simulator')" style="background:none;border:none;color:var(--accent);font-size:11px;cursor:pointer;padding:6px 12px;opacity:.7;transition:opacity .15s" onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='.7'">📊 View Saved Scenarios</button></div>
 </div>`
 ,
 v13:`<h3 class="serif">Specialty Fit Analyzer</h3>

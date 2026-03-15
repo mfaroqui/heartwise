@@ -699,6 +699,8 @@ function enterApp(){
   checkNotifBadge();
   // Show upgrade elements based on tier
   showUpgradeElements();
+  // Start onboarding tour for new users (after a short delay for rendering)
+  if(shouldShowTour())setTimeout(startTour,800);
 }
 
 // ===== UPGRADE ELEMENTS =====
@@ -8255,3 +8257,132 @@ function generateMonthlyReport(){
   document.getElementById('modal-q-content').innerHTML=h;document.getElementById('modal-q').classList.remove('hidden');
 }
 function printReport(){window.print()}
+
+// ===== ONBOARDING TOUR =====
+var _tourStep=0;
+var _tourSteps=[
+  {
+    target:function(){return document.getElementById('dash-update-bar')},
+    fallback:function(){return document.getElementById('career-dashboard')},
+    title:'Set Up Your Career Profile',
+    body:'Start here. Answer a few questions about your training stage, specialty, and goals — and we\'ll generate personalized career scores across 4 dimensions.',
+    pos:'top'
+  },
+  {
+    target:function(){return document.getElementById('career-dashboard')},
+    title:'Your Career Scores',
+    body:'These four scores — Competitiveness, Research, Readiness, and Financial — track your progress over time. They update every time you recalculate your profile.',
+    pos:'bottom'
+  },
+  {
+    target:function(){return document.querySelector('[onclick="navTo(\'scr-vault\')"]')},
+    title:'Explore 15+ Career Tools',
+    body:'Frameworks is where the real work happens. Contract analysis, match calculators, financial simulators, interview prep — every tool a physician needs for career decisions.',
+    pos:'bottom'
+  },
+  {
+    target:function(){return document.querySelector('[onclick="navTo(\'scr-ask\',this)"]')},
+    fallback:function(){return document.querySelector('[onclick="navTo(\'scr-ask\')"]')},
+    title:'Ask Anything',
+    body:'Have a career question? Type it here and get AI-powered strategic guidance tailored to your profile and specialty. Your first few analyses are free.',
+    pos:'bottom'
+  }
+];
+
+function shouldShowTour(){
+  if(!U)return false;
+  // Don't show to admin
+  if(U.tier==='admin')return false;
+  // Check if already completed
+  if(localStorage.getItem('hw_tour_done'))return false;
+  // Check if user has used tools or has score history (not a new user)
+  if(U.toolHistory&&U.toolHistory.length>3)return false;
+  if(U.scoreHistory&&U.scoreHistory.length>1)return false;
+  return true;
+}
+
+function startTour(){
+  _tourStep=0;
+  // Create backdrop
+  var backdrop=document.createElement('div');
+  backdrop.id='tour-backdrop';
+  backdrop.className='tour-backdrop';
+  backdrop.style.background='transparent';// actual darkening done by box-shadow on highlight
+  document.body.appendChild(backdrop);
+  // Create highlight
+  var hl=document.createElement('div');
+  hl.id='tour-highlight';
+  hl.className='tour-highlight';
+  document.body.appendChild(hl);
+  // Create tooltip
+  var tt=document.createElement('div');
+  tt.id='tour-tooltip';
+  tt.className='tour-tooltip';
+  document.body.appendChild(tt);
+  showTourStep(0);
+}
+
+function showTourStep(idx){
+  _tourStep=idx;
+  if(idx>=_tourSteps.length){endTour();return}
+  var step=_tourSteps[idx];
+  var el=step.target();
+  if((!el||el.offsetHeight===0)&&step.fallback)el=step.fallback();
+  if(!el||el.offsetHeight===0){showTourStep(idx+1);return}// skip hidden elements
+
+  // Scroll target into view
+  el.scrollIntoView({behavior:'smooth',block:'center'});
+
+  setTimeout(function(){
+    var rect=el.getBoundingClientRect();
+    var pad=8;
+    var hl=document.getElementById('tour-highlight');
+    hl.style.top=(rect.top-pad+window.scrollY)+'px';
+    hl.style.left=(rect.left-pad)+'px';
+    hl.style.width=(rect.width+pad*2)+'px';
+    hl.style.height=(rect.height+pad*2)+'px';
+
+    // Build tooltip content
+    var dots='';
+    for(var i=0;i<_tourSteps.length;i++){dots+='<div class="tour-dot'+(i===idx?' active':'')+'"></div>'}
+
+    var tt=document.getElementById('tour-tooltip');
+    tt.innerHTML='<div class="tour-step-num">Step '+(idx+1)+' of '+_tourSteps.length+'</div>'+
+      '<div class="tour-tooltip-title">'+step.title+'</div>'+
+      '<div class="tour-tooltip-body">'+step.body+'</div>'+
+      '<div class="tour-tooltip-footer">'+
+      '<div class="tour-dots">'+dots+'</div>'+
+      '<div style="display:flex;align-items:center;gap:8px">'+
+      (idx>0?'<button class="tour-btn-skip" onclick="showTourStep('+(_tourStep-1)+')">← Back</button>':'')+
+      '<button class="tour-btn-skip" onclick="endTour()">Skip</button>'+
+      '<button class="tour-btn tour-btn-next" onclick="showTourStep('+(_tourStep+1)+')">'+(idx===_tourSteps.length-1?'Done ✓':'Next →')+'</button>'+
+      '</div></div>';
+
+    // Position tooltip
+    var ttRect=tt.getBoundingClientRect();
+    var viewW=window.innerWidth;
+    var viewH=window.innerHeight;
+
+    if(step.pos==='top'||rect.bottom+ttRect.height+20>viewH){
+      // Above target
+      tt.style.top=Math.max(8,(rect.top+window.scrollY-ttRect.height-20))+'px';
+    }else{
+      // Below target
+      tt.style.top=(rect.bottom+window.scrollY+16)+'px';
+    }
+    // Center horizontally, clamped to viewport
+    var ttLeft=rect.left+(rect.width/2)-(ttRect.width/2);
+    ttLeft=Math.max(16,Math.min(ttLeft,viewW-ttRect.width-16));
+    tt.style.left=ttLeft+'px';
+  },350);
+}
+
+function endTour(){
+  var hl=document.getElementById('tour-highlight');
+  var tt=document.getElementById('tour-tooltip');
+  var bd=document.getElementById('tour-backdrop');
+  if(hl)hl.remove();
+  if(tt)tt.remove();
+  if(bd)bd.remove();
+  localStorage.setItem('hw_tour_done','1');
+}

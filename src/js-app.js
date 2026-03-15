@@ -8265,27 +8265,23 @@ var _tourSteps=[
     target:function(){return document.getElementById('dash-update-bar')},
     fallback:function(){return document.getElementById('career-dashboard')},
     title:'Set Up Your Career Profile',
-    body:'Start here. Answer a few questions about your training stage, specialty, and goals — and we\'ll generate personalized career scores across 4 dimensions.',
-    pos:'top'
+    body:'Start here. Answer a few questions about your training stage, specialty, and goals — and we\'ll generate personalized career scores across 4 dimensions.'
   },
   {
     target:function(){return document.getElementById('career-dashboard')},
     title:'Your Career Scores',
-    body:'These four scores — Competitiveness, Research, Readiness, and Financial — track your progress over time. They update every time you recalculate your profile.',
-    pos:'bottom'
+    body:'These four scores — Competitiveness, Research, Readiness, and Financial — track your progress over time. They update every time you recalculate your profile.'
   },
   {
     target:function(){return document.querySelector('[onclick="navTo(\'scr-vault\')"]')},
     title:'Explore 15+ Career Tools',
-    body:'Frameworks is where the real work happens. Contract analysis, match calculators, financial simulators, interview prep — every tool a physician needs for career decisions.',
-    pos:'bottom'
+    body:'Frameworks is where the real work happens. Contract analysis, match calculators, financial simulators, interview prep — every tool a physician needs for career decisions.'
   },
   {
     target:function(){return document.querySelector('[onclick="navTo(\'scr-ask\',this)"]')},
     fallback:function(){return document.querySelector('[onclick="navTo(\'scr-ask\')"]')},
     title:'Ask Anything',
-    body:'Have a career question? Type it here and get AI-powered strategic guidance tailored to your profile and specialty. Your first few analyses are free.',
-    pos:'bottom'
+    body:'Have a career question? Type it here and get AI-powered strategic guidance tailored to your profile and specialty. Your first few analyses are free.'
   }
 ];
 
@@ -8303,22 +8299,30 @@ function shouldShowTour(){
 
 function startTour(){
   _tourStep=0;
-  // Create backdrop
+  // Create backdrop (catches clicks outside tooltip)
   var backdrop=document.createElement('div');
   backdrop.id='tour-backdrop';
   backdrop.className='tour-backdrop';
-  backdrop.style.background='transparent';// actual darkening done by box-shadow on highlight
+  backdrop.onclick=function(){};// block clicks through
   document.body.appendChild(backdrop);
-  // Create highlight
+  // Create highlight (fixed position)
   var hl=document.createElement('div');
   hl.id='tour-highlight';
   hl.className='tour-highlight';
   document.body.appendChild(hl);
-  // Create tooltip
+  // Create tooltip (fixed position)
   var tt=document.createElement('div');
   tt.id='tour-tooltip';
   tt.className='tour-tooltip';
   document.body.appendChild(tt);
+  // Reposition on scroll/resize (debounced)
+  var _tourReposTimer=null;
+  window._tourRepos=function(){
+    if(_tourReposTimer)clearTimeout(_tourReposTimer);
+    _tourReposTimer=setTimeout(function(){repositionTour()},50);
+  };
+  window.addEventListener('scroll',window._tourRepos,true);
+  window.addEventListener('resize',window._tourRepos);
   showTourStep(0);
 }
 
@@ -8328,16 +8332,18 @@ function showTourStep(idx){
   var step=_tourSteps[idx];
   var el=step.target();
   if((!el||el.offsetHeight===0)&&step.fallback)el=step.fallback();
-  if(!el||el.offsetHeight===0){showTourStep(idx+1);return}// skip hidden elements
+  if(!el||el.offsetHeight===0){showTourStep(idx+1);return}
 
-  // Scroll target into view
+  // Scroll target into view first
   el.scrollIntoView({behavior:'smooth',block:'center'});
 
+  // Wait for scroll to settle then position everything using fixed coords
   setTimeout(function(){
     var rect=el.getBoundingClientRect();
     var pad=8;
     var hl=document.getElementById('tour-highlight');
-    hl.style.top=(rect.top-pad+window.scrollY)+'px';
+    // Fixed positioning — rect values are already viewport-relative
+    hl.style.top=(rect.top-pad)+'px';
     hl.style.left=(rect.left-pad)+'px';
     hl.style.width=(rect.width+pad*2)+'px';
     hl.style.height=(rect.height+pad*2)+'px';
@@ -8358,23 +8364,56 @@ function showTourStep(idx){
       '<button class="tour-btn tour-btn-next" onclick="showTourStep('+(_tourStep+1)+')">'+(idx===_tourSteps.length-1?'Done ✓':'Next →')+'</button>'+
       '</div></div>';
 
-    // Position tooltip
-    var ttRect=tt.getBoundingClientRect();
-    var viewW=window.innerWidth;
+    // Position tooltip — use fixed coords from rect
     var viewH=window.innerHeight;
+    var viewW=window.innerWidth;
+    // Measure tooltip
+    tt.style.top='0px';tt.style.left='-9999px';tt.style.visibility='hidden';
+    var ttH=tt.offsetHeight;var ttW=tt.offsetWidth;
+    tt.style.visibility='';
 
-    if(step.pos==='top'||rect.bottom+ttRect.height+20>viewH){
-      // Above target
-      tt.style.top=Math.max(8,(rect.top+window.scrollY-ttRect.height-20))+'px';
+    var ttTop;
+    // Prefer below, but go above if not enough room
+    if(rect.bottom+16+ttH<=viewH){
+      ttTop=rect.bottom+16;
+    }else if(rect.top-16-ttH>=0){
+      ttTop=rect.top-16-ttH;
     }else{
-      // Below target
-      tt.style.top=(rect.bottom+window.scrollY+16)+'px';
+      // Neither fits — put it in the middle of the viewport
+      ttTop=Math.max(8,(viewH-ttH)/2);
     }
-    // Center horizontally, clamped to viewport
-    var ttLeft=rect.left+(rect.width/2)-(ttRect.width/2);
-    ttLeft=Math.max(16,Math.min(ttLeft,viewW-ttRect.width-16));
+    var ttLeft=Math.max(16,Math.min(rect.left+(rect.width-ttW)/2,viewW-ttW-16));
+    tt.style.top=ttTop+'px';
     tt.style.left=ttLeft+'px';
-  },350);
+  },400);
+}
+
+// Reposition highlight+tooltip without scrolling (for scroll/resize events)
+function repositionTour(){
+  if(_tourStep>=_tourSteps.length)return;
+  var step=_tourSteps[_tourStep];
+  var el=step.target();
+  if((!el||el.offsetHeight===0)&&step.fallback)el=step.fallback();
+  if(!el)return;
+  var rect=el.getBoundingClientRect();
+  var pad=8;
+  var hl=document.getElementById('tour-highlight');
+  if(!hl)return;
+  hl.style.top=(rect.top-pad)+'px';
+  hl.style.left=(rect.left-pad)+'px';
+  hl.style.width=(rect.width+pad*2)+'px';
+  hl.style.height=(rect.height+pad*2)+'px';
+  var tt=document.getElementById('tour-tooltip');
+  if(!tt)return;
+  var viewH=window.innerHeight;var viewW=window.innerWidth;
+  var ttH=tt.offsetHeight;var ttW=tt.offsetWidth;
+  var ttTop;
+  if(rect.bottom+16+ttH<=viewH)ttTop=rect.bottom+16;
+  else if(rect.top-16-ttH>=0)ttTop=rect.top-16-ttH;
+  else ttTop=Math.max(8,(viewH-ttH)/2);
+  var ttLeft=Math.max(16,Math.min(rect.left+(rect.width-ttW)/2,viewW-ttW-16));
+  tt.style.top=ttTop+'px';
+  tt.style.left=ttLeft+'px';
 }
 
 function endTour(){
@@ -8384,5 +8423,10 @@ function endTour(){
   if(hl)hl.remove();
   if(tt)tt.remove();
   if(bd)bd.remove();
+  if(window._tourRepos){
+    window.removeEventListener('scroll',window._tourRepos,true);
+    window.removeEventListener('resize',window._tourRepos);
+    window._tourRepos=null;
+  }
   localStorage.setItem('hw_tour_done','1');
 }

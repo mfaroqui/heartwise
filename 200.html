@@ -1953,19 +1953,14 @@ Sign Out</button>
 <span id="user-badge" class="badge b-free">FREE</span>
 </div>
 
-<!-- ===== HERO — Ivory Welcome with Tagline + Quote ===== -->
+<!-- ===== HERO — Welcome + Personalized Next Step ===== -->
 <div style="padding:18px 24px 0">
 <div style="background:linear-gradient(160deg,#f5f0e8,#ece5d8,#f0ebe3);border-radius:16px;padding:24px 22px 20px;position:relative;overflow:hidden">
 <div style="position:absolute;top:-40%;right:-18%;width:220px;height:220px;background:radial-gradient(circle,rgba(200,168,124,.15),transparent 60%);border-radius:50%"></div>
 <div style="position:absolute;bottom:-30%;left:-12%;width:160px;height:160px;background:radial-gradient(circle,rgba(200,168,124,.08),transparent 60%);border-radius:50%"></div>
 <div style="position:relative">
-<h2 id="welcome-msg" style="font-family:var(--font-serif);font-size:17px;font-weight:400;color:#4a4540;margin:0 0 6px;line-height:1.3;letter-spacing:.2px">Welcome back</h2>
-<p style="font-family:var(--font-serif);font-size:20px;color:#1a1620;line-height:1.4;font-weight:600;margin:0 0 4px;letter-spacing:.2px">Your career is too important for guesswork.</p>
-<p id="dash-subtitle" style="font-size:11px;color:#6a6560;line-height:1.5;margin:0"></p>
-</div>
-<div id="daily-quote" style="margin-top:14px;padding-top:14px;border-top:1px solid rgba(160,140,110,.2);position:relative">
-<p style="font-size:15px;color:#2a2520;line-height:1.6;font-family:var(--font-serif);font-weight:500;font-style:italic;margin:0;letter-spacing:.2px" id="quote-text"></p>
-<p style="font-size:10px;color:#9a8a72;margin:8px 0 0;font-weight:600;letter-spacing:.8px;text-transform:uppercase" id="quote-author"></p>
+<h2 id="welcome-msg" style="font-family:var(--font-serif);font-size:17px;font-weight:400;color:#4a4540;margin:0 0 10px;line-height:1.3;letter-spacing:.2px">Welcome back</h2>
+<div id="home-next-step"></div>
 </div>
 </div>
 </div>
@@ -1973,70 +1968,28 @@ Sign Out</button>
 <!-- Trial Countdown Banner -->
 <div id="trial-countdown-banner" style="margin:12px 24px 0;padding:14px 18px;border-radius:var(--r);border:1px solid rgba(200,168,124,.2);background:var(--accent-dim);display:none"></div>
 
-<!-- Trial: No physician reviews note -->
-<div id="trial-review-note" style="margin:12px 24px 0;display:none">
-<div style="padding:12px 16px;border-radius:var(--r);border-color:rgba(139,173,196,.15);background:var(--blue-dim);display:flex;align-items:flex-start;gap:8px">
-<span style="font-size:13px;flex-shrink:0">ℹ️</span>
-<div style="font-size:11px;color:var(--text2);line-height:1.5">Trial access — physician review credits available with paid plans. Explore every tool during your 48 hours.</div>
-</div>
-</div>
-
-<!-- ===== THIS WEEK'S FOCUS ===== -->
-<div style="padding:14px 24px 0">
-<div id="whats-changed" style="margin-bottom:12px;display:none"></div>
-<div id="weekly-focus" style="margin-bottom:0;display:none"></div>
-</div>
-
-<!-- ===== SCORE CARDS — Compact Single Row ===== -->
+<!-- ===== CAREER SCORE — Single Prominent Number + Trend ===== -->
 <div id="career-dashboard" style="padding:14px 24px 0">
-<div id="dash-scores" style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:12px"></div>
-<div id="dash-score-refresh" style="display:none;margin-bottom:10px"></div>
+<div id="home-score-card"></div>
+<div id="dash-score-refresh" style="display:none;margin-top:8px"></div>
 </div>
 
-<!-- ===== QUICK ACTIONS ===== -->
-<div style="padding:0 24px">
-<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px">
-<div style="background:linear-gradient(160deg,rgba(200,168,124,.08),rgba(200,168,124,.03));border:1px solid rgba(200,168,124,.15);border-radius:12px;padding:14px 10px;cursor:pointer;text-align:center;transition:transform .15s" onclick="navTo('scr-vault')" onmouseenter="this.style.transform='scale(1.02)'" onmouseleave="this.style.transform='scale(1)'">
-<div style="font-size:22px;margin-bottom:5px">🧭</div>
-<div style="font-size:11px;font-weight:600;color:var(--text)">Frameworks</div>
-<div style="font-size:9px;color:var(--accent);margin-top:3px;font-weight:500">15+ tools</div>
-</div>
-<div style="background:linear-gradient(160deg,rgba(200,168,124,.08),rgba(200,168,124,.03));border:1px solid rgba(200,168,124,.15);border-radius:12px;padding:14px 10px;cursor:pointer;text-align:center;transition:transform .15s" onclick="navTo('scr-ask')" onmouseenter="this.style.transform='scale(1.02)'" onmouseleave="this.style.transform='scale(1)'">
-<div style="font-size:22px;margin-bottom:5px">🧠</div>
-<div style="font-size:11px;font-weight:600;color:var(--text)">Ask a Question</div>
-<div style="font-size:9px;color:var(--accent);margin-top:3px;font-weight:500">AI strategy</div>
-</div>
-<div style="background:linear-gradient(160deg,rgba(200,168,124,.08),rgba(200,168,124,.03));border:1px solid rgba(200,168,124,.15);border-radius:12px;padding:14px 10px;cursor:pointer;text-align:center;transition:transform .15s" onclick="showPrivateStrategyModal()" onmouseenter="this.style.transform='scale(1.02)'" onmouseleave="this.style.transform='scale(1)'">
-<div style="font-size:22px;margin-bottom:5px">🎯</div>
-<div style="font-size:11px;font-weight:600;color:var(--text)">1-on-1 Strategy</div>
-<div style="font-size:9px;color:var(--accent);margin-top:3px;font-weight:500">Dr. Faroqui</div>
-</div>
-</div>
-<!-- Check-in + Report row -->
-<div id="checkin-report-row" style="display:none;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;margin-bottom:4px">
-<div onclick="showWeeklyCheckin()" style="padding:10px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;cursor:pointer;text-align:center;transition:border-color .15s" onmouseenter="this.style.borderColor='var(--accent)'" onmouseleave="this.style.borderColor='var(--border)'">
-<span style="font-size:14px">📋</span><span style="font-size:11px;font-weight:600;color:var(--text);margin-left:6px">Weekly Check-in</span>
-</div>
-<div onclick="generateMonthlyReport()" style="padding:10px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;cursor:pointer;text-align:center;transition:border-color .15s" onmouseenter="this.style.borderColor='var(--accent)'" onmouseleave="this.style.borderColor='var(--border)'">
-<span style="font-size:14px">📊</span><span style="font-size:11px;font-weight:600;color:var(--text);margin-left:6px">Monthly Report</span>
-</div>
+<!-- ===== ASK A QUESTION — Always Visible ===== -->
+<div style="padding:14px 24px 0">
+<div onclick="navTo('scr-ask')" style="display:flex;align-items:center;gap:12px;padding:14px 18px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;cursor:pointer;transition:border-color .15s" onmouseenter="this.style.borderColor='var(--accent)'" onmouseleave="this.style.borderColor='var(--border)'">
+<span style="font-size:18px">🧠</span>
+<div style="flex:1;font-size:13px;color:var(--text3)">Ask any career, financial, or clinical question…</div>
+<span style="font-size:12px;font-weight:600;color:var(--accent)">Ask →</span>
 </div>
 </div>
 
-<!-- ===== TOOL PROGRESS + UPCOMING DEADLINES ===== -->
+<!-- ===== RECOMMENDED TOOLS — Personalized ===== -->
+<div id="home-recommended-tools" style="padding:14px 24px 0;display:none"></div>
+
+<!-- ===== PROGRESS / HISTORY ===== -->
 <div style="padding:0 24px">
 <div id="tool-progress" style="margin-bottom:12px;display:none"></div>
-<div id="upcoming-deadlines" style="margin-bottom:12px;display:none"></div>
 </div>
-
-<!-- ===== TOOL OF THE WEEK + LOGIN STREAK ===== -->
-<div style="padding:0 24px">
-<div id="tool-of-week" style="margin-bottom:12px"></div>
-<div id="login-streak" style="margin-bottom:12px"></div>
-</div>
-
-<!-- Weekly tip placeholder (hidden — removed from visible layout) -->
-<div id="weekly-tip" style="display:none"></div>
 
 <!-- ===== DEEPER ANALYTICS (collapsible) ===== -->
 <div style="padding:0 24px">
@@ -2075,63 +2028,10 @@ Sign Out</button>
 </div>
 </div>
 
-<!-- ===== UPDATE PROFILE + LAST UPDATED ===== -->
-<div style="padding:0 24px 14px">
-<div id="dash-update-bar" style="display:none">
-<div onclick="showUpdateProfile()" style="cursor:pointer;padding:16px 20px;background:linear-gradient(160deg,#f5f0e8,#ece5d8);border-radius:14px;position:relative;overflow:hidden">
-<div style="position:absolute;top:-30%;right:-10%;width:120px;height:120px;background:radial-gradient(circle,rgba(200,168,124,.15),transparent 60%);border-radius:50%"></div>
-<div style="position:relative;display:flex;align-items:center;justify-content:space-between">
-<div>
-<div style="font-size:14px;font-weight:700;color:#1a1620;font-family:var(--font-serif)">📊 Update Career Profile</div>
-<div id="dash-last-updated-bar" style="font-size:11px;color:#6a6560;margin-top:3px"></div>
-</div>
-<div style="background:linear-gradient(135deg,#1a1620,#2a2530);color:#f5f0e8;padding:10px 20px;border-radius:10px;font-size:12px;font-weight:700;letter-spacing:.3px;white-space:nowrap">Recalculate →</div>
-</div>
-</div>
-</div>
-</div>
+<!-- ===== SINGLE UPGRADE NUDGE (contextual) ===== -->
+<div id="home-upgrade-nudge" style="padding:0 24px 16px;display:none"></div>
 
-<!-- Update Profile Modal -->
-<div id="modal-update-profile" class="hidden" style="position:fixed;top:0;left:0;right:0;bottom:0;z-index:100;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center;padding:24px">
-<div style="background:var(--bg);border-radius:16px;max-width:480px;width:100%;max-height:85vh;overflow-y:auto;padding:28px 24px">
-<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
-<div style="font-size:16px;font-weight:600;color:var(--text);font-family:var(--font-serif)">Update Career Profile</div>
-<button onclick="document.getElementById('modal-update-profile').classList.add('hidden')" style="background:none;border:none;color:var(--text3);font-size:20px;cursor:pointer;padding:4px">✕</button>
-</div>
-<div id="update-profile-fields"></div>
-<button onclick="saveUpdatedProfile()" class="btn btn-a" style="width:100%;margin-top:16px">Recalculate My Scores →</button>
-</div>
-</div>
-
-<!-- Strategic Leverage Upsell (Core users only — hidden by default, shown via JS) -->
-<div id="leverage-upsell" style="display:none;padding:0 24px 16px">
-<div style="background:linear-gradient(160deg,rgba(26,22,32,.03),rgba(42,37,48,.02));border:1px solid rgba(200,168,124,.2);border-radius:var(--r3);padding:24px;position:relative;overflow:hidden">
-<div style="position:absolute;top:-20%;right:-8%;width:120px;height:120px;background:radial-gradient(circle,rgba(200,168,124,.08),transparent 60%);border-radius:50%"></div>
-<div style="position:relative">
-<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
-<span style="font-size:18px">⚡</span>
-<div style="font-family:var(--font-serif);font-size:16px;font-weight:600;color:var(--text)">AI is not a search engine.</div>
-</div>
-<p style="font-size:12px;color:var(--text2);line-height:1.7;margin:0 0 10px">Most physicians use AI the way they use Google — typing in a question and hoping for a good answer. That's not how you get ahead. The physicians who will separate themselves from their peers are the ones who learn <strong style="color:var(--text)">what to ask, how to frame it, and how to turn the output into action.</strong></p>
-<p style="font-size:12px;color:var(--text2);line-height:1.7;margin:0 0 14px">Mentorship members get access to <strong style="color:var(--text)">10 Strategic Leverage tools</strong> — structured workflows like the Study Accelerator, Case Simulator, Research Idea Generator, and more — designed to teach you how to use AI as a competitive advantage, not a crutch.</p>
-<button onclick="navTo('scr-profile');showUpgrade()" style="width:100%;padding:12px;font-size:13px;font-weight:600;background:linear-gradient(135deg,var(--accent2),var(--accent));color:#0a0a0f;border:none;border-radius:var(--r2);cursor:pointer;letter-spacing:.3px">Explore Mentorship →</button>
-</div>
-</div>
-</div>
-
-<!-- Submit a Question + Usage -->
-<div style="padding:0 24px 20px">
-<div style="background:linear-gradient(160deg,#f5f0e8,#ece5d8);border-radius:var(--r3);padding:24px;position:relative;overflow:hidden">
-<div style="position:absolute;top:-30%;right:-10%;width:140px;height:140px;background:radial-gradient(circle,rgba(200,168,124,.12),transparent 60%);border-radius:50%"></div>
-<div style="position:relative">
-<div style="font-family:var(--font-serif);font-size:18px;font-weight:600;color:#1a1620;margin-bottom:6px">Ready to strategize?</div>
-<p style="font-size:12px;color:#5a5550;line-height:1.6;margin-bottom:16px">Ask any career, financial, or clinical question. Get structured, evidence-backed guidance — not generic AI filler.</p>
-<button class="btn" onclick="navTo('scr-ask')" style="width:100%;padding:14px;font-size:14px;font-weight:600;background:linear-gradient(135deg,#1a1620,#2a2530);color:#f5f0e8;border-radius:var(--r2);cursor:pointer;border:none;letter-spacing:.3px">Submit a Question →</button>
-</div>
-</div>
-</div>
-
-<!-- Usage Stats (compact) -->
+<!-- ===== USAGE STATS (compact) ===== -->
 <div style="padding:0 24px 16px">
 <div class="card" style="padding:14px 18px">
 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
@@ -2146,24 +2046,29 @@ Sign Out</button>
 </div>
 </div>
 
-<div id="upgrade-prompt" style="padding:0 24px 16px">
-<div class="card" style="border-color:rgba(200,168,124,.2);cursor:pointer" onclick="navTo('scr-profile');showUpgrade()">
-<div style="display:flex;align-items:center;gap:12px">
-<span style="font-size:20px">⚡</span>
-<div><div style="font-size:13px;font-weight:600;color:var(--accent)">Upgrade to Core</div><div style="font-size:11px;color:var(--text3)">$29/mo — 100 career intelligence analyses, all framework tools</div></div>
-</div>
-</div>
-</div>
-
-<!-- Reviewed This Week -->
-<div class="sec">Reviewed This Week</div>
+<!-- Recent Analyses -->
+<div id="home-feed-section" style="display:none">
+<div class="sec">Recent Analyses</div>
 <div id="home-feed" class="pad"></div>
+</div>
 
 <!-- Disclaimer -->
 <div style="padding:24px 24px 100px">
 <div style="border-top:1px solid var(--border);padding-top:20px">
 <p style="font-size:10px;color:var(--text3);line-height:1.7;text-align:center;max-width:380px;margin:0 auto">HeartWise provides structured educational strategy. It does not provide medical, legal, financial, or tax advice. AI outputs are frameworks, not personalized recommendations. Users should consult appropriate professionals for individualized decisions.</p>
 <p style="font-size:10px;color:var(--text3);text-align:center;margin-top:10px">© 2026 HeartWise. All rights reserved.</p>
+</div>
+</div>
+
+<!-- Update Profile Modal -->
+<div id="modal-update-profile" class="hidden" style="position:fixed;top:0;left:0;right:0;bottom:0;z-index:100;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center;padding:24px">
+<div style="background:var(--bg);border-radius:16px;max-width:480px;width:100%;max-height:85vh;overflow-y:auto;padding:28px 24px">
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+<div style="font-size:16px;font-weight:600;color:var(--text);font-family:var(--font-serif)">Update Career Profile</div>
+<button onclick="document.getElementById('modal-update-profile').classList.add('hidden')" style="background:none;border:none;color:var(--text3);font-size:20px;cursor:pointer;padding:4px">✕</button>
+</div>
+<div id="update-profile-fields"></div>
+<button onclick="saveUpdatedProfile()" class="btn btn-a" style="width:100%;margin-top:16px">Recalculate My Scores →</button>
 </div>
 </div>
 </div>
@@ -5526,7 +5431,6 @@ function enterApp(){
   // Show Leverage tab for mentorship (non-trial) and admin only
   var showLev=(U.tier==='elite'&&!U.isTrial)||U.tier==='admin';
   document.getElementById('nav-leverage').style.display=showLev?'':'none';
-  document.getElementById('upgrade-prompt').style.display=U.tier==='free'?'':'none';
   var topUpgrade=document.getElementById('topbar-upgrade');
   if(topUpgrade){
     if(U.tier==='free'||U.isTrial){topUpgrade.style.display='';topUpgrade.textContent='Subscribe';topUpgrade.onclick=function(){navTo('scr-profile');showUpgrade()}}
@@ -5534,8 +5438,7 @@ function enterApp(){
     else{topUpgrade.style.display='none'}
   }
   // Show leverage upsell for core users only
-  var levUpsell=document.getElementById('leverage-upsell');
-  if(levUpsell)levUpsell.style.display=U.tier==='core'?'':'none';
+  // leverage-upsell removed from home screen layout
   // Check for pending plan from landing page
   const pendingPlan=sessionStorage.getItem('hw_pending_plan');
   if(pendingPlan){
@@ -6020,63 +5923,42 @@ function renderDashboard(){
   var cp=U.careerProfile;
   if(!cp||!cp.lastUpdated){
     document.getElementById('career-dashboard').style.display='none';
-    // Show a prompt to complete their profile (paid/trial users only)
-    var focusEl=document.getElementById('weekly-focus');
-    if(focusEl){
-      var _hasPlan2=U.tier==='core'||U.tier==='elite'||U.tier==='admin'||U.isTrial;
-      if(_hasPlan2){
-        focusEl.style.display='';
-        focusEl.innerHTML='<div onclick="showUpdateProfile()" style="padding:20px;background:linear-gradient(160deg,rgba(200,168,124,.1),rgba(200,168,124,.03));border:2px solid rgba(200,168,124,.3);border-radius:14px;cursor:pointer;text-align:center">'
-          +'<div style="font-size:32px;margin-bottom:10px">📊</div>'
-          +'<div style="font-size:16px;font-weight:700;color:var(--text);font-family:var(--font-serif);margin-bottom:6px">Set Up Your Career Profile</div>'
-          +'<div style="font-size:13px;color:var(--text2);line-height:1.6;max-width:360px;margin:0 auto 12px">Tell us your training stage, specialty, and goals — and HeartWise will personalize your entire experience. Better data = better recommendations.</div>'
-          +'<div style="font-size:12px;color:var(--accent);font-weight:600">Takes 2 minutes → personalized dashboard, deadlines, and weekly focus ✨</div>'
-          +'</div>';
-      } else {
-        focusEl.style.display='none';
-      }
-    }
     return;
   }
   document.getElementById('career-dashboard').style.display='';
   var scores=calcDashScores(cp);
   var stage=cp.stage||'student';
 
-  // Subtitle
-  var stageLabel={student:'Medical Student',resident:'Resident',fellow:'Fellow',attending:'Attending Physician'}[stage]||'Physician';
-  var specLabel=cp.specialty?' · '+(cp.specialty.charAt(0).toUpperCase()+cp.specialty.slice(1)):'';
-  document.getElementById('dash-subtitle').textContent='';
-
-  // Score Cards
+  // Single prominent score card — overall career score (avg of 4)
+  var overall=Math.round((scores.competitiveness+scores.research+scores.readiness+scores.financial)/4);
   var prev=U.scoreHistory.length>1?U.scoreHistory[U.scoreHistory.length-2].scores:null;
-  var sh='';
-  var scoreItems=[
-    {key:'competitiveness',label:'Competitiveness',icon:'🏆'},
-    {key:'research',label:'Research',icon:'🔬'},
-    {key:'readiness',label:stage==='fellow'||stage==='attending'?'Career Readiness':'Match Readiness',icon:'🎯'},
-    {key:'financial',label:'Financial',icon:'💰'}
-  ];
-  scoreItems.forEach(function(si){
-    var val=scores[si.key]||0;
-    var delta=prev?val-(prev[si.key]||0):0;
-    var deltaStr=delta>0?'<span style="color:var(--green);font-size:8px;font-weight:600">+'+delta+'</span>':delta<0?'<span style="color:var(--red);font-size:8px;font-weight:600">'+delta+'</span>':'';
-    var color=val>=75?'var(--green)':val>=55?'var(--accent)':'var(--red)';
-    // SVG ring
-    var r=22,circ=2*Math.PI*r,offset=circ-(val/100)*circ;
-    var ringColor=val>=75?'#6aaa64':val>=55?'#c8a87c':'#c06060';
-    sh+='<div style="text-align:center;padding:10px 4px">';
-    sh+='<div style="position:relative;width:52px;height:52px;margin:0 auto 6px">';
-    sh+='<svg viewBox="0 0 52 52" style="width:52px;height:52px;transform:rotate(-90deg)">';
-    sh+='<circle cx="26" cy="26" r="'+r+'" fill="none" stroke="var(--bg3)" stroke-width="4"/>';
-    sh+='<circle cx="26" cy="26" r="'+r+'" fill="none" stroke="'+ringColor+'" stroke-width="4" stroke-linecap="round" stroke-dasharray="'+circ.toFixed(1)+'" stroke-dashoffset="'+offset.toFixed(1)+'" style="transition:stroke-dashoffset .8s ease"/>';
-    sh+='</svg>';
-    sh+='<div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:14px;font-weight:700;color:'+color+';font-family:var(--font-serif)">'+val+'</div>';
-    sh+='</div>';
-    sh+='<div style="font-size:9px;font-weight:600;color:var(--text2);letter-spacing:.2px;line-height:1.2">'+si.label+'</div>';
-    if(deltaStr) sh+='<div style="margin-top:2px">'+deltaStr+'</div>';
-    sh+='</div>';
+  var prevOverall=prev?Math.round((prev.competitiveness+prev.research+prev.readiness+prev.financial)/4):null;
+  var delta=prevOverall!==null?overall-prevOverall:0;
+  var overallColor=overall>=75?'var(--green)':overall>=55?'var(--accent)':'var(--red)';
+  var ringColor=overall>=75?'#6aaa64':overall>=55?'#c8a87c':'#c06060';
+  var r=34,circ=2*Math.PI*r,offset=circ-(overall/100)*circ;
+
+  var sh='<div class="card" style="padding:18px;display:flex;align-items:center;gap:18px">';
+  sh+='<div style="position:relative;width:76px;height:76px;flex-shrink:0">';
+  sh+='<svg viewBox="0 0 76 76" style="width:76px;height:76px;transform:rotate(-90deg)">';
+  sh+='<circle cx="38" cy="38" r="'+r+'" fill="none" stroke="var(--bg3)" stroke-width="5"/>';
+  sh+='<circle cx="38" cy="38" r="'+r+'" fill="none" stroke="'+ringColor+'" stroke-width="5" stroke-linecap="round" stroke-dasharray="'+circ.toFixed(1)+'" stroke-dashoffset="'+offset.toFixed(1)+'" style="transition:stroke-dashoffset .8s ease"/>';
+  sh+='</svg>';
+  sh+='<div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:24px;font-weight:700;color:'+overallColor+';font-family:var(--font-serif)">'+overall+'</div>';
+  sh+='</div>';
+  sh+='<div style="flex:1">';
+  sh+='<div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:4px">Career Score</div>';
+  if(delta!==0) sh+='<div style="font-size:11px;color:'+(delta>0?'var(--green)':'var(--red)')+';font-weight:600;margin-bottom:4px">'+(delta>0?'↑ +':'↓ ')+delta+' since last update</div>';
+  // Mini breakdown
+  sh+='<div style="display:flex;gap:12px;flex-wrap:wrap">';
+  [['🏆',scores.competitiveness],['🔬',scores.research],['🎯',scores.readiness],['💰',scores.financial]].forEach(function(s){
+    sh+='<span style="font-size:10px;color:var(--text3)">'+s[0]+' '+s[1]+'</span>';
   });
-  document.getElementById('dash-scores').innerHTML=sh;
+  sh+='</div>';
+  sh+='</div>';
+  sh+='<div onclick="showUpdateProfile()" style="cursor:pointer;padding:8px 14px;background:var(--bg3);border-radius:8px;font-size:11px;font-weight:600;color:var(--accent);white-space:nowrap">Update</div>';
+  sh+='</div>';
+  document.getElementById('home-score-card').innerHTML=sh;
 
   // Score Refresh Prompt — show if scores are older than 30 days
   var refreshEl=document.getElementById('dash-score-refresh');
@@ -6199,25 +6081,6 @@ function renderDashboard(){
     document.getElementById('dash-history-list').innerHTML=hh;
   }else{
     document.getElementById('dash-history').style.display='none';
-  }
-
-  // Update bar at bottom
-  var lastUp=new Date(cp.lastUpdated);
-  var daysSince=Math.floor((new Date()-lastUp)/(1000*60*60*24));
-  var updateBar=document.getElementById('dash-update-bar');
-  if(updateBar){
-    updateBar.style.display='';
-    var barText='Last updated: '+lastUp.toLocaleDateString('en-US',{month:'short',day:'numeric'});
-    if(daysSince>90) barText+=' — ⚠️ time to refresh';
-    var barTextEl=document.getElementById('dash-last-updated-bar');
-    if(barTextEl) barTextEl.textContent=barText;
-  }
-  // Legacy reassess element
-  var reassessEl=document.getElementById('dash-reassess');
-  if(reassessEl){
-    reassessEl.style.display='';
-    var luEl=document.getElementById('dash-last-updated');
-    if(luEl) luEl.textContent='Last updated: '+lastUp.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})+(daysSince>90?' — ⚠️ Consider updating':'');
   }
 
   // Show detail toggle if there's any detailed data
@@ -6576,7 +6439,7 @@ function recordToolUse(toolName,score,summary,resultData){
 function renderHome(){
   if(!U)return;
   renderDashboard();
-  setDailyQuote();
+  // Usage stats
   const t=TIERS[U.tier]||TIERS.free;
   const used=U.usage?.ai||0;const max=t.ai;
   const pct=max===999?0:Math.min(100,Math.round(used/max*100));
@@ -6584,52 +6447,166 @@ function renderHome(){
   document.getElementById('usage-bar').style.width=max===999?'0%':pct+'%';
   document.getElementById('usage-credits').textContent=U.usage?.credits||0;
   document.getElementById('usage-tier').textContent=t.name+(U.isTrial?' (trial)':' plan');
-  // Show/hide trial elements
+  // Trial banner (single upgrade nudge for trial users)
   var trialBanner=document.getElementById('trial-countdown-banner');
-  var trialNote=document.getElementById('trial-review-note');
   if(trialBanner)trialBanner.style.display=U.isTrial&&U.trialEnd?'':'none';
-  if(trialNote)trialNote.style.display=U.isTrial?'':'none';
   if(U.isTrial&&U.trialEnd)updateTrialBanner();
-  // Reviewed This Week = reviewed in last 7 days (or latest 5 if none recent)
+  // Personalized next step in hero
+  renderNextStep();
+  // Personalized tool recommendations
+  renderRecommendedTools();
+  // Single contextual upgrade nudge (not for trial — they have the banner)
+  renderUpgradeNudge();
+  // Recent analyses — only show if there's data
+  var feedSection=document.getElementById('home-feed-section');
   const now=new Date();const weekAgo=new Date(now);weekAgo.setDate(weekAgo.getDate()-7);const weekStr=weekAgo.toISOString().split('T')[0];
   let reviewed=DB.questions.filter(q=>q.status==='reviewed'&&q.reviewNote).sort((a,b)=>b.date.localeCompare(a.date));
   const thisWeek=reviewed.filter(q=>(q.reviewDate||q.date)>=weekStr);
   const featured=thisWeek.length>=3?thisWeek.slice(0,5):reviewed.slice(0,5);
-  document.getElementById('home-feed').innerHTML=featured.length?featured.map(renderQCard).join(''):'<div style="text-align:center;padding:40px;color:var(--text3)"><p>No reviewed questions yet.</p></div>';
-  // Animate How It Works steps on scroll
-  setTimeout(function(){
-    var steps=document.querySelectorAll('.hiw-step');
-    if(!steps.length)return;
-    if('IntersectionObserver' in window){
-      var obs=new IntersectionObserver(function(entries){
-        entries.forEach(function(e){if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target)}});
-      },{threshold:0.2});
-      steps.forEach(function(s){obs.observe(s)});
-    }else{
-      steps.forEach(function(s){s.classList.add('visible')});
-    }
-  },100);
-
-  // Render dynamic engagement sections (Core, Mentorship, and trial users only)
+  if(featured.length){
+    if(feedSection)feedSection.style.display='';
+    document.getElementById('home-feed').innerHTML=featured.map(renderQCard).join('');
+  }else{
+    if(feedSection)feedSection.style.display='none';
+  }
+  // Tool progress (paid users only)
   var _hasPlan=U.tier==='core'||U.tier==='elite'||U.tier==='admin'||U.isTrial;
   if(_hasPlan){
-    try{renderWhatsChanged()}catch(e){console.error('WhatsChanged:',e)}
-    try{renderWeeklyFocus()}catch(e){console.error('WeeklyFocus:',e)}
     try{renderToolProgress()}catch(e){console.error('ToolProgress:',e)}
-    try{renderUpcomingDeadlines()}catch(e){console.error('Deadlines:',e)}
-    try{renderWeeklyTip()}catch(e){console.error('WeeklyTip:',e)}
-    try{renderToolOfWeek()}catch(e){console.error('ToolOfWeek:',e)}
-    try{renderLoginStreak()}catch(e){console.error('LoginStreak:',e)}
-    // Show check-in + report buttons
-    var ciRow=document.getElementById('checkin-report-row');
-    if(ciRow)ciRow.style.display='grid';
-  } else {
-    // Hide all dynamic sections for free users
-    ['weekly-focus','tool-progress','upcoming-deadlines','weekly-tip','tool-of-week','login-streak','whats-changed'].forEach(function(id){
-      var el=document.getElementById(id);if(el)el.style.display='none';
-    });
-    var ciRow=document.getElementById('checkin-report-row');if(ciRow)ciRow.style.display='none';
+  }else{
+    var tpEl=document.getElementById('tool-progress');if(tpEl)tpEl.style.display='none';
   }
+}
+
+// ===== PERSONALIZED NEXT STEP =====
+function renderNextStep(){
+  var el=document.getElementById('home-next-step');
+  if(!el||!U)return;
+  var cp=U.careerProfile||{};
+  var toolsUsed=(U.toolHistory||[]).map(function(t){return t.tool});
+  var h='';
+
+  // No profile yet — prompt to set up
+  if(!cp.lastUpdated){
+    var _hasPlan2=U.tier==='core'||U.tier==='elite'||U.tier==='admin'||U.isTrial;
+    if(_hasPlan2){
+      h='<div onclick="showUpdateProfile()" style="cursor:pointer;margin-top:4px">';
+      h+='<p style="font-family:var(--font-serif);font-size:16px;color:#1a1620;line-height:1.4;font-weight:600;margin:0 0 8px">Set up your Career Profile to get personalized scores and recommendations.</p>';
+      h+='<span style="font-size:12px;color:#9a8a72;font-weight:600">Takes 2 minutes → personalized dashboard ✨</span>';
+      h+='</div>';
+    }else{
+      h='<p style="font-family:var(--font-serif);font-size:16px;color:#1a1620;line-height:1.4;font-weight:600;margin:0">Your career is too important for guesswork.</p>';
+    }
+    el.innerHTML=h;
+    return;
+  }
+
+  // Has profile — find highest-impact next action
+  var stage=cp.stage||'student';
+  var goal=cp.goal||'';
+  var scores=calcDashScores(cp);
+
+  // Find weakest score
+  var lowest={key:'competitiveness',val:100};
+  ['competitiveness','research','readiness','financial'].forEach(function(k){
+    if((scores[k]||0)<lowest.val){lowest={key:k,val:scores[k]||0}}
+  });
+
+  var toolMap={
+    competitiveness:'Match Competitiveness Calculator',
+    research:'Research ROI Calculator',
+    readiness:'Career Strategy Builder',
+    financial:'Financial Trajectory Simulator'
+  };
+  var actionMap={
+    competitiveness:'Run the Match Competitiveness Calculator to see exactly where the gaps are.',
+    research:'Use the Research ROI Calculator to find the highest-impact research moves.',
+    readiness:'Try the Career Strategy Builder to map your next steps.',
+    financial:'Run the Financial Trajectory Simulator to model your 30-year wealth path.'
+  };
+
+  // Check if they've already used the recommended tool
+  var recTool=toolMap[lowest.key];
+  var usedRec=toolsUsed.indexOf(recTool)!==-1;
+
+  if(usedRec){
+    // Stale scores?
+    var lastUpdate=cp.lastUpdated?new Date(cp.lastUpdated):null;
+    var daysSince=lastUpdate?Math.floor((new Date()-lastUpdate)/86400000):999;
+    if(daysSince>=30){
+      h='<div onclick="showUpdateProfile()" style="cursor:pointer;margin-top:4px">';
+      h+='<p style="font-family:var(--font-serif);font-size:16px;color:#1a1620;line-height:1.4;font-weight:600;margin:0 0 6px">Your scores are '+daysSince+' days old.</p>';
+      h+='<p style="font-size:12px;color:#6a6560;margin:0">Update your profile to see how you\'ve progressed. <span style="color:#9a8a72;font-weight:600">Update →</span></p>';
+      h+='</div>';
+    }else{
+      h='<p style="font-family:var(--font-serif);font-size:16px;color:#1a1620;line-height:1.4;font-weight:600;margin:0 0 6px">You\'re on track.</p>';
+      h+='<p style="font-size:12px;color:#6a6560;margin:0">Ask a question or explore a new tool to keep building your strategy.</p>';
+    }
+  }else{
+    h='<div onclick="navTo(\'scr-vault\')" style="cursor:pointer;margin-top:4px">';
+    h+='<p style="font-family:var(--font-serif);font-size:16px;color:#1a1620;line-height:1.4;font-weight:600;margin:0 0 6px">Your <span style="color:#c8a87c">'+lowest.key+'</span> score is '+lowest.val+'. '+actionMap[lowest.key]+'</p>';
+    h+='<span style="font-size:12px;color:#9a8a72;font-weight:600">Open Frameworks →</span>';
+    h+='</div>';
+  }
+  el.innerHTML=h;
+}
+
+// ===== PERSONALIZED TOOL RECOMMENDATIONS =====
+function renderRecommendedTools(){
+  var el=document.getElementById('home-recommended-tools');
+  if(!el||!U)return;
+  var cp=U.careerProfile||{};
+  if(!cp.lastUpdated){el.style.display='none';return}
+  var scores=calcDashScores(cp);
+  var toolsUsed=(U.toolHistory||[]).map(function(t){return t.tool});
+  var stage=cp.stage||'student';
+
+  // Build prioritized tool list based on scores
+  var allTools=[
+    {score:'competitiveness',name:'Match Competitiveness Calculator',icon:'🏆',why:'Benchmark against peers'},
+    {score:'financial',name:'Financial Trajectory Simulator',icon:'🔮',why:'Model your 30-year wealth'},
+    {score:'research',name:'Research ROI Calculator',icon:'🔬',why:'Maximize research impact'},
+    {score:'readiness',name:'Career Strategy Builder',icon:'📊',why:'Map your next moves'},
+    {score:'financial',name:'Contract Intelligence Tool',icon:'📋',why:'Score your offers'},
+    {score:'competitiveness',name:'Mock Interview Simulator',icon:'🎤',why:'Practice real questions'}
+  ];
+
+  // Filter out already-used tools, sort by weakest score
+  var unused=allTools.filter(function(t){return toolsUsed.indexOf(t.name)===-1});
+  unused.sort(function(a,b){return (scores[a.score]||0)-(scores[b.score]||0)});
+  var picks=unused.slice(0,3);
+
+  if(!picks.length){el.style.display='none';return}
+  el.style.display='';
+  var h='<div style="font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px">✦ Recommended for you</div>';
+  h+='<div style="display:flex;flex-direction:column;gap:8px">';
+  picks.forEach(function(p){
+    h+='<div onclick="navTo(\'scr-vault\')" style="display:flex;align-items:center;gap:14px;padding:14px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;cursor:pointer;transition:border-color .15s" onmouseenter="this.style.borderColor=\'var(--accent)\'" onmouseleave="this.style.borderColor=\'var(--border)\'">';
+    h+='<div style="flex-shrink:0;width:36px;height:36px;border-radius:10px;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:18px">'+p.icon+'</div>';
+    h+='<div style="flex:1"><div style="font-size:13px;font-weight:600;color:var(--text)">'+p.name+'</div>';
+    h+='<div style="font-size:11px;color:var(--text3);margin-top:2px">'+p.why+'</div></div>';
+    h+='<span style="font-size:11px;color:var(--accent);font-weight:600">→</span>';
+    h+='</div>';
+  });
+  h+='</div>';
+  el.innerHTML=h;
+}
+
+// ===== SINGLE UPGRADE NUDGE =====
+function renderUpgradeNudge(){
+  var el=document.getElementById('home-upgrade-nudge');
+  if(!el||!U)return;
+  // Don't show for paid users or trial users (they have the trial banner)
+  if(U.tier!=='free'||U.isTrial){el.style.display='none';return}
+  el.style.display='';
+  var t=TIERS.free;
+  var remaining=Math.max(0,t.ai-(U.usage?.ai||0));
+  el.innerHTML='<div class="card" style="border-color:rgba(200,168,124,.2);cursor:pointer" onclick="navTo(\'scr-profile\');showUpgrade()">'
+    +'<div style="display:flex;align-items:center;gap:12px">'
+    +'<span style="font-size:20px">⚡</span>'
+    +'<div><div style="font-size:13px;font-weight:600;color:var(--accent)">Upgrade to Core</div>'
+    +'<div style="font-size:11px;color:var(--text3)">'+remaining+' free analyses remaining — $29/mo unlocks 100+ analyses and all tools</div></div>'
+    +'</div></div>';
 }
 
 // Toggle detailed analytics section
@@ -9760,7 +9737,7 @@ function adminSwitchTier(tier){
   if(b){b.className='badge '+(bc[tier]||'b-free');b.textContent=tier==='admin'?'MENTOR':t.name.toUpperCase()||'FREE'}
   var showLev=(tier==='elite')||tier==='admin';
   document.getElementById('nav-leverage').style.display=showLev?'':'none';
-  document.getElementById('upgrade-prompt').style.display=tier==='free'?'':'none';
+  var upNudge=document.getElementById('home-upgrade-nudge');if(upNudge)upNudge.style.display=tier==='free'&&!U.isTrial?'':'none';
   var topUpgrade=document.getElementById('topbar-upgrade');
   if(topUpgrade){
     if(tier==='free'){topUpgrade.style.display='';topUpgrade.textContent='Subscribe'}
@@ -13616,7 +13593,7 @@ function printReport(){window.print()}
 var _tourStep=0;
 var _tourSteps=[
   {
-    target:function(){return document.getElementById('dash-update-bar')},
+    target:function(){return document.getElementById('home-score-card')},
     fallback:function(){return document.getElementById('career-dashboard')},
     title:'Set Up Your Career Profile',
     body:'Start here. Answer a few questions about your training stage, specialty, and goals — and we\'ll generate personalized career scores across 4 dimensions.'

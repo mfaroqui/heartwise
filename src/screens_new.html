@@ -1,0 +1,29 @@
+<!-- ===== MAIN APP ===== -->
+<div id="main-app" class="hidden">
+
+<!-- App Top Bar -->
+<div id="app-topbar" style="position:sticky;top:0;z-index:90;display:flex;align-items:center;justify-content:space-between;padding:10px 20px;background:var(--bg);border-bottom:1px solid var(--border)">
+<div style="display:flex;align-items:center;gap:8px;cursor:pointer" onclick="navTo('scr-home')">
+<div class="logo-mark" style="width:24px;height:24px"><svg style="width:16px;height:16px"><use href="#i-heart"/></svg></div>
+<span style="font-family:var(--font-serif);font-size:15px;font-weight:600;color:var(--text);letter-spacing:.3px">HeartWise</span>
+</div>
+<div style="display:flex;align-items:center;gap:8px">
+<button id="topbar-upgrade" onclick="navTo('scr-profile');showUpgrade()" style="display:none;padding:6px 14px;font-size:11px;font-weight:600;color:#0a0a0f;background:var(--accent);border:none;border-radius:8px;cursor:pointer;letter-spacing:.3px">Subscribe</button>
+<button onclick="doLogout()" style="display:flex;align-items:center;gap:6px;padding:6px 14px;font-size:11px;font-weight:600;color:var(--text3);background:var(--bg2);border:1px solid var(--border);border-radius:8px;cursor:pointer;transition:all .2s;letter-spacing:.3px" onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--accent)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text3)'">
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+Sign Out</button>
+</div>
+</div>
+
+<!-- NAV -->
+<nav class="nav" id="main-nav">
+<button class="ni on" data-scr="scr-home" onclick="navTo('scr-home',this)"><svg><use href="#i-home"/></svg>Home</button>
+<button class="ni" data-scr="scr-ask" onclick="navTo('scr-ask',this)"><svg><use href="#i-plus"/></svg>Ask</button>
+<button class="ni" data-scr="scr-archive" onclick="navTo('scr-archive',this)"><svg><use href="#i-archive"/></svg>Archive</button>
+<button class="ni" data-scr="scr-vault" onclick="navTo('scr-vault',this)"><svg><use href="#i-lock"/></svg>Frameworks</button>
+<button class="ni" data-scr="scr-leverage" id="nav-leverage" style="display:none" onclick="navTo('scr-leverage',this)"><svg><use href="#i-zap"/></svg>Leverage</button>
+<button class="ni" data-scr="scr-profile" onclick="navTo('scr-profile',this)"><svg><use href="#i-user"/></svg>Profile</button>
+<button class="ni" data-scr="scr-admin" id="nav-admin" style="display:none" onclick="openAdmin()"><svg><use href="#i-settings"/></svg>Admin</button>
+</nav>
+
+<!-- HOME SCREEN -->

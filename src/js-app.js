@@ -756,7 +756,6 @@ function enterApp(){
   // Show Leverage tab for mentorship (non-trial) and admin only
   var showLev=(U.tier==='elite'&&!U.isTrial)||U.tier==='admin';
   document.getElementById('nav-leverage').style.display=showLev?'':'none';
-  document.getElementById('upgrade-prompt').style.display=U.tier==='free'?'':'none';
   var topUpgrade=document.getElementById('topbar-upgrade');
   if(topUpgrade){
     if(U.tier==='free'||U.isTrial){topUpgrade.style.display='';topUpgrade.textContent='Subscribe';topUpgrade.onclick=function(){navTo('scr-profile');showUpgrade()}}
@@ -764,8 +763,7 @@ function enterApp(){
     else{topUpgrade.style.display='none'}
   }
   // Show leverage upsell for core users only
-  var levUpsell=document.getElementById('leverage-upsell');
-  if(levUpsell)levUpsell.style.display=U.tier==='core'?'':'none';
+  // leverage-upsell removed from home screen layout
   // Check for pending plan from landing page
   const pendingPlan=sessionStorage.getItem('hw_pending_plan');
   if(pendingPlan){
@@ -1250,63 +1248,42 @@ function renderDashboard(){
   var cp=U.careerProfile;
   if(!cp||!cp.lastUpdated){
     document.getElementById('career-dashboard').style.display='none';
-    // Show a prompt to complete their profile (paid/trial users only)
-    var focusEl=document.getElementById('weekly-focus');
-    if(focusEl){
-      var _hasPlan2=U.tier==='core'||U.tier==='elite'||U.tier==='admin'||U.isTrial;
-      if(_hasPlan2){
-        focusEl.style.display='';
-        focusEl.innerHTML='<div onclick="showUpdateProfile()" style="padding:20px;background:linear-gradient(160deg,rgba(200,168,124,.1),rgba(200,168,124,.03));border:2px solid rgba(200,168,124,.3);border-radius:14px;cursor:pointer;text-align:center">'
-          +'<div style="font-size:32px;margin-bottom:10px">📊</div>'
-          +'<div style="font-size:16px;font-weight:700;color:var(--text);font-family:var(--font-serif);margin-bottom:6px">Set Up Your Career Profile</div>'
-          +'<div style="font-size:13px;color:var(--text2);line-height:1.6;max-width:360px;margin:0 auto 12px">Tell us your training stage, specialty, and goals — and HeartWise will personalize your entire experience. Better data = better recommendations.</div>'
-          +'<div style="font-size:12px;color:var(--accent);font-weight:600">Takes 2 minutes → personalized dashboard, deadlines, and weekly focus ✨</div>'
-          +'</div>';
-      } else {
-        focusEl.style.display='none';
-      }
-    }
     return;
   }
   document.getElementById('career-dashboard').style.display='';
   var scores=calcDashScores(cp);
   var stage=cp.stage||'student';
 
-  // Subtitle
-  var stageLabel={student:'Medical Student',resident:'Resident',fellow:'Fellow',attending:'Attending Physician'}[stage]||'Physician';
-  var specLabel=cp.specialty?' · '+(cp.specialty.charAt(0).toUpperCase()+cp.specialty.slice(1)):'';
-  document.getElementById('dash-subtitle').textContent='';
-
-  // Score Cards
+  // Single prominent score card — overall career score (avg of 4)
+  var overall=Math.round((scores.competitiveness+scores.research+scores.readiness+scores.financial)/4);
   var prev=U.scoreHistory.length>1?U.scoreHistory[U.scoreHistory.length-2].scores:null;
-  var sh='';
-  var scoreItems=[
-    {key:'competitiveness',label:'Competitiveness',icon:'🏆'},
-    {key:'research',label:'Research',icon:'🔬'},
-    {key:'readiness',label:stage==='fellow'||stage==='attending'?'Career Readiness':'Match Readiness',icon:'🎯'},
-    {key:'financial',label:'Financial',icon:'💰'}
-  ];
-  scoreItems.forEach(function(si){
-    var val=scores[si.key]||0;
-    var delta=prev?val-(prev[si.key]||0):0;
-    var deltaStr=delta>0?'<span style="color:var(--green);font-size:8px;font-weight:600">+'+delta+'</span>':delta<0?'<span style="color:var(--red);font-size:8px;font-weight:600">'+delta+'</span>':'';
-    var color=val>=75?'var(--green)':val>=55?'var(--accent)':'var(--red)';
-    // SVG ring
-    var r=22,circ=2*Math.PI*r,offset=circ-(val/100)*circ;
-    var ringColor=val>=75?'#6aaa64':val>=55?'#c8a87c':'#c06060';
-    sh+='<div style="text-align:center;padding:10px 4px">';
-    sh+='<div style="position:relative;width:52px;height:52px;margin:0 auto 6px">';
-    sh+='<svg viewBox="0 0 52 52" style="width:52px;height:52px;transform:rotate(-90deg)">';
-    sh+='<circle cx="26" cy="26" r="'+r+'" fill="none" stroke="var(--bg3)" stroke-width="4"/>';
-    sh+='<circle cx="26" cy="26" r="'+r+'" fill="none" stroke="'+ringColor+'" stroke-width="4" stroke-linecap="round" stroke-dasharray="'+circ.toFixed(1)+'" stroke-dashoffset="'+offset.toFixed(1)+'" style="transition:stroke-dashoffset .8s ease"/>';
-    sh+='</svg>';
-    sh+='<div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:14px;font-weight:700;color:'+color+';font-family:var(--font-serif)">'+val+'</div>';
-    sh+='</div>';
-    sh+='<div style="font-size:9px;font-weight:600;color:var(--text2);letter-spacing:.2px;line-height:1.2">'+si.label+'</div>';
-    if(deltaStr) sh+='<div style="margin-top:2px">'+deltaStr+'</div>';
-    sh+='</div>';
+  var prevOverall=prev?Math.round((prev.competitiveness+prev.research+prev.readiness+prev.financial)/4):null;
+  var delta=prevOverall!==null?overall-prevOverall:0;
+  var overallColor=overall>=75?'var(--green)':overall>=55?'var(--accent)':'var(--red)';
+  var ringColor=overall>=75?'#6aaa64':overall>=55?'#c8a87c':'#c06060';
+  var r=34,circ=2*Math.PI*r,offset=circ-(overall/100)*circ;
+
+  var sh='<div class="card" style="padding:18px;display:flex;align-items:center;gap:18px">';
+  sh+='<div style="position:relative;width:76px;height:76px;flex-shrink:0">';
+  sh+='<svg viewBox="0 0 76 76" style="width:76px;height:76px;transform:rotate(-90deg)">';
+  sh+='<circle cx="38" cy="38" r="'+r+'" fill="none" stroke="var(--bg3)" stroke-width="5"/>';
+  sh+='<circle cx="38" cy="38" r="'+r+'" fill="none" stroke="'+ringColor+'" stroke-width="5" stroke-linecap="round" stroke-dasharray="'+circ.toFixed(1)+'" stroke-dashoffset="'+offset.toFixed(1)+'" style="transition:stroke-dashoffset .8s ease"/>';
+  sh+='</svg>';
+  sh+='<div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:24px;font-weight:700;color:'+overallColor+';font-family:var(--font-serif)">'+overall+'</div>';
+  sh+='</div>';
+  sh+='<div style="flex:1">';
+  sh+='<div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:4px">Career Score</div>';
+  if(delta!==0) sh+='<div style="font-size:11px;color:'+(delta>0?'var(--green)':'var(--red)')+';font-weight:600;margin-bottom:4px">'+(delta>0?'↑ +':'↓ ')+delta+' since last update</div>';
+  // Mini breakdown
+  sh+='<div style="display:flex;gap:12px;flex-wrap:wrap">';
+  [['🏆',scores.competitiveness],['🔬',scores.research],['🎯',scores.readiness],['💰',scores.financial]].forEach(function(s){
+    sh+='<span style="font-size:10px;color:var(--text3)">'+s[0]+' '+s[1]+'</span>';
   });
-  document.getElementById('dash-scores').innerHTML=sh;
+  sh+='</div>';
+  sh+='</div>';
+  sh+='<div onclick="showUpdateProfile()" style="cursor:pointer;padding:8px 14px;background:var(--bg3);border-radius:8px;font-size:11px;font-weight:600;color:var(--accent);white-space:nowrap">Update</div>';
+  sh+='</div>';
+  document.getElementById('home-score-card').innerHTML=sh;
 
   // Score Refresh Prompt — show if scores are older than 30 days
   var refreshEl=document.getElementById('dash-score-refresh');
@@ -1429,25 +1406,6 @@ function renderDashboard(){
     document.getElementById('dash-history-list').innerHTML=hh;
   }else{
     document.getElementById('dash-history').style.display='none';
-  }
-
-  // Update bar at bottom
-  var lastUp=new Date(cp.lastUpdated);
-  var daysSince=Math.floor((new Date()-lastUp)/(1000*60*60*24));
-  var updateBar=document.getElementById('dash-update-bar');
-  if(updateBar){
-    updateBar.style.display='';
-    var barText='Last updated: '+lastUp.toLocaleDateString('en-US',{month:'short',day:'numeric'});
-    if(daysSince>90) barText+=' — ⚠️ time to refresh';
-    var barTextEl=document.getElementById('dash-last-updated-bar');
-    if(barTextEl) barTextEl.textContent=barText;
-  }
-  // Legacy reassess element
-  var reassessEl=document.getElementById('dash-reassess');
-  if(reassessEl){
-    reassessEl.style.display='';
-    var luEl=document.getElementById('dash-last-updated');
-    if(luEl) luEl.textContent='Last updated: '+lastUp.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})+(daysSince>90?' — ⚠️ Consider updating':'');
   }
 
   // Show detail toggle if there's any detailed data
@@ -1806,7 +1764,7 @@ function recordToolUse(toolName,score,summary,resultData){
 function renderHome(){
   if(!U)return;
   renderDashboard();
-  setDailyQuote();
+  // Usage stats
   const t=TIERS[U.tier]||TIERS.free;
   const used=U.usage?.ai||0;const max=t.ai;
   const pct=max===999?0:Math.min(100,Math.round(used/max*100));
@@ -1814,52 +1772,166 @@ function renderHome(){
   document.getElementById('usage-bar').style.width=max===999?'0%':pct+'%';
   document.getElementById('usage-credits').textContent=U.usage?.credits||0;
   document.getElementById('usage-tier').textContent=t.name+(U.isTrial?' (trial)':' plan');
-  // Show/hide trial elements
+  // Trial banner (single upgrade nudge for trial users)
   var trialBanner=document.getElementById('trial-countdown-banner');
-  var trialNote=document.getElementById('trial-review-note');
   if(trialBanner)trialBanner.style.display=U.isTrial&&U.trialEnd?'':'none';
-  if(trialNote)trialNote.style.display=U.isTrial?'':'none';
   if(U.isTrial&&U.trialEnd)updateTrialBanner();
-  // Reviewed This Week = reviewed in last 7 days (or latest 5 if none recent)
+  // Personalized next step in hero
+  renderNextStep();
+  // Personalized tool recommendations
+  renderRecommendedTools();
+  // Single contextual upgrade nudge (not for trial — they have the banner)
+  renderUpgradeNudge();
+  // Recent analyses — only show if there's data
+  var feedSection=document.getElementById('home-feed-section');
   const now=new Date();const weekAgo=new Date(now);weekAgo.setDate(weekAgo.getDate()-7);const weekStr=weekAgo.toISOString().split('T')[0];
   let reviewed=DB.questions.filter(q=>q.status==='reviewed'&&q.reviewNote).sort((a,b)=>b.date.localeCompare(a.date));
   const thisWeek=reviewed.filter(q=>(q.reviewDate||q.date)>=weekStr);
   const featured=thisWeek.length>=3?thisWeek.slice(0,5):reviewed.slice(0,5);
-  document.getElementById('home-feed').innerHTML=featured.length?featured.map(renderQCard).join(''):'<div style="text-align:center;padding:40px;color:var(--text3)"><p>No reviewed questions yet.</p></div>';
-  // Animate How It Works steps on scroll
-  setTimeout(function(){
-    var steps=document.querySelectorAll('.hiw-step');
-    if(!steps.length)return;
-    if('IntersectionObserver' in window){
-      var obs=new IntersectionObserver(function(entries){
-        entries.forEach(function(e){if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target)}});
-      },{threshold:0.2});
-      steps.forEach(function(s){obs.observe(s)});
-    }else{
-      steps.forEach(function(s){s.classList.add('visible')});
-    }
-  },100);
-
-  // Render dynamic engagement sections (Core, Mentorship, and trial users only)
+  if(featured.length){
+    if(feedSection)feedSection.style.display='';
+    document.getElementById('home-feed').innerHTML=featured.map(renderQCard).join('');
+  }else{
+    if(feedSection)feedSection.style.display='none';
+  }
+  // Tool progress (paid users only)
   var _hasPlan=U.tier==='core'||U.tier==='elite'||U.tier==='admin'||U.isTrial;
   if(_hasPlan){
-    try{renderWhatsChanged()}catch(e){console.error('WhatsChanged:',e)}
-    try{renderWeeklyFocus()}catch(e){console.error('WeeklyFocus:',e)}
     try{renderToolProgress()}catch(e){console.error('ToolProgress:',e)}
-    try{renderUpcomingDeadlines()}catch(e){console.error('Deadlines:',e)}
-    try{renderWeeklyTip()}catch(e){console.error('WeeklyTip:',e)}
-    try{renderToolOfWeek()}catch(e){console.error('ToolOfWeek:',e)}
-    try{renderLoginStreak()}catch(e){console.error('LoginStreak:',e)}
-    // Show check-in + report buttons
-    var ciRow=document.getElementById('checkin-report-row');
-    if(ciRow)ciRow.style.display='grid';
-  } else {
-    // Hide all dynamic sections for free users
-    ['weekly-focus','tool-progress','upcoming-deadlines','weekly-tip','tool-of-week','login-streak','whats-changed'].forEach(function(id){
-      var el=document.getElementById(id);if(el)el.style.display='none';
-    });
-    var ciRow=document.getElementById('checkin-report-row');if(ciRow)ciRow.style.display='none';
+  }else{
+    var tpEl=document.getElementById('tool-progress');if(tpEl)tpEl.style.display='none';
   }
+}
+
+// ===== PERSONALIZED NEXT STEP =====
+function renderNextStep(){
+  var el=document.getElementById('home-next-step');
+  if(!el||!U)return;
+  var cp=U.careerProfile||{};
+  var toolsUsed=(U.toolHistory||[]).map(function(t){return t.tool});
+  var h='';
+
+  // No profile yet — prompt to set up
+  if(!cp.lastUpdated){
+    var _hasPlan2=U.tier==='core'||U.tier==='elite'||U.tier==='admin'||U.isTrial;
+    if(_hasPlan2){
+      h='<div onclick="showUpdateProfile()" style="cursor:pointer;margin-top:4px">';
+      h+='<p style="font-family:var(--font-serif);font-size:16px;color:#1a1620;line-height:1.4;font-weight:600;margin:0 0 8px">Set up your Career Profile to get personalized scores and recommendations.</p>';
+      h+='<span style="font-size:12px;color:#9a8a72;font-weight:600">Takes 2 minutes → personalized dashboard ✨</span>';
+      h+='</div>';
+    }else{
+      h='<p style="font-family:var(--font-serif);font-size:16px;color:#1a1620;line-height:1.4;font-weight:600;margin:0">Your career is too important for guesswork.</p>';
+    }
+    el.innerHTML=h;
+    return;
+  }
+
+  // Has profile — find highest-impact next action
+  var stage=cp.stage||'student';
+  var goal=cp.goal||'';
+  var scores=calcDashScores(cp);
+
+  // Find weakest score
+  var lowest={key:'competitiveness',val:100};
+  ['competitiveness','research','readiness','financial'].forEach(function(k){
+    if((scores[k]||0)<lowest.val){lowest={key:k,val:scores[k]||0}}
+  });
+
+  var toolMap={
+    competitiveness:'Match Competitiveness Calculator',
+    research:'Research ROI Calculator',
+    readiness:'Career Strategy Builder',
+    financial:'Financial Trajectory Simulator'
+  };
+  var actionMap={
+    competitiveness:'Run the Match Competitiveness Calculator to see exactly where the gaps are.',
+    research:'Use the Research ROI Calculator to find the highest-impact research moves.',
+    readiness:'Try the Career Strategy Builder to map your next steps.',
+    financial:'Run the Financial Trajectory Simulator to model your 30-year wealth path.'
+  };
+
+  // Check if they've already used the recommended tool
+  var recTool=toolMap[lowest.key];
+  var usedRec=toolsUsed.indexOf(recTool)!==-1;
+
+  if(usedRec){
+    // Stale scores?
+    var lastUpdate=cp.lastUpdated?new Date(cp.lastUpdated):null;
+    var daysSince=lastUpdate?Math.floor((new Date()-lastUpdate)/86400000):999;
+    if(daysSince>=30){
+      h='<div onclick="showUpdateProfile()" style="cursor:pointer;margin-top:4px">';
+      h+='<p style="font-family:var(--font-serif);font-size:16px;color:#1a1620;line-height:1.4;font-weight:600;margin:0 0 6px">Your scores are '+daysSince+' days old.</p>';
+      h+='<p style="font-size:12px;color:#6a6560;margin:0">Update your profile to see how you\'ve progressed. <span style="color:#9a8a72;font-weight:600">Update →</span></p>';
+      h+='</div>';
+    }else{
+      h='<p style="font-family:var(--font-serif);font-size:16px;color:#1a1620;line-height:1.4;font-weight:600;margin:0 0 6px">You\'re on track.</p>';
+      h+='<p style="font-size:12px;color:#6a6560;margin:0">Ask a question or explore a new tool to keep building your strategy.</p>';
+    }
+  }else{
+    h='<div onclick="navTo(\'scr-vault\')" style="cursor:pointer;margin-top:4px">';
+    h+='<p style="font-family:var(--font-serif);font-size:16px;color:#1a1620;line-height:1.4;font-weight:600;margin:0 0 6px">Your <span style="color:#c8a87c">'+lowest.key+'</span> score is '+lowest.val+'. '+actionMap[lowest.key]+'</p>';
+    h+='<span style="font-size:12px;color:#9a8a72;font-weight:600">Open Frameworks →</span>';
+    h+='</div>';
+  }
+  el.innerHTML=h;
+}
+
+// ===== PERSONALIZED TOOL RECOMMENDATIONS =====
+function renderRecommendedTools(){
+  var el=document.getElementById('home-recommended-tools');
+  if(!el||!U)return;
+  var cp=U.careerProfile||{};
+  if(!cp.lastUpdated){el.style.display='none';return}
+  var scores=calcDashScores(cp);
+  var toolsUsed=(U.toolHistory||[]).map(function(t){return t.tool});
+  var stage=cp.stage||'student';
+
+  // Build prioritized tool list based on scores
+  var allTools=[
+    {score:'competitiveness',name:'Match Competitiveness Calculator',icon:'🏆',why:'Benchmark against peers'},
+    {score:'financial',name:'Financial Trajectory Simulator',icon:'🔮',why:'Model your 30-year wealth'},
+    {score:'research',name:'Research ROI Calculator',icon:'🔬',why:'Maximize research impact'},
+    {score:'readiness',name:'Career Strategy Builder',icon:'📊',why:'Map your next moves'},
+    {score:'financial',name:'Contract Intelligence Tool',icon:'📋',why:'Score your offers'},
+    {score:'competitiveness',name:'Mock Interview Simulator',icon:'🎤',why:'Practice real questions'}
+  ];
+
+  // Filter out already-used tools, sort by weakest score
+  var unused=allTools.filter(function(t){return toolsUsed.indexOf(t.name)===-1});
+  unused.sort(function(a,b){return (scores[a.score]||0)-(scores[b.score]||0)});
+  var picks=unused.slice(0,3);
+
+  if(!picks.length){el.style.display='none';return}
+  el.style.display='';
+  var h='<div style="font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px">✦ Recommended for you</div>';
+  h+='<div style="display:flex;flex-direction:column;gap:8px">';
+  picks.forEach(function(p){
+    h+='<div onclick="navTo(\'scr-vault\')" style="display:flex;align-items:center;gap:14px;padding:14px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;cursor:pointer;transition:border-color .15s" onmouseenter="this.style.borderColor=\'var(--accent)\'" onmouseleave="this.style.borderColor=\'var(--border)\'">';
+    h+='<div style="flex-shrink:0;width:36px;height:36px;border-radius:10px;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:18px">'+p.icon+'</div>';
+    h+='<div style="flex:1"><div style="font-size:13px;font-weight:600;color:var(--text)">'+p.name+'</div>';
+    h+='<div style="font-size:11px;color:var(--text3);margin-top:2px">'+p.why+'</div></div>';
+    h+='<span style="font-size:11px;color:var(--accent);font-weight:600">→</span>';
+    h+='</div>';
+  });
+  h+='</div>';
+  el.innerHTML=h;
+}
+
+// ===== SINGLE UPGRADE NUDGE =====
+function renderUpgradeNudge(){
+  var el=document.getElementById('home-upgrade-nudge');
+  if(!el||!U)return;
+  // Don't show for paid users or trial users (they have the trial banner)
+  if(U.tier!=='free'||U.isTrial){el.style.display='none';return}
+  el.style.display='';
+  var t=TIERS.free;
+  var remaining=Math.max(0,t.ai-(U.usage?.ai||0));
+  el.innerHTML='<div class="card" style="border-color:rgba(200,168,124,.2);cursor:pointer" onclick="navTo(\'scr-profile\');showUpgrade()">'
+    +'<div style="display:flex;align-items:center;gap:12px">'
+    +'<span style="font-size:20px">⚡</span>'
+    +'<div><div style="font-size:13px;font-weight:600;color:var(--accent)">Upgrade to Core</div>'
+    +'<div style="font-size:11px;color:var(--text3)">'+remaining+' free analyses remaining — $29/mo unlocks 100+ analyses and all tools</div></div>'
+    +'</div></div>';
 }
 
 // Toggle detailed analytics section
@@ -4990,7 +5062,7 @@ function adminSwitchTier(tier){
   if(b){b.className='badge '+(bc[tier]||'b-free');b.textContent=tier==='admin'?'MENTOR':t.name.toUpperCase()||'FREE'}
   var showLev=(tier==='elite')||tier==='admin';
   document.getElementById('nav-leverage').style.display=showLev?'':'none';
-  document.getElementById('upgrade-prompt').style.display=tier==='free'?'':'none';
+  var upNudge=document.getElementById('home-upgrade-nudge');if(upNudge)upNudge.style.display=tier==='free'&&!U.isTrial?'':'none';
   var topUpgrade=document.getElementById('topbar-upgrade');
   if(topUpgrade){
     if(tier==='free'){topUpgrade.style.display='';topUpgrade.textContent='Subscribe'}
@@ -8846,7 +8918,7 @@ function printReport(){window.print()}
 var _tourStep=0;
 var _tourSteps=[
   {
-    target:function(){return document.getElementById('dash-update-bar')},
+    target:function(){return document.getElementById('home-score-card')},
     fallback:function(){return document.getElementById('career-dashboard')},
     title:'Set Up Your Career Profile',
     body:'Start here. Answer a few questions about your training stage, specialty, and goals — and we\'ll generate personalized career scores across 4 dimensions.'

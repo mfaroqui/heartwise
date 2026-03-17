@@ -388,10 +388,11 @@ a:hover{color:var(--accent2)}
   display:grid;
   grid-template-columns:1fr 420px;
   gap:64px;
-  align-items:center;
+  align-items:start;
 }
 .hero-lux-text{
   position:relative;
+  padding-top:24px;
 }
 .hero-lux-badge{
   display:inline-block;
@@ -606,7 +607,9 @@ a:hover{color:var(--accent2)}
     grid-template-columns:1fr;
     gap:48px;
     text-align:center;
+    align-items:center;
   }
+  .hero-lux-text{padding-top:0}
   .hero-lux-h1{font-size:44px}
   .hero-lux-sub{margin-left:auto;margin-right:auto}
   .hero-lux-ctas{justify-content:center;flex-wrap:wrap}

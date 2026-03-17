@@ -17,6 +17,79 @@
   }
 })();
 
+// ===== HERO SHOWCASE CAROUSEL =====
+(function(){
+  var currentSlide=0, totalSlides=4, timer=null, animated=[];
+  function animateSlide(idx){
+    if(animated[idx])return; animated[idx]=true;
+    if(idx===0){
+      // Competitiveness score
+      var scoreEl=document.querySelector('.showcase-slide[data-slide="0"] .sc-score');
+      var target=76, cur=0;
+      var si=setInterval(function(){cur+=2;if(cur>=target){cur=target;clearInterval(si)}if(scoreEl)scoreEl.textContent=cur},30);
+      document.querySelectorAll('.showcase-slide[data-slide="0"] .sc-bar').forEach(function(b){setTimeout(function(){b.style.width=b.dataset.width+'%'},100)});
+      document.querySelectorAll('.showcase-slide[data-slide="0"] .sc-pct').forEach(function(p){
+        var t=parseInt(p.dataset.target),c=0;
+        var pi=setInterval(function(){c+=2;if(c>=t){c=t;clearInterval(pi)}p.textContent=c+'%'},25);
+      });
+      setTimeout(function(){document.querySelectorAll('.showcase-slide[data-slide="0"] .sc-tag').forEach(function(t){t.style.opacity='1'})},1200);
+    }else if(idx===1){
+      // Financial trajectory
+      var amtEl=document.querySelector('.fin-amount'), diffEl=document.querySelector('.fin-diff');
+      var t1=14.2,c1=0;
+      var fi=setInterval(function(){c1+=0.3;if(c1>=t1){c1=t1;clearInterval(fi)}if(amtEl)amtEl.textContent='$'+c1.toFixed(1)+'M'},40);
+      var t2=6.8,c2=0;
+      var di=setInterval(function(){c2+=0.15;if(c2>=t2){c2=t2;clearInterval(di)}if(diffEl)diffEl.textContent='+$'+c2.toFixed(1)+'M'},40);
+      setTimeout(function(){
+        document.querySelectorAll('.fin-line-base,.fin-line-strat').forEach(function(l){l.style.strokeDashoffset='0'});
+        var dot=document.querySelector('.fin-dot');if(dot)dot.style.opacity='1';
+      },100);
+    }else if(idx===2){
+      // Contract
+      var valEl=document.querySelector('.contract-val'),rvuEl=document.querySelector('.contract-rvu');
+      var tv=685000,cv=0;
+      var vi=setInterval(function(){cv+=15000;if(cv>=tv){cv=tv;clearInterval(vi)}if(valEl)valEl.textContent='$'+cv.toLocaleString()},30);
+      var tr=55,cr=0;
+      var ri=setInterval(function(){cr+=1;if(cr>=tr){cr=tr;clearInterval(ri)}if(rvuEl)rvuEl.innerHTML='$'+cr+'<span style="font-size:11px;font-weight:300;color:var(--text3)">/wRVU</span>'},30);
+      setTimeout(function(){document.querySelectorAll('.contract-flag').forEach(function(f){f.style.opacity='1';f.style.transform='translateX(0)'})},400);
+    }else if(idx===3){
+      // Roadmap
+      setTimeout(function(){document.querySelectorAll('.roadmap-node').forEach(function(n){n.style.opacity='1';n.style.transform='translateY(0)'})},100);
+    }
+  }
+  window.goShowcase=function(idx){
+    if(idx===currentSlide)return;
+    clearInterval(timer);
+    document.querySelectorAll('.showcase-slide').forEach(function(s){s.style.display='none'});
+    document.querySelectorAll('.showcase-dot').forEach(function(d){d.style.background='var(--border2)';d.classList.remove('showcase-dot-active')});
+    var slide=document.querySelector('.showcase-slide[data-slide="'+idx+'"]');
+    var dot=document.querySelector('.showcase-dot[data-dot="'+idx+'"]');
+    if(slide)slide.style.display='block';
+    if(dot){dot.style.background='var(--accent)';dot.classList.add('showcase-dot-active')}
+    currentSlide=idx;
+    setTimeout(function(){animateSlide(idx)},50);
+    startTimer();
+  };
+  function startTimer(){
+    clearInterval(timer);
+    timer=setInterval(function(){goShowcase((currentSlide+1)%totalSlides)},5000);
+  }
+  // Init on load via IntersectionObserver
+  function initShowcase(){
+    var el=document.getElementById('hero-showcase');
+    if(!el)return;
+    if('IntersectionObserver' in window){
+      var obs=new IntersectionObserver(function(entries){
+        entries.forEach(function(e){
+          if(e.isIntersecting){animateSlide(0);startTimer();obs.disconnect()}
+        });
+      },{threshold:0.3});
+      obs.observe(el);
+    }else{animateSlide(0);startTimer()}
+  }
+  if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',initShowcase)}else{initShowcase()}
+})();
+
 // ===== LANDING MENU =====
 function toggleLandingMenu(e){
   e.stopPropagation();

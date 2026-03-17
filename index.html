@@ -874,6 +874,151 @@ body.has-upgrade-bar #main-app{padding-bottom:70px}
 <div class="hero-lux-ctas">
 <button class="hero-btn-primary" onclick="document.getElementById('hook-sec').scrollIntoView({behavior:'smooth'})">Check Your Competitiveness for Free (30 seconds) →</button>
 </div>
+<!-- ===== TOOL SHOWCASE CAROUSEL ===== -->
+<div id="hero-showcase" style="margin-top:28px;max-width:480px">
+<div style="font-size:10px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:var(--text3);text-align:center;margin-bottom:12px">✦ Sample Outputs · See what you'll get</div>
+<div style="position:relative;background:var(--bg2);border:1px solid var(--border2);border-radius:16px;padding:24px;overflow:hidden;min-height:260px">
+<!-- Slide 1: Competitiveness Score -->
+<div class="showcase-slide showcase-active" data-slide="0">
+<div style="display:flex;align-items:center;gap:10px;margin-bottom:18px">
+<span style="font-size:18px">📊</span>
+<div>
+<div style="font-size:13px;font-weight:600;color:var(--text)">Competitiveness Analyzer</div>
+<div style="font-size:10px;color:var(--text3)">Your profile scored & benchmarked instantly</div>
+</div>
+</div>
+<div style="display:flex;align-items:center;gap:20px;margin-bottom:18px">
+<div style="width:68px;height:68px;border-radius:50%;border:3px solid var(--accent);display:flex;align-items:center;justify-content:center;flex-shrink:0;position:relative">
+<span class="sc-score" style="font-family:var(--font-serif);font-size:26px;font-weight:600;color:var(--accent)">0</span>
+</div>
+<div style="flex:1">
+<div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-size:10px;color:var(--text2)">Research</span><span class="sc-pct" data-target="72" style="font-size:10px;color:var(--accent);font-weight:500">0%</span></div>
+<div style="height:4px;background:rgba(200,168,124,.08);border-radius:2px;margin-bottom:8px"><div class="sc-bar" data-width="72" style="height:100%;width:0%;background:var(--accent);border-radius:2px;transition:width 1.2s ease"></div></div>
+<div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-size:10px;color:var(--text2)">Board Scores</span><span class="sc-pct" data-target="85" style="font-size:10px;color:var(--green);font-weight:500">0%</span></div>
+<div style="height:4px;background:rgba(200,168,124,.08);border-radius:2px;margin-bottom:8px"><div class="sc-bar" data-width="85" style="height:100%;width:0%;background:var(--green);border-radius:2px;transition:width 1.2s ease"></div></div>
+<div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-size:10px;color:var(--text2)">Leadership</span><span class="sc-pct" data-target="48" style="font-size:10px;color:var(--accent);font-weight:500">0%</span></div>
+<div style="height:4px;background:rgba(200,168,124,.08);border-radius:2px;margin-bottom:8px"><div class="sc-bar" data-width="48" style="height:100%;width:0%;background:var(--accent);border-radius:2px;transition:width 1.2s ease"></div></div>
+<div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-size:10px;color:var(--text2)">Networking</span><span class="sc-pct" data-target="35" style="font-size:10px;color:var(--red);font-weight:500">0%</span></div>
+<div style="height:4px;background:rgba(200,168,124,.08);border-radius:2px"><div class="sc-bar" data-width="35" style="height:100%;width:0%;background:var(--red);border-radius:2px;transition:width 1.2s ease;opacity:.7"></div></div>
+</div>
+</div>
+<div style="display:flex;gap:6px;flex-wrap:wrap">
+<span class="sc-tag" style="font-size:9px;padding:4px 10px;border-radius:100px;background:var(--accent-dim);color:var(--accent);font-weight:500;border:1px solid rgba(200,168,124,.15);opacity:0;transition:opacity .6s ease">⚡ 3 gaps identified</span>
+<span class="sc-tag" style="font-size:9px;padding:4px 10px;border-radius:100px;background:var(--green-dim);color:var(--green);font-weight:500;border:1px solid rgba(139,184,160,.15);opacity:0;transition:opacity .6s ease">✓ 2 strengths</span>
+</div>
+</div>
+<!-- Slide 2: Financial Trajectory -->
+<div class="showcase-slide" data-slide="1" style="display:none">
+<div style="display:flex;align-items:center;gap:10px;margin-bottom:18px">
+<span style="font-size:18px">📈</span>
+<div>
+<div style="font-size:13px;font-weight:600;color:var(--text)">Financial Trajectory Simulator</div>
+<div style="font-size:10px;color:var(--text3)">See how one decision compounds over 20 years</div>
+</div>
+</div>
+<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:14px">
+<div>
+<div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:2px">Net Worth · Year 20</div>
+<div class="fin-amount" style="font-family:var(--font-serif);font-size:30px;font-weight:600;color:var(--accent)">$0</div>
+</div>
+<div style="text-align:right">
+<div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:2px">vs. Baseline</div>
+<div class="fin-diff" style="font-size:15px;font-weight:600;color:var(--green)">+$0</div>
+</div>
+</div>
+<svg viewBox="0 0 400 110" style="width:100%;height:auto">
+<line x1="30" y1="95" x2="380" y2="95" stroke="rgba(200,168,124,.08)" stroke-width=".5"/>
+<line x1="30" y1="55" x2="380" y2="55" stroke="rgba(200,168,124,.05)" stroke-width=".5" stroke-dasharray="4,4"/>
+<line x1="30" y1="15" x2="380" y2="15" stroke="rgba(200,168,124,.05)" stroke-width=".5" stroke-dasharray="4,4"/>
+<text x="26" y="98" text-anchor="end" font-size="7" fill="rgba(240,236,230,.3)" font-family="sans-serif">$0</text>
+<text x="26" y="58" text-anchor="end" font-size="7" fill="rgba(240,236,230,.3)" font-family="sans-serif">$7M</text>
+<text x="26" y="18" text-anchor="end" font-size="7" fill="rgba(240,236,230,.3)" font-family="sans-serif">$14M</text>
+<polyline class="fin-line-base" points="30,93 100,90 170,86 240,80 310,74 380,60" fill="none" stroke="rgba(240,236,230,.15)" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="600" stroke-dashoffset="600" style="transition:stroke-dashoffset 2s ease"/>
+<polyline class="fin-line-strat" points="30,93 100,84 170,70 240,52 310,30 380,10" fill="none" stroke="#C6A75E" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="600" stroke-dashoffset="600" style="transition:stroke-dashoffset 2s ease"/>
+<circle class="fin-dot" cx="380" cy="10" r="4" fill="#C6A75E" opacity="0" style="transition:opacity .5s ease 1.8s"/>
+</svg>
+<div style="display:flex;justify-content:center;gap:16px;margin-top:6px">
+<div style="display:flex;align-items:center;gap:5px"><div style="width:12px;height:2px;background:rgba(240,236,230,.15);border-radius:1px"></div><span style="font-size:9px;color:var(--text3)">Baseline</span></div>
+<div style="display:flex;align-items:center;gap:5px"><div style="width:12px;height:2px;background:#C6A75E;border-radius:1px"></div><span style="font-size:9px;color:var(--accent)">Strategic</span></div>
+</div>
+</div>
+<!-- Slide 3: Contract Intelligence -->
+<div class="showcase-slide" data-slide="2" style="display:none">
+<div style="display:flex;align-items:center;gap:10px;margin-bottom:18px">
+<span style="font-size:18px">📄</span>
+<div>
+<div style="font-size:13px;font-weight:600;color:var(--text)">Contract Intelligence Tool</div>
+<div style="font-size:10px;color:var(--text3)">Every clause analyzed, red flags surfaced</div>
+</div>
+</div>
+<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border)">
+<div>
+<div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:2px">Total Year 1 Value</div>
+<div class="contract-val" style="font-family:var(--font-serif);font-size:28px;font-weight:600;color:var(--accent)">$0</div>
+</div>
+<div style="text-align:right">
+<div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:2px">RVU Rate</div>
+<div class="contract-rvu" style="font-family:var(--font-serif);font-size:20px;font-weight:600;color:var(--text)">$0<span style="font-size:11px;font-weight:300;color:var(--text3)">/wRVU</span></div>
+</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:8px">
+<div class="contract-flag" style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--red-dim);border-radius:8px;border:1px solid rgba(196,77,86,.15);opacity:0;transform:translateX(-10px);transition:all .4s ease">
+<span style="font-size:11px">🚩</span>
+<span style="font-size:10px;color:var(--red);font-weight:500">Non-compete: 25mi / 2yr — above market</span>
+</div>
+<div class="contract-flag" style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--green-dim);border-radius:8px;border:1px solid rgba(139,184,160,.15);opacity:0;transform:translateX(-10px);transition:all .4s ease .15s">
+<span style="font-size:11px">✓</span>
+<span style="font-size:10px;color:var(--green);font-weight:500">RVU rate $55 — above 75th %ile MGMA</span>
+</div>
+<div class="contract-flag" style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--accent-dim);border-radius:8px;border:1px solid rgba(200,168,124,.15);opacity:0;transform:translateX(-10px);transition:all .4s ease .3s">
+<span style="font-size:11px">⚠️</span>
+<span style="font-size:10px;color:var(--accent);font-weight:500">Tail coverage not included — negotiate</span>
+</div>
+</div>
+</div>
+<!-- Slide 4: Career Roadmap -->
+<div class="showcase-slide" data-slide="3" style="display:none">
+<div style="display:flex;align-items:center;gap:10px;margin-bottom:18px">
+<span style="font-size:18px">🗺️</span>
+<div>
+<div style="font-size:13px;font-weight:600;color:var(--text)">Career Roadmap</div>
+<div style="font-size:10px;color:var(--text3)">Interactive milestones & decision support</div>
+</div>
+</div>
+<div style="border-left:2px solid var(--border2);padding-left:18px;margin-left:8px">
+<div class="roadmap-node" style="position:relative;margin-bottom:20px;opacity:0;transform:translateY(8px);transition:all .5s ease">
+<div style="position:absolute;left:-25px;top:2px;width:12px;height:12px;border-radius:50%;background:var(--green)"></div>
+<div style="font-size:12px;font-weight:500;color:var(--text)">PGY-3 · Chief Resident</div>
+<div style="font-size:10px;color:var(--text3);font-weight:300">✓ Completed</div>
+</div>
+<div class="roadmap-node" style="position:relative;margin-bottom:20px;opacity:0;transform:translateY(8px);transition:all .5s ease .2s">
+<div style="position:absolute;left:-25px;top:2px;width:12px;height:12px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px rgba(200,168,124,.4)"></div>
+<div style="font-size:12px;font-weight:500;color:var(--accent)">Cardiology Fellowship</div>
+<div style="font-size:10px;color:var(--text3);font-weight:300">● In Progress — 78th percentile</div>
+</div>
+<div class="roadmap-node" style="position:relative;margin-bottom:20px;opacity:0;transform:translateY(8px);transition:all .5s ease .4s">
+<div style="position:absolute;left:-25px;top:2px;width:12px;height:12px;border-radius:50%;border:1.5px solid var(--text3)"></div>
+<div style="font-size:12px;font-weight:400;color:var(--text3)">Interventional Fellowship</div>
+<div style="font-size:10px;color:var(--text3);font-weight:300">→ 3 programs simulated</div>
+</div>
+<div class="roadmap-node" style="position:relative;opacity:0;transform:translateY(8px);transition:all .5s ease .6s">
+<div style="position:absolute;left:-25px;top:2px;width:12px;height:12px;border-radius:50%;border:1.5px solid var(--text3)"></div>
+<div style="font-size:12px;font-weight:400;color:var(--text3)">Attending · Private Practice</div>
+<div style="font-size:10px;color:var(--text3);font-weight:300">→ $14.2M projected net worth (yr 20)</div>
+</div>
+</div>
+</div>
+<!-- Dots -->
+<div style="display:flex;justify-content:center;gap:8px;margin-top:16px">
+<div class="showcase-dot showcase-dot-active" data-dot="0" onclick="goShowcase(0)" style="width:8px;height:8px;border-radius:50%;background:var(--accent);cursor:pointer;transition:all .3s"></div>
+<div class="showcase-dot" data-dot="1" onclick="goShowcase(1)" style="width:8px;height:8px;border-radius:50%;background:var(--border2);cursor:pointer;transition:all .3s"></div>
+<div class="showcase-dot" data-dot="2" onclick="goShowcase(2)" style="width:8px;height:8px;border-radius:50%;background:var(--border2);cursor:pointer;transition:all .3s"></div>
+<div class="showcase-dot" data-dot="3" onclick="goShowcase(3)" style="width:8px;height:8px;border-radius:50%;background:var(--border2);cursor:pointer;transition:all .3s"></div>
+</div>
+</div>
+</div>
+<!-- ===== END SHOWCASE ===== -->
+
 <div class="hero-lux-steps">
 <div class="hero-lux-steps-label">In under 5 minutes</div>
 <div class="hero-lux-steps-row">
@@ -4860,6 +5005,79 @@ v15:`<h3 class="serif">Career Strategy Builder</h3>
     window.addEventListener('scroll',function(){updateTopbar(window.scrollY)});
     updateTopbar(0);
   }
+})();
+
+// ===== HERO SHOWCASE CAROUSEL =====
+(function(){
+  var currentSlide=0, totalSlides=4, timer=null, animated=[];
+  function animateSlide(idx){
+    if(animated[idx])return; animated[idx]=true;
+    if(idx===0){
+      // Competitiveness score
+      var scoreEl=document.querySelector('.showcase-slide[data-slide="0"] .sc-score');
+      var target=76, cur=0;
+      var si=setInterval(function(){cur+=2;if(cur>=target){cur=target;clearInterval(si)}if(scoreEl)scoreEl.textContent=cur},30);
+      document.querySelectorAll('.showcase-slide[data-slide="0"] .sc-bar').forEach(function(b){setTimeout(function(){b.style.width=b.dataset.width+'%'},100)});
+      document.querySelectorAll('.showcase-slide[data-slide="0"] .sc-pct').forEach(function(p){
+        var t=parseInt(p.dataset.target),c=0;
+        var pi=setInterval(function(){c+=2;if(c>=t){c=t;clearInterval(pi)}p.textContent=c+'%'},25);
+      });
+      setTimeout(function(){document.querySelectorAll('.showcase-slide[data-slide="0"] .sc-tag').forEach(function(t){t.style.opacity='1'})},1200);
+    }else if(idx===1){
+      // Financial trajectory
+      var amtEl=document.querySelector('.fin-amount'), diffEl=document.querySelector('.fin-diff');
+      var t1=14.2,c1=0;
+      var fi=setInterval(function(){c1+=0.3;if(c1>=t1){c1=t1;clearInterval(fi)}if(amtEl)amtEl.textContent='$'+c1.toFixed(1)+'M'},40);
+      var t2=6.8,c2=0;
+      var di=setInterval(function(){c2+=0.15;if(c2>=t2){c2=t2;clearInterval(di)}if(diffEl)diffEl.textContent='+$'+c2.toFixed(1)+'M'},40);
+      setTimeout(function(){
+        document.querySelectorAll('.fin-line-base,.fin-line-strat').forEach(function(l){l.style.strokeDashoffset='0'});
+        var dot=document.querySelector('.fin-dot');if(dot)dot.style.opacity='1';
+      },100);
+    }else if(idx===2){
+      // Contract
+      var valEl=document.querySelector('.contract-val'),rvuEl=document.querySelector('.contract-rvu');
+      var tv=685000,cv=0;
+      var vi=setInterval(function(){cv+=15000;if(cv>=tv){cv=tv;clearInterval(vi)}if(valEl)valEl.textContent='$'+cv.toLocaleString()},30);
+      var tr=55,cr=0;
+      var ri=setInterval(function(){cr+=1;if(cr>=tr){cr=tr;clearInterval(ri)}if(rvuEl)rvuEl.innerHTML='$'+cr+'<span style="font-size:11px;font-weight:300;color:var(--text3)">/wRVU</span>'},30);
+      setTimeout(function(){document.querySelectorAll('.contract-flag').forEach(function(f){f.style.opacity='1';f.style.transform='translateX(0)'})},400);
+    }else if(idx===3){
+      // Roadmap
+      setTimeout(function(){document.querySelectorAll('.roadmap-node').forEach(function(n){n.style.opacity='1';n.style.transform='translateY(0)'})},100);
+    }
+  }
+  window.goShowcase=function(idx){
+    if(idx===currentSlide)return;
+    clearInterval(timer);
+    document.querySelectorAll('.showcase-slide').forEach(function(s){s.style.display='none'});
+    document.querySelectorAll('.showcase-dot').forEach(function(d){d.style.background='var(--border2)';d.classList.remove('showcase-dot-active')});
+    var slide=document.querySelector('.showcase-slide[data-slide="'+idx+'"]');
+    var dot=document.querySelector('.showcase-dot[data-dot="'+idx+'"]');
+    if(slide)slide.style.display='block';
+    if(dot){dot.style.background='var(--accent)';dot.classList.add('showcase-dot-active')}
+    currentSlide=idx;
+    setTimeout(function(){animateSlide(idx)},50);
+    startTimer();
+  };
+  function startTimer(){
+    clearInterval(timer);
+    timer=setInterval(function(){goShowcase((currentSlide+1)%totalSlides)},5000);
+  }
+  // Init on load via IntersectionObserver
+  function initShowcase(){
+    var el=document.getElementById('hero-showcase');
+    if(!el)return;
+    if('IntersectionObserver' in window){
+      var obs=new IntersectionObserver(function(entries){
+        entries.forEach(function(e){
+          if(e.isIntersecting){animateSlide(0);startTimer();obs.disconnect()}
+        });
+      },{threshold:0.3});
+      obs.observe(el);
+    }else{animateSlide(0);startTimer()}
+  }
+  if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',initShowcase)}else{initShowcase()}
 })();
 
 // ===== LANDING MENU =====

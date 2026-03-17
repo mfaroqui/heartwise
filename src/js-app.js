@@ -72,7 +72,7 @@
   };
   function startTimer(){
     clearInterval(timer);
-    timer=setInterval(function(){goShowcase((currentSlide+1)%totalSlides)},5000);
+    timer=setInterval(function(){goShowcase((currentSlide+1)%totalSlides)},2750);
   }
   // Init on load via IntersectionObserver
   function initShowcase(){

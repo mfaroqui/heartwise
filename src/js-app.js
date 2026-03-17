@@ -109,10 +109,13 @@ function landingNav(id){
   if(el)el.scrollIntoView({behavior:'smooth'});
 }
 function lpTab(name){
+  console.log('lpTab called:',name);
   closeLandingMenu();
   var tabs=document.querySelectorAll('.lp-tab');
+  console.log('tabs found:',tabs.length);
   tabs.forEach(function(t){t.classList.remove('lp-tab-active')});
   var target=document.querySelector('.lp-tab[data-lptab="'+name+'"]');
+  console.log('target found:',!!target);
   if(target)target.classList.add('lp-tab-active');
   // Highlight active nav link
   document.querySelectorAll('.lp-tab-link').forEach(function(a){a.classList.remove('active')});

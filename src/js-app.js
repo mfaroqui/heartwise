@@ -1142,7 +1142,7 @@ function getScoreActions(cp,scores){
     if(!goal){
       actions.push({action:'Set your primary career goal in your profile to get specific actions',gain:'Focus',priority:'high'});
       actions.push({action:'Run the Specialty Fit Analyzer to clarify your direction',gain:'Clarity',priority:'high'});
-      actions.push({action:'Explore the Framework Library — discover which tools help you most',gain:'Awareness',priority:'medium'});
+      actions.push({action:'Explore Career Tools — discover which tools help you most',gain:'Awareness',priority:'medium'});
     }
   }
 
@@ -1179,7 +1179,7 @@ function getScoreActions(cp,scores){
     }
     if(!goal){
       actions.push({action:'Set your primary career goal in your profile to get specific actions',gain:'Focus',priority:'high'});
-      actions.push({action:'Explore the Framework Library — discover which tools help you most',gain:'Awareness',priority:'high'});
+      actions.push({action:'Explore Career Tools — discover which tools help you most',gain:'Awareness',priority:'high'});
       actions.push({action:'Run the Match Competitiveness Calculator for your target',gain:'Baseline',priority:'medium'});
     }
   }
@@ -1899,7 +1899,7 @@ function renderNextStep(){
   }else{
     h='<div onclick="navTo(\'scr-vault\')" style="cursor:pointer;margin-top:4px">';
     h+='<p style="font-family:var(--font-serif);font-size:16px;color:#1a1620;line-height:1.4;font-weight:600;margin:0 0 6px">Your <span style="color:#c8a87c">'+lowest.key+'</span> score is '+lowest.val+'. '+actionMap[lowest.key]+'</p>';
-    h+='<span style="font-size:12px;color:#9a8a72;font-weight:600">Open Frameworks →</span>';
+    h+='<span style="font-size:12px;color:#9a8a72;font-weight:600">Open Career Tools →</span>';
     h+='</div>';
   }
   el.innerHTML=h;
@@ -2074,7 +2074,7 @@ function renderToolProgress(){
     var h='<div class="card" style="padding:16px">';
     h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">';
     h+='<span style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px">🧭 Tool Progress</span>';
-    h+='<span style="display:flex;align-items:center;gap:8px"><span style="font-size:12px;font-weight:700;color:var(--text3)">0 / '+total+'</span><span onclick="navTo(\'scr-vault\')" style="font-size:10px;color:var(--accent);font-weight:600;cursor:pointer;text-decoration:underline">Frameworks →</span></span>';
+    h+='<span style="display:flex;align-items:center;gap:8px"><span style="font-size:12px;font-weight:700;color:var(--text3)">0 / '+total+'</span><span onclick="navTo(\'scr-vault\')" style="font-size:10px;color:var(--accent);font-weight:600;cursor:pointer;text-decoration:underline">Career Tools →</span></span>';
     h+='</div>';
     h+='<div style="height:8px;background:var(--bg3);border-radius:4px;overflow:hidden;margin-bottom:10px"><div style="height:100%;width:0%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:4px"></div></div>';
     h+='<div style="font-size:12px;color:var(--text2);line-height:1.5;margin-bottom:8px">You haven\'t used any tools yet. <strong>The more tools you run, the sharper your strategy gets.</strong> Each one builds on the last.</div>';
@@ -2089,7 +2089,7 @@ function renderToolProgress(){
   var h='<div class="card" style="padding:16px">';
   h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">';
   h+='<span style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px">🧭 Tool Progress</span>';
-  h+='<span style="display:flex;align-items:center;gap:8px"><span style="font-size:12px;font-weight:700;color:var(--accent)">'+used+' / '+total+'</span><span onclick="navTo(\'scr-vault\')" style="font-size:10px;color:var(--accent);font-weight:600;cursor:pointer;text-decoration:underline">Frameworks →</span></span>';
+  h+='<span style="display:flex;align-items:center;gap:8px"><span style="font-size:12px;font-weight:700;color:var(--accent)">'+used+' / '+total+'</span><span onclick="navTo(\'scr-vault\')" style="font-size:10px;color:var(--accent);font-weight:600;cursor:pointer;text-decoration:underline">Career Tools →</span></span>';
   h+='</div>';
   h+='<div style="height:8px;background:var(--bg3);border-radius:4px;overflow:hidden;margin-bottom:10px"><div style="height:100%;width:'+pct+'%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:4px;transition:width .5s"></div></div>';
   if(nextTool){
@@ -4604,7 +4604,7 @@ function quizShowResults(){
     var locked=!canAccess||mentOnly;
     var onclick;
     if(locked&&mentOnly&&canAccess) onclick='previewEliteFramework(\''+item.id+'\')';
-    else if(locked) onclick='notify(\'Upgrade to access this framework\',1)';
+    else if(locked) onclick='notify(\'Upgrade to access this tool\',1)';
     else onclick='openFramework(\''+item.id+'\')';
 
     html+='<div onclick="'+onclick+'" style="display:flex;gap:14px;padding:14px;background:var(--bg2);border:1px solid '+(i===0?'rgba(200,168,124,.3)':'var(--border)')+';border-radius:10px;margin-bottom:8px;cursor:pointer;position:relative;transition:border-color .2s'+(i===0?';box-shadow:0 0 20px rgba(200,168,124,.06)':'')+'">';
@@ -4703,7 +4703,7 @@ function renderVault(){
     if(locked&&mentOnly&&canAccess){
       onclick='onclick="previewEliteFramework(\''+v.id+'\')"';
     }else if(locked){
-      onclick='onclick="notify(\'Upgrade to access this framework\',1)"';
+      onclick='onclick="notify(\'Upgrade to access this tool\',1)"';
     }else{
       onclick='onclick="openFramework(\''+v.id+'\')"';
     }

@@ -68,7 +68,7 @@ a:hover{color:var(--accent2)}
 .lp-tab-link.active{color:var(--accent)!important;font-weight:500}
 
 /* ===== TOP NAV ===== */
-.topbar{position:fixed;top:0;left:0;right:0;z-index:9999;display:flex;align-items:center;justify-content:space-between;padding:20px 32px;background:transparent;backdrop-filter:blur(0px);-webkit-backdrop-filter:blur(0px);border-bottom:1px solid transparent;transition:all .5s ease}
+.topbar{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:20px 32px;background:transparent;backdrop-filter:blur(0px);-webkit-backdrop-filter:blur(0px);border-bottom:1px solid transparent;transition:all .5s ease}
 .topbar.solid{background:rgba(9,9,14,.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom-color:var(--border)}
 .topbar-logo{display:flex;align-items:center;gap:12px;cursor:pointer}
 .topbar-logo .logo-mark{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;transition:transform .3s}
@@ -860,6 +860,7 @@ body.has-upgrade-bar #main-app{padding-bottom:70px}
 </div>
 </div>
 <div class="topbar-links">
+<a href="#" class="tb-link lp-tab-link" data-lptab="home" onclick="event.preventDefault();lpTab('home')">Home</a>
 <a href="#" class="tb-link lp-tab-link" data-lptab="tools" onclick="event.preventDefault();lpTab('tools')">Tools</a>
 <a href="#" class="tb-link lp-tab-link" data-lptab="compare" onclick="event.preventDefault();lpTab('compare')">Why HeartWise</a>
 <a href="#" class="tb-link lp-tab-link" data-lptab="pricing" onclick="event.preventDefault();lpTab('pricing')">Pricing</a>
@@ -1262,7 +1263,7 @@ body.has-upgrade-bar #main-app{padding-bottom:70px}
 <button class="btn btn-a" onclick="go('pg-onboard')" style="max-width:300px;margin:0 auto">Access the Full Toolkit →</button>
 <p style="font-size:12px;color:var(--text3);margin-top:12px;font-weight:300">No credit card required.</p>
 </div>
-
+</div>
 </div>
 </div>
 <!-- ===== END TAB: TOOLS ===== -->
@@ -1401,6 +1402,8 @@ ChatGPT and Claude are powerful AI tools — but they're general-purpose. <stron
 <button class="btn btn-a" onclick="go('pg-onboard')" style="max-width:320px;margin:0 auto">Try HeartWise Free →</button>
 </div>
 
+</div>
+</div>
 </div>
 <!-- ===== END TAB: COMPARE ===== -->
 
@@ -1685,6 +1688,7 @@ ChatGPT and Claude are powerful AI tools — but they're general-purpose. <stron
 </div>
 
 
+</div>
 </div>
 </div>
 <!-- ===== END TAB: FOUNDER ===== -->
@@ -4811,13 +4815,10 @@ function landingNav(id){
   if(el)el.scrollIntoView({behavior:'smooth'});
 }
 function lpTab(name){
-  console.log('lpTab called:',name);
   closeLandingMenu();
   var tabs=document.querySelectorAll('.lp-tab');
-  console.log('tabs found:',tabs.length);
   tabs.forEach(function(t){t.classList.remove('lp-tab-active')});
   var target=document.querySelector('.lp-tab[data-lptab="'+name+'"]');
-  console.log('target found:',!!target);
   if(target)target.classList.add('lp-tab-active');
   // Highlight active nav link
   document.querySelectorAll('.lp-tab-link').forEach(function(a){a.classList.remove('active')});

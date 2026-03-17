@@ -134,28 +134,6 @@ function hookQ(q,val,btn){
   }
 }
 
-function hookCard(d){
-  var h='<div style="padding:20px;background:linear-gradient(160deg,#1a1825,rgba(200,168,124,.06));border:1px solid rgba(200,168,124,.2);border-radius:14px">';
-  h+='<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px"><span style="font-size:16px">'+d.icon+'</span>';
-  h+='<span style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px">'+d.title+'</span></div>';
-  h+='<p style="font-size:11px;color:var(--text3);margin-bottom:6px">'+d.tag+'</p>';
-  // Sample inputs badge
-  if(d.inp){h+='<div style="display:inline-block;padding:4px 10px;background:rgba(200,168,124,.08);border:1px solid rgba(200,168,124,.12);border-radius:6px;font-size:9px;color:var(--accent);margin-bottom:12px;letter-spacing:.3px">📊 Sample inputs: '+d.inp+'</div>';}
-  h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">';
-  d.c.forEach(function(c){
-    h+='<div style="padding:14px;background:var(--bg2);border-radius:10px;text-align:center;border:1px solid rgba(200,168,124,.12)">';
-    h+='<div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">'+c[0]+'</div>';
-    h+='<div style="font-size:9px;color:var(--text3);margin-bottom:4px">'+c[1]+'</div>';
-    h+='<div style="font-size:26px;font-weight:700;color:'+c[3]+';font-family:var(--font-serif)">'+c[2]+'</div>';
-    h+='<div style="font-size:9px;color:'+c[3]+'">'+c[4]+'</div></div>';
-  });
-  h+='</div><div style="text-align:center;font-size:11px;color:var(--text2);font-weight:500">'+d.ins+'</div>';
-  // "Your version" line
-  if(d.yours){h+='<div style="text-align:center;margin-top:10px;padding:8px 12px;background:rgba(139,184,160,.06);border:1px solid rgba(139,184,160,.12);border-radius:8px;font-size:9px;color:var(--text3)">🔑 <span style="color:var(--text2)">Your personalized version uses:</span> '+d.yours+'</div>';}
-  h+='</div>';
-  return h;
-}
-
 function hookShowResults(){
   var s=hookA.stage,g=hookA.goal;
   var labels={student:'Medical Students',resident:'Residents',fellow:'Fellows',attending:'Attending Physicians',pivot:'Physicians Exploring a Career Change'};
@@ -288,6 +266,7 @@ function hookShowResults(){
       {icon:'🔮',title:'Financial Trajectory Simulator',tag:'Model the 30-year impact.',c:[['Current Path','Stay the course','$8.9M',A,'lifetime'],['New Direction','After transition','$11.4M',G,'lifetime']],ins:'$2.5M more. The pivot pays for itself by year 7.'}]
   };
 
+  window._hookDemoData=D;
   var key=s+'_'+g;
   var tList=T[key]||T['student_specialty'];
   var dList=D[key]||D['student_specialty'];
@@ -301,17 +280,6 @@ function hookShowResults(){
     html+='<div style="font-size:11px;color:var(--text3);line-height:1.5">'+t[2]+'</div></div></div>';
   });
   document.getElementById('hook-tool-list').innerHTML=html;
-
-  // Personalization callout
-  var goalLabels={specialty:'choosing a specialty',match:'matching into residency',fellowship:'positioning for fellowship',contract:'negotiating a job offer',finance:'financial planning',direction:'career direction'};
-  var stageLabels={student:'a medical student',resident:'a resident',fellow:'a fellow',attending:'an attending physician',pivot:'a physician exploring a career change'};
-  var phtml='<div style="padding:14px 16px;background:rgba(200,168,124,.06);border:1px solid rgba(200,168,124,.15);border-radius:10px;margin-bottom:6px;text-align:center">';
-  phtml+='<div style="font-size:12px;color:var(--text);font-weight:600;margin-bottom:4px">These examples are tailored to your answers</div>';
-  phtml+='<div style="font-size:11px;color:var(--text3);line-height:1.5">Below is what HeartWise output looks like for <strong style="color:var(--accent)">'+(stageLabels[s]||'you')+'</strong> focused on <strong style="color:var(--accent)">'+(goalLabels[g]||'your goals')+'</strong>. When you sign up, each tool asks targeted questions about <em>your</em> actual scores, finances, and goals — generating results unique to you.</div>';
-  phtml+='</div>';
-
-  // Demo section header
-  var dhtml=phtml+'<div style="font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px;text-align:center">✦ Example outputs from your recommended tools</div>';
 
   // Add inp/yours metadata to demo cards
   var inputMeta={
@@ -329,70 +297,112 @@ function hookShowResults(){
     var meta=inputMeta[d.icon]||{};
     d.inp=meta.inp||'';
     d.yours=meta.yours||'';
-    dhtml+=hookCard(d);
   });
-  document.getElementById('hook-demos').innerHTML=dhtml;
 
+  // Build tabbed tool preview
+  buildToolPreview(dList,s,g);
   document.getElementById('hook-results').style.display='';
-  var miniEx=document.getElementById('hook-mini-example');
-  if(miniEx){miniEx.style.display='';buildMiniCarousel(dList)}
   setTimeout(function(){document.getElementById('hook-results').scrollIntoView({behavior:'smooth',block:'nearest'})},100);
 }
 
-// ===== MINI TOOL CAROUSEL (replaces leverage demo) =====
-var _miniSlide=0,_miniTimer=null,_miniAnimated=[];
-function buildMiniCarousel(dList){
-  _miniSlide=0;_miniAnimated=[];clearInterval(_miniTimer);
-  var container=document.getElementById('hook-mini-carousel');
-  var dotsEl=document.getElementById('hook-mini-dots');
-  if(!container||!dotsEl)return;
-  // Build slides from demo data
-  var slides='';
+// ===== TABBED TOOL PREVIEW =====
+var _activeTab=0;
+function buildToolPreview(dList,stage,goal){
+  _activeTab=0;
+  var wrap=document.getElementById('hook-tool-preview');
+  var tabsEl=document.getElementById('hook-preview-tabs');
+  var bodyEl=document.getElementById('hook-preview-body');
+  if(!wrap||!tabsEl||!bodyEl)return;
+  wrap.style.display='';
+
+  // Build tabs
+  var tabs='';
   dList.forEach(function(d,i){
-    slides+='<div class="mini-slide" data-ms="'+i+'" style="'+(i>0?'display:none':'')+'">';
-    slides+='<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">';
-    slides+='<span style="font-size:20px">'+d.icon+'</span>';
-    slides+='<div><div style="font-size:14px;font-weight:600;color:var(--text)">'+d.title+'</div>';
-    slides+='<div style="font-size:11px;color:var(--text3)">'+d.tag+'</div></div></div>';
-    slides+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">';
-    d.c.forEach(function(c){
-      slides+='<div style="padding:14px;background:var(--bg);border-radius:10px;text-align:center;border:1px solid rgba(200,168,124,.12)">';
-      slides+='<div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">'+c[0]+'</div>';
-      slides+='<div style="font-size:9px;color:var(--text3);margin-bottom:4px">'+c[1]+'</div>';
-      slides+='<div class="mini-val" data-target="'+c[2]+'" style="font-size:26px;font-weight:700;color:'+c[3]+';font-family:var(--font-serif)">'+c[2]+'</div>';
-      slides+='<div style="font-size:9px;color:'+c[3]+'">'+c[4]+'</div></div>';
-    });
-    slides+='</div>';
-    slides+='<div style="text-align:center;font-size:12px;color:var(--text2);font-weight:500;line-height:1.5;padding:10px 12px;background:rgba(200,168,124,.04);border-radius:8px">'+d.ins+'</div>';
-    slides+='</div>';
+    var active=i===0;
+    tabs+='<button onclick="switchPreviewTab('+i+')" data-ptab="'+i+'" style="';
+    tabs+='flex:1;padding:12px 8px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--border);';
+    tabs+='border-bottom:'+(active?'none':'1px solid var(--border)')+';';
+    tabs+='background:'+(active?'var(--bg2)':'var(--bg)')+';';
+    tabs+='color:'+(active?'var(--accent)':'var(--text3)')+';';
+    tabs+='border-radius:'+(i===0?'14px 0 0 0':i===dList.length-1?'0 14px 0 0':'0')+';';
+    tabs+='transition:all .25s;white-space:nowrap;position:relative;';
+    if(active)tabs+='z-index:1;';
+    tabs+='">';
+    tabs+=d.icon+' '+d.title;
+    tabs+='</button>';
   });
-  container.innerHTML=slides;
-  // Dots
-  var dots='';
-  dList.forEach(function(d,i){
-    dots+='<div class="mini-dot" data-md="'+i+'" onclick="goMiniSlide('+i+')" style="width:8px;height:8px;border-radius:50%;background:'+(i===0?'var(--accent)':'var(--border2)')+';cursor:pointer;transition:all .3s"></div>';
-  });
-  dotsEl.innerHTML=dots;
-  startMiniTimer();
+  tabsEl.innerHTML=tabs;
+
+  // Render first tab content
+  renderPreviewTab(bodyEl,dList,0);
 }
-window.goMiniSlide=function(idx){
-  if(idx===_miniSlide)return;
-  clearInterval(_miniTimer);
-  document.querySelectorAll('.mini-slide').forEach(function(s){s.style.display='none'});
-  document.querySelectorAll('.mini-dot').forEach(function(d){d.style.background='var(--border2)'});
-  var slide=document.querySelector('.mini-slide[data-ms="'+idx+'"]');
-  var dot=document.querySelector('.mini-dot[data-md="'+idx+'"]');
-  if(slide)slide.style.display='block';
-  if(dot)dot.style.background='var(--accent)';
-  _miniSlide=idx;
-  startMiniTimer();
+
+function renderPreviewTab(bodyEl,dList,idx){
+  var d=dList[idx];
+  var h='<div style="animation:hookFadeIn .3s ease">';
+  // Tool header
+  h+='<div style="margin-bottom:14px">';
+  h+='<div style="font-size:11px;color:var(--text3);line-height:1.5;margin-bottom:0">'+d.tag+'</div>';
+  h+='</div>';
+  // Sample inputs badge
+  if(d.inp){
+    h+='<div style="display:inline-block;padding:4px 10px;background:rgba(200,168,124,.08);border:1px solid rgba(200,168,124,.12);border-radius:6px;font-size:9px;color:var(--accent);margin-bottom:14px;letter-spacing:.3px">📊 Sample inputs: '+d.inp+'</div>';
+  }
+  // Comparison cards
+  h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">';
+  d.c.forEach(function(c){
+    h+='<div style="padding:16px;background:var(--bg);border-radius:10px;text-align:center;border:1px solid rgba(200,168,124,.12)">';
+    h+='<div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">'+c[0]+'</div>';
+    h+='<div style="font-size:9px;color:var(--text3);margin-bottom:6px">'+c[1]+'</div>';
+    h+='<div style="font-size:28px;font-weight:700;color:'+c[3]+';font-family:var(--font-serif);line-height:1.1">'+c[2]+'</div>';
+    h+='<div style="font-size:9px;color:'+c[3]+';margin-top:4px">'+c[4]+'</div></div>';
+  });
+  h+='</div>';
+  // Insight
+  h+='<div style="text-align:center;font-size:12px;color:var(--text2);font-weight:500;line-height:1.5;padding:12px 14px;background:rgba(200,168,124,.04);border:1px solid rgba(200,168,124,.08);border-radius:8px">'+d.ins+'</div>';
+  // "Your version" line
+  if(d.yours){
+    h+='<div style="text-align:center;margin-top:10px;padding:8px 12px;background:rgba(139,184,160,.06);border:1px solid rgba(139,184,160,.12);border-radius:8px;font-size:9px;color:var(--text3)">🔑 <span style="color:var(--text2)">Your personalized version uses:</span> '+d.yours+'</div>';
+  }
+  h+='</div>';
+  bodyEl.innerHTML=h;
+}
+
+window.switchPreviewTab=function(idx){
+  if(idx===_activeTab)return;
+  _activeTab=idx;
+  // Update tab styles
+  document.querySelectorAll('[data-ptab]').forEach(function(btn){
+    var isActive=parseInt(btn.getAttribute('data-ptab'))===idx;
+    btn.style.background=isActive?'var(--bg2)':'var(--bg)';
+    btn.style.color=isActive?'var(--accent)':'var(--text3)';
+    btn.style.borderBottom=isActive?'none':'1px solid var(--border)';
+    btn.style.zIndex=isActive?'1':'0';
+  });
+  // Re-render body
+  var bodyEl=document.getElementById('hook-preview-body');
+  var s=hookA.stage,g=hookA.goal;
+  var key=s+'_'+g;
+  var G='#6abf4b',A='#c8a87c',W='#e8a838';
+  // We need dList again — re-derive from D
+  var D=window._hookDemoData;
+  if(!D)return;
+  var dList=D[key]||D['student_specialty'];
+  // Re-apply metadata
+  var inputMeta={
+    '🏆':{ inp:'Step 2 CK score, publication count, school tier, target specialty', yours:'your Step scores, research, LORs, school type, leadership, target programs'},
+    '🔮':{ inp:'Specialty, age, debt, savings rate, compensation data', yours:'your specialty, training length, debt, living costs, investment strategy, target retirement'},
+    '🧬':{ inp:'Personality traits, lifestyle preferences, value rankings', yours:'your personality assessment, work-life priorities, clinical interests, practice setting preferences'},
+    '📋':{ inp:'Base salary, RVU rate, call frequency, benefits package', yours:'your specific offer terms, specialty benchmarks, geographic adjustments, contract clauses'},
+    '💰':{ inp:'Loan balance, interest rate, income, employer type', yours:'your exact loan details, repayment plan, employer, tax situation, insurance needs'},
+    '📈':{ inp:'Specialty, RVU rate, panel size, payer mix', yours:'your specialty, contract terms, productivity data, practice setting'},
+    '🎤':{ inp:'Interview type, specialty, training level', yours:'your target specialty, interview format, experience level, prior feedback'},
+    '🔬':{ inp:'Research type, time investment, target specialty', yours:'your available time, current CV, target program, research interests'},
+    '⚖️':{ inp:'Current specialty, target, years in practice, financial data', yours:'your career stage, financial obligations, risk tolerance, timeline, family considerations'}
+  };
+  dList.forEach(function(d){var m=inputMeta[d.icon]||{};d.inp=m.inp||'';d.yours=m.yours||'';});
+  renderPreviewTab(bodyEl,dList,idx);
 };
-function startMiniTimer(){
-  clearInterval(_miniTimer);
-  var total=document.querySelectorAll('.mini-slide').length;
-  if(total<=1)return;
-  _miniTimer=setInterval(function(){goMiniSlide((_miniSlide+1)%total)},5000);
-}
 
 document.addEventListener('click',function(e){
   const m=document.getElementById('landing-menu');

@@ -1283,34 +1283,34 @@ function renderDashboard(){
   var scores=calcDashScores(cp);
   var stage=cp.stage||'student';
 
-  // Single prominent score card — overall career score (avg of 4)
+  // Single prominent score card — dark spotlight per design system
   var overall=Math.round((scores.competitiveness+scores.research+scores.readiness+scores.financial)/4);
   var prev=U.scoreHistory.length>1?U.scoreHistory[U.scoreHistory.length-2].scores:null;
   var prevOverall=prev?Math.round((prev.competitiveness+prev.research+prev.readiness+prev.financial)/4):null;
   var delta=prevOverall!==null?overall-prevOverall:0;
-  var overallColor=overall>=75?'var(--green)':overall>=55?'var(--accent)':'var(--red)';
-  var ringColor=overall>=75?'#6aaa64':overall>=55?'#c8a87c':'#c06060';
+  var overallColor=overall>=75?'#5E8B6F':overall>=55?'#C6A85E':'#B85C5C';
+  var ringColor=overall>=75?'#5E8B6F':overall>=55?'#C6A85E':'#B85C5C';
   var r=34,circ=2*Math.PI*r,offset=circ-(overall/100)*circ;
 
-  var sh='<div class="card" style="padding:18px;display:flex;align-items:center;gap:18px">';
+  var sh='<div style="background:#111318;border-radius:18px;padding:20px;display:flex;align-items:center;gap:18px;color:#EDEBE7">';
   sh+='<div style="position:relative;width:76px;height:76px;flex-shrink:0">';
   sh+='<svg viewBox="0 0 76 76" style="width:76px;height:76px;transform:rotate(-90deg)">';
-  sh+='<circle cx="38" cy="38" r="'+r+'" fill="none" stroke="var(--bg3)" stroke-width="5"/>';
+  sh+='<circle cx="38" cy="38" r="'+r+'" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="5"/>';
   sh+='<circle cx="38" cy="38" r="'+r+'" fill="none" stroke="'+ringColor+'" stroke-width="5" stroke-linecap="round" stroke-dasharray="'+circ.toFixed(1)+'" stroke-dashoffset="'+offset.toFixed(1)+'" style="transition:stroke-dashoffset .8s ease"/>';
   sh+='</svg>';
   sh+='<div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:24px;font-weight:700;color:'+overallColor+';font-family:var(--font-serif)">'+overall+'</div>';
   sh+='</div>';
   sh+='<div style="flex:1">';
-  sh+='<div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:4px">Career Score</div>';
-  if(delta!==0) sh+='<div style="font-size:11px;color:'+(delta>0?'var(--green)':'var(--red)')+';font-weight:600;margin-bottom:4px">'+(delta>0?'↑ +':'↓ ')+delta+' since last update</div>';
+  sh+='<div style="font-size:14px;font-weight:600;color:#EDEBE7;margin-bottom:4px">Career Score</div>';
+  if(delta!==0) sh+='<div style="font-size:11px;color:'+(delta>0?'#5E8B6F':'#B85C5C')+';font-weight:600;margin-bottom:4px">'+(delta>0?'↑ +':'↓ ')+delta+' since last update</div>';
   // Mini breakdown
   sh+='<div style="display:flex;gap:12px;flex-wrap:wrap">';
   [['🏆',scores.competitiveness],['🔬',scores.research],['🎯',scores.readiness],['💰',scores.financial]].forEach(function(s){
-    sh+='<span style="font-size:10px;color:var(--text3)">'+s[0]+' '+s[1]+'</span>';
+    sh+='<span style="font-size:10px;color:rgba(237,235,231,.6)">'+s[0]+' '+s[1]+'</span>';
   });
   sh+='</div>';
   sh+='</div>';
-  sh+='<div onclick="showUpdateProfile()" style="cursor:pointer;padding:8px 14px;background:var(--bg3);border-radius:8px;font-size:11px;font-weight:600;color:var(--accent);white-space:nowrap">Update</div>';
+  sh+='<div onclick="showUpdateProfile()" style="cursor:pointer;padding:8px 14px;background:rgba(255,255,255,.08);border-radius:10px;font-size:11px;font-weight:600;color:#C6A85E;white-space:nowrap;transition:background .2s" onmouseenter="this.style.background=\'rgba(255,255,255,.12)\'" onmouseleave="this.style.background=\'rgba(255,255,255,.08)\'">Update</div>';
   sh+='</div>';
   document.getElementById('home-score-card').innerHTML=sh;
 
@@ -1898,7 +1898,7 @@ function renderNextStep(){
     }
   }else{
     h='<div onclick="navTo(\'scr-vault\')" style="cursor:pointer;margin-top:4px">';
-    h+='<p style="font-family:var(--font-serif);font-size:16px;color:#1a1620;line-height:1.4;font-weight:600;margin:0 0 6px">Your <span style="color:#c8a87c">'+lowest.key+'</span> score is '+lowest.val+'. '+actionMap[lowest.key]+'</p>';
+    h+='<p style="font-family:var(--font-serif);font-size:16px;color:#1a1620;line-height:1.4;font-weight:600;margin:0 0 6px">Your <span style="color:#C6A85E">'+lowest.key+'</span> score is '+lowest.val+'. '+actionMap[lowest.key]+'</p>';
     h+='<span style="font-size:12px;color:#9a8a72;font-weight:600">Open Career Tools →</span>';
     h+='</div>';
   }
@@ -1932,14 +1932,14 @@ function renderRecommendedTools(){
 
   if(!picks.length){el.style.display='none';return}
   el.style.display='';
-  var h='<div style="font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px">✦ Recommended for you</div>';
+  var h='<div style="font-size:10px;font-weight:600;color:#8A8278;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px">✦ Recommended for you</div>';
   h+='<div style="display:flex;flex-direction:column;gap:8px">';
   picks.forEach(function(p){
-    h+='<div onclick="navTo(\'scr-vault\')" style="display:flex;align-items:center;gap:14px;padding:14px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;cursor:pointer;transition:border-color .15s" onmouseenter="this.style.borderColor=\'var(--accent)\'" onmouseleave="this.style.borderColor=\'var(--border)\'">';
-    h+='<div style="flex-shrink:0;width:36px;height:36px;border-radius:10px;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:18px">'+p.icon+'</div>';
-    h+='<div style="flex:1"><div style="font-size:13px;font-weight:600;color:var(--text)">'+p.name+'</div>';
-    h+='<div style="font-size:11px;color:var(--text3);margin-top:2px">'+p.why+'</div></div>';
-    h+='<span style="font-size:11px;color:var(--accent);font-weight:600">→</span>';
+    h+='<div onclick="navTo(\'scr-vault\')" style="display:flex;align-items:center;gap:14px;padding:14px 16px;background:#fff;border:1px solid #E8E1D8;border-radius:14px;cursor:pointer;transition:all .2s;box-shadow:0 2px 6px rgba(0,0,0,.04)" onmouseenter="this.style.borderColor=\'#C6A85E\';this.style.boxShadow=\'0 6px 16px rgba(0,0,0,.08)\'" onmouseleave="this.style.borderColor=\'#E8E1D8\';this.style.boxShadow=\'0 2px 6px rgba(0,0,0,.04)\'">';
+    h+='<div style="flex-shrink:0;width:36px;height:36px;border-radius:10px;background:#F8F5F0;display:flex;align-items:center;justify-content:center;font-size:18px">'+p.icon+'</div>';
+    h+='<div style="flex:1"><div style="font-size:13px;font-weight:600;color:#1C1A17">'+p.name+'</div>';
+    h+='<div style="font-size:11px;color:#8A8278;margin-top:2px">'+p.why+'</div></div>';
+    h+='<span style="font-size:11px;color:#C6A85E;font-weight:600">→</span>';
     h+='</div>';
   });
   h+='</div>';
@@ -1955,11 +1955,11 @@ function renderUpgradeNudge(){
   el.style.display='';
   var t=TIERS.free;
   var remaining=Math.max(0,t.ai-(U.usage?.ai||0));
-  el.innerHTML='<div class="card" style="border-color:rgba(200,168,124,.2);cursor:pointer" onclick="navTo(\'scr-profile\');showUpgrade()">'
+  el.innerHTML='<div style="background:#fff;border:1px solid rgba(198,168,94,.25);border-radius:14px;padding:16px 18px;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.04);transition:all .2s" onclick="navTo(\'scr-profile\');showUpgrade()" onmouseenter="this.style.boxShadow=\'0 6px 16px rgba(0,0,0,.08)\'" onmouseleave="this.style.boxShadow=\'0 2px 6px rgba(0,0,0,.04)\'">'
     +'<div style="display:flex;align-items:center;gap:12px">'
     +'<span style="font-size:20px">⚡</span>'
-    +'<div><div style="font-size:13px;font-weight:600;color:var(--accent)">Upgrade to Core</div>'
-    +'<div style="font-size:11px;color:var(--text3)">'+remaining+' free analyses remaining — $29/mo unlocks 100+ analyses and all tools</div></div>'
+    +'<div><div style="font-size:13px;font-weight:600;color:#C6A85E">Upgrade to Core</div>'
+    +'<div style="font-size:11px;color:#5C564F">'+remaining+' free analyses remaining — $29/mo unlocks 100+ analyses and all tools</div></div>'
     +'</div></div>';
 }
 
@@ -2069,16 +2069,15 @@ function renderToolProgress(){
   });
 
   if(used===0){
-    // Show encouragement + profile nudge if no tools used yet
     el.style.display='';
-    var h='<div class="card" style="padding:16px">';
+    var h='<div style="background:#fff;border:1px solid #E8E1D8;border-radius:14px;padding:16px;box-shadow:0 2px 6px rgba(0,0,0,.04)">';
     h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">';
-    h+='<span style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px">🧭 Tool Progress</span>';
-    h+='<span style="display:flex;align-items:center;gap:8px"><span style="font-size:12px;font-weight:700;color:var(--text3)">0 / '+total+'</span><span onclick="navTo(\'scr-vault\')" style="font-size:10px;color:var(--accent);font-weight:600;cursor:pointer;text-decoration:underline">Career Tools →</span></span>';
+    h+='<span style="font-size:11px;font-weight:600;color:#C6A85E;text-transform:uppercase;letter-spacing:1px">🧭 Tool Progress</span>';
+    h+='<span style="display:flex;align-items:center;gap:8px"><span style="font-size:12px;font-weight:700;color:#8A8278">0 / '+total+'</span><span onclick="navTo(\'scr-vault\')" style="font-size:10px;color:#C6A85E;font-weight:600;cursor:pointer;text-decoration:underline">Career Tools →</span></span>';
     h+='</div>';
-    h+='<div style="height:8px;background:var(--bg3);border-radius:4px;overflow:hidden;margin-bottom:10px"><div style="height:100%;width:0%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:4px"></div></div>';
-    h+='<div style="font-size:12px;color:var(--text2);line-height:1.5;margin-bottom:8px">You haven\'t used any tools yet. <strong>The more tools you run, the sharper your strategy gets.</strong> Each one builds on the last.</div>';
-    if(!cp.stage||!cp.goal) h+='<div style="font-size:11px;color:var(--accent);font-weight:500">💡 Tip: <span onclick="showUpdateProfile()" style="cursor:pointer;text-decoration:underline">Complete your profile</span> first — we\'ll recommend the right tools for your stage.</div>';
+    h+='<div style="height:8px;background:#EAE6E0;border-radius:4px;overflow:hidden;margin-bottom:10px"><div style="height:100%;width:0%;background:linear-gradient(90deg,#C6A85E,#B89543);border-radius:4px"></div></div>';
+    h+='<div style="font-size:12px;color:#5C564F;line-height:1.5;margin-bottom:8px">You haven\'t used any tools yet. <strong>The more tools you run, the sharper your strategy gets.</strong> Each one builds on the last.</div>';
+    if(!cp.stage||!cp.goal) h+='<div style="font-size:11px;color:#C6A85E;font-weight:500">💡 Tip: <span onclick="showUpdateProfile()" style="cursor:pointer;text-decoration:underline">Complete your profile</span> first — we\'ll recommend the right tools for your stage.</div>';
     h+='</div>';
     el.innerHTML=h;
     return;
@@ -2086,18 +2085,18 @@ function renderToolProgress(){
 
   var pct=Math.round(used/total*100);
   el.style.display='';
-  var h='<div class="card" style="padding:16px">';
+  var h='<div style="background:#fff;border:1px solid #E8E1D8;border-radius:14px;padding:16px;box-shadow:0 2px 6px rgba(0,0,0,.04)">';
   h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">';
-  h+='<span style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px">🧭 Tool Progress</span>';
-  h+='<span style="display:flex;align-items:center;gap:8px"><span style="font-size:12px;font-weight:700;color:var(--accent)">'+used+' / '+total+'</span><span onclick="navTo(\'scr-vault\')" style="font-size:10px;color:var(--accent);font-weight:600;cursor:pointer;text-decoration:underline">Career Tools →</span></span>';
+  h+='<span style="font-size:11px;font-weight:600;color:#C6A85E;text-transform:uppercase;letter-spacing:1px">🧭 Tool Progress</span>';
+  h+='<span style="display:flex;align-items:center;gap:8px"><span style="font-size:12px;font-weight:700;color:#C6A85E">'+used+' / '+total+'</span><span onclick="navTo(\'scr-vault\')" style="font-size:10px;color:#C6A85E;font-weight:600;cursor:pointer;text-decoration:underline">Career Tools →</span></span>';
   h+='</div>';
-  h+='<div style="height:8px;background:var(--bg3);border-radius:4px;overflow:hidden;margin-bottom:10px"><div style="height:100%;width:'+pct+'%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:4px;transition:width .5s"></div></div>';
+  h+='<div style="height:8px;background:#EAE6E0;border-radius:4px;overflow:hidden;margin-bottom:10px"><div style="height:100%;width:'+pct+'%;background:linear-gradient(90deg,#C6A85E,#B89543);border-radius:4px;transition:width .5s"></div></div>';
   if(nextTool){
-    h+='<div onclick="openFramework(\''+nextTool.id+'\')" style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--bg3);border-radius:8px;cursor:pointer;transition:background .2s">';
+    h+='<div onclick="openFramework(\''+nextTool.id+'\')" style="display:flex;align-items:center;gap:10px;padding:10px;background:#F8F5F0;border-radius:10px;cursor:pointer;transition:background .2s">';
     h+='<span style="font-size:16px">'+nextTool.icon+'</span>';
-    h+='<div style="flex:1"><div style="font-size:12px;font-weight:600;color:var(--text)">Next: '+nextTool.title+'</div>';
-    h+='<div style="font-size:10px;color:var(--text3)">'+nextTool.desc.substring(0,60)+'…</div></div>';
-    h+='<span style="font-size:12px;color:var(--accent)">→</span></div>';
+    h+='<div style="flex:1"><div style="font-size:12px;font-weight:600;color:#1C1A17">Next: '+nextTool.title+'</div>';
+    h+='<div style="font-size:10px;color:#8A8278">'+nextTool.desc.substring(0,60)+'…</div></div>';
+    h+='<span style="font-size:12px;color:#C6A85E">→</span></div>';
   }
   h+='</div>';
   el.innerHTML=h;
@@ -7494,7 +7493,7 @@ async function submitAudit(){
   if(filled<3){notify('Please fill out at least a few sections before submitting.',1);return}
 
   var h='<div style="font-family:system-ui,sans-serif">';
-  h+='<div style="font-size:16px;font-weight:700;margin-bottom:16px;color:#c8a87c">🎯 Strategic Audit Report</div>';
+  h+='<div style="font-size:16px;font-weight:700;margin-bottom:16px;color:#C6A85E">🎯 Strategic Audit Report</div>';
   h+='<div style="font-size:11px;color:#7a756e;margin-bottom:16px">'+filled+' of 20 fields completed</div>';
 
   sections.forEach(function(sec){
@@ -7502,7 +7501,7 @@ async function submitAudit(){
     sec.fields.forEach(function(f){var el=document.getElementById(f.id);if(el&&el.value.trim())secFilled++});
     h+='<div style="margin-bottom:16px;padding:12px;background:rgba(200,168,124,.06);border:1px solid rgba(200,168,124,.1);border-radius:8px">';
     h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">';
-    h+='<div style="font-size:11px;font-weight:700;color:#c8a87c;text-transform:uppercase;letter-spacing:1px">'+sec.title+'</div>';
+    h+='<div style="font-size:11px;font-weight:700;color:#C6A85E;text-transform:uppercase;letter-spacing:1px">'+sec.title+'</div>';
     h+='<div style="font-size:10px;color:#7a756e">'+secFilled+'/'+sec.fields.length+' answered</div>';
     h+='</div>';
     h+='<table style="width:100%;font-size:12px;border-collapse:collapse">';
@@ -7704,11 +7703,11 @@ async function submitPivot(){
 
   // Build clean HTML report
   var h='<div style="font-family:system-ui,sans-serif">';
-  h+='<div style="font-size:16px;font-weight:700;margin-bottom:16px;color:#c8a87c">📊 Career Pivot Decision Engine Report</div>';
+  h+='<div style="font-size:16px;font-weight:700;margin-bottom:16px;color:#C6A85E">📊 Career Pivot Decision Engine Report</div>';
 
   // Step 1
   h+='<div style="margin-bottom:16px;padding:12px;background:rgba(200,168,124,.06);border:1px solid rgba(200,168,124,.1);border-radius:8px">';
-  h+='<div style="font-size:11px;font-weight:700;color:#c8a87c;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Step 1: Diagnose the Dissatisfaction</div>';
+  h+='<div style="font-size:11px;font-weight:700;color:#C6A85E;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Step 1: Diagnose the Dissatisfaction</div>';
   h+='<table style="width:100%;font-size:12px;border-collapse:collapse">';
   h+='<tr><td style="padding:4px 8px;color:#7a756e;width:40%">Core Issue</td><td style="padding:4px 8px;font-weight:600">'+causeLabel+(causeOther?' — '+causeOther:'')+'</td></tr>';
   h+='<tr><td style="padding:4px 8px;color:#7a756e">What they dislike</td><td style="padding:4px 8px">'+(document.getElementById('pivot-1a').value.trim()||'<em style="color:#7a756e">Not answered</em>')+'</td></tr>';
@@ -7718,22 +7717,22 @@ async function submitPivot(){
 
   // Step 2 — Options comparison chart
   h+='<div style="margin-bottom:16px;padding:12px;background:rgba(200,168,124,.06);border:1px solid rgba(200,168,124,.1);border-radius:8px">';
-  h+='<div style="font-size:11px;font-weight:700;color:#c8a87c;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Step 2: Options Comparison</div>';
+  h+='<div style="font-size:11px;font-weight:700;color:#C6A85E;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Step 2: Options Comparison</div>';
   h+='<table style="width:100%;font-size:11px;border-collapse:collapse;text-align:center">';
-  h+='<tr style="border-bottom:2px solid rgba(200,168,124,.15)"><th style="padding:6px;text-align:left;color:#7a756e">Option</th><th style="padding:6px;color:#7a756e">Feasibility</th><th style="padding:6px;color:#7a756e">Financial</th><th style="padding:6px;color:#7a756e">Timeline</th><th style="padding:6px;color:#7a756e">Satisfaction</th><th style="padding:6px;color:#c8a87c;font-weight:700">Avg</th></tr>';
+  h+='<tr style="border-bottom:2px solid rgba(200,168,124,.15)"><th style="padding:6px;text-align:left;color:#7a756e">Option</th><th style="padding:6px;color:#7a756e">Feasibility</th><th style="padding:6px;color:#7a756e">Financial</th><th style="padding:6px;color:#7a756e">Timeline</th><th style="padding:6px;color:#7a756e">Satisfaction</th><th style="padding:6px;color:#C6A85E;font-weight:700">Avg</th></tr>';
   var bestAvg=0;var bestKey='';
   options.forEach(function(o){var a=parseFloat(o.avg);if(a>bestAvg){bestAvg=a;bestKey=o.key}});
   options.forEach(function(o){
     var isBest=o.key===bestKey&&bestAvg>0;
     var rowStyle=isBest?'background:rgba(106,191,75,.06);':'';
-    function scoreColor(v){if(!v||v===0)return'color:#7a756e';if(v>=8)return'color:#6abf4b;font-weight:700';if(v>=5)return'color:#c8a87c';return'color:#ef4444'}
+    function scoreColor(v){if(!v||v===0)return'color:#7a756e';if(v>=8)return'color:#6abf4b;font-weight:700';if(v>=5)return'color:#C6A85E';return'color:#ef4444'}
     h+='<tr style="border-bottom:1px solid rgba(200,168,124,.08);'+rowStyle+'">';
     h+='<td style="padding:6px;text-align:left;font-weight:600">'+(isBest?'✦ ':'')+o.label+'</td>';
     h+='<td style="padding:6px;'+scoreColor(o.f)+'">'+(o.f||'—')+'</td>';
     h+='<td style="padding:6px;'+scoreColor(o.i)+'">'+(o.i||'—')+'</td>';
     h+='<td style="padding:6px;'+scoreColor(o.t)+'">'+(o.t||'—')+'</td>';
     h+='<td style="padding:6px;'+scoreColor(o.s)+'">'+(o.s||'—')+'</td>';
-    h+='<td style="padding:6px;font-weight:700;color:#c8a87c">'+o.avg+'</td>';
+    h+='<td style="padding:6px;font-weight:700;color:#C6A85E">'+o.avg+'</td>';
     h+='</tr>';
   });
   h+='</table>';
@@ -7742,7 +7741,7 @@ async function submitPivot(){
 
   // Step 3
   h+='<div style="margin-bottom:16px;padding:12px;background:rgba(200,168,124,.06);border:1px solid rgba(200,168,124,.1);border-radius:8px">';
-  h+='<div style="font-size:11px;font-weight:700;color:#c8a87c;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Step 3: Financial Reality Check</div>';
+  h+='<div style="font-size:11px;font-weight:700;color:#C6A85E;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Step 3: Financial Reality Check</div>';
   h+='<table style="width:100%;font-size:12px;border-collapse:collapse">';
   h+='<tr><td style="padding:4px 8px;color:#7a756e;width:40%">Debt / obligations</td><td style="padding:4px 8px">'+(document.getElementById('pivot-3a').value.trim()||'<em style="color:#7a756e">Not answered</em>')+'</td></tr>';
   h+='<tr><td style="padding:4px 8px;color:#7a756e">Sustain reduced income?</td><td style="padding:4px 8px">'+(document.getElementById('pivot-3b').value.trim()||'<em style="color:#7a756e">Not answered</em>')+'</td></tr>';
@@ -7753,7 +7752,7 @@ async function submitPivot(){
 
   // Step 4 — Readiness
   h+='<div style="margin-bottom:16px;padding:12px;background:rgba(200,168,124,.06);border:1px solid rgba(200,168,124,.1);border-radius:8px">';
-  h+='<div style="font-size:11px;font-weight:700;color:#c8a87c;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Step 4: Readiness Check</div>';
+  h+='<div style="font-size:11px;font-weight:700;color:#C6A85E;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Step 4: Readiness Check</div>';
   h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px">';
   checks.forEach(function(c){
     var bg=c.done?'rgba(106,191,75,.08)':'rgba(239,68,68,.05)';

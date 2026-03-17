@@ -143,7 +143,7 @@ function hookQ(q,val,btn){
   var cls=q===1?'.hook-opt':q===2?'.hook-opt2':'.hook-opt3';
   var sec=document.getElementById('hook-q'+q);
   sec.querySelectorAll(cls).forEach(function(b){b.style.borderColor='var(--border)';b.style.background='var(--bg2)'});
-  btn.style.borderColor='var(--accent)';btn.style.background='rgba(200,168,124,.08)';
+  btn.style.borderColor='var(--accent)';btn.style.background='rgba(198,168,94,.08)';
   if(q===1){
     hookA.stage=val;hookA.goal=null;hookA.urgency=null;
     document.getElementById('hook-q2').style.display='';
@@ -375,12 +375,12 @@ function renderPreviewTab(bodyEl,dList,idx){
   h+='</div>';
   // Sample inputs badge
   if(d.inp){
-    h+='<div style="display:inline-block;padding:4px 10px;background:rgba(200,168,124,.08);border:1px solid rgba(200,168,124,.12);border-radius:6px;font-size:9px;color:var(--accent);margin-bottom:14px;letter-spacing:.3px">📊 Sample inputs: '+d.inp+'</div>';
+    h+='<div style="display:inline-block;padding:4px 10px;background:rgba(198,168,94,.08);border:1px solid rgba(198,168,94,.10);border-radius:6px;font-size:9px;color:var(--accent);margin-bottom:14px;letter-spacing:.3px">📊 Sample inputs: '+d.inp+'</div>';
   }
   // Comparison cards
   h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">';
   d.c.forEach(function(c){
-    h+='<div style="padding:16px;background:var(--bg);border-radius:10px;text-align:center;border:1px solid rgba(200,168,124,.12)">';
+    h+='<div style="padding:16px;background:var(--bg);border-radius:10px;text-align:center;border:1px solid rgba(198,168,94,.10)">';
     h+='<div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">'+c[0]+'</div>';
     h+='<div style="font-size:9px;color:var(--text3);margin-bottom:6px">'+c[1]+'</div>';
     h+='<div style="font-size:28px;font-weight:700;color:'+c[3]+';font-family:var(--font-serif);line-height:1.1">'+c[2]+'</div>';
@@ -388,7 +388,7 @@ function renderPreviewTab(bodyEl,dList,idx){
   });
   h+='</div>';
   // Insight
-  h+='<div style="text-align:center;font-size:12px;color:var(--text2);font-weight:500;line-height:1.5;padding:12px 14px;background:rgba(200,168,124,.04);border:1px solid rgba(200,168,124,.08);border-radius:8px">'+d.ins+'</div>';
+  h+='<div style="text-align:center;font-size:12px;color:var(--text2);font-weight:500;line-height:1.5;padding:12px 14px;background:rgba(198,168,94,.04);border:1px solid rgba(198,168,94,.08);border-radius:8px">'+d.ins+'</div>';
   // "Your version" line
   if(d.yours){
     h+='<div style="text-align:center;margin-top:10px;padding:8px 12px;background:rgba(139,184,160,.06);border:1px solid rgba(139,184,160,.12);border-radius:8px;font-size:9px;color:var(--text3)">🔑 <span style="color:var(--text2)">Your personalized version uses:</span> '+d.yours+'</div>';
@@ -923,7 +923,7 @@ function updateTrialBanner(){
   var mins=Math.floor((diff%3600000)/60000);
   var urgency=hours<6?'var(--red)':hours<12?'var(--accent)':'var(--green)';
   var urgencyBg=hours<6?'var(--red-dim)':hours<12?'var(--accent-dim)':'var(--green-dim)';
-  var urgencyBorder=hours<6?'rgba(196,77,86,.2)':hours<12?'rgba(200,168,124,.2)':'rgba(139,184,160,.2)';
+  var urgencyBorder=hours<6?'rgba(196,77,86,.2)':hours<12?'rgba(198,168,94,.15)':'rgba(139,184,160,.2)';
   el.style.background=urgencyBg;
   el.style.borderColor=urgencyBorder;
   el.innerHTML='<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap"><span style="font-size:18px">⚡</span><div style="flex:1;min-width:180px"><div style="font-size:13px;font-weight:600;color:'+urgency+'">Full Access Trial — '+hours+'h '+mins+'m remaining</div><div style="font-size:11px;color:var(--text2);margin-top:2px">Every tool unlocked. Explore everything before time runs out.</div></div><button class="btn btn-a btn-sm" onclick="navTo(\'scr-profile\');showUpgrade()" style="flex-shrink:0;width:auto;padding:8px 18px">Keep Access →</button></div>';
@@ -1321,7 +1321,7 @@ function renderDashboard(){
     var daysSince=lastUpdate?Math.floor((new Date()-lastUpdate)/86400000):999;
     if(daysSince>=30){
       refreshEl.style.display='';
-      refreshEl.innerHTML='<div style="display:flex;align-items:center;gap:10px;padding:14px 16px;background:linear-gradient(160deg,rgba(200,168,124,.06),rgba(200,168,124,.02));border:1px solid rgba(200,168,124,.2);border-radius:10px;cursor:pointer" onclick="showUpdateProfile()">'
+      refreshEl.innerHTML='<div style="display:flex;align-items:center;gap:10px;padding:14px 16px;background:linear-gradient(160deg,rgba(198,168,94,.06),rgba(200,168,124,.02));border:1px solid rgba(198,168,94,.15);border-radius:10px;cursor:pointer" onclick="showUpdateProfile()">'
         +'<span style="font-size:16px">🔄</span>'
         +'<div style="flex:1"><div style="font-size:12px;font-weight:600;color:var(--accent)">Your scores are '+daysSince+' days old</div>'
         +'<div style="font-size:11px;color:var(--text3);margin-top:2px">A lot can change in a month. Update your profile to recalculate.</div></div>'
@@ -1845,11 +1845,11 @@ function renderNextStep(){
     var _hasPlan2=U.tier==='core'||U.tier==='elite'||U.tier==='admin'||U.isTrial;
     if(_hasPlan2){
       h='<div onclick="showUpdateProfile()" style="cursor:pointer;margin-top:4px">';
-      h+='<p style="font-family:var(--font-serif);font-size:16px;color:#1a1620;line-height:1.4;font-weight:600;margin:0 0 8px">Set up your Career Profile to get personalized scores and recommendations.</p>';
+      h+='<p style="font-family:var(--font-serif);font-size:16px;color:#1C1A17;line-height:1.4;font-weight:600;margin:0 0 8px">Set up your Career Profile to get personalized scores and recommendations.</p>';
       h+='<span style="font-size:12px;color:#9a8a72;font-weight:600">Takes 2 minutes → personalized dashboard ✨</span>';
       h+='</div>';
     }else{
-      h='<p style="font-family:var(--font-serif);font-size:16px;color:#1a1620;line-height:1.4;font-weight:600;margin:0">Your career is too important for guesswork.</p>';
+      h='<p style="font-family:var(--font-serif);font-size:16px;color:#1C1A17;line-height:1.4;font-weight:600;margin:0">Your career is too important for guesswork.</p>';
     }
     el.innerHTML=h;
     return;
@@ -1889,16 +1889,16 @@ function renderNextStep(){
     var daysSince=lastUpdate?Math.floor((new Date()-lastUpdate)/86400000):999;
     if(daysSince>=30){
       h='<div onclick="showUpdateProfile()" style="cursor:pointer;margin-top:4px">';
-      h+='<p style="font-family:var(--font-serif);font-size:16px;color:#1a1620;line-height:1.4;font-weight:600;margin:0 0 6px">Your scores are '+daysSince+' days old.</p>';
+      h+='<p style="font-family:var(--font-serif);font-size:16px;color:#1C1A17;line-height:1.4;font-weight:600;margin:0 0 6px">Your scores are '+daysSince+' days old.</p>';
       h+='<p style="font-size:12px;color:#6a6560;margin:0">Update your profile to see how you\'ve progressed. <span style="color:#9a8a72;font-weight:600">Update →</span></p>';
       h+='</div>';
     }else{
-      h='<p style="font-family:var(--font-serif);font-size:16px;color:#1a1620;line-height:1.4;font-weight:600;margin:0 0 6px">You\'re on track.</p>';
+      h='<p style="font-family:var(--font-serif);font-size:16px;color:#1C1A17;line-height:1.4;font-weight:600;margin:0 0 6px">You\'re on track.</p>';
       h+='<p style="font-size:12px;color:#6a6560;margin:0">Ask a question or explore a new tool to keep building your strategy.</p>';
     }
   }else{
     h='<div onclick="navTo(\'scr-vault\')" style="cursor:pointer;margin-top:4px">';
-    h+='<p style="font-family:var(--font-serif);font-size:16px;color:#1a1620;line-height:1.4;font-weight:600;margin:0 0 6px">Your <span style="color:#C6A85E">'+lowest.key+'</span> score is '+lowest.val+'. '+actionMap[lowest.key]+'</p>';
+    h+='<p style="font-family:var(--font-serif);font-size:16px;color:#1C1A17;line-height:1.4;font-weight:600;margin:0 0 6px">Your <span style="color:#C6A85E">'+lowest.key+'</span> score is '+lowest.val+'. '+actionMap[lowest.key]+'</p>';
     h+='<span style="font-size:12px;color:#9a8a72;font-weight:600">Open Career Tools →</span>';
     h+='</div>';
   }
@@ -2039,7 +2039,7 @@ function renderWeeklyFocus(){
   var onclick=focus.tool?'openFramework(\''+focus.tool+'\')':focus.action==='profile'?'showUpdateProfile()':'';
 
   el.style.display='';
-  el.innerHTML='<div onclick="'+onclick+'" style="padding:18px;background:linear-gradient(160deg,rgba(200,168,124,.08),rgba(200,168,124,.02));border:1.5px solid rgba(200,168,124,.25);border-radius:12px;cursor:pointer;transition:border-color .2s">'
+  el.innerHTML='<div onclick="'+onclick+'" style="padding:18px;background:linear-gradient(160deg,rgba(198,168,94,.08),rgba(200,168,124,.02));border:1.5px solid rgba(198,168,94,.20);border-radius:12px;cursor:pointer;transition:border-color .2s">'
     +'<div style="display:flex;align-items:center;gap:6px;margin-bottom:8px"><span style="font-size:10px;font-weight:700;color:'+urgColor+';text-transform:uppercase;letter-spacing:1px">'+urgLabel+'</span></div>'
     +'<div style="display:flex;align-items:flex-start;gap:12px">'
     +'<span style="font-size:28px;flex-shrink:0">'+focus.icon+'</span>'
@@ -2202,7 +2202,7 @@ function renderToolOfWeek(){
   var toolsUsed=(U.toolHistory||[]).map(function(t){return t.tool});
   var alreadyUsed=toolsUsed.indexOf(tool.title)>=0;
 
-  el.innerHTML='<div onclick="openFramework(\''+tool.id+'\')" class="card" style="padding:16px;cursor:pointer;border:1px solid rgba(200,168,124,.15);transition:border-color .2s">'
+  el.innerHTML='<div onclick="openFramework(\''+tool.id+'\')" class="card" style="padding:16px;cursor:pointer;border:1px solid rgba(198,168,94,.15);transition:border-color .2s">'
     +'<div style="display:flex;align-items:center;gap:6px;margin-bottom:8px">'
     +'<span style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px">⭐ Tool of the Week</span>'
     +(alreadyUsed?'<span style="font-size:9px;padding:2px 8px;background:rgba(106,191,75,.1);color:var(--green);border-radius:10px;font-weight:600">Used ✓</span>':'')
@@ -2295,7 +2295,7 @@ function showQuestion(id){
   }
   // Upgrade prompt for free users
   if(U&&U.tier==='free'){
-    h+='<div style="margin-top:20px;padding:18px;border-radius:var(--r2);background:linear-gradient(135deg,var(--accent-dim),rgba(200,168,124,.06));border:1px solid rgba(200,168,124,.2)">';
+    h+='<div style="margin-top:20px;padding:18px;border-radius:var(--r2);background:linear-gradient(135deg,var(--accent-dim),rgba(198,168,94,.06));border:1px solid rgba(198,168,94,.15)">';
     h+='<div style="font-size:14px;font-weight:600;color:var(--accent);margin-bottom:6px">⚡ Want more structured guidance?</div>';
     h+='<p style="font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.5">Upgrade to Core for unlimited strategic assessments, financial modeling tools, and scenario simulations.</p>';
     h+='<button class="btn btn-a btn-sm" onclick="closeModal(\'modal-q\');navTo(\'scr-profile\');showUpgrade()" style="max-width:200px">View Plans \u2192</button></div>';
@@ -2649,7 +2649,7 @@ function fprShowMockInterview(spec){
   window._fprMockQuestions=questions;
   window._fprMockSpec=spec;
 
-  var h='<div style="margin-top:24px;padding:20px;background:linear-gradient(160deg,rgba(200,168,124,.06),rgba(200,168,124,.02));border:1px solid rgba(200,168,124,.15);border-radius:12px">';
+  var h='<div style="margin-top:24px;padding:20px;background:linear-gradient(160deg,rgba(198,168,94,.06),rgba(200,168,124,.02));border:1px solid rgba(198,168,94,.15);border-radius:12px">';
   h+='<div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">';
   h+='<div style="font-size:24px">\ud83c\udf99\ufe0f</div>';
   h+='<div><div style="font-size:15px;font-weight:600;color:var(--accent);font-family:var(--font-serif)">Mock Interview: '+specName+'</div>';
@@ -2952,7 +2952,7 @@ function crsCalc(){
   }
 
   // Bottom line
-  h+='<div style="padding:16px;background:linear-gradient(160deg,rgba(200,168,124,.06),rgba(200,168,124,.02));border:1px solid rgba(200,168,124,.15);border-radius:12px">';
+  h+='<div style="padding:16px;background:linear-gradient(160deg,rgba(198,168,94,.06),rgba(200,168,124,.02));border:1px solid rgba(198,168,94,.15);border-radius:12px">';
   h+='<div style="font-size:12px;font-weight:600;color:var(--accent);margin-bottom:8px">\ud83e\udde0 What to Do Next</div>';
   h+='<div style="font-size:12px;color:var(--text2);line-height:1.8">';
   if(reds.length>=3) h+='<p style="margin-bottom:8px"><strong>'+reds.length+' red flags</strong> is too many to negotiate alone. Hire a healthcare contract attorney ($2-3.5K). They typically save physicians $20-50K+ in improved terms. This is not optional — it\u2019s a financial investment with a clear ROI.</p>';
@@ -3226,7 +3226,7 @@ function ocmCompare(){
   h+=renderOfferAnalysis(bN,'var(--green)',bAnalysis);
 
   // Bottom line
-  h+='<div style="padding:18px;background:linear-gradient(160deg,rgba(200,168,124,.06),rgba(200,168,124,.02));border:1px solid rgba(200,168,124,.15);border-radius:12px;margin-top:4px">';
+  h+='<div style="padding:18px;background:linear-gradient(160deg,rgba(198,168,94,.06),rgba(200,168,124,.02));border:1px solid rgba(198,168,94,.15);border-radius:12px;margin-top:4px">';
   h+='<div style="font-size:12px;font-weight:600;color:var(--accent);margin-bottom:8px">\ud83e\udde0 The Honest Bottom Line</div>';
   h+='<div style="font-size:12px;color:var(--text2);line-height:1.8">';
 
@@ -3367,8 +3367,8 @@ function sfaUpdate(){
   var h='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:14px">\u2728 Your Top Specialty Matches</div>';
   top.forEach(function(s,i){
     var pct=Math.round((s.fit/maxFit)*100);
-    var border=i===0?'rgba(200,168,124,.3)':'var(--border)';
-    h+='<div style="padding:16px;background:var(--bg2);border:1px solid '+border+';border-radius:10px;margin-bottom:10px'+(i===0?';box-shadow:0 0 20px rgba(200,168,124,.06)':'')+'">';
+    var border=i===0?'rgba(198,168,94,.20)':'var(--border)';
+    h+='<div style="padding:16px;background:var(--bg2);border:1px solid '+border+';border-radius:10px;margin-bottom:10px'+(i===0?';box-shadow:0 0 20px rgba(198,168,94,.06)':'')+'">';
     h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">';
     h+='<span style="font-size:14px;font-weight:600;color:var(--text)">'+s.icon+' '+s.name+'</span>';
     if(i===0)h+='<span style="font-size:9px;padding:3px 8px;border-radius:100px;background:var(--accent-dim);color:var(--accent);font-weight:600">#1 FIT</span>';
@@ -3802,7 +3802,7 @@ function mccCalculate(){
   h+='</div>';
 
   // 6. LOR Strategy — How to Secure Letters from Subspecialty Leaders
-  h+='<div style="margin-bottom:16px;padding:16px;background:linear-gradient(160deg,rgba(200,168,124,.06),rgba(200,168,124,.01));border:1px solid rgba(200,168,124,.2);border-radius:10px">';
+  h+='<div style="margin-bottom:16px;padding:16px;background:linear-gradient(160deg,rgba(198,168,94,.06),rgba(200,168,124,.01));border:1px solid rgba(198,168,94,.15);border-radius:10px">';
   h+='<div style="font-size:11px;font-weight:600;color:var(--accent);margin-bottom:4px">✉️ How to Secure Strong Letters from Subspecialty Leaders</div>';
   h+='<div style="font-size:10px;color:var(--text3);margin-bottom:12px">Letters from recognized leaders can transform a borderline application into a competitive one</div>';
 
@@ -3848,7 +3848,7 @@ function mccCalculate(){
   h+='</ul></div>';
 
   // 8. What-If Scenarios
-  h+='<div style="margin-bottom:16px;padding:16px;background:linear-gradient(160deg,rgba(200,168,124,.04),rgba(200,168,124,.01));border:1px solid rgba(200,168,124,.15);border-radius:10px">';
+  h+='<div style="margin-bottom:16px;padding:16px;background:linear-gradient(160deg,rgba(198,168,94,.04),rgba(200,168,124,.01));border:1px solid rgba(198,168,94,.15);border-radius:10px">';
   h+='<div style="font-size:11px;font-weight:600;color:var(--accent);margin-bottom:10px">🔬 What-If Scenarios</div>';
   h+='<div style="font-size:11px;color:var(--text3);margin-bottom:10px">See how improvements change your score and match probability.</div>';
   var simStep=step2+10;
@@ -3878,7 +3878,7 @@ function mccCalculate(){
   h+='</div>';
 
   // 9. Save Profile
-  h+='<div style="text-align:center;margin-bottom:16px"><button onclick="mccSaveProfile()" class="btn" style="font-size:12px;padding:10px 24px;border:1px solid rgba(200,168,124,.25);color:var(--accent);background:none;cursor:pointer;border-radius:8px">💾 Save Competitiveness Profile</button>';
+  h+='<div style="text-align:center;margin-bottom:16px"><button onclick="mccSaveProfile()" class="btn" style="font-size:12px;padding:10px 24px;border:1px solid rgba(198,168,94,.20);color:var(--accent);background:none;cursor:pointer;border-radius:8px">💾 Save Competitiveness Profile</button>';
   h+='<div style="font-size:10px;color:var(--text3);margin-top:6px">Track improvements as your application strengthens.</div></div>';
 
   // 10. Related Tools
@@ -4406,7 +4406,7 @@ function csbGenerate(){
   var nowLabels={ms1:'MS-1/2',ms2:'MS-1/2',ms3:'MS-3/4',intern:'PGY-1',resident:'PGY-2/3',senior:'PGY-4+',fellow:'Fellow',attending:'Attending'};
 
   // Header
-  h+='<div style="text-align:center;padding:20px;background:linear-gradient(160deg,rgba(200,168,124,.1),rgba(200,168,124,.03));border:1px solid rgba(200,168,124,.15);border-radius:14px;margin-bottom:20px">';
+  h+='<div style="text-align:center;padding:20px;background:linear-gradient(160deg,rgba(200,168,124,.1),rgba(200,168,124,.03));border:1px solid rgba(198,168,94,.15);border-radius:14px;margin-bottom:20px">';
   h+='<div style="font-size:11px;color:var(--accent);font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px">Your Career Roadmap</div>';
   h+='<div style="font-size:20px;font-weight:600;color:var(--text);font-family:var(--font-serif);margin-bottom:4px">\ud83d\udccd '+tName+'</div>';
   h+='<div style="font-size:12px;color:var(--text3)">From '+(nowLabels[now]||now)+' \u2022 '+(urgency==='1'?'Applying this cycle':'Timeline: '+urgency+' year(s)')+(isDO?' \u2022 DO':'')+'</div>';
@@ -4436,7 +4436,7 @@ function csbGenerate(){
     confidence:'Every physician feels this. You\'re here building a strategy \u2014 that\'s evidence of competence. Focus on objective metrics. Track progress. Celebrate wins.'
   };
   if(concern&&concern!=='none'&&concernAdvice[concern]){
-    h+='<div style="margin-bottom:20px;padding:16px;background:linear-gradient(160deg,rgba(200,168,124,.06),rgba(200,168,124,.02));border:1px solid rgba(200,168,124,.15);border-radius:12px">';
+    h+='<div style="margin-bottom:20px;padding:16px;background:linear-gradient(160deg,rgba(198,168,94,.06),rgba(200,168,124,.02));border:1px solid rgba(198,168,94,.15);border-radius:12px">';
     h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">\ud83d\udca1 Addressing: '+concernLabels[concern]+'</div>';
     h+='<div style="font-size:12px;color:var(--text2);line-height:1.7">'+concernAdvice[concern]+'</div></div>';
   }
@@ -4446,7 +4446,7 @@ function csbGenerate(){
   phases.forEach(function(phase,i){
     h+='<div style="position:relative;padding-left:28px;padding-bottom:'+(i<phases.length-1?'20px':'0')+'">';
     if(i<phases.length-1)h+='<div style="position:absolute;left:8px;top:20px;bottom:0;width:2px;background:var(--border)"></div>';
-    h+='<div style="position:absolute;left:0;top:2px;width:18px;height:18px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:10px;color:#0a0a0f;font-weight:700">'+(i+1)+'</div>';
+    h+='<div style="position:absolute;left:0;top:2px;width:18px;height:18px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:10px;color:#1C1A17;font-weight:700">'+(i+1)+'</div>';
     h+='<div style="font-size:10px;color:var(--accent);font-weight:600;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">'+phase.time+'</div>';
     h+='<div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:8px">'+phase.title+'</div>';
     h+='<ul style="font-size:12px;color:var(--text2);line-height:1.8;padding-left:16px;margin:0">';
@@ -4467,13 +4467,13 @@ function csbGenerate(){
     h+='<div style="margin-top:20px;padding:16px;background:var(--bg2);border:1px solid var(--border);border-radius:12px">';
     h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">\ud83e\udde0 Recommended Next Steps</div>';
     nextTools.slice(0,4).forEach(function(t){
-      h+='<div onclick="openFramework(\''+t.id+'\')" style="display:flex;align-items:center;gap:10px;padding:10px;margin-bottom:6px;background:var(--bg3);border-radius:8px;cursor:pointer;transition:background .2s" onmouseenter="this.style.background=\'rgba(200,168,124,.08)\'" onmouseleave="this.style.background=\'var(--bg3)\'">';
+      h+='<div onclick="openFramework(\''+t.id+'\')" style="display:flex;align-items:center;gap:10px;padding:10px;margin-bottom:6px;background:var(--bg3);border-radius:8px;cursor:pointer;transition:background .2s" onmouseenter="this.style.background=\'rgba(198,168,94,.08)\'" onmouseleave="this.style.background=\'var(--bg3)\'">';
       h+='<span style="font-size:18px">'+t.icon+'</span><div><div style="font-size:12px;font-weight:600;color:var(--text)">'+t.name+'</div><div style="font-size:10px;color:var(--text3)">'+t.why+'</div></div></div>';
     });
     h+='</div>';
   }
 
-  h+='<div style="margin-top:20px;padding:14px;background:var(--accent-dim);border:1px solid rgba(200,168,124,.15);border-radius:10px;text-align:center">';
+  h+='<div style="margin-top:20px;padding:14px;background:var(--accent-dim);border:1px solid rgba(198,168,94,.15);border-radius:10px;text-align:center">';
   h+='<div style="font-size:12px;color:var(--accent);font-weight:600;margin-bottom:4px">Want expert review of your roadmap?</div>';
   h+='<div style="font-size:11px;color:var(--text3)">Submit a Strategic Audit for Dr. Faroqui\u2019s personalized assessment.</div></div>';
 
@@ -4584,7 +4584,7 @@ function quizShowResults(){
   // Build urgency message
   var urgMsg='';
   if(quizAnswers.urgency==='now') urgMsg='<div style="padding:10px 14px;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.15);border-radius:8px;margin-bottom:14px;font-size:11px;color:var(--red);display:flex;align-items:center;gap:8px"><span style="font-size:14px">🔥</span> <span>You need to act within 3 months — start with <strong>'+findVaultTitle(recs[0].id)+'</strong> today.</span></div>';
-  else if(quizAnswers.urgency==='soon') urgMsg='<div style="padding:10px 14px;background:rgba(200,168,124,.08);border:1px solid rgba(200,168,124,.15);border-radius:8px;margin-bottom:14px;font-size:11px;color:var(--accent);display:flex;align-items:center;gap:8px"><span style="font-size:14px">📅</span> <span>You have about a year. Work through these tools in order — start this week.</span></div>';
+  else if(quizAnswers.urgency==='soon') urgMsg='<div style="padding:10px 14px;background:rgba(198,168,94,.08);border:1px solid rgba(198,168,94,.15);border-radius:8px;margin-bottom:14px;font-size:11px;color:var(--accent);display:flex;align-items:center;gap:8px"><span style="font-size:14px">📅</span> <span>You have about a year. Work through these tools in order — start this week.</span></div>';
   else if(quizAnswers.urgency==='later') urgMsg='<div style="padding:10px 14px;background:rgba(139,173,196,.08);border:1px solid rgba(139,173,196,.15);border-radius:8px;margin-bottom:14px;font-size:11px;color:var(--blue);display:flex;align-items:center;gap:8px"><span style="font-size:14px">🗓️</span> <span>You have time to plan strategically. Use these tools to build a strong foundation.</span></div>';
   else urgMsg='<div style="padding:10px 14px;background:rgba(139,173,196,.08);border:1px solid rgba(139,173,196,.15);border-radius:8px;margin-bottom:14px;font-size:11px;color:var(--blue);display:flex;align-items:center;gap:8px"><span style="font-size:14px">🗺️</span> <span>Great time to explore. Browse these tools at your own pace — no pressure.</span></div>';
 
@@ -4606,8 +4606,8 @@ function quizShowResults(){
     else if(locked) onclick='notify(\'Upgrade to access this tool\',1)';
     else onclick='openFramework(\''+item.id+'\')';
 
-    html+='<div onclick="'+onclick+'" style="display:flex;gap:14px;padding:14px;background:var(--bg2);border:1px solid '+(i===0?'rgba(200,168,124,.3)':'var(--border)')+';border-radius:10px;margin-bottom:8px;cursor:pointer;position:relative;transition:border-color .2s'+(i===0?';box-shadow:0 0 20px rgba(200,168,124,.06)':'')+'">';
-    html+='<div style="flex-shrink:0;width:38px;height:38px;border-radius:10px;background:'+(i===0?'linear-gradient(135deg,var(--accent),var(--accent2))':'var(--bg3)')+';display:flex;align-items:center;justify-content:center;font-size:18px'+(i===0?';color:#0a0a0f':'')+'">'+item.icon+'</div>';
+    html+='<div onclick="'+onclick+'" style="display:flex;gap:14px;padding:14px;background:var(--bg2);border:1px solid '+(i===0?'rgba(198,168,94,.20)':'var(--border)')+';border-radius:10px;margin-bottom:8px;cursor:pointer;position:relative;transition:border-color .2s'+(i===0?';box-shadow:0 0 20px rgba(198,168,94,.06)':'')+'">';
+    html+='<div style="flex-shrink:0;width:38px;height:38px;border-radius:10px;background:'+(i===0?'linear-gradient(135deg,var(--accent),var(--accent2))':'var(--bg3)')+';display:flex;align-items:center;justify-content:center;font-size:18px'+(i===0?';color:#1C1A17':'')+'">'+item.icon+'</div>';
     html+='<div style="flex:1;min-width:0">';
     html+='<div style="display:flex;align-items:center;gap:6px;margin-bottom:3px"><span style="font-size:13px;font-weight:600;color:var(--text)">'+item.title+'</span>';
     if(mentOnly) html+='<span style="font-size:8px;padding:2px 6px;border-radius:100px;background:var(--accent-dim);color:var(--accent);font-weight:600;letter-spacing:.5px">MENTORSHIP</span>';
@@ -4620,9 +4620,9 @@ function quizShowResults(){
   });
 
   // Explore all tools CTA
-  html+='<div style="margin-top:16px;padding:16px;background:linear-gradient(160deg,rgba(200,168,124,.04),rgba(200,168,124,.01));border:1px solid rgba(200,168,124,.12);border-radius:10px;text-align:center">';
+  html+='<div style="margin-top:16px;padding:16px;background:linear-gradient(160deg,rgba(198,168,94,.04),rgba(200,168,124,.01));border:1px solid rgba(198,168,94,.10);border-radius:10px;text-align:center">';
   html+='<p style="font-size:12px;color:var(--text2);margin:0 0 8px;line-height:1.5">These are your top picks — but every physician\'s path is different. All '+VAULT_ITEMS.length+' tools in the Framework Library are available to explore.</p>';
-  html+='<button onclick="quizReset();document.getElementById(\'vault-categories\').scrollIntoView({behavior:\'smooth\',block:\'start\'})" style="font-size:11px;font-weight:600;color:var(--accent);background:none;border:1px solid rgba(200,168,124,.25);border-radius:8px;padding:8px 20px;cursor:pointer;transition:all .2s">Browse All Tools ↓</button>';
+  html+='<button onclick="quizReset();document.getElementById(\'vault-categories\').scrollIntoView({behavior:\'smooth\',block:\'start\'})" style="font-size:11px;font-weight:600;color:var(--accent);background:none;border:1px solid rgba(198,168,94,.20);border-radius:8px;padding:8px 20px;cursor:pointer;transition:all .2s">Browse All Tools ↓</button>';
   html+='</div>';
 
   document.getElementById('vault-quiz-recs').innerHTML=html;
@@ -4707,7 +4707,7 @@ function renderVault(){
       onclick='onclick="openFramework(\''+v.id+'\')"';
     }
     var tierBadge='';
-    if(v.tier==='elite') tierBadge=' <span style="font-size:8px;padding:2px 6px;border-radius:100px;background:linear-gradient(135deg,var(--accent2),var(--accent));color:#0a0a0f;font-weight:700;letter-spacing:.5px;vertical-align:middle">MENTORSHIP</span>';
+    if(v.tier==='elite') tierBadge=' <span style="font-size:8px;padding:2px 6px;border-radius:100px;background:var(--accent);color:#1C1A17;font-weight:700;letter-spacing:.5px;vertical-align:middle">MENTORSHIP</span>';
     return '<div class="vault-card '+(locked?'':'unlocked')+'" '+onclick+'><div class="v-icon">'+v.icon+'</div><div class="v-info"><h3>'+v.title+tierBadge+'</h3><p>'+v.desc+'</p></div><div class="v-lock">'+(locked?'\ud83d\udd12':'\ud83d\udcc4')+'</div></div>';
   }
 
@@ -4897,10 +4897,10 @@ function previewEliteFramework(id){
   var h='<div style="position:relative">';
   
   // Hero header with gradient background
-  h+='<div style="text-align:center;padding:32px 20px;margin:-20px -20px 24px;background:linear-gradient(160deg,rgba(200,168,124,.1),rgba(200,168,124,.03));border-radius:12px 12px 0 0;border-bottom:1px solid rgba(200,168,124,.15)">';
+  h+='<div style="text-align:center;padding:32px 20px;margin:-20px -20px 24px;background:linear-gradient(160deg,rgba(200,168,124,.1),rgba(200,168,124,.03));border-radius:12px 12px 0 0;border-bottom:1px solid rgba(198,168,94,.15)">';
   h+='<div style="font-size:44px;margin-bottom:12px">'+preview.icon+'</div>';
   h+='<h3 class="serif" style="font-size:22px;font-weight:600;margin-bottom:10px;color:var(--text)">'+preview.title+'</h3>';
-  h+='<div style="display:inline-block;padding:4px 12px;background:linear-gradient(135deg,var(--accent2),var(--accent));border-radius:20px;font-size:10px;font-weight:600;color:#0a0a0f;letter-spacing:.5px;text-transform:uppercase">Mentorship</div>';
+  h+='<div style="display:inline-block;padding:4px 12px;background:var(--accent);border-radius:20px;font-size:10px;font-weight:600;color:#1C1A17;letter-spacing:.5px;text-transform:uppercase">Mentorship</div>';
   h+='</div>';
 
   h+='<p style="font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:24px;text-align:center">'+preview.desc+'</p>';
@@ -4911,11 +4911,11 @@ function previewEliteFramework(id){
   
   preview.sections.forEach(function(sec,i){
     var isBlurred=i>=4;
-    h+='<div style="margin-bottom:12px;padding:14px;background:var(--bg2);border-radius:10px;border:1px solid rgba(200,168,124,.12);transition:all .2s;">';
+    h+='<div style="margin-bottom:12px;padding:14px;background:var(--bg2);border-radius:10px;border:1px solid rgba(198,168,94,.10);transition:all .2s;">';
     h+='<div style="font-size:12px;font-weight:600;color:var(--accent);margin-bottom:8px">'+sec.name+'</div>';
     h+='<div style="display:flex;flex-wrap:wrap;gap:6px">';
     sec.items.forEach(function(item){
-      h+='<span style="font-size:10px;padding:4px 10px;border-radius:20px;background:rgba(200,168,124,.06);color:var(--text2);border:1px solid var(--border)">'+item+'</span>';
+      h+='<span style="font-size:10px;padding:4px 10px;border-radius:20px;background:rgba(198,168,94,.06);color:var(--text2);border:1px solid var(--border)">'+item+'</span>';
     });
     h+='</div></div>';
   });
@@ -4935,7 +4935,7 @@ function previewEliteFramework(id){
   h+='</div>';
 
   // Value proposition
-  h+='<div style="padding:16px;background:linear-gradient(135deg,rgba(200,168,124,.06),rgba(200,168,124,.02));border:1px solid rgba(200,168,124,.15);border-radius:10px;margin-bottom:20px">';
+  h+='<div style="padding:16px;background:linear-gradient(135deg,rgba(198,168,94,.06),rgba(200,168,124,.02));border:1px solid rgba(198,168,94,.15);border-radius:10px;margin-bottom:20px">';
   h+='<div style="font-size:12px;font-weight:600;color:var(--accent);margin-bottom:8px">\u2728 Why Mentorship members use this</div>';
   if(id==='v9'){
     h+='<p style="font-size:12px;color:var(--text2);line-height:1.7;margin:0">The Strategic Audit eliminates guesswork from career decisions. Instead of a vague email to a mentor, you get a structured analysis reviewed by a physician who\'s navigated these exact crossroads. Most members say it\'s the single most valuable tool on the platform.</p>';
@@ -5436,7 +5436,7 @@ async function renderGoalTracker(){
   var monthIdx=getCurrentMonth();
   var currentGoals=template.months[Math.min(monthIdx,template.months.length-1)];
 
-  var h='<div class="card" style="padding:20px;border-color:rgba(200,168,124,.2)">';
+  var h='<div class="card" style="padding:20px;border-color:rgba(198,168,94,.15)">';
 
   // Header
   h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">';
@@ -5511,7 +5511,7 @@ async function renderGoalTracker(){
   var lastCheckin=savedProgress._lastCheckin||'';
   var daysSince=lastCheckin?Math.floor((Date.now()-new Date(lastCheckin))/(24*60*60*1000)):999;
   if(daysSince>=7){
-    h+='<div style="margin-top:14px;padding:14px;background:linear-gradient(135deg,rgba(200,168,124,.08),rgba(200,168,124,.02));border:1px solid rgba(200,168,124,.15);border-radius:10px">';
+    h+='<div style="margin-top:14px;padding:14px;background:linear-gradient(135deg,rgba(198,168,94,.08),rgba(200,168,124,.02));border:1px solid rgba(198,168,94,.15);border-radius:10px">';
     h+='<div style="font-size:12px;font-weight:600;color:var(--accent);margin-bottom:6px">\ud83d\udcac Weekly Check-In</div>';
     h+='<p style="font-size:11px;color:var(--text3);margin-bottom:10px">How\'s this '+(currentGoals.label||'month')+' going? Your update goes directly to Dr. Faroqui.</p>';
     h+='<textarea id="goal-checkin-text" rows="3" placeholder="What progress did you make this week? What\'s blocking you?" style="width:100%;font-family:inherit;font-size:12px;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);resize:vertical;margin-bottom:8px;box-sizing:border-box"></textarea>';
@@ -5984,7 +5984,7 @@ function ciCalc(){
   }
   if(recs.length){
     out.innerHTML+='<div style="margin-top:16px;font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">\ud83c\udfaf Recommended Negotiation Points</div>'+
-      '<div style="background:var(--bg3);border:1px solid rgba(200,168,124,.15);border-radius:8px;padding:14px;font-size:12px;color:var(--text2);line-height:1.8">'+
+      '<div style="background:var(--bg3);border:1px solid rgba(198,168,94,.15);border-radius:8px;padding:14px;font-size:12px;color:var(--text2);line-height:1.8">'+
       recs.map(function(r,i){return '<div style="margin-bottom:6px">'+(i+1)+'. '+r+'</div>'}).join('')+'</div>';
   }
 
@@ -6180,7 +6180,7 @@ function ftCalc(){
       debtTimelines+='<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:12px"><span>Scenario '+labels2[i]+' ('+sc.label+')</span><span style="font-weight:600;color:'+(payoffYear&&payoffYear<=10?'var(--green)':'var(--accent)')+'">Debt-free by year '+(payoffYear||'30+')+(debtFreeAge?' (age ~'+debtFreeAge+')':'')+'</span></div>';
     });
 
-    var debtSection='<div style="margin-top:16px;padding:14px;background:rgba(200,168,124,.04);border:1px solid rgba(200,168,124,.12);border-radius:8px"><div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">\ud83d\udcb3 Debt Payoff Timeline</div>'+debtTimelines+'<p style="font-size:10px;color:var(--text3);margin-top:8px">Assumes $250K starting debt. Higher savings rates and higher income specialties accelerate payoff dramatically.</p></div>';
+    var debtSection='<div style="margin-top:16px;padding:14px;background:rgba(198,168,94,.04);border:1px solid rgba(198,168,94,.10);border-radius:8px"><div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">\ud83d\udcb3 Debt Payoff Timeline</div>'+debtTimelines+'<p style="font-size:10px;color:var(--text3);margin-top:8px">Assumes $250K starting debt. Higher savings rates and higher income specialties accelerate payoff dramatically.</p></div>';
 
     if(projections.length>=2){
     var sorted=projections.map(function(p,i){return{idx:i,nw:p[p.length-1].netWorth,earn:p[p.length-1].cumEarnings}}).sort(function(a,b){return b.nw-a.nw});
@@ -6364,7 +6364,7 @@ function closeAdmin(){
 function admUpdateTierButtons(){
   document.querySelectorAll('.tier-sw').forEach(function(b){b.style.background='var(--bg3)';b.style.color='var(--text3)';b.style.borderColor='var(--border)'});
   var cur=document.getElementById('ts-'+(U.tier||'free'));
-  if(cur){cur.style.background='var(--accent)';cur.style.color='#0a0a0f';cur.style.borderColor='var(--accent)'}
+  if(cur){cur.style.background='var(--accent)';cur.style.color='#1C1A17';cur.style.borderColor='var(--accent)'}
   var el=document.getElementById('ts-current');
   if(el)el.textContent='Current: '+(U.tier||'free').toUpperCase();
 }
@@ -6841,7 +6841,7 @@ async function showMyMessages(){
       var title=n.title||n.user_name||'Notification';
       var isReview=title.indexOf('reviewed')>=0;
       var icon=isReview?'\u2705':'\ud83d\udce9';
-      var borderColor=n.read?'var(--border)':'rgba(200,168,124,.3)';
+      var borderColor=n.read?'var(--border)':'rgba(198,168,94,.20)';
       var bg=n.read?'':'background:rgba(200,168,124,.03);';
       h+='<div class="card" style="margin-bottom:10px;border-color:'+borderColor+';'+bg+'">';
       h+='<div style="display:flex;gap:12px;align-items:flex-start">';
@@ -7044,7 +7044,7 @@ function genReport(){
   myPlan.forEach(step=>{h+='<li style="padding:4px 0">'+step+'</li>'});
   h+='</ol></div>';
   // Risk
-  h+='<div class="report-sec" style="border-color:rgba(200,168,124,.15)"><h4>⚠️ Key Risk Areas</h4>';
+  h+='<div class="report-sec" style="border-color:rgba(198,168,94,.15)"><h4>⚠️ Key Risk Areas</h4>';
   if(hasPubsField&&pubs<2)h+='<p>• Low research output limits competitiveness for selective programs</p>';
   if(!p.goal)h+='<p>• No defined strategic goal — decisions without direction lead to drift</p>';
   if(p.stage==='attending'&&!p.debt)h+='<p>• Loan strategy undefined — every month of delay has compounding cost</p>';
@@ -7499,7 +7499,7 @@ async function submitAudit(){
   sections.forEach(function(sec){
     var secFilled=0;
     sec.fields.forEach(function(f){var el=document.getElementById(f.id);if(el&&el.value.trim())secFilled++});
-    h+='<div style="margin-bottom:16px;padding:12px;background:rgba(200,168,124,.06);border:1px solid rgba(200,168,124,.1);border-radius:8px">';
+    h+='<div style="margin-bottom:16px;padding:12px;background:rgba(198,168,94,.06);border:1px solid rgba(200,168,124,.1);border-radius:8px">';
     h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">';
     h+='<div style="font-size:11px;font-weight:700;color:#C6A85E;text-transform:uppercase;letter-spacing:1px">'+sec.title+'</div>';
     h+='<div style="font-size:10px;color:#7a756e">'+secFilled+'/'+sec.fields.length+' answered</div>';
@@ -7508,7 +7508,7 @@ async function submitAudit(){
     sec.fields.forEach(function(f){
       var el=document.getElementById(f.id);
       var val=el?el.value.trim():'';
-      h+='<tr style="border-bottom:1px solid rgba(200,168,124,.06)">';
+      h+='<tr style="border-bottom:1px solid rgba(198,168,94,.06)">';
       h+='<td style="padding:6px 8px;color:#7a756e;width:35%;vertical-align:top;font-size:11px">'+f.label+'</td>';
       h+='<td style="padding:6px 8px">'+(val||'<em style="color:#7a756e;font-size:11px">Not answered</em>')+'</td>';
       h+='</tr>';
@@ -7519,7 +7519,7 @@ async function submitAudit(){
   // Completion summary
   var pct=Math.round((filled/20)*100);
   var completionColor=pct>=80?'#6abf4b':pct>=50?'#c8a87c':'#ef4444';
-  h+='<div style="padding:10px 12px;background:rgba(200,168,124,.04);border-radius:6px;display:flex;align-items:center;gap:10px">';
+  h+='<div style="padding:10px 12px;background:rgba(198,168,94,.04);border-radius:6px;display:flex;align-items:center;gap:10px">';
   h+='<div style="width:36px;height:36px;border-radius:50%;border:3px solid '+completionColor+';display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:'+completionColor+';flex-shrink:0">'+pct+'%</div>';
   h+='<div><div style="font-size:12px;font-weight:600;color:'+completionColor+'">'+(pct>=80?'Comprehensive submission':pct>=50?'Partially complete':'Minimal detail')+'</div>';
   h+='<div style="font-size:10px;color:#7a756e">The more detail provided, the more actionable the review.</div></div></div>';
@@ -7591,7 +7591,7 @@ function pivotSelect(el,group){
   var container=document.getElementById(group);
   if(container){
     container.querySelectorAll('label').forEach(function(l){l.style.borderColor='var(--border)';l.style.background='var(--bg2)'});
-    el.style.borderColor='var(--accent)';el.style.background='rgba(200,168,124,.08)';
+    el.style.borderColor='var(--accent)';el.style.background='rgba(198,168,94,.08)';
   }
   var val=el.querySelector('input').value;
   var fb=document.getElementById(group+'-feedback');
@@ -7603,7 +7603,7 @@ function pivotSelect(el,group){
     if(otherBox){otherBox.classList.toggle('hidden',val!=='other')}
     if(PIVOT_PROS_CONS[val]){
       var data=PIVOT_PROS_CONS[val];
-    var h='<div style="padding:14px;background:rgba(200,168,124,.04);border:1px solid rgba(200,168,124,.15);border-radius:8px;animation:fadeIn .3s">';
+    var h='<div style="padding:14px;background:rgba(198,168,94,.04);border:1px solid rgba(198,168,94,.15);border-radius:8px;animation:fadeIn .3s">';
     h+='<div style="font-size:12px;font-weight:600;color:var(--accent);margin-bottom:10px">'+data.title+'</div>';
     h+='<div style="display:flex;gap:12px;flex-wrap:wrap">';
     h+='<div style="flex:1;min-width:140px"><div style="font-size:10px;font-weight:600;color:var(--green);margin-bottom:6px">PROS</div>';
@@ -7614,18 +7614,18 @@ function pivotSelect(el,group){
     h+='</div></div></div>';
     fb.innerHTML=h;
   }else if(val==='other'){
-    fb.innerHTML='<div style="padding:10px;background:rgba(200,168,124,.04);border-radius:6px;font-size:11px;color:var(--text2);line-height:1.5;animation:fadeIn .3s">Describe your situation in the field above. Dr. Faroqui will review the full context in your submitted report.</div>';
+    fb.innerHTML='<div style="padding:10px;background:rgba(198,168,94,.04);border-radius:6px;font-size:11px;color:var(--text2);line-height:1.5;animation:fadeIn .3s">Describe your situation in the field above. Dr. Faroqui will review the full context in your submitted report.</div>';
   }
   }
   if(group==='pivot-burnout'&&PIVOT_BURNOUT_FEEDBACK[val]){
     var d=PIVOT_BURNOUT_FEEDBACK[val];
-    fb.innerHTML='<div style="padding:12px;background:rgba(200,168,124,.04);border:1px solid rgba(200,168,124,.15);border-radius:8px;animation:fadeIn .3s"><div style="font-size:12px;font-weight:600;color:var(--accent);margin-bottom:6px">'+d.title+'</div><p style="font-size:11px;color:var(--text2);line-height:1.6;margin:0">'+d.msg+'</p></div>';
+    fb.innerHTML='<div style="padding:12px;background:rgba(198,168,94,.04);border:1px solid rgba(198,168,94,.15);border-radius:8px;animation:fadeIn .3s"><div style="font-size:12px;font-weight:600;color:var(--accent);margin-bottom:6px">'+d.title+'</div><p style="font-size:11px;color:var(--text2);line-height:1.6;margin:0">'+d.msg+'</p></div>';
   }
   if(group==='pivot-regret'){
     if(val==='yes'){
-      fb.innerHTML='<div style="padding:10px;background:rgba(200,168,124,.04);border-radius:6px;font-size:11px;color:var(--text2);line-height:1.5;animation:fadeIn .3s"><strong style="color:var(--accent)">That\'s a strong signal.</strong> Regret avoidance is one of the most reliable decision-making heuristics. If the financial reality supports it, this pivot deserves serious consideration.</div>';
+      fb.innerHTML='<div style="padding:10px;background:rgba(198,168,94,.04);border-radius:6px;font-size:11px;color:var(--text2);line-height:1.5;animation:fadeIn .3s"><strong style="color:var(--accent)">That\'s a strong signal.</strong> Regret avoidance is one of the most reliable decision-making heuristics. If the financial reality supports it, this pivot deserves serious consideration.</div>';
     }else{
-      fb.innerHTML='<div style="padding:10px;background:rgba(200,168,124,.04);border-radius:6px;font-size:11px;color:var(--text2);line-height:1.5;animation:fadeIn .3s"><strong style="color:var(--accent)">Good to know.</strong> If you won\'t regret staying, consider whether smaller adjustments (setting change, boundary changes, role modification) could address your dissatisfaction without a full pivot.</div>';
+      fb.innerHTML='<div style="padding:10px;background:rgba(198,168,94,.04);border-radius:6px;font-size:11px;color:var(--text2);line-height:1.5;animation:fadeIn .3s"><strong style="color:var(--accent)">Good to know.</strong> If you won\'t regret staying, consider whether smaller adjustments (setting change, boundary changes, role modification) could address your dissatisfaction without a full pivot.</div>';
     }
   }
 }
@@ -7648,7 +7648,7 @@ function pivotCalcAvg(){
   var rec=document.getElementById('pivot-recommendation');
   if(best&&rec){
     var color=bestAvg>=4?'var(--green)':bestAvg>=3?'var(--accent)':'var(--text3)';
-    rec.innerHTML='<div style="padding:10px;background:rgba(200,168,124,.04);border-radius:6px;font-size:12px;color:var(--text2);line-height:1.5"><strong style="color:'+color+'">Highest rated: '+labels[best]+' ('+bestAvg.toFixed(1)+'/5.0)</strong></div>';
+    rec.innerHTML='<div style="padding:10px;background:rgba(198,168,94,.04);border-radius:6px;font-size:12px;color:var(--text2);line-height:1.5"><strong style="color:'+color+'">Highest rated: '+labels[best]+' ('+bestAvg.toFixed(1)+'/5.0)</strong></div>';
   }
 }
 
@@ -7706,7 +7706,7 @@ async function submitPivot(){
   h+='<div style="font-size:16px;font-weight:700;margin-bottom:16px;color:#C6A85E">📊 Career Pivot Decision Engine Report</div>';
 
   // Step 1
-  h+='<div style="margin-bottom:16px;padding:12px;background:rgba(200,168,124,.06);border:1px solid rgba(200,168,124,.1);border-radius:8px">';
+  h+='<div style="margin-bottom:16px;padding:12px;background:rgba(198,168,94,.06);border:1px solid rgba(200,168,124,.1);border-radius:8px">';
   h+='<div style="font-size:11px;font-weight:700;color:#C6A85E;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Step 1: Diagnose the Dissatisfaction</div>';
   h+='<table style="width:100%;font-size:12px;border-collapse:collapse">';
   h+='<tr><td style="padding:4px 8px;color:#7a756e;width:40%">Core Issue</td><td style="padding:4px 8px;font-weight:600">'+causeLabel+(causeOther?' — '+causeOther:'')+'</td></tr>';
@@ -7716,17 +7716,17 @@ async function submitPivot(){
   h+='</table></div>';
 
   // Step 2 — Options comparison chart
-  h+='<div style="margin-bottom:16px;padding:12px;background:rgba(200,168,124,.06);border:1px solid rgba(200,168,124,.1);border-radius:8px">';
+  h+='<div style="margin-bottom:16px;padding:12px;background:rgba(198,168,94,.06);border:1px solid rgba(200,168,124,.1);border-radius:8px">';
   h+='<div style="font-size:11px;font-weight:700;color:#C6A85E;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Step 2: Options Comparison</div>';
   h+='<table style="width:100%;font-size:11px;border-collapse:collapse;text-align:center">';
-  h+='<tr style="border-bottom:2px solid rgba(200,168,124,.15)"><th style="padding:6px;text-align:left;color:#7a756e">Option</th><th style="padding:6px;color:#7a756e">Feasibility</th><th style="padding:6px;color:#7a756e">Financial</th><th style="padding:6px;color:#7a756e">Timeline</th><th style="padding:6px;color:#7a756e">Satisfaction</th><th style="padding:6px;color:#C6A85E;font-weight:700">Avg</th></tr>';
+  h+='<tr style="border-bottom:2px solid rgba(198,168,94,.15)"><th style="padding:6px;text-align:left;color:#7a756e">Option</th><th style="padding:6px;color:#7a756e">Feasibility</th><th style="padding:6px;color:#7a756e">Financial</th><th style="padding:6px;color:#7a756e">Timeline</th><th style="padding:6px;color:#7a756e">Satisfaction</th><th style="padding:6px;color:#C6A85E;font-weight:700">Avg</th></tr>';
   var bestAvg=0;var bestKey='';
   options.forEach(function(o){var a=parseFloat(o.avg);if(a>bestAvg){bestAvg=a;bestKey=o.key}});
   options.forEach(function(o){
     var isBest=o.key===bestKey&&bestAvg>0;
     var rowStyle=isBest?'background:rgba(106,191,75,.06);':'';
     function scoreColor(v){if(!v||v===0)return'color:#7a756e';if(v>=8)return'color:#6abf4b;font-weight:700';if(v>=5)return'color:#C6A85E';return'color:#ef4444'}
-    h+='<tr style="border-bottom:1px solid rgba(200,168,124,.08);'+rowStyle+'">';
+    h+='<tr style="border-bottom:1px solid rgba(198,168,94,.08);'+rowStyle+'">';
     h+='<td style="padding:6px;text-align:left;font-weight:600">'+(isBest?'✦ ':'')+o.label+'</td>';
     h+='<td style="padding:6px;'+scoreColor(o.f)+'">'+(o.f||'—')+'</td>';
     h+='<td style="padding:6px;'+scoreColor(o.i)+'">'+(o.i||'—')+'</td>';
@@ -7740,7 +7740,7 @@ async function submitPivot(){
   h+='</div>';
 
   // Step 3
-  h+='<div style="margin-bottom:16px;padding:12px;background:rgba(200,168,124,.06);border:1px solid rgba(200,168,124,.1);border-radius:8px">';
+  h+='<div style="margin-bottom:16px;padding:12px;background:rgba(198,168,94,.06);border:1px solid rgba(200,168,124,.1);border-radius:8px">';
   h+='<div style="font-size:11px;font-weight:700;color:#C6A85E;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Step 3: Financial Reality Check</div>';
   h+='<table style="width:100%;font-size:12px;border-collapse:collapse">';
   h+='<tr><td style="padding:4px 8px;color:#7a756e;width:40%">Debt / obligations</td><td style="padding:4px 8px">'+(document.getElementById('pivot-3a').value.trim()||'<em style="color:#7a756e">Not answered</em>')+'</td></tr>';
@@ -7751,7 +7751,7 @@ async function submitPivot(){
   h+='</table></div>';
 
   // Step 4 — Readiness
-  h+='<div style="margin-bottom:16px;padding:12px;background:rgba(200,168,124,.06);border:1px solid rgba(200,168,124,.1);border-radius:8px">';
+  h+='<div style="margin-bottom:16px;padding:12px;background:rgba(198,168,94,.06);border:1px solid rgba(200,168,124,.1);border-radius:8px">';
   h+='<div style="font-size:11px;font-weight:700;color:#C6A85E;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Step 4: Readiness Check</div>';
   h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px">';
   checks.forEach(function(c){
@@ -7767,7 +7767,7 @@ async function submitPivot(){
   // Readiness score
   var readyColor=readiness>=3?'#6abf4b':readiness>=2?'#c8a87c':'#ef4444';
   var readyLabel=readiness>=3?'Ready to decide':readiness>=2?'Almost ready':'More groundwork needed';
-  h+='<div style="margin-top:10px;padding:8px 12px;background:rgba(200,168,124,.04);border-radius:6px;display:flex;align-items:center;gap:10px">';
+  h+='<div style="margin-top:10px;padding:8px 12px;background:rgba(198,168,94,.04);border-radius:6px;display:flex;align-items:center;gap:10px">';
   h+='<div style="width:36px;height:36px;border-radius:50%;border:3px solid '+readyColor+';display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:'+readyColor+';flex-shrink:0">'+readiness+'/4</div>';
   h+='<div><div style="font-size:12px;font-weight:600;color:'+readyColor+'">'+readyLabel+'</div><div style="font-size:10px;color:#7a756e">Readiness checklist completion</div></div>';
   h+='</div>';
@@ -7989,7 +7989,7 @@ function misStart(){
   hdr+='<div style="font-size:15px;font-weight:600;color:var(--accent);font-family:var(--font-serif)">'+(typeNames[type]||'Interview Simulation')+'</div>';
   hdr+='<div style="font-size:11px;color:var(--text3)">'+(settingNames[setting]||setting)+' • 5 Questions • Answer as if you\'re in the room</div>';
   hdr+='</div></div>';
-  hdr+='<div style="margin-top:12px;padding:10px;background:rgba(200,168,124,.06);border-radius:8px;border:1px solid rgba(200,168,124,.1)">';
+  hdr+='<div style="margin-top:12px;padding:10px;background:rgba(198,168,94,.06);border-radius:8px;border:1px solid rgba(200,168,124,.1)">';
   hdr+='<div style="font-size:11px;color:var(--text2);line-height:1.6">💡 <strong>Treat this like a real interview.</strong> Type your actual answer — the way you\'d say it out loud. Don\'t look anything up. Your natural response is what we need to evaluate.</div>';
   hdr+='</div>';
   document.getElementById('mis-header').innerHTML=hdr;
@@ -8003,7 +8003,7 @@ function misStart(){
     qh+='<div style="margin-bottom:16px;padding:16px;background:var(--bg2);border:1px solid var(--border);border-radius:12px">';
     qh+='<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">';
     qh+='<span style="font-size:16px;font-weight:700;color:var(--accent)">Q'+(i+1)+'</span>';
-    qh+='<span style="font-size:9px;padding:2px 8px;border-radius:100px;background:rgba(200,168,124,.06);color:'+(typeColor[q.type]||'var(--text3)')+';font-weight:600;letter-spacing:.5px">'+(typeBadge[q.type]||q.type)+'</span>';
+    qh+='<span style="font-size:9px;padding:2px 8px;border-radius:100px;background:rgba(198,168,94,.06);color:'+(typeColor[q.type]||'var(--text3)')+';font-weight:600;letter-spacing:.5px">'+(typeBadge[q.type]||q.type)+'</span>';
     qh+='</div>';
     qh+='<div style="font-size:14px;font-weight:500;color:var(--text);line-height:1.6;margin-bottom:4px">"'+q.q+'"</div>';
     qh+='<div style="font-size:11px;color:var(--text3);margin-bottom:12px;line-height:1.5;font-style:italic">'+q.what+'</div>';
@@ -8190,7 +8190,7 @@ function misGrade(){
   var h='<div style="margin-top:24px">';
 
   // Overall score header
-  h+='<div style="text-align:center;padding:28px;background:linear-gradient(160deg,rgba(200,168,124,.1),rgba(200,168,124,.03));border:1px solid rgba(200,168,124,.15);border-radius:14px;margin-bottom:20px">';
+  h+='<div style="text-align:center;padding:28px;background:linear-gradient(160deg,rgba(200,168,124,.1),rgba(200,168,124,.03));border:1px solid rgba(198,168,94,.15);border-radius:14px;margin-bottom:20px">';
   h+='<div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px">Interview Performance</div>';
 
   var overallColor=avgScore>=80?'var(--green)':avgScore>=60?'var(--accent)':avgScore>=40?'#E67E22':'var(--red)';
@@ -8220,7 +8220,7 @@ function misGrade(){
     h+='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:6px">';
     h+='<div style="display:flex;align-items:center;gap:8px">';
     h+='<span style="font-size:14px;font-weight:700;color:var(--accent)">Q'+(i+1)+'</span>';
-    h+='<span style="font-size:9px;padding:2px 8px;border-radius:100px;background:rgba(200,168,124,.06);color:'+(typeColor[q.type]||'var(--text3)')+';font-weight:600;letter-spacing:.5px">'+(typeBadge[q.type]||q.type)+'</span>';
+    h+='<span style="font-size:9px;padding:2px 8px;border-radius:100px;background:rgba(198,168,94,.06);color:'+(typeColor[q.type]||'var(--text3)')+';font-weight:600;letter-spacing:.5px">'+(typeBadge[q.type]||q.type)+'</span>';
     h+='</div>';
     h+='<div style="display:flex;align-items:center;gap:6px"><span style="font-size:12px;font-weight:700;color:'+g.color+'">'+g.score+'/100</span><span style="font-size:10px;color:'+g.color+';font-weight:600">'+g.label+'</span></div>';
     h+='</div>';
@@ -8267,7 +8267,7 @@ function misGrade(){
     h+='</details>';
 
     // Coaching advice
-    h+='<div style="margin-top:8px;padding:10px;background:rgba(200,168,124,.04);border-radius:6px;border:1px solid rgba(200,168,124,.1)">';
+    h+='<div style="margin-top:8px;padding:10px;background:rgba(198,168,94,.04);border-radius:6px;border:1px solid rgba(200,168,124,.1)">';
     h+='<div style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Coaching</div>';
     h+='<div style="font-size:11px;color:var(--text2);line-height:1.7">'+g.advice+'</div>';
     h+='</div>';
@@ -8276,7 +8276,7 @@ function misGrade(){
   });
 
   // Bottom section: overall tips
-  h+='<div style="padding:20px;background:linear-gradient(160deg,rgba(200,168,124,.06),rgba(200,168,124,.02));border:1px solid rgba(200,168,124,.12);border-radius:12px;margin-bottom:16px">';
+  h+='<div style="padding:20px;background:linear-gradient(160deg,rgba(198,168,94,.06),rgba(200,168,124,.02));border:1px solid rgba(198,168,94,.10);border-radius:12px;margin-bottom:16px">';
   h+='<div style="font-size:12px;font-weight:600;color:var(--accent);margin-bottom:12px;font-family:var(--font-serif)">🎯 The Honest Debrief</div>';
   h+='<div style="font-size:12px;color:var(--text2);line-height:1.8">';
 
@@ -8662,7 +8662,7 @@ function levSubmit(wfId,ev){
 
   // Update the button
   var btn=document.getElementById('lev-btn-'+wfId);
-  if(btn){btn.textContent='Get New Guidance';btn.style.background='var(--bg3)';btn.style.color='var(--accent)';btn.style.border='1px solid rgba(200,168,124,.3)'}
+  if(btn){btn.textContent='Get New Guidance';btn.style.background='var(--bg3)';btn.style.color='var(--accent)';btn.style.border='1px solid rgba(198,168,94,.20)'}
 }
 
 function levFilter(cat,btn){
@@ -8780,7 +8780,7 @@ function renderLeverage(){
     h+='<div id="lev-resp-'+wf.id+'" style="display:none"></div>';
 
     if(wf.linkText){
-      h+='<button onclick="event.stopPropagation();'+wf.linkAction+'" style="margin-top:14px;padding:10px 20px;background:var(--accent-dim);border:1px solid rgba(200,168,124,.2);border-radius:8px;color:var(--accent);font-size:13px;font-weight:600;cursor:pointer;width:100%;text-align:center">'+wf.linkText+'</button>';
+      h+='<button onclick="event.stopPropagation();'+wf.linkAction+'" style="margin-top:14px;padding:10px 20px;background:var(--accent-dim);border:1px solid rgba(198,168,94,.15);border-radius:8px;color:var(--accent);font-size:13px;font-weight:600;cursor:pointer;width:100%;text-align:center">'+wf.linkText+'</button>';
     }
 
     h+='<div style="margin-top:12px;font-size:11px;color:var(--text3);text-align:center">\u2728 No physician credits used \u2014 use as many times as you want</div>';
@@ -8800,12 +8800,12 @@ function showSavedScenarios(toolName){
   var h='<div style="padding:20px"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px"><div style="font-size:16px;font-weight:600;color:var(--text);font-family:var(--font-serif)">📊 Saved Scenarios</div><button onclick="closeModal(\'modal-q\')" style="background:none;border:none;color:var(--text3);font-size:18px;cursor:pointer">✕</button></div>';
   h+='<div style="font-size:11px;color:var(--text3);margin-bottom:14px">'+toolName+' — '+sc.length+' saved</div>';
   if(sc.length>=2){
-    h+='<div style="margin-bottom:14px;padding:12px;background:linear-gradient(160deg,rgba(200,168,124,.08),rgba(200,168,124,.03));border:1px solid rgba(200,168,124,.15);border-radius:10px"><div style="font-size:11px;font-weight:600;color:var(--accent);margin-bottom:8px">Compare Two Runs</div><div style="display:flex;gap:8px;align-items:center">';
+    h+='<div style="margin-bottom:14px;padding:12px;background:linear-gradient(160deg,rgba(198,168,94,.08),rgba(200,168,124,.03));border:1px solid rgba(198,168,94,.15);border-radius:10px"><div style="font-size:11px;font-weight:600;color:var(--accent);margin-bottom:8px">Compare Two Runs</div><div style="display:flex;gap:8px;align-items:center">';
     h+='<select id="sc-a" style="flex:1;padding:8px;border:1px solid var(--border);border-radius:6px;background:var(--bg);color:var(--text);font-size:11px">';
     sc.forEach(function(s,i){h+='<option value="'+i+'">'+new Date(s.date).toLocaleDateString('en-US',{month:'short',day:'numeric'})+' — '+(s.summary||'Run '+(i+1))+'</option>'});
     h+='</select><span style="color:var(--text3);font-size:11px">vs</span><select id="sc-b" style="flex:1;padding:8px;border:1px solid var(--border);border-radius:6px;background:var(--bg);color:var(--text);font-size:11px">';
     sc.forEach(function(s,i){h+='<option value="'+i+'"'+(i===sc.length-1?' selected':'')+'>'+new Date(s.date).toLocaleDateString('en-US',{month:'short',day:'numeric'})+' — '+(s.summary||'Run '+(i+1))+'</option>'});
-    h+='</select><button onclick="compareScenarios(\''+toolName.replace(/'/g,"\\'")+'\',document.getElementById(\'sc-a\').value,document.getElementById(\'sc-b\').value)" style="padding:8px 14px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#0a0a0f;border:none;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer">Compare</button></div></div>';
+    h+='</select><button onclick="compareScenarios(\''+toolName.replace(/'/g,"\\'")+'\',document.getElementById(\'sc-a\').value,document.getElementById(\'sc-b\').value)" style="padding:8px 14px;background:var(--accent);color:#1C1A17;border:none;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer">Compare</button></div></div>';
   }
   sc.slice().reverse().forEach(function(s,ri){var i=sc.length-1-ri;var d=new Date(s.date);
     h+='<div class="card" style="padding:14px;margin-bottom:8px;cursor:pointer" onclick="viewScenario(\''+toolName.replace(/'/g,"\\'")+'\','+i+')">';
@@ -8855,7 +8855,7 @@ function showWeeklyCheckin(){
   }
   h+='<div style="margin-bottom:16px"><div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Any New Developments?</div><div style="font-size:10px;color:var(--text3);margin-bottom:6px">Offers, interviews, publications, scores, decisions...</div><textarea id="ci-dev" rows="3" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-size:12px;resize:vertical;font-family:var(--font-body)" placeholder="e.g., Got an interview at Hopkins, Step 2 came back 255..."></textarea></div>';
   h+='<div style="margin-bottom:20px"><div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">This Week\'s Goal</div><input type="text" id="ci-goal" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-size:12px;font-family:var(--font-body)" placeholder="e.g., Submit 2 fellowship apps, finish abstract..."></div>';
-  h+='<button onclick="submitCheckin()" style="width:100%;padding:14px;background:linear-gradient(135deg,#1a1620,#2a2530);color:#f5f0e8;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer">Save Check-in →</button></div>';
+  h+='<button onclick="submitCheckin()" style="width:100%;padding:14px;background:var(--accent);color:#1C1A17;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer">Save Check-in →</button></div>';
   document.getElementById('modal-q-content').innerHTML=h;document.getElementById('modal-q').classList.remove('hidden');
 }
 function submitCheckin(){
@@ -8891,7 +8891,7 @@ function renderWhatsChanged(){
   if(U.toolHistory&&U.toolHistory.length){var lt=U.toolHistory[U.toolHistory.length-1];items.push({icon:'🧭',text:'Last ran <strong>'+lt.tool+'</strong>'+(lt.score?' ('+lt.score+')':'')})}
   if(!items.length){el.style.display='none';return}
   el.style.display='';
-  var h='<div style="padding:14px 16px;background:linear-gradient(160deg,rgba(200,168,124,.06),rgba(200,168,124,.02));border:1px solid rgba(200,168,124,.15);border-radius:12px">';
+  var h='<div style="padding:14px 16px;background:linear-gradient(160deg,rgba(198,168,94,.06),rgba(200,168,124,.02));border:1px solid rgba(198,168,94,.15);border-radius:12px">';
   h+='<div style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">📌 Your Status</div>';
   items.forEach(function(it){h+='<div style="display:flex;align-items:flex-start;gap:8px;padding:4px 0;font-size:12px;color:var(--text);line-height:1.5"><span style="flex-shrink:0">'+it.icon+'</span><span>'+it.text+'</span></div>'});
   h+='</div>';el.innerHTML=h;
@@ -8911,7 +8911,7 @@ function generateMonthlyReport(){
   var mCheckins=(U.checkins||[]).filter(function(c){var cd=new Date(c.date);return cd.getMonth()===now.getMonth()});
   var goalsHit=(U.weeklyGoals||[]).filter(function(g){return g.status==='completed'&&new Date(g.date).getMonth()===now.getMonth()}).length;
   var h='<div style="padding:24px;max-width:600px;margin:0 auto">';
-  h+='<div style="text-align:center;margin-bottom:24px;padding-bottom:20px;border-bottom:2px solid rgba(200,168,124,.2)"><div style="font-size:12px;color:var(--accent);font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px">HeartWise Career Report</div><div style="font-size:24px;font-weight:600;color:var(--text);font-family:var(--font-serif)">'+monthName+'</div><div style="font-size:13px;color:var(--text3);margin-top:4px">'+U.name+' · '+sl+(spec?' · '+spec:'')+'</div></div>';
+  h+='<div style="text-align:center;margin-bottom:24px;padding-bottom:20px;border-bottom:2px solid rgba(198,168,94,.15)"><div style="font-size:12px;color:var(--accent);font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px">HeartWise Career Report</div><div style="font-size:24px;font-weight:600;color:var(--text);font-family:var(--font-serif)">'+monthName+'</div><div style="font-size:13px;color:var(--text3);margin-top:4px">'+U.name+' · '+sl+(spec?' · '+spec:'')+'</div></div>';
   h+='<div style="margin-bottom:20px"><div style="font-size:12px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Career Scores</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">';
   [{k:'competitiveness',l:'Competitiveness',i:'🏆'},{k:'research',l:'Research',i:'🔬'},{k:'readiness',l:'Readiness',i:'🎯'},{k:'financial',l:'Financial',i:'💰'}].forEach(function(si){
     var v=scores[si.k]||0;var d=prev?(v-(prev[si.k]||0)):0;var ds=d>0?'<span style="color:var(--green)">↑+'+d+'</span>':d<0?'<span style="color:var(--red)">↓'+d+'</span>':'';
@@ -8936,7 +8936,7 @@ function generateMonthlyReport(){
     h+='</div>';
   }
   h+='<div style="text-align:center;padding-top:16px;border-top:1px solid var(--border)"><div style="font-size:10px;color:var(--text3);margin-bottom:12px">Generated by HeartWise · '+new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})+'</div>';
-  h+='<button onclick="printReport()" style="padding:10px 24px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#0a0a0f;border:none;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;margin-right:8px">🖨 Print / Save PDF</button>';
+  h+='<button onclick="printReport()" style="padding:10px 24px;background:var(--accent);color:#1C1A17;border:none;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;margin-right:8px">🖨 Print / Save PDF</button>';
   h+='<button onclick="closeModal(\'modal-q\')" style="padding:10px 24px;background:var(--bg2);color:var(--text);border:1px solid var(--border);border-radius:8px;font-size:12px;cursor:pointer">Close</button></div></div>';
   document.getElementById('modal-q-content').innerHTML=h;document.getElementById('modal-q').classList.remove('hidden');
 }

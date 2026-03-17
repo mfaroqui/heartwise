@@ -40,20 +40,25 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{
---bg:#09090e;--bg2:#0f0f16;--bg3:#16161f;--bg4:#1e1e29;
---text:#f0ece6;--text1:#f0ece6;--text2:#ccc8c2;--text3:#9a958e;
---accent:#c8a87c;--accent2:#dfc19f;--accent-dim:rgba(200,168,124,.10);
+/* ===== LIGHT DESIGN SYSTEM ===== */
+--bg:#F5F1EB;--bg2:#fff;--bg3:#F8F5F0;--bg4:#EAE6E0;
+--text:#1C1A17;--text1:#1C1A17;--text2:#5C564F;--text3:#8A8278;
+--accent:#C6A85E;--accent2:#B89543;--accent-dim:rgba(198,168,94,.10);
 --rose:#c4929a;--rose-dim:rgba(196,146,154,.10);
 --champagne:#e8d5b7;
---red:#c44d56;--red-dim:rgba(196,77,86,.10);
---green:#8bb8a0;--green-dim:rgba(139,184,160,.10);
---blue:#8badc4;--blue-dim:rgba(139,173,196,.10);
---border:rgba(200,168,124,.08);--border2:rgba(200,168,124,.15);
---glass:rgba(9,9,14,.92);
---r:12px;--r2:10px;--r3:20px;
+--red:#B85C5C;--red-dim:rgba(184,92,92,.10);
+--green:#5E8B6F;--green-dim:rgba(94,139,111,.10);
+--blue:#6A86A8;--blue-dim:rgba(106,134,168,.10);
+--border:#E8E1D8;--border2:rgba(198,168,94,.25);
+--glass:rgba(245,241,235,.92);
+--r:14px;--r2:10px;--r3:18px;
 --font-ui:'DM Sans','Inter',system-ui,-apple-system,sans-serif;
 --font-body:'Inter','DM Sans',system-ui,-apple-system,sans-serif;
 --font-serif:'Cormorant Garamond',Georgia,'Times New Roman',serif;
+/* ===== DARK SPOTLIGHT ===== */
+--ink:#111318;--ink-soft:#1A1D24;
+--shadow-soft:0 2px 6px rgba(0,0,0,.04);
+--shadow-hover:0 6px 16px rgba(0,0,0,.08);
 }
 html{scroll-behavior:smooth}
 body{font-family:var(--font-body);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;-webkit-tap-highlight-color:transparent;font-size:16px;line-height:1.6;font-weight:400;letter-spacing:.01em}
@@ -62,10 +67,6 @@ a{color:var(--accent);text-decoration:none;transition:color .2s}
 a:hover{color:var(--accent2)}
 .hidden{display:none!important}
 
-/* ===== HOME SCREEN (LIGHT THEME) ===== */
-#scr-home{background:#F5F1EB;color:#1C1A17}
-#scr-home .hdr-home{background:rgba(245,241,235,.95);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom-color:#E8E1D8}
-#scr-home .hdr-home .hdr-t{color:#1C1A17}
 
 /* ===== LANDING PAGE TABS ===== */
 .lp-tab{display:none}
@@ -74,20 +75,20 @@ a:hover{color:var(--accent2)}
 
 /* ===== TOP NAV ===== */
 .topbar{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:20px 32px;background:transparent;backdrop-filter:blur(0px);-webkit-backdrop-filter:blur(0px);border-bottom:1px solid transparent;transition:all .5s ease}
-.topbar.solid{background:rgba(9,9,14,.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom-color:var(--border)}
+.topbar.solid{background:rgba(245,241,235,.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom-color:var(--border)}
 .topbar-logo{display:flex;align-items:center;gap:12px;cursor:pointer}
 .topbar-logo .logo-mark{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;transition:transform .3s}
 .topbar-logo:hover .logo-mark{transform:scale(1.05)}
-.topbar-logo .logo-mark svg{width:18px;height:18px;fill:#09090e}
+.topbar-logo .logo-mark svg{width:18px;height:18px;fill:#1C1A17}
 .topbar-logo .logo-text{font-family:var(--font-serif);font-size:22px;font-weight:600;color:var(--text);letter-spacing:.5px}
 .topbar-links{display:flex;gap:28px;align-items:center}
-.topbar-links a{font-size:13px;font-weight:400;color:var(--text2);transition:color .3s;letter-spacing:.5px}
+.topbar-links a{font-size:13px;font-weight:400;color:#5C564F;transition:color .3s;letter-spacing:.5px}
 .topbar-links a:hover{color:var(--accent)}
 .topbar-links .tb-cta{background:transparent;color:var(--accent);padding:9px 22px;border-radius:100px;font-weight:500;font-size:11px;letter-spacing:1px;text-transform:uppercase;transition:all .35s;border:1px solid var(--accent)}
-.topbar-links .tb-cta:hover{background:var(--accent);color:#09090e}
-.landing-menu{position:absolute;top:calc(100% + 12px);left:0;background:rgba(9,9,14,.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid var(--border2);border-radius:12px;padding:8px 0;min-width:200px;box-shadow:0 12px 40px rgba(0,0,0,.4);z-index:300}
-.landing-menu a{display:block;padding:10px 20px;font-size:13px;color:var(--text2);font-weight:400;transition:all .2s;letter-spacing:.3px}
-.landing-menu a:hover{background:var(--accent-dim);color:var(--accent)}
+.topbar-links .tb-cta:hover{background:var(--accent);color:#1C1A17}
+.landing-menu{position:absolute;top:calc(100% + 12px);left:0;background:rgba(255,255,255,.97);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid var(--border);border-radius:12px;padding:8px 0;min-width:200px;box-shadow:0 12px 40px rgba(0,0,0,.1);z-index:300}
+.landing-menu a{display:block;padding:10px 20px;font-size:13px;color:#5C564F;font-weight:400;transition:all .2s;letter-spacing:.3px}
+.landing-menu a:hover{background:rgba(198,168,94,.08);color:var(--accent)}
 .topbar-logo .logo-mark{cursor:pointer}
 @media(max-width:640px){
   .topbar{padding:16px 20px}
@@ -98,20 +99,20 @@ a:hover{color:var(--accent2)}
 /* ===== SPLASH ===== */
 #splash{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .8s ease}
 #splash.out{opacity:0;pointer-events:none}
-.sp-mark{width:64px;height:64px;border-radius:18px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;margin-bottom:24px;box-shadow:0 0 80px rgba(200,168,124,.12)}
-.sp-mark svg{width:32px;height:32px;fill:#09090e}
+.sp-mark{width:64px;height:64px;border-radius:18px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;margin-bottom:24px;box-shadow:0 0 80px rgba(198,168,94,.12)}
+.sp-mark svg{width:32px;height:32px;fill:#1C1A17}
 .sp-t{font-family:var(--font-serif);font-size:32px;font-weight:600;letter-spacing:1px;margin-bottom:8px}
 .sp-s{font-size:11px;color:var(--text3);letter-spacing:3px;text-transform:uppercase;font-weight:400;font-family:var(--font-ui)}
 
 /* ===== NOTIFICATION ===== */
-.notif{position:fixed;top:20px;left:20px;right:20px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--r2);padding:16px 20px;z-index:2000;display:flex;align-items:center;gap:12px;transform:translateY(-120%);transition:transform .4s ease;box-shadow:0 16px 48px rgba(0,0,0,.4);backdrop-filter:blur(16px)}
+.notif{position:fixed;top:20px;left:20px;right:20px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:16px 20px;z-index:2000;display:flex;align-items:center;gap:12px;transform:translateY(-120%);transition:transform .4s ease;box-shadow:0 16px 48px rgba(0,0,0,.12)}
 .notif.show{transform:translateY(0)}.notif.err{border-color:var(--red)}
 .notif-t{font-size:13px;font-weight:400;flex:1}
 
 /* ===== BUTTONS ===== */
 .btn{display:flex;align-items:center;justify-content:center;gap:8px;padding:16px;border:none;border-radius:100px;font-size:14px;font-weight:600;font-family:var(--font-ui);cursor:pointer;transition:all .35s ease;letter-spacing:.6px;text-transform:uppercase;width:100%}
-.btn-a{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#09090e;box-shadow:0 4px 20px rgba(200,168,124,.15)}
-.btn-a:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(200,168,124,.25)}
+.btn-a{background:var(--accent);color:#1C1A17;box-shadow:0 4px 20px rgba(198,168,94,.15)}
+.btn-a:hover{background:var(--accent2);transform:translateY(-2px);box-shadow:0 8px 32px rgba(198,168,94,.25)}
 .btn-g{background:transparent;color:var(--text2);border:1px solid var(--border2)}
 .btn-g:hover{border-color:var(--accent);color:var(--accent)}
 .btn-sm{width:auto;padding:10px 24px;font-size:11px}
@@ -120,19 +121,19 @@ a:hover{color:var(--accent2)}
 /* ===== FORMS ===== */
 .fg{margin-bottom:22px}
 .fg label{display:block;font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px;font-family:var(--font-ui)}
-.fg input,.fg select,.fg textarea{width:100%;padding:14px 18px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r2);color:var(--text);font-size:16px;font-family:var(--font-body);outline:none;transition:all .3s}
-.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-dim)}
+.fg input,.fg select,.fg textarea{width:100%;padding:14px 18px;background:#fff;border:1px solid var(--border);border-radius:var(--r2);color:var(--text);font-size:16px;font-family:var(--font-body);outline:none;transition:all .3s}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(198,168,94,.15)}
 .fg input::placeholder,.fg textarea::placeholder{color:var(--text3);font-weight:300}
 .fg select{appearance:none;cursor:pointer}
 
 /* ===== BOTTOM NAV ===== */
-.nav{position:sticky;top:0;left:0;right:0;background:var(--glass);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid var(--border);display:flex;justify-content:space-around;padding:10px 0;z-index:200}
+.nav{position:sticky;top:0;left:0;right:0;background:rgba(245,241,235,.95);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid var(--border);display:flex;justify-content:space-around;padding:10px 0;z-index:200}
 .ni{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:9px;font-weight:500;color:var(--text3);cursor:pointer;padding:8px 12px;background:none;border:none;transition:color .25s;letter-spacing:.8px;text-transform:uppercase;font-family:var(--font-ui)}
 .ni.on,.ni:hover{color:var(--accent)}
 .ni svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
 
 /* ===== HEADER (app) ===== */
-.hdr{padding:20px 24px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;background:var(--glass);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid var(--border)}
+.hdr{padding:20px 24px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;background:rgba(245,241,235,.95);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid var(--border)}
 .hdr-t{font-family:var(--font-serif);font-size:26px;font-weight:600;letter-spacing:.3px}
 .hdr-back{font-family:var(--font-ui);font-size:13px;color:var(--text3);background:none;border:none;cursor:pointer;padding:0;margin-right:12px;transition:color .2s}
 .hdr-back:hover{color:var(--accent)}
@@ -140,7 +141,7 @@ a:hover{color:var(--accent2)}
 .b-free{background:var(--bg4);color:var(--text3)}.b-core{background:var(--blue-dim);color:var(--blue)}.b-pro{background:var(--accent-dim);color:var(--accent)}.b-ment{background:var(--accent-dim);color:var(--accent2)}.b-admin{background:var(--green-dim);color:var(--green)}
 
 /* ===== CARDS ===== */
-.card{background:var(--bg2);border-radius:var(--r);padding:24px;margin-bottom:12px;border:1px solid var(--border);transition:all .35s ease;backdrop-filter:blur(4px)}
+.card{background:var(--bg2);border-radius:var(--r);padding:24px;margin-bottom:12px;border:1px solid var(--border);transition:all .35s ease;box-shadow:var(--shadow-soft)}
 .card:hover{border-color:var(--border2);box-shadow:0 4px 24px rgba(0,0,0,.15)}
 .sec{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:2px;padding:28px 24px 14px;font-family:var(--font-ui)}
 
@@ -156,8 +157,8 @@ a:hover{color:var(--accent2)}
 .lp{overflow-y:auto;min-height:100vh;position:relative}
 
 /* Hero */
-.hero{padding:160px 32px 100px;text-align:center;position:relative;overflow:hidden;background:linear-gradient(180deg,rgba(9,9,14,.1) 0%,rgba(9,9,14,.55) 40%,rgba(9,9,14,.92) 70%,var(--bg) 100%),linear-gradient(160deg,#1a1520 0%,#12101a 30%,#0e0f18 60%,#09090e 100%)}
-.hero::before{content:'';position:absolute;top:-120px;right:-80px;width:600px;height:600px;background:radial-gradient(ellipse,rgba(200,168,124,.06),transparent 70%);border-radius:50%;pointer-events:none}
+.hero{padding:160px 32px 100px;text-align:center;position:relative;overflow:hidden;background:var(--bg)}
+.hero::before{content:'';position:absolute;top:-120px;right:-80px;width:600px;height:600px;background:radial-gradient(ellipse,rgba(198,168,94,.06),transparent 70%);border-radius:50%;pointer-events:none}
 .hero::after{content:'';position:absolute;bottom:-150px;left:-100px;width:500px;height:500px;background:radial-gradient(ellipse,rgba(196,146,154,.04),transparent 70%);border-radius:50%;pointer-events:none}
 .hero *{position:relative}
 .hero-badge{display:inline-block;padding:8px 20px;border-radius:100px;background:transparent;color:var(--accent);font-size:10px;font-weight:500;letter-spacing:2px;text-transform:uppercase;margin-bottom:28px;border:1px solid var(--border2)}
@@ -178,7 +179,7 @@ a:hover{color:var(--accent2)}
 
 .who-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;max-width:500px;margin:0 auto}
 .who-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:28px 20px;text-align:center;transition:all .4s ease}
-.who-card:hover{border-color:var(--accent);transform:translateY(-3px);box-shadow:0 12px 40px rgba(200,168,124,.06)}
+.who-card:hover{border-color:var(--accent);transform:translateY(-3px);box-shadow:0 12px 40px rgba(198,168,94,.06)}
 .who-card .icon{font-size:28px;margin-bottom:12px}
 .who-card h3{font-size:14px;font-weight:600;margin-bottom:8px;letter-spacing:.2px}
 .who-card p{font-size:12px;color:var(--text3);line-height:1.6;font-weight:300}
@@ -194,7 +195,7 @@ a:hover{color:var(--accent2)}
 .flow-road{display:flex;align-items:flex-start;justify-content:center;gap:0;padding:12px 16px;overflow-x:auto;-webkit-overflow-scrolling:touch}
 .flow-node{display:flex;flex-direction:column;align-items:center;text-align:center;min-width:85px;max-width:105px;flex-shrink:0}
 .flow-icon{width:56px;height:56px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:12px;border:1px solid var(--border);transition:all .4s ease;background:var(--bg3)}
-.flow-node:hover .flow-icon{border-color:var(--accent);transform:translateY(-3px);box-shadow:0 8px 24px rgba(200,168,124,.08)}
+.flow-node:hover .flow-icon{border-color:var(--accent);transform:translateY(-3px);box-shadow:0 8px 24px rgba(198,168,94,.08)}
 .flow-label{font-size:11px;font-weight:600;color:var(--text);margin-bottom:5px;white-space:nowrap;letter-spacing:.3px}
 .flow-desc{font-size:10px;color:var(--text3);line-height:1.5;font-weight:300}
 .flow-arrow{display:flex;align-items:center;padding-top:18px;flex-shrink:0}
@@ -203,9 +204,9 @@ a:hover{color:var(--accent2)}
 /* ===== PRICING ===== */
 .plan{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r3);padding:36px 32px;margin-bottom:16px;transition:all .4s ease}
 .plan:hover{border-color:var(--border2);transform:translateY(-2px);box-shadow:0 12px 48px rgba(0,0,0,.2)}
-.plan.ft{border-color:var(--border2);background:linear-gradient(160deg,var(--bg2),rgba(200,168,124,.03))}
+.plan.ft{border-color:var(--border2);background:linear-gradient(160deg,var(--bg2),rgba(198,168,94,.04))}
 .plan.pop{border-color:var(--accent);position:relative}
-.plan.pop::before{content:'RECOMMENDED';position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:var(--accent);color:#09090e;font-size:9px;font-weight:600;padding:4px 16px;border-radius:100px;letter-spacing:1.5px}
+.plan.pop::before{content:'RECOMMENDED';position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:var(--accent);color:#1C1A17;font-size:9px;font-weight:600;padding:4px 16px;border-radius:100px;letter-spacing:1.5px}
 .plan-n{font-size:16px;font-weight:600;margin-bottom:6px;letter-spacing:.3px;font-family:var(--font-ui)}
 .plan-p{font-family:var(--font-serif);font-size:44px;font-weight:600;margin-bottom:4px;letter-spacing:-1px}
 .plan-p span{font-size:14px;font-weight:400;color:var(--text3);font-family:var(--font-body)}
@@ -214,8 +215,8 @@ a:hover{color:var(--accent2)}
 .plan-f li::before{content:'✦';color:var(--accent);font-size:9px;margin-top:4px;flex-shrink:0}
 
 /* Usage */
-.usage{background:var(--bg3);border-radius:6px;height:6px;overflow:hidden;margin-top:6px}
-.usage-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:6px;transition:width .6s ease}
+.usage{background:var(--bg4);border-radius:999px;height:6px;overflow:hidden;margin-top:6px}
+.usage-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:999px;transition:width .6s ease}
 .usage-label{display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-top:5px}
 
 /* AI Response */
@@ -224,16 +225,16 @@ a:hover{color:var(--accent2)}
 .ai-resp h4:first-child{margin-top:0}
 .ai-resp p,.ai-resp li{font-size:15px;color:var(--text2);line-height:1.75;font-weight:300}
 .ai-resp ol{padding-left:20px;margin:8px 0}
-.ai-resp .escalate{margin-top:18px;padding:14px 18px;border-radius:var(--r2);background:var(--accent-dim);border:1px solid rgba(200,168,124,.12);font-size:13px;color:var(--accent)}
+.ai-resp .escalate{margin-top:18px;padding:14px 18px;border-radius:var(--r2);background:var(--accent-dim);border:1px solid rgba(198,168,94,.12);font-size:13px;color:var(--accent)}
 
 /* Vault */
-.quiz-opt:hover{border-color:rgba(200,168,124,.4)!important;transform:translateY(-1px)}
+.quiz-opt:hover{border-color:rgba(198,168,94,.4)!important;transform:translateY(-1px)}
 .vault-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:22px;margin-bottom:12px;display:flex;align-items:center;gap:16px;transition:all .35s ease}
 .vault-card .v-icon{width:44px;height:44px;border-radius:12px;background:var(--accent-dim);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
 .vault-card .v-info{flex:1}.vault-card .v-info h3{font-size:15px;font-weight:600;margin-bottom:3px;font-family:var(--font-ui)}.vault-card .v-info p{font-size:13px;color:var(--text3);font-weight:300;line-height:1.5}
 .vault-card .v-lock{color:var(--text3);font-size:18px}
 .vault-card.unlocked{border-color:var(--accent);cursor:pointer}
-.vault-card.unlocked:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(200,168,124,.08)}
+.vault-card.unlocked:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(198,168,94,.08)}
 .vault-card.unlocked .v-lock{color:var(--accent)}
 
 /* Question cards */
@@ -259,7 +260,7 @@ a:hover{color:var(--accent2)}
 .adm-table td{padding:10px 8px;border-bottom:1px solid var(--border);color:var(--text2);vertical-align:top}
 .adm-table tr:hover{background:var(--bg3)}
 .adm-filter{font-size:11px;padding:6px 10px;border:1px solid var(--border);border-radius:6px;background:var(--bg2);color:var(--text);margin-right:6px}
-.abox{background:var(--bg3);border-radius:var(--r2);padding:18px;margin-top:14px;border:1px solid var(--border)}
+.abox{background:#fff;border-radius:var(--r2);padding:18px;margin-top:14px;border:1px solid var(--border)}
 .abox textarea{width:100%;background:transparent;border:none;color:var(--text);font-size:14px;resize:vertical;min-height:100px;outline:none;font-family:var(--font-body);line-height:1.65}
 
 /* Modal */
@@ -277,8 +278,8 @@ a:hover{color:var(--accent2)}
 
 /* Search */
 .sbar{margin:20px 24px;position:relative}
-.sbar input{width:100%;padding:14px 18px 14px 46px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);color:var(--text);font-size:14px;font-family:var(--font-body);outline:none;transition:all .3s}
-.sbar input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-dim)}
+.sbar input{width:100%;padding:14px 18px 14px 46px;background:#fff;border:1px solid var(--border);border-radius:var(--r2);color:var(--text);font-size:14px;font-family:var(--font-body);outline:none;transition:all .3s}
+.sbar input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(198,168,94,.15)}
 .sbar svg{position:absolute;left:16px;top:50%;transform:translateY(-50%);width:16px;height:16px;stroke:var(--text3);fill:none;stroke-width:1.5}
 
 /* Misc */
@@ -299,7 +300,7 @@ a:hover{color:var(--accent2)}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 @keyframes hookFadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 @keyframes slideInLeft{from{opacity:0;transform:translateX(-20px)}to{opacity:1;transform:translateX(0)}}
-@keyframes pulseGlow{0%,100%{box-shadow:0 0 0 0 rgba(200,168,124,.3)}50%{box-shadow:0 0 12px 4px rgba(200,168,124,.15)}}
+@keyframes pulseGlow{0%,100%{box-shadow:0 0 0 0 rgba(198,168,94,.3)}50%{box-shadow:0 0 12px 4px rgba(198,168,94,.15)}}
 @keyframes drawLine{from{height:0}to{height:100%}}
 @keyframes countUp{from{transform:scale(.6);opacity:0}to{transform:scale(1);opacity:1}}
 .fade-in{animation:fadeUp .5s ease both}
@@ -315,22 +316,22 @@ a:hover{color:var(--accent2)}
 .hiw-step:nth-child(4){transition-delay:.7s}
 .hiw-num{animation:countUp .4s ease both}
 .hiw-step.visible .hiw-num{animation:countUp .4s ease both,pulseGlow 2s ease-in-out infinite}
-.hiw-line{position:absolute;left:17px;top:0;width:2px;background:linear-gradient(180deg,var(--accent),rgba(200,168,124,.1));transform-origin:top;animation:drawLine 1.2s ease .2s both}
+.hiw-line{position:absolute;left:17px;top:0;width:2px;background:linear-gradient(180deg,var(--accent),rgba(198,168,94,.1));transform-origin:top;animation:drawLine 1.2s ease .2s both}
 .hiw-icon-float{animation:fadeIn .6s ease both;transition:transform .3s}
 .hiw-step:hover .hiw-icon-float{transform:scale(1.15)}
 
 /* Safe areas */
 @supports(padding-top:env(safe-area-inset-top)){.hdr{padding-top:calc(20px + env(safe-area-inset-top))}.hero{padding-top:calc(160px + env(safe-area-inset-top))}.topbar{padding-top:calc(20px + env(safe-area-inset-top))}}
-::-webkit-scrollbar{width:3px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:rgba(200,168,124,.15);border-radius:3px}
+::-webkit-scrollbar{width:3px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:rgba(198,168,94,.15);border-radius:3px}
 .intake-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.intake-grid .fg{margin-bottom:12px}
-.review-banner{background:var(--accent-dim);border:1px solid rgba(200,168,124,.12);border-radius:var(--r2);padding:18px;margin-bottom:22px;display:flex;align-items:center;gap:14px}
+.review-banner{background:var(--accent-dim);border:1px solid rgba(198,168,94,.12);border-radius:var(--r2);padding:18px;margin-bottom:22px;display:flex;align-items:center;gap:14px}
 .review-banner .icon{font-size:20px}.review-banner .info{flex:1}.review-banner .info h4{font-size:12px;font-weight:500;color:var(--accent);margin-bottom:3px;letter-spacing:.3px}.review-banner .info p{font-size:11px;color:var(--text3);font-weight:300}
 .prof-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:20px}
 .prof-stat{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:16px;text-align:center}
 /* Tool cards */
 .tool-grid{display:grid;grid-template-columns:1fr;gap:12px}
 .tool-card{display:flex;gap:16px;align-items:flex-start;padding:22px;background:var(--bg);border:1px solid var(--border);border-radius:var(--r);transition:all .4s ease}
-.tool-card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 8px 28px rgba(200,168,124,.06)}
+.tool-card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 8px 28px rgba(198,168,94,.06)}
 .tool-icon{width:44px;height:44px;border-radius:12px;background:var(--accent-dim);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
 .tool-info h3{font-size:16px;font-weight:600;margin-bottom:5px;letter-spacing:.2px;font-family:var(--font-ui)}
 .tool-info p{font-size:13px;color:var(--text3);line-height:1.6;font-weight:300}
@@ -351,8 +352,8 @@ a:hover{color:var(--accent2)}
 .lev-opt:hover{border-color:var(--accent);color:var(--text)}
 .lev-opt.sel{background:var(--accent-dim);border-color:var(--accent);color:var(--accent);font-weight:600}
 .lev-wf-card{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:12px;cursor:pointer;transition:all .25s}
-.lev-wf-card:hover{border-color:rgba(200,168,124,.3);transform:translateY(-1px)}
-.lev-wf-card.expanded{border-color:rgba(200,168,124,.25)}
+.lev-wf-card:hover{border-color:rgba(198,168,94,.3);transform:translateY(-1px)}
+.lev-wf-card.expanded{border-color:rgba(198,168,94,.25)}
 .lev-wf-detail{display:none;margin-top:16px;padding-top:16px;border-top:1px solid var(--border)}
 .lev-wf-card.expanded .lev-wf-detail{display:block}
 .lev-prompt{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px 16px;font-size:13px;color:var(--text2);font-family:'SF Mono',SFMono-Regular,Consolas,monospace;line-height:1.6;margin:10px 0;position:relative}
@@ -362,7 +363,7 @@ a:hover{color:var(--accent2)}
 .lev-tried-badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:9px;font-weight:700;letter-spacing:.3px;text-transform:uppercase}
 .lev-output{background:rgba(92,184,154,.04);border:1px solid rgba(92,184,154,.15);border-radius:10px;padding:14px 16px;margin:10px 0}
 .lev-output li{font-size:13px;color:var(--text2);padding:3px 0;line-height:1.5}
-.lev-tip{background:rgba(200,168,124,.06);border:1px solid rgba(200,168,124,.12);border-radius:10px;padding:14px 16px;margin-top:12px;font-size:13px;color:var(--text2);line-height:1.6}
+.lev-tip{background:rgba(198,168,94,.06);border:1px solid rgba(198,168,94,.12);border-radius:10px;padding:14px 16px;margin-top:12px;font-size:13px;color:var(--text2);line-height:1.6}
 
 /* Competitive score */
 .score-ring{width:120px;height:120px;border-radius:50%;border:4px solid var(--border);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;position:relative}
@@ -665,7 +666,7 @@ a:hover{color:var(--accent2)}
 /* ===== GLASS TOOL CARDS ===== */
 .glass-tool{
   background:linear-gradient(160deg,rgba(22,22,31,.95),rgba(15,15,22,.98));
-  border:1px solid rgba(200,168,124,.1);
+  border:1px solid rgba(198,168,94,.1);
   border-radius:20px;
   padding:0;
   margin-bottom:32px;
@@ -675,13 +676,13 @@ a:hover{color:var(--accent2)}
 }
 .glass-tool::before{
   content:'';position:absolute;inset:0;border-radius:20px;
-  background:linear-gradient(160deg,rgba(200,168,124,.06),transparent 40%);
+  background:linear-gradient(160deg,rgba(198,168,94,.06),transparent 40%);
   pointer-events:none;opacity:0;transition:opacity .5s ease;
 }
 .glass-tool:hover{
-  border-color:rgba(200,168,124,.25);
+  border-color:rgba(198,168,94,.25);
   transform:translateY(-6px);
-  box-shadow:0 24px 64px rgba(0,0,0,.35),0 0 80px rgba(200,168,124,.06);
+  box-shadow:0 24px 64px rgba(0,0,0,.35),0 0 80px rgba(198,168,94,.06);
 }
 .glass-tool:hover::before{opacity:1}
 .glass-tool-header{padding:36px 32px 0}
@@ -689,15 +690,15 @@ a:hover{color:var(--accent2)}
 .glass-tool-mock{
   padding:24px;
   margin:20px 0 0;
-  background:rgba(9,9,14,.6);
-  border:1px solid rgba(200,168,124,.06);
+  background:rgba(0,0,0,.4);
+  border:1px solid rgba(198,168,94,.06);
   border-radius:14px;
   position:relative;
   overflow:hidden;
 }
 .glass-tool-mock::after{
   content:'';position:absolute;top:0;right:0;width:120px;height:120px;
-  background:radial-gradient(circle,rgba(200,168,124,.04),transparent 70%);
+  background:radial-gradient(circle,rgba(198,168,94,.04),transparent 70%);
   pointer-events:none;
 }
 .glass-tool-num{
@@ -714,7 +715,7 @@ a:hover{color:var(--accent2)}
 }
 .glass-tool-insight{
   margin-top:20px;padding-top:18px;
-  border-top:1px solid rgba(200,168,124,.08);
+  border-top:1px solid rgba(198,168,94,.08);
   font-size:13px;color:var(--text2);line-height:1.7;font-weight:300;
 }
 .glass-tool-insight strong{color:var(--accent);font-weight:600}
@@ -723,12 +724,12 @@ a:hover{color:var(--accent2)}
 .hero-lux{position:relative;overflow:hidden}
 .hero-lux::before{
   content:'';position:absolute;top:-200px;right:-150px;width:600px;height:600px;
-  background:radial-gradient(ellipse,rgba(200,168,124,.08),transparent 70%);
+  background:radial-gradient(ellipse,rgba(198,168,94,.08),transparent 70%);
   border-radius:50%;pointer-events:none;z-index:0;
 }
 .hero-lux::after{
   content:'';position:absolute;bottom:-250px;left:-200px;width:700px;height:700px;
-  background:radial-gradient(ellipse,rgba(200,168,124,.04),transparent 60%);
+  background:radial-gradient(ellipse,rgba(198,168,94,.04),transparent 60%);
   border-radius:50%;pointer-events:none;z-index:0;
 }
 .hero-lux-inner{position:relative;z-index:1}
@@ -741,27 +742,27 @@ a:hover{color:var(--accent2)}
 /* Blurred results overlay for free users */
 .hw-blur-gate{position:relative}
 .hw-blur-gate .hw-blur-content{filter:blur(6px);pointer-events:none;user-select:none;-webkit-user-select:none}
-.hw-blur-gate .hw-blur-overlay{position:absolute;top:0;left:0;right:0;bottom:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(9,9,14,.7);border-radius:10px;z-index:2;padding:32px 20px;text-align:center}
+.hw-blur-gate .hw-blur-overlay{position:absolute;top:0;left:0;right:0;bottom:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(0,0,0,.5);border-radius:10px;z-index:2;padding:32px 20px;text-align:center}
 .hw-blur-overlay .hw-blur-icon{font-size:36px;margin-bottom:12px}
 .hw-blur-overlay .hw-blur-title{font-size:16px;font-weight:700;color:var(--text);margin-bottom:6px;font-family:var(--font-serif)}
 .hw-blur-overlay .hw-blur-sub{font-size:12px;color:var(--text3);margin-bottom:16px;line-height:1.5;max-width:280px}
-.hw-blur-overlay .hw-blur-cta{padding:12px 28px;font-size:13px;font-weight:700;background:linear-gradient(135deg,var(--accent2),var(--accent));color:#0a0a0f;border:none;border-radius:8px;cursor:pointer;letter-spacing:.3px;transition:transform .15s}
+.hw-blur-overlay .hw-blur-cta{padding:12px 28px;font-size:13px;font-weight:700;background:linear-gradient(135deg,var(--accent2),var(--accent));color:#1C1A17;border:none;border-radius:8px;cursor:pointer;letter-spacing:.3px;transition:transform .15s}
 .hw-blur-overlay .hw-blur-cta:hover{transform:scale(1.03)}
 /* Adjust main-app bottom padding when sticky bar is showing */
 body.has-upgrade-bar #main-app{padding-bottom:70px}
 /* ===== ONBOARDING TOUR ===== */
 .tour-backdrop{position:fixed;top:0;left:0;right:0;bottom:0;z-index:9997;pointer-events:auto}
-.tour-highlight{position:fixed;z-index:9999;border-radius:14px;box-shadow:0 0 0 4000px rgba(0,0,0,.6),0 0 0 3px var(--accent),0 0 24px rgba(200,168,124,.4);pointer-events:none;transition:top .35s ease,left .35s ease,width .35s ease,height .35s ease}
-.tour-tooltip{position:fixed;z-index:10000;background:linear-gradient(160deg,#1e1a28,#252030);border:1px solid rgba(200,168,124,.25);border-radius:14px;padding:20px;max-width:320px;width:calc(100vw - 48px);pointer-events:auto;box-shadow:0 12px 40px rgba(0,0,0,.5);animation:tourFadeIn .3s ease}
+.tour-highlight{position:fixed;z-index:9999;border-radius:14px;box-shadow:0 0 0 4000px rgba(0,0,0,.6),0 0 0 3px var(--accent),0 0 24px rgba(198,168,94,.4);pointer-events:none;transition:top .35s ease,left .35s ease,width .35s ease,height .35s ease}
+.tour-tooltip{position:fixed;z-index:10000;background:linear-gradient(160deg,#1e1a28,#252030);border:1px solid rgba(198,168,94,.25);border-radius:14px;padding:20px;max-width:320px;width:calc(100vw - 48px);pointer-events:auto;box-shadow:0 12px 40px rgba(0,0,0,.5);animation:tourFadeIn .3s ease}
 @keyframes tourFadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 .tour-tooltip-title{font-size:15px;font-weight:700;color:var(--text);margin-bottom:6px;font-family:var(--font-serif)}
 .tour-tooltip-body{font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:16px}
 .tour-tooltip-footer{display:flex;align-items:center;justify-content:space-between}
 .tour-dots{display:flex;gap:6px}
-.tour-dot{width:7px;height:7px;border-radius:50%;background:rgba(200,168,124,.25);transition:all .2s}
+.tour-dot{width:7px;height:7px;border-radius:50%;background:rgba(198,168,94,.25);transition:all .2s}
 .tour-dot.active{background:var(--accent);transform:scale(1.2)}
 .tour-btn{padding:10px 22px;font-size:12px;font-weight:700;border:none;border-radius:8px;cursor:pointer;letter-spacing:.3px;transition:all .15s}
-.tour-btn-next{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#0a0a0f}
+.tour-btn-next{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#1C1A17}
 .tour-btn-next:hover{transform:scale(1.03)}
 .tour-btn-skip{background:none;border:none;color:var(--text3);font-size:11px;cursor:pointer;padding:6px 10px}
 .tour-btn-skip:hover{color:var(--accent)}
@@ -911,17 +912,17 @@ body.has-upgrade-bar #main-app{padding-bottom:70px}
 </div>
 <div style="flex:1">
 <div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-size:10px;color:var(--text2)">Research</span><span class="sc-pct" data-target="72" style="font-size:10px;color:var(--accent);font-weight:500">0%</span></div>
-<div style="height:4px;background:rgba(200,168,124,.08);border-radius:2px;margin-bottom:8px"><div class="sc-bar" data-width="72" style="height:100%;width:0%;background:var(--accent);border-radius:2px;transition:width 1.2s ease"></div></div>
+<div style="height:4px;background:rgba(198,168,94,.08);border-radius:2px;margin-bottom:8px"><div class="sc-bar" data-width="72" style="height:100%;width:0%;background:var(--accent);border-radius:2px;transition:width 1.2s ease"></div></div>
 <div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-size:10px;color:var(--text2)">Board Scores</span><span class="sc-pct" data-target="85" style="font-size:10px;color:var(--green);font-weight:500">0%</span></div>
-<div style="height:4px;background:rgba(200,168,124,.08);border-radius:2px;margin-bottom:8px"><div class="sc-bar" data-width="85" style="height:100%;width:0%;background:var(--green);border-radius:2px;transition:width 1.2s ease"></div></div>
+<div style="height:4px;background:rgba(198,168,94,.08);border-radius:2px;margin-bottom:8px"><div class="sc-bar" data-width="85" style="height:100%;width:0%;background:var(--green);border-radius:2px;transition:width 1.2s ease"></div></div>
 <div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-size:10px;color:var(--text2)">Leadership</span><span class="sc-pct" data-target="48" style="font-size:10px;color:var(--accent);font-weight:500">0%</span></div>
-<div style="height:4px;background:rgba(200,168,124,.08);border-radius:2px;margin-bottom:8px"><div class="sc-bar" data-width="48" style="height:100%;width:0%;background:var(--accent);border-radius:2px;transition:width 1.2s ease"></div></div>
+<div style="height:4px;background:rgba(198,168,94,.08);border-radius:2px;margin-bottom:8px"><div class="sc-bar" data-width="48" style="height:100%;width:0%;background:var(--accent);border-radius:2px;transition:width 1.2s ease"></div></div>
 <div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-size:10px;color:var(--text2)">Networking</span><span class="sc-pct" data-target="35" style="font-size:10px;color:var(--red);font-weight:500">0%</span></div>
-<div style="height:4px;background:rgba(200,168,124,.08);border-radius:2px"><div class="sc-bar" data-width="35" style="height:100%;width:0%;background:var(--red);border-radius:2px;transition:width 1.2s ease;opacity:.7"></div></div>
+<div style="height:4px;background:rgba(198,168,94,.08);border-radius:2px"><div class="sc-bar" data-width="35" style="height:100%;width:0%;background:var(--red);border-radius:2px;transition:width 1.2s ease;opacity:.7"></div></div>
 </div>
 </div>
 <div style="display:flex;gap:6px;flex-wrap:wrap">
-<span class="sc-tag" style="font-size:9px;padding:4px 10px;border-radius:100px;background:var(--accent-dim);color:var(--accent);font-weight:500;border:1px solid rgba(200,168,124,.15);opacity:0;transition:opacity .6s ease">⚡ 3 gaps identified</span>
+<span class="sc-tag" style="font-size:9px;padding:4px 10px;border-radius:100px;background:var(--accent-dim);color:var(--accent);font-weight:500;border:1px solid rgba(198,168,94,.15);opacity:0;transition:opacity .6s ease">⚡ 3 gaps identified</span>
 <span class="sc-tag" style="font-size:9px;padding:4px 10px;border-radius:100px;background:var(--green-dim);color:var(--green);font-weight:500;border:1px solid rgba(139,184,160,.15);opacity:0;transition:opacity .6s ease">✓ 2 strengths</span>
 </div>
 </div>
@@ -945,9 +946,9 @@ body.has-upgrade-bar #main-app{padding-bottom:70px}
 </div>
 </div>
 <svg viewBox="0 0 400 110" style="width:100%;height:auto">
-<line x1="30" y1="95" x2="380" y2="95" stroke="rgba(200,168,124,.08)" stroke-width=".5"/>
-<line x1="30" y1="55" x2="380" y2="55" stroke="rgba(200,168,124,.05)" stroke-width=".5" stroke-dasharray="4,4"/>
-<line x1="30" y1="15" x2="380" y2="15" stroke="rgba(200,168,124,.05)" stroke-width=".5" stroke-dasharray="4,4"/>
+<line x1="30" y1="95" x2="380" y2="95" stroke="rgba(198,168,94,.08)" stroke-width=".5"/>
+<line x1="30" y1="55" x2="380" y2="55" stroke="rgba(198,168,94,.05)" stroke-width=".5" stroke-dasharray="4,4"/>
+<line x1="30" y1="15" x2="380" y2="15" stroke="rgba(198,168,94,.05)" stroke-width=".5" stroke-dasharray="4,4"/>
 <text x="26" y="98" text-anchor="end" font-size="7" fill="rgba(240,236,230,.3)" font-family="sans-serif">$0</text>
 <text x="26" y="58" text-anchor="end" font-size="7" fill="rgba(240,236,230,.3)" font-family="sans-serif">$7M</text>
 <text x="26" y="18" text-anchor="end" font-size="7" fill="rgba(240,236,230,.3)" font-family="sans-serif">$14M</text>
@@ -988,7 +989,7 @@ body.has-upgrade-bar #main-app{padding-bottom:70px}
 <span style="font-size:11px">✓</span>
 <span style="font-size:10px;color:var(--green);font-weight:500">RVU rate $55 — above 75th %ile MGMA</span>
 </div>
-<div class="contract-flag" style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--accent-dim);border-radius:8px;border:1px solid rgba(200,168,124,.15);opacity:0;transform:translateX(-10px);transition:all .4s ease .3s">
+<div class="contract-flag" style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--accent-dim);border-radius:8px;border:1px solid rgba(198,168,94,.15);opacity:0;transform:translateX(-10px);transition:all .4s ease .3s">
 <span style="font-size:11px">⚠️</span>
 <span style="font-size:10px;color:var(--accent);font-weight:500">Tail coverage not included — negotiate</span>
 </div>
@@ -1010,7 +1011,7 @@ body.has-upgrade-bar #main-app{padding-bottom:70px}
 <div style="font-size:10px;color:var(--text3);font-weight:300">✓ Completed</div>
 </div>
 <div class="roadmap-node" style="position:relative;margin-bottom:20px;opacity:0;transform:translateY(8px);transition:all .5s ease .2s">
-<div style="position:absolute;left:-25px;top:2px;width:12px;height:12px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px rgba(200,168,124,.4)"></div>
+<div style="position:absolute;left:-25px;top:2px;width:12px;height:12px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px rgba(198,168,94,.4)"></div>
 <div style="font-size:12px;font-weight:500;color:var(--accent)">Cardiology Fellowship</div>
 <div style="font-size:10px;color:var(--text3);font-weight:300">● In Progress — 78th percentile</div>
 </div>
@@ -1073,8 +1074,8 @@ body.has-upgrade-bar #main-app{padding-bottom:70px}
 </div>
 
 <!-- HOOK: INSTANT VALUE -->
-<div class="lp-sec" id="hook-sec" style="background:linear-gradient(180deg,var(--bg),#0d0d14);position:relative;overflow:hidden">
-<div style="position:absolute;top:10%;right:-15%;width:400px;height:400px;background:radial-gradient(circle,rgba(200,168,124,.04),transparent 65%);pointer-events:none"></div>
+<div class="lp-sec" id="hook-sec" style="background:linear-gradient(180deg,var(--bg),var(--bg3));position:relative;overflow:hidden">
+<div style="position:absolute;top:10%;right:-15%;width:400px;height:400px;background:radial-gradient(circle,rgba(198,168,94,.04),transparent 65%);pointer-events:none"></div>
 <div style="position:relative;z-index:1;max-width:560px;margin:0 auto">
 
 <div style="text-align:center;margin-bottom:28px">
@@ -1177,7 +1178,7 @@ body.has-upgrade-bar #main-app{padding-bottom:70px}
 <div style="text-align:center;padding:18px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;margin-bottom:16px">
 <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:6px">Ready to see <em>your</em> numbers?</div>
 <div style="font-size:11px;color:var(--text3);line-height:1.6;margin-bottom:14px">The examples above are based on sample data. When you sign up, each tool asks you a short set of personalized questions — your scores, your debt, your goals — and generates results that are <strong style="color:var(--accent)">unique to you</strong>.</div>
-<button onclick="go('pg-onboard')" style="padding:16px 48px;font-size:15px;font-weight:600;color:#0a0a0f;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:12px;cursor:pointer;letter-spacing:.5px;display:block;width:100%">Start Free Access →</button>
+<button onclick="go('pg-onboard')" style="padding:16px 48px;font-size:15px;font-weight:600;color:#1C1A17;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:12px;cursor:pointer;letter-spacing:.5px;display:block;width:100%">Start Free Access →</button>
 <p style="font-size:11px;color:var(--text3);margin-top:10px">No credit card required.</p>
 </div>
 </div>
@@ -1312,7 +1313,7 @@ body.has-upgrade-bar #main-app{padding-bottom:70px}
 <span style="font-size:10px">✓</span>
 <span style="font-size:10px;color:var(--green);font-weight:500">RVU rate: $55 (above MGMA)</span>
 </div>
-<div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--accent-dim);border-radius:6px;border:1px solid rgba(200,168,124,.15)">
+<div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--accent-dim);border-radius:6px;border:1px solid rgba(198,168,94,.15)">
 <span style="font-size:10px">⚠️</span>
 <span style="font-size:10px;color:var(--accent);font-weight:500">Tail coverage: not included</span>
 </div>
@@ -1342,9 +1343,9 @@ body.has-upgrade-bar #main-app{padding-bottom:70px}
 <div style="font-size:9px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:12px">HeartWise</div>
 <!-- Mini income/savings/debt chart -->
 <svg viewBox="0 0 220 80" style="width:100%;height:auto;margin-bottom:8px">
-<line x1="20" y1="70" x2="200" y2="70" stroke="rgba(200,168,124,.15)" stroke-width=".5"/>
-<line x1="20" y1="45" x2="200" y2="45" stroke="rgba(200,168,124,.08)" stroke-width=".5" stroke-dasharray="3,3"/>
-<line x1="20" y1="20" x2="200" y2="20" stroke="rgba(200,168,124,.08)" stroke-width=".5" stroke-dasharray="3,3"/>
+<line x1="20" y1="70" x2="200" y2="70" stroke="rgba(198,168,94,.15)" stroke-width=".5"/>
+<line x1="20" y1="45" x2="200" y2="45" stroke="rgba(198,168,94,.08)" stroke-width=".5" stroke-dasharray="3,3"/>
+<line x1="20" y1="20" x2="200" y2="20" stroke="rgba(198,168,94,.08)" stroke-width=".5" stroke-dasharray="3,3"/>
 <!-- Income line (gold) -->
 <polyline points="20,65 60,55 100,42 140,30 180,20 200,16" fill="none" stroke="#C6A75E" stroke-width="1.5" stroke-linecap="round"/>
 <!-- Savings area -->
@@ -1381,15 +1382,15 @@ body.has-upgrade-bar #main-app{padding-bottom:70px}
 <div style="font-size:9px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:12px">HeartWise</div>
 <!-- Mini scenario cards -->
 <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:10px">
-<div style="display:flex;align-items:center;justify-content:space-between;padding:6px 10px;background:rgba(200,168,124,.08);border-radius:6px;border:1px solid rgba(200,168,124,.12)">
+<div style="display:flex;align-items:center;justify-content:space-between;padding:6px 10px;background:rgba(198,168,94,.08);border-radius:6px;border:1px solid rgba(198,168,94,.12)">
 <span style="font-size:9px;color:var(--text2);font-weight:400">Offer A · Academic</span>
 <span style="font-size:9px;color:var(--accent);font-weight:600">$620K</span>
 </div>
-<div style="display:flex;align-items:center;justify-content:space-between;padding:6px 10px;background:rgba(200,168,124,.08);border-radius:6px;border:1px solid rgba(200,168,124,.12)">
+<div style="display:flex;align-items:center;justify-content:space-between;padding:6px 10px;background:rgba(198,168,94,.08);border-radius:6px;border:1px solid rgba(198,168,94,.12)">
 <span style="font-size:9px;color:var(--text2);font-weight:400">Offer B · Private</span>
 <span style="font-size:9px;color:var(--green);font-weight:600">$785K</span>
 </div>
-<div style="display:flex;align-items:center;justify-content:space-between;padding:6px 10px;background:rgba(200,168,124,.08);border-radius:6px;border:1px solid rgba(200,168,124,.12)">
+<div style="display:flex;align-items:center;justify-content:space-between;padding:6px 10px;background:rgba(198,168,94,.08);border-radius:6px;border:1px solid rgba(198,168,94,.12)">
 <span style="font-size:9px;color:var(--text2);font-weight:400">Offer C · Hospital</span>
 <span style="font-size:9px;color:var(--text2);font-weight:600">$710K</span>
 </div>
@@ -1451,7 +1452,7 @@ ChatGPT and Claude are powerful AI tools — but they're general-purpose. <stron
 <div class="reveal" style="max-width:500px;margin:0 auto">
 
 <!-- Trial CTA -->
-<div style="padding:24px;border-radius:var(--r3);background:linear-gradient(160deg,rgba(200,168,124,.06),rgba(200,168,124,.02));border:1px solid var(--border2);margin-bottom:20px;text-align:center">
+<div style="padding:24px;border-radius:var(--r3);background:linear-gradient(160deg,rgba(198,168,94,.06),rgba(198,168,94,.02));border:1px solid var(--border2);margin-bottom:20px;text-align:center">
 <div style="font-size:18px;font-family:'Cormorant Garamond',serif;font-weight:600;margin-bottom:8px">48-Hour Full Access</div>
 <p style="font-size:13px;color:var(--text2);font-weight:300;line-height:1.6;margin-bottom:16px">Every tool. Every feature. No credit card. No limits. See what HeartWise can do for your career.</p>
 <button class="btn btn-a" onclick="go('pg-onboard')" style="max-width:260px;margin:0 auto">Start Free Trial</button>
@@ -1573,8 +1574,8 @@ ChatGPT and Claude are powerful AI tools — but they're general-purpose. <stron
 <div class="reveal" style="max-width:540px;margin:0 auto">
 
 <!-- Hero card -->
-<div style="padding:36px 28px;background:linear-gradient(160deg,var(--bg2),rgba(200,168,124,.03));border:1px solid var(--border2);border-radius:var(--r3);text-align:center;margin-bottom:24px">
-<img src="founder.jpg" alt="Dr. Mouzam Faroqui" style="width:120px;height:120px;border-radius:50%;object-fit:cover;object-position:center center;margin:0 auto 20px;display:block;border:3px solid rgba(200,168,124,.25);box-shadow:0 8px 32px rgba(0,0,0,.3)">
+<div style="padding:36px 28px;background:linear-gradient(160deg,var(--bg2),rgba(198,168,94,.03));border:1px solid var(--border2);border-radius:var(--r3);text-align:center;margin-bottom:24px">
+<img src="founder.jpg" alt="Dr. Mouzam Faroqui" style="width:120px;height:120px;border-radius:50%;object-fit:cover;object-position:center center;margin:0 auto 20px;display:block;border:3px solid rgba(198,168,94,.25);box-shadow:0 8px 32px rgba(0,0,0,.3)">
 <div style="font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:600;margin-bottom:4px">Mouzam Faroqui, MD, FACC</div>
 <div style="font-size:13px;color:var(--accent);font-weight:500;letter-spacing:.5px;margin-bottom:16px">Practicing Physician · Founder of HeartWise</div>
 <div style="display:flex;flex-direction:column;align-items:center;gap:6px">
@@ -1590,7 +1591,7 @@ ChatGPT and Claude are powerful AI tools — but they're general-purpose. <stron
 <div style="font-size:11px;font-weight:500;color:var(--accent);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:16px">The Journey</div>
 <p style="font-size:14px;color:var(--text2);line-height:1.8;font-weight:300;margin-bottom:14px">From medical student to Chief Resident and cardiology fellow, my career required navigating complex decisions about training, specialization, finances, and long-term strategy.</p>
 <p style="font-size:14px;color:var(--text2);line-height:1.8;font-weight:300;margin-bottom:18px">I built HeartWise to help medical students, residents, and physicians make those decisions with structured frameworks, financial trajectory tools, and physician-built strategy.</p>
-<div style="padding:16px;background:linear-gradient(160deg,#f5f0e8,#ece5d8);border:1px solid rgba(200,168,124,.2);border-radius:8px">
+<div style="padding:16px;background:linear-gradient(160deg,#f5f0e8,#ece5d8);border:1px solid rgba(198,168,94,.2);border-radius:8px">
 <p style="font-size:15px;color:#1a1620;line-height:1.7;font-weight:600;font-style:italic;margin:0;font-family:'Cormorant Garamond',serif">"The decisions that shape your career shouldn't be made in the dark."</p>
 </div>
 </div>
@@ -1615,7 +1616,7 @@ ChatGPT and Claude are powerful AI tools — but they're general-purpose. <stron
 </div>
 
 <div style="position:relative">
-<div style="position:absolute;left:-27px;top:2px;width:12px;height:12px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px rgba(200,168,124,.4)"></div>
+<div style="position:absolute;left:-27px;top:2px;width:12px;height:12px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px rgba(198,168,94,.4)"></div>
 <div style="font-size:14px;font-weight:500;color:var(--text);margin-bottom:3px">Deborah Heart and Lung Center</div>
 <div style="font-size:12px;color:var(--accent);font-weight:400;margin-bottom:2px">Sidney Kimmel Medical College at Thomas Jefferson University</div>
 <div style="font-size:11px;color:var(--text3);font-weight:300">Interventional Cardiology Fellowship → Chief Interventional Cardiology Fellow</div>
@@ -2287,8 +2288,8 @@ Sign Out</button>
 
 <!-- Toolkit Quiz -->
 <div id="vault-quiz" style="padding:20px 24px 0">
-<div style="background:linear-gradient(160deg,#1e1b2e,rgba(200,168,124,.06));border:1px solid rgba(200,168,124,.18);border-radius:14px;padding:24px;position:relative;overflow:hidden">
-<div style="position:absolute;top:-40%;right:-20%;width:160px;height:160px;background:radial-gradient(circle,rgba(200,168,124,.06),transparent 70%);border-radius:50%"></div>
+<div style="background:#fff;border:1px solid #E8E1D8;border-radius:14px;padding:24px;position:relative;overflow:hidden">
+<div style="position:absolute;top:-40%;right:-20%;width:160px;height:160px;background:radial-gradient(circle,rgba(198,168,94,.06),transparent 70%);border-radius:50%"></div>
 <div style="position:relative">
 <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
 <span style="font-size:20px">🧭</span>
@@ -2507,7 +2508,7 @@ Sign Out</button>
 <div class="card" style="padding:20px">
 
 <!-- Ask HeartWise AI Section -->
-<div style="margin-bottom:16px;padding:16px;background:linear-gradient(160deg,rgba(200,168,124,.08),rgba(200,168,124,.02));border:1px solid rgba(200,168,124,.15);border-radius:12px;cursor:pointer" onclick="toggleContactForm();navTo('scr-ask')">
+<div style="margin-bottom:16px;padding:16px;background:#fff;border:1px solid #E8E1D8;border-radius:12px;cursor:pointer" onclick="toggleContactForm();navTo('scr-ask')">
 <div style="display:flex;align-items:center;gap:12px">
 <span style="font-size:24px">🧠</span>
 <div>
@@ -2578,7 +2579,7 @@ Sign Out</button>
 <!-- Founder Bio (collapsible) -->
 <div id="founder-bio" class="hidden" style="margin-bottom:12px">
 <div class="card" style="padding:24px;text-align:center">
-<img src="founder.jpg" alt="Dr. Mouzam Faroqui" style="width:90px;height:90px;border-radius:50%;object-fit:cover;object-position:center center;margin:0 auto 14px;display:block;border:3px solid rgba(200,168,124,.25);box-shadow:0 4px 20px rgba(0,0,0,.3)">
+<img src="founder.jpg" alt="Dr. Mouzam Faroqui" style="width:90px;height:90px;border-radius:50%;object-fit:cover;object-position:center center;margin:0 auto 14px;display:block;border:3px solid rgba(198,168,94,.25);box-shadow:0 4px 20px rgba(0,0,0,.1)">
 <div class="serif" style="font-size:18px;font-weight:600;margin-bottom:4px">Mouzam Faroqui, MD, FACC</div>
 <div style="font-size:12px;color:var(--accent);font-weight:500;margin-bottom:14px">Practicing Physician · Founder of HeartWise</div>
 <div style="display:flex;flex-direction:column;align-items:center;gap:5px;margin-bottom:16px">
@@ -2589,7 +2590,7 @@ Sign Out</button>
 </div>
 <p style="font-size:12px;color:var(--text2);line-height:1.7;font-weight:300;margin:0 auto 14px;max-width:420px;text-align:left">From medical student to Chief Resident and cardiology fellow, my career required navigating complex decisions about training, specialization, finances, and long-term strategy.</p>
 <p style="font-size:12px;color:var(--text2);line-height:1.7;font-weight:300;margin:0 auto 14px;max-width:420px;text-align:left">I built HeartWise to help medical students, residents, and physicians make those decisions with structured frameworks, financial trajectory tools, and physician-built strategy.</p>
-<div style="padding:14px;background:linear-gradient(160deg,#f5f0e8,#ece5d8);border:1px solid rgba(200,168,124,.2);border-radius:8px">
+<div style="padding:14px;background:#fff;border:1px solid #E8E1D8;border-radius:8px">
 <p style="font-size:13px;color:#1a1620;line-height:1.7;font-weight:600;font-style:italic;margin:0;font-family:var(--font-serif)">"The decisions that shape your career shouldn't be made in the dark."</p>
 </div>
 </div>
@@ -2648,7 +2649,7 @@ Sign Out</button>
 
 <!-- Admin Tier Switcher (only visible to admin) -->
 <div id="admin-tier-switcher" class="hidden" style="margin-bottom:20px">
-<div class="card" style="padding:20px;border-color:rgba(200,168,124,.2)">
+<div class="card" style="padding:20px;border-color:#E8E1D8">
 <div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">🔧 Admin — Test As Tier</div>
 <p style="font-size:11px;color:var(--text3);margin-bottom:14px;line-height:1.5">Switch your view to simulate what each plan looks like. Admin features stay accessible.</p>
 <div style="display:flex;gap:8px;flex-wrap:wrap">
@@ -2663,7 +2664,7 @@ Sign Out</button>
 
 <div id="upgrade-section" class="hidden">
 <div id="sub-manage" class="hidden" style="margin-bottom:16px">
-<div class="card" style="padding:20px;border-color:rgba(200,168,124,.2)">
+<div class="card" style="padding:20px;border-color:#E8E1D8">
 <div style="font-size:13px;font-weight:600;margin-bottom:12px">Current Subscription</div>
 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
 <span style="font-size:14px;font-weight:600;color:var(--accent)" id="sub-plan-name">Free</span>
@@ -2850,7 +2851,7 @@ Sign Out</button>
 
 <!-- Hero -->
 <div id="lev-hero" style="padding:20px 24px 0">
-<div style="background:linear-gradient(160deg,#f5f0e8,#ece5d8);border:1px solid rgba(200,168,124,.35);border-radius:16px;padding:32px 28px;position:relative;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,.15)">
+<div style="background:#fff;border:1px solid #E8E1D8;border-radius:16px;padding:32px 28px;position:relative;overflow:hidden;box-shadow:0 2px 6px rgba(0,0,0,.04)">
 <div style="position:absolute;top:-30%;right:-15%;width:180px;height:180px;background:radial-gradient(circle,rgba(200,168,124,.2),transparent 65%);border-radius:50%"></div>
 <div style="position:absolute;bottom:-20%;left:-10%;width:140px;height:140px;background:radial-gradient(circle,rgba(200,168,124,.12),transparent 60%);border-radius:50%"></div>
 <div style="position:relative">
@@ -2937,7 +2938,7 @@ Sign Out</button>
 </div>
 
 <!-- Score Result -->
-<div id="lev-score-result" style="display:none;margin-top:16px;padding:20px;background:linear-gradient(160deg,rgba(200,168,124,.06),rgba(200,168,124,.02));border:1px solid rgba(200,168,124,.15);border-radius:12px;text-align:center">
+<div id="lev-score-result" style="display:none;margin-top:16px;padding:20px;background:rgba(198,168,94,.04);border:1px solid #E8E1D8;border-radius:12px;text-align:center">
 <div style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--text3);margin-bottom:6px">Your Leverage Score</div>
 <div id="lev-score-num" style="font-size:48px;font-weight:700;font-family:var(--font-serif);color:var(--accent)">0</div>
 <div id="lev-score-max" style="font-size:12px;color:var(--text3);margin-bottom:4px">out of 100</div>
@@ -2945,7 +2946,7 @@ Sign Out</button>
 <div id="lev-score-desc" style="font-size:13px;color:var(--text2);line-height:1.6"></div>
 <div id="lev-score-recs" style="margin-top:14px;text-align:left"></div>
 <div id="lev-score-history" style="margin-top:12px;font-size:11px;color:var(--text3)"></div>
-<button onclick="levResetQuiz()" style="margin-top:12px;font-size:11px;color:var(--accent);background:none;border:1px solid rgba(200,168,124,.25);border-radius:8px;padding:6px 16px;cursor:pointer">Retake Assessment</button>
+<button onclick="levResetQuiz()" style="margin-top:12px;font-size:11px;color:var(--accent);background:none;border:1px solid rgba(198,168,94,.20);border-radius:8px;padding:6px 16px;cursor:pointer">Retake Assessment</button>
 </div>
 </div>
 </div>
@@ -2972,16 +2973,16 @@ Sign Out</button>
 <div style="font-family:var(--font-serif);font-size:20px;font-weight:600;color:var(--text);margin-bottom:8px">Strategic Leverage Tools</div>
 <p style="font-size:13px;color:var(--text2);line-height:1.6;max-width:360px;margin:0 auto">10 interactive tools to accelerate your learning, research, career planning, and productivity. Here's what's inside:</p>
 </div>
-<div style="display:flex;align-items:flex-start;gap:12px;padding:14px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;margin-bottom:8px;opacity:0.85"><div style="font-size:22px;flex-shrink:0;margin-top:2px">🎯</div><div style="flex:1"><div style="font-size:14px;font-weight:600;color:var(--text)">Study Accelerator</div><div style="font-size:12px;color:var(--text3);line-height:1.5;margin-top:2px">Convert any material into active recall in minutes.</div></div><div style="flex-shrink:0;padding:4px 10px;border-radius:6px;background:rgba(200,168,124,.08);border:1px solid rgba(200,168,124,.15);font-size:10px;font-weight:600;color:var(--accent);white-space:nowrap">🔒 Mentorship</div></div>
-<div style="display:flex;align-items:flex-start;gap:12px;padding:14px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;margin-bottom:8px;opacity:0.85"><div style="font-size:22px;flex-shrink:0;margin-top:2px">🧠</div><div style="flex:1"><div style="font-size:14px;font-weight:600;color:var(--text)">Concept Simplifier</div><div style="font-size:12px;color:var(--text3);line-height:1.5;margin-top:2px">Understand any topic at three levels of depth.</div></div><div style="flex-shrink:0;padding:4px 10px;border-radius:6px;background:rgba(200,168,124,.08);border:1px solid rgba(200,168,124,.15);font-size:10px;font-weight:600;color:var(--accent);white-space:nowrap">🔒 Mentorship</div></div>
-<div style="display:flex;align-items:flex-start;gap:12px;padding:14px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;margin-bottom:8px;opacity:0.85"><div style="font-size:22px;flex-shrink:0;margin-top:2px">🧑‍⚕️</div><div style="flex:1"><div style="font-size:14px;font-weight:600;color:var(--text)">Case Simulator</div><div style="font-size:12px;color:var(--text3);line-height:1.5;margin-top:2px">Practice clinical reasoning with realistic cases.</div></div><div style="flex-shrink:0;padding:4px 10px;border-radius:6px;background:rgba(200,168,124,.08);border:1px solid rgba(200,168,124,.15);font-size:10px;font-weight:600;color:var(--accent);white-space:nowrap">🔒 Mentorship</div></div>
-<div style="display:flex;align-items:flex-start;gap:12px;padding:14px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;margin-bottom:8px;opacity:0.85"><div style="font-size:22px;flex-shrink:0;margin-top:2px">🔬</div><div style="flex:1"><div style="font-size:14px;font-weight:600;color:var(--text)">Research Idea Generator</div><div style="font-size:12px;color:var(--text3);line-height:1.5;margin-top:2px">Walk into mentor meetings with proposals, not empty hands.</div></div><div style="flex-shrink:0;padding:4px 10px;border-radius:6px;background:rgba(200,168,124,.08);border:1px solid rgba(200,168,124,.15);font-size:10px;font-weight:600;color:var(--accent);white-space:nowrap">🔒 Mentorship</div></div>
-<div style="display:flex;align-items:flex-start;gap:12px;padding:14px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;margin-bottom:8px;opacity:0.85"><div style="font-size:22px;flex-shrink:0;margin-top:2px">📚</div><div style="flex:1"><div style="font-size:14px;font-weight:600;color:var(--text)">Literature Synthesizer</div><div style="font-size:12px;color:var(--text3);line-height:1.5;margin-top:2px">Know the key trials on any topic in minutes.</div></div><div style="flex-shrink:0;padding:4px 10px;border-radius:6px;background:rgba(200,168,124,.08);border:1px solid rgba(200,168,124,.15);font-size:10px;font-weight:600;color:var(--accent);white-space:nowrap">🔒 Mentorship</div></div>
-<div style="display:flex;align-items:flex-start;gap:12px;padding:14px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;margin-bottom:8px;opacity:0.85"><div style="font-size:22px;flex-shrink:0;margin-top:2px">🏆</div><div style="flex:1"><div style="font-size:14px;font-weight:600;color:var(--text)">Fellowship Strategy Builder</div><div style="font-size:12px;color:var(--text3);line-height:1.5;margin-top:2px">Build a strategic plan to match into your target fellowship.</div></div><div style="flex-shrink:0;padding:4px 10px;border-radius:6px;background:rgba(200,168,124,.08);border:1px solid rgba(200,168,124,.15);font-size:10px;font-weight:600;color:var(--accent);white-space:nowrap">🔒 Mentorship</div></div>
-<div style="display:flex;align-items:flex-start;gap:12px;padding:14px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;margin-bottom:8px;opacity:0.85"><div style="font-size:22px;flex-shrink:0;margin-top:2px">🤝</div><div style="flex:1"><div style="font-size:14px;font-weight:600;color:var(--text)">Networking Strategist</div><div style="font-size:12px;color:var(--text3);line-height:1.5;margin-top:2px">Build strategic relationships, not random contacts.</div></div><div style="flex-shrink:0;padding:4px 10px;border-radius:6px;background:rgba(200,168,124,.08);border:1px solid rgba(200,168,124,.15);font-size:10px;font-weight:600;color:var(--accent);white-space:nowrap">🔒 Mentorship</div></div>
-<div style="display:flex;align-items:flex-start;gap:12px;padding:14px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;margin-bottom:8px;opacity:0.85"><div style="font-size:22px;flex-shrink:0;margin-top:2px">🚀</div><div style="flex:1"><div style="font-size:14px;font-weight:600;color:var(--text)">Productivity Multiplier</div><div style="font-size:12px;color:var(--text3);line-height:1.5;margin-top:2px">Automate the work that doesn't need your clinical judgment.</div></div><div style="flex-shrink:0;padding:4px 10px;border-radius:6px;background:rgba(200,168,124,.08);border:1px solid rgba(200,168,124,.15);font-size:10px;font-weight:600;color:var(--accent);white-space:nowrap">🔒 Mentorship</div></div>
-<div style="display:flex;align-items:flex-start;gap:12px;padding:14px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;margin-bottom:8px;opacity:0.85"><div style="font-size:22px;flex-shrink:0;margin-top:2px">📊</div><div style="flex:1"><div style="font-size:14px;font-weight:600;color:var(--text)">Career Path Modeler</div><div style="font-size:12px;color:var(--text3);line-height:1.5;margin-top:2px">Make career decisions with data, not assumptions.</div></div><div style="flex-shrink:0;padding:4px 10px;border-radius:6px;background:rgba(200,168,124,.08);border:1px solid rgba(200,168,124,.15);font-size:10px;font-weight:600;color:var(--accent);white-space:nowrap">🔒 Mentorship</div></div>
-<div style="display:flex;align-items:flex-start;gap:12px;padding:14px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;margin-bottom:8px;opacity:0.85"><div style="font-size:22px;flex-shrink:0;margin-top:2px">🌟</div><div style="flex:1"><div style="font-size:14px;font-weight:600;color:var(--text)">Personal Brand Builder</div><div style="font-size:12px;color:var(--text3);line-height:1.5;margin-top:2px">Start building your professional platform during training.</div></div><div style="flex-shrink:0;padding:4px 10px;border-radius:6px;background:rgba(200,168,124,.08);border:1px solid rgba(200,168,124,.15);font-size:10px;font-weight:600;color:var(--accent);white-space:nowrap">🔒 Mentorship</div></div>
+<div style="display:flex;align-items:flex-start;gap:12px;padding:14px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;margin-bottom:8px;opacity:0.85"><div style="font-size:22px;flex-shrink:0;margin-top:2px">🎯</div><div style="flex:1"><div style="font-size:14px;font-weight:600;color:var(--text)">Study Accelerator</div><div style="font-size:12px;color:var(--text3);line-height:1.5;margin-top:2px">Convert any material into active recall in minutes.</div></div><div style="flex-shrink:0;padding:4px 10px;border-radius:6px;background:rgba(198,168,94,.08);border:1px solid #E8E1D8;font-size:10px;font-weight:600;color:var(--accent);white-space:nowrap">🔒 Mentorship</div></div>
+<div style="display:flex;align-items:flex-start;gap:12px;padding:14px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;margin-bottom:8px;opacity:0.85"><div style="font-size:22px;flex-shrink:0;margin-top:2px">🧠</div><div style="flex:1"><div style="font-size:14px;font-weight:600;color:var(--text)">Concept Simplifier</div><div style="font-size:12px;color:var(--text3);line-height:1.5;margin-top:2px">Understand any topic at three levels of depth.</div></div><div style="flex-shrink:0;padding:4px 10px;border-radius:6px;background:rgba(198,168,94,.08);border:1px solid #E8E1D8;font-size:10px;font-weight:600;color:var(--accent);white-space:nowrap">🔒 Mentorship</div></div>
+<div style="display:flex;align-items:flex-start;gap:12px;padding:14px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;margin-bottom:8px;opacity:0.85"><div style="font-size:22px;flex-shrink:0;margin-top:2px">🧑‍⚕️</div><div style="flex:1"><div style="font-size:14px;font-weight:600;color:var(--text)">Case Simulator</div><div style="font-size:12px;color:var(--text3);line-height:1.5;margin-top:2px">Practice clinical reasoning with realistic cases.</div></div><div style="flex-shrink:0;padding:4px 10px;border-radius:6px;background:rgba(198,168,94,.08);border:1px solid #E8E1D8;font-size:10px;font-weight:600;color:var(--accent);white-space:nowrap">🔒 Mentorship</div></div>
+<div style="display:flex;align-items:flex-start;gap:12px;padding:14px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;margin-bottom:8px;opacity:0.85"><div style="font-size:22px;flex-shrink:0;margin-top:2px">🔬</div><div style="flex:1"><div style="font-size:14px;font-weight:600;color:var(--text)">Research Idea Generator</div><div style="font-size:12px;color:var(--text3);line-height:1.5;margin-top:2px">Walk into mentor meetings with proposals, not empty hands.</div></div><div style="flex-shrink:0;padding:4px 10px;border-radius:6px;background:rgba(198,168,94,.08);border:1px solid #E8E1D8;font-size:10px;font-weight:600;color:var(--accent);white-space:nowrap">🔒 Mentorship</div></div>
+<div style="display:flex;align-items:flex-start;gap:12px;padding:14px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;margin-bottom:8px;opacity:0.85"><div style="font-size:22px;flex-shrink:0;margin-top:2px">📚</div><div style="flex:1"><div style="font-size:14px;font-weight:600;color:var(--text)">Literature Synthesizer</div><div style="font-size:12px;color:var(--text3);line-height:1.5;margin-top:2px">Know the key trials on any topic in minutes.</div></div><div style="flex-shrink:0;padding:4px 10px;border-radius:6px;background:rgba(198,168,94,.08);border:1px solid #E8E1D8;font-size:10px;font-weight:600;color:var(--accent);white-space:nowrap">🔒 Mentorship</div></div>
+<div style="display:flex;align-items:flex-start;gap:12px;padding:14px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;margin-bottom:8px;opacity:0.85"><div style="font-size:22px;flex-shrink:0;margin-top:2px">🏆</div><div style="flex:1"><div style="font-size:14px;font-weight:600;color:var(--text)">Fellowship Strategy Builder</div><div style="font-size:12px;color:var(--text3);line-height:1.5;margin-top:2px">Build a strategic plan to match into your target fellowship.</div></div><div style="flex-shrink:0;padding:4px 10px;border-radius:6px;background:rgba(198,168,94,.08);border:1px solid #E8E1D8;font-size:10px;font-weight:600;color:var(--accent);white-space:nowrap">🔒 Mentorship</div></div>
+<div style="display:flex;align-items:flex-start;gap:12px;padding:14px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;margin-bottom:8px;opacity:0.85"><div style="font-size:22px;flex-shrink:0;margin-top:2px">🤝</div><div style="flex:1"><div style="font-size:14px;font-weight:600;color:var(--text)">Networking Strategist</div><div style="font-size:12px;color:var(--text3);line-height:1.5;margin-top:2px">Build strategic relationships, not random contacts.</div></div><div style="flex-shrink:0;padding:4px 10px;border-radius:6px;background:rgba(198,168,94,.08);border:1px solid #E8E1D8;font-size:10px;font-weight:600;color:var(--accent);white-space:nowrap">🔒 Mentorship</div></div>
+<div style="display:flex;align-items:flex-start;gap:12px;padding:14px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;margin-bottom:8px;opacity:0.85"><div style="font-size:22px;flex-shrink:0;margin-top:2px">🚀</div><div style="flex:1"><div style="font-size:14px;font-weight:600;color:var(--text)">Productivity Multiplier</div><div style="font-size:12px;color:var(--text3);line-height:1.5;margin-top:2px">Automate the work that doesn't need your clinical judgment.</div></div><div style="flex-shrink:0;padding:4px 10px;border-radius:6px;background:rgba(198,168,94,.08);border:1px solid #E8E1D8;font-size:10px;font-weight:600;color:var(--accent);white-space:nowrap">🔒 Mentorship</div></div>
+<div style="display:flex;align-items:flex-start;gap:12px;padding:14px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;margin-bottom:8px;opacity:0.85"><div style="font-size:22px;flex-shrink:0;margin-top:2px">📊</div><div style="flex:1"><div style="font-size:14px;font-weight:600;color:var(--text)">Career Path Modeler</div><div style="font-size:12px;color:var(--text3);line-height:1.5;margin-top:2px">Make career decisions with data, not assumptions.</div></div><div style="flex-shrink:0;padding:4px 10px;border-radius:6px;background:rgba(198,168,94,.08);border:1px solid #E8E1D8;font-size:10px;font-weight:600;color:var(--accent);white-space:nowrap">🔒 Mentorship</div></div>
+<div style="display:flex;align-items:flex-start;gap:12px;padding:14px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;margin-bottom:8px;opacity:0.85"><div style="font-size:22px;flex-shrink:0;margin-top:2px">🌟</div><div style="flex:1"><div style="font-size:14px;font-weight:600;color:var(--text)">Personal Brand Builder</div><div style="font-size:12px;color:var(--text3);line-height:1.5;margin-top:2px">Start building your professional platform during training.</div></div><div style="flex-shrink:0;padding:4px 10px;border-radius:6px;background:rgba(198,168,94,.08);border:1px solid #E8E1D8;font-size:10px;font-weight:600;color:var(--accent);white-space:nowrap">🔒 Mentorship</div></div>
 <div style="text-align:center;padding:28px 0 8px">
 <p style="font-size:14px;color:var(--text2);line-height:1.6;margin-bottom:16px;max-width:340px;margin-left:auto;margin-right:auto">These tools are available exclusively with a Mentorship subscription.</p>
 <button class="btn btn-a" onclick="navTo('scr-profile');showUpgrade()" style="max-width:280px;margin:0 auto;padding:14px 32px;font-size:15px">Upgrade to Mentorship →</button>
@@ -3038,7 +3039,7 @@ Sign Out</button>
 </div>
 
 <!-- Sticky Upgrade Bar (Free users) -->
-<div id="upgrade-sticky-bar" class="hidden" style="position:fixed;bottom:0;left:0;right:0;z-index:900;background:linear-gradient(135deg,#12111a,#171622);border-top:1px solid rgba(200,168,124,.25);padding:12px 20px;display:flex;align-items:center;justify-content:center;gap:14px;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)">
+<div id="upgrade-sticky-bar" class="hidden" style="position:fixed;bottom:0;left:0;right:0;z-index:900;background:rgba(245,241,235,.95);border-top:1px solid var(--border);padding:12px 20px;display:flex;align-items:center;justify-content:center;gap:14px;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)">
 <div style="display:flex;align-items:center;gap:10px;flex:1;max-width:600px">
 <span style="font-size:18px">🔓</span>
 <div style="flex:1">
@@ -4858,7 +4859,7 @@ function hookQ(q,val,btn){
   var cls=q===1?'.hook-opt':q===2?'.hook-opt2':'.hook-opt3';
   var sec=document.getElementById('hook-q'+q);
   sec.querySelectorAll(cls).forEach(function(b){b.style.borderColor='var(--border)';b.style.background='var(--bg2)'});
-  btn.style.borderColor='var(--accent)';btn.style.background='rgba(200,168,124,.08)';
+  btn.style.borderColor='var(--accent)';btn.style.background='rgba(198,168,94,.08)';
   if(q===1){
     hookA.stage=val;hookA.goal=null;hookA.urgency=null;
     document.getElementById('hook-q2').style.display='';
@@ -5090,12 +5091,12 @@ function renderPreviewTab(bodyEl,dList,idx){
   h+='</div>';
   // Sample inputs badge
   if(d.inp){
-    h+='<div style="display:inline-block;padding:4px 10px;background:rgba(200,168,124,.08);border:1px solid rgba(200,168,124,.12);border-radius:6px;font-size:9px;color:var(--accent);margin-bottom:14px;letter-spacing:.3px">📊 Sample inputs: '+d.inp+'</div>';
+    h+='<div style="display:inline-block;padding:4px 10px;background:rgba(198,168,94,.08);border:1px solid rgba(198,168,94,.10);border-radius:6px;font-size:9px;color:var(--accent);margin-bottom:14px;letter-spacing:.3px">📊 Sample inputs: '+d.inp+'</div>';
   }
   // Comparison cards
   h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">';
   d.c.forEach(function(c){
-    h+='<div style="padding:16px;background:var(--bg);border-radius:10px;text-align:center;border:1px solid rgba(200,168,124,.12)">';
+    h+='<div style="padding:16px;background:var(--bg);border-radius:10px;text-align:center;border:1px solid rgba(198,168,94,.10)">';
     h+='<div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">'+c[0]+'</div>';
     h+='<div style="font-size:9px;color:var(--text3);margin-bottom:6px">'+c[1]+'</div>';
     h+='<div style="font-size:28px;font-weight:700;color:'+c[3]+';font-family:var(--font-serif);line-height:1.1">'+c[2]+'</div>';
@@ -5103,7 +5104,7 @@ function renderPreviewTab(bodyEl,dList,idx){
   });
   h+='</div>';
   // Insight
-  h+='<div style="text-align:center;font-size:12px;color:var(--text2);font-weight:500;line-height:1.5;padding:12px 14px;background:rgba(200,168,124,.04);border:1px solid rgba(200,168,124,.08);border-radius:8px">'+d.ins+'</div>';
+  h+='<div style="text-align:center;font-size:12px;color:var(--text2);font-weight:500;line-height:1.5;padding:12px 14px;background:rgba(198,168,94,.04);border:1px solid rgba(198,168,94,.08);border-radius:8px">'+d.ins+'</div>';
   // "Your version" line
   if(d.yours){
     h+='<div style="text-align:center;margin-top:10px;padding:8px 12px;background:rgba(139,184,160,.06);border:1px solid rgba(139,184,160,.12);border-radius:8px;font-size:9px;color:var(--text3)">🔑 <span style="color:var(--text2)">Your personalized version uses:</span> '+d.yours+'</div>';
@@ -5638,7 +5639,7 @@ function updateTrialBanner(){
   var mins=Math.floor((diff%3600000)/60000);
   var urgency=hours<6?'var(--red)':hours<12?'var(--accent)':'var(--green)';
   var urgencyBg=hours<6?'var(--red-dim)':hours<12?'var(--accent-dim)':'var(--green-dim)';
-  var urgencyBorder=hours<6?'rgba(196,77,86,.2)':hours<12?'rgba(200,168,124,.2)':'rgba(139,184,160,.2)';
+  var urgencyBorder=hours<6?'rgba(196,77,86,.2)':hours<12?'rgba(198,168,94,.15)':'rgba(139,184,160,.2)';
   el.style.background=urgencyBg;
   el.style.borderColor=urgencyBorder;
   el.innerHTML='<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap"><span style="font-size:18px">⚡</span><div style="flex:1;min-width:180px"><div style="font-size:13px;font-weight:600;color:'+urgency+'">Full Access Trial — '+hours+'h '+mins+'m remaining</div><div style="font-size:11px;color:var(--text2);margin-top:2px">Every tool unlocked. Explore everything before time runs out.</div></div><button class="btn btn-a btn-sm" onclick="navTo(\'scr-profile\');showUpgrade()" style="flex-shrink:0;width:auto;padding:8px 18px">Keep Access →</button></div>';
@@ -6036,7 +6037,7 @@ function renderDashboard(){
     var daysSince=lastUpdate?Math.floor((new Date()-lastUpdate)/86400000):999;
     if(daysSince>=30){
       refreshEl.style.display='';
-      refreshEl.innerHTML='<div style="display:flex;align-items:center;gap:10px;padding:14px 16px;background:linear-gradient(160deg,rgba(200,168,124,.06),rgba(200,168,124,.02));border:1px solid rgba(200,168,124,.2);border-radius:10px;cursor:pointer" onclick="showUpdateProfile()">'
+      refreshEl.innerHTML='<div style="display:flex;align-items:center;gap:10px;padding:14px 16px;background:linear-gradient(160deg,rgba(198,168,94,.06),rgba(200,168,124,.02));border:1px solid rgba(198,168,94,.15);border-radius:10px;cursor:pointer" onclick="showUpdateProfile()">'
         +'<span style="font-size:16px">🔄</span>'
         +'<div style="flex:1"><div style="font-size:12px;font-weight:600;color:var(--accent)">Your scores are '+daysSince+' days old</div>'
         +'<div style="font-size:11px;color:var(--text3);margin-top:2px">A lot can change in a month. Update your profile to recalculate.</div></div>'
@@ -6560,11 +6561,11 @@ function renderNextStep(){
     var _hasPlan2=U.tier==='core'||U.tier==='elite'||U.tier==='admin'||U.isTrial;
     if(_hasPlan2){
       h='<div onclick="showUpdateProfile()" style="cursor:pointer;margin-top:4px">';
-      h+='<p style="font-family:var(--font-serif);font-size:16px;color:#1a1620;line-height:1.4;font-weight:600;margin:0 0 8px">Set up your Career Profile to get personalized scores and recommendations.</p>';
+      h+='<p style="font-family:var(--font-serif);font-size:16px;color:#1C1A17;line-height:1.4;font-weight:600;margin:0 0 8px">Set up your Career Profile to get personalized scores and recommendations.</p>';
       h+='<span style="font-size:12px;color:#9a8a72;font-weight:600">Takes 2 minutes → personalized dashboard ✨</span>';
       h+='</div>';
     }else{
-      h='<p style="font-family:var(--font-serif);font-size:16px;color:#1a1620;line-height:1.4;font-weight:600;margin:0">Your career is too important for guesswork.</p>';
+      h='<p style="font-family:var(--font-serif);font-size:16px;color:#1C1A17;line-height:1.4;font-weight:600;margin:0">Your career is too important for guesswork.</p>';
     }
     el.innerHTML=h;
     return;
@@ -6604,16 +6605,16 @@ function renderNextStep(){
     var daysSince=lastUpdate?Math.floor((new Date()-lastUpdate)/86400000):999;
     if(daysSince>=30){
       h='<div onclick="showUpdateProfile()" style="cursor:pointer;margin-top:4px">';
-      h+='<p style="font-family:var(--font-serif);font-size:16px;color:#1a1620;line-height:1.4;font-weight:600;margin:0 0 6px">Your scores are '+daysSince+' days old.</p>';
+      h+='<p style="font-family:var(--font-serif);font-size:16px;color:#1C1A17;line-height:1.4;font-weight:600;margin:0 0 6px">Your scores are '+daysSince+' days old.</p>';
       h+='<p style="font-size:12px;color:#6a6560;margin:0">Update your profile to see how you\'ve progressed. <span style="color:#9a8a72;font-weight:600">Update →</span></p>';
       h+='</div>';
     }else{
-      h='<p style="font-family:var(--font-serif);font-size:16px;color:#1a1620;line-height:1.4;font-weight:600;margin:0 0 6px">You\'re on track.</p>';
+      h='<p style="font-family:var(--font-serif);font-size:16px;color:#1C1A17;line-height:1.4;font-weight:600;margin:0 0 6px">You\'re on track.</p>';
       h+='<p style="font-size:12px;color:#6a6560;margin:0">Ask a question or explore a new tool to keep building your strategy.</p>';
     }
   }else{
     h='<div onclick="navTo(\'scr-vault\')" style="cursor:pointer;margin-top:4px">';
-    h+='<p style="font-family:var(--font-serif);font-size:16px;color:#1a1620;line-height:1.4;font-weight:600;margin:0 0 6px">Your <span style="color:#C6A85E">'+lowest.key+'</span> score is '+lowest.val+'. '+actionMap[lowest.key]+'</p>';
+    h+='<p style="font-family:var(--font-serif);font-size:16px;color:#1C1A17;line-height:1.4;font-weight:600;margin:0 0 6px">Your <span style="color:#C6A85E">'+lowest.key+'</span> score is '+lowest.val+'. '+actionMap[lowest.key]+'</p>';
     h+='<span style="font-size:12px;color:#9a8a72;font-weight:600">Open Career Tools →</span>';
     h+='</div>';
   }
@@ -6754,7 +6755,7 @@ function renderWeeklyFocus(){
   var onclick=focus.tool?'openFramework(\''+focus.tool+'\')':focus.action==='profile'?'showUpdateProfile()':'';
 
   el.style.display='';
-  el.innerHTML='<div onclick="'+onclick+'" style="padding:18px;background:linear-gradient(160deg,rgba(200,168,124,.08),rgba(200,168,124,.02));border:1.5px solid rgba(200,168,124,.25);border-radius:12px;cursor:pointer;transition:border-color .2s">'
+  el.innerHTML='<div onclick="'+onclick+'" style="padding:18px;background:linear-gradient(160deg,rgba(198,168,94,.08),rgba(200,168,124,.02));border:1.5px solid rgba(198,168,94,.20);border-radius:12px;cursor:pointer;transition:border-color .2s">'
     +'<div style="display:flex;align-items:center;gap:6px;margin-bottom:8px"><span style="font-size:10px;font-weight:700;color:'+urgColor+';text-transform:uppercase;letter-spacing:1px">'+urgLabel+'</span></div>'
     +'<div style="display:flex;align-items:flex-start;gap:12px">'
     +'<span style="font-size:28px;flex-shrink:0">'+focus.icon+'</span>'
@@ -6917,7 +6918,7 @@ function renderToolOfWeek(){
   var toolsUsed=(U.toolHistory||[]).map(function(t){return t.tool});
   var alreadyUsed=toolsUsed.indexOf(tool.title)>=0;
 
-  el.innerHTML='<div onclick="openFramework(\''+tool.id+'\')" class="card" style="padding:16px;cursor:pointer;border:1px solid rgba(200,168,124,.15);transition:border-color .2s">'
+  el.innerHTML='<div onclick="openFramework(\''+tool.id+'\')" class="card" style="padding:16px;cursor:pointer;border:1px solid rgba(198,168,94,.15);transition:border-color .2s">'
     +'<div style="display:flex;align-items:center;gap:6px;margin-bottom:8px">'
     +'<span style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px">⭐ Tool of the Week</span>'
     +(alreadyUsed?'<span style="font-size:9px;padding:2px 8px;background:rgba(106,191,75,.1);color:var(--green);border-radius:10px;font-weight:600">Used ✓</span>':'')
@@ -7010,7 +7011,7 @@ function showQuestion(id){
   }
   // Upgrade prompt for free users
   if(U&&U.tier==='free'){
-    h+='<div style="margin-top:20px;padding:18px;border-radius:var(--r2);background:linear-gradient(135deg,var(--accent-dim),rgba(200,168,124,.06));border:1px solid rgba(200,168,124,.2)">';
+    h+='<div style="margin-top:20px;padding:18px;border-radius:var(--r2);background:linear-gradient(135deg,var(--accent-dim),rgba(198,168,94,.06));border:1px solid rgba(198,168,94,.15)">';
     h+='<div style="font-size:14px;font-weight:600;color:var(--accent);margin-bottom:6px">⚡ Want more structured guidance?</div>';
     h+='<p style="font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.5">Upgrade to Core for unlimited strategic assessments, financial modeling tools, and scenario simulations.</p>';
     h+='<button class="btn btn-a btn-sm" onclick="closeModal(\'modal-q\');navTo(\'scr-profile\');showUpgrade()" style="max-width:200px">View Plans \u2192</button></div>';
@@ -7364,7 +7365,7 @@ function fprShowMockInterview(spec){
   window._fprMockQuestions=questions;
   window._fprMockSpec=spec;
 
-  var h='<div style="margin-top:24px;padding:20px;background:linear-gradient(160deg,rgba(200,168,124,.06),rgba(200,168,124,.02));border:1px solid rgba(200,168,124,.15);border-radius:12px">';
+  var h='<div style="margin-top:24px;padding:20px;background:linear-gradient(160deg,rgba(198,168,94,.06),rgba(200,168,124,.02));border:1px solid rgba(198,168,94,.15);border-radius:12px">';
   h+='<div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">';
   h+='<div style="font-size:24px">\ud83c\udf99\ufe0f</div>';
   h+='<div><div style="font-size:15px;font-weight:600;color:var(--accent);font-family:var(--font-serif)">Mock Interview: '+specName+'</div>';
@@ -7667,7 +7668,7 @@ function crsCalc(){
   }
 
   // Bottom line
-  h+='<div style="padding:16px;background:linear-gradient(160deg,rgba(200,168,124,.06),rgba(200,168,124,.02));border:1px solid rgba(200,168,124,.15);border-radius:12px">';
+  h+='<div style="padding:16px;background:linear-gradient(160deg,rgba(198,168,94,.06),rgba(200,168,124,.02));border:1px solid rgba(198,168,94,.15);border-radius:12px">';
   h+='<div style="font-size:12px;font-weight:600;color:var(--accent);margin-bottom:8px">\ud83e\udde0 What to Do Next</div>';
   h+='<div style="font-size:12px;color:var(--text2);line-height:1.8">';
   if(reds.length>=3) h+='<p style="margin-bottom:8px"><strong>'+reds.length+' red flags</strong> is too many to negotiate alone. Hire a healthcare contract attorney ($2-3.5K). They typically save physicians $20-50K+ in improved terms. This is not optional — it\u2019s a financial investment with a clear ROI.</p>';
@@ -7941,7 +7942,7 @@ function ocmCompare(){
   h+=renderOfferAnalysis(bN,'var(--green)',bAnalysis);
 
   // Bottom line
-  h+='<div style="padding:18px;background:linear-gradient(160deg,rgba(200,168,124,.06),rgba(200,168,124,.02));border:1px solid rgba(200,168,124,.15);border-radius:12px;margin-top:4px">';
+  h+='<div style="padding:18px;background:linear-gradient(160deg,rgba(198,168,94,.06),rgba(200,168,124,.02));border:1px solid rgba(198,168,94,.15);border-radius:12px;margin-top:4px">';
   h+='<div style="font-size:12px;font-weight:600;color:var(--accent);margin-bottom:8px">\ud83e\udde0 The Honest Bottom Line</div>';
   h+='<div style="font-size:12px;color:var(--text2);line-height:1.8">';
 
@@ -8082,8 +8083,8 @@ function sfaUpdate(){
   var h='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:14px">\u2728 Your Top Specialty Matches</div>';
   top.forEach(function(s,i){
     var pct=Math.round((s.fit/maxFit)*100);
-    var border=i===0?'rgba(200,168,124,.3)':'var(--border)';
-    h+='<div style="padding:16px;background:var(--bg2);border:1px solid '+border+';border-radius:10px;margin-bottom:10px'+(i===0?';box-shadow:0 0 20px rgba(200,168,124,.06)':'')+'">';
+    var border=i===0?'rgba(198,168,94,.20)':'var(--border)';
+    h+='<div style="padding:16px;background:var(--bg2);border:1px solid '+border+';border-radius:10px;margin-bottom:10px'+(i===0?';box-shadow:0 0 20px rgba(198,168,94,.06)':'')+'">';
     h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">';
     h+='<span style="font-size:14px;font-weight:600;color:var(--text)">'+s.icon+' '+s.name+'</span>';
     if(i===0)h+='<span style="font-size:9px;padding:3px 8px;border-radius:100px;background:var(--accent-dim);color:var(--accent);font-weight:600">#1 FIT</span>';
@@ -8517,7 +8518,7 @@ function mccCalculate(){
   h+='</div>';
 
   // 6. LOR Strategy — How to Secure Letters from Subspecialty Leaders
-  h+='<div style="margin-bottom:16px;padding:16px;background:linear-gradient(160deg,rgba(200,168,124,.06),rgba(200,168,124,.01));border:1px solid rgba(200,168,124,.2);border-radius:10px">';
+  h+='<div style="margin-bottom:16px;padding:16px;background:linear-gradient(160deg,rgba(198,168,94,.06),rgba(200,168,124,.01));border:1px solid rgba(198,168,94,.15);border-radius:10px">';
   h+='<div style="font-size:11px;font-weight:600;color:var(--accent);margin-bottom:4px">✉️ How to Secure Strong Letters from Subspecialty Leaders</div>';
   h+='<div style="font-size:10px;color:var(--text3);margin-bottom:12px">Letters from recognized leaders can transform a borderline application into a competitive one</div>';
 
@@ -8563,7 +8564,7 @@ function mccCalculate(){
   h+='</ul></div>';
 
   // 8. What-If Scenarios
-  h+='<div style="margin-bottom:16px;padding:16px;background:linear-gradient(160deg,rgba(200,168,124,.04),rgba(200,168,124,.01));border:1px solid rgba(200,168,124,.15);border-radius:10px">';
+  h+='<div style="margin-bottom:16px;padding:16px;background:linear-gradient(160deg,rgba(198,168,94,.04),rgba(200,168,124,.01));border:1px solid rgba(198,168,94,.15);border-radius:10px">';
   h+='<div style="font-size:11px;font-weight:600;color:var(--accent);margin-bottom:10px">🔬 What-If Scenarios</div>';
   h+='<div style="font-size:11px;color:var(--text3);margin-bottom:10px">See how improvements change your score and match probability.</div>';
   var simStep=step2+10;
@@ -8593,7 +8594,7 @@ function mccCalculate(){
   h+='</div>';
 
   // 9. Save Profile
-  h+='<div style="text-align:center;margin-bottom:16px"><button onclick="mccSaveProfile()" class="btn" style="font-size:12px;padding:10px 24px;border:1px solid rgba(200,168,124,.25);color:var(--accent);background:none;cursor:pointer;border-radius:8px">💾 Save Competitiveness Profile</button>';
+  h+='<div style="text-align:center;margin-bottom:16px"><button onclick="mccSaveProfile()" class="btn" style="font-size:12px;padding:10px 24px;border:1px solid rgba(198,168,94,.20);color:var(--accent);background:none;cursor:pointer;border-radius:8px">💾 Save Competitiveness Profile</button>';
   h+='<div style="font-size:10px;color:var(--text3);margin-top:6px">Track improvements as your application strengthens.</div></div>';
 
   // 10. Related Tools
@@ -9121,7 +9122,7 @@ function csbGenerate(){
   var nowLabels={ms1:'MS-1/2',ms2:'MS-1/2',ms3:'MS-3/4',intern:'PGY-1',resident:'PGY-2/3',senior:'PGY-4+',fellow:'Fellow',attending:'Attending'};
 
   // Header
-  h+='<div style="text-align:center;padding:20px;background:linear-gradient(160deg,rgba(200,168,124,.1),rgba(200,168,124,.03));border:1px solid rgba(200,168,124,.15);border-radius:14px;margin-bottom:20px">';
+  h+='<div style="text-align:center;padding:20px;background:linear-gradient(160deg,rgba(200,168,124,.1),rgba(200,168,124,.03));border:1px solid rgba(198,168,94,.15);border-radius:14px;margin-bottom:20px">';
   h+='<div style="font-size:11px;color:var(--accent);font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px">Your Career Roadmap</div>';
   h+='<div style="font-size:20px;font-weight:600;color:var(--text);font-family:var(--font-serif);margin-bottom:4px">\ud83d\udccd '+tName+'</div>';
   h+='<div style="font-size:12px;color:var(--text3)">From '+(nowLabels[now]||now)+' \u2022 '+(urgency==='1'?'Applying this cycle':'Timeline: '+urgency+' year(s)')+(isDO?' \u2022 DO':'')+'</div>';
@@ -9151,7 +9152,7 @@ function csbGenerate(){
     confidence:'Every physician feels this. You\'re here building a strategy \u2014 that\'s evidence of competence. Focus on objective metrics. Track progress. Celebrate wins.'
   };
   if(concern&&concern!=='none'&&concernAdvice[concern]){
-    h+='<div style="margin-bottom:20px;padding:16px;background:linear-gradient(160deg,rgba(200,168,124,.06),rgba(200,168,124,.02));border:1px solid rgba(200,168,124,.15);border-radius:12px">';
+    h+='<div style="margin-bottom:20px;padding:16px;background:linear-gradient(160deg,rgba(198,168,94,.06),rgba(200,168,124,.02));border:1px solid rgba(198,168,94,.15);border-radius:12px">';
     h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">\ud83d\udca1 Addressing: '+concernLabels[concern]+'</div>';
     h+='<div style="font-size:12px;color:var(--text2);line-height:1.7">'+concernAdvice[concern]+'</div></div>';
   }
@@ -9161,7 +9162,7 @@ function csbGenerate(){
   phases.forEach(function(phase,i){
     h+='<div style="position:relative;padding-left:28px;padding-bottom:'+(i<phases.length-1?'20px':'0')+'">';
     if(i<phases.length-1)h+='<div style="position:absolute;left:8px;top:20px;bottom:0;width:2px;background:var(--border)"></div>';
-    h+='<div style="position:absolute;left:0;top:2px;width:18px;height:18px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:10px;color:#0a0a0f;font-weight:700">'+(i+1)+'</div>';
+    h+='<div style="position:absolute;left:0;top:2px;width:18px;height:18px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:10px;color:#1C1A17;font-weight:700">'+(i+1)+'</div>';
     h+='<div style="font-size:10px;color:var(--accent);font-weight:600;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">'+phase.time+'</div>';
     h+='<div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:8px">'+phase.title+'</div>';
     h+='<ul style="font-size:12px;color:var(--text2);line-height:1.8;padding-left:16px;margin:0">';
@@ -9182,13 +9183,13 @@ function csbGenerate(){
     h+='<div style="margin-top:20px;padding:16px;background:var(--bg2);border:1px solid var(--border);border-radius:12px">';
     h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">\ud83e\udde0 Recommended Next Steps</div>';
     nextTools.slice(0,4).forEach(function(t){
-      h+='<div onclick="openFramework(\''+t.id+'\')" style="display:flex;align-items:center;gap:10px;padding:10px;margin-bottom:6px;background:var(--bg3);border-radius:8px;cursor:pointer;transition:background .2s" onmouseenter="this.style.background=\'rgba(200,168,124,.08)\'" onmouseleave="this.style.background=\'var(--bg3)\'">';
+      h+='<div onclick="openFramework(\''+t.id+'\')" style="display:flex;align-items:center;gap:10px;padding:10px;margin-bottom:6px;background:var(--bg3);border-radius:8px;cursor:pointer;transition:background .2s" onmouseenter="this.style.background=\'rgba(198,168,94,.08)\'" onmouseleave="this.style.background=\'var(--bg3)\'">';
       h+='<span style="font-size:18px">'+t.icon+'</span><div><div style="font-size:12px;font-weight:600;color:var(--text)">'+t.name+'</div><div style="font-size:10px;color:var(--text3)">'+t.why+'</div></div></div>';
     });
     h+='</div>';
   }
 
-  h+='<div style="margin-top:20px;padding:14px;background:var(--accent-dim);border:1px solid rgba(200,168,124,.15);border-radius:10px;text-align:center">';
+  h+='<div style="margin-top:20px;padding:14px;background:var(--accent-dim);border:1px solid rgba(198,168,94,.15);border-radius:10px;text-align:center">';
   h+='<div style="font-size:12px;color:var(--accent);font-weight:600;margin-bottom:4px">Want expert review of your roadmap?</div>';
   h+='<div style="font-size:11px;color:var(--text3)">Submit a Strategic Audit for Dr. Faroqui\u2019s personalized assessment.</div></div>';
 
@@ -9299,7 +9300,7 @@ function quizShowResults(){
   // Build urgency message
   var urgMsg='';
   if(quizAnswers.urgency==='now') urgMsg='<div style="padding:10px 14px;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.15);border-radius:8px;margin-bottom:14px;font-size:11px;color:var(--red);display:flex;align-items:center;gap:8px"><span style="font-size:14px">🔥</span> <span>You need to act within 3 months — start with <strong>'+findVaultTitle(recs[0].id)+'</strong> today.</span></div>';
-  else if(quizAnswers.urgency==='soon') urgMsg='<div style="padding:10px 14px;background:rgba(200,168,124,.08);border:1px solid rgba(200,168,124,.15);border-radius:8px;margin-bottom:14px;font-size:11px;color:var(--accent);display:flex;align-items:center;gap:8px"><span style="font-size:14px">📅</span> <span>You have about a year. Work through these tools in order — start this week.</span></div>';
+  else if(quizAnswers.urgency==='soon') urgMsg='<div style="padding:10px 14px;background:rgba(198,168,94,.08);border:1px solid rgba(198,168,94,.15);border-radius:8px;margin-bottom:14px;font-size:11px;color:var(--accent);display:flex;align-items:center;gap:8px"><span style="font-size:14px">📅</span> <span>You have about a year. Work through these tools in order — start this week.</span></div>';
   else if(quizAnswers.urgency==='later') urgMsg='<div style="padding:10px 14px;background:rgba(139,173,196,.08);border:1px solid rgba(139,173,196,.15);border-radius:8px;margin-bottom:14px;font-size:11px;color:var(--blue);display:flex;align-items:center;gap:8px"><span style="font-size:14px">🗓️</span> <span>You have time to plan strategically. Use these tools to build a strong foundation.</span></div>';
   else urgMsg='<div style="padding:10px 14px;background:rgba(139,173,196,.08);border:1px solid rgba(139,173,196,.15);border-radius:8px;margin-bottom:14px;font-size:11px;color:var(--blue);display:flex;align-items:center;gap:8px"><span style="font-size:14px">🗺️</span> <span>Great time to explore. Browse these tools at your own pace — no pressure.</span></div>';
 
@@ -9321,8 +9322,8 @@ function quizShowResults(){
     else if(locked) onclick='notify(\'Upgrade to access this tool\',1)';
     else onclick='openFramework(\''+item.id+'\')';
 
-    html+='<div onclick="'+onclick+'" style="display:flex;gap:14px;padding:14px;background:var(--bg2);border:1px solid '+(i===0?'rgba(200,168,124,.3)':'var(--border)')+';border-radius:10px;margin-bottom:8px;cursor:pointer;position:relative;transition:border-color .2s'+(i===0?';box-shadow:0 0 20px rgba(200,168,124,.06)':'')+'">';
-    html+='<div style="flex-shrink:0;width:38px;height:38px;border-radius:10px;background:'+(i===0?'linear-gradient(135deg,var(--accent),var(--accent2))':'var(--bg3)')+';display:flex;align-items:center;justify-content:center;font-size:18px'+(i===0?';color:#0a0a0f':'')+'">'+item.icon+'</div>';
+    html+='<div onclick="'+onclick+'" style="display:flex;gap:14px;padding:14px;background:var(--bg2);border:1px solid '+(i===0?'rgba(198,168,94,.20)':'var(--border)')+';border-radius:10px;margin-bottom:8px;cursor:pointer;position:relative;transition:border-color .2s'+(i===0?';box-shadow:0 0 20px rgba(198,168,94,.06)':'')+'">';
+    html+='<div style="flex-shrink:0;width:38px;height:38px;border-radius:10px;background:'+(i===0?'linear-gradient(135deg,var(--accent),var(--accent2))':'var(--bg3)')+';display:flex;align-items:center;justify-content:center;font-size:18px'+(i===0?';color:#1C1A17':'')+'">'+item.icon+'</div>';
     html+='<div style="flex:1;min-width:0">';
     html+='<div style="display:flex;align-items:center;gap:6px;margin-bottom:3px"><span style="font-size:13px;font-weight:600;color:var(--text)">'+item.title+'</span>';
     if(mentOnly) html+='<span style="font-size:8px;padding:2px 6px;border-radius:100px;background:var(--accent-dim);color:var(--accent);font-weight:600;letter-spacing:.5px">MENTORSHIP</span>';
@@ -9335,9 +9336,9 @@ function quizShowResults(){
   });
 
   // Explore all tools CTA
-  html+='<div style="margin-top:16px;padding:16px;background:linear-gradient(160deg,rgba(200,168,124,.04),rgba(200,168,124,.01));border:1px solid rgba(200,168,124,.12);border-radius:10px;text-align:center">';
+  html+='<div style="margin-top:16px;padding:16px;background:linear-gradient(160deg,rgba(198,168,94,.04),rgba(200,168,124,.01));border:1px solid rgba(198,168,94,.10);border-radius:10px;text-align:center">';
   html+='<p style="font-size:12px;color:var(--text2);margin:0 0 8px;line-height:1.5">These are your top picks — but every physician\'s path is different. All '+VAULT_ITEMS.length+' tools in the Framework Library are available to explore.</p>';
-  html+='<button onclick="quizReset();document.getElementById(\'vault-categories\').scrollIntoView({behavior:\'smooth\',block:\'start\'})" style="font-size:11px;font-weight:600;color:var(--accent);background:none;border:1px solid rgba(200,168,124,.25);border-radius:8px;padding:8px 20px;cursor:pointer;transition:all .2s">Browse All Tools ↓</button>';
+  html+='<button onclick="quizReset();document.getElementById(\'vault-categories\').scrollIntoView({behavior:\'smooth\',block:\'start\'})" style="font-size:11px;font-weight:600;color:var(--accent);background:none;border:1px solid rgba(198,168,94,.20);border-radius:8px;padding:8px 20px;cursor:pointer;transition:all .2s">Browse All Tools ↓</button>';
   html+='</div>';
 
   document.getElementById('vault-quiz-recs').innerHTML=html;
@@ -9422,7 +9423,7 @@ function renderVault(){
       onclick='onclick="openFramework(\''+v.id+'\')"';
     }
     var tierBadge='';
-    if(v.tier==='elite') tierBadge=' <span style="font-size:8px;padding:2px 6px;border-radius:100px;background:linear-gradient(135deg,var(--accent2),var(--accent));color:#0a0a0f;font-weight:700;letter-spacing:.5px;vertical-align:middle">MENTORSHIP</span>';
+    if(v.tier==='elite') tierBadge=' <span style="font-size:8px;padding:2px 6px;border-radius:100px;background:var(--accent);color:#1C1A17;font-weight:700;letter-spacing:.5px;vertical-align:middle">MENTORSHIP</span>';
     return '<div class="vault-card '+(locked?'':'unlocked')+'" '+onclick+'><div class="v-icon">'+v.icon+'</div><div class="v-info"><h3>'+v.title+tierBadge+'</h3><p>'+v.desc+'</p></div><div class="v-lock">'+(locked?'\ud83d\udd12':'\ud83d\udcc4')+'</div></div>';
   }
 
@@ -9612,10 +9613,10 @@ function previewEliteFramework(id){
   var h='<div style="position:relative">';
   
   // Hero header with gradient background
-  h+='<div style="text-align:center;padding:32px 20px;margin:-20px -20px 24px;background:linear-gradient(160deg,rgba(200,168,124,.1),rgba(200,168,124,.03));border-radius:12px 12px 0 0;border-bottom:1px solid rgba(200,168,124,.15)">';
+  h+='<div style="text-align:center;padding:32px 20px;margin:-20px -20px 24px;background:linear-gradient(160deg,rgba(200,168,124,.1),rgba(200,168,124,.03));border-radius:12px 12px 0 0;border-bottom:1px solid rgba(198,168,94,.15)">';
   h+='<div style="font-size:44px;margin-bottom:12px">'+preview.icon+'</div>';
   h+='<h3 class="serif" style="font-size:22px;font-weight:600;margin-bottom:10px;color:var(--text)">'+preview.title+'</h3>';
-  h+='<div style="display:inline-block;padding:4px 12px;background:linear-gradient(135deg,var(--accent2),var(--accent));border-radius:20px;font-size:10px;font-weight:600;color:#0a0a0f;letter-spacing:.5px;text-transform:uppercase">Mentorship</div>';
+  h+='<div style="display:inline-block;padding:4px 12px;background:var(--accent);border-radius:20px;font-size:10px;font-weight:600;color:#1C1A17;letter-spacing:.5px;text-transform:uppercase">Mentorship</div>';
   h+='</div>';
 
   h+='<p style="font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:24px;text-align:center">'+preview.desc+'</p>';
@@ -9626,11 +9627,11 @@ function previewEliteFramework(id){
   
   preview.sections.forEach(function(sec,i){
     var isBlurred=i>=4;
-    h+='<div style="margin-bottom:12px;padding:14px;background:var(--bg2);border-radius:10px;border:1px solid rgba(200,168,124,.12);transition:all .2s;">';
+    h+='<div style="margin-bottom:12px;padding:14px;background:var(--bg2);border-radius:10px;border:1px solid rgba(198,168,94,.10);transition:all .2s;">';
     h+='<div style="font-size:12px;font-weight:600;color:var(--accent);margin-bottom:8px">'+sec.name+'</div>';
     h+='<div style="display:flex;flex-wrap:wrap;gap:6px">';
     sec.items.forEach(function(item){
-      h+='<span style="font-size:10px;padding:4px 10px;border-radius:20px;background:rgba(200,168,124,.06);color:var(--text2);border:1px solid var(--border)">'+item+'</span>';
+      h+='<span style="font-size:10px;padding:4px 10px;border-radius:20px;background:rgba(198,168,94,.06);color:var(--text2);border:1px solid var(--border)">'+item+'</span>';
     });
     h+='</div></div>';
   });
@@ -9650,7 +9651,7 @@ function previewEliteFramework(id){
   h+='</div>';
 
   // Value proposition
-  h+='<div style="padding:16px;background:linear-gradient(135deg,rgba(200,168,124,.06),rgba(200,168,124,.02));border:1px solid rgba(200,168,124,.15);border-radius:10px;margin-bottom:20px">';
+  h+='<div style="padding:16px;background:linear-gradient(135deg,rgba(198,168,94,.06),rgba(200,168,124,.02));border:1px solid rgba(198,168,94,.15);border-radius:10px;margin-bottom:20px">';
   h+='<div style="font-size:12px;font-weight:600;color:var(--accent);margin-bottom:8px">\u2728 Why Mentorship members use this</div>';
   if(id==='v9'){
     h+='<p style="font-size:12px;color:var(--text2);line-height:1.7;margin:0">The Strategic Audit eliminates guesswork from career decisions. Instead of a vague email to a mentor, you get a structured analysis reviewed by a physician who\'s navigated these exact crossroads. Most members say it\'s the single most valuable tool on the platform.</p>';
@@ -10151,7 +10152,7 @@ async function renderGoalTracker(){
   var monthIdx=getCurrentMonth();
   var currentGoals=template.months[Math.min(monthIdx,template.months.length-1)];
 
-  var h='<div class="card" style="padding:20px;border-color:rgba(200,168,124,.2)">';
+  var h='<div class="card" style="padding:20px;border-color:rgba(198,168,94,.15)">';
 
   // Header
   h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">';
@@ -10226,7 +10227,7 @@ async function renderGoalTracker(){
   var lastCheckin=savedProgress._lastCheckin||'';
   var daysSince=lastCheckin?Math.floor((Date.now()-new Date(lastCheckin))/(24*60*60*1000)):999;
   if(daysSince>=7){
-    h+='<div style="margin-top:14px;padding:14px;background:linear-gradient(135deg,rgba(200,168,124,.08),rgba(200,168,124,.02));border:1px solid rgba(200,168,124,.15);border-radius:10px">';
+    h+='<div style="margin-top:14px;padding:14px;background:linear-gradient(135deg,rgba(198,168,94,.08),rgba(200,168,124,.02));border:1px solid rgba(198,168,94,.15);border-radius:10px">';
     h+='<div style="font-size:12px;font-weight:600;color:var(--accent);margin-bottom:6px">\ud83d\udcac Weekly Check-In</div>';
     h+='<p style="font-size:11px;color:var(--text3);margin-bottom:10px">How\'s this '+(currentGoals.label||'month')+' going? Your update goes directly to Dr. Faroqui.</p>';
     h+='<textarea id="goal-checkin-text" rows="3" placeholder="What progress did you make this week? What\'s blocking you?" style="width:100%;font-family:inherit;font-size:12px;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);resize:vertical;margin-bottom:8px;box-sizing:border-box"></textarea>';
@@ -10699,7 +10700,7 @@ function ciCalc(){
   }
   if(recs.length){
     out.innerHTML+='<div style="margin-top:16px;font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">\ud83c\udfaf Recommended Negotiation Points</div>'+
-      '<div style="background:var(--bg3);border:1px solid rgba(200,168,124,.15);border-radius:8px;padding:14px;font-size:12px;color:var(--text2);line-height:1.8">'+
+      '<div style="background:var(--bg3);border:1px solid rgba(198,168,94,.15);border-radius:8px;padding:14px;font-size:12px;color:var(--text2);line-height:1.8">'+
       recs.map(function(r,i){return '<div style="margin-bottom:6px">'+(i+1)+'. '+r+'</div>'}).join('')+'</div>';
   }
 
@@ -10895,7 +10896,7 @@ function ftCalc(){
       debtTimelines+='<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:12px"><span>Scenario '+labels2[i]+' ('+sc.label+')</span><span style="font-weight:600;color:'+(payoffYear&&payoffYear<=10?'var(--green)':'var(--accent)')+'">Debt-free by year '+(payoffYear||'30+')+(debtFreeAge?' (age ~'+debtFreeAge+')':'')+'</span></div>';
     });
 
-    var debtSection='<div style="margin-top:16px;padding:14px;background:rgba(200,168,124,.04);border:1px solid rgba(200,168,124,.12);border-radius:8px"><div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">\ud83d\udcb3 Debt Payoff Timeline</div>'+debtTimelines+'<p style="font-size:10px;color:var(--text3);margin-top:8px">Assumes $250K starting debt. Higher savings rates and higher income specialties accelerate payoff dramatically.</p></div>';
+    var debtSection='<div style="margin-top:16px;padding:14px;background:rgba(198,168,94,.04);border:1px solid rgba(198,168,94,.10);border-radius:8px"><div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">\ud83d\udcb3 Debt Payoff Timeline</div>'+debtTimelines+'<p style="font-size:10px;color:var(--text3);margin-top:8px">Assumes $250K starting debt. Higher savings rates and higher income specialties accelerate payoff dramatically.</p></div>';
 
     if(projections.length>=2){
     var sorted=projections.map(function(p,i){return{idx:i,nw:p[p.length-1].netWorth,earn:p[p.length-1].cumEarnings}}).sort(function(a,b){return b.nw-a.nw});
@@ -11079,7 +11080,7 @@ function closeAdmin(){
 function admUpdateTierButtons(){
   document.querySelectorAll('.tier-sw').forEach(function(b){b.style.background='var(--bg3)';b.style.color='var(--text3)';b.style.borderColor='var(--border)'});
   var cur=document.getElementById('ts-'+(U.tier||'free'));
-  if(cur){cur.style.background='var(--accent)';cur.style.color='#0a0a0f';cur.style.borderColor='var(--accent)'}
+  if(cur){cur.style.background='var(--accent)';cur.style.color='#1C1A17';cur.style.borderColor='var(--accent)'}
   var el=document.getElementById('ts-current');
   if(el)el.textContent='Current: '+(U.tier||'free').toUpperCase();
 }
@@ -11556,7 +11557,7 @@ async function showMyMessages(){
       var title=n.title||n.user_name||'Notification';
       var isReview=title.indexOf('reviewed')>=0;
       var icon=isReview?'\u2705':'\ud83d\udce9';
-      var borderColor=n.read?'var(--border)':'rgba(200,168,124,.3)';
+      var borderColor=n.read?'var(--border)':'rgba(198,168,94,.20)';
       var bg=n.read?'':'background:rgba(200,168,124,.03);';
       h+='<div class="card" style="margin-bottom:10px;border-color:'+borderColor+';'+bg+'">';
       h+='<div style="display:flex;gap:12px;align-items:flex-start">';
@@ -11759,7 +11760,7 @@ function genReport(){
   myPlan.forEach(step=>{h+='<li style="padding:4px 0">'+step+'</li>'});
   h+='</ol></div>';
   // Risk
-  h+='<div class="report-sec" style="border-color:rgba(200,168,124,.15)"><h4>⚠️ Key Risk Areas</h4>';
+  h+='<div class="report-sec" style="border-color:rgba(198,168,94,.15)"><h4>⚠️ Key Risk Areas</h4>';
   if(hasPubsField&&pubs<2)h+='<p>• Low research output limits competitiveness for selective programs</p>';
   if(!p.goal)h+='<p>• No defined strategic goal — decisions without direction lead to drift</p>';
   if(p.stage==='attending'&&!p.debt)h+='<p>• Loan strategy undefined — every month of delay has compounding cost</p>';
@@ -12214,7 +12215,7 @@ async function submitAudit(){
   sections.forEach(function(sec){
     var secFilled=0;
     sec.fields.forEach(function(f){var el=document.getElementById(f.id);if(el&&el.value.trim())secFilled++});
-    h+='<div style="margin-bottom:16px;padding:12px;background:rgba(200,168,124,.06);border:1px solid rgba(200,168,124,.1);border-radius:8px">';
+    h+='<div style="margin-bottom:16px;padding:12px;background:rgba(198,168,94,.06);border:1px solid rgba(200,168,124,.1);border-radius:8px">';
     h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">';
     h+='<div style="font-size:11px;font-weight:700;color:#C6A85E;text-transform:uppercase;letter-spacing:1px">'+sec.title+'</div>';
     h+='<div style="font-size:10px;color:#7a756e">'+secFilled+'/'+sec.fields.length+' answered</div>';
@@ -12223,7 +12224,7 @@ async function submitAudit(){
     sec.fields.forEach(function(f){
       var el=document.getElementById(f.id);
       var val=el?el.value.trim():'';
-      h+='<tr style="border-bottom:1px solid rgba(200,168,124,.06)">';
+      h+='<tr style="border-bottom:1px solid rgba(198,168,94,.06)">';
       h+='<td style="padding:6px 8px;color:#7a756e;width:35%;vertical-align:top;font-size:11px">'+f.label+'</td>';
       h+='<td style="padding:6px 8px">'+(val||'<em style="color:#7a756e;font-size:11px">Not answered</em>')+'</td>';
       h+='</tr>';
@@ -12234,7 +12235,7 @@ async function submitAudit(){
   // Completion summary
   var pct=Math.round((filled/20)*100);
   var completionColor=pct>=80?'#6abf4b':pct>=50?'#c8a87c':'#ef4444';
-  h+='<div style="padding:10px 12px;background:rgba(200,168,124,.04);border-radius:6px;display:flex;align-items:center;gap:10px">';
+  h+='<div style="padding:10px 12px;background:rgba(198,168,94,.04);border-radius:6px;display:flex;align-items:center;gap:10px">';
   h+='<div style="width:36px;height:36px;border-radius:50%;border:3px solid '+completionColor+';display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:'+completionColor+';flex-shrink:0">'+pct+'%</div>';
   h+='<div><div style="font-size:12px;font-weight:600;color:'+completionColor+'">'+(pct>=80?'Comprehensive submission':pct>=50?'Partially complete':'Minimal detail')+'</div>';
   h+='<div style="font-size:10px;color:#7a756e">The more detail provided, the more actionable the review.</div></div></div>';
@@ -12306,7 +12307,7 @@ function pivotSelect(el,group){
   var container=document.getElementById(group);
   if(container){
     container.querySelectorAll('label').forEach(function(l){l.style.borderColor='var(--border)';l.style.background='var(--bg2)'});
-    el.style.borderColor='var(--accent)';el.style.background='rgba(200,168,124,.08)';
+    el.style.borderColor='var(--accent)';el.style.background='rgba(198,168,94,.08)';
   }
   var val=el.querySelector('input').value;
   var fb=document.getElementById(group+'-feedback');
@@ -12318,7 +12319,7 @@ function pivotSelect(el,group){
     if(otherBox){otherBox.classList.toggle('hidden',val!=='other')}
     if(PIVOT_PROS_CONS[val]){
       var data=PIVOT_PROS_CONS[val];
-    var h='<div style="padding:14px;background:rgba(200,168,124,.04);border:1px solid rgba(200,168,124,.15);border-radius:8px;animation:fadeIn .3s">';
+    var h='<div style="padding:14px;background:rgba(198,168,94,.04);border:1px solid rgba(198,168,94,.15);border-radius:8px;animation:fadeIn .3s">';
     h+='<div style="font-size:12px;font-weight:600;color:var(--accent);margin-bottom:10px">'+data.title+'</div>';
     h+='<div style="display:flex;gap:12px;flex-wrap:wrap">';
     h+='<div style="flex:1;min-width:140px"><div style="font-size:10px;font-weight:600;color:var(--green);margin-bottom:6px">PROS</div>';
@@ -12329,18 +12330,18 @@ function pivotSelect(el,group){
     h+='</div></div></div>';
     fb.innerHTML=h;
   }else if(val==='other'){
-    fb.innerHTML='<div style="padding:10px;background:rgba(200,168,124,.04);border-radius:6px;font-size:11px;color:var(--text2);line-height:1.5;animation:fadeIn .3s">Describe your situation in the field above. Dr. Faroqui will review the full context in your submitted report.</div>';
+    fb.innerHTML='<div style="padding:10px;background:rgba(198,168,94,.04);border-radius:6px;font-size:11px;color:var(--text2);line-height:1.5;animation:fadeIn .3s">Describe your situation in the field above. Dr. Faroqui will review the full context in your submitted report.</div>';
   }
   }
   if(group==='pivot-burnout'&&PIVOT_BURNOUT_FEEDBACK[val]){
     var d=PIVOT_BURNOUT_FEEDBACK[val];
-    fb.innerHTML='<div style="padding:12px;background:rgba(200,168,124,.04);border:1px solid rgba(200,168,124,.15);border-radius:8px;animation:fadeIn .3s"><div style="font-size:12px;font-weight:600;color:var(--accent);margin-bottom:6px">'+d.title+'</div><p style="font-size:11px;color:var(--text2);line-height:1.6;margin:0">'+d.msg+'</p></div>';
+    fb.innerHTML='<div style="padding:12px;background:rgba(198,168,94,.04);border:1px solid rgba(198,168,94,.15);border-radius:8px;animation:fadeIn .3s"><div style="font-size:12px;font-weight:600;color:var(--accent);margin-bottom:6px">'+d.title+'</div><p style="font-size:11px;color:var(--text2);line-height:1.6;margin:0">'+d.msg+'</p></div>';
   }
   if(group==='pivot-regret'){
     if(val==='yes'){
-      fb.innerHTML='<div style="padding:10px;background:rgba(200,168,124,.04);border-radius:6px;font-size:11px;color:var(--text2);line-height:1.5;animation:fadeIn .3s"><strong style="color:var(--accent)">That\'s a strong signal.</strong> Regret avoidance is one of the most reliable decision-making heuristics. If the financial reality supports it, this pivot deserves serious consideration.</div>';
+      fb.innerHTML='<div style="padding:10px;background:rgba(198,168,94,.04);border-radius:6px;font-size:11px;color:var(--text2);line-height:1.5;animation:fadeIn .3s"><strong style="color:var(--accent)">That\'s a strong signal.</strong> Regret avoidance is one of the most reliable decision-making heuristics. If the financial reality supports it, this pivot deserves serious consideration.</div>';
     }else{
-      fb.innerHTML='<div style="padding:10px;background:rgba(200,168,124,.04);border-radius:6px;font-size:11px;color:var(--text2);line-height:1.5;animation:fadeIn .3s"><strong style="color:var(--accent)">Good to know.</strong> If you won\'t regret staying, consider whether smaller adjustments (setting change, boundary changes, role modification) could address your dissatisfaction without a full pivot.</div>';
+      fb.innerHTML='<div style="padding:10px;background:rgba(198,168,94,.04);border-radius:6px;font-size:11px;color:var(--text2);line-height:1.5;animation:fadeIn .3s"><strong style="color:var(--accent)">Good to know.</strong> If you won\'t regret staying, consider whether smaller adjustments (setting change, boundary changes, role modification) could address your dissatisfaction without a full pivot.</div>';
     }
   }
 }
@@ -12363,7 +12364,7 @@ function pivotCalcAvg(){
   var rec=document.getElementById('pivot-recommendation');
   if(best&&rec){
     var color=bestAvg>=4?'var(--green)':bestAvg>=3?'var(--accent)':'var(--text3)';
-    rec.innerHTML='<div style="padding:10px;background:rgba(200,168,124,.04);border-radius:6px;font-size:12px;color:var(--text2);line-height:1.5"><strong style="color:'+color+'">Highest rated: '+labels[best]+' ('+bestAvg.toFixed(1)+'/5.0)</strong></div>';
+    rec.innerHTML='<div style="padding:10px;background:rgba(198,168,94,.04);border-radius:6px;font-size:12px;color:var(--text2);line-height:1.5"><strong style="color:'+color+'">Highest rated: '+labels[best]+' ('+bestAvg.toFixed(1)+'/5.0)</strong></div>';
   }
 }
 
@@ -12421,7 +12422,7 @@ async function submitPivot(){
   h+='<div style="font-size:16px;font-weight:700;margin-bottom:16px;color:#C6A85E">📊 Career Pivot Decision Engine Report</div>';
 
   // Step 1
-  h+='<div style="margin-bottom:16px;padding:12px;background:rgba(200,168,124,.06);border:1px solid rgba(200,168,124,.1);border-radius:8px">';
+  h+='<div style="margin-bottom:16px;padding:12px;background:rgba(198,168,94,.06);border:1px solid rgba(200,168,124,.1);border-radius:8px">';
   h+='<div style="font-size:11px;font-weight:700;color:#C6A85E;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Step 1: Diagnose the Dissatisfaction</div>';
   h+='<table style="width:100%;font-size:12px;border-collapse:collapse">';
   h+='<tr><td style="padding:4px 8px;color:#7a756e;width:40%">Core Issue</td><td style="padding:4px 8px;font-weight:600">'+causeLabel+(causeOther?' — '+causeOther:'')+'</td></tr>';
@@ -12431,17 +12432,17 @@ async function submitPivot(){
   h+='</table></div>';
 
   // Step 2 — Options comparison chart
-  h+='<div style="margin-bottom:16px;padding:12px;background:rgba(200,168,124,.06);border:1px solid rgba(200,168,124,.1);border-radius:8px">';
+  h+='<div style="margin-bottom:16px;padding:12px;background:rgba(198,168,94,.06);border:1px solid rgba(200,168,124,.1);border-radius:8px">';
   h+='<div style="font-size:11px;font-weight:700;color:#C6A85E;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Step 2: Options Comparison</div>';
   h+='<table style="width:100%;font-size:11px;border-collapse:collapse;text-align:center">';
-  h+='<tr style="border-bottom:2px solid rgba(200,168,124,.15)"><th style="padding:6px;text-align:left;color:#7a756e">Option</th><th style="padding:6px;color:#7a756e">Feasibility</th><th style="padding:6px;color:#7a756e">Financial</th><th style="padding:6px;color:#7a756e">Timeline</th><th style="padding:6px;color:#7a756e">Satisfaction</th><th style="padding:6px;color:#C6A85E;font-weight:700">Avg</th></tr>';
+  h+='<tr style="border-bottom:2px solid rgba(198,168,94,.15)"><th style="padding:6px;text-align:left;color:#7a756e">Option</th><th style="padding:6px;color:#7a756e">Feasibility</th><th style="padding:6px;color:#7a756e">Financial</th><th style="padding:6px;color:#7a756e">Timeline</th><th style="padding:6px;color:#7a756e">Satisfaction</th><th style="padding:6px;color:#C6A85E;font-weight:700">Avg</th></tr>';
   var bestAvg=0;var bestKey='';
   options.forEach(function(o){var a=parseFloat(o.avg);if(a>bestAvg){bestAvg=a;bestKey=o.key}});
   options.forEach(function(o){
     var isBest=o.key===bestKey&&bestAvg>0;
     var rowStyle=isBest?'background:rgba(106,191,75,.06);':'';
     function scoreColor(v){if(!v||v===0)return'color:#7a756e';if(v>=8)return'color:#6abf4b;font-weight:700';if(v>=5)return'color:#C6A85E';return'color:#ef4444'}
-    h+='<tr style="border-bottom:1px solid rgba(200,168,124,.08);'+rowStyle+'">';
+    h+='<tr style="border-bottom:1px solid rgba(198,168,94,.08);'+rowStyle+'">';
     h+='<td style="padding:6px;text-align:left;font-weight:600">'+(isBest?'✦ ':'')+o.label+'</td>';
     h+='<td style="padding:6px;'+scoreColor(o.f)+'">'+(o.f||'—')+'</td>';
     h+='<td style="padding:6px;'+scoreColor(o.i)+'">'+(o.i||'—')+'</td>';
@@ -12455,7 +12456,7 @@ async function submitPivot(){
   h+='</div>';
 
   // Step 3
-  h+='<div style="margin-bottom:16px;padding:12px;background:rgba(200,168,124,.06);border:1px solid rgba(200,168,124,.1);border-radius:8px">';
+  h+='<div style="margin-bottom:16px;padding:12px;background:rgba(198,168,94,.06);border:1px solid rgba(200,168,124,.1);border-radius:8px">';
   h+='<div style="font-size:11px;font-weight:700;color:#C6A85E;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Step 3: Financial Reality Check</div>';
   h+='<table style="width:100%;font-size:12px;border-collapse:collapse">';
   h+='<tr><td style="padding:4px 8px;color:#7a756e;width:40%">Debt / obligations</td><td style="padding:4px 8px">'+(document.getElementById('pivot-3a').value.trim()||'<em style="color:#7a756e">Not answered</em>')+'</td></tr>';
@@ -12466,7 +12467,7 @@ async function submitPivot(){
   h+='</table></div>';
 
   // Step 4 — Readiness
-  h+='<div style="margin-bottom:16px;padding:12px;background:rgba(200,168,124,.06);border:1px solid rgba(200,168,124,.1);border-radius:8px">';
+  h+='<div style="margin-bottom:16px;padding:12px;background:rgba(198,168,94,.06);border:1px solid rgba(200,168,124,.1);border-radius:8px">';
   h+='<div style="font-size:11px;font-weight:700;color:#C6A85E;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Step 4: Readiness Check</div>';
   h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px">';
   checks.forEach(function(c){
@@ -12482,7 +12483,7 @@ async function submitPivot(){
   // Readiness score
   var readyColor=readiness>=3?'#6abf4b':readiness>=2?'#c8a87c':'#ef4444';
   var readyLabel=readiness>=3?'Ready to decide':readiness>=2?'Almost ready':'More groundwork needed';
-  h+='<div style="margin-top:10px;padding:8px 12px;background:rgba(200,168,124,.04);border-radius:6px;display:flex;align-items:center;gap:10px">';
+  h+='<div style="margin-top:10px;padding:8px 12px;background:rgba(198,168,94,.04);border-radius:6px;display:flex;align-items:center;gap:10px">';
   h+='<div style="width:36px;height:36px;border-radius:50%;border:3px solid '+readyColor+';display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:'+readyColor+';flex-shrink:0">'+readiness+'/4</div>';
   h+='<div><div style="font-size:12px;font-weight:600;color:'+readyColor+'">'+readyLabel+'</div><div style="font-size:10px;color:#7a756e">Readiness checklist completion</div></div>';
   h+='</div>';
@@ -12704,7 +12705,7 @@ function misStart(){
   hdr+='<div style="font-size:15px;font-weight:600;color:var(--accent);font-family:var(--font-serif)">'+(typeNames[type]||'Interview Simulation')+'</div>';
   hdr+='<div style="font-size:11px;color:var(--text3)">'+(settingNames[setting]||setting)+' • 5 Questions • Answer as if you\'re in the room</div>';
   hdr+='</div></div>';
-  hdr+='<div style="margin-top:12px;padding:10px;background:rgba(200,168,124,.06);border-radius:8px;border:1px solid rgba(200,168,124,.1)">';
+  hdr+='<div style="margin-top:12px;padding:10px;background:rgba(198,168,94,.06);border-radius:8px;border:1px solid rgba(200,168,124,.1)">';
   hdr+='<div style="font-size:11px;color:var(--text2);line-height:1.6">💡 <strong>Treat this like a real interview.</strong> Type your actual answer — the way you\'d say it out loud. Don\'t look anything up. Your natural response is what we need to evaluate.</div>';
   hdr+='</div>';
   document.getElementById('mis-header').innerHTML=hdr;
@@ -12718,7 +12719,7 @@ function misStart(){
     qh+='<div style="margin-bottom:16px;padding:16px;background:var(--bg2);border:1px solid var(--border);border-radius:12px">';
     qh+='<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">';
     qh+='<span style="font-size:16px;font-weight:700;color:var(--accent)">Q'+(i+1)+'</span>';
-    qh+='<span style="font-size:9px;padding:2px 8px;border-radius:100px;background:rgba(200,168,124,.06);color:'+(typeColor[q.type]||'var(--text3)')+';font-weight:600;letter-spacing:.5px">'+(typeBadge[q.type]||q.type)+'</span>';
+    qh+='<span style="font-size:9px;padding:2px 8px;border-radius:100px;background:rgba(198,168,94,.06);color:'+(typeColor[q.type]||'var(--text3)')+';font-weight:600;letter-spacing:.5px">'+(typeBadge[q.type]||q.type)+'</span>';
     qh+='</div>';
     qh+='<div style="font-size:14px;font-weight:500;color:var(--text);line-height:1.6;margin-bottom:4px">"'+q.q+'"</div>';
     qh+='<div style="font-size:11px;color:var(--text3);margin-bottom:12px;line-height:1.5;font-style:italic">'+q.what+'</div>';
@@ -12905,7 +12906,7 @@ function misGrade(){
   var h='<div style="margin-top:24px">';
 
   // Overall score header
-  h+='<div style="text-align:center;padding:28px;background:linear-gradient(160deg,rgba(200,168,124,.1),rgba(200,168,124,.03));border:1px solid rgba(200,168,124,.15);border-radius:14px;margin-bottom:20px">';
+  h+='<div style="text-align:center;padding:28px;background:linear-gradient(160deg,rgba(200,168,124,.1),rgba(200,168,124,.03));border:1px solid rgba(198,168,94,.15);border-radius:14px;margin-bottom:20px">';
   h+='<div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px">Interview Performance</div>';
 
   var overallColor=avgScore>=80?'var(--green)':avgScore>=60?'var(--accent)':avgScore>=40?'#E67E22':'var(--red)';
@@ -12935,7 +12936,7 @@ function misGrade(){
     h+='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:6px">';
     h+='<div style="display:flex;align-items:center;gap:8px">';
     h+='<span style="font-size:14px;font-weight:700;color:var(--accent)">Q'+(i+1)+'</span>';
-    h+='<span style="font-size:9px;padding:2px 8px;border-radius:100px;background:rgba(200,168,124,.06);color:'+(typeColor[q.type]||'var(--text3)')+';font-weight:600;letter-spacing:.5px">'+(typeBadge[q.type]||q.type)+'</span>';
+    h+='<span style="font-size:9px;padding:2px 8px;border-radius:100px;background:rgba(198,168,94,.06);color:'+(typeColor[q.type]||'var(--text3)')+';font-weight:600;letter-spacing:.5px">'+(typeBadge[q.type]||q.type)+'</span>';
     h+='</div>';
     h+='<div style="display:flex;align-items:center;gap:6px"><span style="font-size:12px;font-weight:700;color:'+g.color+'">'+g.score+'/100</span><span style="font-size:10px;color:'+g.color+';font-weight:600">'+g.label+'</span></div>';
     h+='</div>';
@@ -12982,7 +12983,7 @@ function misGrade(){
     h+='</details>';
 
     // Coaching advice
-    h+='<div style="margin-top:8px;padding:10px;background:rgba(200,168,124,.04);border-radius:6px;border:1px solid rgba(200,168,124,.1)">';
+    h+='<div style="margin-top:8px;padding:10px;background:rgba(198,168,94,.04);border-radius:6px;border:1px solid rgba(200,168,124,.1)">';
     h+='<div style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Coaching</div>';
     h+='<div style="font-size:11px;color:var(--text2);line-height:1.7">'+g.advice+'</div>';
     h+='</div>';
@@ -12991,7 +12992,7 @@ function misGrade(){
   });
 
   // Bottom section: overall tips
-  h+='<div style="padding:20px;background:linear-gradient(160deg,rgba(200,168,124,.06),rgba(200,168,124,.02));border:1px solid rgba(200,168,124,.12);border-radius:12px;margin-bottom:16px">';
+  h+='<div style="padding:20px;background:linear-gradient(160deg,rgba(198,168,94,.06),rgba(200,168,124,.02));border:1px solid rgba(198,168,94,.10);border-radius:12px;margin-bottom:16px">';
   h+='<div style="font-size:12px;font-weight:600;color:var(--accent);margin-bottom:12px;font-family:var(--font-serif)">🎯 The Honest Debrief</div>';
   h+='<div style="font-size:12px;color:var(--text2);line-height:1.8">';
 
@@ -13377,7 +13378,7 @@ function levSubmit(wfId,ev){
 
   // Update the button
   var btn=document.getElementById('lev-btn-'+wfId);
-  if(btn){btn.textContent='Get New Guidance';btn.style.background='var(--bg3)';btn.style.color='var(--accent)';btn.style.border='1px solid rgba(200,168,124,.3)'}
+  if(btn){btn.textContent='Get New Guidance';btn.style.background='var(--bg3)';btn.style.color='var(--accent)';btn.style.border='1px solid rgba(198,168,94,.20)'}
 }
 
 function levFilter(cat,btn){
@@ -13495,7 +13496,7 @@ function renderLeverage(){
     h+='<div id="lev-resp-'+wf.id+'" style="display:none"></div>';
 
     if(wf.linkText){
-      h+='<button onclick="event.stopPropagation();'+wf.linkAction+'" style="margin-top:14px;padding:10px 20px;background:var(--accent-dim);border:1px solid rgba(200,168,124,.2);border-radius:8px;color:var(--accent);font-size:13px;font-weight:600;cursor:pointer;width:100%;text-align:center">'+wf.linkText+'</button>';
+      h+='<button onclick="event.stopPropagation();'+wf.linkAction+'" style="margin-top:14px;padding:10px 20px;background:var(--accent-dim);border:1px solid rgba(198,168,94,.15);border-radius:8px;color:var(--accent);font-size:13px;font-weight:600;cursor:pointer;width:100%;text-align:center">'+wf.linkText+'</button>';
     }
 
     h+='<div style="margin-top:12px;font-size:11px;color:var(--text3);text-align:center">\u2728 No physician credits used \u2014 use as many times as you want</div>';
@@ -13515,12 +13516,12 @@ function showSavedScenarios(toolName){
   var h='<div style="padding:20px"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px"><div style="font-size:16px;font-weight:600;color:var(--text);font-family:var(--font-serif)">📊 Saved Scenarios</div><button onclick="closeModal(\'modal-q\')" style="background:none;border:none;color:var(--text3);font-size:18px;cursor:pointer">✕</button></div>';
   h+='<div style="font-size:11px;color:var(--text3);margin-bottom:14px">'+toolName+' — '+sc.length+' saved</div>';
   if(sc.length>=2){
-    h+='<div style="margin-bottom:14px;padding:12px;background:linear-gradient(160deg,rgba(200,168,124,.08),rgba(200,168,124,.03));border:1px solid rgba(200,168,124,.15);border-radius:10px"><div style="font-size:11px;font-weight:600;color:var(--accent);margin-bottom:8px">Compare Two Runs</div><div style="display:flex;gap:8px;align-items:center">';
+    h+='<div style="margin-bottom:14px;padding:12px;background:linear-gradient(160deg,rgba(198,168,94,.08),rgba(200,168,124,.03));border:1px solid rgba(198,168,94,.15);border-radius:10px"><div style="font-size:11px;font-weight:600;color:var(--accent);margin-bottom:8px">Compare Two Runs</div><div style="display:flex;gap:8px;align-items:center">';
     h+='<select id="sc-a" style="flex:1;padding:8px;border:1px solid var(--border);border-radius:6px;background:var(--bg);color:var(--text);font-size:11px">';
     sc.forEach(function(s,i){h+='<option value="'+i+'">'+new Date(s.date).toLocaleDateString('en-US',{month:'short',day:'numeric'})+' — '+(s.summary||'Run '+(i+1))+'</option>'});
     h+='</select><span style="color:var(--text3);font-size:11px">vs</span><select id="sc-b" style="flex:1;padding:8px;border:1px solid var(--border);border-radius:6px;background:var(--bg);color:var(--text);font-size:11px">';
     sc.forEach(function(s,i){h+='<option value="'+i+'"'+(i===sc.length-1?' selected':'')+'>'+new Date(s.date).toLocaleDateString('en-US',{month:'short',day:'numeric'})+' — '+(s.summary||'Run '+(i+1))+'</option>'});
-    h+='</select><button onclick="compareScenarios(\''+toolName.replace(/'/g,"\\'")+'\',document.getElementById(\'sc-a\').value,document.getElementById(\'sc-b\').value)" style="padding:8px 14px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#0a0a0f;border:none;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer">Compare</button></div></div>';
+    h+='</select><button onclick="compareScenarios(\''+toolName.replace(/'/g,"\\'")+'\',document.getElementById(\'sc-a\').value,document.getElementById(\'sc-b\').value)" style="padding:8px 14px;background:var(--accent);color:#1C1A17;border:none;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer">Compare</button></div></div>';
   }
   sc.slice().reverse().forEach(function(s,ri){var i=sc.length-1-ri;var d=new Date(s.date);
     h+='<div class="card" style="padding:14px;margin-bottom:8px;cursor:pointer" onclick="viewScenario(\''+toolName.replace(/'/g,"\\'")+'\','+i+')">';
@@ -13570,7 +13571,7 @@ function showWeeklyCheckin(){
   }
   h+='<div style="margin-bottom:16px"><div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Any New Developments?</div><div style="font-size:10px;color:var(--text3);margin-bottom:6px">Offers, interviews, publications, scores, decisions...</div><textarea id="ci-dev" rows="3" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-size:12px;resize:vertical;font-family:var(--font-body)" placeholder="e.g., Got an interview at Hopkins, Step 2 came back 255..."></textarea></div>';
   h+='<div style="margin-bottom:20px"><div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">This Week\'s Goal</div><input type="text" id="ci-goal" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-size:12px;font-family:var(--font-body)" placeholder="e.g., Submit 2 fellowship apps, finish abstract..."></div>';
-  h+='<button onclick="submitCheckin()" style="width:100%;padding:14px;background:linear-gradient(135deg,#1a1620,#2a2530);color:#f5f0e8;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer">Save Check-in →</button></div>';
+  h+='<button onclick="submitCheckin()" style="width:100%;padding:14px;background:var(--accent);color:#1C1A17;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer">Save Check-in →</button></div>';
   document.getElementById('modal-q-content').innerHTML=h;document.getElementById('modal-q').classList.remove('hidden');
 }
 function submitCheckin(){
@@ -13606,7 +13607,7 @@ function renderWhatsChanged(){
   if(U.toolHistory&&U.toolHistory.length){var lt=U.toolHistory[U.toolHistory.length-1];items.push({icon:'🧭',text:'Last ran <strong>'+lt.tool+'</strong>'+(lt.score?' ('+lt.score+')':'')})}
   if(!items.length){el.style.display='none';return}
   el.style.display='';
-  var h='<div style="padding:14px 16px;background:linear-gradient(160deg,rgba(200,168,124,.06),rgba(200,168,124,.02));border:1px solid rgba(200,168,124,.15);border-radius:12px">';
+  var h='<div style="padding:14px 16px;background:linear-gradient(160deg,rgba(198,168,94,.06),rgba(200,168,124,.02));border:1px solid rgba(198,168,94,.15);border-radius:12px">';
   h+='<div style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">📌 Your Status</div>';
   items.forEach(function(it){h+='<div style="display:flex;align-items:flex-start;gap:8px;padding:4px 0;font-size:12px;color:var(--text);line-height:1.5"><span style="flex-shrink:0">'+it.icon+'</span><span>'+it.text+'</span></div>'});
   h+='</div>';el.innerHTML=h;
@@ -13626,7 +13627,7 @@ function generateMonthlyReport(){
   var mCheckins=(U.checkins||[]).filter(function(c){var cd=new Date(c.date);return cd.getMonth()===now.getMonth()});
   var goalsHit=(U.weeklyGoals||[]).filter(function(g){return g.status==='completed'&&new Date(g.date).getMonth()===now.getMonth()}).length;
   var h='<div style="padding:24px;max-width:600px;margin:0 auto">';
-  h+='<div style="text-align:center;margin-bottom:24px;padding-bottom:20px;border-bottom:2px solid rgba(200,168,124,.2)"><div style="font-size:12px;color:var(--accent);font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px">HeartWise Career Report</div><div style="font-size:24px;font-weight:600;color:var(--text);font-family:var(--font-serif)">'+monthName+'</div><div style="font-size:13px;color:var(--text3);margin-top:4px">'+U.name+' · '+sl+(spec?' · '+spec:'')+'</div></div>';
+  h+='<div style="text-align:center;margin-bottom:24px;padding-bottom:20px;border-bottom:2px solid rgba(198,168,94,.15)"><div style="font-size:12px;color:var(--accent);font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px">HeartWise Career Report</div><div style="font-size:24px;font-weight:600;color:var(--text);font-family:var(--font-serif)">'+monthName+'</div><div style="font-size:13px;color:var(--text3);margin-top:4px">'+U.name+' · '+sl+(spec?' · '+spec:'')+'</div></div>';
   h+='<div style="margin-bottom:20px"><div style="font-size:12px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Career Scores</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">';
   [{k:'competitiveness',l:'Competitiveness',i:'🏆'},{k:'research',l:'Research',i:'🔬'},{k:'readiness',l:'Readiness',i:'🎯'},{k:'financial',l:'Financial',i:'💰'}].forEach(function(si){
     var v=scores[si.k]||0;var d=prev?(v-(prev[si.k]||0)):0;var ds=d>0?'<span style="color:var(--green)">↑+'+d+'</span>':d<0?'<span style="color:var(--red)">↓'+d+'</span>':'';
@@ -13651,7 +13652,7 @@ function generateMonthlyReport(){
     h+='</div>';
   }
   h+='<div style="text-align:center;padding-top:16px;border-top:1px solid var(--border)"><div style="font-size:10px;color:var(--text3);margin-bottom:12px">Generated by HeartWise · '+new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})+'</div>';
-  h+='<button onclick="printReport()" style="padding:10px 24px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#0a0a0f;border:none;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;margin-right:8px">🖨 Print / Save PDF</button>';
+  h+='<button onclick="printReport()" style="padding:10px 24px;background:var(--accent);color:#1C1A17;border:none;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;margin-right:8px">🖨 Print / Save PDF</button>';
   h+='<button onclick="closeModal(\'modal-q\')" style="padding:10px 24px;background:var(--bg2);color:var(--text);border:1px solid var(--border);border-radius:8px;font-size:12px;cursor:pointer">Close</button></div></div>';
   document.getElementById('modal-q-content').innerHTML=h;document.getElementById('modal-q').classList.remove('hidden');
 }

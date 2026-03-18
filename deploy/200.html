@@ -1996,7 +1996,6 @@ Sign Out</button>
 <button class="ni on" data-scr="scr-home" onclick="navTo('scr-home',this)"><svg><use href="#i-home"/></svg>Home</button>
 <button class="ni" data-scr="scr-vault" onclick="navTo('scr-vault',this)"><svg><use href="#i-lock"/></svg>Career Tools</button>
 <button class="ni" data-scr="scr-ask" onclick="navTo('scr-ask',this)"><svg><use href="#i-plus"/></svg>Ask</button>
-<button class="ni" data-scr="scr-leverage" id="nav-leverage" style="display:none" onclick="navTo('scr-leverage',this)"><svg><use href="#i-zap"/></svg>Leverage</button>
 <button class="ni" data-scr="scr-archive" onclick="navTo('scr-archive',this)"><svg><use href="#i-archive"/></svg>Insights</button>
 <button class="ni" data-scr="scr-profile" onclick="navTo('scr-profile',this)"><svg><use href="#i-user"/></svg>Profile</button>
 <button class="ni" data-scr="scr-admin" id="nav-admin" style="display:none" onclick="openAdmin()"><svg><use href="#i-settings"/></svg>Admin</button>
@@ -5599,9 +5598,6 @@ function enterApp(){
   b.textContent=U.tier==='admin'?'MENTOR':TIERS[U.tier]?.name?.toUpperCase()||'FREE';
   document.getElementById('welcome-msg').textContent='Welcome, Dr. '+U.name.split(' ').pop();
   document.getElementById('nav-admin').style.display=U.tier==='admin'?'':'none';
-  // Show Leverage tab for mentorship (non-trial) and admin only
-  var showLev=(U.tier==='elite'&&!U.isTrial)||U.tier==='admin';
-  document.getElementById('nav-leverage').style.display=showLev?'':'none';
   var topUpgrade=document.getElementById('topbar-upgrade');
   if(topUpgrade){
     if(U.tier==='free'||U.isTrial){topUpgrade.style.display='';topUpgrade.textContent='Subscribe';topUpgrade.onclick=function(){navTo('scr-profile');showUpgrade()}}
@@ -9905,8 +9901,6 @@ function adminSwitchTier(tier){
   var b=document.getElementById('user-badge');
   var bc={free:'b-free',core:'b-core',elite:'b-pro',admin:'b-admin'};
   if(b){b.className='badge '+(bc[tier]||'b-free');b.textContent=tier==='admin'?'MENTOR':t.name.toUpperCase()||'FREE'}
-  var showLev=(tier==='elite')||tier==='admin';
-  document.getElementById('nav-leverage').style.display=showLev?'':'none';
   var upNudge=document.getElementById('home-upgrade-nudge');if(upNudge)upNudge.style.display=tier==='free'&&!U.isTrial?'':'none';
   var topUpgrade=document.getElementById('topbar-upgrade');
   if(topUpgrade){

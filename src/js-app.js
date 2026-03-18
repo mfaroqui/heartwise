@@ -782,9 +782,6 @@ function enterApp(){
   b.textContent=U.tier==='admin'?'MENTOR':TIERS[U.tier]?.name?.toUpperCase()||'FREE';
   document.getElementById('welcome-msg').textContent='Welcome, Dr. '+U.name.split(' ').pop();
   document.getElementById('nav-admin').style.display=U.tier==='admin'?'':'none';
-  // Show Leverage tab for mentorship (non-trial) and admin only
-  var showLev=(U.tier==='elite'&&!U.isTrial)||U.tier==='admin';
-  document.getElementById('nav-leverage').style.display=showLev?'':'none';
   var topUpgrade=document.getElementById('topbar-upgrade');
   if(topUpgrade){
     if(U.tier==='free'||U.isTrial){topUpgrade.style.display='';topUpgrade.textContent='Subscribe';topUpgrade.onclick=function(){navTo('scr-profile');showUpgrade()}}
@@ -5088,8 +5085,6 @@ function adminSwitchTier(tier){
   var b=document.getElementById('user-badge');
   var bc={free:'b-free',core:'b-core',elite:'b-pro',admin:'b-admin'};
   if(b){b.className='badge '+(bc[tier]||'b-free');b.textContent=tier==='admin'?'MENTOR':t.name.toUpperCase()||'FREE'}
-  var showLev=(tier==='elite')||tier==='admin';
-  document.getElementById('nav-leverage').style.display=showLev?'':'none';
   var upNudge=document.getElementById('home-upgrade-nudge');if(upNudge)upNudge.style.display=tier==='free'&&!U.isTrial?'':'none';
   var topUpgrade=document.getElementById('topbar-upgrade');
   if(topUpgrade){

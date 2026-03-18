@@ -136,6 +136,23 @@ function lpTab(name){
   }
 }
 
+// Landing page email capture
+function captureEmail(e){
+  e.preventDefault();
+  var email=document.getElementById('capture-email').value.trim();
+  if(!email)return;
+  // Store locally + attempt to save via Supabase if available
+  var captures=JSON.parse(localStorage.getItem('hw_email_captures')||'[]');
+  captures.push({email:email,date:new Date().toISOString()});
+  localStorage.setItem('hw_email_captures',JSON.stringify(captures));
+  // Try Supabase insert if client available
+  if(typeof _supaClient!=='undefined'&&_supaClient){
+    try{_supaClient.from('email_captures').insert({email:email,source:'landing_guide'}).then(function(){})}catch(ex){}
+  }
+  document.getElementById('email-capture-form').style.display='none';
+  document.getElementById('capture-success').style.display='';
+}
+
 // Landing page hook — 3-question quiz with demo previews
 var hookA={stage:null,goal:null,urgency:null};
 
@@ -804,7 +821,10 @@ function enterApp(){
   // Check for unread notifications
   checkNotifBadge();
   // Check achievements on app entry
-  try{checkAchievements()}catch(e){console.error('Achievements:',e)}  // Show upgrade elements based on tier
+  try{checkAchievements()}catch(e){console.error('Achievements:',e)}
+  // Request notification permission (non-blocking)
+  try{requestNotifPermission()}catch(e){}
+  // Show upgrade elements based on tier
   showUpgradeElements();
   // Start onboarding tour for new users (after a short delay for rendering)
   if(shouldShowTour())setTimeout(startTour,800);
@@ -2535,8 +2555,25 @@ function togReview(){
   if(!t.classList.contains('on')&&(U.usage?.credits||0)<=0){notify('No review credits. Upgrade your plan.',1);return}
   t.classList.toggle('on');
 }
+function askFillPrompt(question,cat,subcat){
+  var coreEl=document.getElementById('q-core');
+  if(coreEl)coreEl.value=question;
+  var catEl=document.getElementById('q-cat');
+  if(catEl&&cat)catEl.value=cat;
+  // Hide prompts after selection
+  var prompts=document.getElementById('ask-quick-prompts');
+  if(prompts)prompts.style.display='none';
+  // Scroll to the form
+  if(coreEl)coreEl.scrollIntoView({behavior:'smooth',block:'center'});
+  coreEl.focus();
+}
+
 function updateAskScreen(){
   document.getElementById('ask-credits').textContent=U.usage?.credits||0;
+  // Show quick prompts if core question is empty
+  var prompts=document.getElementById('ask-quick-prompts');
+  var coreEl=document.getElementById('q-core');
+  if(prompts&&coreEl)prompts.style.display=coreEl.value.trim()?'none':'';
   // Auto-fill from career baseline profile
   if(U&&U.careerProfile){
     var cp=U.careerProfile;
@@ -9296,9 +9333,10 @@ var _tourSteps=[
     body:'These four scores — Competitiveness, Research, Readiness, and Financial — track your progress over time. They update every time you recalculate your profile.'
   },
   {
-    target:function(){return document.querySelector('[onclick="navTo(\'scr-vault\')"]')},
-    title:'Explore 15+ Career Tools',
-    body:'Frameworks is where the real work happens. Contract analysis, match calculators, financial simulators, interview prep — every tool a physician needs for career decisions.'
+    target:function(){return document.querySelector('[onclick="navTo(\'scr-vault\',this)"]')},
+    fallback:function(){return document.querySelector('[onclick="navTo(\'scr-vault\')"]')},
+    title:'16 Career Tools',
+    body:'Career Tools is where the real work happens. Contract analysis, match calculators, financial simulators, interview prep — every tool built specifically for physician career decisions.'
   },
   {
     target:function(){return document.querySelector('[onclick="navTo(\'scr-ask\',this)"]')},
@@ -9453,3 +9491,56 @@ function endTour(){
   }
   localStorage.setItem('hw_tour_done','1');
 }
+
+// ===== BROWSER NOTIFICATIONS =====
+function requestNotifPermission(){
+  if(!('Notification' in window))return;
+  if(Notification.permission==='default'){
+    // Ask after a delay so it doesn't feel aggressive
+    setTimeout(function(){
+      // Only ask if user has been here at least 2 sessions
+      var visits=parseInt(localStorage.getItem('hw_visit_count')||'0')+1;
+      localStorage.setItem('hw_visit_count',String(visits));
+      if(visits>=2){
+        Notification.requestPermission();
+      }
+    },15000);
+  }
+}
+function sendBrowserNotif(title,body,onclick){
+  if(!('Notification' in window)||Notification.permission!=='granted')return;
+  try{
+    var n=new Notification(title,{body:body,icon:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="80">🫀</text></svg>',badge:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="80">🫀</text></svg>'});
+    if(onclick)n.onclick=function(){window.focus();onclick();n.close()};
+    setTimeout(function(){n.close()},8000);
+  }catch(e){}
+}
+// Schedule weekly notification check (runs while page is open)
+function scheduleNotifChecks(){
+  if(!('Notification' in window)||Notification.permission!=='granted')return;
+  // Check every 30 minutes for things worth notifying about
+  setInterval(function(){
+    if(!U)return;
+    // Score staleness
+    var age=getScoreAge();
+    var lastNotif=localStorage.getItem('hw_notif_score_age');
+    if(age>=14&&(!lastNotif||Date.now()-parseInt(lastNotif)>86400000)){
+      sendBrowserNotif('Your Career Score needs attention','It\'s been '+age+' days since your last assessment. Recalculate to stay on track.',function(){navTo('scr-vault')});
+      localStorage.setItem('hw_notif_score_age',String(Date.now()));
+    }
+    // Weekly check-in reminder (Mon-Wed)
+    var day=new Date().getDay();
+    var lastCheckinNotif=localStorage.getItem('hw_notif_checkin');
+    if(day>=1&&day<=3&&(!lastCheckinNotif||Date.now()-parseInt(lastCheckinNotif)>86400000)){
+      var weekAgo=new Date();weekAgo.setDate(weekAgo.getDate()-7);
+      var recent=(U.checkins||[]).find(function(c){return new Date(c.date)>=weekAgo});
+      if(!recent&&(U.toolHistory||[]).length>0){
+        sendBrowserNotif('Weekly Check-in Ready','2 minutes to update your goals and track progress.',function(){showWeeklyCheckin()});
+        localStorage.setItem('hw_notif_checkin',String(Date.now()));
+      }
+    }
+  },1800000); // 30 minutes
+}
+// Start notification scheduling on page load
+if(document.readyState==='complete')setTimeout(scheduleNotifChecks,5000);
+else window.addEventListener('load',function(){setTimeout(scheduleNotifChecks,5000)});

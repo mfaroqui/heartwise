@@ -192,8 +192,24 @@ Sign Out</button>
 
 <!-- ASK SCREEN (Structured Intake) -->
 <div id="scr-ask" class="scr">
-<div class="hdr"><div class="hdr-t serif" style="font-size:20px">Strategic Intake</div></div>
+<div class="hdr"><div class="hdr-t serif" style="font-size:20px">Ask HeartWise</div></div>
 <div style="padding:24px 24px 100px">
+
+<!-- Quick Prompts for new users -->
+<div id="ask-quick-prompts" style="margin-bottom:20px">
+<div style="font-size:10px;font-weight:700;color:#C6A85E;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:12px">Not sure what to ask? Try one of these:</div>
+<div style="display:flex;flex-direction:column;gap:8px">
+<div onclick="askFillPrompt('How competitive am I for cardiology fellowship with my current profile?','career','fellowship')" style="display:flex;align-items:center;gap:10px;padding:12px 14px;background:#fff;border:1px solid #E8E1D8;border-radius:12px;cursor:pointer;transition:all .2s" onmouseenter="this.style.borderColor='#C6A85E'" onmouseleave="this.style.borderColor='#E8E1D8'">
+<span style="font-size:16px">🎯</span><div style="flex:1;font-size:12px;color:#5C564F">How competitive am I for cardiology fellowship?</div><span style="font-size:11px;color:#C6A85E">→</span></div>
+<div onclick="askFillPrompt('I have two job offers — hospital employed at $520K vs private practice at $450K with partnership track. How do I decide?','contract','')" style="display:flex;align-items:center;gap:10px;padding:12px 14px;background:#fff;border:1px solid #E8E1D8;border-radius:12px;cursor:pointer;transition:all .2s" onmouseenter="this.style.borderColor='#C6A85E'" onmouseleave="this.style.borderColor='#E8E1D8'">
+<span style="font-size:16px">📋</span><div style="flex:1;font-size:12px;color:#5C564F">Hospital employed vs private practice — how do I decide?</div><span style="font-size:11px;color:#C6A85E">→</span></div>
+<div onclick="askFillPrompt('Should I refinance my $340K in loans or stay on PSLF? Finishing fellowship next year.','finance','')" style="display:flex;align-items:center;gap:10px;padding:12px 14px;background:#fff;border:1px solid #E8E1D8;border-radius:12px;cursor:pointer;transition:all .2s" onmouseenter="this.style.borderColor='#C6A85E'" onmouseleave="this.style.borderColor='#E8E1D8'">
+<span style="font-size:16px">💰</span><div style="flex:1;font-size:12px;color:#5C564F">Should I refinance my loans or stay on PSLF?</div><span style="font-size:11px;color:#C6A85E">→</span></div>
+<div onclick="askFillPrompt('I am feeling burnt out in PGY-3. How do I know if it is the specialty or just training fatigue?','wellness','')" style="display:flex;align-items:center;gap:10px;padding:12px 14px;background:#fff;border:1px solid #E8E1D8;border-radius:12px;cursor:pointer;transition:all .2s" onmouseenter="this.style.borderColor='#C6A85E'" onmouseleave="this.style.borderColor='#E8E1D8'">
+<span style="font-size:16px">🧠</span><div style="flex:1;font-size:12px;color:#5C564F">Burnt out in PGY-3 — is it the specialty or training?</div><span style="font-size:11px;color:#C6A85E">→</span></div>
+</div>
+<div style="font-size:10px;color:#8A8278;margin-top:10px;text-align:center">Or scroll down to write your own question ↓</div>
+</div>
 
 <div class="review-banner" id="review-banner">
 <div class="icon">📋</div>
@@ -342,7 +358,7 @@ Sign Out</button>
 <!-- ARCHIVE SCREEN -->
 <div id="scr-archive" class="scr">
 <div class="hdr"><div class="hdr-t serif" style="font-size:20px">Insights</div></div>
-<div class="sbar"><svg><use href="#i-search"/></svg><input type="text" id="search-input" placeholder="Search reviewed questions..." oninput="filterArchive()"></div>
+<div class="sbar"><svg><use href="#i-search"/></svg><input type="text" id="search-input" placeholder="Search insights..." oninput="filterArchive()"></div>
 <div class="fc">
 <button class="chip on" onclick="setFilter('all',this)">All</button>
 <button class="chip" onclick="setFilter('career',this)">Career</button>

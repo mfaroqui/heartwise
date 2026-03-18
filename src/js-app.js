@@ -102,9 +102,38 @@ function closeLandingMenu(){
 }
 function landingNav(id){
   closeLandingMenu();
-  if(id==='pg-landing'){document.getElementById('pg-landing').scrollTo({top:0,behavior:'smooth'});return}
+  if(id==='pg-landing'){lpTab('home');return}
+  var tabMap={'tools-sec':'tools','diff-sec':'compare','pricing-sec':'pricing','founder-sec':'founder'};
+  if(tabMap[id]){lpTab(tabMap[id]);return}
   const el=document.getElementById(id);
   if(el)el.scrollIntoView({behavior:'smooth'});
+}
+function lpTab(name){
+  closeLandingMenu();
+  var tabs=document.querySelectorAll('.lp-tab');
+  tabs.forEach(function(t){t.classList.remove('lp-tab-active')});
+  var target=document.querySelector('.lp-tab[data-lptab="'+name+'"]');
+  if(target)target.classList.add('lp-tab-active');
+  // Highlight active nav link
+  document.querySelectorAll('.lp-tab-link').forEach(function(a){a.classList.remove('active')});
+  var activeLink=document.querySelector('.lp-tab-link[data-lptab="'+name+'"]');
+  if(activeLink)activeLink.classList.add('active');
+  // Scroll to top of landing page
+  var pg=document.getElementById('pg-landing');
+  if(pg)pg.scrollTo({top:0,behavior:'instant'});
+  // Update topbar — only home tab has light hero
+  var tb=document.getElementById('topbar');
+  if(tb){
+    if(name==='home'){tb.classList.add('on-light');tb.classList.remove('solid')}
+    else{tb.classList.remove('on-light');tb.classList.add('solid')}
+  }
+  // Re-trigger reveal animations for newly visible tab
+  if(target){
+    target.querySelectorAll('.reveal').forEach(function(el){
+      el.style.opacity='0';el.style.transform='translateY(24px)';
+      setTimeout(function(){el.style.transition='opacity .6s ease,transform .6s ease';el.style.opacity='1';el.style.transform='translateY(0)'},50);
+    });
+  }
 }
 
 // Landing page hook — 3-question quiz with demo previews

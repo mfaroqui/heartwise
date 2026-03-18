@@ -29,6 +29,11 @@ a:hover{color:var(--accent2)}
 .hidden{display:none!important}
 
 
+/* ===== LANDING PAGE TABS ===== */
+.lp-tab{display:none}
+.lp-tab-active{display:block}
+.lp-tab-link.active{color:var(--accent)!important;font-weight:500}
+
 /* ===== LANDING PAGE (DARK THEME SCOPE) ===== */
 #pg-landing{
 --bg:#09090e;--bg2:#0f0f16;--bg3:#16161f;--bg4:#1e1e29;
@@ -50,15 +55,15 @@ color:var(--text);background:var(--bg);
 
 /* ===== TOP NAV ===== */
 .topbar{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:20px 32px;background:transparent;backdrop-filter:blur(0px);-webkit-backdrop-filter:blur(0px);border-bottom:1px solid transparent;transition:all .5s ease}
-.topbar.solid{background:#111318;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom-color:rgba(255,255,255,.06)}
+.topbar.solid{background:rgba(9,9,14,.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom-color:rgba(200,168,124,.08)}
 .topbar-logo{display:flex;align-items:center;gap:12px;cursor:pointer}
 .topbar-logo .logo-mark{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;transition:transform .3s}
 .topbar-logo:hover .logo-mark{transform:scale(1.05)}
 .topbar-logo .logo-mark svg{width:18px;height:18px;fill:#1C1A17}
 .topbar-logo .logo-text{font-family:var(--font-serif);font-size:22px;font-weight:600;color:#f0ece6;letter-spacing:.5px}
 .topbar-links{display:flex;gap:28px;align-items:center}
-.topbar-links a{font-size:13px;font-weight:400;color:rgba(255,255,255,.65);transition:color .3s;letter-spacing:.5px}
-.topbar-links a:hover{color:#fff}
+.topbar-links a{font-size:13px;font-weight:400;color:#ccc8c2;transition:color .3s;letter-spacing:.5px}
+.topbar-links a:hover{color:#c8a87c}
 .topbar-links .tb-cta{background:transparent;color:#c8a87c;padding:9px 22px;border-radius:100px;font-weight:500;font-size:11px;letter-spacing:1px;text-transform:uppercase;transition:all .35s;border:1px solid #c8a87c}
 .topbar-links .tb-cta:hover{background:#c8a87c;color:#09090e}
 .landing-menu{position:absolute;top:calc(100% + 12px);left:0;background:rgba(9,9,14,.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(200,168,124,.15);border-radius:12px;padding:8px 0;min-width:200px;box-shadow:0 12px 40px rgba(0,0,0,.4);z-index:300}

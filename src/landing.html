@@ -2,22 +2,20 @@
 <nav class="topbar" id="topbar">
 <div class="topbar-logo" style="position:relative">
 <div class="logo-mark" onclick="toggleLandingMenu(event)"><svg><use href="#i-heart"/></svg></div>
-<span class="logo-text" onclick="lpTab('home')">HeartWise</span>
+<span class="logo-text" onclick="document.getElementById('pg-landing').scrollTo({top:0,behavior:'smooth'})">HeartWise</span>
 <div id="landing-menu" class="landing-menu hidden">
-<a href="#" onclick="lpTab('home');return false">Home</a>
-<a href="#" onclick="lpTab('tools');return false">Tools</a>
-<a href="#" onclick="lpTab('compare');return false">Why HeartWise</a>
-<a href="#" onclick="lpTab('pricing');return false">Pricing</a>
-<a href="#" onclick="lpTab('founder');return false">Founder</a>
+<a href="#" onclick="landingNav('pg-landing');return false">Home</a>
+<a href="#" onclick="landingNav('tools-sec');return false">Tools</a>
+<a href="#" onclick="landingNav('diff-sec');return false">Why HeartWise</a>
+<a href="#" onclick="landingNav('founder-sec');return false">Founder</a>
+<a href="#" onclick="landingNav('pricing-sec');return false">Pricing</a>
 <a href="#" onclick="event.preventDefault();go('pg-login');closeLandingMenu()">Sign In</a>
 </div>
 </div>
 <div class="topbar-links">
-<a href="#" class="tb-link lp-tab-link" data-lptab="home" onclick="event.preventDefault();lpTab('home')">Home</a>
-<a href="#" class="tb-link lp-tab-link" data-lptab="tools" onclick="event.preventDefault();lpTab('tools')">Tools</a>
-<a href="#" class="tb-link lp-tab-link" data-lptab="compare" onclick="event.preventDefault();lpTab('compare')">Why HeartWise</a>
-<a href="#" class="tb-link lp-tab-link" data-lptab="pricing" onclick="event.preventDefault();lpTab('pricing')">Pricing</a>
-<a href="#" class="tb-link lp-tab-link" data-lptab="founder" onclick="event.preventDefault();lpTab('founder')">Founder</a>
+<a href="#" class="tb-link" onclick="event.preventDefault();document.getElementById('tools-sec').scrollIntoView({behavior:'smooth'})">Tools</a>
+<a href="#" class="tb-link" onclick="event.preventDefault();document.getElementById('founder-sec').scrollIntoView({behavior:'smooth'})">Founder</a>
+<a href="#" class="tb-link" onclick="event.preventDefault();document.getElementById('pricing-sec').scrollIntoView({behavior:'smooth'})">Pricing</a>
 <a href="#" class="tb-link" onclick="event.preventDefault();go('pg-login')">Sign In</a>
 <a href="#" class="tb-cta" onclick="event.preventDefault();go('pg-onboard')">Start Free Trial</a>
 </div>
@@ -25,9 +23,6 @@
 
 <!-- ===== LANDING PAGE ===== -->
 <div id="pg-landing" class="lp">
-
-<!-- ===== TAB: HOME (hero + quiz) ===== -->
-<div class="lp-tab lp-tab-active" data-lptab="home">
 
 <!-- HERO -->
 <div class="hero-lux">
@@ -42,9 +37,7 @@
 </div>
 <!-- ===== TOOL SHOWCASE CAROUSEL ===== -->
 <div id="hero-showcase" style="margin-top:28px;max-width:480px">
-<div style="background:#111318;margin:0 -48px 16px;padding:14px 48px;text-align:center">
-<div style="font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.85)">16 physician-built tools. No credit card required.</div>
-</div>
+<div style="font-size:10px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:var(--text3);text-align:center;margin-bottom:12px">✦ Sample Outputs · See what you'll get</div>
 <div style="position:relative;background:var(--bg2);border:1px solid var(--border2);border-radius:16px;padding:24px;overflow:hidden;min-height:260px">
 <!-- Slide 1: Competitiveness Score -->
 <div class="showcase-slide showcase-active" data-slide="0">
@@ -61,17 +54,17 @@
 </div>
 <div style="flex:1">
 <div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-size:10px;color:var(--text2)">Research</span><span class="sc-pct" data-target="72" style="font-size:10px;color:var(--accent);font-weight:500">0%</span></div>
-<div style="height:4px;background:rgba(198,168,94,.08);border-radius:2px;margin-bottom:8px"><div class="sc-bar" data-width="72" style="height:100%;width:0%;background:var(--accent);border-radius:2px;transition:width 1.2s ease"></div></div>
+<div style="height:4px;background:rgba(200,168,124,.08);border-radius:2px;margin-bottom:8px"><div class="sc-bar" data-width="72" style="height:100%;width:0%;background:var(--accent);border-radius:2px;transition:width 1.2s ease"></div></div>
 <div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-size:10px;color:var(--text2)">Board Scores</span><span class="sc-pct" data-target="85" style="font-size:10px;color:var(--green);font-weight:500">0%</span></div>
-<div style="height:4px;background:rgba(198,168,94,.08);border-radius:2px;margin-bottom:8px"><div class="sc-bar" data-width="85" style="height:100%;width:0%;background:var(--green);border-radius:2px;transition:width 1.2s ease"></div></div>
+<div style="height:4px;background:rgba(200,168,124,.08);border-radius:2px;margin-bottom:8px"><div class="sc-bar" data-width="85" style="height:100%;width:0%;background:var(--green);border-radius:2px;transition:width 1.2s ease"></div></div>
 <div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-size:10px;color:var(--text2)">Leadership</span><span class="sc-pct" data-target="48" style="font-size:10px;color:var(--accent);font-weight:500">0%</span></div>
-<div style="height:4px;background:rgba(198,168,94,.08);border-radius:2px;margin-bottom:8px"><div class="sc-bar" data-width="48" style="height:100%;width:0%;background:var(--accent);border-radius:2px;transition:width 1.2s ease"></div></div>
+<div style="height:4px;background:rgba(200,168,124,.08);border-radius:2px;margin-bottom:8px"><div class="sc-bar" data-width="48" style="height:100%;width:0%;background:var(--accent);border-radius:2px;transition:width 1.2s ease"></div></div>
 <div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-size:10px;color:var(--text2)">Networking</span><span class="sc-pct" data-target="35" style="font-size:10px;color:var(--red);font-weight:500">0%</span></div>
-<div style="height:4px;background:rgba(198,168,94,.08);border-radius:2px"><div class="sc-bar" data-width="35" style="height:100%;width:0%;background:var(--red);border-radius:2px;transition:width 1.2s ease;opacity:.7"></div></div>
+<div style="height:4px;background:rgba(200,168,124,.08);border-radius:2px"><div class="sc-bar" data-width="35" style="height:100%;width:0%;background:var(--red);border-radius:2px;transition:width 1.2s ease;opacity:.7"></div></div>
 </div>
 </div>
 <div style="display:flex;gap:6px;flex-wrap:wrap">
-<span class="sc-tag" style="font-size:9px;padding:4px 10px;border-radius:100px;background:var(--accent-dim);color:var(--accent);font-weight:500;border:1px solid rgba(198,168,94,.15);opacity:0;transition:opacity .6s ease">⚡ 3 gaps identified</span>
+<span class="sc-tag" style="font-size:9px;padding:4px 10px;border-radius:100px;background:var(--accent-dim);color:var(--accent);font-weight:500;border:1px solid rgba(200,168,124,.15);opacity:0;transition:opacity .6s ease">⚡ 3 gaps identified</span>
 <span class="sc-tag" style="font-size:9px;padding:4px 10px;border-radius:100px;background:var(--green-dim);color:var(--green);font-weight:500;border:1px solid rgba(139,184,160,.15);opacity:0;transition:opacity .6s ease">✓ 2 strengths</span>
 </div>
 </div>
@@ -95,9 +88,9 @@
 </div>
 </div>
 <svg viewBox="0 0 400 110" style="width:100%;height:auto">
-<line x1="30" y1="95" x2="380" y2="95" stroke="rgba(198,168,94,.08)" stroke-width=".5"/>
-<line x1="30" y1="55" x2="380" y2="55" stroke="rgba(198,168,94,.05)" stroke-width=".5" stroke-dasharray="4,4"/>
-<line x1="30" y1="15" x2="380" y2="15" stroke="rgba(198,168,94,.05)" stroke-width=".5" stroke-dasharray="4,4"/>
+<line x1="30" y1="95" x2="380" y2="95" stroke="rgba(200,168,124,.08)" stroke-width=".5"/>
+<line x1="30" y1="55" x2="380" y2="55" stroke="rgba(200,168,124,.05)" stroke-width=".5" stroke-dasharray="4,4"/>
+<line x1="30" y1="15" x2="380" y2="15" stroke="rgba(200,168,124,.05)" stroke-width=".5" stroke-dasharray="4,4"/>
 <text x="26" y="98" text-anchor="end" font-size="7" fill="rgba(240,236,230,.3)" font-family="sans-serif">$0</text>
 <text x="26" y="58" text-anchor="end" font-size="7" fill="rgba(240,236,230,.3)" font-family="sans-serif">$7M</text>
 <text x="26" y="18" text-anchor="end" font-size="7" fill="rgba(240,236,230,.3)" font-family="sans-serif">$14M</text>
@@ -138,7 +131,7 @@
 <span style="font-size:11px">✓</span>
 <span style="font-size:10px;color:var(--green);font-weight:500">RVU rate $55 — above 75th %ile MGMA</span>
 </div>
-<div class="contract-flag" style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--accent-dim);border-radius:8px;border:1px solid rgba(198,168,94,.15);opacity:0;transform:translateX(-10px);transition:all .4s ease .3s">
+<div class="contract-flag" style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--accent-dim);border-radius:8px;border:1px solid rgba(200,168,124,.15);opacity:0;transform:translateX(-10px);transition:all .4s ease .3s">
 <span style="font-size:11px">⚠️</span>
 <span style="font-size:10px;color:var(--accent);font-weight:500">Tail coverage not included — negotiate</span>
 </div>
@@ -160,7 +153,7 @@
 <div style="font-size:10px;color:var(--text3);font-weight:300">✓ Completed</div>
 </div>
 <div class="roadmap-node" style="position:relative;margin-bottom:20px;opacity:0;transform:translateY(8px);transition:all .5s ease .2s">
-<div style="position:absolute;left:-25px;top:2px;width:12px;height:12px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px rgba(198,168,94,.4)"></div>
+<div style="position:absolute;left:-25px;top:2px;width:12px;height:12px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px rgba(200,168,124,.4)"></div>
 <div style="font-size:12px;font-weight:500;color:var(--accent)">Cardiology Fellowship</div>
 <div style="font-size:10px;color:var(--text3);font-weight:300">● In Progress — 78th percentile</div>
 </div>
@@ -223,8 +216,8 @@
 </div>
 
 <!-- HOOK: INSTANT VALUE -->
-<div class="lp-sec" id="hook-sec" style="background:linear-gradient(180deg,var(--bg),var(--bg3));position:relative;overflow:hidden">
-<div style="position:absolute;top:10%;right:-15%;width:400px;height:400px;background:radial-gradient(circle,rgba(198,168,94,.04),transparent 65%);pointer-events:none"></div>
+<div class="lp-sec" id="hook-sec" style="background:linear-gradient(180deg,var(--bg),#0d0d14);position:relative;overflow:hidden">
+<div style="position:absolute;top:10%;right:-15%;width:400px;height:400px;background:radial-gradient(circle,rgba(200,168,124,.04),transparent 65%);pointer-events:none"></div>
 <div style="position:relative;z-index:1;max-width:560px;margin:0 auto">
 
 <div style="text-align:center;margin-bottom:28px">
@@ -327,19 +320,13 @@
 <div style="text-align:center;padding:18px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;margin-bottom:16px">
 <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:6px">Ready to see <em>your</em> numbers?</div>
 <div style="font-size:11px;color:var(--text3);line-height:1.6;margin-bottom:14px">The examples above are based on sample data. When you sign up, each tool asks you a short set of personalized questions — your scores, your debt, your goals — and generates results that are <strong style="color:var(--accent)">unique to you</strong>.</div>
-<button onclick="go('pg-onboard')" style="padding:16px 48px;font-size:15px;font-weight:600;color:#1C1A17;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:12px;cursor:pointer;letter-spacing:.5px;display:block;width:100%">Start Free Access →</button>
+<button onclick="go('pg-onboard')" style="padding:16px 48px;font-size:15px;font-weight:600;color:#0a0a0f;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:12px;cursor:pointer;letter-spacing:.5px;display:block;width:100%">Start Free Access →</button>
 <p style="font-size:11px;color:var(--text3);margin-top:10px">No credit card required.</p>
 </div>
 </div>
 
 </div>
 </div>
-
-</div>
-<!-- ===== END TAB: HOME ===== -->
-
-<!-- ===== TAB: TOOLS ===== -->
-<div class="lp-tab" data-lptab="tools">
 
 <!-- ALL TOOLS GRID -->
 <div class="lp-sec" id="tools-sec" style="background:var(--bg);position:relative;overflow:hidden">
@@ -351,66 +338,66 @@
 <div class="lp-divider"></div>
 <p class="sub" style="text-align:center;margin-left:auto;margin-right:auto">Every tool designed for a specific decision. Not generic advice — structured, data-driven career intelligence.</p>
 
-<div class="reveal" style="max-width:680px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:14px">
-<div style="padding:20px;background:var(--bg2);border:1px solid var(--border);border-radius:12px">
+<div class="reveal" style="max-width:640px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:12px">
+<div style="padding:16px;background:var(--bg2);border:1px solid var(--border);border-radius:12px">
 <div style="font-size:16px;margin-bottom:6px">📊</div>
 <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:4px">Competitiveness Analyzer</div>
-<div style="font-size:10px;color:var(--text3);line-height:1.5">Score your profile against benchmarked metrics for your specialty. See where you rank and what gaps to close.</div>
+<div style="font-size:10px;color:var(--text3);line-height:1.5">Score your profile against benchmarked metrics</div>
 </div>
-<div style="padding:20px;background:var(--bg2);border:1px solid var(--border);border-radius:12px">
+<div style="padding:16px;background:var(--bg2);border:1px solid var(--border);border-radius:12px">
 <div style="font-size:16px;margin-bottom:6px">📈</div>
 <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:4px">Financial Trajectory Simulator</div>
-<div style="font-size:10px;color:var(--text3);line-height:1.5">Model 10–30 year income, savings, and debt paths. Compare strategic vs. baseline decisions.</div>
+<div style="font-size:10px;color:var(--text3);line-height:1.5">Model 10–30 year income paths</div>
 </div>
-<div style="padding:20px;background:var(--bg2);border:1px solid var(--border);border-radius:12px">
+<div style="padding:16px;background:var(--bg2);border:1px solid var(--border);border-radius:12px">
 <div style="font-size:16px;margin-bottom:6px">📄</div>
 <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:4px">Contract Intelligence Tool</div>
-<div style="font-size:10px;color:var(--text3);line-height:1.5">Decode contracts clause by clause. Surface red flags, benchmark RVU rates, get negotiation strategies.</div>
+<div style="font-size:10px;color:var(--text3);line-height:1.5">Decode contracts, surface red flags</div>
 </div>
-<div style="padding:20px;background:var(--bg2);border:1px solid var(--border);border-radius:12px">
+<div style="padding:16px;background:var(--bg2);border:1px solid var(--border);border-radius:12px">
 <div style="font-size:16px;margin-bottom:6px">🧬</div>
 <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:4px">Specialty Fit Analyzer</div>
-<div style="font-size:10px;color:var(--text3);line-height:1.5">Match your profile, interests, and lifestyle goals against specialties with weighted compatibility scores.</div>
+<div style="font-size:10px;color:var(--text3);line-height:1.5">Match your profile to specialties</div>
 </div>
-<div style="padding:20px;background:var(--bg2);border:1px solid var(--border);border-radius:12px">
+<div style="padding:16px;background:var(--bg2);border:1px solid var(--border);border-radius:12px">
 <div style="font-size:16px;margin-bottom:6px">🎯</div>
 <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:4px">Match Competitiveness Calculator</div>
-<div style="font-size:10px;color:var(--text3);line-height:1.5">Calculate weighted match probability by program tier. Factors in STEP scores, research, LORs, and leadership.</div>
+<div style="font-size:10px;color:var(--text3);line-height:1.5">Weighted probability by program tier</div>
 </div>
-<div style="padding:20px;background:var(--bg2);border:1px solid var(--border);border-radius:12px">
+<div style="padding:16px;background:var(--bg2);border:1px solid var(--border);border-radius:12px">
 <div style="font-size:16px;margin-bottom:6px">🗺️</div>
 <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:4px">Career Strategy Builder</div>
-<div style="font-size:10px;color:var(--text3);line-height:1.5">Build a milestone roadmap from current stage to goal with decision simulations and timing recommendations.</div>
+<div style="font-size:10px;color:var(--text3);line-height:1.5">Milestone roadmap with simulations</div>
 </div>
-<div style="padding:20px;background:var(--bg2);border:1px solid var(--border);border-radius:12px">
+<div style="padding:16px;background:var(--bg2);border:1px solid var(--border);border-radius:12px">
 <div style="font-size:16px;margin-bottom:6px">🎤</div>
 <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:4px">Mock Interview Simulator</div>
-<div style="font-size:10px;color:var(--text3);line-height:1.5">Practice specialty-specific interview questions with structured feedback on responses and areas to improve.</div>
+<div style="font-size:10px;color:var(--text3);line-height:1.5">Practice with specialty-specific questions</div>
 </div>
-<div style="padding:20px;background:var(--bg2);border:1px solid var(--border);border-radius:12px">
+<div style="padding:16px;background:var(--bg2);border:1px solid var(--border);border-radius:12px">
 <div style="font-size:16px;margin-bottom:6px">🏆</div>
 <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:4px">Fellowship Readiness Worksheet</div>
-<div style="font-size:10px;color:var(--text3);line-height:1.5">Gap analysis for fellowship applications. Know where you stand and what to prioritize before application season.</div>
+<div style="font-size:10px;color:var(--text3);line-height:1.5">Gap analysis for fellowship applications</div>
 </div>
-<div style="padding:20px;background:var(--bg2);border:1px solid var(--border);border-radius:12px">
+<div style="padding:16px;background:var(--bg2);border:1px solid var(--border);border-radius:12px">
 <div style="font-size:16px;margin-bottom:6px">💰</div>
 <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:4px">RVU Modeling &amp; Offer Comparison</div>
-<div style="font-size:10px;color:var(--text3);line-height:1.5">Side-by-side comparison of job offers. Model RVU scenarios and compare total compensation over time.</div>
+<div style="font-size:10px;color:var(--text3);line-height:1.5">Side-by-side offer analysis</div>
 </div>
-<div style="padding:20px;background:var(--bg2);border:1px solid var(--border);border-radius:12px">
+<div style="padding:16px;background:var(--bg2);border:1px solid var(--border);border-radius:12px">
 <div style="font-size:16px;margin-bottom:6px">🔄</div>
 <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:4px">Career Pivot Decision Engine</div>
-<div style="font-size:10px;color:var(--text3);line-height:1.5">Evaluate career changes with structured cost-benefit analysis. Model retraining, income disruption, recovery.</div>
+<div style="font-size:10px;color:var(--text3);line-height:1.5">Evaluate career change scenarios</div>
 </div>
-<div style="padding:20px;background:var(--bg2);border:1px solid var(--border);border-radius:12px">
+<div style="padding:16px;background:var(--bg2);border:1px solid var(--border);border-radius:12px">
 <div style="font-size:16px;margin-bottom:6px">🔬</div>
 <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:4px">Research ROI Calculator</div>
-<div style="font-size:10px;color:var(--text3);line-height:1.5">Quantify research impact on career trajectory. Score publications and projects by real competitive value.</div>
+<div style="font-size:10px;color:var(--text3);line-height:1.5">Quantify research impact on career</div>
 </div>
-<div style="padding:20px;background:var(--bg2);border:1px solid var(--border);border-radius:12px">
+<div style="padding:16px;background:var(--bg2);border:1px solid var(--border);border-radius:12px">
 <div style="font-size:16px;margin-bottom:6px">📋</div>
 <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:4px">Contract Risk Scorecard</div>
-<div style="font-size:10px;color:var(--text3);line-height:1.5">Quick 5-minute risk assessment for any offer. Score non-competes, tail coverage, and compensation structure.</div>
+<div style="font-size:10px;color:var(--text3);line-height:1.5">Quick risk assessment for any offer</div>
 </div>
 </div>
 
@@ -418,13 +405,9 @@
 <button class="btn btn-a" onclick="go('pg-onboard')" style="max-width:300px;margin:0 auto">Access the Full Toolkit →</button>
 <p style="font-size:12px;color:var(--text3);margin-top:12px;font-weight:300">No credit card required.</p>
 </div>
-</div>
-</div>
-</div>
-<!-- ===== END TAB: TOOLS ===== -->
 
-<!-- ===== TAB: COMPARE ===== -->
-<div class="lp-tab" data-lptab="compare">
+</div>
+</div>
 
 <!-- WHY NOT CHATGPT — EXPANDED COMPARISON -->
 <div class="lp-sec" id="diff-sec" style="background:var(--bg2)">
@@ -462,7 +445,7 @@
 <span style="font-size:10px">✓</span>
 <span style="font-size:10px;color:var(--green);font-weight:500">RVU rate: $55 (above MGMA)</span>
 </div>
-<div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--accent-dim);border-radius:6px;border:1px solid rgba(198,168,94,.15)">
+<div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--accent-dim);border-radius:6px;border:1px solid rgba(200,168,124,.15)">
 <span style="font-size:10px">⚠️</span>
 <span style="font-size:10px;color:var(--accent);font-weight:500">Tail coverage: not included</span>
 </div>
@@ -492,9 +475,9 @@
 <div style="font-size:9px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:12px">HeartWise</div>
 <!-- Mini income/savings/debt chart -->
 <svg viewBox="0 0 220 80" style="width:100%;height:auto;margin-bottom:8px">
-<line x1="20" y1="70" x2="200" y2="70" stroke="rgba(198,168,94,.15)" stroke-width=".5"/>
-<line x1="20" y1="45" x2="200" y2="45" stroke="rgba(198,168,94,.08)" stroke-width=".5" stroke-dasharray="3,3"/>
-<line x1="20" y1="20" x2="200" y2="20" stroke="rgba(198,168,94,.08)" stroke-width=".5" stroke-dasharray="3,3"/>
+<line x1="20" y1="70" x2="200" y2="70" stroke="rgba(200,168,124,.15)" stroke-width=".5"/>
+<line x1="20" y1="45" x2="200" y2="45" stroke="rgba(200,168,124,.08)" stroke-width=".5" stroke-dasharray="3,3"/>
+<line x1="20" y1="20" x2="200" y2="20" stroke="rgba(200,168,124,.08)" stroke-width=".5" stroke-dasharray="3,3"/>
 <!-- Income line (gold) -->
 <polyline points="20,65 60,55 100,42 140,30 180,20 200,16" fill="none" stroke="#C6A75E" stroke-width="1.5" stroke-linecap="round"/>
 <!-- Savings area -->
@@ -531,15 +514,15 @@
 <div style="font-size:9px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:12px">HeartWise</div>
 <!-- Mini scenario cards -->
 <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:10px">
-<div style="display:flex;align-items:center;justify-content:space-between;padding:6px 10px;background:rgba(198,168,94,.08);border-radius:6px;border:1px solid rgba(198,168,94,.12)">
+<div style="display:flex;align-items:center;justify-content:space-between;padding:6px 10px;background:rgba(200,168,124,.08);border-radius:6px;border:1px solid rgba(200,168,124,.12)">
 <span style="font-size:9px;color:var(--text2);font-weight:400">Offer A · Academic</span>
 <span style="font-size:9px;color:var(--accent);font-weight:600">$620K</span>
 </div>
-<div style="display:flex;align-items:center;justify-content:space-between;padding:6px 10px;background:rgba(198,168,94,.08);border-radius:6px;border:1px solid rgba(198,168,94,.12)">
+<div style="display:flex;align-items:center;justify-content:space-between;padding:6px 10px;background:rgba(200,168,124,.08);border-radius:6px;border:1px solid rgba(200,168,124,.12)">
 <span style="font-size:9px;color:var(--text2);font-weight:400">Offer B · Private</span>
 <span style="font-size:9px;color:var(--green);font-weight:600">$785K</span>
 </div>
-<div style="display:flex;align-items:center;justify-content:space-between;padding:6px 10px;background:rgba(198,168,94,.08);border-radius:6px;border:1px solid rgba(198,168,94,.12)">
+<div style="display:flex;align-items:center;justify-content:space-between;padding:6px 10px;background:rgba(200,168,124,.08);border-radius:6px;border:1px solid rgba(200,168,124,.12)">
 <span style="font-size:9px;color:var(--text2);font-weight:400">Offer C · Hospital</span>
 <span style="font-size:9px;color:var(--text2);font-weight:600">$710K</span>
 </div>
@@ -559,11 +542,6 @@ ChatGPT and Claude are powerful AI tools — but they're general-purpose. <stron
 
 </div>
 </div>
-</div>
-<!-- ===== END TAB: COMPARE ===== -->
-
-<!-- ===== TAB: PRICING ===== -->
-<div class="lp-tab" data-lptab="pricing">
 
 <!-- PRICING -->
 <div class="lp-sec" id="pricing-sec" style="background:var(--bg2)">
@@ -601,7 +579,7 @@ ChatGPT and Claude are powerful AI tools — but they're general-purpose. <stron
 <div class="reveal" style="max-width:500px;margin:0 auto">
 
 <!-- Trial CTA -->
-<div style="padding:24px;border-radius:var(--r3);background:linear-gradient(160deg,rgba(198,168,94,.06),rgba(198,168,94,.02));border:1px solid var(--border2);margin-bottom:20px;text-align:center">
+<div style="padding:24px;border-radius:var(--r3);background:linear-gradient(160deg,rgba(200,168,124,.06),rgba(200,168,124,.02));border:1px solid var(--border2);margin-bottom:20px;text-align:center">
 <div style="font-size:18px;font-family:'Cormorant Garamond',serif;font-weight:600;margin-bottom:8px">48-Hour Full Access</div>
 <p style="font-size:13px;color:var(--text2);font-weight:300;line-height:1.6;margin-bottom:16px">Every tool. Every feature. No credit card. No limits. See what HeartWise can do for your career.</p>
 <button class="btn btn-a" onclick="go('pg-onboard')" style="max-width:260px;margin:0 auto">Start Free Trial</button>
@@ -709,11 +687,6 @@ ChatGPT and Claude are powerful AI tools — but they're general-purpose. <stron
 </div>
 </div>
 
-</div>
-<!-- ===== END TAB: PRICING ===== -->
-
-<!-- ===== TAB: FOUNDER ===== -->
-<div class="lp-tab" data-lptab="founder">
 
 <!-- FOUNDER -->
 <div class="lp-sec" id="founder-sec">
@@ -723,8 +696,8 @@ ChatGPT and Claude are powerful AI tools — but they're general-purpose. <stron
 <div class="reveal" style="max-width:540px;margin:0 auto">
 
 <!-- Hero card -->
-<div style="padding:36px 28px;background:linear-gradient(160deg,var(--bg2),rgba(198,168,94,.03));border:1px solid var(--border2);border-radius:var(--r3);text-align:center;margin-bottom:24px">
-<img src="founder.jpg" alt="Dr. Mouzam Faroqui" style="width:120px;height:120px;border-radius:50%;object-fit:cover;object-position:center center;margin:0 auto 20px;display:block;border:3px solid rgba(198,168,94,.25);box-shadow:0 8px 32px rgba(0,0,0,.3)">
+<div style="padding:36px 28px;background:linear-gradient(160deg,var(--bg2),rgba(200,168,124,.03));border:1px solid var(--border2);border-radius:var(--r3);text-align:center;margin-bottom:24px">
+<img src="founder.jpg" alt="Dr. Mouzam Faroqui" style="width:120px;height:120px;border-radius:50%;object-fit:cover;object-position:center center;margin:0 auto 20px;display:block;border:3px solid rgba(200,168,124,.25);box-shadow:0 8px 32px rgba(0,0,0,.3)">
 <div style="font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:600;margin-bottom:4px">Mouzam Faroqui, MD, FACC</div>
 <div style="font-size:13px;color:var(--accent);font-weight:500;letter-spacing:.5px;margin-bottom:16px">Practicing Physician · Founder of HeartWise</div>
 <div style="display:flex;flex-direction:column;align-items:center;gap:6px">
@@ -740,7 +713,7 @@ ChatGPT and Claude are powerful AI tools — but they're general-purpose. <stron
 <div style="font-size:11px;font-weight:500;color:var(--accent);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:16px">The Journey</div>
 <p style="font-size:14px;color:var(--text2);line-height:1.8;font-weight:300;margin-bottom:14px">From medical student to Chief Resident and cardiology fellow, my career required navigating complex decisions about training, specialization, finances, and long-term strategy.</p>
 <p style="font-size:14px;color:var(--text2);line-height:1.8;font-weight:300;margin-bottom:18px">I built HeartWise to help medical students, residents, and physicians make those decisions with structured frameworks, financial trajectory tools, and physician-built strategy.</p>
-<div style="padding:16px;background:linear-gradient(160deg,#f5f0e8,#ece5d8);border:1px solid rgba(198,168,94,.2);border-radius:8px">
+<div style="padding:16px;background:linear-gradient(160deg,#f5f0e8,#ece5d8);border:1px solid rgba(200,168,124,.2);border-radius:8px">
 <p style="font-size:15px;color:#1a1620;line-height:1.7;font-weight:600;font-style:italic;margin:0;font-family:'Cormorant Garamond',serif">"The decisions that shape your career shouldn't be made in the dark."</p>
 </div>
 </div>
@@ -765,7 +738,7 @@ ChatGPT and Claude are powerful AI tools — but they're general-purpose. <stron
 </div>
 
 <div style="position:relative">
-<div style="position:absolute;left:-27px;top:2px;width:12px;height:12px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px rgba(198,168,94,.4)"></div>
+<div style="position:absolute;left:-27px;top:2px;width:12px;height:12px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px rgba(200,168,124,.4)"></div>
 <div style="font-size:14px;font-weight:500;color:var(--text);margin-bottom:3px">Deborah Heart and Lung Center</div>
 <div style="font-size:12px;color:var(--accent);font-weight:400;margin-bottom:2px">Sidney Kimmel Medical College at Thomas Jefferson University</div>
 <div style="font-size:11px;color:var(--text3);font-weight:300">Interventional Cardiology Fellowship → Chief Interventional Cardiology Fellow</div>
@@ -845,10 +818,9 @@ ChatGPT and Claude are powerful AI tools — but they're general-purpose. <stron
 
 </div>
 </div>
-</div>
-<!-- ===== END TAB: FOUNDER ===== -->
 
-<!-- Shared Footer (visible on all tabs) -->
+
+<!-- Footer -->
 <div style="padding:60px 32px 48px;text-align:center;border-top:1px solid var(--border)">
 <div style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;margin-bottom:16px;color:var(--text)">HeartWise</div>
 <div style="font-size:12px;color:var(--text3);max-width:380px;margin:0 auto 24px;line-height:1.7;font-weight:300">Strategic intelligence. Not generic answers.</div>
@@ -917,7 +889,7 @@ ChatGPT and Claude are powerful AI tools — but they're general-purpose. <stron
 <div style="margin-bottom:36px">
 <h2 style="font-family:var(--font-serif);font-size:20px;font-weight:600;color:var(--text);margin-bottom:4px">Disclaimer</h2>
 <p style="font-size:11px;color:var(--text3);margin-bottom:16px">Last updated: March 8, 2026</p>
-<div style="padding:20px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;margin-bottom:16px">
+<div style="padding:16px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;margin-bottom:16px">
 <p style="font-weight:600;color:var(--accent);margin-bottom:8px;font-size:14px">Educational Purpose Only</p>
 <p>All content is for informational and educational purposes only. No doctor-patient relationship is created. No guarantee of outcomes. AI may contain errors. Financial data are estimates. Always consult qualified professionals.</p>
 </div>

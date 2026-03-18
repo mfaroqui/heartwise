@@ -4589,7 +4589,7 @@ function quizShowResults(){
   else urgMsg='<div style="padding:10px 14px;background:rgba(139,173,196,.08);border:1px solid rgba(139,173,196,.15);border-radius:8px;margin-bottom:14px;font-size:11px;color:var(--blue);display:flex;align-items:center;gap:8px"><span style="font-size:14px">🗺️</span> <span>Great time to explore. Browse these tools at your own pace — no pressure.</span></div>';
 
   // Stage labels for personalized intro
-  var stageLabels={student:'medical student',resident:'resident',fellow:'fellow',attending:'early attending',pivot:'physician exploring a career pivot'};
+  var stageLabels={student:'medical student',resident:'resident',fellow:'fellow',attending:'attending physician'};
   var goalLabels={specialty:'choosing a specialty',match:'matching into residency',fellowship:'positioning for fellowship',contract:'negotiating a job offer',finance:'building income and financial leverage',direction:'considering a career change'};
   var stageLabel=stageLabels[quizAnswers.stage]||'physician';
   var goalLabel=goalLabels[quizAnswers.goal]||'your next move';

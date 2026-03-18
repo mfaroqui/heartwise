@@ -2334,13 +2334,9 @@ Sign Out</button>
 </button>
 <button class="quiz-opt" onclick="quizPick(1,'attending',this)" style="padding:12px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;text-align:center;cursor:pointer;transition:all .2s">
 <div style="font-size:18px;margin-bottom:4px">⚕️</div>
-<div style="font-size:12px;font-weight:500;color:var(--text)">Early Attending</div>
+<div style="font-size:12px;font-weight:500;color:var(--text)">Attending</div>
 </button>
 </div>
-<button class="quiz-opt" onclick="quizPick(1,'pivot',this)" style="padding:10px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;text-align:center;cursor:pointer;transition:all .2s;margin-top:8px;width:100%;display:flex;align-items:center;justify-content:center;gap:8px">
-<span style="font-size:16px">🔄</span>
-<span style="font-size:12px;font-weight:500;color:var(--text)">Exploring a Career Pivot</span>
-</button>
 </div>
 
 <!-- Q2: Decision (hidden until Q1 answered) -->
@@ -9384,7 +9380,7 @@ function quizShowResults(){
   else urgMsg='<div style="padding:10px 14px;background:rgba(139,173,196,.08);border:1px solid rgba(139,173,196,.15);border-radius:8px;margin-bottom:14px;font-size:11px;color:var(--blue);display:flex;align-items:center;gap:8px"><span style="font-size:14px">🗺️</span> <span>Great time to explore. Browse these tools at your own pace — no pressure.</span></div>';
 
   // Stage labels for personalized intro
-  var stageLabels={student:'medical student',resident:'resident',fellow:'fellow',attending:'early attending',pivot:'physician exploring a career pivot'};
+  var stageLabels={student:'medical student',resident:'resident',fellow:'fellow',attending:'attending physician'};
   var goalLabels={specialty:'choosing a specialty',match:'matching into residency',fellowship:'positioning for fellowship',contract:'negotiating a job offer',finance:'building income and financial leverage',direction:'considering a career change'};
   var stageLabel=stageLabels[quizAnswers.stage]||'physician';
   var goalLabel=goalLabels[quizAnswers.goal]||'your next move';

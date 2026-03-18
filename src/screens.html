@@ -46,6 +46,18 @@ Sign Out</button>
 <!-- Trial Countdown Banner -->
 <div id="trial-countdown-banner" style="margin:12px 24px 0;padding:14px 18px;border-radius:14px;border:1px solid rgba(198,168,94,.25);background:rgba(198,168,94,.08);display:none"></div>
 
+<!-- Score Change Banner -->
+<div id="score-change-banner" style="display:none;margin:12px 24px 0;padding:14px 18px;border-radius:14px;border:1px solid rgba(106,191,75,.2);background:rgba(106,191,75,.06);cursor:pointer" onclick="this.style.display='none'">
+<div style="display:flex;align-items:center;gap:10px">
+<span style="font-size:20px" id="score-change-icon">📈</span>
+<div style="flex:1">
+<div id="score-change-text" style="font-size:13px;font-weight:600;color:var(--text)"></div>
+<div id="score-change-sub" style="font-size:11px;color:var(--text3);margin-top:2px"></div>
+</div>
+<span style="font-size:10px;color:var(--text3)">✕</span>
+</div>
+</div>
+
 <!-- ===== CAREER SCORE — Single Prominent Number + Trend ===== -->
 <div id="career-dashboard" style="padding:14px 24px 0">
 <div id="home-score-card"></div>
@@ -63,6 +75,34 @@ Sign Out</button>
 
 <!-- ===== RECOMMENDED TOOLS — Personalized ===== -->
 <div id="home-recommended-tools" style="padding:14px 24px 0;display:none"></div>
+
+<!-- ===== WEEKLY FOCUS + CHECK-IN ===== -->
+<div style="padding:14px 24px 0">
+<div id="weekly-focus" style="display:none"></div>
+</div>
+
+<!-- ===== LOGIN STREAK + TOOL OF THE WEEK ===== -->
+<div style="padding:0 24px">
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
+<div id="login-streak" style="display:none"></div>
+<div id="tool-of-week" style="display:none"></div>
+</div>
+</div>
+
+<!-- ===== UPCOMING DEADLINES ===== -->
+<div style="padding:0 24px">
+<div id="upcoming-deadlines" style="display:none;margin-bottom:12px"></div>
+</div>
+
+<!-- ===== WHAT'S CHANGED FEED ===== -->
+<div style="padding:0 24px">
+<div id="whats-changed" style="display:none;margin-bottom:12px"></div>
+</div>
+
+<!-- ===== WEEKLY CHECK-IN TRIGGER ===== -->
+<div style="padding:0 24px">
+<div id="checkin-trigger" style="display:none;margin-bottom:12px"></div>
+</div>
 
 <!-- ===== PROGRESS / HISTORY ===== -->
 <div style="padding:0 24px">
@@ -478,6 +518,9 @@ Sign Out</button>
 
 <!-- Goal Tracker (Core + Mentorship) -->
 <div id="goal-tracker" style="display:none"></div>
+
+<!-- Achievements -->
+<div id="prof-achievements" style="display:none;margin-bottom:12px"></div>
 
 <div style="margin-bottom:12px">
 <div class="card" style="cursor:pointer;padding:16px 20px" onclick="toggleAccountSettings()">

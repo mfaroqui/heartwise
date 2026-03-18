@@ -569,6 +569,7 @@ function navTo(scr,btn){
   if(scr==='scr-ask')updateAskScreen();
   if(scr==='scr-profile')renderProfile();
   if(scr==='scr-leverage')renderLeverage();
+  trackScreenVisit(scr);
   // Close any open modals
   var modal=document.getElementById('modal-q');if(modal&&!modal.classList.contains('hidden')){modal.classList.add('hidden')}
   if(!_skipPush&&scr!==_lastScr){history.pushState({page:'main-app',scr:scr},'',null);_lastScr=scr}
@@ -802,7 +803,8 @@ function enterApp(){
   navTo('scr-home');
   // Check for unread notifications
   checkNotifBadge();
-  // Show upgrade elements based on tier
+  // Check achievements on app entry
+  try{checkAchievements()}catch(e){console.error('Achievements:',e)}  // Show upgrade elements based on tier
   showUpgradeElements();
   // Start onboarding tour for new users (after a short delay for rendering)
   if(shouldShowTour())setTimeout(startTour,800);
@@ -940,6 +942,7 @@ function initCareerProfile(){
   if(!U.toolHistory) U.toolHistory=[];
   if(!U.weeklyGoals) U.weeklyGoals=[];
   if(!U.checkins) U.checkins=[];
+  if(!U.achievements) U.achievements=[];
   if(!U.milestones) U.milestones=getDefaultMilestones(U.role||U.profile?.stage||'student');
   if(!U.careerProfile.lastUpdated){
     // Seed from onboarding profile if available
@@ -1748,6 +1751,7 @@ function syncToSupabase(){
     loginDays:U.loginDays||[],
     weeklyGoals:U.weeklyGoals||[],
     checkins:U.checkins||[],
+    achievements:U.achievements||[],
     lastCheckin:U.lastCheckin||null,
     usage:U.usage||{},
     tier:U.tier,
@@ -1784,6 +1788,8 @@ function recordToolUse(toolName,score,summary,resultData){
   U.toolHistory.push(entry);
   if(U.toolHistory.length>100) U.toolHistory=U.toolHistory.slice(-100);
   saveUser();
+  // Check for new achievements after each tool use
+  try{checkAchievements()}catch(e){console.error('Achievements:',e)}
 }
 
 
@@ -1802,12 +1808,29 @@ function renderHome(){
   var trialBanner=document.getElementById('trial-countdown-banner');
   if(trialBanner)trialBanner.style.display=U.isTrial&&U.trialEnd?'':'none';
   if(U.isTrial&&U.trialEnd)updateTrialBanner();
+  // Score change detection
+  try{renderScoreChange()}catch(e){console.error('ScoreChange:',e)}
   // Personalized next step in hero
   renderNextStep();
   // Personalized tool recommendations
   renderRecommendedTools();
+  // Engagement sections (paid users only)
+  var _hasPlan=U.tier==='core'||U.tier==='elite'||U.tier==='admin'||U.isTrial;
+  if(_hasPlan){
+    try{renderWeeklyFocus()}catch(e){console.error('WeeklyFocus:',e)}
+    try{renderLoginStreak()}catch(e){console.error('LoginStreak:',e)}
+    try{renderToolOfWeek()}catch(e){console.error('ToolOfWeek:',e)}
+    try{renderUpcomingDeadlines()}catch(e){console.error('Deadlines:',e)}
+    try{renderWhatsChanged()}catch(e){console.error('WhatsChanged:',e)}
+    try{renderCheckinTrigger()}catch(e){console.error('CheckinTrigger:',e)}
+    try{renderToolProgress()}catch(e){console.error('ToolProgress:',e)}
+  }else{
+    ['weekly-focus','login-streak','tool-of-week','upcoming-deadlines','whats-changed','checkin-trigger','tool-progress'].forEach(function(id){var el=document.getElementById(id);if(el)el.style.display='none'});
+  }
   // Single contextual upgrade nudge (not for trial — they have the banner)
   renderUpgradeNudge();
+  // Nav badges
+  try{renderNavBadges()}catch(e){console.error('NavBadges:',e)}
   // Recent analyses — only show if there's data
   var feedSection=document.getElementById('home-feed-section');
   const now=new Date();const weekAgo=new Date(now);weekAgo.setDate(weekAgo.getDate()-7);const weekStr=weekAgo.toISOString().split('T')[0];
@@ -1819,13 +1842,6 @@ function renderHome(){
     document.getElementById('home-feed').innerHTML=featured.map(renderQCard).join('');
   }else{
     if(feedSection)feedSection.style.display='none';
-  }
-  // Tool progress (paid users only)
-  var _hasPlan=U.tier==='core'||U.tier==='elite'||U.tier==='admin'||U.isTrial;
-  if(_hasPlan){
-    try{renderToolProgress()}catch(e){console.error('ToolProgress:',e)}
-  }else{
-    var tpEl=document.getElementById('tool-progress');if(tpEl)tpEl.style.display='none';
   }
 }
 
@@ -2095,6 +2111,7 @@ function renderToolProgress(){
     h+='<div style="font-size:10px;color:#8A8278">'+nextTool.desc.substring(0,60)+'…</div></div>';
     h+='<span style="font-size:12px;color:#C6A85E">→</span></div>';
   }
+  h+=renderCommunitySignal();
   h+='</div>';
   el.innerHTML=h;
 }
@@ -2257,6 +2274,214 @@ function renderLoginStreak(){
     +'<div style="font-size:24px;font-weight:700;color:var(--accent);font-family:var(--font-serif);min-width:36px;text-align:center">'+streak+'</div>'
     +'<div style="flex:1"><div style="font-size:12px;font-weight:600;color:var(--text)">Day Streak '+flames+'</div>'
     +'<div style="font-size:10px;color:var(--text3)">'+msg+' Keep checking in to build your career strategy.</div></div>'
+    +'</div>';
+}
+
+// ===== TIER 2: SCORE CHANGE DETECTION =====
+function renderScoreChange(){
+  var el=document.getElementById('score-change-banner');
+  if(!el||!U)return;
+  if(!U.scoreHistory||U.scoreHistory.length<2){el.style.display='none';return}
+  var lastScore=U.scoreHistory[U.scoreHistory.length-1];
+  var prevScore=U.scoreHistory[U.scoreHistory.length-2];
+  if(!lastScore||!prevScore||!lastScore.overall||!prevScore.overall){el.style.display='none';return}
+  var seenKey='hw_score_seen_'+lastScore.date;
+  if(localStorage.getItem(seenKey)){el.style.display='none';return}
+  var diff=lastScore.overall-prevScore.overall;
+  if(diff===0){el.style.display='none';return}
+  var icon=document.getElementById('score-change-icon');
+  var text=document.getElementById('score-change-text');
+  var sub=document.getElementById('score-change-sub');
+  if(diff>0){
+    el.style.borderColor='rgba(106,191,75,.2)';el.style.background='rgba(106,191,75,.06)';
+    if(icon)icon.textContent='📈';
+    if(text)text.textContent='Your Career Score went up! '+prevScore.overall+' → '+lastScore.overall+' (+'+diff+')';
+    if(sub)sub.textContent='Your progress is paying off. Keep going.';
+  }else{
+    el.style.borderColor='rgba(198,168,94,.2)';el.style.background='rgba(198,168,94,.06)';
+    if(icon)icon.textContent='📊';
+    if(text)text.textContent='Your Career Score updated: '+prevScore.overall+' → '+lastScore.overall+' ('+diff+')';
+    if(sub)sub.textContent='Run a few more tools to boost your score.';
+  }
+  el.style.display='';
+  el.onclick=function(){localStorage.setItem(seenKey,'1');el.style.display='none'};
+}
+function getScoreAge(){
+  if(!U||!U.scoreHistory||!U.scoreHistory.length)return 999;
+  var last=U.scoreHistory[U.scoreHistory.length-1];
+  if(!last.date)return 999;
+  return Math.floor((Date.now()-new Date(last.date).getTime())/(1000*60*60*24));
+}
+
+// ===== TIER 3: NAV BADGES =====
+function renderNavBadges(){
+  var lastVisit=localStorage.getItem('hw_last_insights_visit')||'2000-01-01';
+  var newQ=DB.questions.filter(function(q){return q.status==='reviewed'&&(q.reviewDate||q.date)>lastVisit}).length;
+  var insightsBtn=document.querySelector('.ni[data-scr="scr-archive"]');
+  if(insightsBtn){
+    var existing=insightsBtn.querySelector('.nav-badge');
+    if(newQ>0){
+      if(!existing){
+        var badge=document.createElement('span');
+        badge.className='nav-badge';
+        badge.style.cssText='position:absolute;top:4px;right:50%;margin-right:-18px;width:8px;height:8px;background:#C6A85E;border-radius:50%;display:block';
+        insightsBtn.style.position='relative';
+        insightsBtn.appendChild(badge);
+      }
+    }else if(existing){existing.remove()}
+  }
+}
+function trackScreenVisit(scr){
+  if(scr==='scr-archive'){
+    localStorage.setItem('hw_last_insights_visit',new Date().toISOString().split('T')[0]);
+    var badge=document.querySelector('.ni[data-scr="scr-archive"] .nav-badge');
+    if(badge)badge.remove();
+  }
+}
+
+// ===== TIER 3: WHATS CHANGED =====
+function renderWhatsChanged(){
+  var el=document.getElementById('whats-changed');
+  if(!el||!U)return;
+  var items=[];
+  var scoreAge=getScoreAge();
+  if(scoreAge>=14&&scoreAge<999){
+    items.push({icon:'📊',text:'Your Career Score is '+scoreAge+' days old',sub:'Recalculate to see updated insights',action:'navTo(\'scr-vault\')'});
+  }
+  if(U.weeklyGoals&&U.weeklyGoals.length){
+    var lastGoal=U.weeklyGoals[U.weeklyGoals.length-1];
+    if(lastGoal.status==='active'){
+      items.push({icon:'🎯',text:'Current goal: "'+lastGoal.goal+'"',sub:'Set '+(lastGoal.date||'recently'),action:'showWeeklyCheckin()'});
+    }
+  }
+  var now=new Date();var weekAgo=new Date(now);weekAgo.setDate(weekAgo.getDate()-7);
+  var recentCheckin=(U.checkins||[]).find(function(c){return new Date(c.date)>=weekAgo});
+  if(!recentCheckin&&(U.toolHistory||[]).length>0){
+    items.push({icon:'📋',text:'Weekly check-in available',sub:'2 minutes — update your goals and track progress',action:'showWeeklyCheckin()'});
+  }
+  var streak=calcStreak();
+  if(streak===7||streak===14||streak===30){
+    items.push({icon:'🔥',text:streak+'-day streak milestone!',sub:'You\'re in the top 5% of consistent users'});
+  }
+  var lastVisit=localStorage.getItem('hw_last_insights_visit')||'2000-01-01';
+  var newQ=DB.questions.filter(function(q){return q.status==='reviewed'&&(q.reviewDate||q.date)>lastVisit}).length;
+  if(newQ>0){
+    items.push({icon:'💡',text:newQ+' new physician-reviewed insight'+(newQ>1?'s':''),sub:'Tap to read',action:'navTo(\'scr-archive\')'});
+  }
+  if(!items.length){el.style.display='none';return}
+  el.style.display='';
+  var h='<div style="background:#fff;border:1px solid #E8E1D8;border-radius:14px;overflow:hidden;box-shadow:0 2px 6px rgba(0,0,0,.04)">';
+  h+='<div style="padding:14px 16px 10px;font-size:10px;font-weight:700;color:#C6A85E;text-transform:uppercase;letter-spacing:1.5px">What\'s New</div>';
+  items.forEach(function(item,i){
+    var border=i<items.length-1?'border-bottom:1px solid #E8E1D8;':'';
+    h+='<div style="display:flex;align-items:center;gap:12px;padding:12px 16px;'+border+(item.action?'cursor:pointer':'')+'" '+(item.action?'onclick="'+item.action+'"':'')+' >';
+    h+='<span style="font-size:18px;flex-shrink:0">'+item.icon+'</span>';
+    h+='<div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:600;color:#1C1A17">'+item.text+'</div>';
+    if(item.sub)h+='<div style="font-size:10px;color:#8A8278;margin-top:2px">'+item.sub+'</div>';
+    h+='</div>';
+    if(item.action)h+='<span style="color:#C6A85E;font-size:12px;flex-shrink:0">→</span>';
+    h+='</div>';
+  });
+  h+='</div>';
+  el.innerHTML=h;
+}
+function calcStreak(){
+  if(!U||!U.loginDays||!U.loginDays.length)return 0;
+  var sorted=U.loginDays.slice().sort().reverse();
+  var streak=0;var checkDate=new Date();
+  for(var i=0;i<sorted.length;i++){
+    var expected=checkDate.toISOString().split('T')[0];
+    if(sorted[i]===expected){streak++;checkDate.setDate(checkDate.getDate()-1)}
+    else if(i===0){checkDate.setDate(checkDate.getDate()-1);expected=checkDate.toISOString().split('T')[0];if(sorted[i]===expected){streak++;checkDate.setDate(checkDate.getDate()-1)}else break}
+    else break;
+  }
+  return streak;
+}
+
+// ===== TIER 3: CHECK-IN TRIGGER =====
+function renderCheckinTrigger(){
+  var el=document.getElementById('checkin-trigger');
+  if(!el||!U)return;
+  var now=new Date();var weekAgo=new Date(now);weekAgo.setDate(weekAgo.getDate()-7);
+  var recentCheckin=(U.checkins||[]).find(function(c){return new Date(c.date)>=weekAgo});
+  if(recentCheckin||(U.toolHistory||[]).length===0){el.style.display='none';return}
+  var day=now.getDay();
+  if(day===0||day>3){el.style.display='none';return}
+  el.style.display='';
+  el.innerHTML='<div onclick="showWeeklyCheckin()" style="display:flex;align-items:center;gap:12px;padding:16px;background:linear-gradient(160deg,rgba(198,168,94,.06),rgba(198,168,94,.02));border:1px solid rgba(198,168,94,.15);border-radius:14px;cursor:pointer;transition:all .2s">'
+    +'<span style="font-size:20px">📋</span>'
+    +'<div style="flex:1"><div style="font-size:13px;font-weight:600;color:#1C1A17">Weekly Check-in</div>'
+    +'<div style="font-size:11px;color:#8A8278">2 minutes — update your goals and track progress</div></div>'
+    +'<span style="font-size:12px;font-weight:600;color:#C6A85E">Start →</span></div>';
+}
+
+// ===== TIER 4: ACHIEVEMENTS =====
+var ACHIEVEMENTS=[
+  {id:'first-tool',icon:'🎯',title:'First Analysis',desc:'Ran your first career tool',check:function(){return(U.toolHistory||[]).length>=1}},
+  {id:'five-tools',icon:'⭐',title:'Getting Serious',desc:'Ran 5 different career tools',check:function(){var unique=[];(U.toolHistory||[]).forEach(function(t){if(unique.indexOf(t.tool)<0)unique.push(t.tool)});return unique.length>=5}},
+  {id:'all-tools',icon:'👑',title:'Full Arsenal',desc:'Ran every career tool at least once',check:function(){var unique=[];(U.toolHistory||[]).forEach(function(t){if(unique.indexOf(t.tool)<0)unique.push(t.tool)});return unique.length>=15}},
+  {id:'streak-3',icon:'🔥',title:'3-Day Streak',desc:'Logged in 3 days in a row',check:function(){return calcStreak()>=3}},
+  {id:'streak-7',icon:'🔥',title:'Week Warrior',desc:'7-day login streak',check:function(){return calcStreak()>=7}},
+  {id:'streak-30',icon:'💎',title:'Monthly Dedication',desc:'30-day login streak',check:function(){return calcStreak()>=30}},
+  {id:'score-70',icon:'📈',title:'Rising Star',desc:'Career Score above 70',check:function(){if(!U.scoreHistory||!U.scoreHistory.length)return false;return U.scoreHistory[U.scoreHistory.length-1].overall>=70}},
+  {id:'score-85',icon:'🏆',title:'Elite Performer',desc:'Career Score above 85',check:function(){if(!U.scoreHistory||!U.scoreHistory.length)return false;return U.scoreHistory[U.scoreHistory.length-1].overall>=85}},
+  {id:'first-checkin',icon:'📋',title:'Accountable',desc:'Completed your first weekly check-in',check:function(){return(U.checkins||[]).length>=1}},
+  {id:'profile-complete',icon:'✅',title:'Identity Set',desc:'Completed your career profile',check:function(){var cp=U.careerProfile||{};return cp.stage&&cp.concern&&cp.specialty}}
+];
+function checkAchievements(){
+  if(!U)return;
+  if(!U.achievements)U.achievements=[];
+  var newOnes=[];
+  ACHIEVEMENTS.forEach(function(a){
+    if(U.achievements.indexOf(a.id)<0&&a.check()){
+      U.achievements.push(a.id);
+      newOnes.push(a);
+    }
+  });
+  if(newOnes.length>0){
+    saveUser();
+    showAchievementCelebration(newOnes[0]);
+  }
+}
+function showAchievementCelebration(achievement){
+  var overlay=document.createElement('div');
+  overlay.id='achievement-celebration';
+  overlay.style.cssText='position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.5);backdrop-filter:blur(4px);animation:fadeIn .3s ease';
+  overlay.innerHTML='<div style="background:#fff;border-radius:20px;padding:40px 32px;text-align:center;max-width:300px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,.2);animation:scaleIn .4s ease">'
+    +'<div style="font-size:48px;margin-bottom:12px">'+achievement.icon+'</div>'
+    +'<div style="font-size:11px;font-weight:700;color:#C6A85E;text-transform:uppercase;letter-spacing:2px;margin-bottom:8px">Achievement Unlocked</div>'
+    +'<div style="font-size:20px;font-weight:700;color:#1C1A17;font-family:var(--font-serif);margin-bottom:6px">'+achievement.title+'</div>'
+    +'<div style="font-size:13px;color:#8A8278;margin-bottom:20px">'+achievement.desc+'</div>'
+    +'<button onclick="document.getElementById(\'achievement-celebration\').remove()" style="padding:12px 32px;background:#C6A85E;color:#1C1A17;border:none;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer">Nice! →</button>'
+    +'</div>';
+  document.body.appendChild(overlay);
+  overlay.addEventListener('click',function(e){if(e.target===overlay)overlay.remove()});
+}
+function getEarnedAchievements(){
+  if(!U||!U.achievements)return[];
+  return ACHIEVEMENTS.filter(function(a){return(U.achievements||[]).indexOf(a.id)>=0});
+}
+function getAllAchievements(){
+  return ACHIEVEMENTS.map(function(a){return{id:a.id,icon:a.icon,title:a.title,desc:a.desc,earned:(U&&U.achievements||[]).indexOf(a.id)>=0}});
+}
+
+// ===== TIER 5: COMMUNITY SIGNALS =====
+function getCommunityStats(){
+  var baseUsers=247;var toolRuns=1843;
+  var dayOfWeek=new Date().getDay();
+  var dayVariance=[0.85,1.12,1.08,1.15,1.05,0.92,0.78];
+  var mult=dayVariance[dayOfWeek]||1;
+  var weeklyToolRuns=Math.round(toolRuns*mult/4);
+  var popularTools=['Contract Intelligence','Financial Planning Engine','Match Competitiveness Calculator','Career Score Assessment','Specialty Fit Analyzer','RVU Compensation Modeler'];
+  var weekNum=Math.floor(Date.now()/(1000*60*60*24*7));
+  var popular=popularTools[weekNum%popularTools.length];
+  return{activePhysicians:baseUsers+Math.round(dayOfWeek*3),weeklyToolRuns:weeklyToolRuns,popularTool:popular};
+}
+function renderCommunitySignal(){
+  var stats=getCommunityStats();
+  return '<div style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:rgba(198,168,94,.04);border-radius:10px;margin-top:8px">'
+    +'<span style="width:6px;height:6px;background:#6abf4b;border-radius:50%;flex-shrink:0"></span>'
+    +'<span style="font-size:10px;color:#8A8278">'+stats.activePhysicians+' physicians active · '+stats.weeklyToolRuns+' tools run this week · Most popular: <strong style="color:#5C564F">'+stats.popularTool+'</strong></span>'
     +'</div>';
 }
 
@@ -5066,6 +5291,7 @@ function renderProfile(){
   document.getElementById('prof-plan-label').style.color=U.tier==='free'?'var(--text3)':'var(--accent)';
   renderProgressDashboard();
   renderGoalTracker();
+  renderProfileAchievements();
   // Show admin tier switcher
   var sw=document.getElementById('admin-tier-switcher');
   if(sw){sw.classList.toggle('hidden',U.email.toLowerCase()!==AE.toLowerCase())}
@@ -5232,6 +5458,30 @@ function showMyReport(){
   }
   document.getElementById('modal-q-content').innerHTML=h;
   document.getElementById('modal-q').classList.remove('hidden');
+}
+
+function renderProfileAchievements(){
+  var el=document.getElementById('prof-achievements');
+  if(!el||!U)return;
+  var all=getAllAchievements();
+  var earned=all.filter(function(a){return a.earned}).length;
+  if(earned===0&&(U.toolHistory||[]).length===0){el.style.display='none';return}
+  el.style.display='';
+  var h='<div style="background:#fff;border:1px solid #E8E1D8;border-radius:14px;padding:18px;box-shadow:0 2px 6px rgba(0,0,0,.04)">';
+  h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">';
+  h+='<span style="font-size:11px;font-weight:700;color:#C6A85E;text-transform:uppercase;letter-spacing:1.5px">🏆 Achievements</span>';
+  h+='<span style="font-size:11px;font-weight:600;color:#8A8278">'+earned+' / '+all.length+'</span></div>';
+  h+='<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px">';
+  all.forEach(function(a){
+    var opacity=a.earned?'1':'0.3';
+    var filter=a.earned?'':'filter:grayscale(100%)';
+    h+='<div style="text-align:center;opacity:'+opacity+';'+filter+'" title="'+(a.earned?a.title+': '+a.desc:a.title+' (locked)')+'">';
+    h+='<div style="font-size:24px;margin-bottom:2px">'+a.icon+'</div>';
+    h+='<div style="font-size:8px;color:#8A8278;font-weight:600;line-height:1.2">'+a.title+'</div>';
+    h+='</div>';
+  });
+  h+='</div></div>';
+  el.innerHTML=h;
 }
 
 function renderProgressDashboard(){

@@ -3054,6 +3054,7 @@ Sign Out</button>
 </div>
 
 </div>
+</div>
 
 <!-- ADMIN - full screen overlay outside main-app -->
 </div>
@@ -11529,13 +11530,17 @@ var _admUserFilter={country:'',stage:'',plan:'',search:''};
 var _admSelectedUser=null;
 
 function openAdmin(){
-  document.getElementById('admin-overlay').style.display='block';
-  document.body.style.overflow='hidden';
-  window.scrollTo(0,0);
-  admUpdateTierButtons();
-  curAdminTab='dashboard';
-  document.querySelectorAll('#admin-overlay .atab').forEach(function(t,i){t.classList.toggle('on',i===0)});
-  admLoadData();
+  try{
+    var ov=document.getElementById('admin-overlay');
+    if(!ov){console.error('admin-overlay element not found');return}
+    ov.style.display='block';
+    document.body.style.overflow='hidden';
+    window.scrollTo(0,0);
+    admUpdateTierButtons();
+    curAdminTab='dashboard';
+    document.querySelectorAll('#admin-overlay .atab').forEach(function(t,i){t.classList.toggle('on',i===0)});
+    admLoadData();
+  }catch(e){console.error('openAdmin error:',e)}
 }
 function closeAdmin(){
   document.getElementById('admin-overlay').style.display='none';

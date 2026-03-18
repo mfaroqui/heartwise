@@ -890,35 +890,54 @@ Sign Out</button>
 
 <!-- Hero -->
 <div id="lev-hero" style="padding:20px 24px 0">
-<div style="background:#fff;border:1px solid #E8E1D8;border-radius:16px;padding:32px 28px;position:relative;overflow:hidden;box-shadow:0 2px 6px rgba(0,0,0,.04)">
-<div style="position:absolute;top:-30%;right:-15%;width:180px;height:180px;background:radial-gradient(circle,rgba(200,168,124,.2),transparent 65%);border-radius:50%"></div>
-<div style="position:absolute;bottom:-20%;left:-10%;width:140px;height:140px;background:radial-gradient(circle,rgba(200,168,124,.12),transparent 60%);border-radius:50%"></div>
+<div style="background:linear-gradient(160deg,#111318,#1a1d24);border-radius:16px;padding:32px 28px;position:relative;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,.12)">
+<div style="position:absolute;top:-30%;right:-15%;width:180px;height:180px;background:radial-gradient(circle,rgba(198,168,94,.15),transparent 65%);border-radius:50%"></div>
+<div style="position:absolute;bottom:-20%;left:-10%;width:140px;height:140px;background:radial-gradient(circle,rgba(198,168,94,.08),transparent 60%);border-radius:50%"></div>
 <div style="position:relative">
-<div style="font-family:var(--font-serif);font-size:24px;font-weight:700;color:#1a1611;margin-bottom:12px;line-height:1.3">The Leverage Playbook</div>
-<p style="font-size:15px;color:#3d362c;line-height:1.8;margin:0">Intelligent tools are becoming part of medical education and clinical practice whether we like it or not. The physicians who learn to use them strategically now won't just keep up — <strong style="color:#1a1611">they'll set the pace.</strong></p>
-<p style="font-size:14px;color:#5a5047;line-height:1.7;margin:12px 0 0">This isn't about shortcuts. It's about building real competitive advantage while everyone else is still deciding whether to start.</p>
+<div style="font-size:10px;font-weight:700;color:#C6A85E;text-transform:uppercase;letter-spacing:2px;margin-bottom:12px">THE UNFAIR ADVANTAGE</div>
+<div style="font-family:var(--font-serif);font-size:24px;font-weight:700;color:#f0ece6;margin-bottom:14px;line-height:1.3">AI is coming to medicine.<br>The top 1% are already using it.</div>
+<p style="font-size:14px;color:rgba(240,236,230,.7);line-height:1.7;margin:0 0 6px">Within 5 years, every physician will use AI daily. The ones who learn to leverage it <em>now</em> — for research, career strategy, clinical reasoning, and productivity — won't just keep up. <strong style="color:#f0ece6">They'll be unreachable.</strong></p>
+<p style="font-size:13px;color:rgba(240,236,230,.5);line-height:1.6;margin:0">These are the 10 tools they'll be using. This is your head start.</p>
 </div>
+</div>
+</div>
+
+<!-- Personalized Recommendation (populated by JS) -->
+<div id="lev-personal-rec" style="display:none;padding:16px 24px 0">
+<div style="background:linear-gradient(160deg,rgba(198,168,94,.06),rgba(198,168,94,.02));border:1px solid rgba(198,168,94,.15);border-radius:14px;padding:20px">
+<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+<span style="font-size:16px">🎯</span>
+<div style="font-size:13px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.5px">Recommended for you</div>
+</div>
+<div id="lev-personal-rec-text" style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:14px"></div>
+<div id="lev-personal-rec-tools" style="display:flex;flex-direction:column;gap:8px"></div>
 </div>
 </div>
 
 <!-- Progress Bar -->
 <div id="lev-progress-bar" style="padding:16px 24px 0">
-<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-<span style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:1px">Your Progress</span>
-<span id="lev-progress-count" style="font-size:12px;font-weight:600;color:var(--accent)">0 / 10</span>
+<div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+<div>
+<span style="font-size:12px;font-weight:700;color:var(--text)">Your Leverage Score</span>
+<span id="lev-progress-level" style="font-size:10px;font-weight:600;color:var(--text3);margin-left:8px">BEGINNER</span>
 </div>
-<div style="height:6px;background:var(--bg3);border-radius:3px;overflow:hidden"><div id="lev-progress-fill" style="height:100%;width:0%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:3px;transition:width .4s"></div></div>
+<span id="lev-progress-count" style="font-size:13px;font-weight:700;color:var(--accent)">0 / 10</span>
+</div>
+<div style="height:8px;background:var(--bg3);border-radius:4px;overflow:hidden"><div id="lev-progress-fill" style="height:100%;width:0%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:4px;transition:width .4s"></div></div>
+<div id="lev-progress-msg" style="font-size:11px;color:var(--text3);margin-top:8px">Complete all 10 tools to unlock your full competitive edge.</div>
+</div>
 </div>
 
-<!-- Leverage Score Quiz -->
+<!-- Leverage Score Quiz (collapsed by default — optional) -->
 <div id="lev-quiz-section" style="padding:16px 24px 0">
 <div style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:20px;position:relative">
 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;cursor:pointer" onclick="levToggleQuiz()">
 <div style="display:flex;align-items:center;gap:10px">
 <span style="font-size:20px">📊</span>
 <div>
-<div style="font-size:14px;font-weight:600;color:var(--text)">Career Leverage Score</div>
-<div style="font-size:12px;color:var(--text3)">Assess where you stand — retake anytime to track progress</div>
+<div style="font-size:14px;font-weight:600;color:var(--text)">How AI-Ready Are You?</div>
+<div style="font-size:12px;color:var(--text3)">Optional — 5 quick questions to benchmark yourself</div>
 </div>
 </div>
 <div style="display:flex;align-items:center;gap:10px">
@@ -1008,10 +1027,16 @@ Sign Out</button>
 
 <!-- Gate for non-elite users (shown/hidden by renderLeverage) -->
 <div id="lev-gate" style="display:none;padding:24px 24px 40px">
-<div style="text-align:center;margin-bottom:24px">
-<div style="font-family:var(--font-serif);font-size:20px;font-weight:600;color:var(--text);margin-bottom:8px">Strategic Leverage Tools</div>
-<p style="font-size:13px;color:var(--text2);line-height:1.6;max-width:360px;margin:0 auto">10 interactive tools to accelerate your learning, research, career planning, and productivity. Here's what's inside:</p>
+<div style="background:linear-gradient(160deg,#111318,#1a1d24);border-radius:16px;padding:28px 24px;margin-bottom:20px;position:relative;overflow:hidden">
+<div style="position:absolute;top:-30%;right:-15%;width:160px;height:160px;background:radial-gradient(circle,rgba(198,168,94,.12),transparent 65%);border-radius:50%"></div>
+<div style="position:relative;text-align:center">
+<div style="font-size:10px;font-weight:700;color:#C6A85E;text-transform:uppercase;letter-spacing:2px;margin-bottom:10px">MENTORSHIP EXCLUSIVE</div>
+<div style="font-family:var(--font-serif);font-size:20px;font-weight:700;color:#f0ece6;margin-bottom:10px;line-height:1.3">10 AI-Powered Tools.<br>The Competitive Edge You're Missing.</div>
+<p style="font-size:13px;color:rgba(240,236,230,.6);line-height:1.6;margin:0">The top 1% of physicians are already using AI strategically. These tools put you in that group.</p>
 </div>
+</div>
+<div style="margin-bottom:20px">
+<div style="font-size:10px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:14px;padding-left:4px">WHAT'S INSIDE</div>
 <div style="display:flex;align-items:flex-start;gap:12px;padding:14px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;margin-bottom:8px;opacity:0.85"><div style="font-size:22px;flex-shrink:0;margin-top:2px">🎯</div><div style="flex:1"><div style="font-size:14px;font-weight:600;color:var(--text)">Study Accelerator</div><div style="font-size:12px;color:var(--text3);line-height:1.5;margin-top:2px">Convert any material into active recall in minutes.</div></div><div style="flex-shrink:0;padding:4px 10px;border-radius:6px;background:rgba(198,168,94,.08);border:1px solid #E8E1D8;font-size:10px;font-weight:600;color:var(--accent);white-space:nowrap">🔒 Mentorship</div></div>
 <div style="display:flex;align-items:flex-start;gap:12px;padding:14px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;margin-bottom:8px;opacity:0.85"><div style="font-size:22px;flex-shrink:0;margin-top:2px">🧠</div><div style="flex:1"><div style="font-size:14px;font-weight:600;color:var(--text)">Concept Simplifier</div><div style="font-size:12px;color:var(--text3);line-height:1.5;margin-top:2px">Understand any topic at three levels of depth.</div></div><div style="flex-shrink:0;padding:4px 10px;border-radius:6px;background:rgba(198,168,94,.08);border:1px solid #E8E1D8;font-size:10px;font-weight:600;color:var(--accent);white-space:nowrap">🔒 Mentorship</div></div>
 <div style="display:flex;align-items:flex-start;gap:12px;padding:14px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;margin-bottom:8px;opacity:0.85"><div style="font-size:22px;flex-shrink:0;margin-top:2px">🧑‍⚕️</div><div style="flex:1"><div style="font-size:14px;font-weight:600;color:var(--text)">Case Simulator</div><div style="font-size:12px;color:var(--text3);line-height:1.5;margin-top:2px">Practice clinical reasoning with realistic cases.</div></div><div style="flex-shrink:0;padding:4px 10px;border-radius:6px;background:rgba(198,168,94,.08);border:1px solid #E8E1D8;font-size:10px;font-weight:600;color:var(--accent);white-space:nowrap">🔒 Mentorship</div></div>
@@ -1023,8 +1048,9 @@ Sign Out</button>
 <div style="display:flex;align-items:flex-start;gap:12px;padding:14px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;margin-bottom:8px;opacity:0.85"><div style="font-size:22px;flex-shrink:0;margin-top:2px">📊</div><div style="flex:1"><div style="font-size:14px;font-weight:600;color:var(--text)">Career Path Modeler</div><div style="font-size:12px;color:var(--text3);line-height:1.5;margin-top:2px">Make career decisions with data, not assumptions.</div></div><div style="flex-shrink:0;padding:4px 10px;border-radius:6px;background:rgba(198,168,94,.08);border:1px solid #E8E1D8;font-size:10px;font-weight:600;color:var(--accent);white-space:nowrap">🔒 Mentorship</div></div>
 <div style="display:flex;align-items:flex-start;gap:12px;padding:14px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;margin-bottom:8px;opacity:0.85"><div style="font-size:22px;flex-shrink:0;margin-top:2px">🌟</div><div style="flex:1"><div style="font-size:14px;font-weight:600;color:var(--text)">Personal Brand Builder</div><div style="font-size:12px;color:var(--text3);line-height:1.5;margin-top:2px">Start building your professional platform during training.</div></div><div style="flex-shrink:0;padding:4px 10px;border-radius:6px;background:rgba(198,168,94,.08);border:1px solid #E8E1D8;font-size:10px;font-weight:600;color:var(--accent);white-space:nowrap">🔒 Mentorship</div></div>
 <div style="text-align:center;padding:28px 0 8px">
-<p style="font-size:14px;color:var(--text2);line-height:1.6;margin-bottom:16px;max-width:340px;margin-left:auto;margin-right:auto">These tools are available exclusively with a Mentorship subscription.</p>
-<button class="btn btn-a" onclick="navTo('scr-profile');showUpgrade()" style="max-width:280px;margin:0 auto;padding:14px 32px;font-size:15px">Upgrade to Mentorship →</button>
+<p style="font-size:14px;color:var(--text);font-weight:600;line-height:1.5;margin-bottom:4px;max-width:340px;margin-left:auto;margin-right:auto">Stop falling behind while you decide.</p>
+<p style="font-size:12px;color:var(--text3);line-height:1.5;margin-bottom:16px;max-width:340px;margin-left:auto;margin-right:auto">Join the physicians who are building leverage now — not later.</p>
+<button class="btn btn-a" onclick="navTo('scr-profile');showUpgrade()" style="max-width:280px;margin:0 auto;padding:14px 32px;font-size:15px">Unlock All 10 Tools →</button>
 <div style="margin-top:10px"><button style="font-size:12px;color:var(--text3);background:none;border:none;cursor:pointer;padding:8px" onclick="navTo('scr-vault')">Browse Free Career Tools</button></div>
 </div>
 </div>

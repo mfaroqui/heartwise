@@ -8679,8 +8679,30 @@ function levFilter(cat,btn){
 function levUpdateProgress(){
   var tried=(U&&U.leverageTried)?U.leverageTried.length:0;
   var total=LEV_WORKFLOWS.length;
+  var pct=Math.round(tried/total*100);
   document.getElementById('lev-progress-count').textContent=tried+' / '+total;
-  document.getElementById('lev-progress-fill').style.width=Math.round(tried/total*100)+'%';
+  document.getElementById('lev-progress-fill').style.width=pct+'%';
+  var levelEl=document.getElementById('lev-progress-level');
+  var msgEl=document.getElementById('lev-progress-msg');
+  if(levelEl){
+    if(tried===0){levelEl.textContent='NOT STARTED';levelEl.style.color='var(--text3)'}
+    else if(tried<=3){levelEl.textContent='EARLY ADOPTER';levelEl.style.color='var(--accent)'}
+    else if(tried<=6){levelEl.textContent='STRATEGIST';levelEl.style.color='var(--green)'}
+    else if(tried<=9){levelEl.textContent='TOP 5%';levelEl.style.color='var(--blue)'}
+    else{levelEl.textContent='TOP 1%';levelEl.style.color='var(--accent)'}
+  }
+  if(msgEl){
+    if(tried===0) msgEl.textContent='Start with a Quick Win tool — takes under 5 minutes.';
+    else if(tried<=3) msgEl.textContent='You\'re ahead of 90% of physicians. Keep building leverage.';
+    else if(tried<=6) msgEl.textContent='Serious momentum. You\'re thinking like the top 5%.';
+    else if(tried<=9) msgEl.textContent='Almost there. '+( total-tried)+' tool'+(total-tried===1?'':'s')+' left to complete your competitive arsenal.';
+    else msgEl.textContent='Full leverage unlocked. You\'re operating at the top 1%. Retake tools anytime to sharpen your edge.';
+  }
+}
+
+function levScrollToWorkflow(wfId){
+  var el=document.getElementById(wfId);
+  if(el){el.scrollIntoView({behavior:'smooth',block:'center'});setTimeout(function(){levToggleWorkflow(wfId)},400)}
 }
 
 function renderLeverage(){
@@ -8694,6 +8716,7 @@ function renderLeverage(){
   var progress=document.getElementById('lev-progress-bar');
   var workflows=document.getElementById('lev-workflows');
   var wfList=document.getElementById('lev-workflow-list');
+  var personalRec=document.getElementById('lev-personal-rec');
   if(!hasAccess){
     // Show static HTML gate, hide interactive sections
     if(hero)hero.style.display='none';
@@ -8701,6 +8724,7 @@ function renderLeverage(){
     if(quiz)quiz.style.display='none';
     if(progress)progress.style.display='none';
     if(workflows)workflows.style.display='none';
+    if(personalRec)personalRec.style.display='none';
     var gate=document.getElementById('lev-gate');
     if(gate)gate.style.display='';
     return;
@@ -8716,7 +8740,57 @@ function renderLeverage(){
   if(!U.leverageTried)U.leverageTried=[];
   levUpdateProgress();
 
-  // Restore quiz state
+  // Personalized recommendations based on career profile
+  if(personalRec){
+    var cp=U.careerProfile||{};
+    var stage=cp.stage||'';
+    var goal=cp.concern||'';
+    var tried=U.leverageTried||[];
+    var recTools=[];var recText='';
+    if(stage==='student'){
+      recText='As a medical student, these tools will give you the biggest head start:';
+      recTools=[{id:'lev-study',why:'Convert lectures into active recall — 75% retention vs 10% passive reading'},{id:'lev-simplify',why:'Master complex concepts at three levels of depth'},{id:'lev-research',why:'Walk into mentor meetings with research proposals ready'}];
+    }else if(stage==='resident'){
+      recText='Residents who use these tools outperform their peers within weeks:';
+      recTools=[{id:'lev-case',why:'Build clinical reasoning faster with realistic case simulations'},{id:'lev-research',why:'Generate publishable research ideas — a PGY-2 got 3 manuscripts started in one session'},{id:'lev-fellowship',why:'Build a strategic fellowship match plan with real data'}];
+    }else if(stage==='fellow'){
+      recText='As a fellow, your leverage multiplier is highest with these tools:';
+      recTools=[{id:'lev-lit',why:'Know every key trial on any topic in minutes, not hours'},{id:'lev-network',why:'Build the strategic relationships that lead to job offers'},{id:'lev-career-sim',why:'Model academic vs private practice with actual data'}];
+    }else if(stage==='attending'){
+      recText='These tools give attending physicians an immediate competitive edge:';
+      recTools=[{id:'lev-career-sim',why:'Make career decisions with data — not assumptions or gut feelings'},{id:'lev-productivity',why:'Reclaim hours from admin work that doesn\'t need your clinical judgment'},{id:'lev-brand',why:'Build the professional platform that compounds over your career'}];
+    }else{
+      recText='Not sure where to start? These 3 tools take under 5 minutes and deliver immediate value:';
+      recTools=[{id:'lev-study',why:'Quick win — convert any topic into active recall instantly'},{id:'lev-simplify',why:'Quick win — understand any concept at three levels of depth'},{id:'lev-lit',why:'Quick win — know the key trials on any topic in minutes'}];
+    }
+    // Filter out already-tried tools
+    var untried=recTools.filter(function(r){return tried.indexOf(r.id)===-1});
+    if(untried.length===0)untried=recTools; // show all if all tried
+    if(untried.length>0){
+      personalRec.style.display='';
+      var rText=document.getElementById('lev-personal-rec-text');
+      var rTools=document.getElementById('lev-personal-rec-tools');
+      if(rText)rText.textContent=recText;
+      if(rTools){
+        var rh='';
+        untried.slice(0,3).forEach(function(r){
+          var wf=LEV_WORKFLOWS.find(function(w){return w.id===r.id});
+          if(!wf)return;
+          var used=tried.indexOf(r.id)!==-1;
+          rh+='<div onclick="levScrollToWorkflow(\''+r.id+'\')" style="display:flex;align-items:center;gap:12px;padding:12px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;cursor:pointer;transition:all .2s">';
+          rh+='<span style="font-size:22px;flex-shrink:0">'+wf.icon+'</span>';
+          rh+='<div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:600;color:var(--text)">'+wf.title+(used?' <span style="font-size:10px;color:var(--green)">✓</span>':'')+'</div>';
+          rh+='<div style="font-size:11px;color:var(--text3);line-height:1.4;margin-top:2px">'+r.why+'</div></div>';
+          rh+='<span style="color:var(--accent);font-size:14px;flex-shrink:0">→</span></div>';
+        });
+        rTools.innerHTML=rh;
+      }
+    }else{
+      personalRec.style.display='none';
+    }
+  }
+
+  // Restore quiz state — collapsed by default
   var quizBody=document.getElementById('lev-quiz-body');
   var quizArrow=document.getElementById('lev-quiz-arrow');
   if(U.leverageScores&&U.leverageScores.length){
@@ -8739,17 +8813,33 @@ function renderLeverage(){
       },50);
     }
   }else{
-    quizBody.style.display='';quizArrow.style.transform='rotate(90deg)';
+    // Collapsed by default — user can expand if interested
+    quizBody.style.display='none';quizArrow.style.transform='';
   }
 
   // Render workflow cards
   var tried=U.leverageTried||[];
   var diffLabels={starter:'Starter',intermediate:'Intermediate',advanced:'Advanced'};
   var diffColors={starter:'var(--green)',intermediate:'var(--accent)',advanced:'var(--red)'};
+  // Quick win tools + outcome examples
+  var quickWins={'lev-study':true,'lev-simplify':true,'lev-lit':true};
+  var outcomes={
+    'lev-study':'A PGY-1 converted a week of cardiology lectures into 200+ active recall questions in 15 minutes.',
+    'lev-research':'A PGY-2 generated 3 publishable research ideas and walked into their mentor meeting prepared for the first time.',
+    'lev-case':'A fellow practiced 5 complex PCI scenarios in one sitting — more than she\'d see in a month of call.',
+    'lev-lit':'An attending prepped for journal club on DAPA-HF in 8 minutes instead of 3 hours.',
+    'lev-network':'A resident built a targeted networking plan for TCT and got introduced to 2 interventional PDs.',
+    'lev-fellowship':'A PGY-2 from a community program identified 3 CV gaps and fixed them before applications opened.',
+    'lev-productivity':'An attending automated lecture prep — what used to take 4 hours now takes 30 minutes.',
+    'lev-career-sim':'A fellow modeled academic vs private practice and realized the 10-year difference was $2.1M.',
+    'lev-brand':'A resident launched a medical education account and had 1,000 followers within a month.',
+    'lev-simplify':'A student went from failing to understand heart failure pathophys to teaching it to classmates.'
+  };
   var h='';
   LEV_WORKFLOWS.forEach(function(wf){
     var isTried=tried.indexOf(wf.id)!==-1;
     var triedBadge=isTried?'<span class="lev-tried-badge" style="background:rgba(92,184,154,.15);color:var(--green)">\u2713 Used</span>':'';
+    var quickBadge=quickWins[wf.id]&&!isTried?'<span style="background:rgba(198,168,94,.12);color:var(--accent);font-size:9px;padding:2px 7px;border-radius:10px;font-weight:600;letter-spacing:.3px">⚡ Quick Win</span>':'';
 
     h+='<div class="lev-wf-card" id="'+wf.id+'" data-cat="'+wf.cat+'" onclick="levToggleWorkflow(\''+wf.id+'\')">';
     h+='<div style="display:flex;gap:14px;align-items:flex-start">';
@@ -8759,8 +8849,12 @@ function renderLeverage(){
     h+='<span style="font-size:15px;font-weight:600;color:var(--text)">'+wf.title+'</span>';
     h+='<span style="font-size:9px;padding:2px 7px;border-radius:10px;font-weight:600;letter-spacing:.3px;border:1px solid;color:'+diffColors[wf.difficulty]+';border-color:'+diffColors[wf.difficulty]+';opacity:.7">'+diffLabels[wf.difficulty]+'</span>';
     h+=triedBadge;
+    h+=quickBadge;
     h+='</div>';
     h+='<p style="font-size:13px;color:var(--text3);line-height:1.5;margin:0">'+wf.tagline+'</p>';
+    if(outcomes[wf.id]){
+      h+='<p style="font-size:11px;color:var(--text3);line-height:1.4;margin:6px 0 0;font-style:italic;opacity:.8">"'+outcomes[wf.id]+'"</p>';
+    }
     h+='</div>';
     h+='<span style="color:var(--text3);font-size:14px;flex-shrink:0;transition:transform .2s">\u203a</span>';
     h+='</div>';

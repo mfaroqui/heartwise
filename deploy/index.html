@@ -127,18 +127,18 @@ a:hover{color:var(--accent2)}
 .fg select{appearance:none;cursor:pointer}
 
 /* ===== BOTTOM NAV ===== */
-.nav{position:sticky;top:0;left:0;right:0;background:rgba(245,241,235,.95);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid var(--border);display:flex;justify-content:space-around;padding:10px 0;z-index:200}
-.ni{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:9px;font-weight:500;color:var(--text3);cursor:pointer;padding:8px 12px;background:none;border:none;transition:color .25s;letter-spacing:.8px;text-transform:uppercase;font-family:var(--font-ui)}
+.nav{position:sticky;top:0;left:0;right:0;background:#111318;border-bottom:none;display:flex;justify-content:space-around;padding:10px 0;z-index:200}
+.ni{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:9px;font-weight:500;color:rgba(255,255,255,.5);cursor:pointer;padding:8px 12px;background:none;border:none;transition:color .25s;letter-spacing:.8px;text-transform:uppercase;font-family:var(--font-ui)}
 .ni.on,.ni:hover{color:var(--accent)}
 .ni svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
 
 /* ===== HEADER (app) ===== */
-.hdr{padding:20px 24px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;background:rgba(245,241,235,.95);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid var(--border)}
-.hdr-t{font-family:var(--font-serif);font-size:26px;font-weight:600;letter-spacing:.3px}
+.hdr{padding:20px 24px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;background:#111318;border-bottom:1px solid rgba(255,255,255,.06)}
+.hdr-t{font-family:var(--font-serif);font-size:26px;font-weight:600;letter-spacing:.3px;color:#fff}
 .hdr-back{font-family:var(--font-ui);font-size:13px;color:var(--text3);background:none;border:none;cursor:pointer;padding:0;margin-right:12px;transition:color .2s}
 .hdr-back:hover{color:var(--accent)}
 .badge{font-size:9px;padding:5px 14px;border-radius:100px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;font-family:var(--font-ui)}
-.b-free{background:var(--bg4);color:var(--text3)}.b-core{background:var(--blue-dim);color:var(--blue)}.b-pro{background:var(--accent-dim);color:var(--accent)}.b-ment{background:var(--accent-dim);color:var(--accent2)}.b-admin{background:var(--green-dim);color:var(--green)}
+.b-free{background:rgba(255,255,255,.1);color:rgba(255,255,255,.5)}.b-core{background:rgba(106,134,168,.2);color:#6A86A8}.b-pro{background:rgba(198,168,94,.15);color:var(--accent)}.b-ment{background:rgba(198,168,94,.15);color:var(--accent)}.b-admin{background:rgba(94,139,111,.2);color:#5E8B6F}
 
 /* ===== CARDS ===== */
 .card{background:var(--bg2);border-radius:var(--r);padding:24px;margin-bottom:12px;border:1px solid var(--border);transition:all .35s ease;box-shadow:var(--shadow-soft)}
@@ -3039,14 +3039,14 @@ Sign Out</button>
 </div>
 
 <!-- Sticky Upgrade Bar (Free users) -->
-<div id="upgrade-sticky-bar" class="hidden" style="position:fixed;bottom:0;left:0;right:0;z-index:900;background:rgba(245,241,235,.95);border-top:1px solid var(--border);padding:12px 20px;display:flex;align-items:center;justify-content:center;gap:14px;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)">
+<div id="upgrade-sticky-bar" class="hidden" style="position:fixed;bottom:0;left:0;right:0;z-index:900;background:#111318;border-top:1px solid rgba(255,255,255,.06);padding:12px 20px;display:flex;align-items:center;justify-content:center;gap:14px">
 <div style="display:flex;align-items:center;gap:10px;flex:1;max-width:600px">
 <span style="font-size:18px">🔓</span>
 <div style="flex:1">
-<div style="font-size:13px;font-weight:600;color:var(--text)">Unlock all 15+ career tools</div>
-<div style="font-size:11px;color:var(--text3)" id="upgrade-bar-sub">Core — $29/mo or $249/year</div>
+<div style="font-size:13px;font-weight:600;color:#fff">Unlock all 15+ career tools</div>
+<div style="font-size:11px;color:rgba(255,255,255,.5)" id="upgrade-bar-sub">Core — $29/mo or $249/year</div>
 </div>
-<button onclick="navTo('scr-profile');showUpgrade()" style="padding:10px 22px;font-size:12px;font-weight:700;background:linear-gradient(135deg,var(--accent2),var(--accent));color:#0a0a0f;border:none;border-radius:8px;cursor:pointer;white-space:nowrap;letter-spacing:.3px">Upgrade Now</button>
+<button onclick="navTo('scr-profile');showUpgrade()" style="padding:10px 22px;font-size:12px;font-weight:700;background:var(--accent);color:#111318;border:none;border-radius:8px;cursor:pointer;white-space:nowrap;letter-spacing:.3px">Upgrade Now</button>
 </div>
 </div>
 

@@ -885,7 +885,7 @@ function showUpgradeElements(){
     document.body.classList.add('has-upgrade-bar');
     var t=TIERS.free;
     var remaining=Math.max(0,t.ai-(U.usage?U.usage.ai:0));
-    document.getElementById('upgrade-bar-sub').textContent=remaining+' of '+t.ai+' free analyses remaining — Core $29/mo';
+    document.getElementById('upgrade-bar-sub').textContent=remaining+' of '+t.ai+' free analyses remaining — Core $39/mo';
   } else {
     stickyBar.classList.add('hidden');
     document.body.classList.remove('has-upgrade-bar');
@@ -904,7 +904,7 @@ function applyBlurGate(resultsEl){
     +'<div class="hw-blur-icon">🔒</div>'
     +'<div class="hw-blur-title">Your analysis is ready</div>'
     +'<div class="hw-blur-sub">Upgrade to Core to see your full results, recommendations, and action plan.</div>'
-    +'<button class="hw-blur-cta" onclick="navTo(\'scr-profile\');showUpgrade();closeModal(\'modal-q\')">Unlock Full Results — $29/mo</button>'
+    +'<button class="hw-blur-cta" onclick="navTo(\'scr-profile\');showUpgrade();closeModal(\'modal-q\')">Unlock Full Results — $39/mo</button>'
     +'</div></div>';
   return true;
 }
@@ -2037,7 +2037,7 @@ function renderUpgradeNudge(){
     +'<div style="display:flex;align-items:center;gap:12px">'
     +'<span style="font-size:20px">⚡</span>'
     +'<div><div style="font-size:13px;font-weight:600;color:#C6A85E">Upgrade to Core</div>'
-    +'<div style="font-size:11px;color:#5C564F">'+remaining+' free analyses remaining — $29/mo unlocks 100+ analyses and all tools</div></div>'
+    +'<div style="font-size:11px;color:#5C564F">'+remaining+' free analyses remaining — $39/mo unlocks 100+ analyses and all tools</div></div>'
     +'</div></div>';
 }
 
@@ -5250,7 +5250,7 @@ function previewEliteFramework(id){
 
   // CTA
   h+='<div style="text-align:center">';
-  h+='<button class="btn btn-a" onclick="closeModal(\'modal-q\');navTo(\'scr-profile\');showUpgrade()" style="width:100%;padding:14px;font-size:14px;font-weight:600">Unlock Mentorship \u2014 $149/mo</button>';
+  h+='<button class="btn btn-a" onclick="closeModal(\'modal-q\');navTo(\'scr-profile\');showUpgrade()" style="width:100%;padding:14px;font-size:14px;font-weight:600">Unlock Mentorship \u2014 $199/mo</button>';
   h+='<p style="font-size:11px;color:var(--text3);margin-top:10px">Includes 2 physician-reviewed answers, all frameworks, and direct access to Dr. Faroqui.</p>';
   h+='</div></div>';
   
@@ -6558,8 +6558,8 @@ function toggleCoreBilling(force){
   if(knob)knob.style.left=_coreBillingAnnual?'20px':'2px';
   if(moLabel){moLabel.style.color=_coreBillingAnnual?'var(--text3)':'var(--accent)';moLabel.style.fontWeight=_coreBillingAnnual?'500':'600'}
   if(yrLabel){yrLabel.style.color=_coreBillingAnnual?'var(--accent)':'var(--text3)';yrLabel.style.fontWeight=_coreBillingAnnual?'600':'500'}
-  if(priceDisplay)priceDisplay.innerHTML=_coreBillingAnnual?'<div class="plan-p">$249<span> /year</span></div><div style="font-size:11px;color:var(--green);font-weight:600;margin-top:-4px;margin-bottom:4px">$20.75/mo — save $99 vs monthly</div>':'<div class="plan-p">$29<span> /mo</span></div>';
-  if(btn){btn.textContent=_coreBillingAnnual?'Get Core — $249/year':'Get Core — $29/mo';btn.setAttribute('onclick',_coreBillingAnnual?"subPlan('core_annual')":"subPlan('core')")}
+  if(priceDisplay)priceDisplay.innerHTML=_coreBillingAnnual?'<div class="plan-p">$350<span> /year</span></div><div style="font-size:11px;color:var(--green);font-weight:600;margin-top:-4px;margin-bottom:4px">$29.17/mo — save over $100 vs monthly</div>':'<div class="plan-p">$39<span> /mo</span></div>';
+  if(btn){btn.textContent=_coreBillingAnnual?'Get Core — $350/year':'Get Core — $39/mo';btn.setAttribute('onclick',_coreBillingAnnual?"subPlan('core_annual')":"subPlan('core')")}
   // Also update landing page toggle if present
   var lKnob=document.getElementById('lp-core-toggle-knob');
   var lMo=document.getElementById('lp-core-toggle-mo');
@@ -6569,8 +6569,8 @@ function toggleCoreBilling(force){
   if(lKnob)lKnob.style.left=_coreBillingAnnual?'20px':'2px';
   if(lMo){lMo.style.color=_coreBillingAnnual?'var(--text3)':'var(--accent)';lMo.style.fontWeight=_coreBillingAnnual?'500':'600'}
   if(lYr){lYr.style.color=_coreBillingAnnual?'var(--accent)':'var(--text3)';lYr.style.fontWeight=_coreBillingAnnual?'600':'500'}
-  if(lPrice)lPrice.innerHTML=_coreBillingAnnual?'<div class="plan-p">$249<span> /year</span></div><div style="font-size:11px;color:var(--green);font-weight:600;margin-top:-4px;margin-bottom:4px">$20.75/mo — save $99 vs monthly</div>':'<div class="plan-p">$29<span> /mo</span></div>';
-  if(lBtn){lBtn.textContent=_coreBillingAnnual?'Get Core — $249/year':'Get Core — $29/mo';lBtn.setAttribute('onclick',_coreBillingAnnual?"planSignup('core_annual')":"planSignup('core')")}
+  if(lPrice)lPrice.innerHTML=_coreBillingAnnual?'<div class="plan-p">$350<span> /year</span></div><div style="font-size:11px;color:var(--green);font-weight:600;margin-top:-4px;margin-bottom:4px">$29.17/mo — save over $100 vs monthly</div>':'<div class="plan-p">$39<span> /mo</span></div>';
+  if(lBtn){lBtn.textContent=_coreBillingAnnual?'Get Core — $350/year':'Get Core — $39/mo';lBtn.setAttribute('onclick',_coreBillingAnnual?"planSignup('core_annual')":"planSignup('core')")}
 }
 
 // Landing page plan signup: if logged in → Stripe, if not → onboard with plan intent
@@ -6804,8 +6804,8 @@ function admRenderDashboard(c){
   var el=users.filter(function(u){return u.tier==='elite'}).length;
   h+='<div class="adm-card"><div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:10px">Subscribers</div>';
   h+='<div style="display:flex;gap:20px;font-size:13px;color:var(--text2)">';
-  h+='<div>Core: <strong>'+co+'</strong> ($29/mo)</div>';
-  h+='<div>Mentorship: <strong>'+el+'</strong> ($149/mo)</div></div>';
+  h+='<div>Core: <strong>'+co+'</strong> ($39/mo)</div>';
+  h+='<div>Mentorship: <strong>'+el+'</strong> ($199/mo)</div></div>';
   h+='<div style="font-size:11px;color:var(--text3);margin-top:8px">Revenue tracked via Stripe — connect Stripe dashboard for actuals</div></div>';
 
   h+='<div style="font-size:12px;font-weight:600;color:var(--text);margin:16px 0 8px">Recent Signups</div>';

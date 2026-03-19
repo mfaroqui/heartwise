@@ -136,22 +136,7 @@ function lpTab(name){
   }
 }
 
-// Landing page email capture
-function captureEmail(e){
-  e.preventDefault();
-  var email=document.getElementById('capture-email').value.trim();
-  if(!email)return;
-  // Store locally + attempt to save via Supabase if available
-  var captures=JSON.parse(localStorage.getItem('hw_email_captures')||'[]');
-  captures.push({email:email,date:new Date().toISOString()});
-  localStorage.setItem('hw_email_captures',JSON.stringify(captures));
-  // Try Supabase insert if client available
-  if(typeof _supaClient!=='undefined'&&_supaClient){
-    try{_supaClient.from('email_captures').insert({email:email,source:'landing_guide'}).then(function(){})}catch(ex){}
-  }
-  document.getElementById('email-capture-form').style.display='none';
-  document.getElementById('capture-success').style.display='';
-}
+
 
 // Landing page tool grid with expandable previews
 var LP_TOOLS=[

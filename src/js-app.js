@@ -5999,7 +5999,8 @@ function reportGoalUpdate(goalId,action,detail){
 }
 
 function showUpgrade(){
-  document.getElementById('upgrade-section').classList.toggle('hidden');
+  var sec=document.getElementById('upgrade-section');
+  sec.classList.remove('hidden');
   // Update subscription management display
   if(U&&U.tier!=='free'&&U.tier!=='admin'){
     const m=document.getElementById('sub-manage');m.classList.remove('hidden');
@@ -6010,6 +6011,7 @@ function showUpgrade(){
     document.getElementById('sub-renew').textContent=renew+' \u2022 Auto-renewal on';
     document.getElementById('sub-usage-summary').textContent=(t.ai===999?'Unlimited':t.ai)+' career intelligence analyses / '+t.credits+' physician-reviewed answers per month';
   }else{document.getElementById('sub-manage').classList.add('hidden')}
+  setTimeout(function(){sec.scrollIntoView({behavior:'smooth',block:'start'})},100);
 }
 function toggleNotifSettings(){document.getElementById('notif-settings').classList.toggle('hidden')}
 

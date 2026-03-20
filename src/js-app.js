@@ -6860,7 +6860,7 @@ function admRender(){
 function admRenderDashboard(c){
   var users=admGetUsers(),qs=admGetQuestions(),msgs=admGetMessages();
   var pending=qs.filter(function(q){return q.status==='pending'||q.status==='answered'});
-  var unread=msgs.filter(function(m){return !m.read});
+  var unread=msgs.filter(function(m){return !m.read&&!m.from_admin});
   var h='<div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:12px">Overview</div>';
   if(pending.length||unread.length){
     h+='<div class="adm-card" style="border-left:3px solid var(--accent)">';
@@ -7289,12 +7289,13 @@ function admRenderFeedback(c){
   h+='<button onclick="admSendMessage()" class="btn btn-a" style="padding:10px 20px">Send Message</button>';
   h+='</div>';
   if(!msgs.length){h+='<div style="text-align:center;padding:40px;color:var(--text3)">\ud83d\udced No messages yet.</div>';c.innerHTML=h;return}
-  var unread=msgs.filter(function(m){return !m.read}).length;
+  var unread=msgs.filter(function(m){return !m.read&&!m.from_admin}).length;
   h+='<div style="font-size:11px;color:var(--text3);margin-bottom:12px">'+msgs.length+' messages \u00b7 '+unread+' unread</div>';
   msgs.forEach(function(m){
     var tl={career:'\ud83c\udfaf Career',finance:'\ud83d\udcb0 Finance',contract:'\ud83d\udccb Contract',bug:'\ud83d\udc1b Bug',suggestion:'\ud83d\udca1 Suggestion',question:'\u2753 Question',feedback:'\ud83d\udcdd Feedback',progress:'\ud83d\udcc8 Progress',other:'\ud83d\udcce Other'};
     var d=m.date?new Date(m.date).toLocaleDateString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}):'';
-    h+='<div class="adm-card" style="'+(m.read?'':'border-left:3px solid var(--accent);')+'"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><div><span style="font-weight:600;font-size:13px">'+(m.user_name||'Unknown')+'</span> <span style="font-size:11px;color:var(--text3)">'+(m.user_email||'')+'</span></div><span style="font-size:10px;color:var(--text3)">'+d+'</span></div>';
+    var isUnread=!m.read&&!m.from_admin;
+    h+='<div class="adm-card" style="'+(isUnread?'border-left:3px solid var(--accent);':'')+'"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><div><span style="font-weight:600;font-size:13px">'+(m.user_name||'Unknown')+'</span> <span style="font-size:11px;color:var(--text3)">'+(m.user_email||'')+'</span>'+(m.from_admin?' <span style="font-size:9px;padding:1px 6px;background:var(--accent);color:#1C1A17;border-radius:3px;font-weight:600">SENT</span>':'')+'</div><span style="font-size:10px;color:var(--text3)">'+d+'</span></div>';
     h+='<span class="tag t-cat" style="font-size:10px;margin-bottom:8px;display:inline-block">'+(tl[m.type]||m.type||'Msg')+'</span>';
     h+='<p style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:10px;white-space:pre-wrap">'+(m.message||'')+'</p>';
     (m.replies||[]).forEach(function(r){h+='<div style="margin-left:14px;padding:8px 12px;background:var(--bg3);border-radius:6px;margin-bottom:6px;border-left:2px solid var(--green)"><div style="font-size:10px;color:var(--green);font-weight:600;margin-bottom:2px">YOUR REPLY</div><p style="font-size:12px;color:var(--text2);line-height:1.5;margin:0">'+r.text+'</p></div>'});

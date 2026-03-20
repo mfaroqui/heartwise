@@ -12161,7 +12161,7 @@ function admRenderToolActivity(c){
   // Filterable list
   h+='<div class="adm-card"><div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:12px">All Tool Runs</div>';
   h+='<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">';
-  h+='<input type="text" id="adm-ta-search" placeholder="Search user name/email..." oninput="admFilterToolActivity()" style="flex:1;min-width:150px;font-size:12px;padding:8px 12px;border:1px solid var(--border);border-radius:8px;background:var(--bg3);color:var(--text)">';
+  h+='<input type="text" id="adm-ta-search" placeholder="Search user, tool, results..." oninput="admFilterToolActivity()" style="flex:1;min-width:150px;font-size:12px;padding:8px 12px;border:1px solid var(--border);border-radius:8px;background:var(--bg3);color:var(--text)">';
   h+='<select id="adm-ta-tool" onchange="admFilterToolActivity()" style="font-size:12px;padding:8px 12px;border:1px solid var(--border);border-radius:6px;background:var(--bg3);color:var(--text)"><option value="">All Tools</option>';
   sortedTools.forEach(function(tn){h+='<option value="'+tn+'">'+(toolIcons[tn]||'🔧')+' '+tn+' ('+toolCounts[tn]+')</option>'});
   h+='</select></div>';
@@ -12180,7 +12180,13 @@ function admFilterToolActivity(){
   var icons=window._admToolIcons||{};
   var filtered=runs.filter(function(r){
     if(toolFilter&&r.tool!==toolFilter)return false;
-    if(search&&r.user.toLowerCase().indexOf(search)===-1&&r.email.toLowerCase().indexOf(search)===-1)return false;
+    if(search){
+      var haystack=(r.user+' '+r.email+' '+r.tool+' '+(r.summary||'')).toLowerCase();
+      if(r.data&&r.data.inputs){for(var k in r.data.inputs){if(r.data.inputs.hasOwnProperty(k))haystack+=' '+k+' '+r.data.inputs[k]}}
+      if(r.data&&r.data.highlights){r.data.highlights.forEach(function(hl){haystack+=' '+hl})}
+      haystack=haystack.toLowerCase();
+      if(haystack.indexOf(search)===-1)return false;
+    }
     return true;
   });
   var listEl=document.getElementById('adm-ta-list');if(!listEl)return;

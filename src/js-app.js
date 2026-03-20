@@ -7757,12 +7757,20 @@ function roiUpdate(){
   document.getElementById('roi-middle-v').textContent=middle;
   document.getElementById('roi-qi-v').textContent=qi;
 
+  // Specialty selector and timeline
+  var specEl=document.getElementById('roi-spec');
+  var monthsEl=document.getElementById('roi-months');
+  var spec=specEl?specEl.value:'';
+  var months=monthsEl?parseInt(monthsEl.value)||0:0;
+
   // Point values per item
   var pts={first:15,cases:8,abstracts:5,reviews:6,middle:3,qi:2};
   var userScore=first*pts.first+cases*pts.cases+abstracts*pts.abstracts+reviews*pts.reviews+middle*pts.middle+qi*pts.qi;
 
-  // Optimal benchmark: 2 first-author (30) + 1 case (8) + 3 abstracts (15) + 0 reviews + 0 middle + 0 QI = 53
-  var optimalScore=53;
+  // Specialty-specific optimal benchmarks
+  var specBenchmarks={derm:120,ortho:100,nsurg:110,plastics:100,ent:80,ophtho:80,uro:80,cards:90,gi:90,hemeonc:90,rads:60,gs:55,em:45,anes:45,neuro:45,im:30,fm:30,peds:30,psych:30,pulmcrit:50,other:53};
+  var specNames={'':'Default',im:'Internal Medicine',fm:'Family Medicine',peds:'Pediatrics',em:'Emergency Medicine',psych:'Psychiatry',neuro:'Neurology',rads:'Radiology',anes:'Anesthesiology',gs:'General Surgery',ortho:'Orthopedic Surgery',nsurg:'Neurosurgery',derm:'Dermatology',ent:'ENT',uro:'Urology',ophtho:'Ophthalmology',plastics:'Plastic Surgery',cards:'Cardiology',gi:'GI',hemeonc:'Heme/Onc',pulmcrit:'Pulm/Crit',other:'Other'};
+  var optimalScore=spec&&specBenchmarks[spec]?specBenchmarks[spec]:53;
   var pct=Math.min(100,Math.round((userScore/optimalScore)*100));
 
   // Grade
@@ -7786,7 +7794,7 @@ function roiUpdate(){
   if(totalItems>0){
     bd+='<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border)"><span>Total Items</span><strong>'+totalItems+'</strong></div>';
     bd+='<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border)"><span>Portfolio Score</span><strong>'+userScore+' pts</strong></div>';
-    bd+='<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border)"><span>Optimal Benchmark</span><strong>'+optimalScore+' pts</strong></div>';
+    bd+='<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border)"><span>Optimal Benchmark'+(spec?' ('+specNames[spec]+')':'')+'</span><strong>'+optimalScore+' pts</strong></div>';
 
     // Weighted contribution breakdown
     var contribs=[];
@@ -7806,6 +7814,34 @@ function roiUpdate(){
     });
   }
   document.getElementById('roi-breakdown').innerHTML=bd;
+
+  // Efficiency chart — points per month of effort
+  var effHtml='';
+  if(totalItems>0){
+    var effData=[
+      {name:'Case Report',ppm:2.67,color:'var(--green)'},
+      {name:'Abstract',ppm:2.50,color:'var(--green)'},
+      {name:'First-Author',ppm:1.50,color:'var(--accent)'},
+      {name:'Review Article',ppm:1.33,color:'var(--accent)'},
+      {name:'Middle-Author',ppm:1.00,color:'var(--text3)'},
+      {name:'QI Project',ppm:0.80,color:'var(--text3)'}
+    ];
+    var maxPpm=effData[0].ppm;
+    effHtml+='<div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">Efficiency: Points Per Month of Effort</div>';
+    effData.forEach(function(e){
+      var barW=Math.round((e.ppm/maxPpm)*100);
+      effHtml+='<div style="margin-bottom:8px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px"><span style="font-size:12px">'+e.name+'</span><span style="font-size:11px;font-weight:600;color:'+e.color+'">'+e.ppm.toFixed(2)+' pts/mo</span></div>';
+      effHtml+='<div style="height:6px;background:var(--bg);border-radius:3px;overflow:hidden"><div style="height:100%;width:'+barW+'%;background:'+e.color+';border-radius:3px;transition:width .3s ease"></div></div></div>';
+    });
+  }
+  var effEl=document.getElementById('roi-efficiency');
+  if(effEl){
+    if(effHtml){
+      effEl.innerHTML='<div style="padding:14px;background:var(--bg2);border-radius:8px;border:1px solid var(--border)">'+effHtml+'</div>';
+    }else{
+      effEl.innerHTML='';
+    }
+  }
 
   // Advice
   var advice='';
@@ -7827,9 +7863,75 @@ function roiUpdate(){
     advice='Keep building. Prioritize first-author work and conference abstracts — these have the highest ROI for your time investment.';
   }
   document.getElementById('roi-next').textContent=advice;
+
+  // Next Best Move section
+  var movesHtml='';
+  if(totalItems>0){
+    var activities=[
+      {name:'First-Author Original',addPts:pts.first,minMo:8,maxMo:12,avgMo:10},
+      {name:'Case Report',addPts:pts.cases,minMo:2,maxMo:4,avgMo:3},
+      {name:'Conference Abstract',addPts:pts.abstracts,minMo:1,maxMo:3,avgMo:2},
+      {name:'Review Article',addPts:pts.reviews,minMo:3,maxMo:6,avgMo:4.5},
+      {name:'Middle-Author Paper',addPts:pts.middle,minMo:2,maxMo:4,avgMo:3},
+      {name:'QI Project',addPts:pts.qi,minMo:2,maxMo:3,avgMo:2.5}
+    ];
+    activities.forEach(function(a){a.ppm=a.addPts/a.avgMo});
+    activities.sort(function(a,b){return b.ppm-a.ppm});
+    var topMoves=activities.slice(0,3);
+
+    movesHtml+='<div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">🎯 Next Best Moves (Ranked by Efficiency)</div>';
+    topMoves.forEach(function(m,i){
+      var achievable=true;
+      var warn='';
+      if(months>0&&m.minMo>months){
+        achievable=false;
+        warn='<div style="font-size:10px;color:var(--red);margin-top:6px">⚠ May not finish within '+months+' months (needs '+m.minMo+'-'+m.maxMo+' mo)</div>';
+      }else if(months>0&&m.avgMo<=months){
+        warn='<div style="font-size:10px;color:var(--green);margin-top:6px">✓ Achievable within your timeline</div>';
+      }else if(months>0){
+        warn='<div style="font-size:10px;color:var(--accent);margin-top:6px">⚡ Tight — possible if started now ('+m.minMo+'-'+m.maxMo+' mo)</div>';
+      }
+      var newScore=userScore+m.addPts;
+      var newPct=Math.min(100,Math.round((newScore/optimalScore)*100));
+      movesHtml+='<div style="padding:12px;background:var(--bg2);border-radius:8px;border:1px solid var(--border);margin-bottom:8px'+((!achievable&&months>0)?';opacity:.7':'')+'">'+
+        '<div style="display:flex;justify-content:space-between;align-items:center"><span style="font-weight:600;font-size:13px;color:var(--text)">#'+(i+1)+' '+m.name+'</span><span style="font-size:11px;font-weight:600;color:var(--accent)">+'+m.addPts+' pts</span></div>'+
+        '<div style="display:flex;gap:16px;margin-top:6px;font-size:11px;color:var(--text2)">'+
+        '<span>⏱ '+m.minMo+'-'+m.maxMo+' months</span>'+
+        '<span>📈 '+m.ppm.toFixed(2)+' pts/mo</span>'+
+        '<span>→ '+newPct+'% of optimal</span>'+
+        '</div>'+warn+'</div>';
+    });
+  }
+  var movesEl=document.getElementById('roi-next-moves');
+  if(movesEl)movesEl.innerHTML=movesHtml;
+
+  // Update benchmark text with specialty context
+  var benchEl=document.getElementById('roi-benchmark-text');
+  if(benchEl){
+    if(spec&&specNames[spec]){
+      benchEl.textContent='Optimal benchmark for '+specNames[spec]+': '+optimalScore+' pts. Based on NRMP Charting Outcomes data and specialty-specific competitiveness.';
+    }else{
+      benchEl.textContent='1-2 first-author papers + 2-3 abstracts + 1 case report = competitive applicant. Based on NRMP Charting Outcomes data for subspecialty fellowship matching.';
+    }
+  }
+
+  // Match Calculator link
+  var linkEl=document.getElementById('roi-match-link');
+  if(linkEl){
+    if(totalItems>0){
+      linkEl.innerHTML='<div style="padding:14px;background:var(--bg2);border-radius:8px;border:1px solid var(--border);text-align:center">'+
+        '<div style="font-size:12px;color:var(--text2);margin-bottom:8px">See how this research score affects your match probability</div>'+
+        '<button onclick="navTo(\'scr-tool\');runTool(\'v14\')" style="padding:8px 20px;border-radius:8px;border:1px solid var(--accent);background:transparent;color:var(--accent);font-size:12px;font-weight:600;cursor:pointer;transition:all .15s" onmouseenter="this.style.background=\'var(--accent)\';this.style.color=\'var(--bg)\'" onmouseleave="this.style.background=\'transparent\';this.style.color=\'var(--accent)\'">Run Match Calculator →</button></div>';
+    }else{
+      linkEl.innerHTML='';
+    }
+  }
+
   // Record with resultData for saved scenarios
   if(totalItems>0){
     var roiInputs={'First-Author':first,'Case Reports':cases,'Abstracts':abstracts,'Reviews':reviews,'Middle-Author':middle,'QI Projects':qi};
+    if(spec)roiInputs['Specialty']=specNames[spec]||spec;
+    if(months)roiInputs['Months to Deadline']=months;
     var roiHL=[grade,'Portfolio Score: '+userScore+'/'+optimalScore+' pts','Total Items: '+totalItems];
     recordToolUse('Research ROI Calculator',pct+'%',grade,{inputs:roiInputs,highlights:roiHL});
   }

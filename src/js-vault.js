@@ -447,6 +447,42 @@ v7:`<h3>Research ROI Calculator</h3>
 
 <div style="font-size:12px">
 
+<div style="margin-bottom:16px">
+<label style="display:block;font-weight:600;margin-bottom:6px">Target Specialty / Fellowship</label>
+<select id="roi-spec" onchange="roiUpdate()" style="width:100%;padding:10px 12px;border-radius:8px;border:1px solid var(--border);background:var(--bg2);color:var(--text);font-size:13px;cursor:pointer">
+<option value="">— Select Specialty —</option>
+<option value="im">Internal Medicine</option>
+<option value="fm">Family Medicine</option>
+<option value="peds">Pediatrics</option>
+<option value="em">Emergency Medicine</option>
+<option value="psych">Psychiatry</option>
+<option value="neuro">Neurology</option>
+<option value="rads">Radiology</option>
+<option value="anes">Anesthesiology</option>
+<option value="gs">General Surgery</option>
+<option value="ortho">Orthopedic Surgery</option>
+<option value="nsurg">Neurosurgery</option>
+<option value="derm">Dermatology</option>
+<option value="ent">ENT</option>
+<option value="uro">Urology</option>
+<option value="ophtho">Ophthalmology</option>
+<option value="plastics">Plastic Surgery</option>
+<option value="cards">Cardiology (Fellowship)</option>
+<option value="gi">GI (Fellowship)</option>
+<option value="hemeonc">Heme/Onc (Fellowship)</option>
+<option value="pulmcrit">Pulm/Crit (Fellowship)</option>
+<option value="other">Other</option>
+</select>
+</div>
+
+<div style="margin-bottom:18px">
+<label style="display:block;font-weight:600;margin-bottom:6px">Months Until Application Deadline</label>
+<input type="number" id="roi-months" min="1" max="36" placeholder="e.g., 12" oninput="roiUpdate()" style="width:100%;padding:10px 12px;border-radius:8px;border:1px solid var(--border);background:var(--bg2);color:var(--text);font-size:13px;box-sizing:border-box">
+<div style="font-size:10px;color:var(--text3);margin-top:4px">Used to filter recommendations to what's achievable</div>
+</div>
+
+<div style="height:1px;background:var(--border);margin-bottom:16px"></div>
+
 <div style="margin-bottom:14px">
 <label style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><span style="font-weight:600">First-Author Original Research</span><span style="color:var(--green);font-size:10px">15 pts each</span></label>
 <div style="display:flex;align-items:center;gap:12px">
@@ -524,12 +560,19 @@ v7:`<h3>Research ROI Calculator</h3>
 <p id="roi-next" style="font-size:12px;color:var(--text2);line-height:1.6;margin:0">Start by entering your current research.</p>
 </div>
 
+<div id="roi-next-moves" style="margin-top:14px"></div>
+
+<div id="roi-efficiency" style="margin-top:14px"></div>
+
 </div>
 
 <div style="margin-top:14px;padding:14px;background:var(--bg2);border-radius:8px">
 <div style="font-size:11px;font-weight:600;color:var(--text3);margin-bottom:6px">OPTIMAL PORTFOLIO BENCHMARK</div>
-<p style="font-size:12px;color:var(--text2);line-height:1.7;margin:0">1-2 first-author papers + 2-3 abstracts + 1 case report = competitive applicant. Based on NRMP Charting Outcomes data for subspecialty fellowship matching.</p>
+<p id="roi-benchmark-text" style="font-size:12px;color:var(--text2);line-height:1.7;margin:0">1-2 first-author papers + 2-3 abstracts + 1 case report = competitive applicant. Based on NRMP Charting Outcomes data for subspecialty fellowship matching.</p>
 </div>
+
+<div id="roi-match-link" style="margin-top:14px"></div>
+
 <div style="text-align:center;margin-top:8px"><button onclick="showSavedScenarios('Research ROI Calculator')" style="background:none;border:none;color:var(--accent);font-size:11px;cursor:pointer;padding:6px 12px;opacity:.7;transition:opacity .15s" onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='.7'">📊 View Saved Scenarios</button></div>
 </div>`,
 

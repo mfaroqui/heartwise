@@ -12307,9 +12307,22 @@ async function admPublishReview(qId){var ta=document.getElementById('adm-rev-'+q
 async function admMarkComplete(qId){if(_supaClient){await _supaClient.from('questions').update({status:'reviewed'}).eq('id',qId);if(_sbQuestions){var q=_sbQuestions.find(function(x){return x.id==qId});if(q)q.status='reviewed'}}else{var q=(DB.questions||[]).find(function(x){return x.id==qId});if(q){q.status='reviewed';saveDB()}}notify('Complete');admRender()}
 
 function admRenderFeedback(c){
-  var msgs=admGetMessages();if(!msgs.length){c.innerHTML='<div style="text-align:center;padding:40px;color:var(--text3)">\ud83d\udced No feedback yet.</div>';return}
-  var unread=msgs.filter(function(m){return !m.read}).length;var isSB=_sbMessages&&_sbMessages.length;
-  var h='<div style="font-size:11px;color:var(--text3);margin-bottom:12px">'+msgs.length+' messages \u00b7 '+unread+' unread</div>';
+  var msgs=admGetMessages();var isSB=_sbMessages&&_sbMessages.length;
+  // Send message to user card
+  var users=admGetUsers();
+  var h='<div class="adm-card" style="margin-bottom:16px"><div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:12px">\u2709\ufe0f Send Message to User</div>';
+  h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">';
+  h+='<div><select id="adm-msg-to" style="width:100%;font-size:12px;padding:8px 12px;border:1px solid var(--border);border-radius:6px;background:var(--bg3);color:var(--text)"><option value="">Select user...</option><option value="__all__">📢 All Users (Broadcast)</option>';
+  users.forEach(function(u){h+='<option value="'+u.email+'">'+((u.name||u.email)||'Unknown')+' ('+(u.email||'')+')</option>'});
+  h+='</select></div>';
+  h+='<div><select id="adm-msg-type" style="width:100%;font-size:12px;padding:8px 12px;border:1px solid var(--border);border-radius:6px;background:var(--bg3);color:var(--text)"><option value="feedback_request">🙏 Feedback Request</option><option value="announcement">📢 Announcement</option><option value="tip">💡 Tip / Suggestion</option><option value="welcome">👋 Welcome</option><option value="followup">🔄 Follow-up</option></select></div>';
+  h+='</div>';
+  h+='<textarea id="adm-msg-text" rows="3" placeholder="Write your message..." style="width:100%;font-size:12px;padding:10px 12px;border:1px solid var(--border);border-radius:8px;background:var(--bg3);color:var(--text);resize:vertical;margin-bottom:10px;box-sizing:border-box"></textarea>';
+  h+='<button onclick="admSendMessage()" class="btn btn-a" style="padding:10px 20px">Send Message</button>';
+  h+='</div>';
+  if(!msgs.length){h+='<div style="text-align:center;padding:40px;color:var(--text3)">\ud83d\udced No messages yet.</div>';c.innerHTML=h;return}
+  var unread=msgs.filter(function(m){return !m.read}).length;
+  h+='<div style="font-size:11px;color:var(--text3);margin-bottom:12px">'+msgs.length+' messages \u00b7 '+unread+' unread</div>';
   msgs.forEach(function(m){
     var tl={career:'\ud83c\udfaf Career',finance:'\ud83d\udcb0 Finance',contract:'\ud83d\udccb Contract',bug:'\ud83d\udc1b Bug',suggestion:'\ud83d\udca1 Suggestion',question:'\u2753 Question',feedback:'\ud83d\udcdd Feedback',progress:'\ud83d\udcc8 Progress',other:'\ud83d\udcce Other'};
     var d=m.date?new Date(m.date).toLocaleDateString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}):'';
@@ -12325,6 +12338,39 @@ function admRenderFeedback(c){
 async function admReply(id,isSB){var input=document.getElementById('adm-reply-'+id);if(!input||!input.value.trim())return;var r={text:input.value.trim(),date:new Date().toISOString()};if(isSB&&_supaClient){var msg=_sbMessages?_sbMessages.find(function(m){return m.id==id}):null;if(!msg)return;var rr=msg.replies||[];rr.push(r);await _supaClient.from('messages').update({replies:rr,read:true}).eq('id',id);msg.replies=rr;msg.read=true}else{var idx=parseInt(id);if(DB.messages&&DB.messages[idx]){if(!DB.messages[idx].replies)DB.messages[idx].replies=[];DB.messages[idx].replies.push(r);DB.messages[idx].read=true;saveDB()}}notify('Reply sent');admRender()}
 async function admMarkRead(id,isSB){if(isSB&&_supaClient){await _supaClient.from('messages').update({read:true}).eq('id',id);var msg=_sbMessages?_sbMessages.find(function(m){return m.id==id}):null;if(msg)msg.read=true}else{var idx=parseInt(id);if(DB.messages&&DB.messages[idx]){DB.messages[idx].read=true;saveDB()}}admRender()}
 
+async function admSendMessage(){
+  var toEl=document.getElementById('adm-msg-to');
+  var typeEl=document.getElementById('adm-msg-type');
+  var textEl=document.getElementById('adm-msg-text');
+  if(!toEl||!typeEl||!textEl)return;
+  var to=toEl.value;var type=typeEl.value;var text=textEl.value.trim();
+  if(!to){notify('Select a user',1);return}
+  if(!text){notify('Write a message',1);return}
+  var isBroadcast=to==='__all__';
+  var payload={
+    user_name:'HeartWise Team',
+    user_email:'admin@heartwisementor.com',
+    type:type,
+    message:text,
+    date:new Date().toISOString(),
+    from_admin:true,
+    to_email:isBroadcast?'__all__':to,
+    read:false,
+    user_read:false
+  };
+  if(_supaClient){
+    var res=await _supaClient.from('messages').insert([payload]);
+    if(res.error){notify('Failed: '+res.error.message,1);return}
+    if(_sbMessages)_sbMessages.unshift(payload);
+  }
+  if(!DB.messages)DB.messages=[];
+  DB.messages.push(payload);saveDB();
+  textEl.value='';toEl.value='';
+  notify(isBroadcast?'Broadcast sent to all users':'Message sent to '+to);
+  admRender();
+}
+
+// User inbox functions
 function admRenderAnalytics(c){
   var users=admGetUsers(),qs=admGetQuestions();
   var h='<div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:12px">AI Usage by User</div>';
@@ -12428,21 +12474,40 @@ async function adminMessageUser(email,name){
 async function loadMyNotifications(){
   if(!U||!U.email)return[];
   var notifs=[];
-  // Load from Supabase
+  // Load from Supabase — notifications + admin-initiated messages to this user or broadcast
   if(_supaClient){
     try{
       var{data,error}=await _supaClient.from('messages').select('*')
-        .eq('user_email',U.email)
-        .eq('type','notification')
+        .or('type.eq.notification,from_admin.eq.true')
+        .or('user_email.eq.'+U.email+',to_email.eq.'+U.email+',to_email.eq.__all__')
         .order('date',{ascending:false})
-        .limit(20);
+        .limit(30);
       if(!error&&data)notifs=data;
     }catch(ex){}
+    // Simpler fallback query if the above fails (or filter)
+    if(!notifs.length){
+      try{
+        var r1=await _supaClient.from('messages').select('*').eq('user_email',U.email).eq('type','notification').order('date',{ascending:false}).limit(20);
+        var r2=await _supaClient.from('messages').select('*').eq('to_email',U.email).eq('from_admin',true).order('date',{ascending:false}).limit(20);
+        var r3=await _supaClient.from('messages').select('*').eq('to_email','__all__').eq('from_admin',true).order('date',{ascending:false}).limit(20);
+        if(!r1.error&&r1.data)notifs=notifs.concat(r1.data);
+        if(!r2.error&&r2.data)notifs=notifs.concat(r2.data);
+        if(!r3.error&&r3.data)notifs=notifs.concat(r3.data);
+        // Deduplicate by id
+        var seen={};notifs=notifs.filter(function(n){if(!n.id||seen[n.id])return false;seen[n.id]=true;return true});
+        notifs.sort(function(a,b){return new Date(b.date)-new Date(a.date)});
+      }catch(ex2){}
+    }
   }
   // Fallback: local notifications for this user
   if(!notifs.length&&DB.notifications){
     notifs=DB.notifications.filter(function(n){
       return n.user_email===U.email;
+    }).reverse();
+  }
+  if(!notifs.length&&DB.messages){
+    notifs=DB.messages.filter(function(n){
+      return n.from_admin&&(n.to_email===U.email||n.to_email==='__all__');
     }).reverse();
   }
   return notifs;
@@ -12457,36 +12522,54 @@ async function showMyMessages(){
       var{data}=await _supaClient.from('messages').select('*')
         .eq('user_email',U.email)
         .neq('type','notification')
+        .is('from_admin',null)
         .order('date',{ascending:false})
         .limit(20);
       if(data)contactReplies=data.filter(function(m){return m.replies&&m.replies.length});
     }catch(ex){}
   }
 
+  var typeLabels={feedback_request:'\ud83d\ude4f Feedback Request',announcement:'\ud83d\udce2 Announcement',tip:'\ud83d\udca1 Tip',welcome:'\ud83d\udc4b Welcome',followup:'\ud83d\udd04 Follow-up',notification:'\ud83d\udce9 Notification'};
   var h='<div style="margin-bottom:20px"><span class="serif" style="font-size:18px;font-weight:600">My Messages</span></div>';
 
   if(!notifs.length&&!contactReplies.length){
     h+='<div style="text-align:center;padding:40px 0;color:var(--text3)"><p style="font-size:36px;margin-bottom:12px">\ud83d\udcec</p><p style="font-size:14px">No messages yet.</p><p style="font-size:12px;margin-top:6px;color:var(--text3)">When Dr. Faroqui reviews your questions or sends you a message, it\u2019ll show up here.</p></div>';
   }else{
-    // Show notifications
-    notifs.forEach(function(n){
+    // Show all notifications and admin messages
+    notifs.forEach(function(n,idx){
       var title=n.title||n.user_name||'Notification';
+      var isAdminMsg=n.from_admin;
       var isReview=title.indexOf('reviewed')>=0;
-      var icon=isReview?'\u2705':'\ud83d\udce9';
-      var borderColor=n.read?'var(--border)':'rgba(198,168,94,.20)';
-      var bg=n.read?'':'background:rgba(200,168,124,.03);';
+      var icon=isAdminMsg?'\u2709\ufe0f':isReview?'\u2705':'\ud83d\udce9';
+      var borderColor=n.read&&n.user_read!==false?'var(--border)':'rgba(198,168,94,.20)';
+      var bg=n.read&&n.user_read!==false?'':'background:rgba(200,168,124,.03);';
       h+='<div class="card" style="margin-bottom:10px;border-color:'+borderColor+';'+bg+'">';
       h+='<div style="display:flex;gap:12px;align-items:flex-start">';
       h+='<span style="font-size:20px;flex-shrink:0;margin-top:2px">'+icon+'</span>';
       h+='<div style="flex:1;min-width:0">';
       h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">';
-      h+='<span style="font-size:13px;font-weight:600;color:var(--text)">'+title+'</span>';
+      if(isAdminMsg){
+        h+='<span style="font-size:13px;font-weight:600;color:var(--accent)">Dr. Faroqui</span>';
+      }else{
+        h+='<span style="font-size:13px;font-weight:600;color:var(--text)">'+title+'</span>';
+      }
       var d=n.date?new Date(n.date).toLocaleDateString('en-US',{month:'short',day:'numeric'}):' ';
       h+='<span style="font-size:10px;color:var(--text3)">'+d+'</span></div>';
+      if(isAdminMsg&&n.type){h+='<span style="font-size:10px;padding:2px 8px;background:var(--bg3);border-radius:4px;color:var(--text3);display:inline-block;margin-bottom:6px">'+(typeLabels[n.type]||n.type)+'</span>'}
       h+='<p style="font-size:12px;color:var(--text2);line-height:1.6;margin:0">'+n.message+'</p>';
+      // Reply box for admin messages
+      if(isAdminMsg){
+        h+='<div style="margin-top:10px;display:flex;gap:6px;align-items:center">';
+        h+='<input type="text" id="inbox-reply-'+idx+'" placeholder="Reply to Dr. Faroqui..." style="flex:1;font-size:12px;padding:8px 10px;border:1px solid var(--border);border-radius:6px;background:var(--bg3);color:var(--text)">';
+        h+='<button onclick="sendInboxReply('+idx+')" class="btn btn-a btn-sm" style="padding:6px 14px">Send</button>';
+        h+='</div>';
+      }
       h+='</div></div></div>';
       // Mark as read
-      if(!n.read&&n.id&&_supaClient){
+      if(isAdminMsg&&n.user_read===false&&n.id&&_supaClient){
+        _supaClient.from('messages').update({user_read:true}).eq('id',n.id).catch(function(){});
+      }
+      if(!isAdminMsg&&!n.read&&n.id&&_supaClient){
         _supaClient.from('messages').update({read:true}).eq('id',n.id).then(function(){}).catch(function(e){logError('messageReadUpdate',e)});
       }
     });
@@ -12513,21 +12596,54 @@ async function showMyMessages(){
   if(badge)badge.style.display='none';
 }
 
+window._inboxNotifs=[];
+async function sendInboxReply(idx){
+  var notifs=await loadMyNotifications();var m=notifs[idx];if(!m)return;
+  var input=document.getElementById('inbox-reply-'+idx);if(!input||!input.value.trim())return;
+  var text=input.value.trim();
+  var payload={
+    user_name:U?U.name:'Unknown',
+    user_email:U?U.email:'Unknown',
+    type:'reply',
+    message:text,
+    date:new Date().toISOString(),
+    reply_to:m.id||null,
+    read:false
+  };
+  if(_supaClient){
+    await _supaClient.from('messages').insert([payload]).catch(function(e){console.warn('Reply insert failed',e)});
+  }
+  if(!DB.messages)DB.messages=[];
+  DB.messages.push(payload);saveDB();
+  input.value='';
+  notify('Reply sent!');
+}
+
 // Check for unread notifications and show badge
 async function checkNotifBadge(){
   if(!U||!U.email)return;
   var count=0;
   if(_supaClient){
     try{
-      var{data,error}=await _supaClient.from('messages').select('id',{count:'exact'})
-        .eq('user_email',U.email)
-        .eq('type','notification')
-        .eq('read',false);
-      if(!error&&data)count=data.length;
+      // Count unread notifications
+      var r1=await _supaClient.from('messages').select('id',{count:'exact'})
+        .eq('user_email',U.email).eq('type','notification').eq('read',false);
+      if(!r1.error&&r1.data)count+=r1.data.length;
+      // Count unread admin messages to this user
+      var r2=await _supaClient.from('messages').select('id',{count:'exact'})
+        .eq('to_email',U.email).eq('from_admin',true).eq('user_read',false);
+      if(!r2.error&&r2.data)count+=r2.data.length;
+      // Count unread broadcasts
+      var r3=await _supaClient.from('messages').select('id',{count:'exact'})
+        .eq('to_email','__all__').eq('from_admin',true).eq('user_read',false);
+      if(!r3.error&&r3.data)count+=r3.data.length;
     }catch(ex){}
   }
   if(!count&&DB.notifications){
     count=DB.notifications.filter(function(n){return n.user_email===U.email&&!n.read}).length;
+  }
+  if(!count&&DB.messages){
+    count+=DB.messages.filter(function(m){return m.from_admin&&(m.to_email===U.email||m.to_email==='__all__')&&!m.user_read}).length;
   }
   var badge=document.getElementById('notif-badge');
   if(badge){

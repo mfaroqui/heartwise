@@ -6864,8 +6864,8 @@ function admRenderDashboard(c){
   var h='<div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:12px">Overview</div>';
   if(pending.length||unread.length){
     h+='<div class="adm-card" style="border-left:3px solid var(--accent)">';
-    if(pending.length)h+='<div style="font-size:13px;color:var(--accent);margin-bottom:4px">⚡ '+pending.length+' question'+(pending.length>1?'s':'')+' awaiting review</div>';
-    if(unread.length)h+='<div style="font-size:13px;color:#5ba8d0">💬 '+unread.length+' unread message'+(unread.length>1?'s':'')+'</div>';
+    if(pending.length)h+='<div onclick="curAdminTab=\'questions\';admRender()" style="font-size:13px;color:var(--accent);margin-bottom:4px;cursor:pointer">⚡ '+pending.length+' question'+(pending.length>1?'s':'')+' awaiting review →</div>';
+    if(unread.length)h+='<div onclick="curAdminTab=\'feedback\';admRender()" style="font-size:13px;color:#5ba8d0;cursor:pointer">💬 '+unread.length+' unread message'+(unread.length>1?'s':'')+' →</div>';
     h+='</div>';
   }
   var co=users.filter(function(u){return u.tier==='core'}).length;

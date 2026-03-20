@@ -246,24 +246,47 @@ v4:`<h3>RVU Compensation Calculator</h3>
 <div class="fg"><label>Your Specialty</label>
 <select id="rvu-spec" onchange="rvuFillBenchmark();rvuUpdate()" style="width:100%">
 <option value="custom">Custom / Other</option>
+<optgroup label="Primary Care">
 <option value="fm">Family Medicine</option>
 <option value="im">IM — Outpatient / Primary Care</option>
 <option value="hosp">IM — Hospitalist</option>
+<option value="peds">Pediatrics</option>
+</optgroup>
+<optgroup label="Medical Subspecialties">
 <option value="gc">General Cardiology</option>
 <option value="ic">Interventional Cardiology</option>
 <option value="ep">Electrophysiology</option>
 <option value="gi">Gastroenterology</option>
 <option value="pulm">Pulmonology / Critical Care</option>
+<option value="hemonc">Hematology / Oncology</option>
 <option value="neph">Nephrology</option>
 <option value="endo">Endocrinology</option>
 <option value="rheum">Rheumatology</option>
-<option value="ortho">Orthopedic Surgery</option>
+<option value="id">Infectious Disease</option>
+<option value="neuro">Neurology</option>
+<option value="pmr">PM&R</option>
+<option value="psych">Psychiatry</option>
+<option value="derm">Dermatology</option>
+</optgroup>
+<optgroup label="Surgical Specialties">
 <option value="gensurg">General Surgery</option>
+<option value="ortho">Orthopedic Surgery</option>
+<option value="nsurg">Neurosurgery</option>
+<option value="ct_surg">Cardiothoracic Surgery</option>
+<option value="vascular">Vascular Surgery</option>
 <option value="uro">Urology</option>
+<option value="ent">ENT</option>
+<option value="plastics">Plastic Surgery</option>
+<option value="obgyn">OB/GYN</option>
+</optgroup>
+<optgroup label="Other Specialties">
 <option value="em">Emergency Medicine</option>
 <option value="anes">Anesthesiology</option>
-<option value="derm">Dermatology</option>
-<option value="psych">Psychiatry</option>
+<option value="path">Pathology</option>
+<option value="ophtho">Ophthalmology</option>
+<option value="ir">Interventional Radiology</option>
+<option value="radonc">Radiation Oncology</option>
+</optgroup>
 </select></div>
 </div>
 
@@ -370,20 +393,49 @@ v4:`<h3>RVU Compensation Calculator</h3>
 <div style="text-align:center;margin-top:8px"><button onclick="showSavedScenarios('RVU Compensation Calculator')" style="background:none;border:none;color:var(--accent);font-size:11px;cursor:pointer;padding:6px 12px;opacity:.7;transition:opacity .15s" onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='.7'">📊 View Saved Scenarios</button></div>`,
 
 v5:`<h3>3-Year Financial Leverage Planner</h3>
-<p style="color:var(--text3);font-size:12px;margin-bottom:16px">The first 3 years after training determine your financial trajectory for the next 20.</p>
-<div style="font-size:12px">
-<div style="padding:16px;background:var(--bg2);border-radius:8px;margin-bottom:12px">
-<div style="font-weight:600;color:var(--accent);margin-bottom:8px">Year 1: Foundation</div>
-<div style="color:var(--text2);line-height:1.8">• Maintain near-resident spending<br>• Build 6-month emergency fund<br>• Max employer retirement match<br>• Secure own-occupation disability insurance<br>• Make PSLF vs. refinance decision<br>• <span style="color:var(--red)">Avoid: car + house + lifestyle expansion simultaneously</span><br><strong>Target: Save 40-50% of gross</strong></div></div>
-<div style="padding:16px;background:var(--bg2);border-radius:8px;margin-bottom:12px">
-<div style="font-weight:600;color:var(--accent);margin-bottom:8px">Year 2: Acceleration</div>
-<div style="color:var(--text2);line-height:1.8">• Max all tax-advantaged accounts<br>• Begin taxable index fund investing<br>• Consider home purchase if staying 5+ years<br>• Term life insurance if dependents<br>• Begin gradual, intentional lifestyle upgrade<br><strong>Target: Net worth positive</strong></div></div>
-<div style="padding:16px;background:var(--bg2);border-radius:8px">
-<div style="font-weight:600;color:var(--accent);margin-bottom:8px">Year 3: Leverage</div>
-<div style="color:var(--text2);line-height:1.8">• Loans paid off or PSLF on track<br>• Portfolio growing with compound returns<br>• Evaluate contract renegotiation<br>• Consider practice ownership or side income<br><strong>Target: $200K-$500K net worth</strong></div></div>
+<p style="color:var(--text3);font-size:12px;margin-bottom:20px">The first 3 years after training determine your financial trajectory for the next 20. Enter your numbers for a personalized year-by-year plan.</p>
+
+<div style="font-size:13px">
+<div style="font-weight:600;color:var(--accent);margin-bottom:12px">Your Financial Details</div>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
+<div class="fg"><label>Expected Attending Salary ($)</label><input type="number" id="fyp-salary" placeholder="e.g., 350000"></div>
+<div class="fg"><label>Student Loan Debt ($)</label><input type="number" id="fyp-debt" placeholder="e.g., 250000"></div>
 </div>
-<div style="padding:16px;background:var(--bg2);border-radius:8px;margin-top:12px"><p style="font-size:12px;color:var(--text2);line-height:1.6;margin:0"><strong>The math:</strong> $400K income, $100K lifestyle = $300K/yr invested. At 8% returns, that's $1M+ in 3 years. Inflate to $300K lifestyle instead and it takes 10+ years.</p></div>
-<p style="font-size:10px;color:var(--text3);margin-top:12px;font-style:italic">Sources: White Coat Investor, AAMC Debt Data 2024.</p>`,
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
+<div class="fg"><label>Loan Interest Rate (%)</label><input type="number" id="fyp-rate" placeholder="e.g., 6.5" step="0.1"></div>
+<div class="fg"><label>Year 1 Living Expenses ($)</label><input type="number" id="fyp-expenses" placeholder="e.g., 100000"></div>
+</div>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
+<div class="fg"><label>Annual Lifestyle Increase (%)</label><input type="number" id="fyp-inflate" placeholder="e.g., 10" step="1"></div>
+<div class="fg"><label>Employer 401k Match (%)</label><input type="number" id="fyp-match" placeholder="e.g., 3" step="0.5"></div>
+</div>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
+<div class="fg"><label>PSLF Eligible?</label>
+<select id="fyp-pslf" style="width:100%">
+<option value="">Select...</option>
+<option value="yes">Yes</option>
+<option value="no">No</option>
+<option value="unsure">Not Sure</option>
+</select></div>
+<div class="fg"><label>Has Dependents?</label>
+<select id="fyp-dependents" style="width:100%">
+<option value="">Select...</option>
+<option value="yes">Yes</option>
+<option value="no">No</option>
+</select></div>
+</div>
+
+<button onclick="fypCalculate()" class="btn btn-a" style="width:100%;padding:14px;margin-bottom:8px">Calculate 3-Year Plan \u2192</button>
+<p style="font-size:10px;color:var(--text3);text-align:center;margin-bottom:16px">All calculations are performed locally. Nothing is stored or sent externally.</p>
+</div>
+
+<div id="fyp-results"></div>
+<p style="font-size:10px;color:var(--text3);margin-top:12px;font-style:italic">Sources: White Coat Investor, AAMC Debt Data 2024, IRS 2024 contribution limits.</p>
+<div style="text-align:center;margin-top:8px"><button onclick="showSavedScenarios('3-Year Financial Planner')" style="background:none;border:none;color:var(--accent);font-size:11px;cursor:pointer;padding:6px 12px;opacity:.7;transition:opacity .15s" onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='.7'">📊 View Saved Scenarios</button></div>`,
 
 v6:`<h3 class="serif">Fellowship Positioning Roadmap</h3>
 <p style="color:var(--text3);font-size:12px;margin-bottom:20px">Your personalized timeline to match day. Check off milestones as you complete them — progress is saved automatically.</p>
@@ -397,7 +449,10 @@ v6:`<h3 class="serif">Fellowship Positioning Roadmap</h3>
 <option value="cardiology">Cardiology</option>
 <option value="interventional">Interventional Cardiology</option>
 <option value="electrophysiology">Electrophysiology</option>
+<option value="heart_failure">Advanced Heart Failure & Transplant</option>
 <option value="gi">Gastroenterology</option>
+<option value="advanced_endoscopy">Advanced Endoscopy</option>
+<option value="transplant_hep">Transplant Hepatology</option>
 <option value="pulm_crit">Pulmonology / Critical Care</option>
 <option value="hemonc">Hematology / Oncology</option>
 <option value="rheum">Rheumatology</option>
@@ -408,9 +463,23 @@ v6:`<h3 class="serif">Fellowship Positioning Roadmap</h3>
 <option value="sports">Sports Medicine</option>
 <option value="geri">Geriatrics</option>
 <option value="pain">Pain Medicine</option>
+<option value="sleep">Sleep Medicine</option>
+<option value="hospice">Hospice & Palliative Medicine</option>
+<option value="neuro_phys">Clinical Neurophysiology</option>
+<option value="neonatal">Neonatal-Perinatal Medicine</option>
+<option value="mfm">Maternal-Fetal Medicine</option>
 <option value="ortho">Orthopedic Surgery</option>
 <option value="ctsx">Cardiothoracic Surgery</option>
 <option value="vasc">Vascular Surgery</option>
+<option value="surg_crit">Surgical Critical Care</option>
+<option value="ped_surg">Pediatric Surgery</option>
+<option value="surg_onc">Surgical Oncology</option>
+<option value="trauma">Trauma & Acute Care Surgery</option>
+<option value="colorectal">Colon & Rectal Surgery</option>
+<option value="hand">Hand Surgery</option>
+<option value="mis">Minimally Invasive Surgery</option>
+<option value="transplant_surg">Transplant Surgery</option>
+<option value="spine">Spine Surgery</option>
 <option value="other">Other</option>
 </select></div>
 <div class="fg"><label style="font-size:11px;color:var(--text3)">Months Until Match</label>
@@ -459,6 +528,7 @@ v7:`<h3>Research ROI Calculator</h3>
 <option value="neuro">Neurology</option>
 <option value="rads">Radiology</option>
 <option value="anes">Anesthesiology</option>
+<option value="path">Pathology</option>
 <option value="gs">General Surgery</option>
 <option value="ortho">Orthopedic Surgery</option>
 <option value="nsurg">Neurosurgery</option>
@@ -467,10 +537,42 @@ v7:`<h3>Research ROI Calculator</h3>
 <option value="uro">Urology</option>
 <option value="ophtho">Ophthalmology</option>
 <option value="plastics">Plastic Surgery</option>
+<option value="ir">Interventional Radiology</option>
+<option value="vascular">Vascular Surgery</option>
+<option value="ct_surg">Cardiothoracic Surgery</option>
+<option value="ct_integrated">Thoracic Surgery (Integrated)</option>
+<option value="obgyn">OB/GYN</option>
+<option value="pmr">PM&R</option>
+<option value="radonc">Radiation Oncology</option>
 <option value="cards">Cardiology (Fellowship)</option>
 <option value="gi">GI (Fellowship)</option>
 <option value="hemeonc">Heme/Onc (Fellowship)</option>
 <option value="pulmcrit">Pulm/Crit (Fellowship)</option>
+<option value="neph">Nephrology (Fellowship)</option>
+<option value="rheum">Rheumatology (Fellowship)</option>
+<option value="endo">Endocrinology (Fellowship)</option>
+<option value="id">Infectious Disease (Fellowship)</option>
+<option value="ic">Interventional Cardiology (Fellowship)</option>
+<option value="ep">Electrophysiology (Fellowship)</option>
+<option value="hf">Heart Failure & Transplant (Fellowship)</option>
+<option value="advendo">Advanced Endoscopy (Fellowship)</option>
+<option value="transphep">Transplant Hepatology (Fellowship)</option>
+<option value="sportsmed">Sports Medicine (Fellowship)</option>
+<option value="surgcrit">Surgical Critical Care (Fellowship)</option>
+<option value="surgonc">Surgical Oncology (Fellowship)</option>
+<option value="pedsurg">Pediatric Surgery (Fellowship)</option>
+<option value="colorectal">Colon & Rectal Surgery (Fellowship)</option>
+<option value="hand">Hand Surgery (Fellowship)</option>
+<option value="spine">Spine Surgery (Fellowship)</option>
+<option value="transplant">Transplant Surgery (Fellowship)</option>
+<option value="mis">Minimally Invasive Surgery (Fellowship)</option>
+<option value="trauma">Trauma Surgery (Fellowship)</option>
+<option value="pain">Pain Medicine (Fellowship)</option>
+<option value="sleep">Sleep Medicine (Fellowship)</option>
+<option value="hospice">Hospice & Palliative (Fellowship)</option>
+<option value="neurophysiology">Clinical Neurophysiology (Fellowship)</option>
+<option value="neonatal">Neonatal-Perinatal Medicine (Fellowship)</option>
+<option value="mfm">Maternal-Fetal Medicine (Fellowship)</option>
 <option value="other">Other</option>
 </select>
 </div>
@@ -577,20 +679,31 @@ v7:`<h3>Research ROI Calculator</h3>
 </div>`,
 
 v8:`<h3>Income Leverage Playbook</h3>
-<p style="color:var(--text3);font-size:12px;margin-bottom:16px">Five financial decisions with the biggest long-term impact on physician wealth.</p>
-<div style="font-size:12px">
-<div style="padding:14px;background:var(--bg2);border-radius:8px;margin-bottom:10px">
-<strong style="color:var(--accent)">1. PSLF vs. Refinance</strong><br><span style="color:var(--text2);line-height:1.7">Potentially a $50K-$200K decision. Qualifying employer for 10 years → PSLF almost always wins. Private practice → refinance to lowest rate. <span style="color:var(--red)">Do NOT refinance federal loans before ruling out PSLF. Irreversible.</span></span></div>
-<div style="padding:14px;background:var(--bg2);border-radius:8px;margin-bottom:10px">
-<strong style="color:var(--accent)">2. Disability Insurance</strong><br><span style="color:var(--text2);line-height:1.7">Own-occupation, specialty-specific. Buy during training when premiums are lowest. 25% chance of 90+ day disability before 65.</span></div>
-<div style="padding:14px;background:var(--bg2);border-radius:8px;margin-bottom:10px">
-<strong style="color:var(--accent)">3. Lifestyle Inflation Timing</strong><br><span style="color:var(--text2);line-height:1.7">Live on $100K vs $300K on a $400K salary = $200K/yr investing capacity. Over 3 years at 8% = $650K+ difference. Gradual upgrade year 3-4.</span></div>
-<div style="padding:14px;background:var(--bg2);border-radius:8px;margin-bottom:10px">
-<strong style="color:var(--accent)">4. Tax-Advantaged Accounts</strong><br><span style="color:var(--text2);line-height:1.7">Max in order: Employer match → Backdoor Roth ($7K) → Max 401k ($23.5K) → HSA ($4,150) → Mega backdoor Roth if available.</span></div>
-<div style="padding:14px;background:var(--bg2);border-radius:8px">
-<strong style="color:var(--accent)">5. Advisor Selection</strong><br><span style="color:var(--text2);line-height:1.7">Fee-only fiduciary. Not "fee-based" (can earn commissions). Check NAPFA.org for vetted advisors. 0.5-1% AUM or flat fee.</span></div>
+<p style="color:var(--text3);font-size:12px;margin-bottom:16px">Score yourself on the 5 financial decisions that matter most. Get personalized recommendations based on your actual situation.</p>
+<div style="font-size:13px">
+<div style="font-weight:600;color:var(--accent);margin-bottom:12px">Your Financial Situation</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
+<div class="fg"><label>Annual Salary ($)</label><input type="number" id="ilp-salary" placeholder="e.g., 400000"></div>
+<div class="fg"><label>Student Loan Debt ($)</label><input type="number" id="ilp-debt" placeholder="e.g., 250000"></div>
 </div>
-<p style="font-size:10px;color:var(--text3);margin-top:12px;font-style:italic">Sources: White Coat Investor, Council for Disability Awareness 2023, IRS 2024 limits.</p>`,
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
+<div class="fg"><label>Loan Interest Rate (%)</label><input type="number" id="ilp-rate" placeholder="6.5" step="0.1"></div>
+<div class="fg"><label>Employer Type</label><select id="ilp-employer" style="width:100%"><option value="">Select...</option><option value="nonprofit">Nonprofit / Academic</option><option value="government">Government / VA</option><option value="private">Private Practice</option><option value="employed">Hospital Employed (for-profit)</option></select></div>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
+<div class="fg"><label>Disability Insurance</label><select id="ilp-disability" style="width:100%"><option value="">Select...</option><option value="own_occ">Own-occupation, specialty-specific</option><option value="any_occ">Any-occupation policy</option><option value="none">None</option></select></div>
+<div class="fg"><label>Annual Spending ($)</label><input type="number" id="ilp-spending" placeholder="e.g., 120000"></div>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
+<div class="fg"><label>Tax-Advantaged Accounts</label><select id="ilp-401k" style="width:100%"><option value="">Select...</option><option value="maxed">Maxing 401k + Roth + HSA</option><option value="match">Only employer match</option><option value="none">Not contributing</option></select></div>
+<div class="fg"><label>Financial Advisor</label><select id="ilp-advisor" style="width:100%"><option value="">Select...</option><option value="feeonly">Fee-only fiduciary</option><option value="feebased">Fee-based</option><option value="commission">Commission-based</option><option value="none">No advisor</option></select></div>
+</div>
+<button onclick="ilpCalculate()" class="btn btn-a" style="width:100%;padding:14px;margin-bottom:8px">Analyze My Financial Leverage →</button>
+<p style="font-size:10px;color:var(--text3);text-align:center;margin-bottom:16px">All calculations are local. Nothing is stored or sent externally.</p>
+</div>
+<div id="ilp-results"></div>
+<p style="font-size:10px;color:var(--text3);margin-top:12px;font-style:italic">Sources: White Coat Investor, Council for Disability Awareness 2023, IRS 2024 limits.</p>
+<div style="text-align:center;margin-top:8px"><button onclick="showSavedScenarios('Income Leverage Playbook')" style="background:none;border:none;color:var(--accent);font-size:11px;cursor:pointer;padding:6px 12px;opacity:.7;transition:opacity .15s" onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='.7'">📊 View Saved Scenarios</button></div>`,
 
 v16:`<h3 class="serif">Mock Interview Simulator</h3>
 <p style="color:var(--text3);font-size:12px;margin-bottom:20px">Real interview questions. Real feedback. No sugarcoating. Select your situation and answer each question like you\u2019re sitting across from the program director or hiring committee.</p>
@@ -618,6 +731,7 @@ v16:`<h3 class="serif">Mock Interview Simulator</h3>
 <option value="cards">Cardiology</option>
 <option value="ic">Interventional Cardiology</option>
 <option value="ep">Electrophysiology</option>
+<option value="hf">Advanced Heart Failure & Transplant</option>
 <option value="gi">Gastroenterology</option>
 <option value="pulm">Pulmonology / Critical Care</option>
 <option value="hemonc">Hematology / Oncology</option>
@@ -629,14 +743,23 @@ v16:`<h3 class="serif">Mock Interview Simulator</h3>
 <option value="anes">Anesthesiology</option>
 <option value="ortho">Orthopedic Surgery</option>
 <option value="gensurg">General Surgery</option>
+<option value="ctsx">Cardiothoracic Surgery</option>
+<option value="vsurg">Vascular Surgery</option>
 <option value="uro">Urology</option>
+<option value="ent">ENT (Otolaryngology)</option>
+<option value="ophtho">Ophthalmology</option>
+<option value="nsurg">Neurosurgery</option>
+<option value="plastics">Plastic Surgery</option>
 <option value="psych">Psychiatry</option>
 <option value="derm">Dermatology</option>
 <option value="rads">Radiology</option>
+<option value="ir">Interventional Radiology</option>
 <option value="path">Pathology</option>
 <option value="peds">Pediatrics</option>
 <option value="obgyn">OB/GYN</option>
 <option value="neuro">Neurology</option>
+<option value="pmr">PM&R</option>
+<option value="radonc">Radiation Oncology</option>
 <option value="other">Other</option>
 </select></div>
 </div>
@@ -857,7 +980,7 @@ v12:`<div style="text-align:center;padding:28px 20px;margin:-20px -20px 24px;bac
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
 <div><label style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:4px">Specialty</label>
 <select id="ci-spec" onchange="ciCalc()" style="width:100%;padding:8px;font-size:12px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;color:var(--text)">
-<option value="im">IM — Outpatient / Primary Care</option><option value="hosp">IM — Hospitalist</option><option value="cards">General Cardiology</option><option value="ic" selected>Interventional Cardiology</option><option value="ep">Electrophysiology</option><option value="ct_surg">CT Surgery</option><option value="gi">GI</option><option value="pulm">Pulm/CC</option><option value="heme_onc">Heme/Onc</option><option value="nephro">Nephrology</option><option value="rheum">Rheumatology</option><option value="endo">Endocrinology</option><option value="id">Infectious Disease</option><option value="gen_surg">General Surgery</option><option value="ortho">Orthopedic Surgery</option><option value="uro">Urology</option><option value="ent">ENT</option><option value="derm">Dermatology</option><option value="rad">Radiology</option><option value="anes">Anesthesiology</option><option value="er">Emergency Medicine</option><option value="fm">Family Medicine</option><option value="psych">Psychiatry</option><option value="pm_r">PM&R</option><option value="neuro">Neurology</option><option value="path">Pathology</option><option value="ophtho">Ophthalmology</option><option value="peds">Pediatrics</option>
+<option value="im">IM — Outpatient / Primary Care</option><option value="hosp">IM — Hospitalist</option><option value="cards">General Cardiology</option><option value="ic" selected>Interventional Cardiology</option><option value="ep">Electrophysiology</option><option value="ct_surg">CT Surgery</option><option value="gi">GI</option><option value="pulm">Pulm/CC</option><option value="heme_onc">Heme/Onc</option><option value="nephro">Nephrology</option><option value="rheum">Rheumatology</option><option value="endo">Endocrinology</option><option value="id">Infectious Disease</option><option value="gen_surg">General Surgery</option><option value="ortho">Orthopedic Surgery</option><option value="uro">Urology</option><option value="ent">ENT</option><option value="derm">Dermatology</option><option value="rad">Radiology</option><option value="anes">Anesthesiology</option><option value="er">Emergency Medicine</option><option value="fm">Family Medicine</option><option value="psych">Psychiatry</option><option value="pm_r">PM&R</option><option value="neuro">Neurology</option><option value="path">Pathology</option><option value="ophtho">Ophthalmology</option><option value="peds">Pediatrics</option><option value="nsurg">Neurosurgery</option><option value="plastics">Plastic Surgery</option><option value="ir">Interventional Radiology</option><option value="vascular">Vascular Surgery</option><option value="obgyn">OB/GYN</option><option value="ct_integrated">Thoracic Surgery (Integrated)</option><option value="rad_onc">Radiation Oncology</option>
 </select></div>
 <div><label style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:4px">Base Salary ($K)</label>
 <input id="ci-salary" type="number" value="425" onchange="ciCalc()" oninput="ciCalc()" style="width:100%;padding:8px;font-size:12px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;color:var(--text);box-sizing:border-box" placeholder="e.g. 425"></div>
@@ -945,6 +1068,13 @@ v11:`<div style="text-align:center;padding:28px 20px;margin:-20px -20px 24px;bac
 <option value="path">Pathology</option>
 <option value="ophtho">Ophthalmology</option>
 <option value="peds">Pediatrics</option>
+<option value="nsurg">Neurosurgery</option>
+<option value="plastics">Plastic Surgery</option>
+<option value="ir">Interventional Radiology</option>
+<option value="vascular">Vascular Surgery</option>
+<option value="obgyn">OB/GYN</option>
+<option value="ct_integrated">Thoracic Surgery (Integrated)</option>
+<option value="rad_onc">Radiation Oncology</option>
 </select></div>
 <div><label style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:4px">Practice Type</label>
 <select id="ft-prac-a" onchange="ftCalc()" style="width:100%;padding:8px;font-size:12px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;color:var(--text)">
@@ -990,10 +1120,13 @@ v11:`<div style="text-align:center;padding:28px 20px;margin:-20px -20px 24px;bac
 <option value="id">Infectious Disease</option>
 <option value="gen_surg">General Surgery</option>
 <option value="ortho">Orthopedic Surgery</option>
+<option value="nsurg">Neurosurgery</option>
 <option value="uro">Urology</option>
 <option value="ent">ENT</option>
 <option value="derm">Dermatology</option>
+<option value="plastics">Plastic Surgery</option>
 <option value="rad">Radiology</option>
+<option value="ir">Interventional Radiology</option>
 <option value="anes">Anesthesiology</option>
 <option value="er">Emergency Medicine</option>
 <option value="fm">Family Medicine</option>
@@ -1003,6 +1136,10 @@ v11:`<div style="text-align:center;padding:28px 20px;margin:-20px -20px 24px;bac
 <option value="path">Pathology</option>
 <option value="ophtho">Ophthalmology</option>
 <option value="peds">Pediatrics</option>
+<option value="obgyn">OB/GYN</option>
+<option value="vascular">Vascular Surgery</option>
+<option value="ct_integrated">Thoracic Surgery (Integrated)</option>
+<option value="rad_onc">Radiation Oncology</option>
 </select></div>
 <div><label style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:4px">Practice Type</label>
 <select id="ft-prac-b" onchange="ftCalc()" style="width:100%;padding:8px;font-size:12px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;color:var(--text)">
@@ -1049,10 +1186,13 @@ v11:`<div style="text-align:center;padding:28px 20px;margin:-20px -20px 24px;bac
 <option value="id">Infectious Disease</option>
 <option value="gen_surg">General Surgery</option>
 <option value="ortho">Orthopedic Surgery</option>
+<option value="nsurg">Neurosurgery</option>
 <option value="uro">Urology</option>
 <option value="ent">ENT</option>
 <option value="derm">Dermatology</option>
+<option value="plastics">Plastic Surgery</option>
 <option value="rad">Radiology</option>
+<option value="ir">Interventional Radiology</option>
 <option value="anes">Anesthesiology</option>
 <option value="er">Emergency Medicine</option>
 <option value="fm">Family Medicine</option>
@@ -1062,6 +1202,10 @@ v11:`<div style="text-align:center;padding:28px 20px;margin:-20px -20px 24px;bac
 <option value="path">Pathology</option>
 <option value="ophtho">Ophthalmology</option>
 <option value="peds">Pediatrics</option>
+<option value="obgyn">OB/GYN</option>
+<option value="vascular">Vascular Surgery</option>
+<option value="ct_integrated">Thoracic Surgery (Integrated)</option>
+<option value="rad_onc">Radiation Oncology</option>
 </select></div>
 <div><label style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:4px">Practice Type</label>
 <select id="ft-prac-c" onchange="ftCalc()" style="width:100%;padding:8px;font-size:12px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;color:var(--text)">
@@ -1210,6 +1354,7 @@ v14:`<h3 class="serif">Match Competitiveness Calculator</h3>
 <option value="rads">Radiology</option>
 <option value="anes">Anesthesiology</option>
 <option value="path">Pathology</option>
+<option value="pmr">PM&R</option>
 <option value="gen_surg">General Surgery</option>
 <option value="ortho">Orthopedic Surgery</option>
 <option value="uro">Urology</option>
@@ -1223,6 +1368,7 @@ v14:`<h3 class="serif">Match Competitiveness Calculator</h3>
 <option value="ct_surg">Cardiothoracic Surgery</option>
 <option value="ct_integrated">Thoracic Surgery (Integrated)</option>
 <option value="obgyn">OB/GYN</option>
+<option value="radonc">Radiation Oncology</option>
 </select>
 </div>
 

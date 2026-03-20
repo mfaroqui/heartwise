@@ -2164,6 +2164,9 @@ Sign Out</button>
 <option value="Allergy/Immunology">Allergy / Immunology</option>
 <option value="Geriatrics">Geriatrics</option>
 <option value="Hospice/Palliative">Hospice / Palliative Medicine</option>
+<option value="Sleep Medicine">Sleep Medicine</option>
+<option value="Transplant Hepatology">Transplant Hepatology</option>
+<option value="Advanced Endoscopy">Advanced Endoscopy</option>
 </optgroup>
 <optgroup label="Surgical Specialties">
 <option value="General Surgery">General Surgery</option>
@@ -2179,6 +2182,12 @@ Sign Out</button>
 <option value="Trauma Surgery">Trauma / Acute Care Surgery</option>
 <option value="Transplant Surgery">Transplant Surgery</option>
 <option value="Surgical Oncology">Surgical Oncology</option>
+<option value="Thoracic Surgery Integrated">Thoracic Surgery (Integrated)</option>
+<option value="Pediatric Surgery">Pediatric Surgery</option>
+<option value="Spine Surgery">Spine Surgery</option>
+<option value="Hand Surgery">Hand Surgery</option>
+<option value="Minimally Invasive Surgery">Minimally Invasive Surgery</option>
+<option value="Surgical Critical Care">Surgical Critical Care</option>
 </optgroup>
 <optgroup label="Other Specialties">
 <option value="Emergency Medicine">Emergency Medicine</option>
@@ -2199,6 +2208,9 @@ Sign Out</button>
 <option value="Sports Medicine">Sports Medicine</option>
 <option value="Pain Medicine">Pain Medicine</option>
 <option value="Critical Care">Critical Care Medicine</option>
+<option value="Clinical Neurophysiology">Clinical Neurophysiology</option>
+<option value="Neonatal-Perinatal Medicine">Neonatal-Perinatal Medicine</option>
+<option value="Maternal-Fetal Medicine">Maternal-Fetal Medicine</option>
 </optgroup>
 <option value="Other">Other</option>
 <option value="Undecided">Undecided</option>
@@ -3062,6 +3074,7 @@ Sign Out</button>
 <button class="atab" onclick="adminTab('feedback',this)">Feedback</button>
 <button class="atab" onclick="adminTab('analytics',this)">Analytics</button>
 <button class="atab" onclick="adminTab('cancellations',this)">Cancellations</button>
+<button class="atab" onclick="adminTab('toolactivity',this)">Tool Activity</button>
 </div>
 
 <!-- Content -->
@@ -3663,24 +3676,47 @@ v4:`<h3>RVU Compensation Calculator</h3>
 <div class="fg"><label>Your Specialty</label>
 <select id="rvu-spec" onchange="rvuFillBenchmark();rvuUpdate()" style="width:100%">
 <option value="custom">Custom / Other</option>
+<optgroup label="Primary Care">
 <option value="fm">Family Medicine</option>
 <option value="im">IM — Outpatient / Primary Care</option>
 <option value="hosp">IM — Hospitalist</option>
+<option value="peds">Pediatrics</option>
+</optgroup>
+<optgroup label="Medical Subspecialties">
 <option value="gc">General Cardiology</option>
 <option value="ic">Interventional Cardiology</option>
 <option value="ep">Electrophysiology</option>
 <option value="gi">Gastroenterology</option>
 <option value="pulm">Pulmonology / Critical Care</option>
+<option value="hemonc">Hematology / Oncology</option>
 <option value="neph">Nephrology</option>
 <option value="endo">Endocrinology</option>
 <option value="rheum">Rheumatology</option>
-<option value="ortho">Orthopedic Surgery</option>
+<option value="id">Infectious Disease</option>
+<option value="neuro">Neurology</option>
+<option value="pmr">PM&R</option>
+<option value="psych">Psychiatry</option>
+<option value="derm">Dermatology</option>
+</optgroup>
+<optgroup label="Surgical Specialties">
 <option value="gensurg">General Surgery</option>
+<option value="ortho">Orthopedic Surgery</option>
+<option value="nsurg">Neurosurgery</option>
+<option value="ct_surg">Cardiothoracic Surgery</option>
+<option value="vascular">Vascular Surgery</option>
 <option value="uro">Urology</option>
+<option value="ent">ENT</option>
+<option value="plastics">Plastic Surgery</option>
+<option value="obgyn">OB/GYN</option>
+</optgroup>
+<optgroup label="Other Specialties">
 <option value="em">Emergency Medicine</option>
 <option value="anes">Anesthesiology</option>
-<option value="derm">Dermatology</option>
-<option value="psych">Psychiatry</option>
+<option value="path">Pathology</option>
+<option value="ophtho">Ophthalmology</option>
+<option value="ir">Interventional Radiology</option>
+<option value="radonc">Radiation Oncology</option>
+</optgroup>
 </select></div>
 </div>
 
@@ -3787,20 +3823,49 @@ v4:`<h3>RVU Compensation Calculator</h3>
 <div style="text-align:center;margin-top:8px"><button onclick="showSavedScenarios('RVU Compensation Calculator')" style="background:none;border:none;color:var(--accent);font-size:11px;cursor:pointer;padding:6px 12px;opacity:.7;transition:opacity .15s" onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='.7'">📊 View Saved Scenarios</button></div>`,
 
 v5:`<h3>3-Year Financial Leverage Planner</h3>
-<p style="color:var(--text3);font-size:12px;margin-bottom:16px">The first 3 years after training determine your financial trajectory for the next 20.</p>
-<div style="font-size:12px">
-<div style="padding:16px;background:var(--bg2);border-radius:8px;margin-bottom:12px">
-<div style="font-weight:600;color:var(--accent);margin-bottom:8px">Year 1: Foundation</div>
-<div style="color:var(--text2);line-height:1.8">• Maintain near-resident spending<br>• Build 6-month emergency fund<br>• Max employer retirement match<br>• Secure own-occupation disability insurance<br>• Make PSLF vs. refinance decision<br>• <span style="color:var(--red)">Avoid: car + house + lifestyle expansion simultaneously</span><br><strong>Target: Save 40-50% of gross</strong></div></div>
-<div style="padding:16px;background:var(--bg2);border-radius:8px;margin-bottom:12px">
-<div style="font-weight:600;color:var(--accent);margin-bottom:8px">Year 2: Acceleration</div>
-<div style="color:var(--text2);line-height:1.8">• Max all tax-advantaged accounts<br>• Begin taxable index fund investing<br>• Consider home purchase if staying 5+ years<br>• Term life insurance if dependents<br>• Begin gradual, intentional lifestyle upgrade<br><strong>Target: Net worth positive</strong></div></div>
-<div style="padding:16px;background:var(--bg2);border-radius:8px">
-<div style="font-weight:600;color:var(--accent);margin-bottom:8px">Year 3: Leverage</div>
-<div style="color:var(--text2);line-height:1.8">• Loans paid off or PSLF on track<br>• Portfolio growing with compound returns<br>• Evaluate contract renegotiation<br>• Consider practice ownership or side income<br><strong>Target: $200K-$500K net worth</strong></div></div>
+<p style="color:var(--text3);font-size:12px;margin-bottom:20px">The first 3 years after training determine your financial trajectory for the next 20. Enter your numbers for a personalized year-by-year plan.</p>
+
+<div style="font-size:13px">
+<div style="font-weight:600;color:var(--accent);margin-bottom:12px">Your Financial Details</div>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
+<div class="fg"><label>Expected Attending Salary ($)</label><input type="number" id="fyp-salary" placeholder="e.g., 350000"></div>
+<div class="fg"><label>Student Loan Debt ($)</label><input type="number" id="fyp-debt" placeholder="e.g., 250000"></div>
 </div>
-<div style="padding:16px;background:var(--bg2);border-radius:8px;margin-top:12px"><p style="font-size:12px;color:var(--text2);line-height:1.6;margin:0"><strong>The math:</strong> $400K income, $100K lifestyle = $300K/yr invested. At 8% returns, that's $1M+ in 3 years. Inflate to $300K lifestyle instead and it takes 10+ years.</p></div>
-<p style="font-size:10px;color:var(--text3);margin-top:12px;font-style:italic">Sources: White Coat Investor, AAMC Debt Data 2024.</p>`,
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
+<div class="fg"><label>Loan Interest Rate (%)</label><input type="number" id="fyp-rate" placeholder="e.g., 6.5" step="0.1"></div>
+<div class="fg"><label>Year 1 Living Expenses ($)</label><input type="number" id="fyp-expenses" placeholder="e.g., 100000"></div>
+</div>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
+<div class="fg"><label>Annual Lifestyle Increase (%)</label><input type="number" id="fyp-inflate" placeholder="e.g., 10" step="1"></div>
+<div class="fg"><label>Employer 401k Match (%)</label><input type="number" id="fyp-match" placeholder="e.g., 3" step="0.5"></div>
+</div>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
+<div class="fg"><label>PSLF Eligible?</label>
+<select id="fyp-pslf" style="width:100%">
+<option value="">Select...</option>
+<option value="yes">Yes</option>
+<option value="no">No</option>
+<option value="unsure">Not Sure</option>
+</select></div>
+<div class="fg"><label>Has Dependents?</label>
+<select id="fyp-dependents" style="width:100%">
+<option value="">Select...</option>
+<option value="yes">Yes</option>
+<option value="no">No</option>
+</select></div>
+</div>
+
+<button onclick="fypCalculate()" class="btn btn-a" style="width:100%;padding:14px;margin-bottom:8px">Calculate 3-Year Plan \u2192</button>
+<p style="font-size:10px;color:var(--text3);text-align:center;margin-bottom:16px">All calculations are performed locally. Nothing is stored or sent externally.</p>
+</div>
+
+<div id="fyp-results"></div>
+<p style="font-size:10px;color:var(--text3);margin-top:12px;font-style:italic">Sources: White Coat Investor, AAMC Debt Data 2024, IRS 2024 contribution limits.</p>
+<div style="text-align:center;margin-top:8px"><button onclick="showSavedScenarios('3-Year Financial Planner')" style="background:none;border:none;color:var(--accent);font-size:11px;cursor:pointer;padding:6px 12px;opacity:.7;transition:opacity .15s" onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='.7'">📊 View Saved Scenarios</button></div>`,
 
 v6:`<h3 class="serif">Fellowship Positioning Roadmap</h3>
 <p style="color:var(--text3);font-size:12px;margin-bottom:20px">Your personalized timeline to match day. Check off milestones as you complete them — progress is saved automatically.</p>
@@ -3814,7 +3879,10 @@ v6:`<h3 class="serif">Fellowship Positioning Roadmap</h3>
 <option value="cardiology">Cardiology</option>
 <option value="interventional">Interventional Cardiology</option>
 <option value="electrophysiology">Electrophysiology</option>
+<option value="heart_failure">Advanced Heart Failure & Transplant</option>
 <option value="gi">Gastroenterology</option>
+<option value="advanced_endoscopy">Advanced Endoscopy</option>
+<option value="transplant_hep">Transplant Hepatology</option>
 <option value="pulm_crit">Pulmonology / Critical Care</option>
 <option value="hemonc">Hematology / Oncology</option>
 <option value="rheum">Rheumatology</option>
@@ -3825,9 +3893,23 @@ v6:`<h3 class="serif">Fellowship Positioning Roadmap</h3>
 <option value="sports">Sports Medicine</option>
 <option value="geri">Geriatrics</option>
 <option value="pain">Pain Medicine</option>
+<option value="sleep">Sleep Medicine</option>
+<option value="hospice">Hospice & Palliative Medicine</option>
+<option value="neuro_phys">Clinical Neurophysiology</option>
+<option value="neonatal">Neonatal-Perinatal Medicine</option>
+<option value="mfm">Maternal-Fetal Medicine</option>
 <option value="ortho">Orthopedic Surgery</option>
 <option value="ctsx">Cardiothoracic Surgery</option>
 <option value="vasc">Vascular Surgery</option>
+<option value="surg_crit">Surgical Critical Care</option>
+<option value="ped_surg">Pediatric Surgery</option>
+<option value="surg_onc">Surgical Oncology</option>
+<option value="trauma">Trauma & Acute Care Surgery</option>
+<option value="colorectal">Colon & Rectal Surgery</option>
+<option value="hand">Hand Surgery</option>
+<option value="mis">Minimally Invasive Surgery</option>
+<option value="transplant_surg">Transplant Surgery</option>
+<option value="spine">Spine Surgery</option>
 <option value="other">Other</option>
 </select></div>
 <div class="fg"><label style="font-size:11px;color:var(--text3)">Months Until Match</label>
@@ -3876,6 +3958,7 @@ v7:`<h3>Research ROI Calculator</h3>
 <option value="neuro">Neurology</option>
 <option value="rads">Radiology</option>
 <option value="anes">Anesthesiology</option>
+<option value="path">Pathology</option>
 <option value="gs">General Surgery</option>
 <option value="ortho">Orthopedic Surgery</option>
 <option value="nsurg">Neurosurgery</option>
@@ -3884,10 +3967,42 @@ v7:`<h3>Research ROI Calculator</h3>
 <option value="uro">Urology</option>
 <option value="ophtho">Ophthalmology</option>
 <option value="plastics">Plastic Surgery</option>
+<option value="ir">Interventional Radiology</option>
+<option value="vascular">Vascular Surgery</option>
+<option value="ct_surg">Cardiothoracic Surgery</option>
+<option value="ct_integrated">Thoracic Surgery (Integrated)</option>
+<option value="obgyn">OB/GYN</option>
+<option value="pmr">PM&R</option>
+<option value="radonc">Radiation Oncology</option>
 <option value="cards">Cardiology (Fellowship)</option>
 <option value="gi">GI (Fellowship)</option>
 <option value="hemeonc">Heme/Onc (Fellowship)</option>
 <option value="pulmcrit">Pulm/Crit (Fellowship)</option>
+<option value="neph">Nephrology (Fellowship)</option>
+<option value="rheum">Rheumatology (Fellowship)</option>
+<option value="endo">Endocrinology (Fellowship)</option>
+<option value="id">Infectious Disease (Fellowship)</option>
+<option value="ic">Interventional Cardiology (Fellowship)</option>
+<option value="ep">Electrophysiology (Fellowship)</option>
+<option value="hf">Heart Failure & Transplant (Fellowship)</option>
+<option value="advendo">Advanced Endoscopy (Fellowship)</option>
+<option value="transphep">Transplant Hepatology (Fellowship)</option>
+<option value="sportsmed">Sports Medicine (Fellowship)</option>
+<option value="surgcrit">Surgical Critical Care (Fellowship)</option>
+<option value="surgonc">Surgical Oncology (Fellowship)</option>
+<option value="pedsurg">Pediatric Surgery (Fellowship)</option>
+<option value="colorectal">Colon & Rectal Surgery (Fellowship)</option>
+<option value="hand">Hand Surgery (Fellowship)</option>
+<option value="spine">Spine Surgery (Fellowship)</option>
+<option value="transplant">Transplant Surgery (Fellowship)</option>
+<option value="mis">Minimally Invasive Surgery (Fellowship)</option>
+<option value="trauma">Trauma Surgery (Fellowship)</option>
+<option value="pain">Pain Medicine (Fellowship)</option>
+<option value="sleep">Sleep Medicine (Fellowship)</option>
+<option value="hospice">Hospice & Palliative (Fellowship)</option>
+<option value="neurophysiology">Clinical Neurophysiology (Fellowship)</option>
+<option value="neonatal">Neonatal-Perinatal Medicine (Fellowship)</option>
+<option value="mfm">Maternal-Fetal Medicine (Fellowship)</option>
 <option value="other">Other</option>
 </select>
 </div>
@@ -3994,20 +4109,31 @@ v7:`<h3>Research ROI Calculator</h3>
 </div>`,
 
 v8:`<h3>Income Leverage Playbook</h3>
-<p style="color:var(--text3);font-size:12px;margin-bottom:16px">Five financial decisions with the biggest long-term impact on physician wealth.</p>
-<div style="font-size:12px">
-<div style="padding:14px;background:var(--bg2);border-radius:8px;margin-bottom:10px">
-<strong style="color:var(--accent)">1. PSLF vs. Refinance</strong><br><span style="color:var(--text2);line-height:1.7">Potentially a $50K-$200K decision. Qualifying employer for 10 years → PSLF almost always wins. Private practice → refinance to lowest rate. <span style="color:var(--red)">Do NOT refinance federal loans before ruling out PSLF. Irreversible.</span></span></div>
-<div style="padding:14px;background:var(--bg2);border-radius:8px;margin-bottom:10px">
-<strong style="color:var(--accent)">2. Disability Insurance</strong><br><span style="color:var(--text2);line-height:1.7">Own-occupation, specialty-specific. Buy during training when premiums are lowest. 25% chance of 90+ day disability before 65.</span></div>
-<div style="padding:14px;background:var(--bg2);border-radius:8px;margin-bottom:10px">
-<strong style="color:var(--accent)">3. Lifestyle Inflation Timing</strong><br><span style="color:var(--text2);line-height:1.7">Live on $100K vs $300K on a $400K salary = $200K/yr investing capacity. Over 3 years at 8% = $650K+ difference. Gradual upgrade year 3-4.</span></div>
-<div style="padding:14px;background:var(--bg2);border-radius:8px;margin-bottom:10px">
-<strong style="color:var(--accent)">4. Tax-Advantaged Accounts</strong><br><span style="color:var(--text2);line-height:1.7">Max in order: Employer match → Backdoor Roth ($7K) → Max 401k ($23.5K) → HSA ($4,150) → Mega backdoor Roth if available.</span></div>
-<div style="padding:14px;background:var(--bg2);border-radius:8px">
-<strong style="color:var(--accent)">5. Advisor Selection</strong><br><span style="color:var(--text2);line-height:1.7">Fee-only fiduciary. Not "fee-based" (can earn commissions). Check NAPFA.org for vetted advisors. 0.5-1% AUM or flat fee.</span></div>
+<p style="color:var(--text3);font-size:12px;margin-bottom:16px">Score yourself on the 5 financial decisions that matter most. Get personalized recommendations based on your actual situation.</p>
+<div style="font-size:13px">
+<div style="font-weight:600;color:var(--accent);margin-bottom:12px">Your Financial Situation</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
+<div class="fg"><label>Annual Salary ($)</label><input type="number" id="ilp-salary" placeholder="e.g., 400000"></div>
+<div class="fg"><label>Student Loan Debt ($)</label><input type="number" id="ilp-debt" placeholder="e.g., 250000"></div>
 </div>
-<p style="font-size:10px;color:var(--text3);margin-top:12px;font-style:italic">Sources: White Coat Investor, Council for Disability Awareness 2023, IRS 2024 limits.</p>`,
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
+<div class="fg"><label>Loan Interest Rate (%)</label><input type="number" id="ilp-rate" placeholder="6.5" step="0.1"></div>
+<div class="fg"><label>Employer Type</label><select id="ilp-employer" style="width:100%"><option value="">Select...</option><option value="nonprofit">Nonprofit / Academic</option><option value="government">Government / VA</option><option value="private">Private Practice</option><option value="employed">Hospital Employed (for-profit)</option></select></div>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
+<div class="fg"><label>Disability Insurance</label><select id="ilp-disability" style="width:100%"><option value="">Select...</option><option value="own_occ">Own-occupation, specialty-specific</option><option value="any_occ">Any-occupation policy</option><option value="none">None</option></select></div>
+<div class="fg"><label>Annual Spending ($)</label><input type="number" id="ilp-spending" placeholder="e.g., 120000"></div>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
+<div class="fg"><label>Tax-Advantaged Accounts</label><select id="ilp-401k" style="width:100%"><option value="">Select...</option><option value="maxed">Maxing 401k + Roth + HSA</option><option value="match">Only employer match</option><option value="none">Not contributing</option></select></div>
+<div class="fg"><label>Financial Advisor</label><select id="ilp-advisor" style="width:100%"><option value="">Select...</option><option value="feeonly">Fee-only fiduciary</option><option value="feebased">Fee-based</option><option value="commission">Commission-based</option><option value="none">No advisor</option></select></div>
+</div>
+<button onclick="ilpCalculate()" class="btn btn-a" style="width:100%;padding:14px;margin-bottom:8px">Analyze My Financial Leverage →</button>
+<p style="font-size:10px;color:var(--text3);text-align:center;margin-bottom:16px">All calculations are local. Nothing is stored or sent externally.</p>
+</div>
+<div id="ilp-results"></div>
+<p style="font-size:10px;color:var(--text3);margin-top:12px;font-style:italic">Sources: White Coat Investor, Council for Disability Awareness 2023, IRS 2024 limits.</p>
+<div style="text-align:center;margin-top:8px"><button onclick="showSavedScenarios('Income Leverage Playbook')" style="background:none;border:none;color:var(--accent);font-size:11px;cursor:pointer;padding:6px 12px;opacity:.7;transition:opacity .15s" onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='.7'">📊 View Saved Scenarios</button></div>`,
 
 v16:`<h3 class="serif">Mock Interview Simulator</h3>
 <p style="color:var(--text3);font-size:12px;margin-bottom:20px">Real interview questions. Real feedback. No sugarcoating. Select your situation and answer each question like you\u2019re sitting across from the program director or hiring committee.</p>
@@ -4035,6 +4161,7 @@ v16:`<h3 class="serif">Mock Interview Simulator</h3>
 <option value="cards">Cardiology</option>
 <option value="ic">Interventional Cardiology</option>
 <option value="ep">Electrophysiology</option>
+<option value="hf">Advanced Heart Failure & Transplant</option>
 <option value="gi">Gastroenterology</option>
 <option value="pulm">Pulmonology / Critical Care</option>
 <option value="hemonc">Hematology / Oncology</option>
@@ -4046,14 +4173,23 @@ v16:`<h3 class="serif">Mock Interview Simulator</h3>
 <option value="anes">Anesthesiology</option>
 <option value="ortho">Orthopedic Surgery</option>
 <option value="gensurg">General Surgery</option>
+<option value="ctsx">Cardiothoracic Surgery</option>
+<option value="vsurg">Vascular Surgery</option>
 <option value="uro">Urology</option>
+<option value="ent">ENT (Otolaryngology)</option>
+<option value="ophtho">Ophthalmology</option>
+<option value="nsurg">Neurosurgery</option>
+<option value="plastics">Plastic Surgery</option>
 <option value="psych">Psychiatry</option>
 <option value="derm">Dermatology</option>
 <option value="rads">Radiology</option>
+<option value="ir">Interventional Radiology</option>
 <option value="path">Pathology</option>
 <option value="peds">Pediatrics</option>
 <option value="obgyn">OB/GYN</option>
 <option value="neuro">Neurology</option>
+<option value="pmr">PM&R</option>
+<option value="radonc">Radiation Oncology</option>
 <option value="other">Other</option>
 </select></div>
 </div>
@@ -4274,7 +4410,7 @@ v12:`<div style="text-align:center;padding:28px 20px;margin:-20px -20px 24px;bac
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
 <div><label style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:4px">Specialty</label>
 <select id="ci-spec" onchange="ciCalc()" style="width:100%;padding:8px;font-size:12px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;color:var(--text)">
-<option value="im">IM — Outpatient / Primary Care</option><option value="hosp">IM — Hospitalist</option><option value="cards">General Cardiology</option><option value="ic" selected>Interventional Cardiology</option><option value="ep">Electrophysiology</option><option value="ct_surg">CT Surgery</option><option value="gi">GI</option><option value="pulm">Pulm/CC</option><option value="heme_onc">Heme/Onc</option><option value="nephro">Nephrology</option><option value="rheum">Rheumatology</option><option value="endo">Endocrinology</option><option value="id">Infectious Disease</option><option value="gen_surg">General Surgery</option><option value="ortho">Orthopedic Surgery</option><option value="uro">Urology</option><option value="ent">ENT</option><option value="derm">Dermatology</option><option value="rad">Radiology</option><option value="anes">Anesthesiology</option><option value="er">Emergency Medicine</option><option value="fm">Family Medicine</option><option value="psych">Psychiatry</option><option value="pm_r">PM&R</option><option value="neuro">Neurology</option><option value="path">Pathology</option><option value="ophtho">Ophthalmology</option><option value="peds">Pediatrics</option>
+<option value="im">IM — Outpatient / Primary Care</option><option value="hosp">IM — Hospitalist</option><option value="cards">General Cardiology</option><option value="ic" selected>Interventional Cardiology</option><option value="ep">Electrophysiology</option><option value="ct_surg">CT Surgery</option><option value="gi">GI</option><option value="pulm">Pulm/CC</option><option value="heme_onc">Heme/Onc</option><option value="nephro">Nephrology</option><option value="rheum">Rheumatology</option><option value="endo">Endocrinology</option><option value="id">Infectious Disease</option><option value="gen_surg">General Surgery</option><option value="ortho">Orthopedic Surgery</option><option value="uro">Urology</option><option value="ent">ENT</option><option value="derm">Dermatology</option><option value="rad">Radiology</option><option value="anes">Anesthesiology</option><option value="er">Emergency Medicine</option><option value="fm">Family Medicine</option><option value="psych">Psychiatry</option><option value="pm_r">PM&R</option><option value="neuro">Neurology</option><option value="path">Pathology</option><option value="ophtho">Ophthalmology</option><option value="peds">Pediatrics</option><option value="nsurg">Neurosurgery</option><option value="plastics">Plastic Surgery</option><option value="ir">Interventional Radiology</option><option value="vascular">Vascular Surgery</option><option value="obgyn">OB/GYN</option><option value="ct_integrated">Thoracic Surgery (Integrated)</option><option value="rad_onc">Radiation Oncology</option>
 </select></div>
 <div><label style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:4px">Base Salary ($K)</label>
 <input id="ci-salary" type="number" value="425" onchange="ciCalc()" oninput="ciCalc()" style="width:100%;padding:8px;font-size:12px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;color:var(--text);box-sizing:border-box" placeholder="e.g. 425"></div>
@@ -4362,6 +4498,13 @@ v11:`<div style="text-align:center;padding:28px 20px;margin:-20px -20px 24px;bac
 <option value="path">Pathology</option>
 <option value="ophtho">Ophthalmology</option>
 <option value="peds">Pediatrics</option>
+<option value="nsurg">Neurosurgery</option>
+<option value="plastics">Plastic Surgery</option>
+<option value="ir">Interventional Radiology</option>
+<option value="vascular">Vascular Surgery</option>
+<option value="obgyn">OB/GYN</option>
+<option value="ct_integrated">Thoracic Surgery (Integrated)</option>
+<option value="rad_onc">Radiation Oncology</option>
 </select></div>
 <div><label style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:4px">Practice Type</label>
 <select id="ft-prac-a" onchange="ftCalc()" style="width:100%;padding:8px;font-size:12px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;color:var(--text)">
@@ -4407,10 +4550,13 @@ v11:`<div style="text-align:center;padding:28px 20px;margin:-20px -20px 24px;bac
 <option value="id">Infectious Disease</option>
 <option value="gen_surg">General Surgery</option>
 <option value="ortho">Orthopedic Surgery</option>
+<option value="nsurg">Neurosurgery</option>
 <option value="uro">Urology</option>
 <option value="ent">ENT</option>
 <option value="derm">Dermatology</option>
+<option value="plastics">Plastic Surgery</option>
 <option value="rad">Radiology</option>
+<option value="ir">Interventional Radiology</option>
 <option value="anes">Anesthesiology</option>
 <option value="er">Emergency Medicine</option>
 <option value="fm">Family Medicine</option>
@@ -4420,6 +4566,10 @@ v11:`<div style="text-align:center;padding:28px 20px;margin:-20px -20px 24px;bac
 <option value="path">Pathology</option>
 <option value="ophtho">Ophthalmology</option>
 <option value="peds">Pediatrics</option>
+<option value="obgyn">OB/GYN</option>
+<option value="vascular">Vascular Surgery</option>
+<option value="ct_integrated">Thoracic Surgery (Integrated)</option>
+<option value="rad_onc">Radiation Oncology</option>
 </select></div>
 <div><label style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:4px">Practice Type</label>
 <select id="ft-prac-b" onchange="ftCalc()" style="width:100%;padding:8px;font-size:12px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;color:var(--text)">
@@ -4466,10 +4616,13 @@ v11:`<div style="text-align:center;padding:28px 20px;margin:-20px -20px 24px;bac
 <option value="id">Infectious Disease</option>
 <option value="gen_surg">General Surgery</option>
 <option value="ortho">Orthopedic Surgery</option>
+<option value="nsurg">Neurosurgery</option>
 <option value="uro">Urology</option>
 <option value="ent">ENT</option>
 <option value="derm">Dermatology</option>
+<option value="plastics">Plastic Surgery</option>
 <option value="rad">Radiology</option>
+<option value="ir">Interventional Radiology</option>
 <option value="anes">Anesthesiology</option>
 <option value="er">Emergency Medicine</option>
 <option value="fm">Family Medicine</option>
@@ -4479,6 +4632,10 @@ v11:`<div style="text-align:center;padding:28px 20px;margin:-20px -20px 24px;bac
 <option value="path">Pathology</option>
 <option value="ophtho">Ophthalmology</option>
 <option value="peds">Pediatrics</option>
+<option value="obgyn">OB/GYN</option>
+<option value="vascular">Vascular Surgery</option>
+<option value="ct_integrated">Thoracic Surgery (Integrated)</option>
+<option value="rad_onc">Radiation Oncology</option>
 </select></div>
 <div><label style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:4px">Practice Type</label>
 <select id="ft-prac-c" onchange="ftCalc()" style="width:100%;padding:8px;font-size:12px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;color:var(--text)">
@@ -4627,6 +4784,7 @@ v14:`<h3 class="serif">Match Competitiveness Calculator</h3>
 <option value="rads">Radiology</option>
 <option value="anes">Anesthesiology</option>
 <option value="path">Pathology</option>
+<option value="pmr">PM&R</option>
 <option value="gen_surg">General Surgery</option>
 <option value="ortho">Orthopedic Surgery</option>
 <option value="uro">Urology</option>
@@ -4640,6 +4798,7 @@ v14:`<h3 class="serif">Match Competitiveness Calculator</h3>
 <option value="ct_surg">Cardiothoracic Surgery</option>
 <option value="ct_integrated">Thoracic Surgery (Integrated)</option>
 <option value="obgyn">OB/GYN</option>
+<option value="radonc">Radiation Oncology</option>
 </select>
 </div>
 
@@ -9206,12 +9365,17 @@ function csbStageChange(){
   }else{
     h+='<div '+sec+'><div style="margin-bottom:6px"><strong>Target Specialty</strong></div>';
     h+='<select id="csb-target" '+sel+'><option value="">Select target...</option>';
+    h+='<option value="im">Internal Medicine</option><option value="fm">Family Medicine</option><option value="peds">Pediatrics</option>';
     h+='<option value="cards">Cardiology</option><option value="ic">Interventional Cardiology</option><option value="ep">Electrophysiology</option>';
     h+='<option value="gi">Gastroenterology</option><option value="pulm">Pulmonary/Critical Care</option><option value="heme">Hematology/Oncology</option>';
     h+='<option value="endo">Endocrinology</option><option value="rheum">Rheumatology</option><option value="neph">Nephrology</option><option value="id">Infectious Disease</option>';
-    h+='<option value="ortho">Orthopedic Surgery</option><option value="nsurg">Neurosurgery</option><option value="derm">Dermatology</option>';
-    h+='<option value="ophtho">Ophthalmology</option><option value="rads">Radiology</option><option value="gen_surg">General Surgery</option>';
-    h+='<option value="em">Emergency Medicine</option><option value="fm">Family Medicine</option><option value="psych">Psychiatry</option>';
+    h+='<option value="gen_surg">General Surgery</option><option value="ortho">Orthopedic Surgery</option><option value="nsurg">Neurosurgery</option>';
+    h+='<option value="ct_surg">Cardiothoracic Surgery</option><option value="vascular">Vascular Surgery</option><option value="uro">Urology</option>';
+    h+='<option value="ent">ENT</option><option value="plastics">Plastic Surgery</option><option value="obgyn">OB/GYN</option>';
+    h+='<option value="derm">Dermatology</option><option value="ophtho">Ophthalmology</option><option value="rads">Radiology</option>';
+    h+='<option value="ir">Interventional Radiology</option><option value="em">Emergency Medicine</option><option value="anes">Anesthesiology</option>';
+    h+='<option value="psych">Psychiatry</option><option value="neuro">Neurology</option><option value="pmr">PM&R</option>';
+    h+='<option value="path">Pathology</option><option value="radonc">Radiation Oncology</option>';
     h+='</select></div>';
   }
 
@@ -11098,7 +11262,10 @@ var CI_MGMA={
   rad:{p25:380,p50:460,p75:550},anes:{p25:350,p50:410,p75:480},er:{p25:300,p50:340,p75:390},
   fm:{p25:215,p50:255,p75:300},psych:{p25:260,p50:300,p75:360},pm_r:{p25:280,p50:330,p75:390},
   neuro:{p25:280,p50:330,p75:390},path:{p25:290,p50:340,p75:390},ophtho:{p25:320,p50:400,p75:520},
-  peds:{p25:210,p50:250,p75:290}
+  peds:{p25:210,p50:250,p75:290},
+  nsurg:{p25:600,p50:750,p75:920},plastics:{p25:380,p50:480,p75:600},ir:{p25:380,p50:460,p75:550},
+  vascular:{p25:400,p50:500,p75:620},obgyn:{p25:270,p50:320,p75:380},
+  ct_integrated:{p25:480,p50:600,p75:760},rad_onc:{p25:370,p50:440,p75:530}
 };
 
 function ciInit(){ciCalc()}
@@ -11268,11 +11435,14 @@ var FT_SALARY={
   gen_surg:[370,410,480],ortho:[520,580,700],uro:[420,480,570],ent:[380,430,510],
   derm:[380,430,520],rad:[400,460,530],anes:[370,410,460],er:[310,340,370],
   fm:[220,250,280],psych:[270,300,340],pm_r:[290,330,370],neuro:[290,330,370],
-  path:[300,340,370],ophtho:[350,400,500],peds:[220,250,275]
+  path:[300,340,370],ophtho:[350,400,500],peds:[220,250,275],
+  nsurg:[600,750,900],plastics:[400,480,600],ir:[400,460,540],vascular:[420,500,600],
+  obgyn:[280,320,370],ct_integrated:[500,600,750],rad_onc:[380,440,520]
 };
 var FT_TRAIN_YRS={
   im:3,hosp:3,cards:6,ic:8,ep:8,ct_surg:9,gi:6,pulm:6,heme_onc:6,nephro:5,rheum:5,endo:5,id:5,
-  gen_surg:5,ortho:5,uro:5,ent:5,derm:4,rad:5,anes:4,er:3,fm:3,psych:4,pm_r:4,neuro:4,path:4,ophtho:4,peds:3
+  gen_surg:5,ortho:5,uro:5,ent:5,derm:4,rad:5,anes:4,er:3,fm:3,psych:4,pm_r:4,neuro:4,path:4,ophtho:4,peds:3,
+  nsurg:7,plastics:6,ir:6,vascular:5,obgyn:4,ct_integrated:6,rad_onc:5
 };
 var FT_SPEC_NAMES={
   im:'IM — Outpatient',hosp:'IM — Hospitalist',cards:'Gen Cardiology',ic:'Interventional Cardiology',
@@ -11280,7 +11450,9 @@ var FT_SPEC_NAMES={
   nephro:'Nephrology',rheum:'Rheumatology',endo:'Endocrinology',id:'Infectious Disease',
   gen_surg:'General Surgery',ortho:'Ortho',uro:'Urology',ent:'ENT',derm:'Dermatology',
   rad:'Radiology',anes:'Anesthesiology',er:'Emergency Med',fm:'Family Medicine',
-  psych:'Psychiatry',pm_r:'PM&R',neuro:'Neurology',path:'Pathology',ophtho:'Ophthalmology',peds:'Pediatrics'
+  psych:'Psychiatry',pm_r:'PM&R',neuro:'Neurology',path:'Pathology',ophtho:'Ophthalmology',peds:'Pediatrics',
+  nsurg:'Neurosurgery',plastics:'Plastic Surgery',ir:'Interventional Radiology',vascular:'Vascular Surgery',
+  obgyn:'OB/GYN',ct_integrated:'Thoracic Surgery',rad_onc:'Radiation Oncology'
 };
 var FT_COLORS=['rgba(200,168,124,1)','rgba(139,173,196,1)','rgba(139,184,160,1)'];
 
@@ -11658,6 +11830,8 @@ async function admLoadData(){
       }
     }
   }catch(e){console.warn('Admin data load:',e)}
+  // Parse session_data JSON strings
+  if(_sbProfiles&&_sbProfiles.length){_sbProfiles.forEach(function(u){if(u.session_data&&typeof u.session_data==='string'){try{u.session_data=JSON.parse(u.session_data)}catch(e){}}});}
   try{admRenderMetrics();admRender()}catch(e){console.error('Admin render:',e);c.innerHTML='<div style="padding:40px;text-align:center;color:#c44d56">Render error. Check console.</div>'}
 }
 function admGetUsers(){return (_sbProfiles&&_sbProfiles.length)?_sbProfiles:(DB.users||[])}
@@ -11711,6 +11885,7 @@ function admRender(){
   else if(curAdminTab==='feedback')admRenderFeedback(c);
   else if(curAdminTab==='analytics')admRenderAnalytics(c);
   else if(curAdminTab==='cancellations')admRenderCancellations(c);
+  else if(curAdminTab==='toolactivity')admRenderToolActivity(c);
 }
 
 // ---- DASHBOARD ----
@@ -11860,7 +12035,202 @@ function admRenderUserDetail(c){
     });
     h+='</div>';
   }
+
+  // Tool History
+  var toolIcons={'Match Competitiveness Calculator':'🏆','Research ROI Calculator':'🔬','Specialty Fit Analyzer':'🧬','Career Strategy Builder':'📊','Financial Trajectory Simulator':'🔮','Contract Intelligence Tool':'📄','RVU Compensation Modeler':'📈','Mock Interview Simulator':'🎤','Income Leverage Playbook':'💰','3-Year Financial Planner':'🏦','Fellowship Positioning Roadmap':'🗺️','Career Pivot Decision Engine':'⚖️'};
+  var th=u.toolHistory||(u.session_data&&u.session_data.toolHistory)||[];
+  if(typeof th==='string'){try{th=JSON.parse(th)}catch(e){th=[]}}
+  if(!Array.isArray(th))th=[];
+  var thSorted=th.slice().sort(function(a,b){return new Date(b.date)-new Date(a.date)});
+  var thLimit=20,thShowAll=false;
+  h+='<div class="adm-card"><div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:8px">🛠️ Tool Activity ('+th.length+')</div>';
+  if(!thSorted.length){
+    h+='<div style="font-size:12px;color:var(--text3);padding:8px 0">No tool usage recorded.</div>';
+  } else {
+    var thDisplay=thSorted.slice(0,thLimit);
+    thDisplay.forEach(function(t,idx){
+      var icon=toolIcons[t.tool]||'🔧';
+      var dt=t.date?new Date(t.date).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit'}):'';
+      var sc=t.score||'';
+      var scColor=sc?((parseInt(sc)>=70)?'var(--green)':(parseInt(sc)>=45)?'var(--accent)':'#c44d56'):'var(--text2)';
+      h+='<div style="padding:10px 12px;background:var(--bg3);border-radius:8px;margin-bottom:6px;border-left:3px solid var(--accent)">';
+      h+='<div style="display:flex;justify-content:space-between;align-items:center">';
+      h+='<div style="font-size:13px;font-weight:600;color:var(--text)">'+icon+' '+(t.tool||'Unknown Tool')+'</div>';
+      if(sc)h+='<span style="font-size:13px;font-weight:700;color:'+scColor+'">'+sc+'</span>';
+      h+='</div>';
+      if(t.summary)h+='<div style="font-size:12px;color:var(--text2);margin-top:2px">'+t.summary+'</div>';
+      h+='<div style="font-size:10px;color:var(--text3);margin-top:4px">'+dt+'</div>';
+      // Expandable details
+      var hasDetails=(t.data&&(t.data.inputs||t.data.highlights));
+      if(hasDetails){
+        var detId='adm-thd-'+u.id+'-'+idx;
+        h+='<div style="margin-top:6px"><a href="#" onclick="var d=document.getElementById(\''+detId+'\');d.style.display=d.style.display===\'none\'?\'block\':\'none\';this.textContent=d.style.display===\'none\'?\'▶ Show Details\':\'▼ Hide Details\';return false" style="font-size:11px;color:var(--accent);text-decoration:none">▶ Show Details</a>';
+        h+='<div id="'+detId+'" style="display:none;margin-top:6px;padding:8px 10px;background:var(--bg);border-radius:6px;font-size:11px">';
+        if(t.data.highlights&&t.data.highlights.length){
+          h+='<div style="font-weight:600;color:var(--text);margin-bottom:4px">Key Highlights</div>';
+          t.data.highlights.forEach(function(hl){h+='<div style="color:var(--text2);padding:1px 0">• '+(typeof hl==='string'?hl:JSON.stringify(hl))+'</div>'});
+        }
+        if(t.data.inputs){
+          h+='<div style="font-weight:600;color:var(--text);margin-top:6px;margin-bottom:4px">Inputs</div>';
+          var ik=Object.keys(t.data.inputs);
+          ik.forEach(function(k){
+            var v=t.data.inputs[k];
+            h+='<div style="color:var(--text3)"><span style="color:var(--text2)">'+k+':</span> '+(typeof v==='object'?JSON.stringify(v):v)+'</div>';
+          });
+        }
+        h+='</div></div>';
+      }
+      h+='</div>';
+    });
+    if(thSorted.length>thLimit){
+      h+='<div id="adm-th-more-'+u.id+'" style="display:none">';
+      thSorted.slice(thLimit).forEach(function(t,idx2){
+        var icon=toolIcons[t.tool]||'🔧';
+        var dt=t.date?new Date(t.date).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit'}):'';
+        var sc=t.score||'';
+        var scColor=sc?((parseInt(sc)>=70)?'var(--green)':(parseInt(sc)>=45)?'var(--accent)':'#c44d56'):'var(--text2)';
+        h+='<div style="padding:10px 12px;background:var(--bg3);border-radius:8px;margin-bottom:6px;border-left:3px solid var(--accent)">';
+        h+='<div style="display:flex;justify-content:space-between;align-items:center">';
+        h+='<div style="font-size:13px;font-weight:600;color:var(--text)">'+icon+' '+(t.tool||'Unknown Tool')+'</div>';
+        if(sc)h+='<span style="font-size:13px;font-weight:700;color:'+scColor+'">'+sc+'</span>';
+        h+='</div>';
+        if(t.summary)h+='<div style="font-size:12px;color:var(--text2);margin-top:2px">'+t.summary+'</div>';
+        h+='<div style="font-size:10px;color:var(--text3);margin-top:4px">'+dt+'</div>';
+        h+='</div>';
+      });
+      h+='</div>';
+      h+='<a href="#" onclick="var d=document.getElementById(\'adm-th-more-'+u.id+'\');d.style.display=d.style.display===\'none\'?\'block\':\'none\';this.textContent=d.style.display===\'none\'?\'Show all '+thSorted.length+' entries\':\'Show less\';return false" style="font-size:11px;color:var(--accent);text-decoration:none;display:block;text-align:center;padding:8px 0">Show all '+thSorted.length+' entries</a>';
+    }
+  }
+  h+='</div>';
+
   c.innerHTML=h;
+}
+
+// ---- TOOL ACTIVITY TAB ----
+function admRenderToolActivity(c){
+  var toolIcons={'Match Competitiveness Calculator':'🏆','Research ROI Calculator':'🔬','Specialty Fit Analyzer':'🧬','Career Strategy Builder':'📊','Financial Trajectory Simulator':'🔮','Contract Intelligence Tool':'📄','RVU Compensation Modeler':'📈','Mock Interview Simulator':'🎤','Income Leverage Playbook':'💰','3-Year Financial Planner':'🏦','Fellowship Positioning Roadmap':'🗺️','Career Pivot Decision Engine':'⚖️'};
+  var users=admGetUsers();
+  // Collect all tool runs with user info
+  var allRuns=[];
+  var toolCounts={},toolScores={};
+  users.forEach(function(u){
+    var th=u.toolHistory||(u.session_data&&u.session_data.toolHistory)||[];
+    if(typeof th==='string'){try{th=JSON.parse(th)}catch(e){th=[]}}
+    if(!Array.isArray(th))th=[];
+    th.forEach(function(t){
+      allRuns.push({user:u.name||u.email||'Unknown',email:u.email||'',userId:u.id,tool:t.tool||'Unknown',score:t.score||'',summary:t.summary||'',date:t.date||'',data:t.data});
+      var tn=t.tool||'Unknown';
+      toolCounts[tn]=(toolCounts[tn]||0)+1;
+      if(t.score){var sv=parseInt(t.score);if(!isNaN(sv)){if(!toolScores[tn])toolScores[tn]={total:0,count:0};toolScores[tn].total+=sv;toolScores[tn].count++}}
+    });
+  });
+  allRuns.sort(function(a,b){return new Date(b.date)-new Date(a.date)});
+  // Sort tools by count
+  var sortedTools=Object.keys(toolCounts).sort(function(a,b){return toolCounts[b]-toolCounts[a]});
+
+  var h='';
+  // Aggregate stats
+  h+='<div class="adm-card"><div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:12px">📊 Tool Activity Overview</div>';
+  h+='<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:16px">';
+  h+='<div style="background:var(--bg3);border-radius:8px;padding:12px;text-align:center"><div style="font-size:22px;font-weight:700;color:var(--accent)">'+allRuns.length+'</div><div style="font-size:11px;color:var(--text3)">Total Runs</div></div>';
+  h+='<div style="background:var(--bg3);border-radius:8px;padding:12px;text-align:center"><div style="font-size:22px;font-weight:700;color:var(--accent)">'+sortedTools.length+'</div><div style="font-size:11px;color:var(--text3)">Tools Used</div></div>';
+  var usersWithTools=users.filter(function(u){var th=u.toolHistory||(u.session_data&&u.session_data.toolHistory)||[];if(typeof th==='string'){try{th=JSON.parse(th)}catch(e){th=[]}}return Array.isArray(th)&&th.length>0}).length;
+  h+='<div style="background:var(--bg3);border-radius:8px;padding:12px;text-align:center"><div style="font-size:22px;font-weight:700;color:var(--accent)">'+usersWithTools+'</div><div style="font-size:11px;color:var(--text3)">Users w/ Tools</div></div>';
+  h+='</div>';
+  // Popular tools
+  if(sortedTools.length){
+    h+='<div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:8px">Most Popular Tools</div>';
+    h+='<div style="display:grid;gap:6px;margin-bottom:4px">';
+    sortedTools.forEach(function(tn){
+      var icon=toolIcons[tn]||'🔧';
+      var cnt=toolCounts[tn];
+      var avgStr='';
+      if(toolScores[tn]){avgStr=' · Avg: '+Math.round(toolScores[tn].total/toolScores[tn].count)+'%'}
+      var pct=allRuns.length?Math.round(cnt/allRuns.length*100):0;
+      h+='<div style="display:flex;align-items:center;gap:8px;font-size:12px">';
+      h+='<span style="width:24px;text-align:center">'+icon+'</span>';
+      h+='<span style="flex:1;color:var(--text2)">'+tn+'</span>';
+      h+='<span style="color:var(--text3);font-size:11px">'+cnt+' runs ('+pct+'%)'+avgStr+'</span>';
+      h+='</div>';
+    });
+    h+='</div>';
+  }
+  h+='</div>';
+
+  // Filterable list
+  h+='<div class="adm-card"><div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:12px">All Tool Runs</div>';
+  h+='<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">';
+  h+='<input type="text" id="adm-ta-search" placeholder="Search user name/email..." oninput="admFilterToolActivity()" style="flex:1;min-width:150px;font-size:12px;padding:8px 12px;border:1px solid var(--border);border-radius:8px;background:var(--bg3);color:var(--text)">';
+  h+='<select id="adm-ta-tool" onchange="admFilterToolActivity()" style="font-size:12px;padding:8px 12px;border:1px solid var(--border);border-radius:6px;background:var(--bg3);color:var(--text)"><option value="">All Tools</option>';
+  sortedTools.forEach(function(tn){h+='<option value="'+tn+'">'+(toolIcons[tn]||'🔧')+' '+tn+' ('+toolCounts[tn]+')</option>'});
+  h+='</select></div>';
+  h+='<div id="adm-ta-list"></div></div>';
+  c.innerHTML=h;
+  // Render initial list
+  window._admToolRuns=allRuns;
+  window._admToolIcons=toolIcons;
+  admFilterToolActivity();
+}
+function admFilterToolActivity(){
+  var search=(document.getElementById('adm-ta-search')||{}).value||'';
+  var toolFilter=(document.getElementById('adm-ta-tool')||{}).value||'';
+  search=search.toLowerCase();
+  var runs=window._admToolRuns||[];
+  var icons=window._admToolIcons||{};
+  var filtered=runs.filter(function(r){
+    if(toolFilter&&r.tool!==toolFilter)return false;
+    if(search&&r.user.toLowerCase().indexOf(search)===-1&&r.email.toLowerCase().indexOf(search)===-1)return false;
+    return true;
+  });
+  var listEl=document.getElementById('adm-ta-list');if(!listEl)return;
+  if(!filtered.length){listEl.innerHTML='<div style="font-size:12px;color:var(--text3);padding:12px 0;text-align:center">No tool runs found.</div>';return}
+  window._admFilteredRuns=filtered;
+  var h='<div style="font-size:11px;color:var(--text3);margin-bottom:8px">'+filtered.length+' result'+(filtered.length!==1?'s':'')+'</div>';
+  filtered.slice(0,100).forEach(function(r,idx){
+    var icon=icons[r.tool]||'🔧';
+    var dt=r.date?new Date(r.date).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit'}):'';
+    var scColor=r.score?((parseInt(r.score)>=70)?'var(--green)':(parseInt(r.score)>=45)?'var(--accent)':'#c44d56'):'var(--text3)';
+    var hasData=r.data&&(r.data.inputs||r.data.highlights);
+    h+='<div style="border:1px solid var(--border);border-radius:8px;margin-bottom:6px;overflow:hidden">';
+    h+='<div onclick="admToggleToolDetail('+idx+')" style="display:grid;grid-template-columns:120px 1fr 70px 1fr 100px;gap:8px;align-items:center;padding:10px 12px;cursor:pointer;transition:background .15s;font-size:12px" onmouseenter="this.style.background=\'var(--bg2)\'" onmouseleave="this.style.background=\'transparent\'">';
+    h+='<div style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+r.user+'</div>';
+    h+='<div>'+icon+' '+r.tool+'</div>';
+    h+='<div style="font-weight:700;color:'+scColor+'">'+(r.score||'—')+'</div>';
+    h+='<div style="font-size:11px;color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+(r.summary||'—')+'</div>';
+    h+='<div style="font-size:11px;color:var(--text3);white-space:nowrap">'+dt+(hasData?' 📋':'')+'</div>';
+    h+='</div>';
+    h+='<div id="adm-td-'+idx+'" style="display:none;padding:0 12px 12px;border-top:1px solid var(--border);background:var(--bg2)"></div>';
+    h+='</div>';
+  });
+  if(filtered.length>100)h+='<div style="font-size:11px;color:var(--text3);text-align:center;padding:8px 0">Showing 100 of '+filtered.length+'</div>';
+  listEl.innerHTML=h;
+}
+function admToggleToolDetail(idx){
+  var el=document.getElementById('adm-td-'+idx);if(!el)return;
+  if(el.style.display!=='none'){el.style.display='none';return}
+  var runs=window._admFilteredRuns||[];var r=runs[idx];if(!r)return;
+  var h='<div style="padding-top:10px">';
+  if(r.data&&r.data.inputs){
+    h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Inputs</div>';
+    h+='<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:6px;margin-bottom:12px">';
+    var inp=r.data.inputs;
+    for(var k in inp){if(inp.hasOwnProperty(k)){h+='<div style="padding:8px 10px;background:var(--bg3);border-radius:6px;font-size:11px"><span style="color:var(--text3)">'+k+':</span> <strong style="color:var(--text)">'+inp[k]+'</strong></div>'}}
+    h+='</div>';
+  }
+  if(r.data&&r.data.highlights&&r.data.highlights.length){
+    h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Results & Highlights</div>';
+    h+='<div style="margin-bottom:12px">';
+    r.data.highlights.forEach(function(hl){h+='<div style="font-size:12px;color:var(--text2);padding:4px 0;padding-left:10px;border-left:2px solid var(--accent);margin-bottom:4px">'+hl+'</div>'});
+    h+='</div>';
+  }
+  if(!r.data||(!r.data.inputs&&!r.data.highlights)){
+    h+='<div style="font-size:12px;color:var(--text3);padding:8px 0">No detailed data saved for this run.</div>';
+  }
+  h+='<div style="font-size:10px;color:var(--text3);margin-top:4px">User: '+r.email+' · '+new Date(r.date).toLocaleString()+'</div>';
+  h+='</div>';
+  el.innerHTML=h;
+  el.style.display='block';
 }
 
 // ---- ADMIN ACTIONS ----
@@ -12507,13 +12877,28 @@ var _rvuBenchmarks={
   neph:{name:'Nephrology',wrvu:5124,rate:54,comp:340000},
   endo:{name:'Endocrinology',wrvu:4512,rate:56,comp:295000},
   rheum:{name:'Rheumatology',wrvu:4368,rate:58,comp:310000},
+  id:{name:'Infectious Disease',wrvu:4256,rate:54,comp:290000},
+  hemonc:{name:'Hematology / Oncology',wrvu:6124,rate:62,comp:440000},
   ortho:{name:'Orthopedic Surgery',wrvu:8684,rate:72,comp:680000},
   gensurg:{name:'General Surgery',wrvu:6853,rate:60,comp:450000},
   uro:{name:'Urology',wrvu:7845,rate:65,comp:530000},
   em:{name:'Emergency Medicine',wrvu:5148,rate:68,comp:385000},
   anes:{name:'Anesthesiology',wrvu:6012,rate:70,comp:465000},
   derm:{name:'Dermatology',wrvu:6378,rate:68,comp:500000},
-  psych:{name:'Psychiatry',wrvu:3824,rate:72,comp:310000}
+  psych:{name:'Psychiatry',wrvu:3824,rate:72,comp:310000},
+  neuro:{name:'Neurology',wrvu:5012,rate:58,comp:330000},
+  pmr:{name:'PM&R',wrvu:5248,rate:60,comp:330000},
+  path:{name:'Pathology',wrvu:4856,rate:62,comp:340000},
+  ophtho:{name:'Ophthalmology',wrvu:6124,rate:68,comp:400000},
+  peds:{name:'Pediatrics',wrvu:4312,rate:50,comp:250000},
+  obgyn:{name:'OB/GYN',wrvu:6248,rate:58,comp:360000},
+  nsurg:{name:'Neurosurgery',wrvu:9856,rate:78,comp:820000},
+  plastics:{name:'Plastic Surgery',wrvu:7124,rate:72,comp:540000},
+  ir:{name:'Interventional Radiology',wrvu:6856,rate:68,comp:500000},
+  vascular:{name:'Vascular Surgery',wrvu:7648,rate:70,comp:560000},
+  ent:{name:'ENT',wrvu:6512,rate:65,comp:430000},
+  ct_surg:{name:'CT Surgery',wrvu:8956,rate:75,comp:700000},
+  radonc:{name:'Radiation Oncology',wrvu:5648,rate:75,comp:480000}
 };
 
 function rvuFillBenchmark(){
@@ -12613,6 +12998,211 @@ function rvuUpdate(){
   }
 }
 
+// ===== 3-YEAR FINANCIAL LEVERAGE PLANNER (v5) =====
+function fypCalculate(){
+  var salary=parseFloat(document.getElementById('fyp-salary').value)||0;
+  var debt=parseFloat(document.getElementById('fyp-debt').value)||0;
+  var rate=(parseFloat(document.getElementById('fyp-rate').value)||6.5)/100;
+  var expenses=parseFloat(document.getElementById('fyp-expenses').value)||0;
+  var inflate=(parseFloat(document.getElementById('fyp-inflate').value)||10)/100;
+  var matchPct=(parseFloat(document.getElementById('fyp-match').value)||0)/100;
+  var pslf=document.getElementById('fyp-pslf').value;
+  var dependents=document.getElementById('fyp-dependents').value;
+  if(!salary){notify('Enter your expected salary',1);return}
+  if(!expenses){expenses=Math.round(salary*0.3)}
+  var effectiveTax=salary>400000?0.35:salary>300000?0.32:salary>200000?0.28:0.24;
+  var netSalary=Math.round(salary*(1-effectiveTax));
+  var max401k=23500,maxRoth=7000,maxHSA=4150;
+  var matchAmt=Math.round(Math.min(salary*matchPct,max401k*0.5));
+  var totalTaxAdv=max401k+maxRoth+maxHSA;
+  var standardPayment=debt>0?Math.round(debt*(rate/12)*Math.pow(1+rate/12,120)/(Math.pow(1+rate/12,120)-1)):0;
+  var refinanceRate=Math.max(0.04,rate-0.015);
+  var refiPayment=debt>0?Math.round(debt*(refinanceRate/12)*Math.pow(1+refinanceRate/12,60)/(Math.pow(1+refinanceRate/12,60)-1)):0;
+  var idrPayment=debt>0?Math.round(Math.max(0,(salary*0.9-22500)*0.10/12)):0;
+  var years=[],cumInvested=0,remainDebt=debt;
+  for(var yr=1;yr<=3;yr++){
+    var yrSalary=Math.round(salary*Math.pow(1.03,yr-1));
+    var yrNet=Math.round(yrSalary*(1-effectiveTax));
+    var yrExp=Math.round(expenses*Math.pow(1+inflate,yr-1));
+    var yrMatch=Math.round(yrSalary*matchPct);
+    var monthlyLoan=0;
+    if(remainDebt>0){monthlyLoan=pslf==='yes'?idrPayment:refiPayment}
+    var yrLoan=monthlyLoan*12;
+    var interest=Math.round(remainDebt*rate);
+    var principal=Math.max(0,yrLoan-interest);
+    remainDebt=Math.max(0,remainDebt-principal);
+    var yrInvestable=Math.max(0,yrNet-yrExp-yrLoan);
+    cumInvested+=totalTaxAdv+yrMatch+yrInvestable;
+    var growth=Math.round(cumInvested*0.08*(yr*0.5));
+    var netWealth=cumInvested+growth-remainDebt;
+    var cashFlow=yrNet-yrExp-yrLoan;
+    years.push({year:yr,salary:yrSalary,net:yrNet,exp:yrExp,loan:yrLoan,taxAdv:totalTaxAdv,match:yrMatch,investable:yrInvestable,cumInvested:cumInvested,growth:growth,remainDebt:remainDebt,netWealth:netWealth,cashFlow:cashFlow});
+  }
+  var y3=years[2],yr1Save=years[0].net>0?Math.round(((years[0].taxAdv+years[0].investable)/years[0].net)*100):0;
+  var h='';
+  h+='<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:20px">';
+  h+='<div style="padding:16px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;text-align:center"><div style="font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--text3);margin-bottom:4px">Year 3 Net Wealth</div><div style="font-size:26px;font-weight:700;color:'+(y3.netWealth>=0?'var(--green)':'var(--red)')+';font-family:var(--font-serif)">$'+Math.round(y3.netWealth/1000)+'K</div></div>';
+  h+='<div style="padding:16px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;text-align:center"><div style="font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--text3);margin-bottom:4px">Total Invested</div><div style="font-size:26px;font-weight:700;color:var(--accent);font-family:var(--font-serif)">$'+Math.round(y3.cumInvested/1000)+'K</div></div>';
+  h+='<div style="padding:16px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;text-align:center"><div style="font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--text3);margin-bottom:4px">Remaining Debt</div><div style="font-size:26px;font-weight:700;color:'+(y3.remainDebt>0?'var(--red)':'var(--green)')+';font-family:var(--font-serif)">'+(y3.remainDebt>0?'$'+Math.round(y3.remainDebt/1000)+'K':'$0')+'</div></div>';
+  h+='</div>';
+  h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">Year-by-Year Breakdown</div>';
+  years.forEach(function(y){
+    var cfColor=y.cashFlow>=0?'var(--green)':'var(--red)';
+    h+='<div style="padding:16px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;margin-bottom:10px">';
+    h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><div style="font-size:14px;font-weight:700;color:var(--accent);font-family:var(--font-serif)">Year '+y.year+'</div><div style="font-size:11px;color:var(--text3)">Salary: $'+Math.round(y.salary/1000)+'K</div></div>';
+    h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:12px">';
+    h+='<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border)"><span style="color:var(--text3)">Take-Home</span><span style="font-weight:600">$'+Math.round(y.net/1000)+'K</span></div>';
+    h+='<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border)"><span style="color:var(--text3)">Expenses</span><span style="font-weight:600">-$'+Math.round(y.exp/1000)+'K</span></div>';
+    if(y.loan>0) h+='<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border)"><span style="color:var(--text3)">Loan Payments</span><span style="color:var(--red);font-weight:600">-$'+Math.round(y.loan/1000)+'K</span></div>';
+    h+='<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border)"><span style="color:var(--text3)">Tax-Advantaged</span><span style="color:var(--green);font-weight:600">$'+Math.round(y.taxAdv/1000)+'K</span></div>';
+    if(y.match>0) h+='<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border)"><span style="color:var(--text3)">Employer Match</span><span style="color:var(--green);font-weight:600">+$'+Math.round(y.match/1000)+'K</span></div>';
+    h+='<div style="display:flex;justify-content:space-between;padding:5px 0"><span style="color:var(--text3)">Monthly Cash Flow</span><span style="color:'+cfColor+';font-weight:700">$'+Math.round(y.cashFlow/12).toLocaleString()+'/mo</span></div>';
+    h+='</div>';
+    var wPct=Math.min(100,Math.max(0,Math.round((y.cumInvested/(salary*3))*100)));
+    h+='<div style="margin-top:8px"><div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text3);margin-bottom:3px"><span>Cumulative Invested</span><span>$'+Math.round(y.cumInvested/1000)+'K</span></div>';
+    h+='<div style="height:5px;background:var(--bg3);border-radius:3px;overflow:hidden"><div style="height:100%;width:'+wPct+'%;background:var(--accent);border-radius:3px"></div></div></div>';
+    h+='</div>';
+  });
+  if(debt>0){
+    h+='<div style="padding:16px;background:var(--bg2);border-left:3px solid var(--accent);border-radius:0 10px 10px 0;margin-bottom:14px">';
+    h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Loan Strategy</div>';
+    if(pslf==='yes'){
+      h+='<div style="font-size:13px;font-weight:600;margin-bottom:4px">PSLF Path</div>';
+      h+='<div style="font-size:12px;color:var(--text2);line-height:1.7">IDR: <strong>$'+idrPayment.toLocaleString()+'/mo</strong> vs standard: <strong>$'+standardPayment.toLocaleString()+'/mo</strong>. Forgiveness: <strong style="color:var(--green)">$'+Math.round(Math.max(0,debt-idrPayment*120)/1000)+'K</strong>. Do NOT refinance.</div>';
+    }else{
+      h+='<div style="font-size:13px;font-weight:600;margin-bottom:4px">Aggressive Payoff</div>';
+      h+='<div style="font-size:12px;color:var(--text2);line-height:1.7">Refinanced: <strong>$'+refiPayment.toLocaleString()+'/mo</strong> × 5yr. Extra $1K/mo saves ~$'+Math.round(debt*rate/12000)+'K interest.</div>';
+    }
+    h+='</div>';
+  }
+  h+='<div style="padding:16px;background:var(--bg2);border-radius:10px;margin-bottom:14px">';
+  h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Key Insights</div>';
+  var ins=[];
+  ins.push('Year 1 savings rate: <strong>'+yr1Save+'%</strong>'+(yr1Save>=30?' — excellent':yr1Save>=20?' — solid, push toward 30%':' — hold expenses flat'));
+  if(inflate>0.15) ins.push('<span style="color:var(--red)">'+Math.round(inflate*100)+'% lifestyle inflation is high.</span> Expenses: $'+Math.round(expenses*Math.pow(1+inflate,2)/1000)+'K by Year 3.');
+  if(matchPct>0) ins.push('Employer match 3yr value: <strong style="color:var(--green)">$'+Math.round(matchAmt*3/1000)+'K</strong>.');
+  if(y3.netWealth>0) ins.push('<strong style="color:var(--green)">Positive net worth by Year 3</strong> — ahead of most physicians.');
+  else ins.push('Negative net worth at Year 3 — hold expenses flat years 4-5.');
+  ins.forEach(function(i){h+='<div style="font-size:12px;color:var(--text2);line-height:1.7;margin-bottom:6px;padding-left:10px;border-left:2px solid var(--border)">'+i+'</div>'});
+  h+='</div>';
+  h+='<div style="padding:16px;background:var(--bg2);border-radius:10px">';
+  h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Annual Tax-Advantaged Checklist</div>';
+  h+='<div style="font-size:12px;color:var(--text2);line-height:2">';
+  h+='<div>1. 401k/403b — <strong>$'+max401k.toLocaleString()+'</strong>'+(matchPct>0?' (+ $'+matchAmt.toLocaleString()+' match)':'')+'</div>';
+  h+='<div>2. Backdoor Roth IRA — <strong>$'+maxRoth.toLocaleString()+'</strong></div>';
+  h+='<div>3. HSA (if HDHP) — <strong>$'+maxHSA.toLocaleString()+'</strong></div>';
+  h+='<div style="color:var(--text3);font-size:11px;margin-top:4px">Total: $'+totalTaxAdv.toLocaleString()+'/yr</div>';
+  h+='</div></div>';
+  document.getElementById('fyp-results').innerHTML=h;
+  recordToolUse('3-Year Financial Planner',null,'Y3 Wealth: $'+Math.round(y3.netWealth/1000)+'K | Invested: $'+Math.round(y3.cumInvested/1000)+'K',{inputs:{Salary:'$'+salary.toLocaleString(),Debt:'$'+debt.toLocaleString(),Rate:(rate*100).toFixed(1)+'%',Expenses:'$'+expenses.toLocaleString(),PSLF:pslf||'N/A'},highlights:['Year 3 Net Wealth: $'+Math.round(y3.netWealth/1000)+'K','Total Invested: $'+Math.round(y3.cumInvested/1000)+'K','Remaining Debt: $'+Math.round(y3.remainDebt/1000)+'K']});
+}
+
+// ===== INCOME LEVERAGE PLAYBOOK (v8) =====
+function ilpCalculate(){
+  var salary=parseFloat(document.getElementById('ilp-salary').value)||0;
+  var debt=parseFloat(document.getElementById('ilp-debt').value)||0;
+  var loanRate=(parseFloat(document.getElementById('ilp-rate').value)||6.5)/100;
+  var employer=document.getElementById('ilp-employer').value;
+  var disability=document.getElementById('ilp-disability').value;
+  var spending=parseFloat(document.getElementById('ilp-spending').value)||0;
+  var has401k=document.getElementById('ilp-401k').value;
+  var hasAdvisor=document.getElementById('ilp-advisor').value;
+  if(!salary){notify('Enter your salary',1);return}
+  if(!spending) spending=Math.round(salary*0.5);
+  var effectiveTax=salary>400000?0.35:salary>300000?0.32:salary>200000?0.28:0.24;
+  var netSalary=Math.round(salary*(1-effectiveTax));
+  var h='',score=0,maxScore=50,flags=[],wins=[];
+  // 1. PSLF vs Refinance
+  h+='<div style="padding:16px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;margin-bottom:10px">';
+  h+='<div style="font-size:13px;font-weight:700;color:var(--accent);margin-bottom:8px">1. PSLF vs. Refinance</div>';
+  var idr=0,refi5=0,std10=0,pslfForgive=0;
+  if(debt>0){
+    idr=Math.round(Math.max(0,(salary*0.9-22500)*0.10/12));
+    var refiRate=Math.max(0.04,loanRate-0.015);
+    refi5=Math.round(debt*(refiRate/12)*Math.pow(1+refiRate/12,60)/(Math.pow(1+refiRate/12,60)-1));
+    std10=Math.round(debt*(loanRate/12)*Math.pow(1+loanRate/12,120)/(Math.pow(1+loanRate/12,120)-1));
+    pslfForgive=Math.max(0,debt-idr*120);
+    if(employer==='nonprofit'||employer==='government'){
+      score+=10;wins.push('PSLF-eligible employer');
+      h+='<div style="padding:10px;background:rgba(139,184,160,.1);border-radius:8px;margin-bottom:8px"><span style="color:var(--green);font-weight:600">PSLF RECOMMENDED</span> — IDR: <strong>$'+idr.toLocaleString()+'/mo</strong>. Forgiveness: ~<strong>$'+Math.round(pslfForgive/1000)+'K</strong>.</div>';
+      h+='<div style="font-size:11px;color:var(--red);font-weight:600">Do NOT refinance federal loans.</div>';
+    }else{
+      score+=6;
+      h+='<div style="padding:10px;background:rgba(200,168,124,.08);border-radius:8px;margin-bottom:8px"><span style="color:var(--accent);font-weight:600">REFINANCE</span> — $'+refi5.toLocaleString()+'/mo x 5yr. Saves ~$'+Math.round((std10*120-refi5*60)/1000)+'K vs standard.</div>';
+    }
+    h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:11px;margin-top:8px">';
+    h+='<div style="padding:8px;background:var(--bg3);border-radius:6px;text-align:center"><div style="color:var(--text3)">PSLF</div><div style="font-weight:600">$'+idr.toLocaleString()+'/mo</div><div style="color:var(--green);font-size:10px">Forgiven: $'+Math.round(pslfForgive/1000)+'K</div></div>';
+    h+='<div style="padding:8px;background:var(--bg3);border-radius:6px;text-align:center"><div style="color:var(--text3)">Refi 5yr</div><div style="font-weight:600">$'+refi5.toLocaleString()+'/mo</div><div style="color:var(--accent);font-size:10px">Total: $'+Math.round(refi5*60/1000)+'K</div></div>';
+    h+='</div>';
+  }else{score+=10;wins.push('No student debt');h+='<div style="color:var(--green);font-weight:600">No debt — skip to wealth building.</div>'}
+  h+='</div>';
+  // 2. Disability Insurance
+  h+='<div style="padding:16px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;margin-bottom:10px">';
+  h+='<div style="font-size:13px;font-weight:700;color:var(--accent);margin-bottom:8px">2. Disability Insurance</div>';
+  var monthBenefit=Math.round(salary*0.6/12);
+  if(disability==='own_occ'){score+=10;wins.push('Own-occupation disability');h+='<div style="padding:10px;background:rgba(139,184,160,.1);border-radius:8px"><span style="color:var(--green);font-weight:600">Own-Occupation — Optimal.</span> Benefit: ~$'+monthBenefit.toLocaleString()+'/mo.</div>'}
+  else if(disability==='any_occ'){score+=4;flags.push('Upgrade to own-occupation');h+='<div style="padding:10px;background:rgba(200,168,124,.1);border-radius:8px"><span style="color:var(--accent);font-weight:600">Any-Occupation — Upgrade.</span> Won\'t pay if you can work ANY job.</div>'}
+  else{flags.push('No disability insurance');h+='<div style="padding:10px;background:rgba(196,77,86,.1);border-radius:8px"><span style="color:var(--red);font-weight:600">No Coverage — Critical Gap.</span> 25% chance of 90+ day disability before 65. Cost: ~$'+Math.round(salary*0.025/1000)+'K/yr for $'+monthBenefit.toLocaleString()+'/mo protection.</div>'}
+  h+='</div>';
+  // 3. Lifestyle
+  h+='<div style="padding:16px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;margin-bottom:10px">';
+  h+='<div style="font-size:13px;font-weight:700;color:var(--accent);margin-bottom:8px">3. Lifestyle vs. Wealth</div>';
+  var spendPct=Math.round((spending/netSalary)*100);
+  var loanPmt=debt>0?((employer==='nonprofit'||employer==='government')?idr*12:refi5*12):0;
+  var investable=Math.max(0,netSalary-spending-loanPmt);
+  var wealth3=Math.round(investable*3*1.24);
+  var altSpend=Math.round(netSalary*0.4);
+  var altInvestable=Math.max(0,netSalary-altSpend-loanPmt);
+  var altWealth3=Math.round(altInvestable*3*1.24);
+  if(spendPct<=40){score+=10;wins.push('Disciplined spending')}else if(spendPct<=60){score+=6;flags.push('Room to reduce spending')}else{score+=2;flags.push('High spending ('+spendPct+'%)')}
+  h+='<div style="font-size:12px;color:var(--text2);margin-bottom:10px">Spending <strong>$'+Math.round(spending/1000)+'K/yr</strong> ('+spendPct+'% of take-home). Investable: <strong>$'+Math.round(investable/1000)+'K/yr</strong>.</div>';
+  h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:11px">';
+  h+='<div style="padding:10px;background:var(--bg3);border-radius:6px;text-align:center"><div style="color:var(--text3)">Your Plan</div><div style="font-weight:600">Spend $'+Math.round(spending/1000)+'K</div><div style="color:var(--accent);font-size:10px">3yr: $'+Math.round(wealth3/1000)+'K</div></div>';
+  h+='<div style="padding:10px;background:var(--bg3);border-radius:6px;text-align:center"><div style="color:var(--text3)">40% Rule</div><div style="font-weight:600">Spend $'+Math.round(altSpend/1000)+'K</div><div style="color:var(--green);font-size:10px">3yr: $'+Math.round(altWealth3/1000)+'K</div></div>';
+  h+='</div>';
+  var wDiff=altWealth3-wealth3;
+  if(wDiff>10000) h+='<div style="font-size:11px;color:var(--accent);margin-top:8px;font-weight:600">Gap: $'+Math.round(wDiff/1000)+'K over 3 years.</div>';
+  h+='</div>';
+  // 4. Tax-Advantaged
+  h+='<div style="padding:16px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;margin-bottom:10px">';
+  h+='<div style="font-size:13px;font-weight:700;color:var(--accent);margin-bottom:8px">4. Tax-Advantaged Accounts</div>';
+  if(has401k==='maxed'){score+=10;wins.push('Maxing tax-advantaged');h+='<div style="padding:10px;background:rgba(139,184,160,.1);border-radius:8px"><span style="color:var(--green);font-weight:600">Maxing Out — Saving ~$'+Math.round(34650*effectiveTax/1000)+'K/yr in taxes.</span></div>'}
+  else if(has401k==='match'){score+=5;flags.push('Only employer match');h+='<div style="padding:10px;background:rgba(200,168,124,.1);border-radius:8px"><span style="color:var(--accent);font-weight:600">Match Only — Leaving tax savings on the table.</span></div>'}
+  else{flags.push('Not contributing');h+='<div style="padding:10px;background:rgba(196,77,86,.1);border-radius:8px"><span style="color:var(--red);font-weight:600">Not Contributing — Missing ~$'+Math.round(34650*effectiveTax/1000)+'K/yr tax savings.</span></div>'}
+  h+='<div style="font-size:12px;color:var(--text2);line-height:1.8;margin-top:8px">Priority: Employer match → Backdoor Roth ($7K) → Max 401k ($23.5K) → HSA ($4,150)</div></div>';
+  // 5. Advisor
+  h+='<div style="padding:16px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;margin-bottom:10px">';
+  h+='<div style="font-size:13px;font-weight:700;color:var(--accent);margin-bottom:8px">5. Financial Advisor</div>';
+  if(hasAdvisor==='feeonly'){score+=10;wins.push('Fee-only fiduciary');h+='<div style="padding:10px;background:rgba(139,184,160,.1);border-radius:8px"><span style="color:var(--green);font-weight:600">Fee-Only Fiduciary — Gold standard.</span></div>'}
+  else if(hasAdvisor==='feebased'){score+=3;flags.push('Fee-based may have conflicts');h+='<div style="padding:10px;background:rgba(200,168,124,.1);border-radius:8px"><span style="color:var(--accent);font-weight:600">Fee-Based — Can earn commissions. Verify fiduciary or switch (NAPFA.org).</span></div>'}
+  else if(hasAdvisor==='none'){score+=4;h+='<div style="padding:10px;background:var(--bg3);border-radius:8px"><span style="font-weight:600">No advisor</span> — Fine if disciplined. Consider fee-only at $250K+ assets.</div>'}
+  else{flags.push('Commission-based advisor');h+='<div style="padding:10px;background:rgba(196,77,86,.1);border-radius:8px"><span style="color:var(--red);font-weight:600">Commission-Based — They profit from selling you products. Switch to fee-only (NAPFA.org).</span></div>'}
+  h+='</div>';
+  // Score
+  var scorePct=Math.round((score/maxScore)*100);
+  var grade=scorePct>=80?'Excellent':scorePct>=60?'Good':scorePct>=40?'Needs Work':'Critical Gaps';
+  var gradeColor=scorePct>=80?'var(--green)':scorePct>=60?'var(--accent)':scorePct>=40?'var(--amber,orange)':'var(--red)';
+  h+='<div style="padding:20px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;margin-bottom:14px;text-align:center">';
+  h+='<div style="font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--text3);margin-bottom:6px">Financial Leverage Score</div>';
+  h+='<div style="font-size:48px;font-weight:700;color:'+gradeColor+';font-family:var(--font-serif)">'+score+'<span style="font-size:20px;color:var(--text3)">/'+maxScore+'</span></div>';
+  h+='<div style="font-size:14px;font-weight:600;color:'+gradeColor+';margin-top:4px">'+grade+'</div>';
+  h+='<div style="height:6px;background:var(--bg3);border-radius:3px;overflow:hidden;margin-top:12px"><div style="height:100%;width:'+scorePct+'%;background:'+gradeColor+';border-radius:3px"></div></div>';
+  h+='</div>';
+  if(wins.length){
+    h+='<div style="padding:14px;background:rgba(139,184,160,.06);border-radius:10px;margin-bottom:10px">';
+    h+='<div style="font-size:11px;font-weight:600;color:var(--green);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">What You\'re Doing Right</div>';
+    wins.forEach(function(w){h+='<div style="font-size:12px;color:var(--text2);margin-bottom:4px">✓ '+w+'</div>'});
+    h+='</div>';
+  }
+  if(flags.length){
+    h+='<div style="padding:14px;background:rgba(196,77,86,.06);border-radius:10px;margin-bottom:10px">';
+    h+='<div style="font-size:11px;font-weight:600;color:var(--red);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Action Items</div>';
+    flags.forEach(function(f){h+='<div style="font-size:12px;color:var(--text2);margin-bottom:4px">→ '+f+'</div>'});
+    h+='</div>';
+  }
+  document.getElementById('ilp-results').innerHTML=h;
+  recordToolUse('Income Leverage Playbook',score+'/'+maxScore,grade+' ('+scorePct+'%)',{inputs:{Salary:'$'+salary.toLocaleString(),Debt:'$'+debt.toLocaleString(),Employer:employer,Disability:disability,Spending:'$'+spending.toLocaleString(),'Tax-Advantaged':has401k,Advisor:hasAdvisor},highlights:['Score: '+score+'/'+maxScore+' ('+grade+')'].concat(wins).concat(flags)});
+}
 // ===== RESEARCH ROI CALCULATOR =====
 function roiUpdate(){
   var first=parseInt(document.getElementById('roi-first').value)||0;

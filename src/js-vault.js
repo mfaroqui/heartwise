@@ -1176,6 +1176,10 @@ v14:`<h3 class="serif">Match Competitiveness Calculator</h3>
 <option value="plastics">Plastic Surgery</option>
 <option value="nsurg">Neurosurgery</option>
 <option value="ir">Interventional Radiology</option>
+<option value="vascular">Vascular Surgery</option>
+<option value="ct_surg">Cardiothoracic Surgery</option>
+<option value="ct_integrated">Thoracic Surgery (Integrated)</option>
+<option value="obgyn">OB/GYN</option>
 </select>
 </div>
 
@@ -1204,6 +1208,16 @@ v14:`<h3 class="serif">Match Competitiveness Calculator</h3>
 <optgroup label="Surgical Subspecialties">
 <option value="sports_med">Sports Medicine</option>
 <option value="critical_care_surg">Surgical Critical Care</option>
+<option value="vascular_surg">Vascular Surgery (Fellowship)</option>
+<option value="ct_surgery">Cardiothoracic Surgery</option>
+<option value="pediatric_surg">Pediatric Surgery</option>
+<option value="surgical_onc">Surgical Oncology / Complex General Surgical Oncology</option>
+<option value="trauma_acute">Trauma & Acute Care Surgery</option>
+<option value="colorectal">Colon & Rectal Surgery</option>
+<option value="hand_surg">Hand Surgery</option>
+<option value="mist">Minimally Invasive Surgery</option>
+<option value="transplant_surg">Transplant Surgery</option>
+<option value="spine_surg">Spine Surgery</option>
 </optgroup>
 </select>
 </div>

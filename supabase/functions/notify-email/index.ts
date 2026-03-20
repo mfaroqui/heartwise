@@ -12,7 +12,7 @@ Deno.serve(async (req: Request) => {
   }
 
   try {
-    const { user_name, user_email, type, message, store } = await req.json();
+    const { user_name, user_email, type, message, store, subject, admin_message } = await req.json();
 
     // If store flag is set, insert message into database server-side
     if (store) {
@@ -33,7 +33,6 @@ Deno.serve(async (req: Request) => {
         }
       } catch (dbErr) {
         console.error("DB insert failed:", dbErr);
-        // Continue to send email even if DB insert fails
       }
     }
 
@@ -44,6 +43,39 @@ Deno.serve(async (req: Request) => {
       });
     }
 
+    // Admin message → email the USER (not admin)
+    if (admin_message && user_email) {
+      const safe = (message || "").replace(/</g, "&lt;").replace(/\n/g, "<br>");
+      const emailSubject = subject || "New message from Dr. Faroqui — HeartWise";
+      const res = await fetch("https://api.resend.com/emails", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer re_Wzrmyu7Y_3uL6Ks2gh6mESGecy2GJj8Mo",
+        },
+        body: JSON.stringify({
+          from: "HeartWise <noreply@heartwisementor.com>",
+          to: user_email,
+          subject: emailSubject,
+          html: '<div style="font-family:system-ui,sans-serif;max-width:600px;margin:0 auto;padding:20px">' +
+            '<div style="background:#1a1620;padding:20px;border-radius:12px 12px 0 0;color:#f0ece6">' +
+            '<h2 style="color:#c8a87c;margin:0 0 4px;font-size:18px">Message from Dr. Faroqui</h2>' +
+            '<p style="color:#b8b3ac;margin:0;font-size:13px">HeartWise — Physician Career Platform</p></div>' +
+            '<div style="padding:24px;background:#f8f6f2;border-radius:0 0 12px 12px;border:1px solid #e8e4de;border-top:none">' +
+            '<div style="font-size:14px;line-height:1.8;color:#2a2520;white-space:pre-wrap">' + safe + '</div>' +
+            '<div style="margin-top:24px;text-align:center">' +
+            '<a href="https://www.heartwisementor.com" style="display:inline-block;padding:12px 28px;background:#c8a87c;color:#1a1620;text-decoration:none;border-radius:8px;font-weight:600;font-size:14px">View on HeartWise →</a></div>' +
+            '</div>' +
+            '<p style="font-size:11px;color:#999;margin-top:16px;text-align:center">Log in to HeartWise to reply to this message.</p></div>',
+        }),
+      });
+      const data = await res.json();
+      return new Response(JSON.stringify({ success: true, data }), {
+        headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
+      });
+    }
+
+    // Regular user message → email ADMIN
     const TL: Record<string, string> = {
       career: "🎯 Career/Strategy",
       finance: "💰 Finance/Comp",
@@ -53,6 +85,7 @@ Deno.serve(async (req: Request) => {
       bug: "🐛 Bug Report",
       suggestion: "💡 Suggestion",
       feedback: "📝 Feedback",
+      reply: "↩️ User Reply",
       other: "📎 Other",
     };
     const label = TL[type] || type || "Message";

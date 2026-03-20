@@ -12365,8 +12365,28 @@ async function admSendMessage(){
   }
   if(!DB.messages)DB.messages=[];
   DB.messages.push(payload);saveDB();
+
+  // Send email notification
+  var typeLabels={feedback_request:'Feedback Request',announcement:'Announcement',tip:'Tip',welcome:'Welcome',followup:'Follow-up'};
+  var subject='New message from Dr. Faroqui — '+(typeLabels[type]||'HeartWise');
+  var emailTargets=isBroadcast?admGetUsers().map(function(u){return u.email}).filter(Boolean):[to];
+  emailTargets.forEach(function(email){
+    fetch('https://kqyvfykbnboesskxovtw.supabase.co/functions/v1/notify-email',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY},
+      body:JSON.stringify({
+        user_name:'Dr. Faroqui',
+        user_email:email,
+        type:'admin_message',
+        message:text,
+        subject:subject,
+        admin_message:true
+      })
+    }).catch(function(e){console.warn('Email notify failed for '+email,e)});
+  });
+
   textEl.value='';toEl.value='';
-  notify(isBroadcast?'Broadcast sent to all users':'Message sent to '+to);
+  notify(isBroadcast?'Broadcast sent to all users ('+emailTargets.length+' emails)':'Message sent to '+to+' (email notified)');
   admRender();
 }
 

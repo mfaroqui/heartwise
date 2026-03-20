@@ -3816,6 +3816,7 @@ function mccCalculate(){
   }
 
   var step2=parseInt(document.getElementById('mcc-step2').value)||0;
+  var step3=parseInt(document.getElementById('mcc-step3').value)||0;
   var pubs=parseInt(document.getElementById('mcc-pubs').value)||0;
   var school=document.getElementById('mcc-school').value;
   var bg=document.getElementById('mcc-background').value;
@@ -3845,7 +3846,10 @@ function mccCalculate(){
 
   // Step 2 CK / Step 3 (max 25 pts for fellowship, 30 for residency)
   var stepMax=isFellowship?25:30;
-  var stepDiff=step2-sd.avgStep;
+  // For fellowship, blend Step 2 (60%) and Step 3 (40%) if Step 3 is provided
+  var boardScore=step2;
+  if(isFellowship&&step3>0){boardScore=Math.round(step2*0.6+step3*0.4)}
+  var stepDiff=boardScore-sd.avgStep;
   var stepPts=0;
   if(stepDiff>=20)stepPts=stepMax;
   else if(stepDiff>=10)stepPts=Math.round(stepMax*0.83);
@@ -3855,7 +3859,8 @@ function mccCalculate(){
   else if(stepDiff>=-10)stepPts=Math.round(stepMax*0.17);
   else stepPts=0;
   score+=stepPts;
-  factors.push({name:isFellowship?'Board Scores (Step 2/3)':'Step 2 CK',value:step2,benchmark:sd.avgStep,pts:stepPts,max:stepMax,status:stepDiff>=0?'above':'below',color:stepPts>=stepMax*0.67?'#6abf4b':stepPts>=stepMax*0.33?'#c8a87c':'#ef4444'});
+  var boardLabel=isFellowship?(step3>0?'Board Scores (Step 2: '+step2+' / Step 3: '+step3+')':'Step 2 CK'):'Step 2 CK';
+  factors.push({name:boardLabel,value:boardScore,benchmark:sd.avgStep,pts:stepPts,max:stepMax,status:stepDiff>=0?'above':'below',color:stepPts>=stepMax*0.67?'#6abf4b':stepPts>=stepMax*0.33?'#c8a87c':'#ef4444'});
 
   // Research (max 20 pts residency, 25 pts fellowship)
   var pubMax=isFellowship?25:20;
@@ -4041,7 +4046,7 @@ function mccCalculate(){
   h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">📈 '+(isFellowship?'Fellowship':'NRMP')+' Benchmark — '+sd.name+'</div>';
   h+='<div style="font-size:10px;color:var(--text3);margin-bottom:10px">Average matched applicant profile'+(isFellowship?' (NRMP Specialty Match data)':' (NRMP Charting Outcomes)')+'</div>';
   var benchmarks=[
-    {label:isFellowship?'Board Score (Step 2/3)':'Step 2 CK',yours:step2,avg:sd.avgStep,unit:''},
+    {label:isFellowship?(step3>0?'Board Score (blended)':'Step 2 CK'):'Step 2 CK',yours:isFellowship&&step3>0?boardScore:step2,avg:sd.avgStep,unit:''},
     {label:'Research Experiences',yours:pubLabels[pubs],avg:sd.avgPubs,unit:''},
     {label:'Overall Match Rate',yours:score>=65?'Above avg':'Below avg',avg:sd.matchRate+'%',unit:''},
     {label:'Programs Applied',yours:programs||'—',avg:sd.recPrograms+' rec.',unit:''}
@@ -4217,6 +4222,7 @@ function mccSaveProfile(){
     mode:mode,
     spec:isFellowship?document.getElementById('mcc-fel-spec').value:document.getElementById('mcc-spec').value,
     step2:document.getElementById('mcc-step2').value,
+    step3:document.getElementById('mcc-step3').value,
     pubs:document.getElementById('mcc-pubs').value,
     school:document.getElementById('mcc-school').value,
     background:document.getElementById('mcc-background').value,

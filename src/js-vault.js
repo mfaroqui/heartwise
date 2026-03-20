@@ -1209,9 +1209,15 @@ v14:`<h3 class="serif">Match Competitiveness Calculator</h3>
 </div>
 
 <div style="padding:10px 0;border-bottom:1px solid var(--border)">
-<div style="margin-bottom:4px"><strong>Step 2 CK / Step 3 Score</strong></div>
-<div style="font-size:10px;color:var(--text3);margin-bottom:6px">Most competitive specialties have average scores between 235–260. For fellowship, Step 3 is also considered.</div>
+<div style="margin-bottom:4px"><strong>Step 2 CK Score</strong></div>
+<div style="font-size:10px;color:var(--text3);margin-bottom:6px">Most competitive specialties have average scores between 235–260.</div>
 <input type="number" id="mcc-step2" placeholder="e.g., 255" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px;box-sizing:border-box">
+</div>
+
+<div style="padding:10px 0;border-bottom:1px solid var(--border)">
+<div style="margin-bottom:4px"><strong>Step 3 Score</strong></div>
+<div style="font-size:10px;color:var(--text3);margin-bottom:6px">Required for fellowship applications. Leave blank if not yet taken.</div>
+<input type="number" id="mcc-step3" placeholder="e.g., 230" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px;box-sizing:border-box">
 </div>
 
 <div style="padding:10px 0;border-bottom:1px solid var(--border)">

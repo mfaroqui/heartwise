@@ -12794,7 +12794,7 @@ function roiUpdate(){
     if(totalItems>0){
       linkEl.innerHTML='<div style="padding:14px;background:var(--bg2);border-radius:8px;border:1px solid var(--border);text-align:center">'+
         '<div style="font-size:12px;color:var(--text2);margin-bottom:8px">See how this research score affects your match probability</div>'+
-        '<button onclick="navTo(\'scr-tool\');runTool(\'v14\')" style="padding:8px 20px;border-radius:8px;border:1px solid var(--accent);background:transparent;color:var(--accent);font-size:12px;font-weight:600;cursor:pointer;transition:all .15s" onmouseenter="this.style.background=\'var(--accent)\';this.style.color=\'var(--bg)\'" onmouseleave="this.style.background=\'transparent\';this.style.color=\'var(--accent)\'">Run Match Calculator →</button></div>';
+        '<button onclick="closeModal(\'modal-q\');setTimeout(function(){openFramework(\'v14\')},300)" style="padding:8px 20px;border-radius:8px;border:1px solid var(--accent);background:transparent;color:var(--accent);font-size:12px;font-weight:600;cursor:pointer;transition:all .15s" onmouseenter="this.style.background=\'var(--accent)\';this.style.color=\'var(--bg)\'" onmouseleave="this.style.background=\'transparent\';this.style.color=\'var(--accent)\'">Run Match Calculator →</button></div>';
     }else{
       linkEl.innerHTML='';
     }

@@ -19,7 +19,7 @@
 
 // ===== HERO SHOWCASE CAROUSEL =====
 (function(){
-  var currentSlide=0, totalSlides=4, timer=null, animated=[];
+  var currentSlide=0, totalSlides=5, timer=null, animated=[];
   function animateSlide(idx){
     if(animated[idx])return; animated[idx]=true;
     if(idx===0){
@@ -53,8 +53,14 @@
       var ri=setInterval(function(){cr+=1;if(cr>=tr){cr=tr;clearInterval(ri)}if(rvuEl)rvuEl.innerHTML='$'+cr+'<span style="font-size:11px;font-weight:300;color:var(--text3)">/wRVU</span>'},30);
       setTimeout(function(){document.querySelectorAll('.contract-flag').forEach(function(f){f.style.opacity='1';f.style.transform='translateX(0)'})},400);
     }else if(idx===3){
-      // Roadmap
-      setTimeout(function(){document.querySelectorAll('.roadmap-node').forEach(function(n){n.style.opacity='1';n.style.transform='translateY(0)'})},100);
+      // Offer Decision Matrix
+      setTimeout(function(){document.querySelectorAll('.offer-row').forEach(function(r){r.style.opacity='1';r.style.transform='translateX(0)'})},100);
+      setTimeout(function(){document.querySelectorAll('.offer-tag').forEach(function(t){t.style.opacity='1'})},800);
+    }else if(idx===4){
+      // Career Pivot Engine
+      setTimeout(function(){document.querySelectorAll('.pivot-card').forEach(function(c){c.style.opacity='1';c.style.transform='translateY(0)'})},100);
+      setTimeout(function(){document.querySelectorAll('.pivot-factor').forEach(function(f){f.style.opacity='1';f.style.transform='translateX(0)'})},300);
+      setTimeout(function(){var ps=document.querySelector('.pivot-score');if(ps)ps.style.opacity='1'},600);
     }
   }
   window.goShowcase=function(idx){

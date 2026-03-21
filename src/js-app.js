@@ -166,7 +166,7 @@ var LP_TOOLS=[
    preview:'<div style="margin-bottom:10px;padding:10px;background:rgba(200,168,124,.06);border-radius:8px"><div style="font-size:9px;font-weight:600;color:var(--accent);margin-bottom:4px">SAMPLE QUESTION</div><div style="font-size:11px;color:var(--text);font-weight:500;margin-bottom:6px">\u201cWhy cardiology? What draws you to the field?\u201d</div><div style="font-size:9px;color:var(--text3)">Grade: <span style="color:#6abf4b;font-weight:600">B+</span> \u00b7 Structure: Strong \u00b7 Authenticity: Needs work</div></div><div style="font-size:10px;color:var(--text3);line-height:1.5;font-style:italic">\u201cGood structure but sounds rehearsed. Add a specific patient story.\u201d</div>'},
   {icon:'\ud83c\udfc6',name:'Fellowship Readiness Assessment',desc:'Gap analysis for fellowship applications.',
    preview:'<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border)"><span style="font-size:9px;color:var(--text2)">Step 2 Score</span><span style="font-size:9px;font-weight:600;color:#6abf4b">\u2713 Strong</span></div><div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border)"><span style="font-size:9px;color:var(--text2)">Research</span><span style="font-size:9px;font-weight:600;color:#c44d56">\u26a0 Gap</span></div><div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border)"><span style="font-size:9px;color:var(--text2)">LORs</span><span style="font-size:9px;font-weight:600;color:var(--accent)">\u25cb Partial</span></div><div style="display:flex;justify-content:space-between;padding:4px 0"><span style="font-size:9px;color:var(--text2)">Leadership</span><span style="font-size:9px;font-weight:600;color:#6abf4b">\u2713 Strong</span></div></div><div style="font-size:10px;color:var(--text3);line-height:1.5;font-style:italic">\u201cPriority #1: close the research gap before ERAS. Everything else is on track.\u201d</div>'},
-  {icon:'\ud83d\udcb0',name:'RVU Modeling & Offer Comparison',desc:'Side-by-side comparison of job offers and RVU scenarios.',
+  {icon:'\ud83d\udcb0',name:'RVU Compensation & Offer Comparison',desc:'Side-by-side comparison of job offers and RVU scenarios.',
    preview:'<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px"><div style="padding:8px;background:rgba(106,191,75,.06);border:1px solid rgba(106,191,75,.12);border-radius:8px;text-align:center"><div style="font-size:8px;color:var(--text3)">Offer A (Hospital)</div><div style="font-size:14px;font-weight:700;color:#6abf4b;font-family:var(--font-serif)">$580K</div><div style="font-size:8px;color:var(--text3)">Year 1</div></div><div style="padding:8px;background:rgba(200,168,124,.06);border:1px solid rgba(200,168,124,.12);border-radius:8px;text-align:center"><div style="font-size:8px;color:var(--text3)">Offer B (Private)</div><div style="font-size:14px;font-weight:700;color:var(--accent);font-family:var(--font-serif)">$720K</div><div style="font-size:8px;color:var(--text3)">Year 3+</div></div></div><div style="font-size:10px;color:var(--text3);line-height:1.5;font-style:italic">\u201cOffer B generates $1.4M more over 10 years \u2014 but carries more risk.\u201d</div>'},
   {icon:'\ud83d\udd04',name:'Career Transition Planner',desc:'Evaluate career changes with structured cost-benefit analysis.',
    preview:'<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px"><div style="padding:8px;background:rgba(200,168,124,.06);border-radius:8px;text-align:center"><div style="font-size:8px;color:var(--text3)">Stay Current</div><div style="font-size:14px;font-weight:700;color:var(--accent);font-family:var(--font-serif)">$8.2M</div><div style="font-size:8px;color:var(--text3)">Lifetime</div></div><div style="padding:8px;background:rgba(106,191,75,.06);border-radius:8px;text-align:center"><div style="font-size:8px;color:var(--text3)">Switch Now</div><div style="font-size:14px;font-weight:700;color:#6abf4b;font-family:var(--font-serif)">$9.8M</div><div style="font-size:8px;color:var(--text3)">Lifetime</div></div></div><div style="font-size:10px;color:var(--text3);line-height:1.5;font-style:italic">\u201cSwitching nets $1.6M more even with 2 extra years of training.\u201d</div>'},
@@ -1286,7 +1286,7 @@ function getScoreActions(cp,scores){
     if(goal==='direction'){
       actions.push({action:'Run the Career Transition Planner — model the financial cost',gain:'Data',priority:'high'});
       actions.push({action:'Re-run the Specialty Fit Assessment with updated values',gain:'Clarity',priority:'high'});
-      actions.push({action:'Submit a Strategic Audit to Dr. Faroqui for structured review',gain:'Expert input',priority:'medium'});
+      actions.push({action:'Submit an Application Review to Dr. Faroqui for structured review',gain:'Expert input',priority:'medium'});
     }
     if(!goal){
       actions.push({action:'Set your primary career goal to get personalized actions',gain:'Focus',priority:'high'});
@@ -1318,7 +1318,7 @@ function getScoreActions(cp,scores){
       var satA=parseInt(cp.satisfaction)||0;
       if(satA>0&&satA<6) actions.push({action:'Run the Career Transition Planner — your satisfaction is '+satA+'/10',gain:'Clarity',priority:'high'});
       actions.push({action:'Re-run the Specialty Fit Assessment — priorities change over time',gain:'Self-awareness',priority:'high'});
-      actions.push({action:'Submit a Strategic Audit to Dr. Faroqui',gain:'Expert guidance',priority:'high'});
+      actions.push({action:'Submit an Application Review to Dr. Faroqui',gain:'Expert guidance',priority:'high'});
       actions.push({action:'Compare financial trajectories: stay vs pivot',gain:'Data',priority:'medium'});
       if(cp.considering==='active') actions.push({action:'Build a 12-month financial bridge plan before making a move',gain:'Safety net',priority:'high'});
     }
@@ -2081,7 +2081,7 @@ function renderWeeklyFocus(){
       if(month>=4&&month<=6&&toolsUsed.indexOf('Match Probability Calculator')<0)
         focus={icon:'🏆',title:'Run the Match Probability Calculator',sub:'ERAS opens soon. Know exactly where you stand before you apply.',tool:'v14',urgency:'high'};
       else if(toolsUsed.indexOf('Research Impact Calculator')<0)
-        focus={icon:'🔬',title:'Calculate your Research ROI',sub:'Find out which research activities will move the needle most for your application.',tool:'v7',urgency:'medium'};
+        focus={icon:'🔬',title:'Calculate your Research Impact',sub:'Find out which research activities will move the needle most for your application.',tool:'v7',urgency:'medium'};
       else if(toolsUsed.indexOf('Interview Practice Tool')<0)
         focus={icon:'🎤',title:'Practice with the Interview Practice Tool',sub:'Most applicants walk into interviews cold. Don\'t be one of them.',tool:'v16',urgency:'medium'};
       else
@@ -2547,7 +2547,7 @@ function getCommunityStats(){
   var dayVariance=[0.85,1.12,1.08,1.15,1.05,0.92,0.78];
   var mult=dayVariance[dayOfWeek]||1;
   var weeklyToolRuns=Math.round(toolRuns*mult/4);
-  var popularTools=['Contract Intelligence','Financial Planning Engine','Match Probability Calculator','Career Score Assessment','Specialty Fit Assessment','RVU Compensation Modeler'];
+  var popularTools=['Contract Review','Financial Planning Engine','Match Probability Calculator','Career Score Assessment','Specialty Fit Assessment','RVU Compensation Modeler'];
   var weekNum=Math.floor(Date.now()/(1000*60*60*24*7));
   var popular=popularTools[weekNum%popularTools.length];
   return{activePhysicians:baseUsers+Math.round(dayOfWeek*3),weeklyToolRuns:weeklyToolRuns,popularTool:popular};
@@ -4630,9 +4630,9 @@ function csbGenerate(){
 
     var p2=[];
     p2.push('Submit at least 1 abstract to a national conference');
-    if(firstAuth===0)p2.push('Start a first-author research project \u2014 highest ROI activity for your application. '+_csbTool('v7','Check Research ROI'));
+    if(firstAuth===0)p2.push('Start a first-author research project \u2014 highest ROI activity for your application. '+_csbTool('v7','Check Research Impact'));
     p2.push('Take on a leadership position in a relevant organization');
-    if(isCompetitive)p2.push('Begin Step 1 preparation early \u2014 a strong score opens doors. '+_csbTool('v14','Check Match Competitiveness'));
+    if(isCompetitive)p2.push('Begin Step 1 preparation early \u2014 a strong score opens doors. '+_csbTool('v14','Check Match Probability'));
     p2.push('Explore summer research opportunities at other institutions');
     phases.push({time:'6 \u2013 12 months',title:'Build Evidence',items:p2});
 
@@ -4649,7 +4649,7 @@ function csbGenerate(){
     var p1=[];
     p1.push('Honor medicine/surgery clerkships \u2014 PDs look at these first');
     if(s2===0)p1.push('Prepare for Step 2 CK \u2014 target '+(isCompetitive?'250+':'240+')+' for '+tName);
-    if(firstAuth===0)p1.push('Start a first-author project immediately \u2014 case report has fastest turnaround (2-4 months). '+_csbTool('v7','Check Research ROI'));
+    if(firstAuth===0)p1.push('Start a first-author project immediately \u2014 case report has fastest turnaround (2-4 months). '+_csbTool('v7','Check Research Impact'));
     else p1.push('Push current research toward publication. Submit manuscripts now.');
     if(lors==='none'||lors==='generic')p1.push('Identify 3 specialty-specific letter writers NOW. Ask early \u2014 give them 8+ weeks.');
     else if(lors==='partial')p1.push('Finalize remaining letter writers. At least one from a prominent name.');
@@ -4679,7 +4679,7 @@ function csbGenerate(){
     var p1=[];
     p1.push('Make your interest in '+tName+' clear to your PD \u2014 ask for relevant rotations');
     if(firstAuth===0){
-      p1.push('Research is your biggest gap. Start a first-author project THIS MONTH. '+_csbTool('v7','Check Research ROI'));
+      p1.push('Research is your biggest gap. Start a first-author project THIS MONTH. '+_csbTool('v7','Check Research Impact'));
       if(urgency==='1')p1.push('\u26a0\ufe0f Applying this cycle with no first-author pubs: target 1 case report + 2-3 abstracts before ERAS');
     }else if(firstAuth<3&&isCompetitive){
       p1.push('Push for '+(3-firstAuth)+' more first-author publications. Target manuscript submission within 3 months.');
@@ -4713,7 +4713,7 @@ function csbGenerate(){
       if(leadership==='none'||leadership==='minor')p2.push('Take on a meaningful leadership role \u2014 chief resident, QI lead, committee chair');
       phases.push({time:'3 \u2013 12 months',title:'Build Deliberately',items:p2});
       phases.push({time:'12 \u2013 18 months',title:'Application Year',items:[
-        'Submit competitive ERAS with strong research and specialty-specific letters. '+_csbTool('v14','Check Match Competitiveness'),
+        'Submit competitive ERAS with strong research and specialty-specific letters. '+_csbTool('v14','Check Match Probability'),
         'Apply to '+(isCompetitive?'18-25':'12-18')+' programs tiered by competitiveness',
         'Personal statement: clear, specific narrative about WHY '+tName,
         'Interview broadly but prepared \u2014 '+_csbTool('v16','Practice with Interview Practice Tool'),
@@ -4765,7 +4765,7 @@ function csbGenerate(){
       'Set a specific decision date \u2014 open-ended "maybe someday" never happens',
       'Negotiate next position using data and the '+_csbTool('v12','Contract Review Tool'),
       'Set up financial safeguards: emergency fund, moonlighting if needed',
-      'Consider a '+_csbTool('v9','Strategic Audit')+' for Dr. Faroqui\'s personalized assessment',
+      'Consider a '+_csbTool('v9','Application Review')+' for Dr. Faroqui\'s personalized assessment',
       'Execute. The cost of staying in the wrong position compounds every year.'
     ]});
   }
@@ -4844,7 +4844,7 @@ function csbGenerate(){
 
   h+='<div style="margin-top:20px;padding:14px;background:var(--accent-dim);border:1px solid rgba(198,168,94,.15);border-radius:10px;text-align:center">';
   h+='<div style="font-size:12px;color:var(--accent);font-weight:600;margin-bottom:4px">Want expert review of your roadmap?</div>';
-  h+='<div style="font-size:11px;color:var(--text3)">Submit a Strategic Audit for Dr. Faroqui\u2019s personalized assessment.</div></div>';
+  h+='<div style="font-size:11px;color:var(--text3)">Submit an Application Review for Dr. Faroqui\u2019s personalized assessment.</div></div>';
 
   document.getElementById('csb-results').innerHTML=h;
   applyBlurGate(document.getElementById('csb-results'));
@@ -5419,7 +5419,7 @@ function previewEliteFramework(id){
   h+='<div style="padding:16px;background:linear-gradient(135deg,rgba(198,168,94,.06),rgba(200,168,124,.02));border:1px solid rgba(198,168,94,.15);border-radius:10px;margin-bottom:20px">';
   h+='<div style="font-size:12px;font-weight:600;color:var(--accent);margin-bottom:8px">\u2728 Why Mentorship members use this</div>';
   if(id==='v9'){
-    h+='<p style="font-size:12px;color:var(--text2);line-height:1.7;margin:0">The Strategic Audit eliminates guesswork from career decisions. Instead of a vague email to a mentor, you get a structured analysis reviewed by a physician who\'s navigated these exact crossroads. Most members say it\'s the single most valuable tool on the platform.</p>';
+    h+='<p style="font-size:12px;color:var(--text2);line-height:1.7;margin:0">The Application Review eliminates guesswork from career decisions. Instead of a vague email to a mentor, you get a structured analysis reviewed by a physician who\'s navigated these exact crossroads. Most members say it\'s the single most valuable tool on the platform.</p>';
   }else{
     h+='<p style="font-size:12px;color:var(--text2);line-height:1.7;margin:0">Career pivots carry six-figure consequences. This engine walks you through the financial, emotional, and strategic dimensions before you make a move \u2014 then sends your complete analysis to Dr. Faroqui for a reality check. No other platform offers this.</p>';
   }
@@ -5832,7 +5832,7 @@ var GOAL_TEMPLATES={
     months:[
       {label:'Month 1',goals:['Diagnose your dissatisfaction: specialty, setting, job, or burnout?','Shadow or talk to 2 physicians in a potential new path','Take stock: what energizes you vs what drains you in your current role','Journal for 2 weeks — track daily satisfaction and frustration triggers']},
       {label:'Month 2',goals:['Informational interviews with 3 people who made a similar pivot','Calculate the financial cost of a pivot (use the Career Transition Planner)','Test the new direction: moonlight, volunteer, or take an elective','Discuss your thinking with a trusted mentor — get honest feedback']},
-      {label:'Month 3',goals:['Make a provisional decision and set a 90-day trial period','If staying: identify 2 concrete changes to improve your current situation','If pivoting: map the timeline, training requirements, and financial bridge','Submit a Strategic Audit to Dr. Faroqui for structured guidance']}
+      {label:'Month 3',goals:['Make a provisional decision and set a 90-day trial period','If staying: identify 2 concrete changes to improve your current situation','If pivoting: map the timeline, training requirements, and financial bridge','Submit an Application Review to Dr. Faroqui for structured guidance']}
     ]
   },
   fellow_contract:{
@@ -5871,7 +5871,7 @@ var GOAL_TEMPLATES={
     title:'Career Reinvention',
     months:[
       {label:'Month 1',goals:['Complete the Career Transition Planner — diagnose before you prescribe','Talk to 3 physicians who\'ve made the pivot you\'re considering','Calculate the true financial cost of transition','Assess: is this burnout (temporary) or misalignment (structural)?']},
-      {label:'Month 2',goals:['Test the new direction without quitting: moonlight, consult, teach, or volunteer','Build a 12-month financial bridge plan','Identify skills that transfer and gaps that need filling','Submit a Strategic Audit to Dr. Faroqui for structured review']},
+      {label:'Month 2',goals:['Test the new direction without quitting: moonlight, consult, teach, or volunteer','Build a 12-month financial bridge plan','Identify skills that transfer and gaps that need filling','Submit an Application Review to Dr. Faroqui for structured review']},
       {label:'Month 3',goals:['Make a provisional decision with a clear timeline','If staying clinical: negotiate specific changes to your current role','If pivoting: set a start date and announce to key stakeholders','Build your support system — mentors, peers, family alignment']}
     ]
   }
@@ -8724,7 +8724,7 @@ async function submitAudit(){
   document.getElementById('audit-form').classList.add('hidden');
   document.getElementById('audit-success').classList.remove('hidden');
   notify('Strategic audit submitted!');
-  recordToolUse('Strategic Audit',null,'Strategic audit submitted for review');
+  recordToolUse('Application Review',null,'Application review submitted for review');
   notifyAdmin(payload);
 }
 
@@ -10161,7 +10161,7 @@ function renderWhatsChanged(){
     items.push({icon:'📋',text:'<span onclick="showWeeklyCheckin()" style="color:var(--accent);cursor:pointer;text-decoration:underline">Weekly check-in ready</span> — 2 min'});
   }
   if(cp.lastUpdated){var age=Math.floor((now-new Date(cp.lastUpdated))/86400000);if(age>=30)items.push({icon:'🔄',text:'Scores are <strong>'+age+'d old</strong>. <span onclick="showUpdateProfile()" style="color:var(--accent);cursor:pointer;text-decoration:underline">Refresh</span>'})}
-  var m=now.getMonth();var alerts={student:[{m:8,t:'ERAS opens soon — personal statement ready?'},{m:2,t:'Match Day this month! 🎉'},{m:6,t:'Away rotation season'}],resident:[{m:5,t:'Fellowship apps opening soon'},{m:9,t:'Contract season — run Contract Intelligence'}],fellow:[{m:9,t:'Job search — analyze every offer'}],attending:[{m:0,t:'New year — review financial trajectory'},{m:9,t:'Contract renewal season'}]};
+  var m=now.getMonth();var alerts={student:[{m:8,t:'ERAS opens soon — personal statement ready?'},{m:2,t:'Match Day this month! 🎉'},{m:6,t:'Away rotation season'}],resident:[{m:5,t:'Fellowship apps opening soon'},{m:9,t:'Contract season — run Contract Review'}],fellow:[{m:9,t:'Job search — analyze every offer'}],attending:[{m:0,t:'New year — review financial trajectory'},{m:9,t:'Contract renewal season'}]};
   (alerts[stage]||alerts.student).forEach(function(a){if(a.m===m)items.push({icon:'📅',text:a.t})});
   if(U.toolHistory&&U.toolHistory.length){var lt=U.toolHistory[U.toolHistory.length-1];items.push({icon:'🧭',text:'Last ran <strong>'+lt.tool+'</strong>'+(lt.score?' ('+lt.score+')':'')})}
   if(!items.length){el.style.display='none';return}

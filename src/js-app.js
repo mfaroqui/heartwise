@@ -713,7 +713,7 @@ async function doLogin(e){
                 await _supaClient.from('profiles').update({tier:'free',is_trial:false}).eq('email',email);
                 saveDB();
               }else if(sp.is_trial){
-                user.tier=sp.tier||'elite';user.isTrial=true;user.trialEnd=sp.trial_end;
+                user.tier=sp.tier||'core';user.isTrial=true;user.trialEnd=sp.trial_end;
               }
             }
             if(sp.tier&&!sp.is_trial&&sp.tier!=='free'){user.tier=sp.tier;user.isTrial=false}
@@ -846,7 +846,7 @@ function enterApp(){
       if(typeof _supaClient!=='undefined'&&_supaClient){
         _supaClient.from('profiles').update({tier:'free',is_trial:false}).eq('email',U.email).then(function(){});
       }
-      notify('Your trial has ended. Upgrade to keep full access.',1);
+      notify('Your guided access has ended. Subscribe to unlock all 17 tools.',1);
     }
   }
   const b=document.getElementById('user-badge');
@@ -988,7 +988,7 @@ function updateTrialBanner(){
     if(typeof _supaClient!=='undefined'&&_supaClient){
       _supaClient.from('profiles').update({tier:'free',is_trial:false}).eq('email',U.email).then(function(){});
     }
-    el.innerHTML='<div style="display:flex;align-items:center;gap:12px"><span style="font-size:18px">⏰</span><div style="flex:1"><div style="font-size:13px;font-weight:600;color:var(--red)">Your trial has ended</div><div style="font-size:11px;color:var(--text2);margin-top:2px">Subscribe now to keep full access to every tool.</div></div><button class="btn btn-a btn-sm" onclick="navTo(\'scr-profile\');showUpgrade()" style="flex-shrink:0;width:auto">Subscribe →</button></div>';
+    el.innerHTML='<div style="display:flex;align-items:center;gap:12px"><span style="font-size:18px">⏰</span><div style="flex:1"><div style="font-size:13px;font-weight:600;color:var(--red)">Your guided access has ended</div><div style="font-size:11px;color:var(--text2);margin-top:2px">Subscribe now to unlock all 17 tools and build your complete strategy.</div></div><button class="btn btn-a btn-sm" onclick="navTo(\'scr-profile\');showUpgrade()" style="flex-shrink:0;width:auto">Subscribe →</button></div>';
     if(_trialInterval){clearInterval(_trialInterval);_trialInterval=null}
     enterApp();
     return;
@@ -1000,7 +1000,7 @@ function updateTrialBanner(){
   var urgencyBorder=hours<6?'rgba(196,77,86,.2)':hours<12?'rgba(198,168,94,.15)':'rgba(139,184,160,.2)';
   el.style.background=urgencyBg;
   el.style.borderColor=urgencyBorder;
-  el.innerHTML='<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap"><span style="font-size:18px">⚡</span><div style="flex:1;min-width:180px"><div style="font-size:13px;font-weight:600;color:'+urgency+'">Full Access Trial — '+hours+'h '+mins+'m remaining</div><div style="font-size:11px;color:var(--text2);margin-top:2px">Every tool unlocked. Explore everything before time runs out.</div></div><button class="btn btn-a btn-sm" onclick="navTo(\'scr-profile\');showUpgrade()" style="flex-shrink:0;width:auto;padding:8px 18px">Keep Access →</button></div>';
+  el.innerHTML='<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap"><span style="font-size:18px">✦</span><div style="flex:1;min-width:180px"><div style="font-size:13px;font-weight:600;color:'+urgency+'">48-Hour Core Access — '+hours+'h '+mins+'m remaining</div><div style="font-size:11px;color:var(--text2);margin-top:2px">Explore your curated tools. Upgrade anytime for full access to all 17.</div></div><button class="btn btn-a btn-sm" onclick="navTo(\'scr-profile\');showUpgrade()" style="flex-shrink:0;width:auto;padding:8px 18px">Unlock Everything →</button></div>';
 }
 
 // ===== CAREER DASHBOARD ENGINE =====
@@ -1878,7 +1878,7 @@ function renderHome(){
   document.getElementById('usage-ai').textContent=max===999?used+' / \u221e':used+' / '+max;
   document.getElementById('usage-bar').style.width=max===999?'0%':pct+'%';
   document.getElementById('usage-credits').textContent=U.usage?.credits||0;
-  document.getElementById('usage-tier').textContent=t.name+(U.isTrial?' (trial)':' plan');
+  document.getElementById('usage-tier').textContent=t.name+(U.isTrial?' (guided access)':' plan');
   // Trial banner (single upgrade nudge for trial users)
   var trialBanner=document.getElementById('trial-countdown-banner');
   if(trialBanner)trialBanner.style.display=U.isTrial&&U.trialEnd?'':'none';
@@ -4970,6 +4970,7 @@ function quizShowResults(){
     if(!item) return;
     var mentOnly=item.tier==='elite'&&U.tier!=='elite'&&U.tier!=='admin';
     var locked=!canAccess||mentOnly;
+    var trialAccess=U&&U.isTrial?getTrialAccess(rec.id):null;
     var onclick;
     if(locked&&mentOnly&&canAccess) onclick='previewEliteFramework(\''+item.id+'\')';
     else if(locked) onclick='notify(\'Upgrade to access this tool\',1)';
@@ -4980,6 +4981,12 @@ function quizShowResults(){
     html+='<div style="flex:1;min-width:0">';
     html+='<div style="display:flex;align-items:center;gap:6px;margin-bottom:3px"><span style="font-size:13px;font-weight:600;color:var(--text)">'+item.title+'</span>';
     if(mentOnly) html+='<span style="font-size:8px;padding:2px 6px;border-radius:100px;background:var(--accent-dim);color:var(--accent);font-weight:600;letter-spacing:.5px">MENTORSHIP</span>';
+    // Trial badges in quiz results
+    if(U&&U.isTrial&&!locked){
+      if(trialAccess==='full') html+='<span style="font-size:8px;padding:2px 6px;border-radius:100px;background:var(--green-dim);color:var(--green);font-weight:600;letter-spacing:.5px">INCLUDED</span>';
+      else if(trialAccess==='partial') html+='<span style="font-size:8px;padding:2px 6px;border-radius:100px;background:var(--accent-dim);color:var(--accent);font-weight:600;letter-spacing:.5px">PREVIEW</span>';
+      else if(trialAccess==='locked') html+='<span style="font-size:8px;padding:2px 6px;border-radius:100px;background:var(--bg3);color:var(--text3);font-weight:600;letter-spacing:.5px">UPGRADE</span>';
+    }
     if(locked) html+='<span style="font-size:12px">🔒</span>';
     html+='</div>';
     html+='<div style="font-size:11px;color:var(--accent);line-height:1.5">'+rec.why+'</div>';
@@ -5067,6 +5074,9 @@ function renderVault(){
   function renderCard(v){
     const mentOnly=v.tier==='elite'&&U.tier!=='elite'&&U.tier!=='admin';
     const locked=!canAccess||mentOnly;
+    // Trial access badges
+    var trialAccess=U&&U.isTrial?getTrialAccess(v.id):null;
+    var trialLocked=U&&U.isTrial&&trialAccess==='locked';
     var onclick;
     if(locked&&mentOnly&&canAccess){
       onclick='onclick="previewEliteFramework(\''+v.id+'\')"';
@@ -5077,7 +5087,15 @@ function renderVault(){
     }
     var tierBadge='';
     if(v.tier==='elite') tierBadge=' <span style="font-size:8px;padding:2px 6px;border-radius:100px;background:var(--accent);color:#1C1A17;font-weight:700;letter-spacing:.5px;vertical-align:middle">MENTORSHIP</span>';
-    return '<div class="vault-card '+(locked?'':'unlocked')+'" '+onclick+'><div class="v-icon">'+v.icon+'</div><div class="v-info"><h3>'+v.title+tierBadge+'</h3><p>'+v.desc+'</p></div><div class="v-lock">'+(locked?'\ud83d\udd12':'\ud83d\udcc4')+'</div></div>';
+    // Trial access indicator badges
+    var trialBadge='';
+    if(U&&U.isTrial&&!locked){
+      if(trialAccess==='full') trialBadge=' <span style="font-size:8px;padding:2px 6px;border-radius:100px;background:var(--green-dim);color:var(--green);font-weight:600;letter-spacing:.5px;vertical-align:middle">INCLUDED</span>';
+      else if(trialAccess==='partial') trialBadge=' <span style="font-size:8px;padding:2px 6px;border-radius:100px;background:var(--accent-dim);color:var(--accent);font-weight:600;letter-spacing:.5px;vertical-align:middle">PREVIEW</span>';
+      else if(trialAccess==='locked') trialBadge=' <span style="font-size:8px;padding:2px 6px;border-radius:100px;background:var(--bg3);color:var(--text3);font-weight:600;letter-spacing:.5px;vertical-align:middle">UPGRADE</span>';
+    }
+    var lockIcon=locked?'\ud83d\udd12':trialLocked?'\ud83d\udd12':'\ud83d\udcc4';
+    return '<div class="vault-card '+(locked||trialLocked?'':'unlocked')+'" '+onclick+'><div class="v-icon">'+v.icon+'</div><div class="v-info"><h3>'+v.title+tierBadge+trialBadge+'</h3><p>'+v.desc+'</p></div><div class="v-lock">'+lockIcon+'</div></div>';
   }
 
   var h='';
@@ -5100,7 +5118,96 @@ function renderVault(){
 
   document.getElementById('vault-categories').innerHTML=h;
 }
+// ===== 48-HOUR GUIDED ACCESS CONFIG =====
+var TRIAL_TOOLS={
+  full:['v17','v14','v13'],
+  partial:['v1','v15','v11'],
+  locked:['v2','v3','v4','v5','v6','v7','v8','v9','v10','v12','v16']
+};
+function getTrialAccess(id){
+  if(!U||!U.isTrial)return 'full';
+  if(U.tier==='admin')return 'full';
+  if(TRIAL_TOOLS.full.indexOf(id)!==-1)return 'full';
+  if(TRIAL_TOOLS.partial.indexOf(id)!==-1)return 'partial';
+  return 'locked';
+}
+
+var TRIAL_TEASERS={
+  v2:{icon:'🚩',headline:'Your contract has hidden risks.',teaser:'We found 3 clauses that could cost you. Upgrade to see the full risk scorecard.'},
+  v3:{icon:'📊',headline:'Your offers aren\'t equal — even if the salary looks close.',teaser:'The Offer Comparison Matrix weighs 12 dimensions beyond base salary. Unlock full access to see which offer actually wins.'},
+  v4:{icon:'💰',headline:'Your RVU rate might be below market.',teaser:'Model your real compensation by volume and rate. See how small changes compound into six figures.'},
+  v5:{icon:'📈',headline:'The first 3 years determine the next 20.',teaser:'Map your income trajectory from training exit through year 3 with the Leverage Planner.'},
+  v6:{icon:'🗺️',headline:'Fellowship match day is closer than you think.',teaser:'A month-by-month timeline keeps you on track. Unlock the full positioning roadmap.'},
+  v7:{icon:'⚖️',headline:'Not all research is created equal.',teaser:'See which publications actually move the needle for your specialty. The ROI Calculator shows your real research strength.'},
+  v8:{icon:'💵',headline:'You may be leaving significant income on the table.',teaser:'PSLF vs refinance, tax strategy, disability planning — the Income Leverage Playbook breaks it all down.'},
+  v9:{icon:'📝',headline:'This is the exact framework from Dr. Faroqui\'s strategy sessions.',teaser:'The Strategic Audit Template is available with Core or Mentorship access.'},
+  v10:{icon:'⚡',headline:'Thinking about a career pivot?',teaser:'The Pivot Decision Engine models the financial and timeline impact of switching. Upgrade to run your scenario.'},
+  v12:{icon:'📝',headline:'Your contract has a competitiveness score.',teaser:'Input your offer details and get risk flags, benchmarks, and a negotiation strategy. Available with Core access.'},
+  v16:{icon:'🎙️',headline:'Program directors ask the same 15 questions.',teaser:'Practice with real interview questions for your specialty and get honest AI feedback. Unlock with Core access.'}
+};
+
+var TRIAL_PARTIAL_MSG={
+  v1:{label:'Match Positioning Score',shown:'Your overall score and top 2 gaps',locked:'Full dimensional breakdown, percentile benchmarks, and personalized action plan'},
+  v15:{label:'Career Strategy Builder',shown:'Phase 1 of your roadmap',locked:'Phases 2–5: timeline, milestones, decision points, and contingency paths'},
+  v11:{label:'Wealth Trajectory Model',shown:'Your 20-year net worth projection',locked:'Side-by-side path comparison, optimization levers, and detailed year-by-year breakdown'}
+};
+
+function showTrialLockedOverlay(id){
+  var t=TRIAL_TEASERS[id];
+  if(!t)t={icon:'🔒',headline:'This tool is part of Core access.',teaser:'Upgrade to unlock all 17 tools and build your complete strategy.'};
+  var item=VAULT_ITEMS.find(function(v){return v.id===id});
+  var title=item?item.title:'Premium Tool';
+  var html='<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:400px;text-align:center;padding:40px 24px">';
+  html+='<div style="font-size:48px;margin-bottom:20px;opacity:.9">'+t.icon+'</div>';
+  html+='<h2 style="font-family:var(--font-serif);font-size:22px;color:var(--text);margin:0 0 8px;line-height:1.3">'+t.headline+'</h2>';
+  html+='<p style="font-size:13px;color:var(--text2);max-width:360px;line-height:1.6;margin:0 0 24px">'+t.teaser+'</p>';
+  html+='<div style="padding:16px 24px;background:var(--bg2);border:1px solid var(--border2);border-radius:12px;margin-bottom:24px;max-width:320px;width:100%">';
+  html+='<div style="font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--text3);margin-bottom:8px">🔒 '+title+'</div>';
+  html+='<div style="font-size:11px;color:var(--text2);line-height:1.5">Available with <strong style="color:var(--accent)">Core</strong> or <strong style="color:var(--accent)">Mentorship</strong> access</div>';
+  html+='</div>';
+  html+='<button onclick="closeModal(\'modal-q\');setTimeout(function(){navTo(\'scr-profile\');showUpgrade()},300)" class="btn btn-a" style="padding:12px 32px;font-size:13px">Unlock All 17 Tools →</button>';
+  html+='<p style="font-size:10px;color:var(--text3);margin-top:12px">Your guided access has '+(U.trialEnd?formatTrialRemaining():'tools')+'</p>';
+  html+='</div>';
+  document.getElementById('modal-q-content').innerHTML=html;
+  document.getElementById('modal-q').classList.remove('hidden');
+  var modalInner=document.querySelector('#modal-q .modal');
+  if(modalInner)modalInner.scrollTop=0;
+}
+
+function formatTrialRemaining(){
+  if(!U||!U.trialEnd)return '';
+  var diff=new Date(U.trialEnd)-new Date();
+  if(diff<=0)return 'expired';
+  var h=Math.floor(diff/3600000);var m=Math.floor((diff%3600000)/60000);
+  return h+'h '+m+'m remaining';
+}
+
+function injectPartialOverlay(id){
+  var cfg=TRIAL_PARTIAL_MSG[id];
+  if(!cfg)return;
+  // Insert partial-access banner at top of tool content after a short delay
+  setTimeout(function(){
+    var container=document.getElementById('modal-q-content');
+    if(!container)return;
+    var banner=document.createElement('div');
+    banner.id='trial-partial-banner';
+    banner.style.cssText='padding:14px 16px;background:linear-gradient(135deg,rgba(198,168,94,.08),rgba(198,168,94,.03));border:1px solid rgba(198,168,94,.15);border-radius:10px;margin-bottom:16px';
+    banner.innerHTML='<div style="display:flex;align-items:flex-start;gap:12px"><span style="font-size:18px;flex-shrink:0">✦</span><div style="flex:1">'
+      +'<div style="font-size:12px;font-weight:600;color:var(--accent);margin-bottom:4px">48-Hour Guided Access</div>'
+      +'<div style="font-size:11px;color:var(--text2);line-height:1.5;margin-bottom:6px"><strong>Included:</strong> '+cfg.shown+'</div>'
+      +'<div style="font-size:11px;color:var(--text3);line-height:1.5"><strong>🔒 Locked:</strong> '+cfg.locked+'</div>'
+      +'<button onclick="closeModal(\'modal-q\');setTimeout(function(){navTo(\'scr-profile\');showUpgrade()},300)" style="margin-top:8px;font-size:10px;font-weight:600;color:var(--accent);background:none;border:1px solid rgba(198,168,94,.2);border-radius:6px;padding:5px 14px;cursor:pointer;transition:all .2s">Unlock Full Access →</button>'
+      +'</div></div>';
+    container.insertBefore(banner,container.firstChild);
+  },80);
+}
+
 function openFramework(id){
+  // Trial access gating
+  if(U&&U.isTrial&&U.tier!=='admin'){
+    var access=getTrialAccess(id);
+    if(access==='locked'){showTrialLockedOverlay(id);return}
+  }
   const content=VAULT_CONTENT[id];
   if(!content){notify('Framework content loading...',1);return}
   document.getElementById('modal-q-content').innerHTML=content;
@@ -5117,6 +5224,10 @@ function openFramework(id){
   if(id==='v17')setTimeout(obsInit,50);
   // Auto-fill tool intakes from career baseline
   setTimeout(function(){autoFillToolFromProfile(id)},60);
+  // Inject partial-access banner for trial users
+  if(U&&U.isTrial&&U.tier!=='admin'&&getTrialAccess(id)==='partial'){
+    injectPartialOverlay(id);
+  }
 }
 
 // Auto-fill tool inputs from the user's saved career baseline profile
@@ -7857,7 +7968,7 @@ async function obComplete(){
     trialHistory.push({email:p.email.toLowerCase(),date:new Date().toISOString(),blocked:true});
     localStorage.setItem('hw_trial_history',JSON.stringify(trialHistory));
     enterApp();showDisc();
-    notify('Welcome! A trial was previously used on this device. You\'ve been signed up on the free Explorer plan. Subscribe to unlock all tools.',1);
+    notify('Welcome! Guided access was previously used on this device. You\'ve been signed up on the free Explorer plan. Subscribe to unlock all tools.',1);
     return;
   }
   // 3. Normal first-time trial
@@ -7866,12 +7977,12 @@ async function obComplete(){
   const trialEnd=new Date();trialEnd.setHours(trialEnd.getHours()+48);
   // Capture report snapshot
   const reportSnapshot=captureReportData(p);
-  const user={id:'u'+DB.nextUserId++,name:p.name,email:p.email.toLowerCase(),pass:p.pass,role:roleMap[p.stage]||'student',tier:'elite',trialEnd:trialEnd.toISOString(),isTrial:true,institution:p.inst,usage:{ai:0,credits:0,month:new Date().getMonth()},profile:safeProfileData(p),signupDate:new Date().toISOString(),report:reportSnapshot,notes:[]};
+  const user={id:'u'+DB.nextUserId++,name:p.name,email:p.email.toLowerCase(),pass:p.pass,role:roleMap[p.stage]||'student',tier:'core',trialEnd:trialEnd.toISOString(),isTrial:true,institution:p.inst,usage:{ai:0,credits:0,month:new Date().getMonth()},profile:safeProfileData(p),signupDate:new Date().toISOString(),report:reportSnapshot,notes:[]};
   DB.users.push(user);saveDB();
   // Sync to Supabase — client-side first, server-side fallback
   var _profilePayload={
     user_id:user.id,name:p.name,email:p.email.toLowerCase(),role:roleMap[p.stage]||'student',
-    tier:'elite',is_trial:true,institution:p.inst||'',stage:p.stage,specialty:p.spec||'',goal:p.goal||'',
+    tier:'core',is_trial:true,institution:p.inst||'',stage:p.stage,specialty:p.spec||'',goal:p.goal||'',
     score:reportSnapshot.score,grade:reportSnapshot.grade,
     strengths:reportSnapshot.strengths,gaps:reportSnapshot.gaps,
     trial_end:trialEnd.toISOString(),
@@ -7893,7 +8004,7 @@ async function obComplete(){
   trialHistory.push({email:p.email.toLowerCase(),date:new Date().toISOString()});
   localStorage.setItem('hw_trial_history',JSON.stringify(trialHistory));
   enterApp();showDisc();
-  notify('Welcome! Your 48-hour full access is now active. Every tool. Every feature. The clock is ticking. ⚡');
+  notify('Welcome! Your 48-hour Core access is now active. Start with the tools selected for you. ✦');
 }
 
 // Strip sensitive fields from profile data before storing

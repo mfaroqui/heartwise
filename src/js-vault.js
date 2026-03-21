@@ -72,7 +72,7 @@ v1:`<h3>Fellowship Readiness Calculator</h3>
 <p style="font-size:10px;color:var(--text3);margin-top:12px;font-style:italic">Based on NRMP Charting Outcomes and program director surveys. Weighted scoring reflects relative importance per PD surveys.</p>
 <div style="text-align:center;margin-top:8px"><button onclick="showSavedScenarios('Fellowship Readiness Calculator')" style="background:none;border:none;color:var(--accent);font-size:11px;cursor:pointer;padding:6px 12px;opacity:.7;transition:opacity .15s" onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='.7'">📊 View Saved Scenarios</button></div>`,
 
-v2:`<h3 class="serif">Contract Risk Scorecard</h3>
+v2:`<h3 class="serif">Contract Risk Assessment</h3>
 <p style="color:var(--text3);font-size:12px;margin-bottom:20px">Answer these questions about your contract. You'll get a risk score and specific flags to address before signing.</p>
 
 <div id="crs-tool" style="font-size:13px">
@@ -166,7 +166,7 @@ v2:`<h3 class="serif">Contract Risk Scorecard</h3>
 <div style="text-align:center;margin-top:8px"><button onclick="showSavedScenarios('Contract Review Scorecard')" style="background:none;border:none;color:var(--accent);font-size:11px;cursor:pointer;padding:6px 12px;opacity:.7;transition:opacity .15s" onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='.7'">📊 View Saved Scenarios</button></div>
 </div>`,
 
-v3:`<h3 class="serif">Offer Comparison Matrix</h3>
+v3:`<h3 class="serif">Job Offer Comparison Tool</h3>
 <p style="color:var(--text3);font-size:12px;margin-bottom:20px">Input your two offers. We'll compare them honestly — no sugarcoating, just the trade-offs you need to see.</p>
 
 <div id="ocm-tool" style="font-size:13px">
@@ -227,7 +227,7 @@ v3:`<h3 class="serif">Offer Comparison Matrix</h3>
 <p style="font-size:10px;color:var(--text3);text-align:center;margin-bottom:20px">All data stays on your device. Nothing is sent to a server.</p>
 
 <div id="ocm-results"></div>
-<div style="text-align:center;margin-top:8px"><button onclick="showSavedScenarios('Offer Comparison Matrix')" style="background:none;border:none;color:var(--accent);font-size:11px;cursor:pointer;padding:6px 12px;opacity:.7;transition:opacity .15s" onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='.7'">📊 View Saved Scenarios</button></div>
+<div style="text-align:center;margin-top:8px"><button onclick="showSavedScenarios('Job Offer Comparison Tool')" style="background:none;border:none;color:var(--accent);font-size:11px;cursor:pointer;padding:6px 12px;opacity:.7;transition:opacity .15s" onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='.7'">📊 View Saved Scenarios</button></div>
 </div>`,
 
 v4:`<h3>RVU Compensation Calculator</h3>
@@ -392,7 +392,7 @@ v4:`<h3>RVU Compensation Calculator</h3>
 <p style="font-size:10px;color:var(--text3);margin-top:12px;font-style:italic">Source: MGMA DataDive Provider Compensation 2024. Figures are approximate medians and vary by region, practice type, and payer mix.</p>
 <div style="text-align:center;margin-top:8px"><button onclick="showSavedScenarios('RVU Compensation Calculator')" style="background:none;border:none;color:var(--accent);font-size:11px;cursor:pointer;padding:6px 12px;opacity:.7;transition:opacity .15s" onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='.7'">📊 View Saved Scenarios</button></div>`,
 
-v5:`<h3>3-Year Financial Leverage Planner</h3>
+v5:`<h3>Early Career Income Planner</h3>
 <p style="color:var(--text3);font-size:12px;margin-bottom:20px">The first 3 years after training determine your financial trajectory for the next 20. Enter your numbers for a personalized year-by-year plan.</p>
 
 <div style="font-size:13px">
@@ -437,7 +437,7 @@ v5:`<h3>3-Year Financial Leverage Planner</h3>
 <p style="font-size:10px;color:var(--text3);margin-top:12px;font-style:italic">Sources: White Coat Investor, AAMC Debt Data 2024, IRS 2024 contribution limits.</p>
 <div style="text-align:center;margin-top:8px"><button onclick="showSavedScenarios('3-Year Financial Planner')" style="background:none;border:none;color:var(--accent);font-size:11px;cursor:pointer;padding:6px 12px;opacity:.7;transition:opacity .15s" onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='.7'">📊 View Saved Scenarios</button></div>`,
 
-v6:`<h3 class="serif">Fellowship Positioning Roadmap</h3>
+v6:`<h3 class="serif">Fellowship Application Planner</h3>
 <p style="color:var(--text3);font-size:12px;margin-bottom:20px">Your personalized timeline to match day. Check off milestones as you complete them — progress is saved automatically.</p>
 
 <div id="fpr-tool" style="font-size:13px">
@@ -506,12 +506,12 @@ v6:`<h3 class="serif">Fellowship Positioning Roadmap</h3>
 <!-- Phases render here -->
 <div id="fpr-phases"></div>
 
-<!-- Mock Interview section renders here -->
+<!-- Interview Practice section renders here -->
 <div id="fpr-mock"></div>
 
 </div>`,
 
-v7:`<h3>Research ROI Calculator</h3>
+v7:`<h3>Research Impact Calculator</h3>
 <p style="color:var(--text3);font-size:12px;margin-bottom:20px">Enter your current research portfolio. The calculator scores each item by application impact per time invested and shows how close you are to optimal.</p>
 
 <div style="font-size:12px">
@@ -675,10 +675,10 @@ v7:`<h3>Research ROI Calculator</h3>
 
 <div id="roi-match-link" style="margin-top:14px"></div>
 
-<div style="text-align:center;margin-top:8px"><button onclick="showSavedScenarios('Research ROI Calculator')" style="background:none;border:none;color:var(--accent);font-size:11px;cursor:pointer;padding:6px 12px;opacity:.7;transition:opacity .15s" onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='.7'">📊 View Saved Scenarios</button></div>
+<div style="text-align:center;margin-top:8px"><button onclick="showSavedScenarios('Research Impact Calculator')" style="background:none;border:none;color:var(--accent);font-size:11px;cursor:pointer;padding:6px 12px;opacity:.7;transition:opacity .15s" onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='.7'">📊 View Saved Scenarios</button></div>
 </div>`,
 
-v8:`<h3>Income Leverage Playbook</h3>
+v8:`<h3>Debt & Income Strategy Tool</h3>
 <p style="color:var(--text3);font-size:12px;margin-bottom:16px">Score yourself on the 5 financial decisions that matter most. Get personalized recommendations based on your actual situation.</p>
 <div style="font-size:13px">
 <div style="font-weight:600;color:var(--accent);margin-bottom:12px">Your Financial Situation</div>
@@ -703,9 +703,9 @@ v8:`<h3>Income Leverage Playbook</h3>
 </div>
 <div id="ilp-results"></div>
 <p style="font-size:10px;color:var(--text3);margin-top:12px;font-style:italic">Sources: White Coat Investor, Council for Disability Awareness 2023, IRS 2024 limits.</p>
-<div style="text-align:center;margin-top:8px"><button onclick="showSavedScenarios('Income Leverage Playbook')" style="background:none;border:none;color:var(--accent);font-size:11px;cursor:pointer;padding:6px 12px;opacity:.7;transition:opacity .15s" onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='.7'">📊 View Saved Scenarios</button></div>`,
+<div style="text-align:center;margin-top:8px"><button onclick="showSavedScenarios('Debt & Income Strategy Tool')" style="background:none;border:none;color:var(--accent);font-size:11px;cursor:pointer;padding:6px 12px;opacity:.7;transition:opacity .15s" onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='.7'">📊 View Saved Scenarios</button></div>`,
 
-v16:`<h3 class="serif">Mock Interview Simulator</h3>
+v16:`<h3 class="serif">Interview Practice Tool</h3>
 <p style="color:var(--text3);font-size:12px;margin-bottom:20px">Real interview questions. Real feedback. No sugarcoating. Select your situation and answer each question like you\u2019re sitting across from the program director or hiring committee.</p>
 
 <div id="mis-tool" style="font-size:13px">
@@ -783,7 +783,7 @@ v16:`<h3 class="serif">Mock Interview Simulator</h3>
 </select></div>
 </div>
 
-<button onclick="misStart()" class="btn btn-a" style="width:100%;padding:14px;margin-bottom:8px">Start Mock Interview \u2192</button>
+<button onclick="misStart()" class="btn btn-a" style="width:100%;padding:14px;margin-bottom:8px">Start Interview Practice \u2192</button>
 <p style="font-size:10px;color:var(--text3);text-align:center;margin-bottom:20px">Your answers are analyzed locally. Nothing is stored or sent to anyone.</p>
 
 <div id="mis-interview" style="display:none">
@@ -794,10 +794,10 @@ v16:`<h3 class="serif">Mock Interview Simulator</h3>
 </div>
 
 <div id="mis-feedback"></div>
-<div style="text-align:center;margin-top:8px"><button onclick="showSavedScenarios('Mock Interview Simulator')" style="background:none;border:none;color:var(--accent);font-size:11px;cursor:pointer;padding:6px 12px;opacity:.7;transition:opacity .15s" onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='.7'">📊 View Saved Scenarios</button></div>
+<div style="text-align:center;margin-top:8px"><button onclick="showSavedScenarios('Interview Practice Tool')" style="background:none;border:none;color:var(--accent);font-size:11px;cursor:pointer;padding:6px 12px;opacity:.7;transition:opacity .15s" onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='.7'">📊 View Saved Scenarios</button></div>
 </div>`,
 
-v9:`<h3>Strategic Audit Template</h3>
+v9:`<h3>Application Review Tool</h3>
 <p style="color:var(--text3);font-size:12px;margin-bottom:20px">Complete this intake form and submit it directly to Dr. Faroqui for review. Be thorough — the more detail you provide, the more targeted the strategic guidance.</p>
 
 <div style="font-size:12px" id="audit-form">
@@ -851,7 +851,7 @@ v9:`<h3>Strategic Audit Template</h3>
 <p style="font-size:13px;color:var(--text2);line-height:1.6">Your strategic audit has been sent to Dr. Faroqui. You'll receive a response within 7 business days.</p>
 </div>`,
 
-v10:`<h3>Career Pivot Decision Engine</h3>
+v10:`<h3>Career Transition Planner</h3>
 <p style="color:var(--text3);font-size:12px;margin-bottom:20px">Work through each step. Your answers are compiled into a report and sent directly to Dr. Faroqui for strategic review.</p>
 <div style="font-size:12px" id="pivot-form">
 
@@ -965,12 +965,12 @@ v10:`<h3>Career Pivot Decision Engine</h3>
 <div id="pivot-success" class="hidden" style="text-align:center;padding:40px 20px">
 <div style="font-size:48px;margin-bottom:16px">\u2713</div>
 <h3 class="serif" style="font-size:20px;margin-bottom:8px">Report Submitted</h3>
-<p style="font-size:13px;color:var(--text2);line-height:1.6">Your Career Pivot Decision Engine report has been sent to Dr. Faroqui for review.</p>
+<p style="font-size:13px;color:var(--text2);line-height:1.6">Your Career Transition Planner report has been sent to Dr. Faroqui for review.</p>
 </div>
-<div style="text-align:center;margin-top:8px"><button onclick="showSavedScenarios('Career Pivot Decision Engine')" style="background:none;border:none;color:var(--accent);font-size:11px;cursor:pointer;padding:6px 12px;opacity:.7;transition:opacity .15s" onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='.7'">📊 View Saved Scenarios</button></div>`,
+<div style="text-align:center;margin-top:8px"><button onclick="showSavedScenarios('Career Transition Planner')" style="background:none;border:none;color:var(--accent);font-size:11px;cursor:pointer;padding:6px 12px;opacity:.7;transition:opacity .15s" onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='.7'">📊 View Saved Scenarios</button></div>`,
 v12:`<div style="text-align:center;padding:28px 20px;margin:-20px -20px 24px;background:linear-gradient(160deg,rgba(200,168,124,.1),rgba(200,168,124,.03));border-radius:12px 12px 0 0;border-bottom:1px solid rgba(200,168,124,.15)">
 <div style="font-size:36px;margin-bottom:8px">\ud83d\udcdd</div>
-<h3 class="serif" style="font-size:22px;margin-bottom:4px">Contract Intelligence Tool</h3>
+<h3 class="serif" style="font-size:22px;margin-bottom:4px">Contract Review Tool</h3>
 <p style="font-size:11px;color:var(--text3)">Input your offer details. Get a competitiveness score, risk analysis, and negotiation strategy.</p>
 </div>
 
@@ -1020,12 +1020,12 @@ v12:`<div style="text-align:center;padding:28px 20px;margin:-20px -20px 24px;bac
 </div>
 
 <div id="ci-output" style="margin-top:24px"></div>
-<div style="text-align:center;margin-top:8px"><button onclick="showSavedScenarios('Contract Intelligence Tool')" style="background:none;border:none;color:var(--accent);font-size:11px;cursor:pointer;padding:6px 12px;opacity:.7;transition:opacity .15s" onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='.7'">📊 View Saved Scenarios</button></div>
+<div style="text-align:center;margin-top:8px"><button onclick="showSavedScenarios('Contract Review Tool')" style="background:none;border:none;color:var(--accent);font-size:11px;cursor:pointer;padding:6px 12px;opacity:.7;transition:opacity .15s" onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='.7'">📊 View Saved Scenarios</button></div>
 </div>`,
 
 v11:`<div style="text-align:center;padding:28px 20px;margin:-20px -20px 24px;background:linear-gradient(160deg,rgba(200,168,124,.1),rgba(200,168,124,.03));border-radius:12px 12px 0 0;border-bottom:1px solid rgba(200,168,124,.15)">
 <div style="font-size:36px;margin-bottom:8px">\ud83d\udcb0</div>
-<h3 class="serif" style="font-size:22px;margin-bottom:4px">Financial Trajectory Simulator</h3>
+<h3 class="serif" style="font-size:22px;margin-bottom:4px">Financial Projection Tool</h3>
 <p style="font-size:12px;color:var(--text3);margin-bottom:4px">The $10 Million Decision Calculator</p>
 <p style="font-size:11px;color:var(--text3)">See how your specialty choice, fellowship, and practice type impact lifetime wealth.</p>
 </div>
@@ -1243,10 +1243,10 @@ v11:`<div style="text-align:center;padding:28px 20px;margin:-20px -20px 24px;bac
 <div id="ft-insights" style="margin-bottom:20px"></div>
 
 <p style="font-size:10px;color:var(--text3);line-height:1.6;font-style:italic;margin-top:16px">Based on MGMA 2024 compensation data. Assumes 7% annual investment return, 3% annual salary growth, and $250K starting student debt. This is a modeling tool \u2014 not financial advice. Consult a financial professional for personalized planning.</p>
-<div style="text-align:center;margin-top:8px"><button onclick="showSavedScenarios('Financial Trajectory Simulator')" style="background:none;border:none;color:var(--accent);font-size:11px;cursor:pointer;padding:6px 12px;opacity:.7;transition:opacity .15s" onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='.7'">📊 View Saved Scenarios</button></div>
+<div style="text-align:center;margin-top:8px"><button onclick="showSavedScenarios('Financial Projection Tool')" style="background:none;border:none;color:var(--accent);font-size:11px;cursor:pointer;padding:6px 12px;opacity:.7;transition:opacity .15s" onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='.7'">📊 View Saved Scenarios</button></div>
 </div>`
 ,
-v13:`<h3 class="serif">Specialty Fit Analyzer</h3>
+v13:`<h3 class="serif">Specialty Fit Assessment</h3>
 <p style="color:var(--text3);font-size:12px;margin-bottom:20px">Answer honestly — this tool helps you identify which specialties align with your personality, goals, and lifestyle preferences.</p>
 <div id="sfa-tool" style="font-size:13px">
 
@@ -1322,11 +1322,11 @@ v13:`<h3 class="serif">Specialty Fit Analyzer</h3>
 </div>
 
 <div id="sfa-results" style="margin-top:20px"></div>
-<div style="text-align:center;margin-top:8px"><button onclick="showSavedScenarios('Specialty Fit Analyzer')" style="background:none;border:none;color:var(--accent);font-size:11px;cursor:pointer;padding:6px 12px;opacity:.7;transition:opacity .15s" onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='.7'">📊 View Saved Scenarios</button></div>
+<div style="text-align:center;margin-top:8px"><button onclick="showSavedScenarios('Specialty Fit Assessment')" style="background:none;border:none;color:var(--accent);font-size:11px;cursor:pointer;padding:6px 12px;opacity:.7;transition:opacity .15s" onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='.7'">📊 View Saved Scenarios</button></div>
 
 </div>`,
 
-v14:`<h3 class="serif">Match Competitiveness Calculator</h3>
+v14:`<h3 class="serif">Match Probability Calculator</h3>
 <p style="color:var(--text3);font-size:12px;margin-bottom:20px">Comprehensive competitiveness analysis with match probability, pre-ERAS action plan, LOR strategy, and specialty-specific benchmarking.</p>
 <div id="mcc-tool" style="font-size:13px">
 
@@ -1568,11 +1568,11 @@ v14:`<h3 class="serif">Match Competitiveness Calculator</h3>
 <button onclick="mccCalculate()" class="btn btn-a" style="width:100%;padding:14px;font-size:14px;font-weight:600">Analyze My Competitiveness →</button>
 
 <div id="mcc-results" style="margin-top:20px"></div>
-<div style="text-align:center;margin-top:8px"><button onclick="showSavedScenarios('Match Competitiveness Calculator')" style="background:none;border:none;color:var(--accent);font-size:11px;cursor:pointer;padding:6px 12px;opacity:.7;transition:opacity .15s" onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='.7'">📊 View Saved Scenarios</button></div>
+<div style="text-align:center;margin-top:8px"><button onclick="showSavedScenarios('Match Probability Calculator')" style="background:none;border:none;color:var(--accent);font-size:11px;cursor:pointer;padding:6px 12px;opacity:.7;transition:opacity .15s" onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='.7'">📊 View Saved Scenarios</button></div>
 
 </div>`,
 
-v15:`<h3 class="serif">Career Strategy Builder</h3>
+v15:`<h3 class="serif">Career Roadmap Tool</h3>
 <p style="color:var(--text3);font-size:12px;margin-bottom:20px">Build a detailed, personalized roadmap. The more you share, the more specific your plan.</p>
 <div id="csb-tool" style="font-size:13px">
 
@@ -1595,11 +1595,11 @@ v15:`<h3 class="serif">Career Strategy Builder</h3>
 <button onclick="csbGenerate()" class="btn btn-a" style="width:100%;margin-top:16px;padding:14px">Build My Roadmap →</button>
 
 <div id="csb-results" style="margin-top:20px"></div>
-<div style="text-align:center;margin-top:8px"><button onclick="showSavedScenarios('Career Strategy Builder')" style="background:none;border:none;color:var(--accent);font-size:11px;cursor:pointer;padding:6px 12px;opacity:.7;transition:opacity .15s" onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='.7'">📊 View Saved Scenarios</button></div>
+<div style="text-align:center;margin-top:8px"><button onclick="showSavedScenarios('Career Roadmap Tool')" style="background:none;border:none;color:var(--accent);font-size:11px;cursor:pointer;padding:6px 12px;opacity:.7;transition:opacity .15s" onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='.7'">📊 View Saved Scenarios</button></div>
 
 </div>`,
 
-v17:`<h3 class="serif">Observership Finder</h3>
+v17:`<h3 class="serif">Observership Database</h3>
 <p style="color:var(--text3);font-size:12px;margin-bottom:10px">65 verified US observership programs with match intelligence, filtering, and personalized recommendations for IMGs and US medical students.</p>
 <div style="padding:8px 12px;background:rgba(234,179,8,.08);border:1px solid rgba(234,179,8,.2);border-radius:8px;margin-bottom:16px;display:flex;align-items:center;gap:8px"><span style="font-size:14px">⚠️</span><span style="font-size:10px;color:var(--text2);line-height:1.4"><strong>Data freshness:</strong> Program details are verified monthly. Information may be up to 30 days old. Always confirm deadlines, fees, and availability directly with the program before applying.</span></div>
 
@@ -1736,6 +1736,6 @@ v17:`<h3 class="serif">Observership Finder</h3>
 
 </div>
 
-<div style="text-align:center;margin-top:12px"><button onclick="showSavedScenarios('Observership Finder')" style="background:none;border:none;color:var(--accent);font-size:11px;cursor:pointer;padding:6px 12px;opacity:.7;transition:opacity .15s" onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='.7'">📊 View Saved Scenarios</button></div>
+<div style="text-align:center;margin-top:12px"><button onclick="showSavedScenarios('Observership Database')" style="background:none;border:none;color:var(--accent);font-size:11px;cursor:pointer;padding:6px 12px;opacity:.7;transition:opacity .15s" onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='.7'">📊 View Saved Scenarios</button></div>
 `
 };

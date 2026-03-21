@@ -201,5 +201,5 @@ function ilpCalculate(){
     h+='</div>';
   }
   document.getElementById('ilp-results').innerHTML=h;
-  recordToolUse('Income Leverage Playbook',score+'/'+maxScore,grade+' ('+scorePct+'%)',{inputs:{Salary:'$'+salary.toLocaleString(),Debt:'$'+debt.toLocaleString(),Employer:employer,Disability:disability,Spending:'$'+spending.toLocaleString(),'Tax-Advantaged':has401k,Advisor:hasAdvisor},highlights:['Score: '+score+'/'+maxScore+' ('+grade+')'].concat(wins).concat(flags)});
+  recordToolUse('Debt & Income Strategy Tool',score+'/'+maxScore,grade+' ('+scorePct+'%)',{inputs:{Salary:'$'+salary.toLocaleString(),Debt:'$'+debt.toLocaleString(),Employer:employer,Disability:disability,Spending:'$'+spending.toLocaleString(),'Tax-Advantaged':has401k,Advisor:hasAdvisor},highlights:['Score: '+score+'/'+maxScore+' ('+grade+')'].concat(wins).concat(flags)});
 }

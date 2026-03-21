@@ -23,7 +23,7 @@
   function animateSlide(idx){
     if(animated[idx])return; animated[idx]=true;
     if(idx===0){
-      // Match Positioning Score
+      // Match Probability Calculator
       var scoreEl=document.querySelector('.showcase-slide[data-slide="0"] .sc-score');
       var target=76, cur=0;
       var si=setInterval(function(){cur+=2;if(cur>=target){cur=target;clearInterval(si)}if(scoreEl)scoreEl.textContent=cur},30);
@@ -34,11 +34,11 @@
       });
       setTimeout(function(){document.querySelectorAll('.showcase-slide[data-slide="0"] .sc-tag').forEach(function(t){t.style.opacity='1'})},1200);
     }else if(idx===1){
-      // Observership Finder
+      // Observership Database
       setTimeout(function(){document.querySelectorAll('.obs-row').forEach(function(r){r.style.opacity='1';r.style.transform='translateX(0)'})},100);
       setTimeout(function(){document.querySelectorAll('.obs-tag').forEach(function(t){t.style.opacity='1'})},600);
     }else if(idx===2){
-      // Wealth Trajectory Model
+      // Financial Projection Tool
       var amtEl=document.querySelector('.fin-amount'), diffEl=document.querySelector('.fin-diff');
       var t1=14.2,c1=0;
       var fi=setInterval(function(){c1+=0.3;if(c1>=t1){c1=t1;clearInterval(fi)}if(amtEl)amtEl.textContent='$'+c1.toFixed(1)+'M'},40);
@@ -49,7 +49,7 @@
         var dot=document.querySelector('.fin-dot');if(dot)dot.style.opacity='1';
       },100);
     }else if(idx===3){
-      // Contract Intelligence Engine
+      // Contract Review Tool
       var valEl=document.querySelector('.contract-val'),rvuEl=document.querySelector('.contract-rvu');
       var tv=685000,cv=0;
       var vi=setInterval(function(){cv+=15000;if(cv>=tv){cv=tv;clearInterval(vi)}if(valEl)valEl.textContent='$'+cv.toLocaleString()},30);
@@ -57,11 +57,11 @@
       var ri=setInterval(function(){cr+=1;if(cr>=tr){cr=tr;clearInterval(ri)}if(rvuEl)rvuEl.innerHTML='$'+cr+'<span style="font-size:11px;font-weight:300;color:var(--text3)">/wRVU</span>'},30);
       setTimeout(function(){document.querySelectorAll('.contract-flag').forEach(function(f){f.style.opacity='1';f.style.transform='translateX(0)'})},400);
     }else if(idx===4){
-      // Offer Decision Matrix
+      // Job Offer Comparison Tool
       setTimeout(function(){document.querySelectorAll('.offer-row').forEach(function(r){r.style.opacity='1';r.style.transform='translateX(0)'})},100);
       setTimeout(function(){document.querySelectorAll('.offer-tag').forEach(function(t){t.style.opacity='1'})},800);
     }else if(idx===5){
-      // Career Pivot Engine
+      // Career Transition Planner
       setTimeout(function(){document.querySelectorAll('.pivot-card').forEach(function(c){c.style.opacity='1';c.style.transform='translateY(0)'})},100);
       setTimeout(function(){document.querySelectorAll('.pivot-factor').forEach(function(f){f.style.opacity='1';f.style.transform='translateX(0)'})},300);
       setTimeout(function(){var ps=document.querySelector('.pivot-score');if(ps)ps.style.opacity='1'},600);
@@ -150,29 +150,29 @@ function lpTab(name){
 
 // Landing page tool grid with expandable previews
 var LP_TOOLS=[
-  {icon:'\ud83d\udcca',name:'Competitiveness Analyzer',desc:'Score your profile against benchmarked metrics for your specialty.',
+  {icon:'\ud83d\udcca',name:'Match Probability Calculator',desc:'Score your profile against benchmarked metrics for your specialty.',
    preview:'<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:10px"><div style="text-align:center;padding:10px 6px;background:rgba(200,168,124,.08);border-radius:8px"><div style="font-size:18px;font-weight:700;color:var(--accent);font-family:var(--font-serif)">78</div><div style="font-size:8px;color:var(--text3)">Competitive</div></div><div style="text-align:center;padding:10px 6px;background:rgba(200,168,124,.08);border-radius:8px"><div style="font-size:18px;font-weight:700;color:var(--accent);font-family:var(--font-serif)">65</div><div style="font-size:8px;color:var(--text3)">Research</div></div><div style="text-align:center;padding:10px 6px;background:rgba(200,168,124,.08);border-radius:8px"><div style="font-size:18px;font-weight:700;color:var(--accent);font-family:var(--font-serif)">82</div><div style="font-size:8px;color:var(--text3)">Readiness</div></div><div style="text-align:center;padding:10px 6px;background:rgba(106,191,75,.08);border-radius:8px"><div style="font-size:18px;font-weight:700;color:#6abf4b;font-family:var(--font-serif)">71</div><div style="font-size:8px;color:var(--text3)">Financial</div></div></div><div style="font-size:10px;color:var(--text3);line-height:1.5;font-style:italic">\u201cResearch score of 65 indicates a gap \u2014 2 additional first-author publications would move this to 78.\u201d</div>'},
-  {icon:'\ud83d\udcc8',name:'Financial Trajectory Simulator',desc:'Model 10\u201330 year income, savings, and debt paths.',
+  {icon:'\ud83d\udcc8',name:'Financial Projection Tool',desc:'Model 10\u201330 year income, savings, and debt paths.',
    preview:'<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px"><div style="padding:8px;background:rgba(106,191,75,.06);border:1px solid rgba(106,191,75,.15);border-radius:8px;text-align:center"><div style="font-size:8px;color:var(--text3)">With PSLF</div><div style="font-size:16px;font-weight:700;color:#6abf4b;font-family:var(--font-serif)">$4.2M</div><div style="font-size:8px;color:var(--text3)">10-yr net worth</div></div><div style="padding:8px;background:rgba(200,168,124,.06);border:1px solid rgba(200,168,124,.15);border-radius:8px;text-align:center"><div style="font-size:8px;color:var(--text3)">Without PSLF</div><div style="font-size:16px;font-weight:700;color:var(--accent);font-family:var(--font-serif)">$3.6M</div><div style="font-size:8px;color:var(--text3)">10-yr net worth</div></div></div><div style="font-size:10px;color:var(--text3);line-height:1.5;font-style:italic">\u201cPSLF creates a $600K advantage over refinancing \u2014 the most common mistake physicians make.\u201d</div>'},
-  {icon:'\ud83d\udcc4',name:'Contract Intelligence Tool',desc:'Decode contracts clause by clause. Surface red flags and negotiation strategies.',
+  {icon:'\ud83d\udcc4',name:'Contract Review Tool',desc:'Decode contracts clause by clause. Surface red flags and negotiation strategies.',
    preview:'<div style="display:flex;align-items:center;gap:12px;margin-bottom:10px"><div style="text-align:center"><div style="font-size:24px;font-weight:700;color:var(--accent);font-family:var(--font-serif)">B+</div><div style="font-size:8px;color:var(--text3)">Grade</div></div><div style="flex:1"><div style="display:flex;align-items:center;gap:4px;margin-bottom:3px"><span style="font-size:8px;color:var(--text3);width:55px">Base Salary</span><div style="flex:1;height:4px;background:rgba(200,168,124,.15);border-radius:2px"><div style="height:100%;width:82%;background:#6abf4b;border-radius:2px"></div></div></div><div style="display:flex;align-items:center;gap:4px;margin-bottom:3px"><span style="font-size:8px;color:var(--text3);width:55px">RVU Rate</span><div style="flex:1;height:4px;background:rgba(200,168,124,.15);border-radius:2px"><div style="height:100%;width:68%;background:var(--accent);border-radius:2px"></div></div></div><div style="display:flex;align-items:center;gap:4px"><span style="font-size:8px;color:#c44d56;width:55px">Non-compete</span><div style="flex:1;height:4px;background:rgba(200,168,124,.15);border-radius:2px"><div style="height:100%;width:35%;background:#c44d56;border-radius:2px"></div></div><span style="font-size:8px;color:#c44d56">\u26a0</span></div></div></div><div style="font-size:10px;color:var(--text3);line-height:1.5;font-style:italic">\u201cNon-compete: 2yr/30mi is aggressive. Negotiate to 1yr/15mi \u2014 #1 leverage point.\u201d</div>'},
-  {icon:'\ud83e\uddec',name:'Specialty Fit Analyzer',desc:'Match your profile and goals against specialties with compatibility scores.',
+  {icon:'\ud83e\uddec',name:'Specialty Fit Assessment',desc:'Match your profile and goals against specialties with compatibility scores.',
    preview:'<div style="margin-bottom:10px"><div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><span style="font-size:9px;color:var(--text2);width:65px">Cardiology</span><div style="flex:1;height:6px;background:rgba(200,168,124,.12);border-radius:3px"><div style="height:100%;width:92%;background:var(--accent);border-radius:3px"></div></div><span style="font-size:9px;font-weight:600;color:var(--accent)">92%</span></div><div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><span style="font-size:9px;color:var(--text2);width:65px">GI</span><div style="flex:1;height:6px;background:rgba(200,168,124,.12);border-radius:3px"><div style="height:100%;width:78%;background:var(--accent);border-radius:3px;opacity:.7"></div></div><span style="font-size:9px;color:var(--text3)">78%</span></div><div style="display:flex;align-items:center;gap:8px"><span style="font-size:9px;color:var(--text2);width:65px">Pulm/Crit</span><div style="flex:1;height:6px;background:rgba(200,168,124,.12);border-radius:3px"><div style="height:100%;width:71%;background:var(--accent);border-radius:3px;opacity:.5"></div></div><span style="font-size:9px;color:var(--text3)">71%</span></div></div><div style="font-size:10px;color:var(--text3);line-height:1.5;font-style:italic">\u201cCardiology is your strongest fit \u2014 driven by procedural interest and research alignment.\u201d</div>'},
-  {icon:'\ud83c\udfaf',name:'Match Competitiveness Calculator',desc:'Calculate weighted match probability by program tier.',
+  {icon:'\ud83c\udfaf',name:'Match Probability Calculator',desc:'Calculate weighted match probability by program tier.',
    preview:'<div style="text-align:center;margin-bottom:10px"><div style="font-size:28px;font-weight:700;color:#6abf4b;font-family:var(--font-serif)">74%</div><div style="font-size:9px;color:var(--text3)">Estimated Match Probability \u2014 Cardiology</div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px"><div style="padding:6px;background:rgba(106,191,75,.06);border-radius:6px;text-align:center"><div style="font-size:9px;color:var(--text3)">Top 20</div><div style="font-size:12px;font-weight:600;color:#6abf4b">68%</div></div><div style="padding:6px;background:rgba(200,168,124,.06);border-radius:6px;text-align:center"><div style="font-size:9px;color:var(--text3)">Top 50</div><div style="font-size:12px;font-weight:600;color:var(--accent)">82%</div></div></div><div style="font-size:10px;color:var(--text3);line-height:1.5;font-style:italic">\u201cStep 2 of 258 is above 75th percentile. Research is your gap \u2014 2 more pubs pushes Top-20 to 79%.\u201d</div>'},
-  {icon:'\ud83d\uddfa\ufe0f',name:'Career Strategy Builder',desc:'Build a milestone roadmap from current stage to goal.',
+  {icon:'\ud83d\uddfa\ufe0f',name:'Career Roadmap Tool',desc:'Build a milestone roadmap from current stage to goal.',
    preview:'<div style="margin-bottom:10px;border-left:2px solid var(--accent);padding-left:10px"><div style="margin-bottom:8px"><div style="font-size:9px;font-weight:600;color:var(--accent)">MONTH 1\u20133</div><div style="font-size:10px;color:var(--text2)">Submit 2 abstracts, secure research mentor, begin LOR conversations</div></div><div style="margin-bottom:8px"><div style="font-size:9px;font-weight:600;color:var(--accent)">MONTH 4\u20136</div><div style="font-size:10px;color:var(--text2)">Away rotations, personal statement, submit ERAS</div></div><div><div style="font-size:9px;font-weight:600;color:var(--accent)">MONTH 7\u201312</div><div style="font-size:10px;color:var(--text2)">Interview circuit, rank list strategy, match prep</div></div></div><div style="font-size:10px;color:var(--text3);line-height:1.5;font-style:italic">\u201cCritical window is months 1\u20133. The research gap must close before ERAS opens.\u201d</div>'},
-  {icon:'\ud83c\udfa4',name:'Mock Interview Simulator',desc:'Practice specialty-specific interview questions with structured feedback.',
+  {icon:'\ud83c\udfa4',name:'Interview Practice Tool',desc:'Practice specialty-specific interview questions with structured feedback.',
    preview:'<div style="margin-bottom:10px;padding:10px;background:rgba(200,168,124,.06);border-radius:8px"><div style="font-size:9px;font-weight:600;color:var(--accent);margin-bottom:4px">SAMPLE QUESTION</div><div style="font-size:11px;color:var(--text);font-weight:500;margin-bottom:6px">\u201cWhy cardiology? What draws you to the field?\u201d</div><div style="font-size:9px;color:var(--text3)">Grade: <span style="color:#6abf4b;font-weight:600">B+</span> \u00b7 Structure: Strong \u00b7 Authenticity: Needs work</div></div><div style="font-size:10px;color:var(--text3);line-height:1.5;font-style:italic">\u201cGood structure but sounds rehearsed. Add a specific patient story.\u201d</div>'},
-  {icon:'\ud83c\udfc6',name:'Fellowship Readiness Worksheet',desc:'Gap analysis for fellowship applications.',
+  {icon:'\ud83c\udfc6',name:'Fellowship Readiness Assessment',desc:'Gap analysis for fellowship applications.',
    preview:'<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border)"><span style="font-size:9px;color:var(--text2)">Step 2 Score</span><span style="font-size:9px;font-weight:600;color:#6abf4b">\u2713 Strong</span></div><div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border)"><span style="font-size:9px;color:var(--text2)">Research</span><span style="font-size:9px;font-weight:600;color:#c44d56">\u26a0 Gap</span></div><div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border)"><span style="font-size:9px;color:var(--text2)">LORs</span><span style="font-size:9px;font-weight:600;color:var(--accent)">\u25cb Partial</span></div><div style="display:flex;justify-content:space-between;padding:4px 0"><span style="font-size:9px;color:var(--text2)">Leadership</span><span style="font-size:9px;font-weight:600;color:#6abf4b">\u2713 Strong</span></div></div><div style="font-size:10px;color:var(--text3);line-height:1.5;font-style:italic">\u201cPriority #1: close the research gap before ERAS. Everything else is on track.\u201d</div>'},
   {icon:'\ud83d\udcb0',name:'RVU Modeling & Offer Comparison',desc:'Side-by-side comparison of job offers and RVU scenarios.',
    preview:'<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px"><div style="padding:8px;background:rgba(106,191,75,.06);border:1px solid rgba(106,191,75,.12);border-radius:8px;text-align:center"><div style="font-size:8px;color:var(--text3)">Offer A (Hospital)</div><div style="font-size:14px;font-weight:700;color:#6abf4b;font-family:var(--font-serif)">$580K</div><div style="font-size:8px;color:var(--text3)">Year 1</div></div><div style="padding:8px;background:rgba(200,168,124,.06);border:1px solid rgba(200,168,124,.12);border-radius:8px;text-align:center"><div style="font-size:8px;color:var(--text3)">Offer B (Private)</div><div style="font-size:14px;font-weight:700;color:var(--accent);font-family:var(--font-serif)">$720K</div><div style="font-size:8px;color:var(--text3)">Year 3+</div></div></div><div style="font-size:10px;color:var(--text3);line-height:1.5;font-style:italic">\u201cOffer B generates $1.4M more over 10 years \u2014 but carries more risk.\u201d</div>'},
-  {icon:'\ud83d\udd04',name:'Career Pivot Decision Engine',desc:'Evaluate career changes with structured cost-benefit analysis.',
+  {icon:'\ud83d\udd04',name:'Career Transition Planner',desc:'Evaluate career changes with structured cost-benefit analysis.',
    preview:'<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px"><div style="padding:8px;background:rgba(200,168,124,.06);border-radius:8px;text-align:center"><div style="font-size:8px;color:var(--text3)">Stay Current</div><div style="font-size:14px;font-weight:700;color:var(--accent);font-family:var(--font-serif)">$8.2M</div><div style="font-size:8px;color:var(--text3)">Lifetime</div></div><div style="padding:8px;background:rgba(106,191,75,.06);border-radius:8px;text-align:center"><div style="font-size:8px;color:var(--text3)">Switch Now</div><div style="font-size:14px;font-weight:700;color:#6abf4b;font-family:var(--font-serif)">$9.8M</div><div style="font-size:8px;color:var(--text3)">Lifetime</div></div></div><div style="font-size:10px;color:var(--text3);line-height:1.5;font-style:italic">\u201cSwitching nets $1.6M more even with 2 extra years of training.\u201d</div>'},
-  {icon:'\ud83d\udd2c',name:'Research ROI Calculator',desc:'Score publications and projects by real competitive value.',
+  {icon:'\ud83d\udd2c',name:'Research Impact Calculator',desc:'Score publications and projects by real competitive value.',
    preview:'<div style="text-align:center;margin-bottom:10px"><div style="font-size:24px;font-weight:700;color:var(--accent);font-family:var(--font-serif)">62 / 100</div><div style="font-size:9px;color:var(--text3)">Research Portfolio Score</div><div style="height:6px;background:rgba(200,168,124,.12);border-radius:3px;margin-top:6px"><div style="height:100%;width:62%;background:var(--accent);border-radius:3px"></div></div></div><div style="font-size:10px;color:var(--text3);line-height:1.5;font-style:italic">\u201c3 pubs score well, but 0 first-author papers is the gap. One first-author adds ~18 points.\u201d</div>'},
-  {icon:'\ud83d\udccb',name:'Contract Risk Scorecard',desc:'Quick 5-minute risk assessment for any offer.',
+  {icon:'\ud83d\udccb',name:'Contract Risk Assessment',desc:'Quick 5-minute risk assessment for any offer.',
    preview:'<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border)"><span style="font-size:9px;color:var(--text2)">Compensation</span><span style="font-size:9px;font-weight:600;color:#6abf4b">Low Risk</span></div><div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border)"><span style="font-size:9px;color:var(--text2)">Non-Compete</span><span style="font-size:9px;font-weight:600;color:#c44d56">High Risk</span></div><div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border)"><span style="font-size:9px;color:var(--text2)">Tail Coverage</span><span style="font-size:9px;font-weight:600;color:var(--accent)">Medium</span></div><div style="display:flex;justify-content:space-between;padding:4px 0"><span style="font-size:9px;color:var(--text2)">Termination</span><span style="font-size:9px;font-weight:600;color:#6abf4b">Low Risk</span></div></div><div style="font-size:10px;color:var(--text3);line-height:1.5;font-style:italic">\u201cOverall: Medium risk. The non-compete is the issue \u2014 negotiate before signing.\u201d</div>'}
 ];
 function buildLPToolGrid(){
@@ -242,129 +242,129 @@ function hookShowResults(){
   var G='#6abf4b',A='#c8a87c',W='#e8a838';
   // 3 tool recs per combo [icon,name,desc]
   var T={
-    student_specialty:     [['🧬','Specialty Fit Analyzer','Match your personality, values, and lifestyle to specialties.'],['🏆','Match Competitiveness Calculator','Check your competitiveness for each target.'],['🔮','Financial Trajectory Simulator','See how specialty choice impacts 30-year wealth.']],
-    student_match:         [['🏆','Match Competitiveness Calculator','See your real match probability by Step scores, research, and tier.'],['🎤','Mock Interview Simulator','Practice the exact questions PDs will ask.'],['📊','Career Strategy Builder','Build a step-by-step roadmap to your target.']],
-    student_fellowship:    [['🏆','Match Competitiveness Calculator','Benchmark yourself early for competitive fellowships.'],['🔬','Research ROI Calculator','Know which research activities move the needle most.'],['📊','Career Strategy Builder','Plan your fellowship trajectory now.']],
-    student_contract:      [['📋','Contract Intelligence Tool','Learn what to look for before you ever negotiate.'],['🔮','Financial Trajectory Simulator','Plan your first 3 years of attending income.'],['💰','Financial Planning Engine','PSLF vs refinance — make this decision early.']],
-    student_finance:       [['🔮','Financial Trajectory Simulator','See how specialty choice impacts lifetime wealth.'],['💰','Financial Planning Engine','The 5 financial decisions worth millions.'],['📈','RVU Compensation Modeler','Understand how physician pay actually works.']],
-    student_direction:     [['🧬','Specialty Fit Analyzer','Discover which specialties fit your personality and goals.'],['🏆','Match Competitiveness Calculator','Check competitiveness for each option.'],['🔮','Financial Trajectory Simulator','Compare financial trajectories side by side.']],
-    resident_specialty:    [['🧬','Specialty Fit Analyzer','Find which specialties actually fit you.'],['🏆','Match Competitiveness Calculator','Check how competitive you are for each option.'],['⚖️','Career Pivot Decision Engine','Structured framework if you\'re rethinking direction.']],
-    resident_match:        [['🏆','Match Competitiveness Calculator','See your real fellowship match probability.'],['🎤','Mock Interview Simulator','Practice real interview questions with honest feedback.'],['🔬','Research ROI Calculator','Maximize research ROI with limited time.']],
-    resident_fellowship:   [['🏆','Match Competitiveness Calculator','See your fellowship match probability.'],['🎤','Mock Interview Simulator','Practice fellowship interview questions.'],['📊','Career Strategy Builder','Build your personalized fellowship roadmap.']],
-    resident_contract:     [['📋','Contract Intelligence Tool','Score your first attending contract — catch red flags.'],['🎤','Mock Interview Simulator','Practice your negotiation pitch.'],['📈','RVU Compensation Modeler','Model your real compensation by RVU volume.']],
-    resident_finance:      [['🔮','Financial Trajectory Simulator','Your first 3 years determine the next 20.'],['💰','Financial Planning Engine','PSLF, disability, tax strategy — get these right.'],['📈','RVU Compensation Modeler','Model what you\'ll actually earn.']],
-    resident_direction:    [['🧬','Specialty Fit Analyzer','Find which specialties actually fit you now.'],['⚖️','Career Pivot Decision Engine','Should you pivot? Structured decision engine.'],['🔮','Financial Trajectory Simulator','Compare financial trajectories across paths.']],
-    fellow_specialty:      [['🧬','Specialty Fit Analyzer','Reassess your fit — your priorities have changed.'],['⚖️','Career Pivot Decision Engine','Structured pivot analysis with financial modeling.'],['🔮','Financial Trajectory Simulator','Model the financial impact of different paths.']],
-    fellow_match:          [['🏆','Match Competitiveness Calculator','Benchmark for advanced fellowship.'],['🎤','Mock Interview Simulator','Practice fellowship director questions.'],['🔬','Research ROI Calculator','Optimize your research portfolio.']],
-    fellow_fellowship:     [['🏆','Match Competitiveness Calculator','Benchmark for advanced subspecialty.'],['🎤','Mock Interview Simulator','Practice the questions directors actually ask.'],['🔬','Research ROI Calculator','Optimize your research portfolio.']],
-    fellow_contract:       [['📋','Contract Intelligence Tool','Score your first attending contract with benchmarks.'],['🎤','Mock Interview Simulator','Practice salary negotiation with AI feedback.'],['📈','RVU Compensation Modeler','Model your actual take-home compensation.']],
-    fellow_finance:        [['🔮','Financial Trajectory Simulator','Visualize your lifetime wealth trajectory.'],['💰','Financial Planning Engine','PSLF, disability, tax optimization.'],['📈','RVU Compensation Modeler','Understand your future compensation structure.']],
-    fellow_direction:      [['⚖️','Career Pivot Decision Engine','Evaluating a pivot? Use this framework.'],['🔮','Financial Trajectory Simulator','Compare career paths financially.'],['🧬','Specialty Fit Analyzer','Rediscover what actually fits you now.']],
-    attending_specialty:   [['🧬','Specialty Fit Analyzer','Reassess your fit — it\'s never too late.'],['⚖️','Career Pivot Decision Engine','Structured career pivot analysis.'],['🔮','Financial Trajectory Simulator','Financial cost of changing paths.']],
-    attending_match:       [['🏆','Match Competitiveness Calculator','Assess competitiveness for additional training.'],['🔬','Research ROI Calculator','Build a research portfolio strategically.'],['🔮','Financial Trajectory Simulator','Financial impact of more training.']],
-    attending_fellowship:  [['🏆','Match Competitiveness Calculator','Assess competitiveness for additional training.'],['🔬','Research ROI Calculator','Build a research portfolio strategically.'],['🔮','Financial Trajectory Simulator','Financial impact of more training.']],
-    attending_contract:    [['📋','Contract Intelligence Tool','Full contract analysis with MGMA benchmarks.'],['🎤','Mock Interview Simulator','Practice salary negotiation answers.'],['📈','RVU Compensation Modeler','Are you being paid fairly?']],
-    attending_finance:     [['🔮','Financial Trajectory Simulator','30-year trajectory — are you on track?'],['💰','Financial Planning Engine','Tax strategy, disability, advisor selection.'],['📈','RVU Compensation Modeler','Are you being compensated fairly?']],
-    attending_direction:   [['⚖️','Career Pivot Decision Engine','Career pivot analysis with financial modeling.'],['🔮','Financial Trajectory Simulator','What does a pivot cost over 30 years?'],['🧬','Specialty Fit Analyzer','Discover what fits you now.']],
-    pivot_specialty:       [['🧬','Specialty Fit Analyzer','Discover which specialties match where you are now.'],['⚖️','Career Pivot Decision Engine','Run a structured pivot analysis.'],['🔮','Financial Trajectory Simulator','Model the financial cost of changing.']],
-    pivot_match:           [['🏆','Match Competitiveness Calculator','Check competitiveness for the new target.'],['⚖️','Career Pivot Decision Engine','Structured pivot decision engine.'],['🔮','Financial Trajectory Simulator','Financial impact of retraining.']],
-    pivot_fellowship:      [['🏆','Match Competitiveness Calculator','Benchmark for the new subspecialty.'],['⚖️','Career Pivot Decision Engine','Is this pivot worth it? Run the numbers.'],['🔮','Financial Trajectory Simulator','Financial cost of more training.']],
-    pivot_contract:        [['📋','Contract Intelligence Tool','Score contracts in your new field.'],['⚖️','Career Pivot Decision Engine','Make sure the pivot makes financial sense.'],['📈','RVU Compensation Modeler','Compare compensation across specialties.']],
-    pivot_finance:         [['🔮','Financial Trajectory Simulator','What does this career change cost over 30 years?'],['⚖️','Career Pivot Decision Engine','Decision engine with financial modeling.'],['💰','Financial Planning Engine','Protect your finances during the pivot.']],
-    pivot_direction:       [['⚖️','Career Pivot Decision Engine','The definitive career pivot framework.'],['🧬','Specialty Fit Analyzer','Discover what actually fits you now.'],['🔮','Financial Trajectory Simulator','Model the 30-year financial impact.']]
+    student_specialty:     [['🧬','Specialty Fit Assessment','Match your personality, values, and lifestyle to specialties.'],['🏆','Match Probability Calculator','Check your competitiveness for each target.'],['🔮','Financial Projection Tool','See how specialty choice impacts 30-year wealth.']],
+    student_match:         [['🏆','Match Probability Calculator','See your real match probability by Step scores, research, and tier.'],['🎤','Interview Practice Tool','Practice the exact questions PDs will ask.'],['📊','Career Roadmap Tool','Build a step-by-step roadmap to your target.']],
+    student_fellowship:    [['🏆','Match Probability Calculator','Benchmark yourself early for competitive fellowships.'],['🔬','Research Impact Calculator','Know which research activities move the needle most.'],['📊','Career Roadmap Tool','Plan your fellowship trajectory now.']],
+    student_contract:      [['📋','Contract Review Tool','Learn what to look for before you ever negotiate.'],['🔮','Financial Projection Tool','Plan your first 3 years of attending income.'],['💰','Financial Planning Engine','PSLF vs refinance — make this decision early.']],
+    student_finance:       [['🔮','Financial Projection Tool','See how specialty choice impacts lifetime wealth.'],['💰','Financial Planning Engine','The 5 financial decisions worth millions.'],['📈','RVU Compensation Modeler','Understand how physician pay actually works.']],
+    student_direction:     [['🧬','Specialty Fit Assessment','Discover which specialties fit your personality and goals.'],['🏆','Match Probability Calculator','Check competitiveness for each option.'],['🔮','Financial Projection Tool','Compare financial trajectories side by side.']],
+    resident_specialty:    [['🧬','Specialty Fit Assessment','Find which specialties actually fit you.'],['🏆','Match Probability Calculator','Check how competitive you are for each option.'],['⚖️','Career Transition Planner','Structured framework if you\'re rethinking direction.']],
+    resident_match:        [['🏆','Match Probability Calculator','See your real fellowship match probability.'],['🎤','Interview Practice Tool','Practice real interview questions with honest feedback.'],['🔬','Research Impact Calculator','Maximize research ROI with limited time.']],
+    resident_fellowship:   [['🏆','Match Probability Calculator','See your fellowship match probability.'],['🎤','Interview Practice Tool','Practice fellowship interview questions.'],['📊','Career Roadmap Tool','Build your personalized fellowship roadmap.']],
+    resident_contract:     [['📋','Contract Review Tool','Score your first attending contract — catch red flags.'],['🎤','Interview Practice Tool','Practice your negotiation pitch.'],['📈','RVU Compensation Modeler','Model your real compensation by RVU volume.']],
+    resident_finance:      [['🔮','Financial Projection Tool','Your first 3 years determine the next 20.'],['💰','Financial Planning Engine','PSLF, disability, tax strategy — get these right.'],['📈','RVU Compensation Modeler','Model what you\'ll actually earn.']],
+    resident_direction:    [['🧬','Specialty Fit Assessment','Find which specialties actually fit you now.'],['⚖️','Career Transition Planner','Should you pivot? Structured decision engine.'],['🔮','Financial Projection Tool','Compare financial trajectories across paths.']],
+    fellow_specialty:      [['🧬','Specialty Fit Assessment','Reassess your fit — your priorities have changed.'],['⚖️','Career Transition Planner','Structured pivot analysis with financial modeling.'],['🔮','Financial Projection Tool','Model the financial impact of different paths.']],
+    fellow_match:          [['🏆','Match Probability Calculator','Benchmark for advanced fellowship.'],['🎤','Interview Practice Tool','Practice fellowship director questions.'],['🔬','Research Impact Calculator','Optimize your research portfolio.']],
+    fellow_fellowship:     [['🏆','Match Probability Calculator','Benchmark for advanced subspecialty.'],['🎤','Interview Practice Tool','Practice the questions directors actually ask.'],['🔬','Research Impact Calculator','Optimize your research portfolio.']],
+    fellow_contract:       [['📋','Contract Review Tool','Score your first attending contract with benchmarks.'],['🎤','Interview Practice Tool','Practice salary negotiation with AI feedback.'],['📈','RVU Compensation Modeler','Model your actual take-home compensation.']],
+    fellow_finance:        [['🔮','Financial Projection Tool','Visualize your lifetime wealth trajectory.'],['💰','Financial Planning Engine','PSLF, disability, tax optimization.'],['📈','RVU Compensation Modeler','Understand your future compensation structure.']],
+    fellow_direction:      [['⚖️','Career Transition Planner','Evaluating a pivot? Use this framework.'],['🔮','Financial Projection Tool','Compare career paths financially.'],['🧬','Specialty Fit Assessment','Rediscover what actually fits you now.']],
+    attending_specialty:   [['🧬','Specialty Fit Assessment','Reassess your fit — it\'s never too late.'],['⚖️','Career Transition Planner','Structured career pivot analysis.'],['🔮','Financial Projection Tool','Financial cost of changing paths.']],
+    attending_match:       [['🏆','Match Probability Calculator','Assess competitiveness for additional training.'],['🔬','Research Impact Calculator','Build a research portfolio strategically.'],['🔮','Financial Projection Tool','Financial impact of more training.']],
+    attending_fellowship:  [['🏆','Match Probability Calculator','Assess competitiveness for additional training.'],['🔬','Research Impact Calculator','Build a research portfolio strategically.'],['🔮','Financial Projection Tool','Financial impact of more training.']],
+    attending_contract:    [['📋','Contract Review Tool','Full contract analysis with MGMA benchmarks.'],['🎤','Interview Practice Tool','Practice salary negotiation answers.'],['📈','RVU Compensation Modeler','Are you being paid fairly?']],
+    attending_finance:     [['🔮','Financial Projection Tool','30-year trajectory — are you on track?'],['💰','Financial Planning Engine','Tax strategy, disability, advisor selection.'],['📈','RVU Compensation Modeler','Are you being compensated fairly?']],
+    attending_direction:   [['⚖️','Career Transition Planner','Career pivot analysis with financial modeling.'],['🔮','Financial Projection Tool','What does a pivot cost over 30 years?'],['🧬','Specialty Fit Assessment','Discover what fits you now.']],
+    pivot_specialty:       [['🧬','Specialty Fit Assessment','Discover which specialties match where you are now.'],['⚖️','Career Transition Planner','Run a structured pivot analysis.'],['🔮','Financial Projection Tool','Model the financial cost of changing.']],
+    pivot_match:           [['🏆','Match Probability Calculator','Check competitiveness for the new target.'],['⚖️','Career Transition Planner','Structured pivot decision engine.'],['🔮','Financial Projection Tool','Financial impact of retraining.']],
+    pivot_fellowship:      [['🏆','Match Probability Calculator','Benchmark for the new subspecialty.'],['⚖️','Career Transition Planner','Is this pivot worth it? Run the numbers.'],['🔮','Financial Projection Tool','Financial cost of more training.']],
+    pivot_contract:        [['📋','Contract Review Tool','Score contracts in your new field.'],['⚖️','Career Transition Planner','Make sure the pivot makes financial sense.'],['📈','RVU Compensation Modeler','Compare compensation across specialties.']],
+    pivot_finance:         [['🔮','Financial Projection Tool','What does this career change cost over 30 years?'],['⚖️','Career Transition Planner','Decision engine with financial modeling.'],['💰','Financial Planning Engine','Protect your finances during the pivot.']],
+    pivot_direction:       [['⚖️','Career Transition Planner','The definitive career pivot framework.'],['🧬','Specialty Fit Assessment','Discover what actually fits you now.'],['🔮','Financial Projection Tool','Model the 30-year financial impact.']]
   };
   // 2 demo cards per combo {icon,title,tag,c:[[label,sub,val,color,note],...],ins}
   var D={
     student_specialty:[
-      {icon:'🔮',title:'Financial Trajectory Simulator',tag:'How does specialty choice impact 30-year wealth?',c:[['Dermatology','At age 45','$2.8M',G,'net worth'],['Family Medicine','At age 45','$680K',A,'net worth']],ins:'$2.1M difference by age 45. Your specialty choice is a multi-million dollar decision.'},
-      {icon:'🏆',title:'Match Competitiveness Calculator',tag:'Are you competitive for your target?',c:[['Your Profile','Step 252 · 3 pubs','72',A,'score'],['Avg Matched','Orthopedic Surgery','84',G,'score']],ins:'12-point gap. HeartWise shows exactly what to improve.'}],
+      {icon:'🔮',title:'Financial Projection Tool',tag:'How does specialty choice impact 30-year wealth?',c:[['Dermatology','At age 45','$2.8M',G,'net worth'],['Family Medicine','At age 45','$680K',A,'net worth']],ins:'$2.1M difference by age 45. Your specialty choice is a multi-million dollar decision.'},
+      {icon:'🏆',title:'Match Probability Calculator',tag:'Are you competitive for your target?',c:[['Your Profile','Step 252 · 3 pubs','72',A,'score'],['Avg Matched','Orthopedic Surgery','84',G,'score']],ins:'12-point gap. HeartWise shows exactly what to improve.'}],
     student_match:[
-      {icon:'🏆',title:'Match Competitiveness Calculator',tag:'Where do you actually stand?',c:[['Your Profile','Step 248 · 2 pubs','68',A,'out of 100'],['Avg Matched','Radiology','79',G,'out of 100']],ins:'11-point gap. One more pub and a stronger LOR closes it.'},
-      {icon:'🎤',title:'Mock Interview Simulator',tag:'Practice the exact questions PDs ask.',c:[['Behavioral','First attempt','6/10',W,'score'],['After Practice','Same question, round 3','8.5/10',G,'score']],ins:'42% improvement with practice. Most applicants walk in cold.'}],
+      {icon:'🏆',title:'Match Probability Calculator',tag:'Where do you actually stand?',c:[['Your Profile','Step 248 · 2 pubs','68',A,'out of 100'],['Avg Matched','Radiology','79',G,'out of 100']],ins:'11-point gap. One more pub and a stronger LOR closes it.'},
+      {icon:'🎤',title:'Interview Practice Tool',tag:'Practice the exact questions PDs ask.',c:[['Behavioral','First attempt','6/10',W,'score'],['After Practice','Same question, round 3','8.5/10',G,'score']],ins:'42% improvement with practice. Most applicants walk in cold.'}],
     student_fellowship:[
-      {icon:'🏆',title:'Match Competitiveness Calculator',tag:'Start tracking fellowship competitiveness now.',c:[['Your Profile','MS-3 · 1 pub · Step 248','58',W,'early score'],['Target','Cardiology Fellowship','82',G,'avg matched']],ins:'24-point gap — but you have time. HeartWise shows where to invest.'},
-      {icon:'🔬',title:'Research ROI Calculator',tag:'Not all research is created equal.',c:[['Case Report','3 months effort','+2 pts',A,'match impact'],['First-Author Original','8 months effort','+11 pts',G,'match impact']],ins:'5.5x more impact for 2.7x the effort.'}],
+      {icon:'🏆',title:'Match Probability Calculator',tag:'Start tracking fellowship competitiveness now.',c:[['Your Profile','MS-3 · 1 pub · Step 248','58',W,'early score'],['Target','Cardiology Fellowship','82',G,'avg matched']],ins:'24-point gap — but you have time. HeartWise shows where to invest.'},
+      {icon:'🔬',title:'Research Impact Calculator',tag:'Not all research is created equal.',c:[['Case Report','3 months effort','+2 pts',A,'match impact'],['First-Author Original','8 months effort','+11 pts',G,'match impact']],ins:'5.5x more impact for 2.7x the effort.'}],
     student_contract:[
-      {icon:'📋',title:'Contract Intelligence Tool',tag:'Know what a fair offer looks like.',c:[['Academic Center','Internal Medicine','$245K',A,'base salary'],['Private Practice','Internal Medicine','$310K',G,'base salary']],ins:'$65K gap in base — before RVU bonuses and signing.'},
-      {icon:'🔮',title:'Financial Trajectory Simulator',tag:'One negotiation changes everything.',c:[['Accepted $240K','No negotiation','$1.4M',A,'net worth at 45'],['Negotiated $285K','+signing bonus','$1.9M',G,'net worth at 45']],ins:'$500K more by age 45 from one conversation.'}],
+      {icon:'📋',title:'Contract Review Tool',tag:'Know what a fair offer looks like.',c:[['Academic Center','Internal Medicine','$245K',A,'base salary'],['Private Practice','Internal Medicine','$310K',G,'base salary']],ins:'$65K gap in base — before RVU bonuses and signing.'},
+      {icon:'🔮',title:'Financial Projection Tool',tag:'One negotiation changes everything.',c:[['Accepted $240K','No negotiation','$1.4M',A,'net worth at 45'],['Negotiated $285K','+signing bonus','$1.9M',G,'net worth at 45']],ins:'$500K more by age 45 from one conversation.'}],
     student_finance:[
-      {icon:'🔮',title:'Financial Trajectory Simulator',tag:'Specialty choice = financial decision.',c:[['Dermatology','At age 35','$650K',G,'net worth'],['Internal Medicine','At age 35','$120K',A,'net worth']],ins:'$530K difference by age 35.'},
+      {icon:'🔮',title:'Financial Projection Tool',tag:'Specialty choice = financial decision.',c:[['Dermatology','At age 35','$650K',G,'net worth'],['Internal Medicine','At age 35','$120K',A,'net worth']],ins:'$530K difference by age 35.'},
       {icon:'💰',title:'Financial Planning Engine',tag:'PSLF or refinance? Six-figure decision.',c:[['PSLF Path','10-year forgiveness','$48K',G,'total paid'],['Refinance','Standard repayment','$340K',W,'total paid']],ins:'$292K difference. The right strategy depends on your path.'}],
     student_direction:[
-      {icon:'🧬',title:'Specialty Fit Analyzer',tag:'Stop guessing. Find what fits.',c:[['Your Top Match','Based on values + lifestyle','92%',G,'fit score'],['Current Plan','What you assumed','64%',W,'fit score']],ins:'28-point gap between what fits and what you assumed.'},
-      {icon:'🔮',title:'Financial Trajectory Simulator',tag:'Compare any two paths.',c:[['Cardiology','At age 50','$4.2M',G,'net worth'],['Psychiatry','At age 50','$2.1M',A,'net worth']],ins:'$2.1M gap — but Psychiatry scores higher on lifestyle. Weigh both.'}],
+      {icon:'🧬',title:'Specialty Fit Assessment',tag:'Stop guessing. Find what fits.',c:[['Your Top Match','Based on values + lifestyle','92%',G,'fit score'],['Current Plan','What you assumed','64%',W,'fit score']],ins:'28-point gap between what fits and what you assumed.'},
+      {icon:'🔮',title:'Financial Projection Tool',tag:'Compare any two paths.',c:[['Cardiology','At age 50','$4.2M',G,'net worth'],['Psychiatry','At age 50','$2.1M',A,'net worth']],ins:'$2.1M gap — but Psychiatry scores higher on lifestyle. Weigh both.'}],
     resident_specialty:[
-      {icon:'🧬',title:'Specialty Fit Analyzer',tag:'Second-guessing? You\'re not alone.',c:[['Current Path','Updated values','61%',W,'fit score'],['Hidden Match','Haven\'t considered','89%',G,'fit score']],ins:'28-point gap. Many residents discover a better fit.'},
-      {icon:'⚖️',title:'Career Pivot Decision Engine',tag:'Is switching worth the cost?',c:[['Stay Current','Lifetime earnings','$8.2M',A,'projected'],['Switch Now','Lifetime earnings','$9.8M',G,'projected']],ins:'Even with 2 extra years, the switch nets $1.6M more.'}],
+      {icon:'🧬',title:'Specialty Fit Assessment',tag:'Second-guessing? You\'re not alone.',c:[['Current Path','Updated values','61%',W,'fit score'],['Hidden Match','Haven\'t considered','89%',G,'fit score']],ins:'28-point gap. Many residents discover a better fit.'},
+      {icon:'⚖️',title:'Career Transition Planner',tag:'Is switching worth the cost?',c:[['Stay Current','Lifetime earnings','$8.2M',A,'projected'],['Switch Now','Lifetime earnings','$9.8M',G,'projected']],ins:'Even with 2 extra years, the switch nets $1.6M more.'}],
     resident_match:[
-      {icon:'🏆',title:'Match Competitiveness Calculator',tag:'Where do you stand for fellowship?',c:[['Your Profile','4 pubs · Step 256','74',A,'out of 100'],['Avg Matched','GI Fellowship','81',G,'out of 100']],ins:'7-point gap. Targeted improvements close this in 6 months.'},
-      {icon:'🎤',title:'Mock Interview Simulator',tag:'Most residents don\'t practice.',c:[['First Attempt','Fellowship interview','5.8/10',W,'score'],['After 3 Rounds','Same questions','8.4/10',G,'score']],ins:'44% improvement. Most applicants walk in cold.'}],
+      {icon:'🏆',title:'Match Probability Calculator',tag:'Where do you stand for fellowship?',c:[['Your Profile','4 pubs · Step 256','74',A,'out of 100'],['Avg Matched','GI Fellowship','81',G,'out of 100']],ins:'7-point gap. Targeted improvements close this in 6 months.'},
+      {icon:'🎤',title:'Interview Practice Tool',tag:'Most residents don\'t practice.',c:[['First Attempt','Fellowship interview','5.8/10',W,'score'],['After 3 Rounds','Same questions','8.4/10',G,'score']],ins:'44% improvement. Most applicants walk in cold.'}],
     resident_fellowship:[
-      {icon:'🏆',title:'Match Competitiveness Calculator',tag:'How competitive for fellowship?',c:[['Your Profile','Step 259 · 6 pubs','79',A,'out of 100'],['Avg Matched','Cardiology','86',G,'out of 100']],ins:'7-point gap. One first-author pub + stronger LOR closes it.'},
-      {icon:'🔬',title:'Research ROI Calculator',tag:'Limited time? Maximize impact.',c:[['Case Series','2 months','+3 pts',A,'match impact'],['Prospective Study','6 months','+14 pts',G,'match impact']],ins:'4.7x more impact. HeartWise shows the highest-ROI moves.'}],
+      {icon:'🏆',title:'Match Probability Calculator',tag:'How competitive for fellowship?',c:[['Your Profile','Step 259 · 6 pubs','79',A,'out of 100'],['Avg Matched','Cardiology','86',G,'out of 100']],ins:'7-point gap. One first-author pub + stronger LOR closes it.'},
+      {icon:'🔬',title:'Research Impact Calculator',tag:'Limited time? Maximize impact.',c:[['Case Series','2 months','+3 pts',A,'match impact'],['Prospective Study','6 months','+14 pts',G,'match impact']],ins:'4.7x more impact. HeartWise shows the highest-ROI moves.'}],
     resident_contract:[
-      {icon:'📋',title:'Contract Intelligence Tool',tag:'Your first contract sets the trajectory.',c:[['Offer A','Academic · RVU-based','$275K',A,'base'],['Offer B','Private · Guaranteed','$365K',G,'base']],ins:'$90K gap — but Offer A has partnership track. HeartWise scores both.'},
+      {icon:'📋',title:'Contract Review Tool',tag:'Your first contract sets the trajectory.',c:[['Offer A','Academic · RVU-based','$275K',A,'base'],['Offer B','Private · Guaranteed','$365K',G,'base']],ins:'$90K gap — but Offer A has partnership track. HeartWise scores both.'},
       {icon:'📈',title:'RVU Compensation Modeler',tag:'What will you actually take home?',c:[['50th %ile RVUs','Average productivity','$295K',A,'total comp'],['75th %ile RVUs','High productivity','$385K',G,'total comp']],ins:'$90K more on the same contract. Know your numbers.'}],
     resident_finance:[
-      {icon:'🔮',title:'Financial Trajectory Simulator',tag:'First 3 years determine the next 20.',c:[['Aggressive Payoff','Live lean 3 more years','$2.4M',G,'at age 45'],['Lifestyle Creep','Upgrade immediately','$890K',W,'at age 45']],ins:'$1.5M difference. Same income, different choices.'},
+      {icon:'🔮',title:'Financial Projection Tool',tag:'First 3 years determine the next 20.',c:[['Aggressive Payoff','Live lean 3 more years','$2.4M',G,'at age 45'],['Lifestyle Creep','Upgrade immediately','$890K',W,'at age 45']],ins:'$1.5M difference. Same income, different choices.'},
       {icon:'💰',title:'Financial Planning Engine',tag:'PSLF vs refinance — six-figure decision.',c:[['PSLF','Remaining payments','$62K',G,'total cost'],['Private Refi','10-year payoff','$380K',W,'total cost']],ins:'$318K difference. Right answer depends on your employer.'}],
     resident_direction:[
-      {icon:'⚖️',title:'Career Pivot Decision Engine',tag:'Model it before you leap.',c:[['Stay: IM → Hospitalist','Lifetime earnings','$7.1M',A,'projected'],['Switch: IM → Derm','Lifetime earnings','$10.4M',G,'projected']],ins:'$3.3M difference — even after retraining costs.'},
-      {icon:'🧬',title:'Specialty Fit Analyzer',tag:'Running toward something or away?',c:[['Current Path','Updated assessment','54%',W,'fit score'],['Possible Pivot','What aligns now','87%',G,'fit score']],ins:'33-point gap. Confirm the move is right.'}],
+      {icon:'⚖️',title:'Career Transition Planner',tag:'Model it before you leap.',c:[['Stay: IM → Hospitalist','Lifetime earnings','$7.1M',A,'projected'],['Switch: IM → Derm','Lifetime earnings','$10.4M',G,'projected']],ins:'$3.3M difference — even after retraining costs.'},
+      {icon:'🧬',title:'Specialty Fit Assessment',tag:'Running toward something or away?',c:[['Current Path','Updated assessment','54%',W,'fit score'],['Possible Pivot','What aligns now','87%',G,'fit score']],ins:'33-point gap. Confirm the move is right.'}],
     fellow_specialty:[
-      {icon:'🧬',title:'Specialty Fit Analyzer',tag:'Your priorities changed. Has your fit?',c:[['Current Subspecialty','Updated values','68%',W,'fit score'],['Alternative Path','Emerged in training','91%',G,'fit score']],ins:'23-point gap. It\'s not too late to adjust.'},
-      {icon:'⚖️',title:'Career Pivot Decision Engine',tag:'What does switching cost now?',c:[['Stay Current','Start earning sooner','$6.8M',A,'lifetime'],['Pivot Now','1 extra year training','$8.1M',G,'lifetime']],ins:'$1.3M more even with the extra year.'}],
+      {icon:'🧬',title:'Specialty Fit Assessment',tag:'Your priorities changed. Has your fit?',c:[['Current Subspecialty','Updated values','68%',W,'fit score'],['Alternative Path','Emerged in training','91%',G,'fit score']],ins:'23-point gap. It\'s not too late to adjust.'},
+      {icon:'⚖️',title:'Career Transition Planner',tag:'What does switching cost now?',c:[['Stay Current','Start earning sooner','$6.8M',A,'lifetime'],['Pivot Now','1 extra year training','$8.1M',G,'lifetime']],ins:'$1.3M more even with the extra year.'}],
     fellow_match:[
-      {icon:'🏆',title:'Match Competitiveness Calculator',tag:'Advanced fellowship — how competitive?',c:[['Your Profile','12 pubs · Fellow','83',A,'out of 100'],['Avg Matched','Interventional Cardio','89',G,'out of 100']],ins:'6-point gap. A targeted strategy closes this.'},
-      {icon:'🎤',title:'Mock Interview Simulator',tag:'Fellowship interviews are different.',c:[['Technical Qs','Procedure-based','7.2/10',W,'score'],['After Practice','Same category','9.1/10',G,'score']],ins:'26% improvement. Don\'t leave fellowship to chance.'}],
+      {icon:'🏆',title:'Match Probability Calculator',tag:'Advanced fellowship — how competitive?',c:[['Your Profile','12 pubs · Fellow','83',A,'out of 100'],['Avg Matched','Interventional Cardio','89',G,'out of 100']],ins:'6-point gap. A targeted strategy closes this.'},
+      {icon:'🎤',title:'Interview Practice Tool',tag:'Fellowship interviews are different.',c:[['Technical Qs','Procedure-based','7.2/10',W,'score'],['After Practice','Same category','9.1/10',G,'score']],ins:'26% improvement. Don\'t leave fellowship to chance.'}],
     fellow_fellowship:[
-      {icon:'🏆',title:'Match Competitiveness Calculator',tag:'Advanced subspecialty — how do you compare?',c:[['Your Profile','15 pubs · Chief Fellow','86',A,'out of 100'],['Avg Matched','Advanced EP','91',G,'out of 100']],ins:'5-point gap. One first-author pub makes you competitive.'},
-      {icon:'🔬',title:'Research ROI Calculator',tag:'Limited time — maximize impact.',c:[['Review Article','2 months','+4 pts',A,'match impact'],['Original Research','5 months','+12 pts',G,'match impact']],ins:'3x more impact for 2.5x the effort.'}],
+      {icon:'🏆',title:'Match Probability Calculator',tag:'Advanced subspecialty — how do you compare?',c:[['Your Profile','15 pubs · Chief Fellow','86',A,'out of 100'],['Avg Matched','Advanced EP','91',G,'out of 100']],ins:'5-point gap. One first-author pub makes you competitive.'},
+      {icon:'🔬',title:'Research Impact Calculator',tag:'Limited time — maximize impact.',c:[['Review Article','2 months','+4 pts',A,'match impact'],['Original Research','5 months','+12 pts',G,'match impact']],ins:'3x more impact for 2.5x the effort.'}],
     fellow_contract:[
-      {icon:'📋',title:'Contract Intelligence Tool',tag:'Biggest financial decision of your career.',c:[['Offer A','Academic · salary','$340K',A,'year 1'],['Offer B','Private · RVU','$480K',G,'year 1']],ins:'$140K gap. But year-3 projections tell a different story.'},
-      {icon:'🎤',title:'Mock Interview Simulator',tag:'Salary negotiation is a skill.',c:[['Without Prep','Accept first offer','$340K',A,'accepted'],['After Prep','Counter with data','$395K',G,'negotiated']],ins:'$55K/year more. Over 5 years that\'s $275K.'}],
+      {icon:'📋',title:'Contract Review Tool',tag:'Biggest financial decision of your career.',c:[['Offer A','Academic · salary','$340K',A,'year 1'],['Offer B','Private · RVU','$480K',G,'year 1']],ins:'$140K gap. But year-3 projections tell a different story.'},
+      {icon:'🎤',title:'Interview Practice Tool',tag:'Salary negotiation is a skill.',c:[['Without Prep','Accept first offer','$340K',A,'accepted'],['After Prep','Counter with data','$395K',G,'negotiated']],ins:'$55K/year more. Over 5 years that\'s $275K.'}],
     fellow_finance:[
-      {icon:'🔮',title:'Financial Trajectory Simulator',tag:'Attending income incoming. Are you ready?',c:[['With Plan','30% savings yr 1','$1.8M',G,'at age 40'],['Without Plan','Lifestyle inflation','$420K',W,'at age 40']],ins:'$1.4M gap in 5 years. The plan matters more than salary.'},
+      {icon:'🔮',title:'Financial Projection Tool',tag:'Attending income incoming. Are you ready?',c:[['With Plan','30% savings yr 1','$1.8M',G,'at age 40'],['Without Plan','Lifestyle inflation','$420K',W,'at age 40']],ins:'$1.4M gap in 5 years. The plan matters more than salary.'},
       {icon:'📈',title:'RVU Compensation Modeler',tag:'Understand your future paycheck.',c:[['Base Only','No RVU bonus','$320K',A,'total comp'],['Base + RVU','75th %ile productivity','$465K',G,'total comp']],ins:'$145K more. Know how to unlock it before you sign.'}],
     fellow_direction:[
-      {icon:'⚖️',title:'Career Pivot Decision Engine',tag:'Is this the right time to pivot?',c:[['Stay Current','Familiar path','$7.4M',A,'lifetime'],['Pivot Now','New direction','$9.2M',G,'lifetime']],ins:'$1.8M more — but only if the fit is right.'},
-      {icon:'🧬',title:'Specialty Fit Analyzer',tag:'Confirm your direction before you move.',c:[['Current Fit','After fellowship','71%',W,'fit score'],['New Direction','Aligned with values','93%',G,'fit score']],ins:'22-point gap. HeartWise helps you decide with data.'}],
+      {icon:'⚖️',title:'Career Transition Planner',tag:'Is this the right time to pivot?',c:[['Stay Current','Familiar path','$7.4M',A,'lifetime'],['Pivot Now','New direction','$9.2M',G,'lifetime']],ins:'$1.8M more — but only if the fit is right.'},
+      {icon:'🧬',title:'Specialty Fit Assessment',tag:'Confirm your direction before you move.',c:[['Current Fit','After fellowship','71%',W,'fit score'],['New Direction','Aligned with values','93%',G,'fit score']],ins:'22-point gap. HeartWise helps you decide with data.'}],
     attending_specialty:[
-      {icon:'🧬',title:'Specialty Fit Analyzer',tag:'It\'s never too late to reassess.',c:[['Current Specialty','Updated priorities','59%',W,'fit score'],['Better Fit','You haven\'t explored','88%',G,'fit score']],ins:'29-point gap. Your priorities change — your career can too.'},
-      {icon:'⚖️',title:'Career Pivot Decision Engine',tag:'What does a change actually cost?',c:[['Stay','Projected lifetime','$9.1M',A,'earnings'],['Pivot','After retraining','$11.3M',G,'earnings']],ins:'$2.2M more — even accounting for the transition.'}],
+      {icon:'🧬',title:'Specialty Fit Assessment',tag:'It\'s never too late to reassess.',c:[['Current Specialty','Updated priorities','59%',W,'fit score'],['Better Fit','You haven\'t explored','88%',G,'fit score']],ins:'29-point gap. Your priorities change — your career can too.'},
+      {icon:'⚖️',title:'Career Transition Planner',tag:'What does a change actually cost?',c:[['Stay','Projected lifetime','$9.1M',A,'earnings'],['Pivot','After retraining','$11.3M',G,'earnings']],ins:'$2.2M more — even accounting for the transition.'}],
     attending_match:[
-      {icon:'🏆',title:'Match Competitiveness Calculator',tag:'Considering additional training?',c:[['Your Profile','Attending · 8 pubs','76',A,'score'],['Avg Matched','Target Fellowship','84',G,'score']],ins:'8-point gap. Strategic publications close it in 12 months.'},
-      {icon:'🔮',title:'Financial Trajectory Simulator',tag:'What does more training cost long-term?',c:[['No More Training','Continue earning','$5.8M',A,'at age 55'],['Fellowship + Return','2-year investment','$7.4M',G,'at age 55']],ins:'$1.6M more long-term despite 2 years of lower income.'}],
+      {icon:'🏆',title:'Match Probability Calculator',tag:'Considering additional training?',c:[['Your Profile','Attending · 8 pubs','76',A,'score'],['Avg Matched','Target Fellowship','84',G,'score']],ins:'8-point gap. Strategic publications close it in 12 months.'},
+      {icon:'🔮',title:'Financial Projection Tool',tag:'What does more training cost long-term?',c:[['No More Training','Continue earning','$5.8M',A,'at age 55'],['Fellowship + Return','2-year investment','$7.4M',G,'at age 55']],ins:'$1.6M more long-term despite 2 years of lower income.'}],
     attending_fellowship:[
-      {icon:'🏆',title:'Match Competitiveness Calculator',tag:'Re-entering fellowship — how competitive?',c:[['Your Profile','Attending · 8 pubs','76',A,'score'],['Avg Matched','Target Fellowship','84',G,'score']],ins:'8-point gap. Doable with the right strategy.'},
-      {icon:'🔮',title:'Financial Trajectory Simulator',tag:'Is the investment worth it?',c:[['Skip Fellowship','Current trajectory','$5.8M',A,'at age 55'],['Complete Fellowship','Higher earning potential','$7.4M',G,'at age 55']],ins:'$1.6M more by 55. HeartWise models the full picture.'}],
+      {icon:'🏆',title:'Match Probability Calculator',tag:'Re-entering fellowship — how competitive?',c:[['Your Profile','Attending · 8 pubs','76',A,'score'],['Avg Matched','Target Fellowship','84',G,'score']],ins:'8-point gap. Doable with the right strategy.'},
+      {icon:'🔮',title:'Financial Projection Tool',tag:'Is the investment worth it?',c:[['Skip Fellowship','Current trajectory','$5.8M',A,'at age 55'],['Complete Fellowship','Higher earning potential','$7.4M',G,'at age 55']],ins:'$1.6M more by 55. HeartWise models the full picture.'}],
     attending_contract:[
-      {icon:'📋',title:'Contract Intelligence Tool',tag:'Are you being paid fairly?',c:[['Your Contract','Current terms','$345K',A,'total comp'],['MGMA Benchmark','75th %ile your specialty','$430K',G,'total comp']],ins:'$85K below benchmark. That\'s $425K over 5 years.'},
-      {icon:'🎤',title:'Mock Interview Simulator',tag:'Negotiate from a position of strength.',c:[['Without Data','Accept renewal','$345K',A,'same terms'],['With HeartWise Data','Counter with benchmarks','$410K',G,'negotiated']],ins:'$65K/year raise. One data-driven conversation.'}],
+      {icon:'📋',title:'Contract Review Tool',tag:'Are you being paid fairly?',c:[['Your Contract','Current terms','$345K',A,'total comp'],['MGMA Benchmark','75th %ile your specialty','$430K',G,'total comp']],ins:'$85K below benchmark. That\'s $425K over 5 years.'},
+      {icon:'🎤',title:'Interview Practice Tool',tag:'Negotiate from a position of strength.',c:[['Without Data','Accept renewal','$345K',A,'same terms'],['With HeartWise Data','Counter with benchmarks','$410K',G,'negotiated']],ins:'$65K/year raise. One data-driven conversation.'}],
     attending_finance:[
-      {icon:'🔮',title:'Financial Trajectory Simulator',tag:'Are you on track?',c:[['Your Current Pace','Projected','$3.2M',A,'at age 55'],['Optimized Strategy','Same income','$5.1M',G,'at age 55']],ins:'$1.9M gap. Same salary — different financial strategy.'},
+      {icon:'🔮',title:'Financial Projection Tool',tag:'Are you on track?',c:[['Your Current Pace','Projected','$3.2M',A,'at age 55'],['Optimized Strategy','Same income','$5.1M',G,'at age 55']],ins:'$1.9M gap. Same salary — different financial strategy.'},
       {icon:'📈',title:'RVU Compensation Modeler',tag:'Are you leaving money on the table?',c:[['Your Current RVUs','Actual production','$370K',A,'total comp'],['Optimized Schedule','Same hours','$445K',G,'total comp']],ins:'$75K more per year from scheduling optimization alone.'}],
     attending_direction:[
-      {icon:'⚖️',title:'Career Pivot Decision Engine',tag:'What does a pivot cost at this stage?',c:[['Stay','Known trajectory','$9.4M',A,'lifetime'],['Pivot','After transition costs','$11.8M',G,'lifetime']],ins:'$2.4M more — if the timing and fit are right.'},
-      {icon:'🧬',title:'Specialty Fit Analyzer',tag:'What actually fits you now?',c:[['Current Role','Today\'s priorities','55%',W,'fit score'],['Potential Pivot','Aligned with values','91%',G,'fit score']],ins:'36-point gap. The data says it\'s worth exploring.'}],
+      {icon:'⚖️',title:'Career Transition Planner',tag:'What does a pivot cost at this stage?',c:[['Stay','Known trajectory','$9.4M',A,'lifetime'],['Pivot','After transition costs','$11.8M',G,'lifetime']],ins:'$2.4M more — if the timing and fit are right.'},
+      {icon:'🧬',title:'Specialty Fit Assessment',tag:'What actually fits you now?',c:[['Current Role','Today\'s priorities','55%',W,'fit score'],['Potential Pivot','Aligned with values','91%',G,'fit score']],ins:'36-point gap. The data says it\'s worth exploring.'}],
     pivot_specialty:[
-      {icon:'🧬',title:'Specialty Fit Analyzer',tag:'What actually fits you now?',c:[['Current Specialty','Updated priorities','52%',W,'fit score'],['New Direction','Values-aligned','90%',G,'fit score']],ins:'38-point gap. Your values changed — your career should too.'},
-      {icon:'🔮',title:'Financial Trajectory Simulator',tag:'What does this change cost?',c:[['Stay','Known trajectory','$8.6M',A,'lifetime'],['Pivot','After retraining','$10.9M',G,'lifetime']],ins:'$2.3M more. The math might surprise you.'}],
+      {icon:'🧬',title:'Specialty Fit Assessment',tag:'What actually fits you now?',c:[['Current Specialty','Updated priorities','52%',W,'fit score'],['New Direction','Values-aligned','90%',G,'fit score']],ins:'38-point gap. Your values changed — your career should too.'},
+      {icon:'🔮',title:'Financial Projection Tool',tag:'What does this change cost?',c:[['Stay','Known trajectory','$8.6M',A,'lifetime'],['Pivot','After retraining','$10.9M',G,'lifetime']],ins:'$2.3M more. The math might surprise you.'}],
     pivot_match:[
-      {icon:'🏆',title:'Match Competitiveness Calculator',tag:'How competitive for the new path?',c:[['Your Profile','Current CV','71',A,'score'],['Avg Matched','New target','83',G,'score']],ins:'12-point gap. HeartWise maps the fastest path to close it.'},
-      {icon:'⚖️',title:'Career Pivot Decision Engine',tag:'Is the timing right?',c:[['Pivot Now','Younger, more time','$10.2M',G,'lifetime'],['Wait 3 Years','Higher risk','$8.9M',A,'lifetime']],ins:'$1.3M cost of waiting. Timing matters.'}],
+      {icon:'🏆',title:'Match Probability Calculator',tag:'How competitive for the new path?',c:[['Your Profile','Current CV','71',A,'score'],['Avg Matched','New target','83',G,'score']],ins:'12-point gap. HeartWise maps the fastest path to close it.'},
+      {icon:'⚖️',title:'Career Transition Planner',tag:'Is the timing right?',c:[['Pivot Now','Younger, more time','$10.2M',G,'lifetime'],['Wait 3 Years','Higher risk','$8.9M',A,'lifetime']],ins:'$1.3M cost of waiting. Timing matters.'}],
     pivot_fellowship:[
-      {icon:'🏆',title:'Match Competitiveness Calculator',tag:'Benchmark for the new subspecialty.',c:[['Your Profile','Experienced physician','78',A,'score'],['Avg Matched','New fellowship','87',G,'score']],ins:'9-point gap. Experienced applicants have unique advantages.'},
-      {icon:'🔮',title:'Financial Trajectory Simulator',tag:'Is more training worth it?',c:[['Skip Fellowship','Current earnings','$7.8M',A,'lifetime'],['Complete Fellowship','Higher trajectory','$9.6M',G,'lifetime']],ins:'$1.8M more. HeartWise models the full cost-benefit.'}],
+      {icon:'🏆',title:'Match Probability Calculator',tag:'Benchmark for the new subspecialty.',c:[['Your Profile','Experienced physician','78',A,'score'],['Avg Matched','New fellowship','87',G,'score']],ins:'9-point gap. Experienced applicants have unique advantages.'},
+      {icon:'🔮',title:'Financial Projection Tool',tag:'Is more training worth it?',c:[['Skip Fellowship','Current earnings','$7.8M',A,'lifetime'],['Complete Fellowship','Higher trajectory','$9.6M',G,'lifetime']],ins:'$1.8M more. HeartWise models the full cost-benefit.'}],
     pivot_contract:[
-      {icon:'📋',title:'Contract Intelligence Tool',tag:'New field, new benchmarks.',c:[['Old Specialty','Your current comp','$380K',A,'total'],['New Specialty','Market rate','$310K',W,'starting']],ins:'Short-term pay cut — but the trajectory reverses by year 3.'},
-      {icon:'⚖️',title:'Career Pivot Decision Engine',tag:'Does the pivot make financial sense?',c:[['5-Year Cost','Transition + lower pay','–$420K',W,'investment'],['10-Year Return','Higher trajectory','$+890K',G,'net gain']],ins:'$890K net positive by year 10. HeartWise runs the full model.'}],
+      {icon:'📋',title:'Contract Review Tool',tag:'New field, new benchmarks.',c:[['Old Specialty','Your current comp','$380K',A,'total'],['New Specialty','Market rate','$310K',W,'starting']],ins:'Short-term pay cut — but the trajectory reverses by year 3.'},
+      {icon:'⚖️',title:'Career Transition Planner',tag:'Does the pivot make financial sense?',c:[['5-Year Cost','Transition + lower pay','–$420K',W,'investment'],['10-Year Return','Higher trajectory','$+890K',G,'net gain']],ins:'$890K net positive by year 10. HeartWise runs the full model.'}],
     pivot_finance:[
-      {icon:'🔮',title:'Financial Trajectory Simulator',tag:'What does this change cost over 30 years?',c:[['Stay','Known trajectory','$9.4M',A,'lifetime'],['Pivot','After all costs','$11.2M',G,'lifetime']],ins:'$1.8M more lifetime — if you protect the transition period.'},
+      {icon:'🔮',title:'Financial Projection Tool',tag:'What does this change cost over 30 years?',c:[['Stay','Known trajectory','$9.4M',A,'lifetime'],['Pivot','After all costs','$11.2M',G,'lifetime']],ins:'$1.8M more lifetime — if you protect the transition period.'},
       {icon:'💰',title:'Financial Planning Engine',tag:'Protect your finances during the pivot.',c:[['Without Planning','Bridge the gap','$180K',W,'savings burned'],['With Strategy','Optimized transition','$45K',G,'savings used']],ins:'$135K saved during transition with the right strategy.'}],
     pivot_direction:[
-      {icon:'⚖️',title:'Career Pivot Decision Engine',tag:'The definitive pivot framework.',c:[['Stay','Comfort + stability','68%',W,'satisfaction forecast'],['Pivot','Aligned with values','92%',G,'satisfaction forecast']],ins:'24-point satisfaction gap. Sometimes the numbers confirm what you feel.'},
-      {icon:'🔮',title:'Financial Trajectory Simulator',tag:'Model the 30-year impact.',c:[['Current Path','Stay the course','$8.9M',A,'lifetime'],['New Direction','After transition','$11.4M',G,'lifetime']],ins:'$2.5M more. The pivot pays for itself by year 7.'}]
+      {icon:'⚖️',title:'Career Transition Planner',tag:'The definitive pivot framework.',c:[['Stay','Comfort + stability','68%',W,'satisfaction forecast'],['Pivot','Aligned with values','92%',G,'satisfaction forecast']],ins:'24-point satisfaction gap. Sometimes the numbers confirm what you feel.'},
+      {icon:'🔮',title:'Financial Projection Tool',tag:'Model the 30-year impact.',c:[['Current Path','Stay the course','$8.9M',A,'lifetime'],['New Direction','After transition','$11.4M',G,'lifetime']],ins:'$2.5M more. The pivot pays for itself by year 7.'}]
   };
 
   window._hookDemoData=D;
@@ -1197,26 +1197,26 @@ function getScoreActions(cp,scores){
     }
     if(goal==='finance'){
       actions.push({action:'Map your student loan repayment strategy (PSLF vs refinance)',gain:'Saves $100K+',priority:'high'});
-      actions.push({action:'Run the Financial Trajectory Simulator for your target specialties',gain:'Clarity',priority:'high'});
+      actions.push({action:'Run the Financial Projection Tool for your target specialties',gain:'Clarity',priority:'high'});
       actions.push({action:'Start a budget — track spending during medical school',gain:'Foundation',priority:'medium'});
       actions.push({action:'Open a Roth IRA if you have any earned income',gain:'Compound growth',priority:'medium'});
       actions.push({action:'Compare lifetime earnings across your top specialty choices',gain:'$1M+ decision',priority:'high'});
       actions.push({action:'Learn the basics of disability insurance — lock in trainee rates',gain:'Protection',priority:'medium'});
     }
     if(goal==='direction'){
-      actions.push({action:'Run the Specialty Fit Analyzer — match values to specialties',gain:'Clarity',priority:'high'});
+      actions.push({action:'Run the Specialty Fit Assessment — match values to specialties',gain:'Clarity',priority:'high'});
       actions.push({action:'Shadow 2-3 specialties you\'re considering',gain:'Insight',priority:'high'});
       actions.push({action:'Compare financial trajectories for your top 3 specialties',gain:'Data',priority:'medium'});
       actions.push({action:'Talk to residents in each specialty about lifestyle realities',gain:'Perspective',priority:'medium'});
     }
     if(goal==='contract'){
-      actions.push({action:'Learn contract terminology — use the Contract Intelligence Tool',gain:'Knowledge',priority:'high'});
+      actions.push({action:'Learn contract terminology — use the Contract Review Tool',gain:'Knowledge',priority:'high'});
       actions.push({action:'Understand the difference between salary, RVU, and hybrid models',gain:'Foundation',priority:'high'});
-      actions.push({action:'Run the Financial Trajectory Simulator to see how contracts impact wealth',gain:'Clarity',priority:'medium'});
+      actions.push({action:'Run the Financial Projection Tool to see how contracts impact wealth',gain:'Clarity',priority:'medium'});
     }
     if(!goal){
       actions.push({action:'Set your primary career goal in your profile to get specific actions',gain:'Focus',priority:'high'});
-      actions.push({action:'Run the Specialty Fit Analyzer to clarify your direction',gain:'Clarity',priority:'high'});
+      actions.push({action:'Run the Specialty Fit Assessment to clarify your direction',gain:'Clarity',priority:'high'});
       actions.push({action:'Explore Career Tools — discover which tools help you most',gain:'Awareness',priority:'medium'});
     }
   }
@@ -1230,12 +1230,12 @@ function getScoreActions(cp,scores){
       if(lead<1) actions.push({action:'Take on chief resident or QI lead role',gain:'+5',priority:'high'});
       if(res<2) actions.push({action:'Start or join a prospective research project',gain:'+3',priority:'medium'});
       if(cp.step3!=='yes') actions.push({action:'Complete Step 3 before fellowship applications',gain:'+2',priority:'medium'});
-      actions.push({action:'Practice fellowship interviews with Mock Interview Simulator',gain:'+2 to +5',priority:'medium'});
+      actions.push({action:'Practice fellowship interviews with Interview Practice Tool',gain:'+2 to +5',priority:'medium'});
     }
     if(goal==='contract'){
-      actions.push({action:'Learn contract terminology — run the Contract Intelligence Tool',gain:'Knowledge',priority:'high'});
+      actions.push({action:'Learn contract terminology — run the Contract Review Tool',gain:'Knowledge',priority:'high'});
       actions.push({action:'Research MGMA benchmarks for your target specialty and region',gain:'Leverage',priority:'high'});
-      actions.push({action:'Practice salary negotiation with Mock Interview Simulator',gain:'+$30K-$80K',priority:'high'});
+      actions.push({action:'Practice salary negotiation with Interview Practice Tool',gain:'+$30K-$80K',priority:'high'});
       actions.push({action:'Understand RVU compensation — run the RVU Modeler',gain:'Insight',priority:'medium'});
     }
     if(goal==='finance'){
@@ -1247,15 +1247,15 @@ function getScoreActions(cp,scores){
       actions.push({action:'Calculate your loan interest rate vs investment returns — optimize',gain:'$50K+ impact',priority:'medium'});
     }
     if(goal==='direction'){
-      actions.push({action:'Run the Specialty Fit Analyzer with updated values',gain:'Clarity',priority:'high'});
-      actions.push({action:'Use the Career Pivot Decision Engine to model a switch',gain:'Data',priority:'high'});
+      actions.push({action:'Run the Specialty Fit Assessment with updated values',gain:'Clarity',priority:'high'});
+      actions.push({action:'Use the Career Transition Planner to model a switch',gain:'Data',priority:'high'});
       actions.push({action:'Talk to attendings in 2 specialties you\'re considering',gain:'Perspective',priority:'medium'});
       actions.push({action:'Compare financial trajectories of current vs new path',gain:'Insight',priority:'medium'});
     }
     if(!goal){
       actions.push({action:'Set your primary career goal in your profile to get specific actions',gain:'Focus',priority:'high'});
       actions.push({action:'Explore Career Tools — discover which tools help you most',gain:'Awareness',priority:'high'});
-      actions.push({action:'Run the Match Competitiveness Calculator for your target',gain:'Baseline',priority:'medium'});
+      actions.push({action:'Run the Match Probability Calculator for your target',gain:'Baseline',priority:'medium'});
     }
   }
 
@@ -1269,7 +1269,7 @@ function getScoreActions(cp,scores){
       actions.push({action:'Practice advanced fellowship interviews with Mock Simulator',gain:'+2 to +4',priority:'medium'});
     }
     if(goal==='contract'){
-      actions.push({action:'Score your first offer with the Contract Intelligence Tool',gain:'Risk awareness',priority:'high'});
+      actions.push({action:'Score your first offer with the Contract Review Tool',gain:'Risk awareness',priority:'high'});
       actions.push({action:'Practice salary negotiation — fellows who negotiate earn $40-80K more',gain:'+$40K-$80K/yr',priority:'high'});
       actions.push({action:'Compare academic vs private practice financial trajectories',gain:'Clarity',priority:'high'});
       actions.push({action:'Understand your RVU potential with the Compensation Modeler',gain:'Leverage',priority:'medium'});
@@ -1284,13 +1284,13 @@ function getScoreActions(cp,scores){
       actions.push({action:'Open backdoor Roth IRA — maximize tax-advantaged space',gain:'$50K+ over 20 years',priority:'medium'});
     }
     if(goal==='direction'){
-      actions.push({action:'Run the Career Pivot Decision Engine — model the financial cost',gain:'Data',priority:'high'});
-      actions.push({action:'Re-run the Specialty Fit Analyzer with updated values',gain:'Clarity',priority:'high'});
+      actions.push({action:'Run the Career Transition Planner — model the financial cost',gain:'Data',priority:'high'});
+      actions.push({action:'Re-run the Specialty Fit Assessment with updated values',gain:'Clarity',priority:'high'});
       actions.push({action:'Submit a Strategic Audit to Dr. Faroqui for structured review',gain:'Expert input',priority:'medium'});
     }
     if(!goal){
       actions.push({action:'Set your primary career goal to get personalized actions',gain:'Focus',priority:'high'});
-      actions.push({action:'Score your upcoming contract with the Contract Intelligence Tool',gain:'Preparation',priority:'high'});
+      actions.push({action:'Score your upcoming contract with the Contract Review Tool',gain:'Preparation',priority:'high'});
       actions.push({action:'Run your 30-year financial trajectory',gain:'Roadmap',priority:'medium'});
     }
   }
@@ -1300,8 +1300,8 @@ function getScoreActions(cp,scores){
     if(goal==='contract'){
       var compA=parseInt(String(cp.comp||'0').replace(/[^0-9]/g,''))||0;
       if(compA>0) actions.push({action:'Benchmark your compensation against MGMA data for '+(spec||'your specialty'),gain:'Know your worth',priority:'high'});
-      actions.push({action:'Score your current contract with the Contract Intelligence Tool',gain:'Risk awareness',priority:'high'});
-      actions.push({action:'Practice renegotiation with Mock Interview Simulator',gain:'+$30K-$100K/yr',priority:'high'});
+      actions.push({action:'Score your current contract with the Contract Review Tool',gain:'Risk awareness',priority:'high'});
+      actions.push({action:'Practice renegotiation with Interview Practice Tool',gain:'+$30K-$100K/yr',priority:'high'});
       if(cp.noncompete==='yes') actions.push({action:'Review non-compete clause with healthcare attorney',gain:'Protection',priority:'medium'});
       if(cp.compmodel==='salary') actions.push({action:'Explore RVU-based compensation — model with RVU Calculator',gain:'Potential +$80K+',priority:'medium'});
     }
@@ -1316,20 +1316,20 @@ function getScoreActions(cp,scores){
     }
     if(goal==='direction'){
       var satA=parseInt(cp.satisfaction)||0;
-      if(satA>0&&satA<6) actions.push({action:'Run the Career Pivot Decision Engine — your satisfaction is '+satA+'/10',gain:'Clarity',priority:'high'});
-      actions.push({action:'Re-run the Specialty Fit Analyzer — priorities change over time',gain:'Self-awareness',priority:'high'});
+      if(satA>0&&satA<6) actions.push({action:'Run the Career Transition Planner — your satisfaction is '+satA+'/10',gain:'Clarity',priority:'high'});
+      actions.push({action:'Re-run the Specialty Fit Assessment — priorities change over time',gain:'Self-awareness',priority:'high'});
       actions.push({action:'Submit a Strategic Audit to Dr. Faroqui',gain:'Expert guidance',priority:'high'});
       actions.push({action:'Compare financial trajectories: stay vs pivot',gain:'Data',priority:'medium'});
       if(cp.considering==='active') actions.push({action:'Build a 12-month financial bridge plan before making a move',gain:'Safety net',priority:'high'});
     }
     if(goal==='specialty'||goal==='match'){
-      actions.push({action:'Run the Specialty Fit Analyzer with current values and priorities',gain:'Clarity',priority:'high'});
+      actions.push({action:'Run the Specialty Fit Assessment with current values and priorities',gain:'Clarity',priority:'high'});
       actions.push({action:'Model the financial cost of retraining with Financial Simulator',gain:'Data',priority:'high'});
-      actions.push({action:'Use the Career Pivot Decision Engine for structured analysis',gain:'Framework',priority:'medium'});
+      actions.push({action:'Use the Career Transition Planner for structured analysis',gain:'Framework',priority:'medium'});
     }
     if(!goal){
       actions.push({action:'Set your primary career goal to get personalized actions',gain:'Focus',priority:'high'});
-      actions.push({action:'Score your current contract with the Contract Intelligence Tool',gain:'Baseline',priority:'high'});
+      actions.push({action:'Score your current contract with the Contract Review Tool',gain:'Baseline',priority:'high'});
       actions.push({action:'Run your 30-year financial trajectory',gain:'Roadmap',priority:'medium'});
     }
   }
@@ -1955,16 +1955,16 @@ function renderNextStep(){
   });
 
   var toolMap={
-    competitiveness:'Match Competitiveness Calculator',
-    research:'Research ROI Calculator',
-    readiness:'Career Strategy Builder',
-    financial:'Financial Trajectory Simulator'
+    competitiveness:'Match Probability Calculator',
+    research:'Research Impact Calculator',
+    readiness:'Career Roadmap Tool',
+    financial:'Financial Projection Tool'
   };
   var actionMap={
-    competitiveness:'Run the Match Competitiveness Calculator to see exactly where the gaps are.',
-    research:'Use the Research ROI Calculator to find the highest-impact research moves.',
-    readiness:'Try the Career Strategy Builder to map your next steps.',
-    financial:'Run the Financial Trajectory Simulator to model your 30-year wealth path.'
+    competitiveness:'Run the Match Probability Calculator to see exactly where the gaps are.',
+    research:'Use the Research Impact Calculator to find the highest-impact research moves.',
+    readiness:'Try the Career Roadmap Tool to map your next steps.',
+    financial:'Run the Financial Projection Tool to model your 30-year wealth path.'
   };
 
   // Check if they've already used the recommended tool
@@ -2005,12 +2005,12 @@ function renderRecommendedTools(){
 
   // Build prioritized tool list based on scores
   var allTools=[
-    {score:'competitiveness',name:'Match Competitiveness Calculator',icon:'🏆',why:'Benchmark against peers'},
-    {score:'financial',name:'Financial Trajectory Simulator',icon:'🔮',why:'Model your 30-year wealth'},
-    {score:'research',name:'Research ROI Calculator',icon:'🔬',why:'Maximize research impact'},
-    {score:'readiness',name:'Career Strategy Builder',icon:'📊',why:'Map your next moves'},
-    {score:'financial',name:'Contract Intelligence Tool',icon:'📋',why:'Score your offers'},
-    {score:'competitiveness',name:'Mock Interview Simulator',icon:'🎤',why:'Practice real questions'}
+    {score:'competitiveness',name:'Match Probability Calculator',icon:'🏆',why:'Benchmark against peers'},
+    {score:'financial',name:'Financial Projection Tool',icon:'🔮',why:'Model your 30-year wealth'},
+    {score:'research',name:'Research Impact Calculator',icon:'🔬',why:'Maximize research impact'},
+    {score:'readiness',name:'Career Roadmap Tool',icon:'📊',why:'Map your next moves'},
+    {score:'financial',name:'Contract Review Tool',icon:'📋',why:'Score your offers'},
+    {score:'competitiveness',name:'Interview Practice Tool',icon:'🎤',why:'Practice real questions'}
   ];
 
   // Filter out already-used tools, sort by weakest score
@@ -2078,30 +2078,30 @@ function renderWeeklyFocus(){
   // Stage + goal based focus
   if(stage==='student'||stage==='resident'){
     if(goal==='match'||goal==='fellowship'){
-      if(month>=4&&month<=6&&toolsUsed.indexOf('Match Competitiveness Calculator')<0)
-        focus={icon:'🏆',title:'Run the Match Competitiveness Calculator',sub:'ERAS opens soon. Know exactly where you stand before you apply.',tool:'v14',urgency:'high'};
-      else if(toolsUsed.indexOf('Research ROI Calculator')<0)
+      if(month>=4&&month<=6&&toolsUsed.indexOf('Match Probability Calculator')<0)
+        focus={icon:'🏆',title:'Run the Match Probability Calculator',sub:'ERAS opens soon. Know exactly where you stand before you apply.',tool:'v14',urgency:'high'};
+      else if(toolsUsed.indexOf('Research Impact Calculator')<0)
         focus={icon:'🔬',title:'Calculate your Research ROI',sub:'Find out which research activities will move the needle most for your application.',tool:'v7',urgency:'medium'};
-      else if(toolsUsed.indexOf('Mock Interview Simulator')<0)
-        focus={icon:'🎤',title:'Practice with the Mock Interview Simulator',sub:'Most applicants walk into interviews cold. Don\'t be one of them.',tool:'v16',urgency:'medium'};
+      else if(toolsUsed.indexOf('Interview Practice Tool')<0)
+        focus={icon:'🎤',title:'Practice with the Interview Practice Tool',sub:'Most applicants walk into interviews cold. Don\'t be one of them.',tool:'v16',urgency:'medium'};
       else
         focus={icon:'📊',title:'Update your career profile',sub:'Your scores may have changed — new pubs, rotations, or letters can shift your competitiveness.',action:'profile',urgency:'low'};
     } else if(goal==='specialty'){
-      if(toolsUsed.indexOf('Specialty Fit Analyzer')<0)
-        focus={icon:'🧬',title:'Take the Specialty Fit Analyzer',sub:'Data-driven specialty matching based on your personality, priorities, and lifestyle goals.',tool:'v13',urgency:'high'};
+      if(toolsUsed.indexOf('Specialty Fit Assessment')<0)
+        focus={icon:'🧬',title:'Take the Specialty Fit Assessment',sub:'Data-driven specialty matching based on your personality, priorities, and lifestyle goals.',tool:'v13',urgency:'high'};
       else
         focus={icon:'🔮',title:'Compare financial trajectories by specialty',sub:'See how your specialty choice impacts lifetime earnings and net worth.',tool:'v11',urgency:'medium'};
     }
   } else if(stage==='fellow'){
-    if(toolsUsed.indexOf('Contract Intelligence Tool')<0)
+    if(toolsUsed.indexOf('Contract Review Tool')<0)
       focus={icon:'📝',title:'Score your upcoming contract offer',sub:'You\'re approaching job offers. Know if the terms are competitive before you sign.',tool:'v12',urgency:'high'};
-    else if(toolsUsed.indexOf('Financial Trajectory Simulator')<0)
+    else if(toolsUsed.indexOf('Financial Projection Tool')<0)
       focus={icon:'💰',title:'Model your 30-year financial trajectory',sub:'Training is almost over. See how different paths impact your long-term wealth.',tool:'v11',urgency:'medium'};
   } else if(stage==='attending'){
-    if(toolsUsed.indexOf('Contract Intelligence Tool')<0)
+    if(toolsUsed.indexOf('Contract Review Tool')<0)
       focus={icon:'📝',title:'Analyze your current contract',sub:'Most physicians leave $50K+ on the table. Find out if you\'re one of them.',tool:'v12',urgency:'high'};
     else if(goal==='direction')
-      focus={icon:'⚡',title:'Run the Career Pivot Decision Engine',sub:'Explore whether a change makes sense — with data, not just gut feeling.',tool:'v10',urgency:'medium'};
+      focus={icon:'⚡',title:'Run the Career Transition Planner',sub:'Explore whether a change makes sense — with data, not just gut feeling.',tool:'v10',urgency:'medium'};
     else
       focus={icon:'💰',title:'Update your financial trajectory',sub:'Market conditions change. Re-run your projections with current data.',tool:'v11',urgency:'low'};
   }
@@ -2547,7 +2547,7 @@ function getCommunityStats(){
   var dayVariance=[0.85,1.12,1.08,1.15,1.05,0.92,0.78];
   var mult=dayVariance[dayOfWeek]||1;
   var weeklyToolRuns=Math.round(toolRuns*mult/4);
-  var popularTools=['Contract Intelligence','Financial Planning Engine','Match Competitiveness Calculator','Career Score Assessment','Specialty Fit Analyzer','RVU Compensation Modeler'];
+  var popularTools=['Contract Intelligence','Financial Planning Engine','Match Probability Calculator','Career Score Assessment','Specialty Fit Assessment','RVU Compensation Modeler'];
   var weekNum=Math.floor(Date.now()/(1000*60*60*24*7));
   var popular=popularTools[weekNum%popularTools.length];
   return{activePhysicians:baseUsers+Math.round(dayOfWeek*3),weeklyToolRuns:weeklyToolRuns,popularTool:popular};
@@ -2966,7 +2966,7 @@ function fprShowMockInterview(spec){
   var h='<div style="margin-top:24px;padding:20px;background:linear-gradient(160deg,rgba(198,168,94,.06),rgba(200,168,124,.02));border:1px solid rgba(198,168,94,.15);border-radius:12px">';
   h+='<div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">';
   h+='<div style="font-size:24px">\ud83c\udf99\ufe0f</div>';
-  h+='<div><div style="font-size:15px;font-weight:600;color:var(--accent);font-family:var(--font-serif)">Mock Interview: '+specName+'</div>';
+  h+='<div><div style="font-size:15px;font-weight:600;color:var(--accent);font-family:var(--font-serif)">Interview Practice: '+specName+'</div>';
   h+='<div style="font-size:11px;color:var(--text3)">Real questions asked by program directors. Practice these out loud.</div></div>';
   h+='</div>';
   h+=fprRenderMockCards(selected);
@@ -3034,7 +3034,7 @@ function fprShowAll(){
     h+='<div style="font-size:10px;color:var(--text3);line-height:1.6">\ud83d\udca1 '+q.tip+'</div>';
     h+='</div>';
   });
-  h+='<button onclick="fprShowMockInterview(\''+spec+'\')" class="btn btn-g" style="width:100%;margin-top:14px;padding:10px;font-size:12px">\u2190 Back to Mock Interview</button>';
+  h+='<button onclick="fprShowMockInterview(\''+spec+'\')" class="btn btn-g" style="width:100%;margin-top:14px;padding:10px;font-size:12px">\u2190 Back to Interview Practice</button>';
   h+='</div>';
   document.getElementById('fpr-mock').innerHTML=h;
 }
@@ -3273,7 +3273,7 @@ function crsCalc(){
   else if(reds.length>=1) h+='<p style="margin-bottom:8px">You have <strong>'+reds.length+' red flag'+(reds.length>1?'s':'')+'</strong>. These are specific, addressable issues. You can negotiate them yourself, but consider attorney review if the non-compete or tail provisions are involved.</p>';
   else if(yellows.length>=2) h+='<p style="margin-bottom:8px">No red flags, but <strong>'+yellows.length+' caution areas</strong>. Raise these in negotiation — they\u2019re reasonable asks that most employers will address.</p>';
   else h+='<p style="margin-bottom:8px">This contract scores well. Do a final read with fresh eyes, verify the numbers match what was discussed verbally, and make sure nothing is referenced in a \u201cseparate document\u201d that you haven\u2019t seen.</p>';
-  h+='<p style="margin:0">Use the <strong>Offer Comparison Matrix</strong> to compare this against other offers, or the <strong>RVU Calculator</strong> to model your actual take-home based on the compensation structure.</p>';
+  h+='<p style="margin:0">Use the <strong>Job Offer Comparison Tool</strong> to compare this against other offers, or the <strong>RVU Calculator</strong> to model your actual take-home based on the compensation structure.</p>';
   h+='</div></div>';
 
   // Completion indicator
@@ -3574,7 +3574,7 @@ function ocmCompare(){
     h+='<p style="margin-bottom:8px">'+moreHrs+' asks for '+hDiff+' more clinical hours per week. That\u2019s '+Math.round(hDiff*48)+' extra hours per year. Before choosing the higher comp, calculate your effective hourly rate for both.</p>';
   }
 
-  h+='<p style="margin:0">The best offer is the one that aligns with where you want to be in 5 years, not just what looks best on paper today. If you\u2019re unsure, submit both offers through the <strong>Contract Intelligence Tool</strong> for a full risk analysis.</p>';
+  h+='<p style="margin:0">The best offer is the one that aligns with where you want to be in 5 years, not just what looks best on paper today. If you\u2019re unsure, submit both offers through the <strong>Contract Review Tool</strong> for a full risk analysis.</p>';
   h+='</div></div>';
 
   document.getElementById('ocm-results').innerHTML=h;
@@ -3583,7 +3583,7 @@ function ocmCompare(){
   // Save scenario for compare
   var ocmInputs={'Offer A':aN,'A Salary':'$'+(a.salary/1000).toFixed(0)+'K','Offer B':bN,'B Salary':'$'+(b.salary/1000).toFixed(0)+'K','A Location':a.loc||'—','B Location':b.loc||'—'};
   var ocmHL=[winner+' wins Year 1: $'+(cA.totalWithRetire>cB.totalWithRetire?cA.totalWithRetire:cB.totalWithRetire).toLocaleString(),aN+': $'+(cA.totalWithRetire/1000).toFixed(0)+'K total comp',bN+': $'+(cB.totalWithRetire/1000).toFixed(0)+'K total comp'];
-  recordToolUse('Offer Comparison Matrix',null,winner+' wins by $'+Math.round(Math.abs(cA.totalWithRetire-cB.totalWithRetire)/1000)+'K',{inputs:ocmInputs,highlights:ocmHL});
+  recordToolUse('Job Offer Comparison Tool',null,winner+' wins by $'+Math.round(Math.abs(cA.totalWithRetire-cB.totalWithRetire)/1000)+'K',{inputs:ocmInputs,highlights:ocmHL});
 }
 
 function renderOfferAnalysis(name,color,analysis){
@@ -3702,7 +3702,7 @@ function sfaUpdate(){
   // Save scenario for compare
   var sfaInputs={'Patient Interaction':q1,'Procedural':q2,'Priority':q3,'Intellectual':q4,'Setting':q5,'Uncertainty':q6};
   var sfaHL=[];top.forEach(function(s,i){sfaHL.push('#'+(i+1)+' '+s.name+' — '+s.comp)});
-  recordToolUse('Specialty Fit Analyzer',null,'Top: '+top[0].name,{inputs:sfaInputs,highlights:sfaHL});
+  recordToolUse('Specialty Fit Assessment',null,'Top: '+top[0].name,{inputs:sfaInputs,highlights:sfaHL});
 }
 
 // ===== MATCH COMPETITIVENESS CALCULATOR (v14) =====
@@ -4247,7 +4247,7 @@ function mccCalculate(){
   // 10. Related Tools
   h+='<div style="padding:16px;background:var(--bg2);border-radius:10px;border:1px solid var(--border)">';
   h+='<div style="font-size:11px;font-weight:600;color:var(--accent);margin-bottom:10px">🔗 Recommended Next Tools</div>';
-  var related=[{id:'v7',icon:'📊',title:'Research ROI Calculator',why:'Maximize research impact before you apply'},{id:'v15',icon:'🗺️',title:'Career Strategy Builder',why:'Build a timeline for your remaining milestones'},{id:'v16',icon:'🎤',title:'Mock Interview Simulator',why:'Practice the questions programs will ask you'}];
+  var related=[{id:'v7',icon:'📊',title:'Research Impact Calculator',why:'Maximize research impact before you apply'},{id:'v15',icon:'🗺️',title:'Career Roadmap Tool',why:'Build a timeline for your remaining milestones'},{id:'v16',icon:'🎤',title:'Interview Practice Tool',why:'Practice the questions programs will ask you'}];
   related.forEach(function(t){
     h+='<div onclick="openFramework(\''+t.id+'\')" style="display:flex;gap:10px;padding:10px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .2s">';
     h+='<span style="font-size:18px">'+t.icon+'</span>';
@@ -4264,7 +4264,7 @@ function mccCalculate(){
   if(isFellowship){mccInputs['Residency Year']=felResYear;mccInputs['Program Rep']=felProgramRep;mccInputs['Procedural Exp']=felProceduralExp;mccInputs['First Author']=felFirstAuthor}
   var mccHighlights=[outlook+' — '+score+'/100','Overall match: '+matchProb+'%','Top-tier: '+topProb+'% | Mid-tier: '+midProb+'% | Community: '+commProb+'%'];
   factors.forEach(function(f){if(f.pts<f.max*0.4) mccHighlights.push('⚠ '+f.name+': '+f.pts+'/'+f.max)});
-  recordToolUse('Match Competitiveness Calculator',score,outlook+' for '+sd.name,{inputs:mccInputs,highlights:mccHighlights});
+  recordToolUse('Match Probability Calculator',score,outlook+' for '+sd.name,{inputs:mccInputs,highlights:mccHighlights});
 }
 
 function mccSaveProfile(){
@@ -4613,7 +4613,7 @@ function csbGenerate(){
   else if(programs==='broad'){strengths.push('Broad program list for strategic coverage')}
 
   if(geo==='limited'&&isCompetitive){warnings.push('Geographic limitations significantly reduce options for competitive specialties.')}
-  if(concern==='direction'){warnings.push('If you\'re unsure about '+tName+', explore that before committing. Run the Specialty Fit Analyzer.')}
+  if(concern==='direction'){warnings.push('If you\'re unsure about '+tName+', explore that before committing. Run the Specialty Fit Assessment.')}
 
   // ===== TIMELINE PHASES =====
   var phases=[];
@@ -4668,7 +4668,7 @@ function csbGenerate(){
 
     phases.push({time:'6 \u2013 12 months',title:'Application Season',items:[
       'Submit ERAS on day 1 \u2014 early applicants get more interview invitations',
-      'Prepare with '+_csbTool('v16','Mock Interview Simulator')+' \u2014 practice 3+ full sessions',
+      'Prepare with '+_csbTool('v16','Interview Practice Tool')+' \u2014 practice 3+ full sessions',
       'Send strategic follow-up emails after each interview (specific, not generic)',
       'Build rank list honestly \u2014 where would you be happiest for 3+ years?',
       'Track every interaction in a spreadsheet: programs, contacts, follow-ups'
@@ -4699,7 +4699,7 @@ function csbGenerate(){
       phases.push({time:'3 \u2013 6 months',title:'Execute \u2014 Application Window',items:p2});
       phases.push({time:'6 \u2013 9 months',title:'Interview & Match',items:[
         'Submit ERAS on day one. No delays.',
-        _csbTool('v16','Mock Interview Simulator')+' \u2014 practice 3+ full sessions',
+        _csbTool('v16','Interview Practice Tool')+' \u2014 practice 3+ full sessions',
         'Send targeted interest emails after each interview',
         'Rank by where you\'d be happiest for 3+ years, not prestige. '+_csbTool('v1','Check Fellowship Readiness'),
         'If couples matching, start coordinating NOW'
@@ -4716,7 +4716,7 @@ function csbGenerate(){
         'Submit competitive ERAS with strong research and specialty-specific letters. '+_csbTool('v14','Check Match Competitiveness'),
         'Apply to '+(isCompetitive?'18-25':'12-18')+' programs tiered by competitiveness',
         'Personal statement: clear, specific narrative about WHY '+tName,
-        'Interview broadly but prepared \u2014 '+_csbTool('v16','Practice with Mock Interview Simulator'),
+        'Interview broadly but prepared \u2014 '+_csbTool('v16','Practice with Interview Practice Tool'),
         'Track rank list criteria: mentorship, research, case volume, location, culture'
       ]});
     }
@@ -4731,12 +4731,12 @@ function csbGenerate(){
       setting==='academic'?'Build academic portfolio: publications, grants, teaching evals':'Identify geographic markets with high demand and favorable compensation'
     ]});
     phases.push({time:'6 \u2013 12 months',title:'Contract Negotiation',items:[
-      'Run every offer through the '+_csbTool('v12','Contract Intelligence Tool'),
-      'Compare offers using the '+_csbTool('v3','Offer Comparison Matrix'),
+      'Run every offer through the '+_csbTool('v12','Contract Review Tool'),
+      'Compare offers using the '+_csbTool('v3','Job Offer Comparison Tool'),
       'Negotiate with data: MGMA percentiles, regional benchmarks. '+_csbTool('v4','Model RVU Compensation'),
       'Key terms: base salary, RVU rate, non-compete, tail insurance, CME, signing bonus',
       'Physician contract attorney review before signing ($2-3.5K \u2014 always worth it)',
-      _csbTool('v11','Financial Trajectory Simulator')+' \u2014 see 30-year impact of each option'
+      _csbTool('v11','Financial Projection Tool')+' \u2014 see 30-year impact of each option'
     ]});
     phases.push({time:'Final 3 months',title:'Transition Planning',items:[
       'Financial foundation: disability insurance, retirement accounts, PSLF decision',
@@ -4752,18 +4752,18 @@ function csbGenerate(){
       'Benchmark compensation: '+_csbTool('v4','RVU Calculator')+' + MGMA comparison',
       'Identify what needs to change: compensation, practice type, location, or work-life balance',
       'Talk to 2-3 physicians who\'ve made the transition you\'re considering',
-      'Run the '+_csbTool('v11','Financial Trajectory Simulator')+' to see long-term wealth trajectory'
+      'Run the '+_csbTool('v11','Financial Projection Tool')+' to see long-term wealth trajectory'
     ]});
     phases.push({time:'3 \u2013 6 months',title:'Build Your Plan',items:[
       'Calculate financial impact: lost income during transition, retraining costs, ramp-up time',
       'Build a 12-month financial bridge if changing practice types',
       'Network in the target space \u2014 conferences, connect with physicians already there',
-      concern==='direction'?'If pivoting specialties: '+_csbTool('v10','Run the Career Pivot Decision Engine'):'If pivoting: understand retraining requirements, credentialing, timeline',
+      concern==='direction'?'If pivoting specialties: '+_csbTool('v10','Run the Career Transition Planner'):'If pivoting: understand retraining requirements, credentialing, timeline',
       'Update CV and professional narrative for the new direction'
     ]});
     phases.push({time:'6 \u2013 12 months',title:'Execute the Transition',items:[
       'Set a specific decision date \u2014 open-ended "maybe someday" never happens',
-      'Negotiate next position using data and the '+_csbTool('v12','Contract Intelligence Tool'),
+      'Negotiate next position using data and the '+_csbTool('v12','Contract Review Tool'),
       'Set up financial safeguards: emergency fund, moonlighting if needed',
       'Consider a '+_csbTool('v9','Strategic Audit')+' for Dr. Faroqui\'s personalized assessment',
       'Execute. The cost of staying in the wrong position compounds every year.'
@@ -4799,9 +4799,9 @@ function csbGenerate(){
     letters:'Letters are often the #1 factor. You need writers who know you personally, are in your specialty, and can cite specific clinical examples. Start now \u2014 don\'t wait until the deadline.',
     clinical:'Ask your PD for honest feedback. Create a specific improvement plan. Document improvement over time. One bad rotation doesn\'t define you \u2014 but a pattern does.',
     time:'Ruthless prioritization wins. Focus on the 2-3 highest-impact items: research submissions, letter writers, personal statement. Everything else is secondary.',
-    direction:'Get data, not more opinions. Shadow in 2-3 specialties. Ask attendings 5-10 years in: "What do you wish you knew?" Run the '+_csbTool('v13','Specialty Fit Analyzer')+'.',
+    direction:'Get data, not more opinions. Shadow in 2-3 specialties. Ask attendings 5-10 years in: "What do you wish you knew?" Run the '+_csbTool('v13','Specialty Fit Assessment')+'.',
     networking:'Most opportunities come through connections. Attend conferences. Email faculty with specific compliments about their research. Follow up after meetings.',
-    finance:'Run the '+_csbTool('v11','Financial Trajectory Simulator')+'. Factor in training length, debt, geography, and practice type differences. Career and financial decisions are inseparable.',
+    finance:'Run the '+_csbTool('v11','Financial Projection Tool')+'. Factor in training length, debt, geography, and practice type differences. Career and financial decisions are inseparable.',
     confidence:'Every physician feels this. You\'re here building a strategy \u2014 that\'s evidence of competence. Focus on objective metrics. Track progress. Celebrate wins.'
   };
   if(concern&&concern!=='none'&&concernAdvice[concern]){
@@ -4825,12 +4825,12 @@ function csbGenerate(){
 
   // Recommended next tools
   var nextTools=[];
-  if(firstAuth===0||totalResearch<3)nextTools.push({id:'v7',icon:'\u2696\ufe0f',name:'Research ROI Calculator',why:'See where your research portfolio stands'});
-  if(now!=='fellow'&&now!=='attending')nextTools.push({id:'v14',icon:'\ud83c\udfc6',name:'Match Competitiveness Calculator',why:'Check your match probability with current stats'});
-  if(now==='fellow'||now==='attending')nextTools.push({id:'v12',icon:'\ud83d\udcdd',name:'Contract Intelligence Tool',why:'Score any contract offer before responding'});
-  if(concern==='direction')nextTools.push({id:'v13',icon:'\ud83d\udd2c',name:'Specialty Fit Analyzer',why:'Find which specialties match your personality'});
-  if(concern==='finance'||now==='fellow'||now==='attending')nextTools.push({id:'v11',icon:'\ud83d\udcb0',name:'Financial Trajectory Simulator',why:'See 30-year financial impact of your choices'});
-  if(now!=='ms1'&&now!=='ms2')nextTools.push({id:'v16',icon:'\ud83c\udfa4',name:'Mock Interview Simulator',why:'Practice real interview questions'});
+  if(firstAuth===0||totalResearch<3)nextTools.push({id:'v7',icon:'\u2696\ufe0f',name:'Research Impact Calculator',why:'See where your research portfolio stands'});
+  if(now!=='fellow'&&now!=='attending')nextTools.push({id:'v14',icon:'\ud83c\udfc6',name:'Match Probability Calculator',why:'Check your match probability with current stats'});
+  if(now==='fellow'||now==='attending')nextTools.push({id:'v12',icon:'\ud83d\udcdd',name:'Contract Review Tool',why:'Score any contract offer before responding'});
+  if(concern==='direction')nextTools.push({id:'v13',icon:'\ud83d\udd2c',name:'Specialty Fit Assessment',why:'Find which specialties match your personality'});
+  if(concern==='finance'||now==='fellow'||now==='attending')nextTools.push({id:'v11',icon:'\ud83d\udcb0',name:'Financial Projection Tool',why:'See 30-year financial impact of your choices'});
+  if(now!=='ms1'&&now!=='ms2')nextTools.push({id:'v16',icon:'\ud83c\udfa4',name:'Interview Practice Tool',why:'Practice real interview questions'});
 
   if(nextTools.length){
     h+='<div style="margin-top:20px;padding:16px;background:var(--bg2);border:1px solid var(--border);border-radius:12px">';
@@ -4860,7 +4860,7 @@ function csbGenerate(){
   if(gaps.length)csbHL.push(gaps.length+' gaps to address');
   if(warnings.length)csbHL.push(warnings.length+' warnings');
   phases.forEach(function(p){csbHL.push(p.time+': '+p.title)});
-  recordToolUse('Career Strategy Builder',null,tName+' roadmap ('+phases.length+' phases)',{inputs:csbInputs,highlights:csbHL});
+  recordToolUse('Career Roadmap Tool',null,tName+' roadmap ('+phases.length+' phases)',{inputs:csbInputs,highlights:csbHL});
 }
 // ===== TOOLKIT QUIZ =====
 var quizAnswers={stage:null,goal:null,urgency:null};
@@ -5035,38 +5035,38 @@ function renderVault(){
 
   var VAULT_CATEGORIES=[
     {
-      key:'discover',
-      title:'Discover Your Fit',
+      key:'define',
+      title:'Define Your Path',
       icon:'🧬',
-      goal:'Understand which specialties align with your personality, interests, and lifestyle goals.',
+      goal:'Choose your specialty with clarity, not guesswork.',
       tools:['v13']
     },
     {
-      key:'evaluate',
-      title:'Evaluate Competitiveness',
+      key:'measure',
+      title:'Measure Your Position',
       icon:'🏆',
-      goal:'Assess whether you\'re competitive for your desired specialty or next career move.',
-      tools:['v1','v14','v7']
+      goal:'Understand exactly where you stand — and where you need to improve.',
+      tools:['v14','v1','v7']
     },
     {
-      key:'simulate',
-      title:'Simulate the Future',
+      key:'model',
+      title:'Model Your Future',
       icon:'🔮',
-      goal:'See realistic long-term outcomes of different career and financial paths.',
+      goal:'See the long-term financial and career impact of every path.',
       tools:['v11','v4','v5','v8']
     },
     {
       key:'decide',
-      title:'Decision Intelligence',
+      title:'Make Better Decisions',
       icon:'⚖️',
-      goal:'Compare options and make strategic, data-driven career decisions.',
+      goal:'Evaluate offers, contracts, and career moves with precision.',
       tools:['v3','v2','v12','v10']
     },
     {
       key:'execute',
-      title:'Execute the Strategy',
+      title:'Execute Your Strategy',
       icon:'🚀',
-      goal:'Implement your career plan with structured roadmaps, interview prep, and expert review.',
+      goal:'Turn your plan into action with structured, step-by-step guidance.',
       tools:['v15','v6','v16','v17','v9']
     }
   ];
@@ -5133,23 +5133,23 @@ function getTrialAccess(id){
 }
 
 var TRIAL_TEASERS={
-  v2:{icon:'🚩',headline:'Your contract has hidden risks.',teaser:'We found 3 clauses that could cost you. Upgrade to see the full risk scorecard.'},
-  v3:{icon:'📊',headline:'Your offers aren\'t equal — even if the salary looks close.',teaser:'The Offer Comparison Matrix weighs 12 dimensions beyond base salary. Unlock full access to see which offer actually wins.'},
-  v4:{icon:'💰',headline:'Your RVU rate might be below market.',teaser:'Model your real compensation by volume and rate. See how small changes compound into six figures.'},
-  v5:{icon:'📈',headline:'The first 3 years determine the next 20.',teaser:'Map your income trajectory from training exit through year 3 with the Leverage Planner.'},
-  v6:{icon:'🗺️',headline:'Fellowship match day is closer than you think.',teaser:'A month-by-month timeline keeps you on track. Unlock the full positioning roadmap.'},
-  v7:{icon:'⚖️',headline:'Not all research is created equal.',teaser:'See which publications actually move the needle for your specialty. The ROI Calculator shows your real research strength.'},
-  v8:{icon:'💵',headline:'You may be leaving significant income on the table.',teaser:'PSLF vs refinance, tax strategy, disability planning — the Income Leverage Playbook breaks it all down.'},
-  v9:{icon:'📝',headline:'This is the exact framework from Dr. Faroqui\'s strategy sessions.',teaser:'The Strategic Audit Template is available with Core or Mentorship access.'},
-  v10:{icon:'⚡',headline:'Thinking about a career pivot?',teaser:'The Pivot Decision Engine models the financial and timeline impact of switching. Upgrade to run your scenario.'},
-  v12:{icon:'📝',headline:'Your contract has a competitiveness score.',teaser:'Input your offer details and get risk flags, benchmarks, and a negotiation strategy. Available with Core access.'},
-  v16:{icon:'🎙️',headline:'Program directors ask the same 15 questions.',teaser:'Practice with real interview questions for your specialty and get honest AI feedback. Unlock with Core access.'}
+  v2:{icon:'🚩',headline:'Your contract has hidden risks.',teaser:'We found 3 clauses that could cost you. Upgrade to see the full Contract Risk Assessment.'},
+  v3:{icon:'📊',headline:'Your offers aren\'t equal — even if the salary looks close.',teaser:'The Job Offer Comparison Tool weighs 12 dimensions beyond base salary. Unlock full access to see which offer actually wins.'},
+  v4:{icon:'💰',headline:'Your RVU rate might be below market.',teaser:'Model your real compensation by volume and rate with the RVU Compensation Calculator.'},
+  v5:{icon:'📈',headline:'The first 3 years determine the next 20.',teaser:'Map your expected income trajectory after training with the Early Career Income Planner.'},
+  v6:{icon:'🗺️',headline:'Fellowship match day is closer than you think.',teaser:'A month-by-month strategy keeps you on track. Unlock the Fellowship Application Planner.'},
+  v7:{icon:'⚖️',headline:'Not all research is created equal.',teaser:'See which publications actually move the needle for your specialty. The Research Impact Calculator shows your real portfolio strength.'},
+  v8:{icon:'💵',headline:'You may be leaving significant income on the table.',teaser:'PSLF vs refinance, tax strategy, disability planning — the Debt & Income Strategy Tool breaks it all down.'},
+  v9:{icon:'📝',headline:'This is the exact framework from Dr. Faroqui\'s strategy sessions.',teaser:'The Application Review Tool is available with Core or Mentorship access.'},
+  v10:{icon:'⚡',headline:'Thinking about a career change?',teaser:'The Career Transition Planner models the financial and timeline impact of switching. Upgrade to run your scenario.'},
+  v12:{icon:'📝',headline:'Your contract has a competitiveness score.',teaser:'Translate your contract details into a clear negotiation strategy with the Contract Review Tool.'},
+  v16:{icon:'🎙️',headline:'Program directors ask the same 15 questions.',teaser:'Practice specialty-specific interview questions with actionable feedback. Unlock with Core access.'}
 };
 
 var TRIAL_PARTIAL_MSG={
-  v1:{label:'Match Positioning Score',shown:'Your overall score and top 2 gaps',locked:'Full dimensional breakdown, percentile benchmarks, and personalized action plan'},
-  v15:{label:'Career Strategy Builder',shown:'Phase 1 of your roadmap',locked:'Phases 2–5: timeline, milestones, decision points, and contingency paths'},
-  v11:{label:'Wealth Trajectory Model',shown:'Your 20-year net worth projection',locked:'Side-by-side path comparison, optimization levers, and detailed year-by-year breakdown'}
+  v1:{label:'Fellowship Readiness Assessment',shown:'Your overall score and top 2 gaps',locked:'Full dimensional breakdown, percentile benchmarks, and personalized action plan'},
+  v15:{label:'Career Roadmap Tool',shown:'Phase 1 of your roadmap',locked:'Phases 2–5: timeline, milestones, decision points, and contingency paths'},
+  v11:{label:'Financial Projection Tool',shown:'Your 20-year net worth projection',locked:'Side-by-side path comparison, optimization levers, and detailed year-by-year breakdown'}
 };
 
 function showTrialLockedOverlay(id){
@@ -5252,7 +5252,7 @@ function autoFillToolFromProfile(toolId){
     }
   }
 
-  // MCC — Match Competitiveness Calculator (v3)
+  // MCC — Match Probability Calculator (v3)
   if(toolId==='v3'){
     setSelect('mcc-spec',cp.specialty);
     setVal('mcc-step2',cp.step2);
@@ -5304,7 +5304,7 @@ function autoFillToolFromProfile(toolId){
     setTimeout(frcUpdate,10);
   }
 
-  // Financial Trajectory Simulator (v11) — specialty
+  // Financial Projection Tool (v11) — specialty
   if(toolId==='v11'){
     setSelect('ft-spec1',cp.specialty);
     if(cp.practice)setSelect('ft-setting1',cp.practice);
@@ -5314,7 +5314,7 @@ function autoFillToolFromProfile(toolId){
     }
   }
 
-  // Contract Intelligence Tool (v12) — specialty and comp
+  // Contract Review Tool (v12) — specialty and comp
   if(toolId==='v12'){
     setSelect('ci-spec',cp.specialty);
     if(cp.comp){var compNum=cp.comp.replace(/[^0-9]/g,'');setVal('ci-base',compNum)}
@@ -5328,7 +5328,7 @@ function autoFillToolFromProfile(toolId){
 
 var ELITE_PREVIEWS={
 v9:{
-  title:'Strategic Audit Template',
+  title:'Application Review Tool',
   icon:'\ud83d\udcdd',
   desc:'The exact intake framework used in Mentorship strategy sessions. Complete every section and submit directly to Dr. Faroqui for a structured strategic review.',
   sections:[
@@ -5339,7 +5339,7 @@ v9:{
   ]
 },
 v10:{
-  title:'Career Pivot Decision Engine',
+  title:'Career Transition Planner',
   icon:'\u26a1',
   desc:'An interactive, step-by-step framework for evaluating specialty switches, practice model changes, or non-clinical transitions — with your answers compiled into a report for Dr. Faroqui.',
   sections:[
@@ -5350,7 +5350,7 @@ v10:{
   ]
 },
 v11:{
-  title:'Financial Trajectory Simulator',
+  title:'Financial Projection Tool',
   icon:'\ud83d\udcb0',
   desc:'Compare up to 3 career paths with a 30-year wealth projection. See how specialty choice, fellowship training, and savings strategy impact lifetime earnings and net worth.',
   sections:[
@@ -5360,7 +5360,7 @@ v11:{
   ]
 },
 v12:{
-  title:'Contract Intelligence Tool',
+  title:'Contract Review Tool',
   icon:'\ud83d\udcdd',
   desc:'Input your actual offer details and get an instant competitiveness score out of 100, MGMA salary benchmarking, risk flag identification, and specific negotiation recommendations.',
   sections:[
@@ -5815,7 +5815,7 @@ var GOAL_TEMPLATES={
     title:'Contract & Job Search',
     months:[
       {label:'Month 1',goals:['Research MGMA median compensation for your specialty','Understand RVU-based vs salary-based compensation models','Learn the 7 key contract red flags (non-compete, tail, termination)','Talk to 2 attendings about their contract negotiation experience']},
-      {label:'Month 2',goals:['Use the Contract Risk Scorecard on a sample contract','Start building a list of target employers/practices','Get an introduction to a healthcare attorney (for when you need one)','Understand your geographic flexibility and non-negotiables']},
+      {label:'Month 2',goals:['Use the Contract Risk Assessment on a sample contract','Start building a list of target employers/practices','Get an introduction to a healthcare attorney (for when you need one)','Understand your geographic flexibility and non-negotiables']},
       {label:'Month 3',goals:['Compare at least 2 real or sample offers using the Comparison Matrix','Calculate your true compensation (base + RVU + benefits + call)','Draft your negotiation priorities list','Determine your PSLF eligibility — this affects which employers to target']}
     ]
   },
@@ -5831,7 +5831,7 @@ var GOAL_TEMPLATES={
     title:'Career Direction',
     months:[
       {label:'Month 1',goals:['Diagnose your dissatisfaction: specialty, setting, job, or burnout?','Shadow or talk to 2 physicians in a potential new path','Take stock: what energizes you vs what drains you in your current role','Journal for 2 weeks — track daily satisfaction and frustration triggers']},
-      {label:'Month 2',goals:['Informational interviews with 3 people who made a similar pivot','Calculate the financial cost of a pivot (use the Career Pivot Decision Engine)','Test the new direction: moonlight, volunteer, or take an elective','Discuss your thinking with a trusted mentor — get honest feedback']},
+      {label:'Month 2',goals:['Informational interviews with 3 people who made a similar pivot','Calculate the financial cost of a pivot (use the Career Transition Planner)','Test the new direction: moonlight, volunteer, or take an elective','Discuss your thinking with a trusted mentor — get honest feedback']},
       {label:'Month 3',goals:['Make a provisional decision and set a 90-day trial period','If staying: identify 2 concrete changes to improve your current situation','If pivoting: map the timeline, training requirements, and financial bridge','Submit a Strategic Audit to Dr. Faroqui for structured guidance']}
     ]
   },
@@ -5839,8 +5839,8 @@ var GOAL_TEMPLATES={
     title:'First Attending Contract',
     months:[
       {label:'Month 1',goals:['Research MGMA compensation benchmarks for your subspecialty','Understand the 7 contract red flags and how to negotiate each one','Start networking with potential employers — conferences, alumni, faculty contacts','Define your non-negotiables: geography, practice type, call, compensation floor']},
-      {label:'Month 2',goals:['Use the Contract Intelligence Tool to score any offers you receive','Compare offers side-by-side using the Offer Comparison Matrix','Get a healthcare attorney recommendation from your program','Understand tail coverage, non-competes, and clawback terms in detail']},
-      {label:'Month 3',goals:['Negotiate your top offer — use specific MGMA data as leverage','Finalize your PSLF vs refinance decision based on employer type','Review the 3-Year Leverage Planner — map your first 3 attending years','Sign with confidence — or walk away if the deal isn\'t right']}
+      {label:'Month 2',goals:['Use the Contract Review Tool to score any offers you receive','Compare offers side-by-side using the Job Offer Comparison Tool','Get a healthcare attorney recommendation from your program','Understand tail coverage, non-competes, and clawback terms in detail']},
+      {label:'Month 3',goals:['Negotiate your top offer — use specific MGMA data as leverage','Finalize your PSLF vs refinance decision based on employer type','Review the Early Career Income Planner — map your first 3 attending years','Sign with confidence — or walk away if the deal isn\'t right']}
     ]
   },
   fellow_finance:{
@@ -5848,21 +5848,21 @@ var GOAL_TEMPLATES={
     months:[
       {label:'Month 1',goals:['Model your attending compensation using the RVU Calculator','Make the PSLF vs refinance decision — this is a $50K-$200K decision','Secure own-occupation disability insurance before finishing training','Plan your post-fellowship budget: live on resident salary for Year 1']},
       {label:'Month 2',goals:['Max your Roth IRA and understand backdoor Roth strategy','Map out all tax-advantaged accounts: 401k, HSA, mega backdoor Roth','Build 6-month emergency fund plan on attending salary','Get a fee-only fiduciary financial advisor consultation']},
-      {label:'Month 3',goals:['Set up automatic investment plan — index funds on autopilot','Use the Financial Trajectory Simulator to model your 30-year wealth','Term life insurance if you have dependents','Create your personal "Year 1 financial playbook" — specific dollar amounts for each goal']}
+      {label:'Month 3',goals:['Set up automatic investment plan — index funds on autopilot','Use the Financial Projection Tool to model your 30-year wealth','Term life insurance if you have dependents','Create your personal "Year 1 financial playbook" — specific dollar amounts for each goal']}
     ]
   },
   attending_contract:{
     title:'Contract Optimization',
     months:[
       {label:'Month 1',goals:['Benchmark your current compensation against MGMA data for your specialty','Identify the 3 weakest terms in your current contract','Research what top-performing physicians in your specialty are earning','List your leverage points: productivity, patient satisfaction, unique skills']},
-      {label:'Month 2',goals:['Prepare your renegotiation case with specific data and comparables','Use the Contract Intelligence Tool to score your current deal','Talk to a healthcare attorney about your non-compete and termination terms','Explore alternative opportunities — even if you\'re not planning to leave']},
-      {label:'Month 3',goals:['Have the renegotiation conversation — or start interviewing','Compare any new offers using the Offer Comparison Matrix','Evaluate partnership/equity track if applicable','Make a decision: renegotiate, move, or stay with clarity']}
+      {label:'Month 2',goals:['Prepare your renegotiation case with specific data and comparables','Use the Contract Review Tool to score your current deal','Talk to a healthcare attorney about your non-compete and termination terms','Explore alternative opportunities — even if you\'re not planning to leave']},
+      {label:'Month 3',goals:['Have the renegotiation conversation — or start interviewing','Compare any new offers using the Job Offer Comparison Tool','Evaluate partnership/equity track if applicable','Make a decision: renegotiate, move, or stay with clarity']}
     ]
   },
   attending_finance:{
     title:'Wealth Acceleration',
     months:[
-      {label:'Month 1',goals:['Run your 30-year projection in the Financial Trajectory Simulator','Audit your savings rate — are you hitting 20%+ of gross income?','Review all tax-advantaged accounts: are you maxing everything?','Check your disability and life insurance coverage — still adequate?']},
+      {label:'Month 1',goals:['Run your 30-year projection in the Financial Projection Tool','Audit your savings rate — are you hitting 20%+ of gross income?','Review all tax-advantaged accounts: are you maxing everything?','Check your disability and life insurance coverage — still adequate?']},
       {label:'Month 2',goals:['Evaluate your investment allocation — too conservative? Too concentrated?','Calculate your net worth and set a 12-month target','Review your student loan strategy — PSLF on track? Refinance rate competitive?','Consider real estate, side income, or practice ownership opportunities']},
       {label:'Month 3',goals:['Meet with your financial advisor for annual review','Optimize your tax strategy — charitable giving, retirement contributions, entity structure','Set your next 12-month financial goals with specific dollar amounts','Build or update your estate plan (will, trust, beneficiaries)']}
     ]
@@ -5870,7 +5870,7 @@ var GOAL_TEMPLATES={
   attending_direction:{
     title:'Career Reinvention',
     months:[
-      {label:'Month 1',goals:['Complete the Career Pivot Decision Engine — diagnose before you prescribe','Talk to 3 physicians who\'ve made the pivot you\'re considering','Calculate the true financial cost of transition','Assess: is this burnout (temporary) or misalignment (structural)?']},
+      {label:'Month 1',goals:['Complete the Career Transition Planner — diagnose before you prescribe','Talk to 3 physicians who\'ve made the pivot you\'re considering','Calculate the true financial cost of transition','Assess: is this burnout (temporary) or misalignment (structural)?']},
       {label:'Month 2',goals:['Test the new direction without quitting: moonlight, consult, teach, or volunteer','Build a 12-month financial bridge plan','Identify skills that transfer and gaps that need filling','Submit a Strategic Audit to Dr. Faroqui for structured review']},
       {label:'Month 3',goals:['Make a provisional decision with a clear timeline','If staying clinical: negotiate specific changes to your current role','If pivoting: set a start date and announce to key stakeholders','Build your support system — mentors, peers, family alignment']}
     ]
@@ -6513,7 +6513,7 @@ function ciCalc(){
   var ciHL=[scoreLabel+' ('+score+'/100)'];
   details.forEach(function(d){if(d.color==='var(--red)')ciHL.push('🚩 '+d.label+': '+d.note)});
   if(recs.length)ciHL.push(recs.length+' negotiation point'+(recs.length>1?'s':''));
-  recordToolUse('Contract Intelligence Tool',score+'/100',scoreLabel,{inputs:ciInputs,highlights:ciHL});
+  recordToolUse('Contract Review Tool',score+'/100',scoreLabel,{inputs:ciInputs,highlights:ciHL});
 }
 
 // ===== FINANCIAL TRAJECTORY SIMULATOR =====
@@ -6716,7 +6716,7 @@ function ftCalc(){
   // Record with resultData for saved scenarios
   var ftInputs={};var ftHL=[];
   scenarios.forEach(function(s,i){var labels3=['A','B','C'];var last=projections[i][projections[i].length-1];ftInputs['Scenario '+labels3[i]]=s.label+' (save '+Math.round(s.saveRate*100)+'%)';ftHL.push(labels3[i]+': $'+(last.netWorth/1000000).toFixed(1)+'M net worth, $'+(last.cumEarnings/1000000).toFixed(1)+'M earnings')});
-  recordToolUse('Financial Trajectory Simulator',null,scenarios.length+' scenario'+(scenarios.length>1?'s':'')+' compared',{inputs:ftInputs,highlights:ftHL});
+  recordToolUse('Financial Projection Tool',null,scenarios.length+' scenario'+(scenarios.length>1?'s':'')+' compared',{inputs:ftInputs,highlights:ftHL});
   }else{
     insEl.innerHTML='<p style="font-size:12px;color:var(--text3);text-align:center;padding:12px">Configure a scenario to see insights.</p>';
   }
@@ -7127,7 +7127,7 @@ function admRenderUserDetail(c){
   }
 
   // Tool History
-  var toolIcons={'Match Competitiveness Calculator':'🏆','Research ROI Calculator':'🔬','Specialty Fit Analyzer':'🧬','Career Strategy Builder':'📊','Financial Trajectory Simulator':'🔮','Contract Intelligence Tool':'📄','RVU Compensation Modeler':'📈','Mock Interview Simulator':'🎤','Income Leverage Playbook':'💰','3-Year Financial Planner':'🏦','Fellowship Positioning Roadmap':'🗺️','Career Pivot Decision Engine':'⚖️'};
+  var toolIcons={'Match Probability Calculator':'🏆','Research Impact Calculator':'🔬','Specialty Fit Assessment':'🧬','Career Roadmap Tool':'📊','Financial Projection Tool':'🔮','Contract Review Tool':'📄','RVU Compensation Modeler':'📈','Interview Practice Tool':'🎤','Debt & Income Strategy Tool':'💰','3-Year Financial Planner':'🏦','Fellowship Application Planner':'🗺️','Career Transition Planner':'⚖️'};
   var th=u.toolHistory||(u.session_data&&u.session_data.toolHistory)||[];
   if(typeof th==='string'){try{th=JSON.parse(th)}catch(e){th=[]}}
   if(!Array.isArray(th))th=[];
@@ -7199,7 +7199,7 @@ function admRenderUserDetail(c){
 
 // ---- TOOL ACTIVITY TAB ----
 function admRenderToolActivity(c){
-  var toolIcons={'Match Competitiveness Calculator':'🏆','Research ROI Calculator':'🔬','Specialty Fit Analyzer':'🧬','Career Strategy Builder':'📊','Financial Trajectory Simulator':'🔮','Contract Intelligence Tool':'📄','RVU Compensation Modeler':'📈','Mock Interview Simulator':'🎤','Income Leverage Playbook':'💰','3-Year Financial Planner':'🏦','Fellowship Positioning Roadmap':'🗺️','Career Pivot Decision Engine':'⚖️'};
+  var toolIcons={'Match Probability Calculator':'🏆','Research Impact Calculator':'🔬','Specialty Fit Assessment':'🧬','Career Roadmap Tool':'📊','Financial Projection Tool':'🔮','Contract Review Tool':'📄','RVU Compensation Modeler':'📈','Interview Practice Tool':'🎤','Debt & Income Strategy Tool':'💰','3-Year Financial Planner':'🏦','Fellowship Application Planner':'🗺️','Career Transition Planner':'⚖️'};
   var users=admGetUsers();
   // Collect all tool runs with user info
   var allRuns=[];
@@ -8434,7 +8434,7 @@ function ilpCalculate(){
     h+='</div>';
   }
   document.getElementById('ilp-results').innerHTML=h;
-  recordToolUse('Income Leverage Playbook',score+'/'+maxScore,grade+' ('+scorePct+'%)',{inputs:{Salary:'$'+salary.toLocaleString(),Debt:'$'+debt.toLocaleString(),Employer:employer,Disability:disability,Spending:'$'+spending.toLocaleString(),'Tax-Advantaged':has401k,Advisor:hasAdvisor},highlights:['Score: '+score+'/'+maxScore+' ('+grade+')'].concat(wins).concat(flags)});
+  recordToolUse('Debt & Income Strategy Tool',score+'/'+maxScore,grade+' ('+scorePct+'%)',{inputs:{Salary:'$'+salary.toLocaleString(),Debt:'$'+debt.toLocaleString(),Employer:employer,Disability:disability,Spending:'$'+spending.toLocaleString(),'Tax-Advantaged':has401k,Advisor:hasAdvisor},highlights:['Score: '+score+'/'+maxScore+' ('+grade+')'].concat(wins).concat(flags)});
 }
 // ===== RESEARCH ROI CALCULATOR =====
 function roiUpdate(){
@@ -8629,7 +8629,7 @@ function roiUpdate(){
     if(spec)roiInputs['Specialty']=specNames[spec]||spec;
     if(months)roiInputs['Months to Deadline']=months;
     var roiHL=[grade,'Portfolio Score: '+userScore+'/'+optimalScore+' pts','Total Items: '+totalItems];
-    recordToolUse('Research ROI Calculator',pct+'%',grade,{inputs:roiInputs,highlights:roiHL});
+    recordToolUse('Research Impact Calculator',pct+'%',grade,{inputs:roiInputs,highlights:roiHL});
   }
 }
 
@@ -8884,7 +8884,7 @@ async function submitPivot(){
 
   // Build clean HTML report
   var h='<div style="font-family:system-ui,sans-serif">';
-  h+='<div style="font-size:16px;font-weight:700;margin-bottom:16px;color:#C6A85E">📊 Career Pivot Decision Engine Report</div>';
+  h+='<div style="font-size:16px;font-weight:700;margin-bottom:16px;color:#C6A85E">📊 Career Transition Planner Report</div>';
 
   // Step 1
   h+='<div style="margin-bottom:16px;padding:12px;background:rgba(198,168,94,.06);border:1px solid rgba(200,168,124,.1);border-radius:8px">';
@@ -8977,7 +8977,7 @@ async function submitPivot(){
   var pivotHL=['Readiness: '+readyLabel+' ('+readiness+'/4)'];
   checks.forEach(function(c){pivotHL.push((c.done?'✅':'❌')+' '+c.label)});
   if(options.length){var best=options.slice().sort(function(a,b){return parseFloat(b.avg)-parseFloat(a.avg)})[0];pivotHL.push('Top option: '+best.label+' ('+best.avg+')')}
-  recordToolUse('Career Pivot Decision Engine',readiness+'/4','Pivot readiness: '+readyLabel,{inputs:pivotInputs,highlights:pivotHL});
+  recordToolUse('Career Transition Planner',readiness+'/4','Pivot readiness: '+readyLabel,{inputs:pivotInputs,highlights:pivotHL});
   notifyAdmin(payload);
 }
 
@@ -9509,7 +9509,7 @@ function misGrade(){
   if(strongCount)misHL.push(strongCount+' strong answer'+(strongCount>1?'s':''));
   if(weakCount)misHL.push(weakCount+' weak answer'+(weakCount>1?'s':''));
   if(totalRed)misHL.push(totalRed+' red flag'+(totalRed>1?'s':''));
-  recordToolUse('Mock Interview Simulator',avgScore+'/100',overallLabel,{inputs:misInputs,highlights:misHL});
+  recordToolUse('Interview Practice Tool',avgScore+'/100',overallLabel,{inputs:misInputs,highlights:misHL});
 }
 
 function misNewType(){
@@ -9575,7 +9575,7 @@ var LEV_WORKFLOWS=[
     catMap:'research'
   },
   {
-    id:'lev-fellowship',num:'06',icon:'\ud83c\udfc6',title:'Fellowship Strategy Builder',
+    id:'lev-fellowship',num:'06',icon:'\ud83c\udfc6',title:'Fellowship Application Planner',
     cat:'career',difficulty:'intermediate',
     tagline:'Build a strategic plan to match into your target fellowship.',
     message:'The fellowship match is strategic. Describe where you are and where you want to be, and we\'ll help you identify gaps, build a timeline, and prioritize.',
@@ -9661,7 +9661,7 @@ function levGenAI(wfId,userInput){
     'lev-fellowship':{
       answer:'The fellowship match is strategic. NRMP data shows what matters most: (1) letter quality, (2) research productivity, (3) away rotation performance. Build an honest self-assessment across these domains, identify your top 2 gaps, and close them aggressively. Work backward from your match year \u2014 3 months ahead of every deadline.',
       aiTip:'Use HeartWise frameworks to run your actual competitiveness score. Then use Ask to build a personalized timeline working backward from your match date. The combination gives you a data-driven strategy instead of guesswork.',
-      nextStep:'Run the Match Competitiveness Calculator in Frameworks first. Then go to Ask with your results and type: "Based on these scores, what are my highest-leverage improvements for '+spec+' fellowship?"'
+      nextStep:'Run the Match Probability Calculator in Frameworks first. Then go to Ask with your results and type: "Based on these scores, what are my highest-leverage improvements for '+spec+' fellowship?"'
     },
     'lev-network':{
       answer:'Strategic networking isn\u2019t collecting contacts \u2014 it\u2019s building relationships with people who will advocate for you. Research their recent work before reaching out. Ask for 15 minutes, not "mentorship." Follow up with value (a relevant paper, a progress update). One well-crafted email gets a response 40\u201350% of the time. Most trainees never send it.',
@@ -9675,8 +9675,8 @@ function levGenAI(wfId,userInput){
     },
     'lev-career-sim':{
       answer:'Most career decisions are made on anecdotes and gut feeling. Model it instead: define what actually matters to you (income, lifestyle, geography, intellectual stimulation), rank those honestly, then compare your options across each variable over 5, 10, and 20 years. Talk to physicians 5\u201310 years into each path \u2014 their perspective is worth more than any data.',
-      aiTip:'Use the Financial Trajectory Simulator in HeartWise Frameworks for precise 30-year compensation modeling. Then use Ask to compare lifestyle, market demand, and burnout data across your options. Decision-making with data, not anxiety.',
-      nextStep:'Run the Financial Trajectory Simulator in Frameworks for each path you\u2019re considering. Then go to Ask: "Compare '+spec+' vs [alternative] across lifestyle, job market, and burnout data over 10 years."'
+      aiTip:'Use the Financial Projection Tool in HeartWise Frameworks for precise 30-year compensation modeling. Then use Ask to compare lifestyle, market demand, and burnout data across your options. Decision-making with data, not anxiety.',
+      nextStep:'Run the Financial Projection Tool in Frameworks for each path you\u2019re considering. Then go to Ask: "Compare '+spec+' vs [alternative] across lifestyle, job market, and burnout data over 10 years."'
     },
     'lev-brand':{
       answer:'Pick ONE platform and ONE niche. "'+spec+' for '+stage+'s" beats "medical education" every time. Post once a week consistently. The 3-1 rule: 3 educational posts for every 1 personal one. You don\u2019t need to be an expert \u2014 documenting your learning journey is genuinely valuable to people one step behind you.',
@@ -10876,7 +10876,7 @@ function obsPlanBuild(){
 
   // Record tool use
   if(typeof recordToolUse==='function'){
-    recordToolUse('Observership Finder',0,'Generated personalized observership strategy for '+(isIMG==='img'?'IMG':'US student')+' targeting '+(OBS_SPEC_LABELS[spec]||spec),{
+    recordToolUse('Observership Database',0,'Generated personalized observership strategy for '+(isIMG==='img'?'IMG':'US student')+' targeting '+(OBS_SPEC_LABELS[spec]||spec),{
       isIMG:isIMG,specialty:spec,step2:step2,budget:budget,priority:priority,region:region,timeline:timeline,
       topPicks:top5.map(function(i){return{name:i.program.inst,roi:obsCalcROI(i.program),score:i.score}})
     });
@@ -10887,7 +10887,7 @@ function obsSaveScenario(){
   if(typeof saveToolScenario==='function'){
     var spec=document.getElementById('obs-p-spec').value;
     var label=(OBS_SPEC_LABELS[spec]||spec)+' strategy';
-    saveToolScenario('Observership Finder',label,document.getElementById('obs-plan-results').innerHTML);
+    saveToolScenario('Observership Database',label,document.getElementById('obs-plan-results').innerHTML);
   }else{
     if(typeof notify==='function')notify('Scenario saved ✨');
   }

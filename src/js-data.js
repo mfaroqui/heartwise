@@ -306,21 +306,21 @@ const LEGACY_Q=[
 ];
 
 const VAULT_ITEMS=[
-{id:'v1',title:'Fellowship Readiness Worksheet',desc:'Evaluate your application against successful fellowship profiles',icon:'🎯',tier:'core'},
-{id:'v2',title:'Contract Risk Scorecard',desc:'Identify red flags and leverage points in any physician contract',icon:'🚩',tier:'core'},
-{id:'v3',title:'Offer Comparison Matrix',desc:'Side-by-side analysis framework for multiple job offers',icon:'📊',tier:'core'},
-{id:'v4',title:'RVU Modeling Sheet',desc:'Model compensation scenarios by volume, rate, and practice type',icon:'💰',tier:'core'},
-{id:'v5',title:'3-Year Leverage Planner',desc:'Map your income trajectory from training exit through year 3',icon:'📈',tier:'core'},
-{id:'v6',title:'Fellowship Positioning Roadmap',desc:'Month-by-month timeline from PGY-2 to match day',icon:'🗺️',tier:'core'},
-{id:'v7',title:'Research ROI Calculator',desc:'Calculate your research portfolio strength and see how close you are to optimal',icon:'⚖️',tier:'core'},
-{id:'v8',title:'Income Leverage Playbook',desc:'PSLF vs refinance modeling, tax strategy, disability planning',icon:'💵',tier:'core'},
-{id:'v13',title:'Specialty Fit Analyzer',desc:'Determine which specialty fits your personality, goals, and lifestyle preferences',icon:'🔬',tier:'core'},
-{id:'v14',title:'Match Competitiveness Calculator',desc:'Estimate your match likelihood based on board scores, research, and school tier',icon:'🏆',tier:'core'},
-{id:'v15',title:'Career Strategy Builder',desc:'Build a step-by-step roadmap to reach your target specialty or career goal',icon:'🗂️',tier:'core'},
-{id:'v16',title:'Mock Interview Simulator',desc:'Practice with real interview questions for your specialty and stage — get honest feedback on your answers',icon:'🎙️',tier:'core'},
-{id:'v9',title:'Strategic Audit Template',desc:'The exact intake framework used in Mentorship strategy sessions',icon:'📝',tier:'core'},
-{id:'v10',title:'Career Pivot Decision Engine',desc:'Structured framework for specialty switches and practice model changes',icon:'⚡',tier:'core'},
-{id:'v11',title:'Financial Trajectory Simulator',desc:'30-year wealth projection with debt payoff timeline by specialty and practice type',icon:'💰',tier:'core'},
-{id:'v12',title:'Contract Intelligence Tool',desc:'Input your offer details and get a competitiveness score, risk flags, and negotiation strategy',icon:'📝',tier:'core'},
-{id:'v17',title:'Observership Finder',desc:'65 verified US observership programs with match intelligence, ROI scoring, and personalized strategy builder',icon:'🏥',tier:'core'}
+{id:'v1',title:'Fellowship Readiness Assessment',desc:'Evaluate how your application compares to successful fellowship candidates',icon:'🎯',tier:'core'},
+{id:'v2',title:'Contract Risk Assessment',desc:'Identify red flags, risks, and leverage points within physician contracts',icon:'🚩',tier:'core'},
+{id:'v3',title:'Job Offer Comparison Tool',desc:'Compare multiple job offers side-by-side with structured decision criteria',icon:'📊',tier:'core'},
+{id:'v4',title:'RVU Compensation Calculator',desc:'Estimate income based on productivity, compensation model, and practice type',icon:'💰',tier:'core'},
+{id:'v5',title:'Early Career Income Planner',desc:'Map your expected income trajectory during your first 3 years after training',icon:'📈',tier:'core'},
+{id:'v6',title:'Fellowship Application Planner',desc:'Follow a month-by-month strategy from PGY-2 through match cycle',icon:'🗺️',tier:'core'},
+{id:'v7',title:'Research Impact Calculator',desc:'Assess the strength and relevance of your research portfolio',icon:'⚖️',tier:'core'},
+{id:'v8',title:'Debt & Income Strategy Tool',desc:'Compare loan repayment strategies including PSLF, refinancing, and tax impact',icon:'💵',tier:'core'},
+{id:'v13',title:'Specialty Fit Assessment',desc:'Identify which medical specialties align with your personality, goals, and lifestyle',icon:'🔬',tier:'core'},
+{id:'v14',title:'Match Probability Calculator',desc:'Estimate your likelihood of matching based on scores, research, and profile strength',icon:'🏆',tier:'core'},
+{id:'v15',title:'Career Roadmap Tool',desc:'Create a step-by-step plan to reach your desired specialty or career outcome',icon:'🗂️',tier:'core'},
+{id:'v16',title:'Interview Practice Tool',desc:'Practice specialty-specific interview questions with actionable feedback',icon:'🎙️',tier:'core'},
+{id:'v9',title:'Application Review Tool',desc:'Audit your full application using a structured, mentor-level evaluation framework',icon:'📝',tier:'core'},
+{id:'v10',title:'Career Transition Planner',desc:'Evaluate and plan specialty or practice changes with structured guidance',icon:'⚡',tier:'core'},
+{id:'v11',title:'Financial Projection Tool',desc:'Visualize long-term earnings, savings, and wealth across different career paths',icon:'💰',tier:'core'},
+{id:'v12',title:'Contract Review Tool',desc:'Translate contract details into a clear negotiation and decision strategy',icon:'📝',tier:'core'},
+{id:'v17',title:'Observership Database',desc:'Browse verified U.S. observership opportunities with strategic insights',icon:'🏥',tier:'core'}
 ];

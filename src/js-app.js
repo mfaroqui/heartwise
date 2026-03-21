@@ -713,7 +713,9 @@ async function doLogin(e){
                 await _supaClient.from('profiles').update({tier:'free',is_trial:false}).eq('email',email);
                 saveDB();
               }else if(sp.is_trial){
-                user.tier=sp.tier||'core';user.isTrial=true;user.trialEnd=sp.trial_end;
+                user.tier='core';user.isTrial=true;user.trialEnd=sp.trial_end;
+                // Fix old trials that were created with elite tier
+                if(sp.tier==='elite'){await _supaClient.from('profiles').update({tier:'core'}).eq('email',email)}
               }
             }
             if(sp.tier&&!sp.is_trial&&sp.tier!=='free'){user.tier=sp.tier;user.isTrial=false}
@@ -6948,6 +6950,8 @@ function admRenderMetrics(){
   var co=users.filter(function(u){return u.tier==='core'}).length;
   var el=users.filter(function(u){return u.tier==='elite'}).length;
   var tr=users.filter(function(u){return u.is_trial||u.isTrial}).length;
+  var trActive=users.filter(function(u){var isTr=u.is_trial||u.isTrial;var te=u.trial_end||u.trialEnd;return isTr&&te&&new Date(te)>new Date()}).length;
+  var trExpired=tr-trActive;
   var ca=users.filter(function(u){return u.cancelled||u.status==='cancelled'}).length;
   var mrr=0; // Revenue tracked via Stripe only
   var tai=0;users.forEach(function(u){if(u.usage&&u.usage.ai)tai+=u.usage.ai;if(u.ai_used)tai+=u.ai_used});
@@ -6963,7 +6967,8 @@ function admRenderMetrics(){
     '<div class="adm-metric"><div class="num" style="color:var(--text3)">'+fr+'</div><div class="lbl">Free</div></div>'+
     '<div class="adm-metric"><div class="num" style="color:var(--accent)">'+co+'</div><div class="lbl">Core</div></div>'+
     '<div class="adm-metric"><div class="num" style="color:var(--green)">'+el+'</div><div class="lbl">Mentorship</div></div>'+
-    '<div class="adm-metric"><div class="num" style="color:#5ba8d0">'+tr+'</div><div class="lbl">Trial</div></div>'+
+    '<div class="adm-metric"><div class="num" style="color:#5ba8d0">'+trActive+'</div><div class="lbl">Active Trials</div></div>'+
+    '<div class="adm-metric"><div class="num" style="color:var(--text3)">'+trExpired+'</div><div class="lbl">Expired Trials</div></div>'+
     '<div class="adm-metric"><div class="num" style="color:#c44d56">'+ca+'</div><div class="lbl">Cancelled</div></div>';
 }
 function admRender(){
@@ -7032,7 +7037,8 @@ function admRenderUsers(c){
     var joined=u.created_at||u.signup_date||'';if(joined)joined=new Date(joined).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'2-digit'});
     h+='<tr><td><a href="#" onclick="event.preventDefault();admShowUser(\''+u.id+'\')" style="color:var(--accent);text-decoration:none;font-weight:600">'+(u.name||'Unknown')+'</a></td>';
     h+='<td style="font-size:11px">'+(u.email||'')+'</td><td>'+stage+'</td>';
-    h+='<td><span style="color:'+tierColor+';font-weight:600">'+(u.tier||'free').toUpperCase()+'</span></td>';
+    var trialBadge='';if(u.is_trial||u.isTrial){var te=u.trial_end||u.trialEnd;if(te&&new Date(te)>new Date())trialBadge=' <span style="font-size:8px;padding:1px 5px;border-radius:4px;background:rgba(198,168,94,.12);color:var(--accent);font-weight:600">TRIAL</span>';else trialBadge=' <span style="font-size:8px;padding:1px 5px;border-radius:4px;background:rgba(196,77,86,.12);color:var(--red);font-weight:600">EXPIRED</span>'}
+    h+='<td><span style="color:'+tierColor+';font-weight:600">'+(u.tier||'free').toUpperCase()+'</span>'+trialBadge+'</td>';
     h+='<td>'+aiUsed+'</td><td style="font-size:11px">'+joined+'</td>';
     h+='<td><button onclick="admShowUser(\''+u.id+'\')" style="font-size:10px;padding:4px 10px;border:1px solid var(--border);border-radius:4px;background:var(--bg3);color:var(--text3);cursor:pointer">View</button></td></tr>';
   });
@@ -7068,6 +7074,13 @@ function admRenderUserDetail(c){
   h+='<div style="font-size:12px;color:var(--text3)">'+(u.email||'')+'</div></div>';
   var tc=u.tier==='elite'?'var(--green)':u.tier==='core'?'var(--accent)':'var(--text3)';
   h+='<span style="color:'+tc+';font-weight:700;font-size:14px">'+(u.tier||'free').toUpperCase()+'</span></div>';
+  // Trial status
+  var isTrial=u.is_trial||u.isTrial;var trialEnd=u.trial_end||u.trialEnd;
+  if(isTrial&&trialEnd){
+    var tRemain=new Date(trialEnd)-new Date();
+    if(tRemain>0){var tHrs=Math.floor(tRemain/3600000);var tMin=Math.floor((tRemain%3600000)/60000);h+='<div style="padding:8px 12px;background:rgba(198,168,94,.08);border:1px solid rgba(198,168,94,.15);border-radius:8px;margin-bottom:10px;font-size:11px;color:var(--accent);display:flex;align-items:center;gap:8px"><span>✦</span> <strong>48h Guided Access Active</strong> — '+tHrs+'h '+tMin+'m remaining (expires '+new Date(trialEnd).toLocaleString()+')</div>'}
+    else{h+='<div style="padding:8px 12px;background:rgba(196,77,86,.08);border:1px solid rgba(196,77,86,.15);border-radius:8px;margin-bottom:10px;font-size:11px;color:var(--red);display:flex;align-items:center;gap:8px"><span>⏰</span> <strong>Trial expired</strong> — ended '+new Date(trialEnd).toLocaleString()+' (still marked as trial in DB — click Expire Trial to clean up)</div>'}
+  }else if(isTrial){h+='<div style="padding:8px 12px;background:rgba(196,77,86,.08);border:1px solid rgba(196,77,86,.15);border-radius:8px;margin-bottom:10px;font-size:11px;color:var(--red)">⚠️ Trial flag set but no trial_end date</div>'}
   h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:13px">';
   h+='<div><span style="color:var(--text3)">Stage:</span> <strong>'+stage+'</strong></div>';
   h+='<div><span style="color:var(--text3)">Specialty:</span> <strong>'+spec+'</strong></div>';
@@ -7100,6 +7113,7 @@ function admRenderUserDetail(c){
   h+='<button onclick="admChangeTier(\''+u.id+'\')" class="btn btn-a btn-sm">Update Tier</button>';
   h+='<button onclick="admResetAI(\''+u.id+'\')" style="font-size:12px;padding:8px 14px;border:1px solid var(--border);border-radius:6px;background:var(--bg3);color:var(--text);cursor:pointer">Reset AI</button>';
   h+='<button onclick="admExtendTrial(\''+u.id+'\')" style="font-size:12px;padding:8px 14px;border:1px solid var(--border);border-radius:6px;background:var(--bg3);color:var(--text);cursor:pointer">+48h Trial</button>';
+  h+='<button onclick="admExpireTrial(\''+u.id+'\')" style="font-size:12px;padding:8px 14px;border:1px solid var(--accent);border-radius:6px;background:rgba(198,168,94,.08);color:var(--accent);cursor:pointer">Expire Trial</button>';
   h+='<button onclick="admDisableUser(\''+u.id+'\')" style="font-size:12px;padding:8px 14px;border:1px solid #c44d56;border-radius:6px;background:rgba(196,77,86,.1);color:#c44d56;cursor:pointer">Disable</button>';
   h+='</div></div>';
 
@@ -7349,10 +7363,35 @@ async function admResetAI(uid){
 async function admExtendTrial(uid){
   var e=new Date(Date.now()+48*3600000).toISOString();
   if(typeof _supaClient!=='undefined'&&_supaClient){
-    await _supaClient.from('profiles').update({trial_end:e,is_trial:true}).eq('id',uid);
-    var u=_sbProfiles?_sbProfiles.find(function(p){return p.id===uid}):null;if(u){u.trial_end=e;u.is_trial=true}
-  }else{var u=(DB.users||[]).find(function(x){return x.id===uid});if(u){u.trialEnd=e;u.isTrial=true;saveDB()}}
-  notify('Trial extended +48h');admRender();
+    await _supaClient.from('profiles').update({trial_end:e,is_trial:true,tier:'core'}).eq('id',uid);
+    var u=_sbProfiles?_sbProfiles.find(function(p){return p.id===uid}):null;if(u){u.trial_end=e;u.is_trial=true;u.tier='core'}
+  }else{var u=(DB.users||[]).find(function(x){return x.id===uid});if(u){u.trialEnd=e;u.isTrial=true;u.tier='core';saveDB()}}
+  notify('48-hour guided access activated');admRender();
+}
+async function admExpireTrial(uid){
+  if(typeof _supaClient!=='undefined'&&_supaClient){
+    await _supaClient.from('profiles').update({tier:'free',is_trial:false,trial_end:null}).eq('id',uid);
+    var u=_sbProfiles?_sbProfiles.find(function(p){return p.id===uid}):null;if(u){u.tier='free';u.is_trial=false;u.trial_end=null}
+  }else{var u=(DB.users||[]).find(function(x){return x.id===uid});if(u){u.tier='free';u.isTrial=false;u.trialEnd=null;saveDB()}}
+  notify('Trial expired — user moved to free tier');admRender();
+}
+function admSimulateTrial(){
+  if(!U||U.tier!=='admin'){notify('Admin only',1);return}
+  // Save real admin state
+  window._adminBackup={tier:U.tier,isTrial:U.isTrial,trialEnd:U.trialEnd};
+  // Set trial state
+  U.tier='core';U.isTrial=true;U.trialEnd=new Date(Date.now()+48*3600000).toISOString();
+  localStorage.setItem('hw_session',JSON.stringify(U));
+  enterApp();
+  notify('🧪 Trial simulation active. You are now seeing the 48-hour guided access experience. Click "Exit Simulation" in admin panel to return.');
+}
+function admExitSimulation(){
+  if(!window._adminBackup){notify('No simulation active',1);return}
+  U.tier=window._adminBackup.tier;U.isTrial=window._adminBackup.isTrial||false;U.trialEnd=window._adminBackup.trialEnd||null;
+  delete window._adminBackup;
+  localStorage.setItem('hw_session',JSON.stringify(U));
+  enterApp();
+  notify('Simulation ended. Admin access restored.');
 }
 async function admDisableUser(uid){
   if(!confirm('Disable this user? They will lose access.'))return;

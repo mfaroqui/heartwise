@@ -19,11 +19,11 @@
 
 // ===== HERO SHOWCASE CAROUSEL =====
 (function(){
-  var currentSlide=0, totalSlides=5, timer=null, animated=[];
+  var currentSlide=0, totalSlides=6, timer=null, animated=[];
   function animateSlide(idx){
     if(animated[idx])return; animated[idx]=true;
     if(idx===0){
-      // Competitiveness score
+      // Match Positioning Score
       var scoreEl=document.querySelector('.showcase-slide[data-slide="0"] .sc-score');
       var target=76, cur=0;
       var si=setInterval(function(){cur+=2;if(cur>=target){cur=target;clearInterval(si)}if(scoreEl)scoreEl.textContent=cur},30);
@@ -34,7 +34,11 @@
       });
       setTimeout(function(){document.querySelectorAll('.showcase-slide[data-slide="0"] .sc-tag').forEach(function(t){t.style.opacity='1'})},1200);
     }else if(idx===1){
-      // Financial trajectory
+      // Observership Finder
+      setTimeout(function(){document.querySelectorAll('.obs-row').forEach(function(r){r.style.opacity='1';r.style.transform='translateX(0)'})},100);
+      setTimeout(function(){document.querySelectorAll('.obs-tag').forEach(function(t){t.style.opacity='1'})},600);
+    }else if(idx===2){
+      // Wealth Trajectory Model
       var amtEl=document.querySelector('.fin-amount'), diffEl=document.querySelector('.fin-diff');
       var t1=14.2,c1=0;
       var fi=setInterval(function(){c1+=0.3;if(c1>=t1){c1=t1;clearInterval(fi)}if(amtEl)amtEl.textContent='$'+c1.toFixed(1)+'M'},40);
@@ -44,19 +48,19 @@
         document.querySelectorAll('.fin-line-base,.fin-line-strat').forEach(function(l){l.style.strokeDashoffset='0'});
         var dot=document.querySelector('.fin-dot');if(dot)dot.style.opacity='1';
       },100);
-    }else if(idx===2){
-      // Contract
+    }else if(idx===3){
+      // Contract Intelligence Engine
       var valEl=document.querySelector('.contract-val'),rvuEl=document.querySelector('.contract-rvu');
       var tv=685000,cv=0;
       var vi=setInterval(function(){cv+=15000;if(cv>=tv){cv=tv;clearInterval(vi)}if(valEl)valEl.textContent='$'+cv.toLocaleString()},30);
       var tr=55,cr=0;
       var ri=setInterval(function(){cr+=1;if(cr>=tr){cr=tr;clearInterval(ri)}if(rvuEl)rvuEl.innerHTML='$'+cr+'<span style="font-size:11px;font-weight:300;color:var(--text3)">/wRVU</span>'},30);
       setTimeout(function(){document.querySelectorAll('.contract-flag').forEach(function(f){f.style.opacity='1';f.style.transform='translateX(0)'})},400);
-    }else if(idx===3){
+    }else if(idx===4){
       // Offer Decision Matrix
       setTimeout(function(){document.querySelectorAll('.offer-row').forEach(function(r){r.style.opacity='1';r.style.transform='translateX(0)'})},100);
       setTimeout(function(){document.querySelectorAll('.offer-tag').forEach(function(t){t.style.opacity='1'})},800);
-    }else if(idx===4){
+    }else if(idx===5){
       // Career Pivot Engine
       setTimeout(function(){document.querySelectorAll('.pivot-card').forEach(function(c){c.style.opacity='1';c.style.transform='translateY(0)'})},100);
       setTimeout(function(){document.querySelectorAll('.pivot-factor').forEach(function(f){f.style.opacity='1';f.style.transform='translateX(0)'})},300);

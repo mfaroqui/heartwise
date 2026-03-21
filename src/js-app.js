@@ -10463,7 +10463,7 @@ function obsRenderCard(p,expanded){
     if(p.applicationUrl)h+='<a href="'+p.applicationUrl+'" target="_blank" rel="noopener" style="flex:1;display:block;text-align:center;padding:10px;background:var(--accent);color:var(--bg);border-radius:8px;font-size:12px;font-weight:600;text-decoration:none">Apply / Learn More →</a>';
     h+='<button onclick="event.stopPropagation();obsAddCompare('+p.id+')" style="padding:10px 14px;background:var(--bg);border:1px solid var(--border);border-radius:8px;font-size:12px;cursor:pointer;color:var(--text)">⚖️ Compare</button>';
     h+='</div>';
-    h+='<div style="margin-top:8px;font-size:9px;color:var(--text3);text-align:right">Last verified: '+p.lastVerified+'</div>';
+    h+='<div style="margin-top:8px;font-size:9px;color:var(--text3);text-align:right">Last verified: '+p.lastVerified+' · Confirm details with program before applying</div>';
     h+='</div>';
   }
   h+='</div>';
@@ -10748,6 +10748,7 @@ function obsPlanBuild(){
   h+='</div></div>';
 
   // Save scenario
+  h+='<div style="margin-top:12px;padding:8px 12px;background:rgba(234,179,8,.08);border:1px solid rgba(234,179,8,.2);border-radius:8px;display:flex;align-items:center;gap:8px"><span style="font-size:14px">⚠️</span><span style="font-size:10px;color:var(--text2);line-height:1.4"><strong>Data freshness:</strong> Program details are verified monthly and may be up to 30 days old. Always confirm deadlines, fees, and availability directly with each program before applying.</span></div>';
   h+='<div style="text-align:center;margin-top:16px"><button onclick="obsSaveScenario()" class="btn" style="padding:10px 24px;font-size:12px">💾 Save This Strategy</button></div>';
 
   el.innerHTML=h;

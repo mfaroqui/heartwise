@@ -1600,7 +1600,8 @@ v15:`<h3 class="serif">Career Strategy Builder</h3>
 </div>`,
 
 v17:`<h3 class="serif">Observership Finder</h3>
-<p style="color:var(--text3);font-size:12px;margin-bottom:16px">65 verified US observership programs with match intelligence, filtering, and personalized recommendations for IMGs and US medical students.</p>
+<p style="color:var(--text3);font-size:12px;margin-bottom:10px">65 verified US observership programs with match intelligence, filtering, and personalized recommendations for IMGs and US medical students.</p>
+<div style="padding:8px 12px;background:rgba(234,179,8,.08);border:1px solid rgba(234,179,8,.2);border-radius:8px;margin-bottom:16px;display:flex;align-items:center;gap:8px"><span style="font-size:14px">⚠️</span><span style="font-size:10px;color:var(--text2);line-height:1.4"><strong>Data freshness:</strong> Program details are verified monthly. Information may be up to 30 days old. Always confirm deadlines, fees, and availability directly with the program before applying.</span></div>
 
 <!-- Tab Navigation -->
 <div id="obs-tabs" style="display:flex;gap:0;margin-bottom:20px;border:1px solid rgba(200,168,124,.25);border-radius:10px;overflow:hidden">

@@ -1597,5 +1597,144 @@ v15:`<h3 class="serif">Career Strategy Builder</h3>
 <div id="csb-results" style="margin-top:20px"></div>
 <div style="text-align:center;margin-top:8px"><button onclick="showSavedScenarios('Career Strategy Builder')" style="background:none;border:none;color:var(--accent);font-size:11px;cursor:pointer;padding:6px 12px;opacity:.7;transition:opacity .15s" onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='.7'">📊 View Saved Scenarios</button></div>
 
-</div>`
+</div>`,
+
+v17:`<h3 class="serif">Observership Finder</h3>
+<p style="color:var(--text3);font-size:12px;margin-bottom:16px">65 verified US observership programs with match intelligence, filtering, and personalized recommendations for IMGs and US medical students.</p>
+
+<!-- Tab Navigation -->
+<div id="obs-tabs" style="display:flex;gap:0;margin-bottom:20px;border:1px solid rgba(200,168,124,.25);border-radius:10px;overflow:hidden">
+<button id="obs-tab-find" onclick="obsTab('find')" style="flex:1;padding:10px;font-size:12px;font-weight:600;border:none;cursor:pointer;background:var(--accent);color:var(--bg);transition:all .2s">🔍 Find Programs</button>
+<button id="obs-tab-plan" onclick="obsTab('plan')" style="flex:1;padding:10px;font-size:12px;font-weight:600;border:none;cursor:pointer;background:none;color:var(--accent);transition:all .2s">🎯 Plan Builder</button>
+<button id="obs-tab-compare" onclick="obsTab('compare')" style="flex:1;padding:10px;font-size:12px;font-weight:600;border:none;cursor:pointer;background:none;color:var(--accent);transition:all .2s">⚖️ Compare</button>
+</div>
+
+<!-- ===== FIND TAB ===== -->
+<div id="obs-find" style="">
+
+<!-- Quick Stats -->
+<div style="display:flex;gap:1px;margin-bottom:16px;border-radius:10px;overflow:hidden">
+<div style="flex:1;background:var(--bg2);padding:10px;text-align:center"><div id="obs-stat-total" style="font-size:20px;font-weight:700;color:var(--accent)">65</div><div style="font-size:9px;color:var(--text3)">Programs</div></div>
+<div style="flex:1;background:var(--bg2);padding:10px;text-align:center"><div id="obs-stat-free" style="font-size:20px;font-weight:700;color:var(--accent)">—</div><div style="font-size:9px;color:var(--text3)">Free</div></div>
+<div style="flex:1;background:var(--bg2);padding:10px;text-align:center"><div id="obs-stat-visa" style="font-size:20px;font-weight:700;color:var(--accent)">—</div><div style="font-size:9px;color:var(--text3)">Visa Support</div></div>
+<div style="flex:1;background:var(--bg2);padding:10px;text-align:center"><div id="obs-stat-hands" style="font-size:20px;font-weight:700;color:var(--accent)">—</div><div style="font-size:9px;color:var(--text3)">Hands-On</div></div>
+</div>
+
+<!-- Search Bar -->
+<div style="position:relative;margin-bottom:12px">
+<input id="obs-search" type="text" placeholder="Search by name, city, state, specialty..." oninput="obsFilter()" style="width:100%;padding:10px 12px 10px 36px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px;box-sizing:border-box">
+<span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:14px;opacity:.5">🔍</span>
+</div>
+
+<!-- Filters -->
+<div style="margin-bottom:16px">
+<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px">
+<select id="obs-f-spec" onchange="obsFilter()" style="flex:1;min-width:120px;padding:8px;border:1px solid var(--border);border-radius:6px;background:var(--bg2);color:var(--text);font-size:11px"><option value="">All Specialties</option></select>
+<select id="obs-f-region" onchange="obsFilter()" style="flex:1;min-width:100px;padding:8px;border:1px solid var(--border);border-radius:6px;background:var(--bg2);color:var(--text);font-size:11px"><option value="">All Regions</option><option value="northeast">Northeast</option><option value="midwest">Midwest</option><option value="south">South</option><option value="west">West</option></select>
+<select id="obs-f-state" onchange="obsFilter()" style="flex:1;min-width:80px;padding:8px;border:1px solid var(--border);border-radius:6px;background:var(--bg2);color:var(--text);font-size:11px"><option value="">All States</option></select>
+</div>
+<div style="display:flex;gap:6px;flex-wrap:wrap">
+<select id="obs-f-cost" onchange="obsFilter()" style="flex:1;min-width:80px;padding:8px;border:1px solid var(--border);border-radius:6px;background:var(--bg2);color:var(--text);font-size:11px"><option value="">Any Cost</option><option value="free">Free Only</option><option value="low">Under $500</option><option value="mid">$500–$1000</option><option value="high">$1000+</option></select>
+<select id="obs-f-img" onchange="obsFilter()" style="flex:1;min-width:100px;padding:8px;border:1px solid var(--border);border-radius:6px;background:var(--bg2);color:var(--text);font-size:11px"><option value="">IMG Friendliness</option><option value="5">★★★★★ Very Welcoming</option><option value="4">★★★★☆ Friendly</option><option value="3">★★★☆☆ Moderate</option></select>
+<select id="obs-f-hands" onchange="obsFilter()" style="flex:1;min-width:100px;padding:8px;border:1px solid var(--border);border-radius:6px;background:var(--bg2);color:var(--text);font-size:11px"><option value="">Hands-On Level</option><option value="4">Hands-On (4-5★)</option><option value="3">Some Participation</option><option value="1">Observation OK</option></select>
+</div>
+<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">
+<select id="obs-f-lor" onchange="obsFilter()" style="flex:1;min-width:100px;padding:8px;border:1px solid var(--border);border-radius:6px;background:var(--bg2);color:var(--text);font-size:11px"><option value="">LOR Potential</option><option value="5">★★★★★ Excellent</option><option value="4">★★★★☆ Strong</option><option value="3">★★★☆☆ Possible</option></select>
+<select id="obs-f-visa" onchange="obsFilter()" style="flex:1;min-width:100px;padding:8px;border:1px solid var(--border);border-radius:6px;background:var(--bg2);color:var(--text);font-size:11px"><option value="">Visa Support</option><option value="yes">Provides Visa Help</option><option value="no">No Visa Support</option></select>
+<select id="obs-f-sort" onchange="obsFilter()" style="flex:1;min-width:100px;padding:8px;border:1px solid var(--border);border-radius:6px;background:var(--bg2);color:var(--text);font-size:11px"><option value="roi">Sort: Best ROI</option><option value="prestige">Sort: Prestige</option><option value="img">Sort: IMG-Friendly</option><option value="cost-low">Sort: Cost (Low→High)</option><option value="cost-high">Sort: Cost (High→Low)</option><option value="hands">Sort: Most Hands-On</option><option value="lor">Sort: Best LOR Potential</option></select>
+</div>
+</div>
+
+<!-- Results Count -->
+<div id="obs-results-count" style="font-size:11px;color:var(--text3);margin-bottom:10px"></div>
+
+<!-- Results -->
+<div id="obs-results" style=""></div>
+
+</div>
+
+<!-- ===== PLAN BUILDER TAB ===== -->
+<div id="obs-plan" style="display:none">
+
+<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid rgba(200,168,124,.15)">📋 Your Profile</div>
+
+<div style="margin-bottom:12px">
+<label style="font-size:11px;color:var(--text3)">Are you an IMG or US student?</label>
+<select id="obs-p-img" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
+<option value="">Select...</option><option value="img">International Medical Graduate (IMG)</option><option value="us">US Medical Student/Graduate</option>
+</select>
+</div>
+
+<div style="margin-bottom:12px">
+<label style="font-size:11px;color:var(--text3)">Target Specialty</label>
+<select id="obs-p-spec" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
+<option value="">Select specialty...</option>
+</select>
+</div>
+
+<div style="margin-bottom:12px">
+<label style="font-size:11px;color:var(--text3)">Step 2 CK Score (or expected)</label>
+<input id="obs-p-step2" type="number" placeholder="e.g. 245" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px;box-sizing:border-box">
+</div>
+
+<div style="margin-bottom:12px">
+<label style="font-size:11px;color:var(--text3)">Do you need visa sponsorship?</label>
+<select id="obs-p-visa" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
+<option value="">Select...</option><option value="yes">Yes — I need visa help</option><option value="no">No — I have a valid visa/US citizen</option>
+</select>
+</div>
+
+<div style="margin-bottom:12px">
+<label style="font-size:11px;color:var(--text3)">Budget for observership fees</label>
+<select id="obs-p-budget" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
+<option value="">Select...</option><option value="0">Free programs only</option><option value="500">Up to $500 total</option><option value="1000">Up to $1,000 total</option><option value="2000">Up to $2,000 total</option><option value="99999">Cost is not an issue</option>
+</select>
+</div>
+
+<div style="margin-bottom:12px">
+<label style="font-size:11px;color:var(--text3)">What do you need most?</label>
+<select id="obs-p-priority" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
+<option value="">Select...</option><option value="lor">Strong Letters of Recommendation</option><option value="hands">Hands-On Clinical Experience</option><option value="prestige">Name Recognition / Prestige</option><option value="pipeline">Best Chance of Matching at Program</option><option value="balanced">Balanced — All of the Above</option>
+</select>
+</div>
+
+<div style="margin-bottom:12px">
+<label style="font-size:11px;color:var(--text3)">Preferred Region (optional)</label>
+<select id="obs-p-region" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
+<option value="">No preference</option><option value="northeast">Northeast</option><option value="midwest">Midwest</option><option value="south">South</option><option value="west">West</option>
+</select>
+</div>
+
+<div style="margin-bottom:12px">
+<label style="font-size:11px;color:var(--text3)">Timeline</label>
+<select id="obs-p-timeline" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
+<option value="">Select...</option><option value="3">Within 3 months</option><option value="6">Within 6 months</option><option value="12">Within 12 months</option><option value="flexible">Flexible — planning ahead</option>
+</select>
+</div>
+
+<button onclick="obsPlanBuild()" class="btn btn-a" style="width:100%;padding:14px;margin-top:8px">Build My Observership Strategy →</button>
+
+<div id="obs-plan-results" style="margin-top:20px"></div>
+
+</div>
+
+<!-- ===== COMPARE TAB ===== -->
+<div id="obs-compare" style="display:none">
+
+<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid rgba(200,168,124,.15)">⚖️ Side-by-Side Comparison</div>
+
+<p style="font-size:12px;color:var(--text3);margin-bottom:12px">Select 2–3 programs to compare. Use the ⚖️ button on any program card to add it here.</p>
+
+<div id="obs-compare-slots" style="display:flex;gap:8px;margin-bottom:16px">
+<div style="flex:1"><select id="obs-cmp-1" onchange="obsCompare()" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:6px;background:var(--bg2);color:var(--text);font-size:11px"><option value="">Program 1...</option></select></div>
+<div style="flex:1"><select id="obs-cmp-2" onchange="obsCompare()" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:6px;background:var(--bg2);color:var(--text);font-size:11px"><option value="">Program 2...</option></select></div>
+<div style="flex:1"><select id="obs-cmp-3" onchange="obsCompare()" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:6px;background:var(--bg2);color:var(--text);font-size:11px"><option value="">Program 3...</option></select></div>
+</div>
+
+<div id="obs-compare-results" style=""></div>
+
+</div>
+
+<div style="text-align:center;margin-top:12px"><button onclick="showSavedScenarios('Observership Finder')" style="background:none;border:none;color:var(--accent);font-size:11px;cursor:pointer;padding:6px 12px;opacity:.7;transition:opacity .15s" onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='.7'">📊 View Saved Scenarios</button></div>
+`
 };

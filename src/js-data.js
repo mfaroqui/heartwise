@@ -321,5 +321,6 @@ const VAULT_ITEMS=[
 {id:'v9',title:'Strategic Audit Template',desc:'The exact intake framework used in Mentorship strategy sessions',icon:'📝',tier:'core'},
 {id:'v10',title:'Career Pivot Decision Engine',desc:'Structured framework for specialty switches and practice model changes',icon:'⚡',tier:'core'},
 {id:'v11',title:'Financial Trajectory Simulator',desc:'30-year wealth projection with debt payoff timeline by specialty and practice type',icon:'💰',tier:'core'},
-{id:'v12',title:'Contract Intelligence Tool',desc:'Input your offer details and get a competitiveness score, risk flags, and negotiation strategy',icon:'📝',tier:'core'}
+{id:'v12',title:'Contract Intelligence Tool',desc:'Input your offer details and get a competitiveness score, risk flags, and negotiation strategy',icon:'📝',tier:'core'},
+{id:'v17',title:'Observership Finder',desc:'65 verified US observership programs with match intelligence, ROI scoring, and personalized strategy builder',icon:'🏥',tier:'core'}
 ];

@@ -8,7 +8,7 @@ const dir = path.join(__dirname, 'src');
 const read = f => fs.readFileSync(path.join(dir, f), 'utf8');
 
 // ===== STEP 1: Assemble JS =====
-const jsFiles = ['js-data.js', 'js-vault.js', 'js-app.js'];
+const jsFiles = ['js-data.js', 'observership-data.js', 'js-vault.js', 'js-app.js'];
 const jsParts = jsFiles.map(f => read(f));
 const combinedJS = jsParts.join('\n');
 

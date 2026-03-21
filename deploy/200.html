@@ -3425,9 +3425,952 @@ const VAULT_ITEMS=[
 {id:'v9',title:'Strategic Audit Template',desc:'The exact intake framework used in Mentorship strategy sessions',icon:'📝',tier:'core'},
 {id:'v10',title:'Career Pivot Decision Engine',desc:'Structured framework for specialty switches and practice model changes',icon:'⚡',tier:'core'},
 {id:'v11',title:'Financial Trajectory Simulator',desc:'30-year wealth projection with debt payoff timeline by specialty and practice type',icon:'💰',tier:'core'},
-{id:'v12',title:'Contract Intelligence Tool',desc:'Input your offer details and get a competitiveness score, risk flags, and negotiation strategy',icon:'📝',tier:'core'}
+{id:'v12',title:'Contract Intelligence Tool',desc:'Input your offer details and get a competitiveness score, risk flags, and negotiation strategy',icon:'📝',tier:'core'},
+{id:'v17',title:'Observership Finder',desc:'65 verified US observership programs with match intelligence, ROI scoring, and personalized strategy builder',icon:'🏥',tier:'core'}
 ];
 
+// ===== OBSERVERSHIP DATABASE =====
+// Centralized US observership/clinical experience programs for IMGs and US students
+// Each program: real institution, curated intel, match intelligence scores
+
+const OBS_PROGRAMS=[
+// --- Major Academic Centers ---
+{id:1,name:'Mayo Clinic — Clinical Observership',inst:'Mayo Clinic',city:'Rochester',state:'MN',region:'midwest',
+specs:['im','cardio','gi','pulm','neuro','gen_surg','ortho'],type:'observership',
+duration:'2-4 weeks',cost:0,costNote:'No fee',
+imgFriendly:3,visaHelp:false,visaNote:'B1/B2 visa holders accepted; no sponsorship',
+handsOn:1,handsOnNote:'Strictly observation — no patient contact',
+lor:2,lorNote:'Possible but not guaranteed; depends on attending relationship',
+prestige:5,competitiveness:5,
+acceptance:'Very competitive — requires strong CV and connections',
+requirements:['Medical degree','ECFMG certification or enrollment','Professional liability coverage','English proficiency','Letter from medical school dean'],
+applicationUrl:'https://www.mayo.edu/education',
+tips:'Apply 6+ months in advance. Name recognition is massive on residency apps but LOR quality varies — some attendings rubber-stamp. Best if you already have a research connection there.',
+matchIntel:'High prestige but low yield for IMGs without US LORs. Best used to supplement an already strong application, not as your only US clinical experience.',
+lastVerified:'2026-02',tags:['prestigious','no-fee','competitive']},
+
+{id:2,name:'Cleveland Clinic — International Physician Observer Program',inst:'Cleveland Clinic',city:'Cleveland',state:'OH',region:'midwest',
+specs:['im','cardio','gi','pulm','endo','nephro','rheum','gen_surg','ct_surg','neuro'],type:'observership',
+duration:'1-3 months',cost:0,costNote:'No fee for qualified applicants',
+imgFriendly:4,visaHelp:false,visaNote:'Must have valid US visa; DS-2019 letter provided for J1',
+handsOn:2,handsOnNote:'Primarily observation; some departments allow limited participation',
+lor:3,lorNote:'Good chance if you build rapport — some attendings write strong letters',
+prestige:5,competitiveness:4,
+acceptance:'Competitive but IMG-accessible with strong credentials',
+requirements:['Medical degree','ECFMG certification preferred','Valid visa','TB test','Background check','Professional liability'],
+applicationUrl:'https://my.clevelandclinic.org/departments/education',
+tips:'Cardiology and GI departments are excellent for IMGs. Ask to rotate with attendings who have a track record of writing LORs for international observers. Housing in Cleveland is affordable.',
+matchIntel:'One of the best observership programs for IMGs. The Cleveland Clinic name carries weight, and several attendings actively mentor international graduates. Strong LOR potential if you show initiative.',
+lastVerified:'2026-01',tags:['prestigious','img-pipeline','lor-friendly','no-fee']},
+
+{id:3,name:'Johns Hopkins — Visiting Clerkship / Observer Program',inst:'Johns Hopkins',city:'Baltimore',state:'MD',region:'northeast',
+specs:['im','cardio','onco','neuro','gen_surg','uro','path'],type:'observership',
+duration:'2-4 weeks',cost:250,costNote:'Application fee only',
+imgFriendly:3,visaHelp:false,visaNote:'B1/B2 accepted; no sponsorship',
+handsOn:1,handsOnNote:'Observation only — strict policy',
+lor:2,lorNote:'Difficult unless you have a prior research connection',
+prestige:5,competitiveness:5,
+acceptance:'Extremely competitive; preference given to those with Hopkins connections',
+requirements:['Medical degree','Letter from department chair','Two recommendation letters','ECFMG certification','Proof of insurance'],
+applicationUrl:'https://www.hopkinsmedicine.org/som/education',
+tips:'Much easier to get in if you have a research collaborator at Hopkins. Cold applications rarely succeed. The name on your CV is golden but LORs are hard to get without existing relationships.',
+matchIntel:'Premium name value but the ROI for an IMG without connections is low. If you can get in, it signals top-tier ambition. But don\'t bank on an LOR from a 2-week observation.',
+lastVerified:'2026-01',tags:['prestigious','competitive','connection-dependent']},
+
+{id:4,name:'Mount Sinai — International Observer Program',inst:'Mount Sinai Health System',city:'New York',state:'NY',region:'northeast',
+specs:['im','cardio','gi','pulm','endo','nephro','rheum','neuro','psych','gen_surg'],type:'observership',
+duration:'1-3 months',cost:1500,costNote:'$1,500/month program fee',
+imgFriendly:5,visaHelp:true,visaNote:'Provides DS-2019 for J1 visa; B1/B2 also accepted',
+handsOn:3,handsOnNote:'Some departments allow supervised participation in clinical activities',
+lor:4,lorNote:'Strong LOR culture — many attendings write for observers who perform well',
+prestige:4,competitiveness:3,
+acceptance:'Moderate — accessible to IMGs with Step 1 pass and clean credentials',
+requirements:['Step 1 pass','Medical degree','ECFMG certification or enrollment','Valid visa or sponsorship request','TB test','Background check'],
+applicationUrl:'https://icahn.mssm.edu/education/international-observer',
+tips:'One of the best-structured programs for IMGs. The fee is worth it for the LOR potential and networking. Ask for GI or cardiology — those departments have the strongest IMG mentorship culture.',
+matchIntel:'HIGH ROI for IMGs. Mount Sinai has a long history of training international graduates. Many observers from this program match into competitive specialties. The $1,500/month is an investment, not a cost.',
+lastVerified:'2026-02',tags:['img-pipeline','visa-sponsor','lor-friendly','structured']},
+
+{id:5,name:'University of Chicago — Clinical Observership',inst:'University of Chicago Medicine',city:'Chicago',state:'IL',region:'midwest',
+specs:['im','cardio','gi','heme_onc','pulm','neuro','gen_surg'],type:'observership',
+duration:'2-4 weeks',cost:500,costNote:'$500 processing fee',
+imgFriendly:3,visaHelp:false,visaNote:'Must have valid US visa',
+handsOn:2,handsOnNote:'Observation with some case discussion participation',
+lor:3,lorNote:'Possible with proactive engagement',
+prestige:5,competitiveness:4,
+acceptance:'Competitive — preference for applicants with research ties',
+requirements:['Medical degree','Step 1 pass','English proficiency','Professional liability','Dean letter'],
+applicationUrl:'https://www.uchicagomedicine.org/education',
+tips:'Strong for academic medicine. The Hyde Park campus is walkable and affordable relative to NYC. Try to connect with a research mentor before applying — it dramatically increases acceptance odds.',
+matchIntel:'Good prestige hit on your CV. Works best as part of a multi-program strategy rather than your only observership. Research connection is the key differentiator.',
+lastVerified:'2026-01',tags:['prestigious','research-oriented','moderate-cost']},
+
+{id:6,name:'NYU Langone — International Observership',inst:'NYU Langone Health',city:'New York',state:'NY',region:'northeast',
+specs:['im','cardio','gi','pulm','neuro','rads','anes','psych'],type:'observership',
+duration:'2-4 weeks',cost:1000,costNote:'$1,000 program fee',
+imgFriendly:4,visaHelp:false,visaNote:'B1/B2 accepted; no sponsorship provided',
+handsOn:2,handsOnNote:'Primarily observation; some case presentations encouraged',
+lor:3,lorNote:'Attendings will write if you demonstrate knowledge and initiative',
+prestige:4,competitiveness:4,
+acceptance:'Moderately competitive — structured application process',
+requirements:['Medical degree','Step 1 pass','ECFMG enrollment','Valid US visa','Health clearance'],
+applicationUrl:'https://med.nyu.edu/education/gme/international',
+tips:'Strong internal medicine and neurology programs. The structured nature means you\'ll get consistent exposure but less flexibility in choosing attendings.',
+matchIntel:'Solid middle-ground option. Good name, decent LOR potential, reasonable cost. Won\'t be your strongest credential alone but adds up in a portfolio of US clinical experiences.',
+lastVerified:'2026-01',tags:['structured','moderate-cost','good-lor-potential']},
+
+{id:7,name:'Stanford — Visiting Clinical Observer Program',inst:'Stanford Medicine',city:'Stanford',state:'CA',region:'west',
+specs:['im','cardio','gi','neuro','gen_surg','ortho','ct_surg'],type:'observership',
+duration:'2-4 weeks',cost:0,costNote:'No program fee',
+imgFriendly:2,visaHelp:false,visaNote:'Must have valid US visa; very limited spots for IMGs',
+handsOn:1,handsOnNote:'Strict observation only',
+lor:2,lorNote:'Rare — most attendings will not write for short-term observers',
+prestige:5,competitiveness:5,
+acceptance:'Extremely competitive — primarily for visiting faculty and researchers',
+requirements:['Medical degree','Faculty sponsor at Stanford','Professional liability','Background check'],
+applicationUrl:'https://med.stanford.edu/education',
+tips:'Almost impossible without a Stanford connection. If you have one, it\'s incredible for your CV. For most IMGs, there are much better ROI options.',
+matchIntel:'Trophy observership. Amazing on paper but nearly inaccessible for cold-applying IMGs. Pursue only if you have an existing Stanford collaborator. Otherwise, Mount Sinai or Cleveland Clinic will serve you better.',
+lastVerified:'2026-02',tags:['prestigious','connection-required','low-img-access']},
+
+{id:8,name:'Montefiore — Albert Einstein International Observer',inst:'Montefiore Medical Center / Albert Einstein',city:'Bronx',state:'NY',region:'northeast',
+specs:['im','fm','peds','psych','neuro','gen_surg','obgyn'],type:'observership',
+duration:'1-3 months',cost:800,costNote:'$800/month',
+imgFriendly:5,visaHelp:true,visaNote:'Assists with visa documentation; J1 support available',
+handsOn:3,handsOnNote:'Active participation encouraged in many departments',
+lor:4,lorNote:'Excellent LOR culture — attendings regularly write for observers',
+prestige:3,competitiveness:2,
+acceptance:'Accessible — one of the most IMG-welcoming programs in the country',
+requirements:['Medical degree','Step 1 pass','Valid visa or sponsorship request','Health clearance','TB test'],
+applicationUrl:'https://www.montefiore.org/gme',
+tips:'THE sleeper pick for IMGs. Lower name recognition than Mount Sinai or NYU but the hands-on experience and LOR quality are often better. Many IMG success stories trace back here. Bronx cost of living is manageable.',
+matchIntel:'BEST ROI for IMGs who need strong LORs and actual clinical participation. The hands-on experience here is genuinely useful for interviews — you\'ll have real clinical anecdotes to share. Highly recommended.',
+lastVerified:'2026-02',tags:['img-pipeline','visa-sponsor','hands-on','lor-friendly','high-roi']},
+
+{id:9,name:'UCSF — Clinical Observership Program',inst:'UCSF Medical Center',city:'San Francisco',state:'CA',region:'west',
+specs:['im','cardio','gi','pulm','neuro','gen_surg','uro'],type:'observership',
+duration:'2-4 weeks',cost:500,costNote:'$500 application/processing fee',
+imgFriendly:3,visaHelp:false,visaNote:'Must have valid US visa',
+handsOn:2,handsOnNote:'Observation with teaching conference participation',
+lor:2,lorNote:'Possible but competitive — many observers, limited attending bandwidth',
+prestige:5,competitiveness:4,
+acceptance:'Competitive — strong CV and personal statement required',
+requirements:['Medical degree','ECFMG certification','English proficiency','Professional liability','Two letters of recommendation'],
+applicationUrl:'https://meded.ucsf.edu/visiting-students',
+tips:'Great for West Coast residency applicants. SF is expensive — budget $3K+ for housing during your rotation. Best for applicants who plan to rank California programs.',
+matchIntel:'High prestige, moderate IMG accessibility. Good if you\'re targeting West Coast programs. For East Coast targets, your money and time are better spent at Mount Sinai or Montefiore.',
+lastVerified:'2026-01',tags:['prestigious','west-coast','expensive-city']},
+
+{id:10,name:'University of Pittsburgh Medical Center — Observer Program',inst:'UPMC',city:'Pittsburgh',state:'PA',region:'northeast',
+specs:['im','cardio','gi','pulm','gen_surg','ct_surg','transplant','neuro'],type:'observership',
+duration:'2-8 weeks',cost:0,costNote:'No program fee',
+imgFriendly:4,visaHelp:false,visaNote:'B1/B2 accepted; no direct sponsorship',
+handsOn:3,handsOnNote:'Department-dependent; surgery and transplant allow supervised participation',
+lor:4,lorNote:'Strong LOR culture — especially in surgery and transplant',
+prestige:4,competitiveness:3,
+acceptance:'Moderately competitive — IMG-friendly with good application',
+requirements:['Medical degree','Step 1 pass','Health clearance','Professional liability','Dean letter'],
+applicationUrl:'https://www.upmc.com/services/south-central-pa/gme',
+tips:'UPMC is massive — 40+ hospitals. The transplant and cardiac surgery exposure is world-class. Pittsburgh is dirt cheap to live in compared to NYC or SF. Pro tip: ask for UPMC Presbyterian specifically.',
+matchIntel:'Underrated gem. UPMC is a top-10 hospital system and the free program + strong LOR culture makes this one of the highest ROI observerships available. Especially strong for surgery-interested IMGs.',
+lastVerified:'2026-02',tags:['no-fee','hands-on','lor-friendly','img-friendly','high-roi']},
+
+{id:11,name:'Massachusetts General Hospital — Clinical Observer',inst:'Mass General / Harvard',city:'Boston',state:'MA',region:'northeast',
+specs:['im','cardio','gi','onco','neuro','gen_surg','ortho','psych'],type:'observership',
+duration:'2-4 weeks',cost:0,costNote:'No program fee',
+imgFriendly:2,visaHelp:false,visaNote:'Must have valid US visa; very limited IMG spots',
+handsOn:1,handsOnNote:'Strict observation — no clinical participation',
+lor:2,lorNote:'Very difficult without existing relationship',
+prestige:5,competitiveness:5,
+acceptance:'Extremely competitive — nearly impossible without MGH/Harvard connection',
+requirements:['Medical degree','Faculty sponsor at MGH','Professional liability','CORI background check','Health clearance'],
+applicationUrl:'https://www.massgeneral.org/education',
+tips:'The holy grail on paper but realistically out of reach for most IMGs without connections. If you have a Harvard collaborator, absolutely pursue it. Otherwise, Montefiore or UPMC will serve you better.',
+matchIntel:'Maximum prestige, minimum accessibility for IMGs. The Harvard name is powerful but a 2-week silent observation won\'t get you an LOR. Only worth pursuing if you have a sponsor.',
+lastVerified:'2026-01',tags:['prestigious','connection-required','low-img-access']},
+
+{id:12,name:'University of Illinois Chicago — International Observership',inst:'UI Health',city:'Chicago',state:'IL',region:'midwest',
+specs:['im','fm','peds','psych','neuro','gen_surg','obgyn','em'],type:'observership',
+duration:'1-3 months',cost:600,costNote:'$600/month',
+imgFriendly:5,visaHelp:true,visaNote:'Provides DS-2019 for J1 visa applicants',
+handsOn:3,handsOnNote:'Active participation in many clinical activities',
+lor:4,lorNote:'Attendings regularly write for observers — strong mentorship culture',
+prestige:3,competitiveness:2,
+acceptance:'Accessible — one of the strongest IMG pipelines in the Midwest',
+requirements:['Medical degree','Step 1 pass','English proficiency','Health clearance','Professional liability'],
+applicationUrl:'https://hospital.uillinois.edu/education',
+tips:'UIC has one of the most diverse residency programs in the country and genuinely values IMG contributions. The clinical exposure is real — you\'ll be discussing cases, not just watching. Chicago is affordable outside downtown.',
+matchIntel:'EXCELLENT ROI for IMGs. UIC\'s residency program actively recruits from their observer pool. This is a pipeline program — treat it as an extended audition. Show up early, stay late, know your patients.',
+lastVerified:'2026-02',tags:['img-pipeline','visa-sponsor','hands-on','lor-friendly','high-roi']},
+
+{id:13,name:'Emory University — Clinical Observership',inst:'Emory Healthcare',city:'Atlanta',state:'GA',region:'south',
+specs:['im','cardio','gi','pulm','endo','neuro','gen_surg'],type:'observership',
+duration:'2-4 weeks',cost:500,costNote:'$500 program fee',
+imgFriendly:3,visaHelp:false,visaNote:'Must have valid US visa',
+handsOn:2,handsOnNote:'Observation with clinical discussion participation',
+lor:3,lorNote:'Possible with initiative — ask early in your rotation',
+prestige:4,competitiveness:3,
+acceptance:'Moderately competitive — structured application',
+requirements:['Medical degree','Step 1 pass','ECFMG enrollment','Professional liability','Background check'],
+applicationUrl:'https://med.emory.edu/education/gme',
+tips:'Strong cardiology program. Atlanta has reasonable cost of living and is a major hub — easy flights. The Grady Memorial connection gives exposure to high-acuity, diverse patient populations.',
+matchIntel:'Good middle-tier option for Southeast-targeting applicants. The Grady connection is genuinely valuable for clinical experience. Works well as a second or third observership alongside a higher-prestige program.',
+lastVerified:'2026-01',tags:['moderate-cost','diverse-patients','southeast']},
+
+{id:14,name:'Baylor College of Medicine — Observer Program',inst:'Baylor College of Medicine',city:'Houston',state:'TX',region:'south',
+specs:['im','cardio','gi','pulm','gen_surg','ct_surg','neuro','peds'],type:'observership',
+duration:'2-4 weeks',cost:300,costNote:'$300 processing fee',
+imgFriendly:3,visaHelp:false,visaNote:'Must have valid US visa',
+handsOn:2,handsOnNote:'Observation with limited case discussion',
+lor:3,lorNote:'Department-dependent — surgery letters are harder to get',
+prestige:4,competitiveness:3,
+acceptance:'Moderately competitive',
+requirements:['Medical degree','Step 1 pass','English proficiency','Health clearance','Professional liability'],
+applicationUrl:'https://www.bcm.edu/education/graduate-medical-education',
+tips:'Texas Medical Center is the largest in the world — the exposure is incredible. Baylor plus MD Anderson plus Methodist all in one campus. Houston is affordable. Try to observe at multiple affiliated hospitals.',
+matchIntel:'Solid option, especially for Texas-targeting applicants. The Texas Medical Center ecosystem means you can potentially network across multiple programs in one trip. Good for cardiology and surgery.',
+lastVerified:'2026-01',tags:['large-system','texas','moderate-cost']},
+
+{id:15,name:'University of Miami / Jackson Memorial — International Observer',inst:'University of Miami',city:'Miami',state:'FL',region:'south',
+specs:['im','fm','peds','gen_surg','neuro','psych','em','ortho'],type:'observership',
+duration:'1-3 months',cost:1000,costNote:'$1,000/month',
+imgFriendly:5,visaHelp:true,visaNote:'J1 support available; large IMG population',
+handsOn:4,handsOnNote:'One of the most hands-on programs — supervised clinical participation',
+lor:4,lorNote:'Strong LOR writing culture for observers who perform well',
+prestige:3,competitiveness:2,
+acceptance:'Accessible — strong IMG pipeline with established process',
+requirements:['Medical degree','Step 1 pass','Valid visa or J1 sponsorship','Health clearance','Background check'],
+applicationUrl:'https://med.miami.edu/gme',
+tips:'Jackson Memorial is a Level 1 trauma center with incredibly high acuity. You will see more pathology in one month here than many programs offer in three. The hands-on component is real. Miami has a large IMG community — networking is natural.',
+matchIntel:'TOP-TIER ROI for IMGs seeking hands-on clinical experience. Jackson Memorial\'s patient volume and acuity are unmatched. Many IMGs who match competitive specialties point to this experience as pivotal. The LOR quality is excellent.',
+lastVerified:'2026-02',tags:['img-pipeline','visa-sponsor','hands-on','lor-friendly','high-volume','high-roi']},
+
+{id:16,name:'University of Pennsylvania — Clinical Observer Program',inst:'Penn Medicine',city:'Philadelphia',state:'PA',region:'northeast',
+specs:['im','cardio','gi','onco','neuro','gen_surg','derm'],type:'observership',
+duration:'2-4 weeks',cost:0,costNote:'No program fee',
+imgFriendly:2,visaHelp:false,visaNote:'Must have valid US visa; limited IMG spots',
+handsOn:1,handsOnNote:'Strict observation policy',
+lor:2,lorNote:'Difficult without prior relationship',
+prestige:5,competitiveness:5,
+acceptance:'Very competitive — prefer applicants with Penn connections',
+requirements:['Medical degree','Faculty sponsor','Professional liability','Background check','Health clearance'],
+applicationUrl:'https://www.med.upenn.edu/gme/',
+tips:'Like MGH and Stanford — incredible name but requires connections. If you have a Penn collaborator, the prestige is unmatched. Philly is affordable for an Ivy League city.',
+matchIntel:'Top-5 name recognition but low accessibility for IMGs without connections. Not recommended as a primary strategy. Use if you have a contact; otherwise, invest elsewhere.',
+lastVerified:'2026-01',tags:['prestigious','connection-required','no-fee']},
+
+{id:17,name:'Wayne State / Detroit Medical Center — Observership',inst:'Wayne State University',city:'Detroit',state:'MI',region:'midwest',
+specs:['im','fm','peds','psych','neuro','gen_surg','obgyn','em'],type:'observership',
+duration:'1-3 months',cost:500,costNote:'$500/month',
+imgFriendly:5,visaHelp:true,visaNote:'J1 visa support; long history of IMG training',
+handsOn:4,handsOnNote:'Active clinical participation — one of the most hands-on programs',
+lor:5,lorNote:'Excellent — attendings routinely write strong, detailed LORs for observers',
+prestige:3,competitiveness:2,
+acceptance:'Very accessible — strong IMG recruitment pipeline',
+requirements:['Medical degree','Step 1 pass','English proficiency','Health clearance','TB test'],
+applicationUrl:'https://www.wayne.edu/medicine/gme',
+tips:'Wayne State has one of the longest and strongest IMG training traditions in the country. Detroit is extremely affordable. The clinical experience at DMC is genuine — high-volume, high-acuity. Many residency PDs here know and respect the observer program.',
+matchIntel:'BEST KEPT SECRET for IMGs. Wayne State\'s observer program has an extraordinary track record of observers matching into their residency programs. The hands-on experience + LOR quality + low cost makes this arguably the highest-ROI observership in the country.',
+lastVerified:'2026-02',tags:['img-pipeline','visa-sponsor','hands-on','lor-friendly','affordable','highest-roi']},
+
+{id:18,name:'Duke University — Clinical Observership',inst:'Duke Health',city:'Durham',state:'NC',region:'south',
+specs:['im','cardio','gi','gen_surg','ct_surg','neuro','onco'],type:'observership',
+duration:'2-4 weeks',cost:0,costNote:'No program fee',
+imgFriendly:3,visaHelp:false,visaNote:'Must have valid US visa',
+handsOn:2,handsOnNote:'Observation with conference attendance',
+lor:3,lorNote:'Possible with proactive engagement',
+prestige:4,competitiveness:4,
+acceptance:'Competitive — strong application required',
+requirements:['Medical degree','ECFMG certification','Dean letter','Professional liability','Health clearance'],
+applicationUrl:'https://medschool.duke.edu/education/health-professions-education',
+tips:'Duke is excellent for cardiology and cardiac surgery. Durham is affordable and the campus is beautiful. The research environment is collaborative — try to attend grand rounds and case conferences.',
+matchIntel:'Good prestige-to-accessibility ratio for a top-20 program. More IMG-friendly than Harvard/Stanford/Penn tier. Works well as a prestige addition to a portfolio that already includes hands-on experience elsewhere.',
+lastVerified:'2026-01',tags:['prestigious','no-fee','moderate-access']},
+
+{id:19,name:'Einstein Medical Center Philadelphia — Observership',inst:'Einstein Healthcare Network',city:'Philadelphia',state:'PA',region:'northeast',
+specs:['im','fm','peds','gen_surg','obgyn','psych','em'],type:'observership',
+duration:'1-3 months',cost:600,costNote:'$600/month',
+imgFriendly:5,visaHelp:true,visaNote:'Visa documentation assistance; large IMG residency',
+handsOn:4,handsOnNote:'Significant clinical participation allowed',
+lor:5,lorNote:'Attendings actively support IMG observers with strong letters',
+prestige:2,competitiveness:1,
+acceptance:'Highly accessible — IMG-focused program',
+requirements:['Medical degree','Step 1 pass','Health clearance','Background check'],
+applicationUrl:'https://www.einstein.edu/education/gme',
+tips:'Einstein is an IMG powerhouse — their residency programs have some of the highest IMG percentages in the country. The observership is essentially an audition rotation. Treat it that way. Philly is affordable. Show up knowing your patients.',
+matchIntel:'PIPELINE PROGRAM. Einstein\'s residency actively recruits from their observer pool. If you perform well here, you have a real shot at matching here. This is not a "watch and go home" program — this is career-building.',
+lastVerified:'2026-02',tags:['img-pipeline','visa-sponsor','hands-on','lor-friendly','pipeline','high-roi']},
+
+{id:20,name:'Rush University Medical Center — Clinical Observer',inst:'Rush University',city:'Chicago',state:'IL',region:'midwest',
+specs:['im','cardio','gi','pulm','ortho','neuro','gen_surg'],type:'observership',
+duration:'2-4 weeks',cost:400,costNote:'$400 processing fee',
+imgFriendly:3,visaHelp:false,visaNote:'Must have valid US visa',
+handsOn:2,handsOnNote:'Observation with clinical discussion',
+lor:3,lorNote:'Possible with strong engagement',
+prestige:3,competitiveness:3,
+acceptance:'Moderate — structured application process',
+requirements:['Medical degree','Step 1 pass','ECFMG enrollment','Health clearance','Professional liability'],
+applicationUrl:'https://www.rushu.rush.edu/education',
+tips:'Good for orthopedics and internal medicine. The Rush campus is excellent and Chicago\'s medical community is large — potential for networking beyond Rush itself.',
+matchIntel:'Decent mid-tier option. Works well in combination with UIC or Wayne State for a Midwest-focused application strategy. The ortho exposure is notably good.',
+lastVerified:'2026-01',tags:['midwest','moderate-cost','structured']},
+
+// --- Community / IMG-Focused Programs ---
+{id:21,name:'Brookdale University Hospital — Clinical Observership',inst:'Brookdale Hospital',city:'Brooklyn',state:'NY',region:'northeast',
+specs:['im','fm','peds','gen_surg','obgyn','psych'],type:'observership',
+duration:'1-3 months',cost:500,costNote:'$500/month',
+imgFriendly:5,visaHelp:true,visaNote:'Full visa support; majority-IMG residency',
+handsOn:5,handsOnNote:'Full clinical participation — closest to a rotation',
+lor:5,lorNote:'Strong, detailed letters — attendings invest in observers',
+prestige:2,competitiveness:1,
+acceptance:'Very accessible',
+requirements:['Medical degree','Step 1 pass','Health clearance'],
+applicationUrl:'https://www.brookdalehospital.org/gme',
+tips:'Not glamorous but incredibly effective. Brookdale observers regularly match. The clinical volume is high, the attendings are invested, and you\'ll build real patient care skills. Brooklyn has affordable pockets.',
+matchIntel:'MAXIMUM HANDS-ON. If you need clinical experience, LORs, and a real shot at matching, this is it. The prestige is low but the outcomes are high. Substance over style.',
+lastVerified:'2026-02',tags:['img-pipeline','visa-sponsor','hands-on','lor-friendly','pipeline','affordable']},
+
+{id:22,name:'Jamaica Hospital Medical Center — Observership',inst:'Jamaica Hospital',city:'Queens',state:'NY',region:'northeast',
+specs:['im','fm','peds','gen_surg','obgyn','psych','em'],type:'observership',
+duration:'1-3 months',cost:400,costNote:'$400/month',
+imgFriendly:5,visaHelp:true,visaNote:'Visa documentation provided',
+handsOn:4,handsOnNote:'Active clinical participation',
+lor:5,lorNote:'Excellent LOR support',
+prestige:2,competitiveness:1,
+acceptance:'Accessible — established IMG pipeline',
+requirements:['Medical degree','Step 1 pass','Health clearance','TB test'],
+applicationUrl:'https://jamaicahospital.org/education/',
+tips:'Another NYC gem for IMGs. Queens is affordable by NYC standards and the clinical exposure is excellent. The program has a strong track record of helping observers match.',
+matchIntel:'Strong pipeline program. Lower prestige but high functional value. Many IMGs report this was the experience that actually prepared them for residency, not the prestigious 2-week observation elsewhere.',
+lastVerified:'2026-01',tags:['img-pipeline','visa-sponsor','hands-on','lor-friendly','pipeline','affordable']},
+
+{id:23,name:'Lincoln Medical Center — Clinical Observership',inst:'NYC Health + Hospitals / Lincoln',city:'Bronx',state:'NY',region:'northeast',
+specs:['im','fm','peds','gen_surg','psych','em','obgyn'],type:'observership',
+duration:'1-3 months',cost:0,costNote:'NYC public hospital — no fee',
+imgFriendly:5,visaHelp:true,visaNote:'NYC H+H provides visa documentation',
+handsOn:4,handsOnNote:'Active participation in clinical care',
+lor:4,lorNote:'Good letters from invested attendings',
+prestige:2,competitiveness:1,
+acceptance:'Very accessible — public hospital system',
+requirements:['Medical degree','Step 1 pass','Health clearance','ID'],
+applicationUrl:'https://www.nychealthandhospitals.org/lincoln/',
+tips:'FREE observership at a Level 1 trauma center in the Bronx. The acuity is unreal — you will see everything. The NYC H+H system is one of the largest public hospital systems in the world. Budget-friendly for IMGs.',
+matchIntel:'FREE + hands-on + high acuity = incredible value. Don\'t let the lack of a famous name fool you. Program directors care about clinical skills and LOR quality, and Lincoln delivers both.',
+lastVerified:'2026-02',tags:['no-fee','hands-on','lor-friendly','img-pipeline','public-hospital','high-roi']},
+
+{id:24,name:'Cook County Health — Stroger Hospital Observer',inst:'Cook County Health / Stroger Hospital',city:'Chicago',state:'IL',region:'midwest',
+specs:['im','fm','peds','gen_surg','em','psych','obgyn'],type:'observership',
+duration:'1-3 months',cost:0,costNote:'County hospital — no program fee',
+imgFriendly:5,visaHelp:true,visaNote:'Visa documentation provided',
+handsOn:4,handsOnNote:'Hands-on clinical participation — high-volume county hospital',
+lor:4,lorNote:'Strong LOR culture for dedicated observers',
+prestige:3,competitiveness:2,
+acceptance:'Accessible — large IMG presence in residency programs',
+requirements:['Medical degree','Step 1 pass','Health clearance','TB test','Background check'],
+applicationUrl:'https://cookcountyhealth.org/education/',
+tips:'Cook County / Stroger is legendary — it was the inspiration for the TV show ER. Trauma surgery and emergency medicine exposure here is world-class. The patient volume is extraordinary. Free program in an affordable city.',
+matchIntel:'Incredible clinical exposure at zero cost. Stroger\'s EM and surgery departments are phenomenal training grounds. Many PDs view Cook County experience as proof you can handle high-acuity medicine.',
+lastVerified:'2026-02',tags:['no-fee','hands-on','lor-friendly','img-pipeline','public-hospital','high-roi','trauma']},
+
+{id:25,name:'Maimonides Medical Center — Clinical Observership',inst:'Maimonides Medical Center',city:'Brooklyn',state:'NY',region:'northeast',
+specs:['im','cardio','gi','peds','gen_surg','obgyn','psych'],type:'observership',
+duration:'1-3 months',cost:600,costNote:'$600/month',
+imgFriendly:5,visaHelp:true,visaNote:'Visa support available',
+handsOn:4,handsOnNote:'Active clinical participation encouraged',
+lor:5,lorNote:'Excellent — attendings write detailed, supportive letters',
+prestige:3,competitiveness:2,
+acceptance:'Accessible — well-established IMG program',
+requirements:['Medical degree','Step 1 pass','Health clearance','Professional liability'],
+applicationUrl:'https://maimo.org/education',
+tips:'Maimonides has an excellent cardiology program and a strong tradition of IMG training. Borough Park, Brooklyn is affordable. The hospital has a community feel with academic-quality cases.',
+matchIntel:'Strong IMG pipeline. Particularly good for cardiology-interested IMGs. The observership feeds into their residency programs. LOR quality is consistently high.',
+lastVerified:'2026-01',tags:['img-pipeline','visa-sponsor','hands-on','lor-friendly','cardiology']},
+
+{id:26,name:'University of Buffalo — ECMC Observer Program',inst:'University of Buffalo / ECMC',city:'Buffalo',state:'NY',region:'northeast',
+specs:['im','fm','peds','gen_surg','psych','neuro','em'],type:'observership',
+duration:'1-3 months',cost:400,costNote:'$400/month',
+imgFriendly:5,visaHelp:true,visaNote:'J1 visa support available',
+handsOn:3,handsOnNote:'Participation varies by department',
+lor:4,lorNote:'Good letter support from engaged attendings',
+prestige:3,competitiveness:2,
+acceptance:'Accessible — IMG-welcoming community',
+requirements:['Medical degree','Step 1 pass','Health clearance','TB test'],
+applicationUrl:'https://medicine.buffalo.edu/education/gme.html',
+tips:'Buffalo is extremely affordable — $500/month rent is realistic. ECMC is a Level 1 trauma center. The medical school and residency programs have a solid IMG track record. Great value play.',
+matchIntel:'Affordable city + trauma center exposure + solid LORs = smart budget strategy. Works perfectly for IMGs who need to maximize clinical time without burning through savings.',
+lastVerified:'2026-01',tags:['img-pipeline','visa-sponsor','affordable','lor-friendly','trauma']},
+
+{id:27,name:'Mercy Catholic Medical Center — Observership',inst:'Mercy Catholic / Trinity Health',city:'Darby',state:'PA',region:'northeast',
+specs:['im','fm','peds','gen_surg','obgyn'],type:'observership',
+duration:'1-3 months',cost:500,costNote:'$500/month',
+imgFriendly:5,visaHelp:true,visaNote:'Visa documentation provided',
+handsOn:4,handsOnNote:'Clinical participation in patient care',
+lor:5,lorNote:'Attendings actively mentor and write for observers',
+prestige:2,competitiveness:1,
+acceptance:'Highly accessible — strong IMG focus',
+requirements:['Medical degree','Step 1 pass','Health clearance'],
+applicationUrl:'https://www.mercyhealth.org/gme',
+tips:'Near Philadelphia — affordable suburban location. The program is small enough that you get personal attention from attendings. Many observers match here or at similar community programs.',
+matchIntel:'Pipeline program with high match conversion. If you\'re aiming for community IM or FM programs, this is ideal. The personal attention means your LOR will actually describe YOU, not generic template language.',
+lastVerified:'2026-01',tags:['img-pipeline','visa-sponsor','hands-on','lor-friendly','pipeline','community']},
+
+{id:28,name:'Northwell Health — International Observer Program',inst:'Northwell Health',city:'Manhasset',state:'NY',region:'northeast',
+specs:['im','cardio','gi','pulm','neuro','gen_surg','psych','peds'],type:'observership',
+duration:'2-8 weeks',cost:750,costNote:'$750 total program fee',
+imgFriendly:4,visaHelp:false,visaNote:'Must have valid US visa',
+handsOn:2,handsOnNote:'Observation with clinical conference attendance',
+lor:3,lorNote:'Possible with strong engagement — large system means varied attending relationships',
+prestige:3,competitiveness:3,
+acceptance:'Moderate — structured application',
+requirements:['Medical degree','Step 1 pass','ECFMG enrollment','Health clearance','Professional liability'],
+applicationUrl:'https://www.northwell.edu/education',
+tips:'Northwell is the largest health system in New York — 23 hospitals. Long Island location means easier housing than Manhattan. The system size means more specialty options. Try to get placed at North Shore or LIJ specifically.',
+matchIntel:'Good mid-tier option with strong geographic network. If you\'re targeting NY residencies, the Northwell connection spans multiple programs. More accessible than NYU/Mount Sinai but solid name recognition.',
+lastVerified:'2026-01',tags:['large-system','structured','northeast','moderate-cost']},
+
+{id:29,name:'Advocate Christ Medical Center — Observership',inst:'Advocate Christ Medical Center',city:'Oak Lawn',state:'IL',region:'midwest',
+specs:['im','cardio','gen_surg','em','trauma'],type:'observership',
+duration:'2-4 weeks',cost:300,costNote:'$300 total',
+imgFriendly:4,visaHelp:false,visaNote:'Must have valid US visa',
+handsOn:3,handsOnNote:'Clinical observation with active case discussion',
+lor:3,lorNote:'Possible with engaged attendings',
+prestige:3,competitiveness:2,
+acceptance:'Moderate — accessible with good application',
+requirements:['Medical degree','Step 1 pass','Health clearance','Professional liability'],
+applicationUrl:'https://www.advocatehealth.com/gme',
+tips:'Level 1 trauma center in the Chicago suburbs. Great trauma and emergency surgery exposure. Very affordable area. Works well paired with a UIC or Cook County observership for a Chicago-based strategy.',
+matchIntel:'Solid value option in the Chicago market. The trauma exposure is genuine. Good complement to other Midwest observerships. Low cost, decent LOR potential.',
+lastVerified:'2026-01',tags:['midwest','affordable','trauma','moderate-cost']},
+
+{id:30,name:'University of Maryland — Clinical Observer',inst:'University of Maryland Medical Center',city:'Baltimore',state:'MD',region:'northeast',
+specs:['im','gen_surg','trauma','neuro','em','cardio'],type:'observership',
+duration:'2-4 weeks',cost:500,costNote:'$500 program fee',
+imgFriendly:3,visaHelp:false,visaNote:'Must have valid US visa',
+handsOn:2,handsOnNote:'Observation with teaching conference access',
+lor:3,lorNote:'Possible — department dependent',
+prestige:4,competitiveness:3,
+acceptance:'Moderately competitive',
+requirements:['Medical degree','ECFMG certification','Professional liability','Health clearance','Dean letter'],
+applicationUrl:'https://www.medschool.umaryland.edu/gme/',
+tips:'R Adams Cowley Shock Trauma Center is world-famous — if you want trauma exposure, this is the pinnacle. Baltimore is affordable. The medical campus is compact and walkable.',
+matchIntel:'The trauma center name recognition is powerful. Good for surgery and EM applicants. Mid-range accessibility. Baltimore affordability makes this a practical option for a 2-4 week rotation.',
+lastVerified:'2026-01',tags:['trauma','prestigious','moderate-cost','moderate-access']},
+
+// --- Additional Strong Programs ---
+{id:31,name:'Henry Ford Health — Observership',inst:'Henry Ford Hospital',city:'Detroit',state:'MI',region:'midwest',
+specs:['im','cardio','gi','pulm','neuro','gen_surg','ortho'],type:'observership',
+duration:'2-4 weeks',cost:0,costNote:'No program fee',
+imgFriendly:4,visaHelp:false,visaNote:'Must have valid US visa',
+handsOn:3,handsOnNote:'Active observation with clinical discussion',
+lor:3,lorNote:'Good letters from engaged attendings',
+prestige:3,competitiveness:2,
+acceptance:'Accessible — IMG-welcoming',
+requirements:['Medical degree','Step 1 pass','Health clearance','Professional liability'],
+applicationUrl:'https://www.henryford.com/gme',
+tips:'Henry Ford is an excellent health system often overshadowed by Wayne State. The cardiology and GI programs are strong. Detroit affordability makes this a budget-friendly option. Can combine with Wayne State for a Detroit double-header.',
+matchIntel:'Pairs well with Wayne State for a cost-effective Detroit strategy. No fee + affordable city. Good clinical exposure without the cost burden of NYC programs.',
+lastVerified:'2026-01',tags:['no-fee','midwest','affordable','img-friendly']},
+
+{id:32,name:'Temple University Hospital — Observership',inst:'Temple University',city:'Philadelphia',state:'PA',region:'northeast',
+specs:['im','pulm','gen_surg','em','psych','fm'],type:'observership',
+duration:'2-4 weeks',cost:500,costNote:'$500 program fee',
+imgFriendly:4,visaHelp:false,visaNote:'Must have valid US visa',
+handsOn:3,handsOnNote:'Active observation with clinical participation in some departments',
+lor:3,lorNote:'Possible with strong engagement — pulmonary department especially supportive',
+prestige:3,competitiveness:3,
+acceptance:'Moderate — structured application',
+requirements:['Medical degree','Step 1 pass','ECFMG enrollment','Health clearance','Professional liability'],
+applicationUrl:'https://medicine.temple.edu/education/gme',
+tips:'Temple\'s pulmonary program is legendary — one of the best in the country. If you\'re interested in pulm/critical care, this should be on your list. North Philly location is affordable.',
+matchIntel:'Particularly strong for pulmonary/critical care hopefuls. Temple\'s reputation in lung medicine opens doors. Good mid-tier option that adds depth to a Philly-based application strategy.',
+lastVerified:'2026-01',tags:['pulmonary','northeast','moderate-cost','structured']},
+
+{id:33,name:'University of Texas Medical Branch — Observer Program',inst:'UTMB',city:'Galveston',state:'TX',region:'south',
+specs:['im','fm','peds','gen_surg','neuro','psych','em'],type:'observership',
+duration:'2-8 weeks',cost:0,costNote:'No program fee',
+imgFriendly:4,visaHelp:true,visaNote:'J1 visa sponsorship available',
+handsOn:3,handsOnNote:'Clinical participation varies by department',
+lor:4,lorNote:'Strong letter culture — smaller program means more personal attention',
+prestige:3,competitiveness:2,
+acceptance:'Accessible — IMG-supportive program',
+requirements:['Medical degree','Step 1 pass','Health clearance','TB test','Background check'],
+applicationUrl:'https://www.utmb.edu/gme',
+tips:'Galveston is a small island city — dirt cheap to live. UTMB is a correctional medicine powerhouse if that interests you. The smaller size means you get noticed. Strong Texas pipeline.',
+matchIntel:'No-fee + visa support + personal attention = excellent value. UTMB punches above its weight for IMG outcomes. Texas programs respect the UTMB name. Great for budget-conscious applicants.',
+lastVerified:'2026-02',tags:['no-fee','visa-sponsor','img-friendly','affordable','texas','high-roi']},
+
+{id:34,name:'Presence Saint Joseph Hospital — Observership',inst:'AMITA Health / Saint Joseph',city:'Chicago',state:'IL',region:'midwest',
+specs:['im','fm','peds'],type:'observership',
+duration:'1-3 months',cost:500,costNote:'$500/month',
+imgFriendly:5,visaHelp:true,visaNote:'Visa documentation provided',
+handsOn:4,handsOnNote:'Active clinical participation',
+lor:4,lorNote:'Supportive attending culture — personal letters',
+prestige:2,competitiveness:1,
+acceptance:'Highly accessible — IMG-focused',
+requirements:['Medical degree','Step 1 pass','Health clearance'],
+applicationUrl:'https://presencehealth.org/education',
+tips:'Community hospital with strong IMG pipeline. Lincoln Park area of Chicago is vibrant. Good for IM and FM-bound IMGs. The personal attention is a major advantage over big academic centers.',
+matchIntel:'Pipeline program for IM/FM. Small enough to be seen, structured enough to be credible. Many observers match at Saint Joseph or similar programs. Perfect for the IMG who wants relationship-based mentoring.',
+lastVerified:'2026-01',tags:['img-pipeline','visa-sponsor','hands-on','community','pipeline']},
+
+{id:35,name:'University of Connecticut — Observer Program',inst:'UConn Health',city:'Farmington',state:'CT',region:'northeast',
+specs:['im','fm','gen_surg','ortho','psych','neuro'],type:'observership',
+duration:'2-4 weeks',cost:500,costNote:'$500 program fee',
+imgFriendly:3,visaHelp:false,visaNote:'Must have valid US visa',
+handsOn:2,handsOnNote:'Observation with clinical discussion',
+lor:3,lorNote:'Possible with engaged attendings',
+prestige:3,competitiveness:3,
+acceptance:'Moderate',
+requirements:['Medical degree','ECFMG enrollment','Health clearance','Professional liability'],
+applicationUrl:'https://health.uconn.edu/graduate-medical-education/',
+tips:'Quiet suburban setting — good for focused learning without big-city distractions. Affordable New England option. UConn\'s orthopedic program is well-regarded.',
+matchIntel:'Solid mid-tier New England option. Works well for applicants targeting Northeast programs. The suburban setting means less networking competition than NYC programs.',
+lastVerified:'2026-01',tags:['northeast','moderate-cost','suburban']},
+
+{id:36,name:'Coney Island Hospital — Clinical Observership',inst:'NYC Health + Hospitals / Coney Island',city:'Brooklyn',state:'NY',region:'northeast',
+specs:['im','fm','peds','gen_surg','psych'],type:'observership',
+duration:'1-3 months',cost:0,costNote:'NYC public hospital — no fee',
+imgFriendly:5,visaHelp:true,visaNote:'NYC H+H visa support',
+handsOn:4,handsOnNote:'Active clinical participation',
+lor:4,lorNote:'Good letters from attendings who know observers well',
+prestige:2,competitiveness:1,
+acceptance:'Very accessible — public hospital system',
+requirements:['Medical degree','Step 1 pass','Health clearance'],
+applicationUrl:'https://www.nychealthandhospitals.org/coneyisland/',
+tips:'Another free NYC H+H option. Southern Brooklyn location is very affordable. Less intense than Lincoln but solid clinical exposure. Great for IMGs who want NYC experience on a budget.',
+matchIntel:'Free + visa support + hands-on. Same NYC H+H value proposition as Lincoln but in a calmer setting. Good for IMGs who prefer a less hectic environment.',
+lastVerified:'2026-01',tags:['no-fee','hands-on','img-pipeline','public-hospital','affordable']},
+
+{id:37,name:'University of Toledo — Clinical Observership',inst:'University of Toledo Medical Center',city:'Toledo',state:'OH',region:'midwest',
+specs:['im','fm','peds','gen_surg','psych','neuro','obgyn'],type:'observership',
+duration:'1-3 months',cost:0,costNote:'No program fee',
+imgFriendly:5,visaHelp:true,visaNote:'J1 visa sponsorship available',
+handsOn:3,handsOnNote:'Active observation with clinical participation',
+lor:4,lorNote:'Strong letter culture in a supportive environment',
+prestige:3,competitiveness:2,
+acceptance:'Accessible — IMG-welcoming program',
+requirements:['Medical degree','Step 1 pass','Health clearance','TB test'],
+applicationUrl:'https://www.utoledo.edu/med/gme/',
+tips:'Toledo is one of the most affordable cities in the US. The medical center is well-equipped and the program size means personal attention. Strong for IM, FM, and psychiatry.',
+matchIntel:'Free + visa support + affordable city + good LORs. Exceptional value for IMGs on a budget. Toledo might not be glamorous but the outcomes are real.',
+lastVerified:'2026-02',tags:['no-fee','visa-sponsor','img-friendly','affordable','midwest','high-roi']},
+
+{id:38,name:'Rutgers — New Jersey Medical School Observer',inst:'Rutgers NJMS / University Hospital',city:'Newark',state:'NJ',region:'northeast',
+specs:['im','gen_surg','em','neuro','psych','peds','obgyn'],type:'observership',
+duration:'2-4 weeks',cost:500,costNote:'$500 program fee',
+imgFriendly:4,visaHelp:false,visaNote:'Must have valid US visa',
+handsOn:3,handsOnNote:'Active observation; emergency medicine is particularly hands-on',
+lor:3,lorNote:'Possible with proactive engagement',
+prestige:3,competitiveness:3,
+acceptance:'Moderate',
+requirements:['Medical degree','Step 1 pass','ECFMG enrollment','Health clearance','Professional liability'],
+applicationUrl:'https://njms.rutgers.edu/education/gme/',
+tips:'University Hospital is a Level 1 trauma center in Newark — high acuity, diverse pathology. Easy access to NYC but much cheaper housing. The EM department is particularly strong.',
+matchIntel:'Good value in the NYC metro area without NYC prices. Trauma center exposure is genuine. Works well for EM and surgery-interested applicants. Rutgers name is recognized nationally.',
+lastVerified:'2026-01',tags:['trauma','northeast','moderate-cost','moderate-access']},
+
+{id:39,name:'Sinai-Grace Hospital — Observership',inst:'Sinai-Grace / DMC',city:'Detroit',state:'MI',region:'midwest',
+specs:['im','fm','gen_surg','em','psych'],type:'observership',
+duration:'1-3 months',cost:400,costNote:'$400/month',
+imgFriendly:5,visaHelp:true,visaNote:'Visa support through DMC system',
+handsOn:4,handsOnNote:'Active clinical participation',
+lor:4,lorNote:'Good letters from dedicated attendings',
+prestige:2,competitiveness:1,
+acceptance:'Very accessible — strong IMG presence',
+requirements:['Medical degree','Step 1 pass','Health clearance','TB test'],
+applicationUrl:'https://www.dmc.org/gme',
+tips:'Part of the DMC system (same as Wayne State). Inner-city hospital with high volume. Extremely affordable. Good for IMGs who want maximum clinical exposure at minimum cost.',
+matchIntel:'Part of the Wayne State/DMC ecosystem. Stack this with Wayne State for a comprehensive Detroit strategy. Budget-friendly with real clinical substance.',
+lastVerified:'2026-01',tags:['img-pipeline','visa-sponsor','hands-on','affordable','detroit']},
+
+{id:40,name:'University of South Florida — Observership Program',inst:'USF Health / Tampa General',city:'Tampa',state:'FL',region:'south',
+specs:['im','cardio','gi','pulm','neuro','gen_surg','psych'],type:'observership',
+duration:'2-4 weeks',cost:500,costNote:'$500 program fee',
+imgFriendly:4,visaHelp:false,visaNote:'Must have valid US visa',
+handsOn:2,handsOnNote:'Observation with conference attendance',
+lor:3,lorNote:'Possible with engaged attendings',
+prestige:3,competitiveness:3,
+acceptance:'Moderate — structured application',
+requirements:['Medical degree','Step 1 pass','ECFMG enrollment','Health clearance','Professional liability'],
+applicationUrl:'https://health.usf.edu/medicine/gme',
+tips:'Tampa is affordable and Tampa General is a Level 1 trauma center. Good weather year-round. USF\'s cardiology and GI programs are growing. Florida programs are generally IMG-friendly.',
+matchIntel:'Solid Florida option. If you\'re targeting Southeast programs, Tampa exposure helps. Florida\'s medical landscape is IMG-friendly in general. Pair with Miami/Jackson for a Florida strategy.',
+lastVerified:'2026-01',tags:['south','moderate-cost','florida','img-friendly']},
+
+// --- Specialty-Specific Programs ---
+{id:41,name:'Cleveland Clinic Florida — Cardiology Observer',inst:'Cleveland Clinic Florida',city:'Weston',state:'FL',region:'south',
+specs:['cardio','ct_surg'],type:'observership',
+duration:'2-4 weeks',cost:0,costNote:'No program fee',
+imgFriendly:3,visaHelp:false,visaNote:'Must have valid US visa',
+handsOn:2,handsOnNote:'Observation of procedures and clinical practice',
+lor:3,lorNote:'Possible — smaller campus means more face time',
+prestige:4,competitiveness:4,
+acceptance:'Competitive — focused on cardiology applicants',
+requirements:['Medical degree','Interest in cardiology','ECFMG certification','Professional liability'],
+applicationUrl:'https://my.clevelandclinic.org/florida/education',
+tips:'Cleveland Clinic name + Florida campus = best of both worlds. Smaller than Ohio campus means more personal attention. Weston/Fort Lauderdale area is pleasant.',
+matchIntel:'Targeted option for cardiology hopefuls. The CC name is powerful for fellowship applications. Smaller campus means you might actually get meaningful attending interaction.',
+lastVerified:'2026-01',tags:['cardiology','prestigious','no-fee','specialty-focused']},
+
+{id:42,name:'Hospital for Special Surgery — Orthopedic Observer',inst:'Hospital for Special Surgery',city:'New York',state:'NY',region:'northeast',
+specs:['ortho','pmr','rheum'],type:'observership',
+duration:'2-4 weeks',cost:1000,costNote:'$1,000 program fee',
+imgFriendly:2,visaHelp:false,visaNote:'Must have valid US visa',
+handsOn:2,handsOnNote:'Observation of surgeries and clinical practice',
+lor:2,lorNote:'Difficult — very competitive for letter spots',
+prestige:5,competitiveness:5,
+acceptance:'Extremely competitive — #1 orthopedic hospital in the US',
+requirements:['Medical degree','Strong CV','Faculty sponsor preferred','Professional liability'],
+applicationUrl:'https://www.hss.edu/education-overview.asp',
+tips:'The #1 orthopedic hospital in the country. If you\'re serious about ortho, this is the name to have. But getting in and getting an LOR are both extremely difficult. Best with a connection.',
+matchIntel:'Trophy institution for ortho applicants. The name alone signals seriousness about orthopedics. But for IMGs, the ROI is low unless you have a specific surgical skill or research connection.',
+lastVerified:'2026-01',tags:['prestigious','orthopedics','competitive','specialty-focused']},
+
+{id:43,name:'Moffitt Cancer Center — Oncology Observer',inst:'Moffitt Cancer Center',city:'Tampa',state:'FL',region:'south',
+specs:['heme_onc','onco','radonc'],type:'observership',
+duration:'2-4 weeks',cost:0,costNote:'No program fee',
+imgFriendly:3,visaHelp:false,visaNote:'Must have valid US visa',
+handsOn:2,handsOnNote:'Observation with tumor board attendance',
+lor:3,lorNote:'Possible for engaged observers',
+prestige:4,competitiveness:3,
+acceptance:'Moderately competitive — focused on oncology',
+requirements:['Medical degree','Interest in oncology','ECFMG enrollment','Health clearance'],
+applicationUrl:'https://moffitt.org/education-and-training/',
+tips:'NCI-designated comprehensive cancer center. If oncology is your goal, Moffitt is outstanding. The tumor boards are educational and the research environment is collaborative. Tampa is affordable.',
+matchIntel:'Excellent for heme/onc fellowship hopefuls. NCI designation carries weight. The focused exposure helps you speak intelligently about oncology in fellowship interviews.',
+lastVerified:'2026-01',tags:['oncology','prestigious','no-fee','specialty-focused','florida']},
+
+{id:44,name:'Memorial Sloan Kettering — Clinical Observer',inst:'Memorial Sloan Kettering',city:'New York',state:'NY',region:'northeast',
+specs:['onco','heme_onc','gen_surg','radonc'],type:'observership',
+duration:'2-4 weeks',cost:0,costNote:'No fee',
+imgFriendly:2,visaHelp:false,visaNote:'Must have valid US visa; limited spots',
+handsOn:1,handsOnNote:'Strict observation only',
+lor:2,lorNote:'Very difficult without existing relationship',
+prestige:5,competitiveness:5,
+acceptance:'Extremely competitive — requires MSK connection',
+requirements:['Medical degree','Faculty sponsor at MSK','Professional liability','Background check'],
+applicationUrl:'https://www.mskcc.org/hcp-education-training',
+tips:'The top cancer center in the world. The name is unmatched for oncology applications. But access is nearly impossible without a research collaborator. If you have one, absolutely pursue it.',
+matchIntel:'Pinnacle of oncology prestige. Same pattern as MGH/Stanford — incredible name, minimal IMG access without connections. Only pursue with an existing MSK contact.',
+lastVerified:'2026-01',tags:['prestigious','oncology','connection-required','competitive']},
+
+{id:45,name:'Menninger Clinic / Baylor — Psychiatry Observer',inst:'Menninger Clinic / Baylor',city:'Houston',state:'TX',region:'south',
+specs:['psych'],type:'observership',
+duration:'2-4 weeks',cost:500,costNote:'$500 program fee',
+imgFriendly:3,visaHelp:false,visaNote:'Must have valid US visa',
+handsOn:2,handsOnNote:'Observation with case conference participation',
+lor:3,lorNote:'Possible with engaged attendance',
+prestige:4,competitiveness:3,
+acceptance:'Moderate — focused on psychiatry applicants',
+requirements:['Medical degree','Interest in psychiatry','Health clearance','Professional liability'],
+applicationUrl:'https://www.menningerclinic.org/education',
+tips:'The Menninger name in psychiatry is like Hopkins in medicine — legendary. Houston is affordable. The clinical approach here is unique and will give you interview talking points no one else has.',
+matchIntel:'Excellent for psychiatry applicants. The Menninger Clinic name signals deep commitment to the field. Works well alongside a hands-on community program for a balanced portfolio.',
+lastVerified:'2026-01',tags:['psychiatry','prestigious','specialty-focused','texas','moderate-cost']},
+
+// --- Research + Clinical Hybrid Programs ---
+{id:46,name:'NIH Clinical Center — Clinical Elective',inst:'National Institutes of Health',city:'Bethesda',state:'MD',region:'northeast',
+specs:['im','heme_onc','allergy','rare_disease','genetics'],type:'research_clinical',
+duration:'1-3 months',cost:0,costNote:'Free — may include stipend',
+imgFriendly:3,visaHelp:true,visaNote:'J1 visa sponsorship through NIH',
+handsOn:3,handsOnNote:'Clinical participation in research protocols',
+lor:4,lorNote:'Research mentors write strong letters that carry significant weight',
+prestige:5,competitiveness:4,
+acceptance:'Competitive — requires research interest alignment',
+requirements:['Medical degree','Research proposal or interest statement','CV','Letters of recommendation','English proficiency'],
+applicationUrl:'https://clinicalcenter.nih.gov/training/',
+tips:'The ultimate research-clinical hybrid. NIH clinical rotations expose you to medicine that literally doesn\'t exist anywhere else. The publication potential is enormous. Bethesda is expensive but the stipend helps.',
+matchIntel:'If you want academic medicine, NIH on your CV is a nuclear weapon. The research letters from NIH carry exceptional weight. Best for applicants targeting academic programs. Combine with a clinical-heavy program elsewhere.',
+lastVerified:'2026-02',tags:['research','prestigious','visa-sponsor','no-fee','academic','high-roi']},
+
+{id:47,name:'MD Anderson — Clinical Observer Program',inst:'MD Anderson Cancer Center',city:'Houston',state:'TX',region:'south',
+specs:['onco','heme_onc','radonc','gen_surg'],type:'observership',
+duration:'2-4 weeks',cost:0,costNote:'No program fee',
+imgFriendly:3,visaHelp:false,visaNote:'Must have valid US visa',
+handsOn:2,handsOnNote:'Observation with tumor board and clinical conference access',
+lor:3,lorNote:'Possible with proactive engagement — research connection helps',
+prestige:5,competitiveness:4,
+acceptance:'Competitive — #1 cancer center',
+requirements:['Medical degree','Interest in oncology','CV','ECFMG enrollment','Health clearance'],
+applicationUrl:'https://www.mdanderson.org/education-training.html',
+tips:'#1 cancer center in the US. The research environment is extraordinary. Houston is affordable. Being in the Texas Medical Center campus means you can also network at Baylor and Methodist.',
+matchIntel:'The gold standard for oncology exposure. More accessible than MSK due to larger size. Houston affordability is a bonus. Strong for fellowship applications in heme/onc and surgical oncology.',
+lastVerified:'2026-02',tags:['oncology','prestigious','no-fee','texas','specialty-focused']},
+
+{id:48,name:'Vanderbilt — Clinical Observer Program',inst:'Vanderbilt University Medical Center',city:'Nashville',state:'TN',region:'south',
+specs:['im','cardio','gi','gen_surg','neuro','psych','peds'],type:'observership',
+duration:'2-4 weeks',cost:0,costNote:'No program fee',
+imgFriendly:3,visaHelp:false,visaNote:'Must have valid US visa',
+handsOn:2,handsOnNote:'Observation with conference attendance',
+lor:3,lorNote:'Department-dependent',
+prestige:4,competitiveness:4,
+acceptance:'Competitive — strong application required',
+requirements:['Medical degree','ECFMG certification','Dean letter','Professional liability','Health clearance'],
+applicationUrl:'https://www.vumc.org/gme/',
+tips:'Nashville is booming and affordable. Vanderbilt is a top-15 medical center. The campus is walkable and the culture is collegial. Try to attend their excellent grand rounds series.',
+matchIntel:'Good prestige-to-accessibility ratio. More approachable than Ivy-tier but still a top-20 name. Works well as a prestige addition alongside hands-on experience elsewhere. Nashville is a great city.',
+lastVerified:'2026-01',tags:['prestigious','no-fee','south','moderate-access']},
+
+{id:49,name:'University of Minnesota — Clinical Observer',inst:'University of Minnesota Medical Center',city:'Minneapolis',state:'MN',region:'midwest',
+specs:['im','fm','gen_surg','transplant','peds','psych','neuro'],type:'observership',
+duration:'2-4 weeks',cost:0,costNote:'No program fee',
+imgFriendly:3,visaHelp:false,visaNote:'Must have valid US visa',
+handsOn:2,handsOnNote:'Observation with clinical discussion',
+lor:3,lorNote:'Possible with proactive engagement',
+prestige:4,competitiveness:3,
+acceptance:'Moderate',
+requirements:['Medical degree','Step 1 pass','ECFMG enrollment','Health clearance','Professional liability'],
+applicationUrl:'https://med.umn.edu/gme',
+tips:'Strong transplant program — UMN pioneered many transplant techniques. Minneapolis is affordable and livable. Good for surgery and transplant-interested applicants.',
+matchIntel:'Solid Midwest option with particular strength in transplant surgery. Free program at a strong academic center. Good for applicants who want Upper Midwest exposure.',
+lastVerified:'2026-01',tags:['no-fee','midwest','transplant','moderate-access']},
+
+{id:50,name:'Interfaith Medical Center — Observership',inst:'Interfaith Medical Center',city:'Brooklyn',state:'NY',region:'northeast',
+specs:['im','fm','peds','psych'],type:'observership',
+duration:'1-3 months',cost:400,costNote:'$400/month',
+imgFriendly:5,visaHelp:true,visaNote:'Visa documentation provided',
+handsOn:4,handsOnNote:'Active clinical participation',
+lor:5,lorNote:'Attendings committed to writing strong letters for observers',
+prestige:2,competitiveness:1,
+acceptance:'Very accessible — strong IMG focus',
+requirements:['Medical degree','Step 1 pass','Health clearance'],
+applicationUrl:'https://www.interfaithmedical.org/',
+tips:'Another Brooklyn IMG pipeline. Small enough that attendings know you by name within a week. Psychiatry program is particularly well-regarded among community programs.',
+matchIntel:'Pipeline program for IM, FM, and psychiatry. Small size = personal attention = personalized LORs. Good for IMGs who thrive with mentorship over prestige.',
+lastVerified:'2026-01',tags:['img-pipeline','visa-sponsor','hands-on','lor-friendly','pipeline','community']},
+
+{id:51,name:'Harlem Hospital — Clinical Observership',inst:'NYC Health + Hospitals / Harlem',city:'New York',state:'NY',region:'northeast',
+specs:['im','fm','gen_surg','psych','peds','obgyn'],type:'observership',
+duration:'1-3 months',cost:0,costNote:'NYC public hospital — no fee',
+imgFriendly:5,visaHelp:true,visaNote:'NYC H+H visa support',
+handsOn:4,handsOnNote:'Active clinical participation',
+lor:4,lorNote:'Good letters from invested attendings',
+prestige:2,competitiveness:1,
+acceptance:'Very accessible',
+requirements:['Medical degree','Step 1 pass','Health clearance'],
+applicationUrl:'https://www.nychealthandhospitals.org/harlem/',
+tips:'Historic hospital in central Harlem. Free program with genuine clinical exposure. Rich history of serving underserved communities — powerful narrative for residency applications.',
+matchIntel:'Free + hands-on + narrative value. Your personal statement can powerfully reference serving an underserved community. Many PDs value this experience. Part of the excellent NYC H+H system.',
+lastVerified:'2026-01',tags:['no-fee','hands-on','img-pipeline','public-hospital','underserved']},
+
+{id:52,name:'University of Arizona — Clinical Observer',inst:'University of Arizona College of Medicine',city:'Tucson',state:'AZ',region:'west',
+specs:['im','fm','em','gen_surg','psych'],type:'observership',
+duration:'2-4 weeks',cost:500,costNote:'$500 program fee',
+imgFriendly:3,visaHelp:false,visaNote:'Must have valid US visa',
+handsOn:2,handsOnNote:'Observation with clinical conference access',
+lor:3,lorNote:'Possible with engaged attendings',
+prestige:3,competitiveness:3,
+acceptance:'Moderate',
+requirements:['Medical degree','Step 1 pass','Health clearance','Professional liability'],
+applicationUrl:'https://medicine.arizona.edu/education/gme',
+tips:'Arizona is growing rapidly as a medical destination. Tucson is extremely affordable. Good for applicants targeting Southwest programs. The integrative medicine focus is unique.',
+matchIntel:'Solid Southwest option. Arizona programs are generally IMG-friendly. Works well for applicants who want to practice in the West. Affordable base for a rotation.',
+lastVerified:'2026-01',tags:['west','affordable','moderate-cost','southwest']},
+
+{id:53,name:'George Washington University — Observer Program',inst:'GW Hospital',city:'Washington',state:'DC',region:'northeast',
+specs:['im','gen_surg','em','neuro','psych'],type:'observership',
+duration:'2-4 weeks',cost:750,costNote:'$750 program fee',
+imgFriendly:3,visaHelp:false,visaNote:'Must have valid US visa',
+handsOn:2,handsOnNote:'Observation with limited participation',
+lor:3,lorNote:'Possible — department dependent',
+prestige:4,competitiveness:4,
+acceptance:'Competitive',
+requirements:['Medical degree','ECFMG enrollment','Professional liability','Health clearance','Dean letter'],
+applicationUrl:'https://smhs.gwu.edu/education/gme',
+tips:'DC location is unique — policy and public health intersections. GW is known for its EM residency (presidential ER). Housing is expensive but the networking potential is high.',
+matchIntel:'Good for applicants interested in EM, policy, or DC-area programs. The GW ER has celebrity status. Works best as a targeted addition for specific career interests.',
+lastVerified:'2026-01',tags:['northeast','dc','moderate-cost','emergency-medicine']},
+
+{id:54,name:'St. Barnabas Medical Center — Observership',inst:'RWJBarnabas Health',city:'Livingston',state:'NJ',region:'northeast',
+specs:['im','cardio','gen_surg','peds','obgyn'],type:'observership',
+duration:'1-3 months',cost:500,costNote:'$500/month',
+imgFriendly:4,visaHelp:false,visaNote:'Must have valid US visa',
+handsOn:3,handsOnNote:'Clinical participation in many departments',
+lor:4,lorNote:'Good letters from community-based attendings',
+prestige:3,competitiveness:2,
+acceptance:'Accessible — IMG-welcoming',
+requirements:['Medical degree','Step 1 pass','Health clearance','Background check'],
+applicationUrl:'https://www.rwjbh.org/education/',
+tips:'Part of the largest health system in NJ. Suburban setting with easy access to NYC. The cardiology program is strong. Livingston/northern NJ is pleasant.',
+matchIntel:'Good NJ option with large system networking potential. RWJBarnabas has multiple residency programs across NJ — one observership can open doors to several programs.',
+lastVerified:'2026-01',tags:['northeast','large-system','img-friendly','community']},
+
+{id:55,name:'Oregon Health & Science University — Observer',inst:'OHSU',city:'Portland',state:'OR',region:'west',
+specs:['im','fm','gen_surg','neuro','peds','psych'],type:'observership',
+duration:'2-4 weeks',cost:500,costNote:'$500 program fee',
+imgFriendly:3,visaHelp:false,visaNote:'Must have valid US visa',
+handsOn:2,handsOnNote:'Observation with conference attendance',
+lor:3,lorNote:'Possible with engagement',
+prestige:4,competitiveness:3,
+acceptance:'Moderately competitive',
+requirements:['Medical degree','ECFMG enrollment','Health clearance','Professional liability'],
+applicationUrl:'https://www.ohsu.edu/education/gme',
+tips:'OHSU is the only academic medical center in Oregon. Beautiful campus on a hill overlooking Portland. If you want to practice in the Pacific Northwest, this is your entry point.',
+matchIntel:'Dominant institution in the Pacific Northwest. If you want Oregon or Washington, OHSU connections are invaluable. More accessible than West Coast peers like Stanford or UCSF.',
+lastVerified:'2026-01',tags:['west','pacific-northwest','moderate-cost','moderate-access']},
+
+{id:56,name:'Howard University Hospital — Observer Program',inst:'Howard University',city:'Washington',state:'DC',region:'northeast',
+specs:['im','fm','gen_surg','obgyn','psych','peds'],type:'observership',
+duration:'2-8 weeks',cost:500,costNote:'$500 program fee',
+imgFriendly:4,visaHelp:false,visaNote:'Must have valid US visa',
+handsOn:3,handsOnNote:'Active observation with clinical participation',
+lor:4,lorNote:'Good letters from supportive faculty',
+prestige:3,competitiveness:2,
+acceptance:'Accessible — diverse and welcoming environment',
+requirements:['Medical degree','Step 1 pass','Health clearance','TB test'],
+applicationUrl:'https://huhealthcare.com/education/gme',
+tips:'Historic HBCU with a proud medical tradition. Rich patient population and unique clinical exposure. DC is expensive but the experience is valuable. Strong for applicants who value diversity and community medicine.',
+matchIntel:'Good mid-tier option with a unique narrative angle. Howard\'s commitment to health equity gives you powerful personal statement material. The faculty are supportive of international graduates.',
+lastVerified:'2026-01',tags:['dc','diverse','community','img-friendly','moderate-cost']},
+
+{id:57,name:'Cedars-Sinai — Clinical Observer Program',inst:'Cedars-Sinai Medical Center',city:'Los Angeles',state:'CA',region:'west',
+specs:['im','cardio','gi','gen_surg','neuro'],type:'observership',
+duration:'2-4 weeks',cost:0,costNote:'No program fee',
+imgFriendly:2,visaHelp:false,visaNote:'Must have valid US visa; limited spots',
+handsOn:1,handsOnNote:'Strict observation',
+lor:2,lorNote:'Difficult without existing connection',
+prestige:4,competitiveness:4,
+acceptance:'Competitive — requires strong credentials',
+requirements:['Medical degree','Faculty sponsor preferred','Professional liability','Health clearance'],
+applicationUrl:'https://www.cedars-sinai.org/education/gme.html',
+tips:'Prestigious LA institution. Celebrity medicine meets academic excellence. Beautiful campus. LA is expensive — budget accordingly. Good for cardiology and GI exposure.',
+matchIntel:'Prestige play for West Coast applicants. More accessible than Stanford but still competitive. Best with an existing connection. The GI and cardiology programs are nationally ranked.',
+lastVerified:'2026-01',tags:['prestigious','west-coast','competitive','cardiology']},
+
+{id:58,name:'Jacobi Medical Center — Clinical Observership',inst:'NYC Health + Hospitals / Jacobi',city:'Bronx',state:'NY',region:'northeast',
+specs:['im','gen_surg','em','trauma','psych','peds'],type:'observership',
+duration:'1-3 months',cost:0,costNote:'NYC public hospital — no fee',
+imgFriendly:5,visaHelp:true,visaNote:'NYC H+H visa support',
+handsOn:4,handsOnNote:'Active clinical participation; Level 1 trauma center',
+lor:4,lorNote:'Good letters from dedicated attendings',
+prestige:2,competitiveness:1,
+acceptance:'Very accessible',
+requirements:['Medical degree','Step 1 pass','Health clearance'],
+applicationUrl:'https://www.nychealthandhospitals.org/jacobi/',
+tips:'Another excellent free NYC H+H option. Jacobi is a Level 1 trauma center — superb for surgery and EM exposure. North Bronx location. Part of the Albert Einstein teaching network.',
+matchIntel:'Free + trauma center + hands-on = exceptional value. Jacobi\'s connection to Einstein gives it educational credibility beyond typical public hospitals. Great for surgery/EM-bound IMGs.',
+lastVerified:'2026-02',tags:['no-fee','hands-on','img-pipeline','public-hospital','trauma','high-roi']},
+
+{id:59,name:'Geisinger Medical Center — Clinical Observer',inst:'Geisinger',city:'Danville',state:'PA',region:'northeast',
+specs:['im','fm','gen_surg','cardio','neuro'],type:'observership',
+duration:'2-4 weeks',cost:0,costNote:'No program fee',
+imgFriendly:3,visaHelp:false,visaNote:'Must have valid US visa',
+handsOn:2,handsOnNote:'Observation with clinical discussion',
+lor:3,lorNote:'Possible — smaller system means better attending relationships',
+prestige:3,competitiveness:2,
+acceptance:'Moderate — rural academic center',
+requirements:['Medical degree','ECFMG enrollment','Health clearance','Professional liability'],
+applicationUrl:'https://www.geisinger.edu/education/gme',
+tips:'Geisinger is a healthcare innovation leader — integrated system, ProvenCare, population health. Rural PA is dirt cheap. If you\'re interested in value-based care or rural medicine, this is exceptional.',
+matchIntel:'Unique angle for applicants interested in healthcare innovation and rural medicine. The Geisinger model is nationally famous. Strong narrative value for personal statements about improving healthcare systems.',
+lastVerified:'2026-01',tags:['no-fee','rural','innovative','affordable','northeast']},
+
+{id:60,name:'Loma Linda University — International Observer',inst:'Loma Linda University Medical Center',city:'Loma Linda',state:'CA',region:'west',
+specs:['im','gen_surg','ct_surg','peds','neuro'],type:'observership',
+duration:'2-4 weeks',cost:500,costNote:'$500 program fee',
+imgFriendly:4,visaHelp:true,visaNote:'Visa documentation available; faith-based institution',
+handsOn:2,handsOnNote:'Observation with limited participation',
+lor:3,lorNote:'Possible with engaged attendings',
+prestige:3,competitiveness:2,
+acceptance:'Accessible — welcoming to international applicants',
+requirements:['Medical degree','Step 1 pass','Health clearance','TB test'],
+applicationUrl:'https://lluh.org/education/gme',
+tips:'Seventh-day Adventist institution — expect faith-integrated environment. The cardiac surgery program is world-class (proton therapy too). Inland Empire is very affordable compared to LA. Great for CT surgery exposure.',
+matchIntel:'Niche but strong. If cardiac surgery or proton therapy interests you, Loma Linda is a destination. The faith component is important to know going in. Affordable SoCal alternative.',
+lastVerified:'2026-01',tags:['visa-sponsor','west-coast','cardiac-surgery','affordable','faith-based']},
+
+{id:61,name:'Thomas Jefferson University — Observer Program',inst:'Jefferson Health',city:'Philadelphia',state:'PA',region:'northeast',
+specs:['im','gen_surg','em','neuro','rads','anes','ortho'],type:'observership',
+duration:'2-4 weeks',cost:600,costNote:'$600 program fee',
+imgFriendly:3,visaHelp:false,visaNote:'Must have valid US visa',
+handsOn:2,handsOnNote:'Observation with conference attendance',
+lor:3,lorNote:'Department-dependent',
+prestige:4,competitiveness:3,
+acceptance:'Moderately competitive',
+requirements:['Medical degree','ECFMG enrollment','Professional liability','Health clearance'],
+applicationUrl:'https://www.jefferson.edu/academics/colleges-schools/skmc/education/gme.html',
+tips:'Jefferson has a strong surgical tradition and one of the oldest medical schools in the US. Center City Philadelphia is vibrant and walkable. Good for surgery and EM applicants.',
+matchIntel:'Solid Philadelphia option with surgical strength. The Jefferson name is well-recognized nationally. Pairs well with Einstein or Temple for a comprehensive Philly strategy.',
+lastVerified:'2026-01',tags:['northeast','surgery','moderate-cost','philadelphia']},
+
+{id:62,name:'Creighton University — Clinical Observer',inst:'Creighton University School of Medicine',city:'Omaha',state:'NE',region:'midwest',
+specs:['im','fm','peds','gen_surg','psych'],type:'observership',
+duration:'2-4 weeks',cost:0,costNote:'No program fee',
+imgFriendly:4,visaHelp:false,visaNote:'Must have valid US visa',
+handsOn:2,handsOnNote:'Observation with clinical discussion',
+lor:3,lorNote:'Possible — Jesuit tradition emphasizes mentorship',
+prestige:3,competitiveness:2,
+acceptance:'Accessible — welcoming community',
+requirements:['Medical degree','Step 1 pass','Health clearance','Professional liability'],
+applicationUrl:'https://medschool.creighton.edu/gme',
+tips:'Jesuit medical school with strong values of service. Omaha is extremely affordable. Creighton\'s primary care programs are well-regarded. Great for FM and IM-focused applicants.',
+matchIntel:'Free program in one of the most affordable cities in America. Good for Midwest-targeting primary care applicants. The Jesuit mission gives your application a service-oriented angle.',
+lastVerified:'2026-01',tags:['no-fee','midwest','affordable','primary-care','service-oriented']},
+
+{id:63,name:'University of South Alabama — Observer Program',inst:'USA Health',city:'Mobile',state:'AL',region:'south',
+specs:['im','fm','gen_surg','peds','psych','neuro'],type:'observership',
+duration:'2-8 weeks',cost:0,costNote:'No program fee',
+imgFriendly:4,visaHelp:false,visaNote:'Must have valid US visa',
+handsOn:3,handsOnNote:'Active observation with clinical participation',
+lor:4,lorNote:'Smaller program = more personal letters',
+prestige:3,competitiveness:2,
+acceptance:'Accessible — IMG-welcoming',
+requirements:['Medical degree','Step 1 pass','Health clearance','TB test'],
+applicationUrl:'https://www.southalabama.edu/colleges/com/gme/',
+tips:'Mobile is the most affordable metro in Alabama. USA Health is the only academic medical center on the Gulf Coast. Small program means you get noticed. Strong for primary care and surgery.',
+matchIntel:'Free + affordable + personal attention. Under-the-radar option with genuine clinical value. Programs in the Deep South are often IMG-friendly and undersaturated with applicants.',
+lastVerified:'2026-01',tags:['no-fee','south','affordable','img-friendly','small-program']},
+
+{id:64,name:'Elmhurst Hospital — Clinical Observership',inst:'NYC Health + Hospitals / Elmhurst',city:'Queens',state:'NY',region:'northeast',
+specs:['im','fm','gen_surg','psych','peds','obgyn'],type:'observership',
+duration:'1-3 months',cost:0,costNote:'NYC public hospital — no fee',
+imgFriendly:5,visaHelp:true,visaNote:'NYC H+H visa support',
+handsOn:4,handsOnNote:'Active clinical participation',
+lor:4,lorNote:'Good letters from supportive faculty',
+prestige:2,competitiveness:1,
+acceptance:'Very accessible',
+requirements:['Medical degree','Step 1 pass','Health clearance'],
+applicationUrl:'https://www.nychealthandhospitals.org/elmhurst/',
+tips:'Elmhurst became world-famous during COVID-19 as the epicenter hospital. Queens location is diverse and affordable by NYC standards. The IM program here is strong and IMG-friendly.',
+matchIntel:'Free + COVID legacy + hands-on + NYC. The Elmhurst story during the pandemic gives your application a powerful narrative dimension. Strong IM pipeline.',
+lastVerified:'2026-02',tags:['no-fee','hands-on','img-pipeline','public-hospital','affordable']},
+
+{id:65,name:'University of New Mexico — Clinical Observer',inst:'UNM Health Sciences',city:'Albuquerque',state:'NM',region:'west',
+specs:['im','fm','em','gen_surg','psych','peds'],type:'observership',
+duration:'2-4 weeks',cost:0,costNote:'No program fee',
+imgFriendly:3,visaHelp:false,visaNote:'Must have valid US visa',
+handsOn:3,handsOnNote:'Active observation — particularly hands-on in EM',
+lor:3,lorNote:'Possible with engagement',
+prestige:3,competitiveness:2,
+acceptance:'Moderate — welcoming',
+requirements:['Medical degree','Step 1 pass','Health clearance','Professional liability'],
+applicationUrl:'https://hsc.unm.edu/medicine/education/gme/',
+tips:'UNM is the only medical school and Level 1 trauma center in New Mexico. The EM and trauma exposure is exceptional. Albuquerque is extremely affordable. Unique rural/frontier medicine perspective.',
+matchIntel:'If you want Southwest experience, UNM is the entry point. The underserved population gives you narrative power. EM and FM are particularly strong here. Affordable and unique.',
+lastVerified:'2026-01',tags:['no-fee','west','southwest','affordable','underserved','trauma']}
+];
+
+// ===== SPECIALTY LABELS FOR OBSERVERSHIP FINDER =====
+const OBS_SPEC_LABELS={
+im:'Internal Medicine',fm:'Family Medicine',peds:'Pediatrics',em:'Emergency Medicine',
+psych:'Psychiatry',neuro:'Neurology',rads:'Radiology',anes:'Anesthesiology',
+path:'Pathology',pmr:'PM&R',gen_surg:'General Surgery',ortho:'Orthopedic Surgery',
+uro:'Urology',ent:'ENT',ophtho:'Ophthalmology',derm:'Dermatology',
+plastics:'Plastic Surgery',nsurg:'Neurosurgery',ir:'Interventional Radiology',
+vascular:'Vascular Surgery',ct_surg:'Cardiothoracic Surgery',obgyn:'OB/GYN',
+radonc:'Radiation Oncology',cardio:'Cardiology',gi:'GI/Gastroenterology',
+pulm:'Pulmonary/Critical Care',endo:'Endocrinology',nephro:'Nephrology',
+rheum:'Rheumatology',heme_onc:'Hematology/Oncology',onco:'Oncology',
+allergy:'Allergy/Immunology',rare_disease:'Rare Disease',genetics:'Genetics',
+transplant:'Transplant',trauma:'Trauma Surgery'
+};
+
+// ===== STATE LABELS =====
+const OBS_STATES={};
+OBS_PROGRAMS.forEach(function(p){OBS_STATES[p.state]=p.state});
+
+// ===== REGION LABELS =====
+const OBS_REGIONS={northeast:'Northeast',midwest:'Midwest',south:'South',west:'West'};
 // ===== FRAMEWORK LIBRARY CONTENT =====
 const VAULT_CONTENT={
 v1:`<h3>Fellowship Readiness Calculator</h3>
@@ -5027,7 +5970,146 @@ v15:`<h3 class="serif">Career Strategy Builder</h3>
 <div id="csb-results" style="margin-top:20px"></div>
 <div style="text-align:center;margin-top:8px"><button onclick="showSavedScenarios('Career Strategy Builder')" style="background:none;border:none;color:var(--accent);font-size:11px;cursor:pointer;padding:6px 12px;opacity:.7;transition:opacity .15s" onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='.7'">📊 View Saved Scenarios</button></div>
 
-</div>`
+</div>`,
+
+v17:`<h3 class="serif">Observership Finder</h3>
+<p style="color:var(--text3);font-size:12px;margin-bottom:16px">65 verified US observership programs with match intelligence, filtering, and personalized recommendations for IMGs and US medical students.</p>
+
+<!-- Tab Navigation -->
+<div id="obs-tabs" style="display:flex;gap:0;margin-bottom:20px;border:1px solid rgba(200,168,124,.25);border-radius:10px;overflow:hidden">
+<button id="obs-tab-find" onclick="obsTab('find')" style="flex:1;padding:10px;font-size:12px;font-weight:600;border:none;cursor:pointer;background:var(--accent);color:var(--bg);transition:all .2s">🔍 Find Programs</button>
+<button id="obs-tab-plan" onclick="obsTab('plan')" style="flex:1;padding:10px;font-size:12px;font-weight:600;border:none;cursor:pointer;background:none;color:var(--accent);transition:all .2s">🎯 Plan Builder</button>
+<button id="obs-tab-compare" onclick="obsTab('compare')" style="flex:1;padding:10px;font-size:12px;font-weight:600;border:none;cursor:pointer;background:none;color:var(--accent);transition:all .2s">⚖️ Compare</button>
+</div>
+
+<!-- ===== FIND TAB ===== -->
+<div id="obs-find" style="">
+
+<!-- Quick Stats -->
+<div style="display:flex;gap:1px;margin-bottom:16px;border-radius:10px;overflow:hidden">
+<div style="flex:1;background:var(--bg2);padding:10px;text-align:center"><div id="obs-stat-total" style="font-size:20px;font-weight:700;color:var(--accent)">65</div><div style="font-size:9px;color:var(--text3)">Programs</div></div>
+<div style="flex:1;background:var(--bg2);padding:10px;text-align:center"><div id="obs-stat-free" style="font-size:20px;font-weight:700;color:var(--accent)">—</div><div style="font-size:9px;color:var(--text3)">Free</div></div>
+<div style="flex:1;background:var(--bg2);padding:10px;text-align:center"><div id="obs-stat-visa" style="font-size:20px;font-weight:700;color:var(--accent)">—</div><div style="font-size:9px;color:var(--text3)">Visa Support</div></div>
+<div style="flex:1;background:var(--bg2);padding:10px;text-align:center"><div id="obs-stat-hands" style="font-size:20px;font-weight:700;color:var(--accent)">—</div><div style="font-size:9px;color:var(--text3)">Hands-On</div></div>
+</div>
+
+<!-- Search Bar -->
+<div style="position:relative;margin-bottom:12px">
+<input id="obs-search" type="text" placeholder="Search by name, city, state, specialty..." oninput="obsFilter()" style="width:100%;padding:10px 12px 10px 36px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px;box-sizing:border-box">
+<span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:14px;opacity:.5">🔍</span>
+</div>
+
+<!-- Filters -->
+<div style="margin-bottom:16px">
+<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px">
+<select id="obs-f-spec" onchange="obsFilter()" style="flex:1;min-width:120px;padding:8px;border:1px solid var(--border);border-radius:6px;background:var(--bg2);color:var(--text);font-size:11px"><option value="">All Specialties</option></select>
+<select id="obs-f-region" onchange="obsFilter()" style="flex:1;min-width:100px;padding:8px;border:1px solid var(--border);border-radius:6px;background:var(--bg2);color:var(--text);font-size:11px"><option value="">All Regions</option><option value="northeast">Northeast</option><option value="midwest">Midwest</option><option value="south">South</option><option value="west">West</option></select>
+<select id="obs-f-state" onchange="obsFilter()" style="flex:1;min-width:80px;padding:8px;border:1px solid var(--border);border-radius:6px;background:var(--bg2);color:var(--text);font-size:11px"><option value="">All States</option></select>
+</div>
+<div style="display:flex;gap:6px;flex-wrap:wrap">
+<select id="obs-f-cost" onchange="obsFilter()" style="flex:1;min-width:80px;padding:8px;border:1px solid var(--border);border-radius:6px;background:var(--bg2);color:var(--text);font-size:11px"><option value="">Any Cost</option><option value="free">Free Only</option><option value="low">Under $500</option><option value="mid">$500–$1000</option><option value="high">$1000+</option></select>
+<select id="obs-f-img" onchange="obsFilter()" style="flex:1;min-width:100px;padding:8px;border:1px solid var(--border);border-radius:6px;background:var(--bg2);color:var(--text);font-size:11px"><option value="">IMG Friendliness</option><option value="5">★★★★★ Very Welcoming</option><option value="4">★★★★☆ Friendly</option><option value="3">★★★☆☆ Moderate</option></select>
+<select id="obs-f-hands" onchange="obsFilter()" style="flex:1;min-width:100px;padding:8px;border:1px solid var(--border);border-radius:6px;background:var(--bg2);color:var(--text);font-size:11px"><option value="">Hands-On Level</option><option value="4">Hands-On (4-5★)</option><option value="3">Some Participation</option><option value="1">Observation OK</option></select>
+</div>
+<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">
+<select id="obs-f-lor" onchange="obsFilter()" style="flex:1;min-width:100px;padding:8px;border:1px solid var(--border);border-radius:6px;background:var(--bg2);color:var(--text);font-size:11px"><option value="">LOR Potential</option><option value="5">★★★★★ Excellent</option><option value="4">★★★★☆ Strong</option><option value="3">★★★☆☆ Possible</option></select>
+<select id="obs-f-visa" onchange="obsFilter()" style="flex:1;min-width:100px;padding:8px;border:1px solid var(--border);border-radius:6px;background:var(--bg2);color:var(--text);font-size:11px"><option value="">Visa Support</option><option value="yes">Provides Visa Help</option><option value="no">No Visa Support</option></select>
+<select id="obs-f-sort" onchange="obsFilter()" style="flex:1;min-width:100px;padding:8px;border:1px solid var(--border);border-radius:6px;background:var(--bg2);color:var(--text);font-size:11px"><option value="roi">Sort: Best ROI</option><option value="prestige">Sort: Prestige</option><option value="img">Sort: IMG-Friendly</option><option value="cost-low">Sort: Cost (Low→High)</option><option value="cost-high">Sort: Cost (High→Low)</option><option value="hands">Sort: Most Hands-On</option><option value="lor">Sort: Best LOR Potential</option></select>
+</div>
+</div>
+
+<!-- Results Count -->
+<div id="obs-results-count" style="font-size:11px;color:var(--text3);margin-bottom:10px"></div>
+
+<!-- Results -->
+<div id="obs-results" style=""></div>
+
+</div>
+
+<!-- ===== PLAN BUILDER TAB ===== -->
+<div id="obs-plan" style="display:none">
+
+<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid rgba(200,168,124,.15)">📋 Your Profile</div>
+
+<div style="margin-bottom:12px">
+<label style="font-size:11px;color:var(--text3)">Are you an IMG or US student?</label>
+<select id="obs-p-img" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
+<option value="">Select...</option><option value="img">International Medical Graduate (IMG)</option><option value="us">US Medical Student/Graduate</option>
+</select>
+</div>
+
+<div style="margin-bottom:12px">
+<label style="font-size:11px;color:var(--text3)">Target Specialty</label>
+<select id="obs-p-spec" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
+<option value="">Select specialty...</option>
+</select>
+</div>
+
+<div style="margin-bottom:12px">
+<label style="font-size:11px;color:var(--text3)">Step 2 CK Score (or expected)</label>
+<input id="obs-p-step2" type="number" placeholder="e.g. 245" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px;box-sizing:border-box">
+</div>
+
+<div style="margin-bottom:12px">
+<label style="font-size:11px;color:var(--text3)">Do you need visa sponsorship?</label>
+<select id="obs-p-visa" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
+<option value="">Select...</option><option value="yes">Yes — I need visa help</option><option value="no">No — I have a valid visa/US citizen</option>
+</select>
+</div>
+
+<div style="margin-bottom:12px">
+<label style="font-size:11px;color:var(--text3)">Budget for observership fees</label>
+<select id="obs-p-budget" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
+<option value="">Select...</option><option value="0">Free programs only</option><option value="500">Up to $500 total</option><option value="1000">Up to $1,000 total</option><option value="2000">Up to $2,000 total</option><option value="99999">Cost is not an issue</option>
+</select>
+</div>
+
+<div style="margin-bottom:12px">
+<label style="font-size:11px;color:var(--text3)">What do you need most?</label>
+<select id="obs-p-priority" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
+<option value="">Select...</option><option value="lor">Strong Letters of Recommendation</option><option value="hands">Hands-On Clinical Experience</option><option value="prestige">Name Recognition / Prestige</option><option value="pipeline">Best Chance of Matching at Program</option><option value="balanced">Balanced — All of the Above</option>
+</select>
+</div>
+
+<div style="margin-bottom:12px">
+<label style="font-size:11px;color:var(--text3)">Preferred Region (optional)</label>
+<select id="obs-p-region" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
+<option value="">No preference</option><option value="northeast">Northeast</option><option value="midwest">Midwest</option><option value="south">South</option><option value="west">West</option>
+</select>
+</div>
+
+<div style="margin-bottom:12px">
+<label style="font-size:11px;color:var(--text3)">Timeline</label>
+<select id="obs-p-timeline" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
+<option value="">Select...</option><option value="3">Within 3 months</option><option value="6">Within 6 months</option><option value="12">Within 12 months</option><option value="flexible">Flexible — planning ahead</option>
+</select>
+</div>
+
+<button onclick="obsPlanBuild()" class="btn btn-a" style="width:100%;padding:14px;margin-top:8px">Build My Observership Strategy →</button>
+
+<div id="obs-plan-results" style="margin-top:20px"></div>
+
+</div>
+
+<!-- ===== COMPARE TAB ===== -->
+<div id="obs-compare" style="display:none">
+
+<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid rgba(200,168,124,.15)">⚖️ Side-by-Side Comparison</div>
+
+<p style="font-size:12px;color:var(--text3);margin-bottom:12px">Select 2–3 programs to compare. Use the ⚖️ button on any program card to add it here.</p>
+
+<div id="obs-compare-slots" style="display:flex;gap:8px;margin-bottom:16px">
+<div style="flex:1"><select id="obs-cmp-1" onchange="obsCompare()" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:6px;background:var(--bg2);color:var(--text);font-size:11px"><option value="">Program 1...</option></select></div>
+<div style="flex:1"><select id="obs-cmp-2" onchange="obsCompare()" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:6px;background:var(--bg2);color:var(--text);font-size:11px"><option value="">Program 2...</option></select></div>
+<div style="flex:1"><select id="obs-cmp-3" onchange="obsCompare()" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:6px;background:var(--bg2);color:var(--text);font-size:11px"><option value="">Program 3...</option></select></div>
+</div>
+
+<div id="obs-compare-results" style=""></div>
+
+</div>
+
+<div style="text-align:center;margin-top:12px"><button onclick="showSavedScenarios('Observership Finder')" style="background:none;border:none;color:var(--accent);font-size:11px;cursor:pointer;padding:6px 12px;opacity:.7;transition:opacity .15s" onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='.7'">📊 View Saved Scenarios</button></div>
+`
 };
 
 // ===== TOPBAR SCROLL EFFECT =====
@@ -9891,16 +10973,16 @@ var quizAnswers={stage:null,goal:null,urgency:null};
 var QUIZ_RECS={
   // STUDENT
   'student_specialty':   [{id:'v13',why:'Discover which specialties match your personality and values'},{id:'v14',why:'Check your competitiveness for each target specialty'},{id:'v11',why:'Compare financial trajectories across specialties'},{id:'v15',why:'Build a roadmap once you decide'}],
-  'student_match':       [{id:'v14',why:'See your real match probability based on scores and research'},{id:'v16',why:'Practice the exact questions program directors will ask'},{id:'v15',why:'Build a step-by-step roadmap to your target specialty'},{id:'v1',why:'Score your application against successful profiles'},{id:'v7',why:'Know which research activities move the needle most'}],
-  'student_fellowship':  [{id:'v14',why:'See your real match probability based on scores and research'},{id:'v16',why:'Practice the exact questions program directors will ask'},{id:'v15',why:'Build a step-by-step roadmap to your target specialty'},{id:'v1',why:'Score your application against successful profiles'},{id:'v7',why:'Know which research activities move the needle most'}],
+  'student_match':       [{id:'v14',why:'See your real match probability based on scores and research'},{id:'v16',why:'Practice the exact questions program directors will ask'},{id:'v15',why:'Build a step-by-step roadmap to your target specialty'},{id:'v1',why:'Score your application against successful profiles'},{id:'v7',why:'Know which research activities move the needle most'},{id:'v17',why:'Find the best observerships for your specialty and profile'}],
+  'student_fellowship':  [{id:'v14',why:'See your real match probability based on scores and research'},{id:'v16',why:'Practice the exact questions program directors will ask'},{id:'v15',why:'Build a step-by-step roadmap to your target specialty'},{id:'v1',why:'Score your application against successful profiles'},{id:'v7',why:'Know which research activities move the needle most'},{id:'v17',why:'Find observerships that build your fellowship profile'}],
   'student_contract':    [{id:'v3',why:'Learn what to look for before you ever see an offer'},{id:'v2',why:'Know the red flags before you need to negotiate'},{id:'v5',why:'Plan your first 3 years of attending income'},{id:'v8',why:'PSLF vs refinance — make this decision early'}],
   'student_finance':     [{id:'v11',why:'See how specialty choice impacts lifetime wealth'},{id:'v8',why:'The 5 financial decisions worth millions'},{id:'v5',why:'Map your post-training financial trajectory'},{id:'v4',why:'Understand how RVU compensation actually works'}],
   'student_direction':   [{id:'v13',why:'Discover which specialties fit your personality and goals'},{id:'v14',why:'Check your competitiveness for each target specialty'},{id:'v15',why:'Build a roadmap once you choose'},{id:'v11',why:'Compare financial trajectories side by side'}],
 
   // RESIDENT
   'resident_specialty':  [{id:'v13',why:'Find which specialties actually fit you'},{id:'v14',why:'Check how competitive you are for each option'},{id:'v11',why:'Compare the financial trajectory of each path'},{id:'v10',why:'Use the pivot engine if you\'re rethinking your direction'}],
-  'resident_match':      [{id:'v14',why:'See your real match probability with current stats'},{id:'v16',why:'Practice real interview questions with honest feedback'},{id:'v15',why:'Build your personalized roadmap'},{id:'v1',why:'Score your application against successful profiles'},{id:'v7',why:'Maximize research ROI with limited time'}],
-  'resident_fellowship': [{id:'v14',why:'See your real match probability with current stats'},{id:'v16',why:'Practice real fellowship interview questions with honest feedback'},{id:'v15',why:'Build your personalized fellowship roadmap'},{id:'v1',why:'Score your application against successful profiles'},{id:'v7',why:'Maximize research ROI with limited time'}],
+  'resident_match':      [{id:'v14',why:'See your real match probability with current stats'},{id:'v16',why:'Practice real interview questions with honest feedback'},{id:'v15',why:'Build your personalized roadmap'},{id:'v1',why:'Score your application against successful profiles'},{id:'v7',why:'Maximize research ROI with limited time'},{id:'v17',why:'Find observerships to strengthen your application'}],
+  'resident_fellowship': [{id:'v14',why:'See your real match probability with current stats'},{id:'v16',why:'Practice real fellowship interview questions with honest feedback'},{id:'v15',why:'Build your personalized fellowship roadmap'},{id:'v1',why:'Score your application against successful profiles'},{id:'v7',why:'Maximize research ROI with limited time'},{id:'v17',why:'Find observerships at top fellowship programs'}],
   'resident_contract':   [{id:'v2',why:'Identify red flags in any contract'},{id:'v16',why:'Practice your negotiation pitch and job interview answers'},{id:'v3',why:'Compare offers systematically'},{id:'v4',why:'Model your real compensation by RVU volume'},{id:'v12',why:'Full contract analysis with risk scoring'}],
   'resident_finance':    [{id:'v5',why:'Your first 3 years determine the next 20'},{id:'v8',why:'PSLF, disability, tax strategy — get these right'},{id:'v11',why:'30-year wealth projection by career path'},{id:'v4',why:'Model what you\'ll actually earn'}],
   'resident_direction':  [{id:'v13',why:'Find which specialties actually fit you'},{id:'v10',why:'Should you pivot? Structured decision engine'},{id:'v15',why:'Build a roadmap to the new target'},{id:'v11',why:'Compare financial trajectories across paths'}],
@@ -10082,7 +11164,7 @@ function renderVault(){
       title:'Execute the Strategy',
       icon:'🚀',
       goal:'Implement your career plan with structured roadmaps, interview prep, and expert review.',
-      tools:['v15','v6','v16','v9']
+      tools:['v15','v6','v16','v17','v9']
     }
   ];
 
@@ -10136,6 +11218,7 @@ function openFramework(id){
   if(id==='v11')setTimeout(ftInit,50);
   if(id==='v12')setTimeout(ciInit,50);
   if(id==='v16')setTimeout(misInit,50);
+  if(id==='v17')setTimeout(obsInit,50);
   // Auto-fill tool intakes from career baseline
   setTimeout(function(){autoFillToolFromProfile(id)},60);
 }
@@ -15353,6 +16436,454 @@ function scheduleNotifChecks(){
 // Start notification scheduling on page load
 if(document.readyState==='complete')setTimeout(scheduleNotifChecks,5000);
 else window.addEventListener('load',function(){setTimeout(scheduleNotifChecks,5000)});
+
+// ===== OBSERVERSHIP STRATEGY ENGINE (v17) =====
+
+var _obsCompareList=[];
+var _obsExpanded={};
+
+function obsInit(){
+  var specSel=document.getElementById('obs-f-spec');
+  var planSpec=document.getElementById('obs-p-spec');
+  if(!specSel)return;
+  var allSpecs={};
+  OBS_PROGRAMS.forEach(function(p){p.specs.forEach(function(s){allSpecs[s]=OBS_SPEC_LABELS[s]||s})});
+  var sorted=Object.keys(allSpecs).sort(function(a,b){return allSpecs[a].localeCompare(allSpecs[b])});
+  sorted.forEach(function(s){
+    var opt=document.createElement('option');opt.value=s;opt.textContent=allSpecs[s];
+    specSel.appendChild(opt);
+    if(planSpec){var o2=opt.cloneNode(true);planSpec.appendChild(o2)}
+  });
+  var stateSel=document.getElementById('obs-f-state');
+  var states={};
+  OBS_PROGRAMS.forEach(function(p){states[p.state]=1});
+  Object.keys(states).sort().forEach(function(s){
+    var opt=document.createElement('option');opt.value=s;opt.textContent=s;
+    stateSel.appendChild(opt);
+  });
+  for(var i=1;i<=3;i++){
+    var sel=document.getElementById('obs-cmp-'+i);
+    if(!sel)continue;
+    OBS_PROGRAMS.forEach(function(p){
+      var opt=document.createElement('option');opt.value=p.id;opt.textContent=p.inst+' — '+p.city+', '+p.state;
+      sel.appendChild(opt);
+    });
+  }
+  var free=OBS_PROGRAMS.filter(function(p){return p.cost===0}).length;
+  var visa=OBS_PROGRAMS.filter(function(p){return p.visaHelp}).length;
+  var hands=OBS_PROGRAMS.filter(function(p){return p.handsOn>=4}).length;
+  var el;
+  el=document.getElementById('obs-stat-total');if(el)el.textContent=OBS_PROGRAMS.length;
+  el=document.getElementById('obs-stat-free');if(el)el.textContent=free;
+  el=document.getElementById('obs-stat-visa');if(el)el.textContent=visa;
+  el=document.getElementById('obs-stat-hands');if(el)el.textContent=hands;
+  if(U&&U.careerProfile){
+    var cp=U.careerProfile;
+    if(cp.specialty){
+      var ps=document.getElementById('obs-p-spec');
+      if(ps){for(var j=0;j<ps.options.length;j++){if(ps.options[j].value===cp.specialty){ps.value=cp.specialty;break}}}
+    }
+    if(cp.step2){var s2=document.getElementById('obs-p-step2');if(s2)s2.value=cp.step2}
+  }
+  obsFilter();
+}
+
+function obsTab(tab){
+  ['find','plan','compare'].forEach(function(t){
+    var el=document.getElementById('obs-'+t);
+    var btn=document.getElementById('obs-tab-'+t);
+    if(el)el.style.display=t===tab?'':'none';
+    if(btn){btn.style.background=t===tab?'var(--accent)':'none';btn.style.color=t===tab?'var(--bg)':'var(--accent)'}
+  });
+}
+
+function obsCalcROI(p){
+  var score=0;
+  score+=p.imgFriendly*4;
+  score+=p.lor*4;
+  score+=p.handsOn*3;
+  score+=p.prestige*2;
+  if(p.cost===0)score+=15;
+  else if(p.cost<=500)score+=10;
+  else if(p.cost<=1000)score+=5;
+  if(p.visaHelp)score+=10;
+  if(p.tags.indexOf('pipeline')>=0)score+=8;
+  if(p.tags.indexOf('high-roi')>=0)score+=5;
+  if(p.tags.indexOf('highest-roi')>=0)score+=8;
+  return Math.min(100,score);
+}
+
+function obsRenderStars(n){
+  var h='';
+  for(var i=0;i<5;i++)h+='<span style="color:'+(i<n?'var(--accent)':'var(--border)')+'">★</span>';
+  return h;
+}
+
+function obsRenderTag(text,color){
+  var bg=color||'rgba(200,168,124,.1)';
+  var tc=color?'#fff':'var(--accent)';
+  return '<span style="display:inline-block;font-size:9px;padding:2px 8px;border-radius:12px;background:'+bg+';color:'+tc+';font-weight:600;margin:2px;white-space:nowrap">'+text+'</span>';
+}
+
+function obsRenderCard(p,expanded){
+  var roi=obsCalcROI(p);
+  var roiColor=roi>=70?'#22c55e':roi>=50?'var(--accent)':'#ef4444';
+  var costDisplay=p.cost===0?'<span style="color:#22c55e;font-weight:700">FREE</span>':'$'+p.cost.toLocaleString()+(p.duration.indexOf('month')>=0?'/mo':'');
+  var h='<div style="padding:14px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;margin-bottom:10px;cursor:pointer;transition:border-color .2s" onclick="obsToggleCard('+p.id+')" onmouseenter="this.style.borderColor=\'rgba(200,168,124,.5)\'" onmouseleave="this.style.borderColor=\'var(--border)\'">';
+  h+='<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">';
+  h+='<div style="flex:1;min-width:0">';
+  h+='<div style="font-size:13px;font-weight:600;color:var(--text);line-height:1.3">'+p.inst+'</div>';
+  h+='<div style="font-size:11px;color:var(--text3);margin-top:2px">'+p.city+', '+p.state+' · '+p.duration+'</div>';
+  h+='</div>';
+  h+='<div style="text-align:right;flex-shrink:0">';
+  h+='<div style="font-size:13px;font-weight:600">'+costDisplay+'</div>';
+  h+='<div style="font-size:10px;color:'+roiColor+';font-weight:600;margin-top:2px">ROI: '+roi+'/100</div>';
+  h+='</div></div>';
+  h+='<div style="display:flex;gap:12px;margin-top:8px;font-size:10px;color:var(--text3)">';
+  h+='<span title="IMG Friendliness">IMG '+obsRenderStars(p.imgFriendly)+'</span>';
+  h+='<span title="LOR Potential">LOR '+obsRenderStars(p.lor)+'</span>';
+  h+='<span title="Hands-On">👐 '+obsRenderStars(p.handsOn)+'</span>';
+  if(p.visaHelp)h+='<span style="color:#22c55e;font-weight:600">✓ Visa</span>';
+  h+='</div>';
+  h+='<div style="margin-top:6px">';
+  if(p.imgFriendly>=5)h+=obsRenderTag('IMG Pipeline');
+  if(p.handsOn>=4)h+=obsRenderTag('Hands-On');
+  if(p.lor>=4)h+=obsRenderTag('Strong LORs');
+  if(p.cost===0)h+=obsRenderTag('No Fee','#22c55e');
+  if(p.prestige>=5)h+=obsRenderTag('Top Prestige');
+  if(p.tags.indexOf('pipeline')>=0&&p.imgFriendly<5)h+=obsRenderTag('Pipeline');
+  h+='</div>';
+
+  if(expanded){
+    h+='<div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border)" onclick="event.stopPropagation()">';
+    h+='<div style="background:rgba(200,168,124,.06);padding:10px;border-radius:8px;margin-bottom:10px;border-left:3px solid var(--accent)">';
+    h+='<div style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">🧠 Match Intelligence</div>';
+    h+='<div style="font-size:12px;color:var(--text2);line-height:1.6">'+p.matchIntel+'</div></div>';
+    h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">';
+    h+='<div style="padding:8px;background:var(--bg);border-radius:6px"><div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-bottom:2px">Prestige</div><div style="font-size:12px">'+obsRenderStars(p.prestige)+' <span style="font-size:10px;color:var(--text3)">('+p.prestige+'/5)</span></div></div>';
+    h+='<div style="padding:8px;background:var(--bg);border-radius:6px"><div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-bottom:2px">Competition</div><div style="font-size:12px">'+obsRenderStars(p.competitiveness)+' <span style="font-size:10px;color:var(--text3)">('+p.competitiveness+'/5)</span></div></div>';
+    h+='<div style="padding:8px;background:var(--bg);border-radius:6px"><div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-bottom:2px">Hands-On</div><div style="font-size:12px;color:var(--text2)">'+p.handsOnNote+'</div></div>';
+    h+='<div style="padding:8px;background:var(--bg);border-radius:6px"><div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-bottom:2px">LOR Potential</div><div style="font-size:12px;color:var(--text2)">'+p.lorNote+'</div></div></div>';
+    h+='<div style="padding:8px;background:var(--bg);border-radius:6px;margin-bottom:10px"><div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-bottom:2px">Visa</div><div style="font-size:12px;color:var(--text2)">'+(p.visaHelp?'✅ ':'⚠️ ')+p.visaNote+'</div></div>';
+    h+='<div style="padding:8px;background:var(--bg);border-radius:6px;margin-bottom:10px"><div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-bottom:2px">💡 Insider Tips</div><div style="font-size:12px;color:var(--text2);line-height:1.5">'+p.tips+'</div></div>';
+    h+='<div style="margin-bottom:10px"><div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-bottom:4px">Specialties</div>';
+    p.specs.forEach(function(s){h+='<span style="display:inline-block;font-size:10px;padding:2px 8px;border-radius:12px;background:var(--bg);color:var(--text2);margin:2px;border:1px solid var(--border)">'+(OBS_SPEC_LABELS[s]||s)+'</span>'});
+    h+='</div>';
+    h+='<div style="margin-bottom:10px"><div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-bottom:4px">Requirements</div>';
+    h+='<ul style="margin:0;padding-left:16px;font-size:11px;color:var(--text2);line-height:1.6">';
+    p.requirements.forEach(function(r){h+='<li>'+r+'</li>'});
+    h+='</ul></div>';
+    h+='<div style="display:flex;gap:8px;margin-top:10px">';
+    if(p.applicationUrl)h+='<a href="'+p.applicationUrl+'" target="_blank" rel="noopener" style="flex:1;display:block;text-align:center;padding:10px;background:var(--accent);color:var(--bg);border-radius:8px;font-size:12px;font-weight:600;text-decoration:none">Apply / Learn More →</a>';
+    h+='<button onclick="event.stopPropagation();obsAddCompare('+p.id+')" style="padding:10px 14px;background:var(--bg);border:1px solid var(--border);border-radius:8px;font-size:12px;cursor:pointer;color:var(--text)">⚖️ Compare</button>';
+    h+='</div>';
+    h+='<div style="margin-top:8px;font-size:9px;color:var(--text3);text-align:right">Last verified: '+p.lastVerified+'</div>';
+    h+='</div>';
+  }
+  h+='</div>';
+  return h;
+}
+
+function obsToggleCard(id){_obsExpanded[id]=!_obsExpanded[id];obsRender()}
+
+function obsFilter(){
+  var search=(document.getElementById('obs-search').value||'').toLowerCase();
+  var spec=document.getElementById('obs-f-spec').value;
+  var region=document.getElementById('obs-f-region').value;
+  var state=document.getElementById('obs-f-state').value;
+  var cost=document.getElementById('obs-f-cost').value;
+  var img=document.getElementById('obs-f-img').value;
+  var hands=document.getElementById('obs-f-hands').value;
+  var lor=document.getElementById('obs-f-lor').value;
+  var visa=document.getElementById('obs-f-visa').value;
+  var sort=document.getElementById('obs-f-sort').value;
+  var filtered=OBS_PROGRAMS.filter(function(p){
+    if(search){
+      var s=p.name.toLowerCase()+' '+p.inst.toLowerCase()+' '+p.city.toLowerCase()+' '+p.state.toLowerCase()+' '+p.specs.map(function(sp){return(OBS_SPEC_LABELS[sp]||sp).toLowerCase()}).join(' ')+' '+p.tags.join(' ');
+      if(s.indexOf(search)<0)return false;
+    }
+    if(spec&&p.specs.indexOf(spec)<0)return false;
+    if(region&&p.region!==region)return false;
+    if(state&&p.state!==state)return false;
+    if(cost==='free'&&p.cost>0)return false;
+    if(cost==='low'&&p.cost>500)return false;
+    if(cost==='mid'&&(p.cost<500||p.cost>1000))return false;
+    if(cost==='high'&&p.cost<1000)return false;
+    if(img&&p.imgFriendly<parseInt(img))return false;
+    if(hands){var hv=parseInt(hands);if(hv>=4&&p.handsOn<4)return false;if(hv===3&&p.handsOn<3)return false}
+    if(lor&&p.lor<parseInt(lor))return false;
+    if(visa==='yes'&&!p.visaHelp)return false;
+    if(visa==='no'&&p.visaHelp)return false;
+    return true;
+  });
+  if(sort==='roi')filtered.sort(function(a,b){return obsCalcROI(b)-obsCalcROI(a)});
+  else if(sort==='prestige')filtered.sort(function(a,b){return b.prestige-a.prestige||(obsCalcROI(b)-obsCalcROI(a))});
+  else if(sort==='img')filtered.sort(function(a,b){return b.imgFriendly-a.imgFriendly||(obsCalcROI(b)-obsCalcROI(a))});
+  else if(sort==='cost-low')filtered.sort(function(a,b){return a.cost-b.cost});
+  else if(sort==='cost-high')filtered.sort(function(a,b){return b.cost-a.cost});
+  else if(sort==='hands')filtered.sort(function(a,b){return b.handsOn-a.handsOn||(obsCalcROI(b)-obsCalcROI(a))});
+  else if(sort==='lor')filtered.sort(function(a,b){return b.lor-a.lor||(obsCalcROI(b)-obsCalcROI(a))});
+  window._obsFiltered=filtered;
+  obsRender();
+}
+
+function obsRender(){
+  var filtered=window._obsFiltered||[];
+  var el=document.getElementById('obs-results');
+  var countEl=document.getElementById('obs-results-count');
+  if(!el)return;
+  countEl.textContent='Showing '+filtered.length+' of '+OBS_PROGRAMS.length+' programs';
+  if(filtered.length===0){
+    el.innerHTML='<div style="text-align:center;padding:40px 20px;color:var(--text3)"><div style="font-size:32px;margin-bottom:12px">🔍</div><div style="font-size:13px">No programs match your filters. Try broadening your search.</div></div>';
+    return;
+  }
+  var h='';
+  filtered.forEach(function(p){h+=obsRenderCard(p,_obsExpanded[p.id])});
+  el.innerHTML=h;
+}
+
+function obsAddCompare(id){
+  obsTab('compare');
+  for(var i=1;i<=3;i++){
+    var sel=document.getElementById('obs-cmp-'+i);
+    if(sel&&!sel.value){sel.value=id;obsCompare();return}
+  }
+  var sel3=document.getElementById('obs-cmp-3');
+  if(sel3){sel3.value=id;obsCompare()}
+}
+
+function obsCompare(){
+  var ids=[];
+  for(var i=1;i<=3;i++){var sel=document.getElementById('obs-cmp-'+i);if(sel&&sel.value)ids.push(parseInt(sel.value))}
+  var el=document.getElementById('obs-compare-results');
+  if(!el)return;
+  if(ids.length<2){el.innerHTML='<div style="text-align:center;padding:30px;color:var(--text3);font-size:12px">Select at least 2 programs to compare</div>';return}
+  var programs=ids.map(function(id){return OBS_PROGRAMS.find(function(p){return p.id===id})}).filter(Boolean);
+  if(programs.length<2){el.innerHTML='';return}
+  var metrics=[
+    {label:'ROI Score',fn:function(p){return obsCalcROI(p)+'/100'},color:function(p){var r=obsCalcROI(p);return r>=70?'#22c55e':r>=50?'var(--accent)':'#ef4444'}},
+    {label:'Cost',fn:function(p){return p.cost===0?'FREE':'$'+p.cost+(p.duration.indexOf('month')>=0?'/mo':'')},color:function(p){return p.cost===0?'#22c55e':'var(--text)'}},
+    {label:'IMG Friendly',fn:function(p){return obsRenderStars(p.imgFriendly)}},
+    {label:'LOR Potential',fn:function(p){return obsRenderStars(p.lor)}},
+    {label:'Hands-On',fn:function(p){return obsRenderStars(p.handsOn)}},
+    {label:'Prestige',fn:function(p){return obsRenderStars(p.prestige)}},
+    {label:'Competition',fn:function(p){return obsRenderStars(p.competitiveness)}},
+    {label:'Visa Help',fn:function(p){return p.visaHelp?'✅ Yes':'❌ No'},color:function(p){return p.visaHelp?'#22c55e':'#ef4444'}},
+    {label:'Duration',fn:function(p){return p.duration}},
+    {label:'Location',fn:function(p){return p.city+', '+p.state}}
+  ];
+  var h='<div style="display:flex;gap:1px;margin-bottom:1px">';
+  programs.forEach(function(p){
+    h+='<div style="flex:1;background:var(--accent);padding:10px;text-align:center"><div style="font-size:12px;font-weight:600;color:var(--bg)">'+p.inst+'</div><div style="font-size:10px;color:var(--bg);opacity:.7">'+p.city+', '+p.state+'</div></div>';
+  });
+  h+='</div>';
+  metrics.forEach(function(m,idx){
+    h+='<div style="display:flex;gap:1px;margin-bottom:1px">';
+    programs.forEach(function(p,pi){
+      var bg=idx%2===0?'var(--bg2)':'var(--bg)';
+      var val=m.fn(p);
+      var col=m.color?m.color(p):'var(--text)';
+      h+='<div style="flex:1;padding:8px;background:'+bg+';text-align:center">';
+      h+='<div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-bottom:3px">'+m.label+'</div>';
+      h+='<div style="font-size:12px;color:'+col+'">'+val+'</div></div>';
+    });
+    h+='</div>';
+  });
+  h+='<div style="margin-top:12px">';
+  programs.forEach(function(p){
+    h+='<div style="padding:10px;background:rgba(200,168,124,.06);border-radius:8px;margin-bottom:8px;border-left:3px solid var(--accent)">';
+    h+='<div style="font-size:10px;font-weight:600;color:var(--accent);margin-bottom:4px">'+p.inst+' — Intelligence</div>';
+    h+='<div style="font-size:11px;color:var(--text2);line-height:1.5">'+p.matchIntel+'</div></div>';
+  });
+  h+='</div>';
+  var best=programs.slice().sort(function(a,b){return obsCalcROI(b)-obsCalcROI(a)})[0];
+  h+='<div style="text-align:center;padding:16px;background:var(--bg2);border-radius:10px;margin-top:12px">';
+  h+='<div style="font-size:10px;text-transform:uppercase;color:var(--text3);letter-spacing:1px;margin-bottom:4px">Recommendation</div>';
+  h+='<div style="font-size:14px;font-weight:600;color:var(--accent)">'+best.inst+'</div>';
+  h+='<div style="font-size:11px;color:var(--text2);margin-top:4px">Highest overall ROI score ('+obsCalcROI(best)+'/100)</div></div>';
+  el.innerHTML=h;
+}
+
+function obsPlanBuild(){
+  var isIMG=document.getElementById('obs-p-img').value;
+  var spec=document.getElementById('obs-p-spec').value;
+  var step2=parseInt(document.getElementById('obs-p-step2').value)||0;
+  var needVisa=document.getElementById('obs-p-visa').value;
+  var budget=parseInt(document.getElementById('obs-p-budget').value);
+  var priority=document.getElementById('obs-p-priority').value;
+  var region=document.getElementById('obs-p-region').value;
+  var timeline=document.getElementById('obs-p-timeline').value;
+  var el=document.getElementById('obs-plan-results');
+  if(!el)return;
+  if(!isIMG||!spec||!priority||isNaN(budget)){
+    el.innerHTML='<div style="padding:20px;text-align:center;color:#ef4444;font-size:13px">Please fill in all required fields above.</div>';
+    return;
+  }
+  var scored=OBS_PROGRAMS.map(function(p){
+    var score=0;var reasons=[];
+    if(p.specs.indexOf(spec)<0)return null;
+    score+=25;reasons.push('Offers '+(OBS_SPEC_LABELS[spec]||spec));
+    if(isIMG==='img'){
+      score+=p.imgFriendly*5;
+      if(p.imgFriendly>=4)reasons.push('IMG-friendly ('+p.imgFriendly+'/5)');
+      if(p.imgFriendly<=2){score-=15;reasons.push('⚠️ Low IMG accessibility')}
+    }
+    if(needVisa==='yes'){
+      if(p.visaHelp){score+=15;reasons.push('✅ Visa support available')}
+      else{score-=20;reasons.push('⚠️ No visa sponsorship')}
+    }
+    if(p.cost>budget){score-=30;reasons.push('⚠️ Over budget ($'+p.cost+')')}
+    else if(p.cost===0){score+=10;reasons.push('No cost')}
+    else reasons.push('Within budget ($'+p.cost+')');
+    if(priority==='lor'){score+=p.lor*5;if(p.lor>=4)reasons.push('Strong LOR culture')}
+    else if(priority==='hands'){score+=p.handsOn*5;if(p.handsOn>=4)reasons.push('Hands-on participation')}
+    else if(priority==='prestige'){score+=p.prestige*5;if(p.prestige>=4)reasons.push('High prestige')}
+    else if(priority==='pipeline'){
+      if(p.tags.indexOf('pipeline')>=0){score+=20;reasons.push('Pipeline to residency')}
+      if(p.tags.indexOf('img-pipeline')>=0)score+=5;
+      score+=p.lor*3;score+=p.handsOn*3;
+    }else if(priority==='balanced'){score+=p.lor*3+p.handsOn*3+p.prestige*2+p.imgFriendly*2}
+    if(region&&p.region===region){score+=8;reasons.push('In preferred region')}
+    if(timeline==='3'){
+      if(p.competitiveness<=2)score+=5;
+      if(p.competitiveness>=4){score-=5;reasons.push('⚠️ Hard to get in quickly')}
+    }
+    score+=Math.floor(obsCalcROI(p)/5);
+    return{program:p,score:score,reasons:reasons};
+  }).filter(Boolean).filter(function(s){return s.score>0}).sort(function(a,b){return b.score-a.score});
+
+  var top5=scored.slice(0,5);
+  var alt=scored.slice(5,8);
+  if(top5.length===0){
+    el.innerHTML='<div style="padding:20px;text-align:center;color:var(--text3);font-size:13px">No programs match your criteria. Try adjusting your filters.</div>';
+    return;
+  }
+  var h='';
+  h+='<div style="text-align:center;padding:20px;background:linear-gradient(160deg,rgba(200,168,124,.1),rgba(200,168,124,.03));border-radius:12px;margin-bottom:16px">';
+  h+='<div style="font-size:28px;margin-bottom:8px">🎯</div>';
+  h+='<div style="font-size:16px;font-weight:600;color:var(--text);font-family:\'Cormorant Garamond\',serif">Your Observership Strategy</div>';
+  h+='<div style="font-size:11px;color:var(--text3);margin-top:4px">'+(isIMG==='img'?'IMG':'US Student')+' · '+(OBS_SPEC_LABELS[spec]||spec)+' · $'+(budget>=99999?'Flexible':budget)+' budget</div>';
+  h+='</div>';
+
+  // Strategy advice
+  var stratAdvice='';
+  if(isIMG==='img'){
+    if(priority==='prestige')stratAdvice='<strong>Strategy: Prestige + Substance.</strong> A prestigious name alone won\'t get you matched. Pair one high-prestige observership with one hands-on pipeline program. The prestige opens doors; the pipeline gets you LORs and clinical skills.';
+    else if(priority==='lor')stratAdvice='<strong>Strategy: LOR-Focused.</strong> Letters of recommendation are the #1 controllable factor in your application. Prioritize programs where attendings have a track record of writing detailed, personalized letters. Spend at least 1 month — 2-week rotations rarely produce strong LORs.';
+    else if(priority==='hands')stratAdvice='<strong>Strategy: Clinical Skills First.</strong> Hands-on experience gives you interview talking points that observation never can. When a PD asks "tell me about a challenging patient," you need real stories. Pipeline programs with clinical participation are your best bet.';
+    else if(priority==='pipeline')stratAdvice='<strong>Strategy: Match Pipeline.</strong> These programs actively recruit from their observer pool. Treat every day as an audition — arrive early, know your patients, offer to present. Your goal is not just experience; it\'s to make them want you as a resident.';
+    else stratAdvice='<strong>Strategy: Balanced Approach.</strong> Combine one higher-prestige program for name recognition with one or two hands-on programs for LORs and clinical skills. Geographic diversity helps if you\'re applying broadly.';
+  }else{
+    stratAdvice='<strong>Strategy: Targeted Exposure.</strong> As a US student/graduate, observerships supplement your rotations. Focus on programs in specialties and regions where you want to match. Use these for networking and specialty-specific LORs that your home institution may not provide.';
+  }
+
+  h+='<div style="padding:14px;background:rgba(200,168,124,.06);border-radius:10px;margin-bottom:16px;border-left:3px solid var(--accent)">';
+  h+='<div style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">📋 Recommended Strategy</div>';
+  h+='<div style="font-size:12px;color:var(--text2);line-height:1.6">'+stratAdvice+'</div></div>';
+
+  // Top picks
+  h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">🏅 Your Top '+top5.length+' Programs</div>';
+
+  top5.forEach(function(item,idx){
+    var p=item.program;
+    var roi=obsCalcROI(p);
+    var roiColor=roi>=70?'#22c55e':roi>=50?'var(--accent)':'#ef4444';
+    var costDisplay=p.cost===0?'<span style="color:#22c55e;font-weight:700">FREE</span>':'$'+p.cost+(p.duration.indexOf('month')>=0?'/mo':'');
+
+    h+='<div style="padding:14px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;margin-bottom:10px;position:relative">';
+    h+='<div style="position:absolute;top:10px;right:12px;font-size:20px;font-weight:700;color:var(--accent);opacity:.3">#'+(idx+1)+'</div>';
+    h+='<div style="font-size:14px;font-weight:600;color:var(--text)">'+p.inst+'</div>';
+    h+='<div style="font-size:11px;color:var(--text3);margin-top:2px">'+p.city+', '+p.state+' · '+p.duration+' · '+costDisplay+'</div>';
+    h+='<div style="display:flex;gap:10px;margin-top:8px;font-size:10px;color:var(--text3)">';
+    h+='<span>IMG '+obsRenderStars(p.imgFriendly)+'</span>';
+    h+='<span>LOR '+obsRenderStars(p.lor)+'</span>';
+    h+='<span>👐 '+obsRenderStars(p.handsOn)+'</span>';
+    h+='<span style="color:'+roiColor+';font-weight:600">ROI: '+roi+'</span>';
+    h+='</div>';
+
+    // Why this program
+    h+='<div style="margin-top:8px;padding:8px;background:var(--bg);border-radius:6px">';
+    h+='<div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-bottom:4px">Why this program for you</div>';
+    h+='<div style="font-size:11px;color:var(--text2);line-height:1.5">'+item.reasons.join(' · ')+'</div>';
+    h+='</div>';
+
+    // Match Intel excerpt
+    h+='<div style="margin-top:6px;font-size:11px;color:var(--text2);line-height:1.4;font-style:italic">'+p.matchIntel.substring(0,200)+(p.matchIntel.length>200?'...':'')+'</div>';
+
+    if(p.applicationUrl)h+='<a href="'+p.applicationUrl+'" target="_blank" rel="noopener" style="display:inline-block;margin-top:8px;font-size:11px;color:var(--accent);text-decoration:none;font-weight:600">Apply / Learn More →</a>';
+    h+='</div>';
+  });
+
+  // Alternatives
+  if(alt.length>0){
+    h+='<div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin:16px 0 10px">Also Consider</div>';
+    alt.forEach(function(item){
+      var p=item.program;
+      h+='<div style="padding:10px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center">';
+      h+='<div><div style="font-size:12px;font-weight:600;color:var(--text)">'+p.inst+'</div>';
+      h+='<div style="font-size:10px;color:var(--text3)">'+p.city+', '+p.state+' · '+(p.cost===0?'Free':'$'+p.cost)+'</div></div>';
+      h+='<div style="font-size:10px;color:var(--accent);font-weight:600">ROI: '+obsCalcROI(p)+'</div>';
+      h+='</div>';
+    });
+  }
+
+  // Timeline
+  h+='<div style="margin-top:20px;padding:14px;background:var(--bg2);border-radius:10px;border:1px solid var(--border)">';
+  h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">📅 Suggested Timeline</div>';
+  if(timeline==='3'){
+    h+='<div style="font-size:12px;color:var(--text2);line-height:1.7">';
+    h+='<strong>Month 1:</strong> Apply to your top 3 programs simultaneously. Focus on accessible programs (competitiveness ≤ 3). Prepare documents: ECFMG status, dean letter, health clearance.<br>';
+    h+='<strong>Month 2:</strong> Begin first observership. Set clear goals: get at least 1 strong LOR, attend all conferences, build relationships with 2-3 attendings.<br>';
+    h+='<strong>Month 3:</strong> Complete rotation, secure LORs, apply to second program if time permits. Begin incorporating experience into personal statement.</div>';
+  }else if(timeline==='6'){
+    h+='<div style="font-size:12px;color:var(--text2);line-height:1.7">';
+    h+='<strong>Months 1-2:</strong> Research and apply to 3-5 programs. Prioritize your #1 choice but have backups. Gather all documents.<br>';
+    h+='<strong>Months 2-3:</strong> First observership — focus on LORs and clinical skills. Take notes daily for your personal statement.<br>';
+    h+='<strong>Months 4-5:</strong> Second observership — diversify (different region or program type). Build your network.<br>';
+    h+='<strong>Month 6:</strong> Consolidate LORs, update CV, refine personal statement with real clinical anecdotes from your observerships.</div>';
+  }else{
+    h+='<div style="font-size:12px;color:var(--text2);line-height:1.7">';
+    h+='<strong>Months 1-3:</strong> Research extensively. Apply to competitive programs early (6+ months in advance for Mayo, Hopkins, etc.). Apply to accessible programs with shorter timelines.<br>';
+    h+='<strong>Months 4-6:</strong> First observership at your highest-priority program. Focus on relationship building and LORs.<br>';
+    h+='<strong>Months 7-9:</strong> Second observership — complement the first (if first was prestige, second should be hands-on, or vice versa).<br>';
+    h+='<strong>Months 10-12:</strong> Optional third program. Consolidate letters, finalize personal statement, prepare residency applications with 2-3 strong US clinical experiences.</div>';
+  }
+  h+='</div>';
+
+  // Budget summary
+  var totalCost=0;
+  top5.slice(0,3).forEach(function(item){totalCost+=item.program.cost});
+  h+='<div style="margin-top:12px;padding:14px;background:var(--bg2);border-radius:10px;border:1px solid var(--border)">';
+  h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">💰 Estimated Budget (Top 3)</div>';
+  h+='<div style="font-size:12px;color:var(--text2);line-height:1.6">';
+  h+='Program fees: <strong>$'+totalCost.toLocaleString()+'</strong><br>';
+  h+='Housing (estimate): <strong>$1,500–$4,000/month</strong> depending on city<br>';
+  h+='Total estimate: <strong>$'+(totalCost+3000).toLocaleString()+'–$'+(totalCost+12000).toLocaleString()+'</strong> for 2-3 months';
+  h+='</div></div>';
+
+  // Save scenario
+  h+='<div style="text-align:center;margin-top:16px"><button onclick="obsSaveScenario()" class="btn" style="padding:10px 24px;font-size:12px">💾 Save This Strategy</button></div>';
+
+  el.innerHTML=h;
+
+  // Record tool use
+  if(typeof recordToolUse==='function'){
+    recordToolUse('Observership Finder',0,'Generated personalized observership strategy for '+(isIMG==='img'?'IMG':'US student')+' targeting '+(OBS_SPEC_LABELS[spec]||spec),{
+      isIMG:isIMG,specialty:spec,step2:step2,budget:budget,priority:priority,region:region,timeline:timeline,
+      topPicks:top5.map(function(i){return{name:i.program.inst,roi:obsCalcROI(i.program),score:i.score}})
+    });
+  }
+}
+
+function obsSaveScenario(){
+  if(typeof saveToolScenario==='function'){
+    var spec=document.getElementById('obs-p-spec').value;
+    var label=(OBS_SPEC_LABELS[spec]||spec)+' strategy';
+    saveToolScenario('Observership Finder',label,document.getElementById('obs-plan-results').innerHTML);
+  }else{
+    if(typeof notify==='function')notify('Scenario saved ✨');
+  }
+}
 
 
 </script>

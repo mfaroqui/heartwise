@@ -4859,16 +4859,16 @@ var quizAnswers={stage:null,goal:null,urgency:null};
 var QUIZ_RECS={
   // STUDENT
   'student_specialty':   [{id:'v13',why:'Discover which specialties match your personality and values'},{id:'v14',why:'Check your competitiveness for each target specialty'},{id:'v11',why:'Compare financial trajectories across specialties'},{id:'v15',why:'Build a roadmap once you decide'}],
-  'student_match':       [{id:'v14',why:'See your real match probability based on scores and research'},{id:'v16',why:'Practice the exact questions program directors will ask'},{id:'v15',why:'Build a step-by-step roadmap to your target specialty'},{id:'v1',why:'Score your application against successful profiles'},{id:'v7',why:'Know which research activities move the needle most'}],
-  'student_fellowship':  [{id:'v14',why:'See your real match probability based on scores and research'},{id:'v16',why:'Practice the exact questions program directors will ask'},{id:'v15',why:'Build a step-by-step roadmap to your target specialty'},{id:'v1',why:'Score your application against successful profiles'},{id:'v7',why:'Know which research activities move the needle most'}],
+  'student_match':       [{id:'v14',why:'See your real match probability based on scores and research'},{id:'v16',why:'Practice the exact questions program directors will ask'},{id:'v15',why:'Build a step-by-step roadmap to your target specialty'},{id:'v1',why:'Score your application against successful profiles'},{id:'v7',why:'Know which research activities move the needle most'},{id:'v17',why:'Find the best observerships for your specialty and profile'}],
+  'student_fellowship':  [{id:'v14',why:'See your real match probability based on scores and research'},{id:'v16',why:'Practice the exact questions program directors will ask'},{id:'v15',why:'Build a step-by-step roadmap to your target specialty'},{id:'v1',why:'Score your application against successful profiles'},{id:'v7',why:'Know which research activities move the needle most'},{id:'v17',why:'Find observerships that build your fellowship profile'}],
   'student_contract':    [{id:'v3',why:'Learn what to look for before you ever see an offer'},{id:'v2',why:'Know the red flags before you need to negotiate'},{id:'v5',why:'Plan your first 3 years of attending income'},{id:'v8',why:'PSLF vs refinance — make this decision early'}],
   'student_finance':     [{id:'v11',why:'See how specialty choice impacts lifetime wealth'},{id:'v8',why:'The 5 financial decisions worth millions'},{id:'v5',why:'Map your post-training financial trajectory'},{id:'v4',why:'Understand how RVU compensation actually works'}],
   'student_direction':   [{id:'v13',why:'Discover which specialties fit your personality and goals'},{id:'v14',why:'Check your competitiveness for each target specialty'},{id:'v15',why:'Build a roadmap once you choose'},{id:'v11',why:'Compare financial trajectories side by side'}],
 
   // RESIDENT
   'resident_specialty':  [{id:'v13',why:'Find which specialties actually fit you'},{id:'v14',why:'Check how competitive you are for each option'},{id:'v11',why:'Compare the financial trajectory of each path'},{id:'v10',why:'Use the pivot engine if you\'re rethinking your direction'}],
-  'resident_match':      [{id:'v14',why:'See your real match probability with current stats'},{id:'v16',why:'Practice real interview questions with honest feedback'},{id:'v15',why:'Build your personalized roadmap'},{id:'v1',why:'Score your application against successful profiles'},{id:'v7',why:'Maximize research ROI with limited time'}],
-  'resident_fellowship': [{id:'v14',why:'See your real match probability with current stats'},{id:'v16',why:'Practice real fellowship interview questions with honest feedback'},{id:'v15',why:'Build your personalized fellowship roadmap'},{id:'v1',why:'Score your application against successful profiles'},{id:'v7',why:'Maximize research ROI with limited time'}],
+  'resident_match':      [{id:'v14',why:'See your real match probability with current stats'},{id:'v16',why:'Practice real interview questions with honest feedback'},{id:'v15',why:'Build your personalized roadmap'},{id:'v1',why:'Score your application against successful profiles'},{id:'v7',why:'Maximize research ROI with limited time'},{id:'v17',why:'Find observerships to strengthen your application'}],
+  'resident_fellowship': [{id:'v14',why:'See your real match probability with current stats'},{id:'v16',why:'Practice real fellowship interview questions with honest feedback'},{id:'v15',why:'Build your personalized fellowship roadmap'},{id:'v1',why:'Score your application against successful profiles'},{id:'v7',why:'Maximize research ROI with limited time'},{id:'v17',why:'Find observerships at top fellowship programs'}],
   'resident_contract':   [{id:'v2',why:'Identify red flags in any contract'},{id:'v16',why:'Practice your negotiation pitch and job interview answers'},{id:'v3',why:'Compare offers systematically'},{id:'v4',why:'Model your real compensation by RVU volume'},{id:'v12',why:'Full contract analysis with risk scoring'}],
   'resident_finance':    [{id:'v5',why:'Your first 3 years determine the next 20'},{id:'v8',why:'PSLF, disability, tax strategy — get these right'},{id:'v11',why:'30-year wealth projection by career path'},{id:'v4',why:'Model what you\'ll actually earn'}],
   'resident_direction':  [{id:'v13',why:'Find which specialties actually fit you'},{id:'v10',why:'Should you pivot? Structured decision engine'},{id:'v15',why:'Build a roadmap to the new target'},{id:'v11',why:'Compare financial trajectories across paths'}],
@@ -5050,7 +5050,7 @@ function renderVault(){
       title:'Execute the Strategy',
       icon:'🚀',
       goal:'Implement your career plan with structured roadmaps, interview prep, and expert review.',
-      tools:['v15','v6','v16','v9']
+      tools:['v15','v6','v16','v17','v9']
     }
   ];
 
@@ -5104,6 +5104,7 @@ function openFramework(id){
   if(id==='v11')setTimeout(ftInit,50);
   if(id==='v12')setTimeout(ciInit,50);
   if(id==='v16')setTimeout(misInit,50);
+  if(id==='v17')setTimeout(obsInit,50);
   // Auto-fill tool intakes from career baseline
   setTimeout(function(){autoFillToolFromProfile(id)},60);
 }
@@ -10321,3 +10322,451 @@ function scheduleNotifChecks(){
 // Start notification scheduling on page load
 if(document.readyState==='complete')setTimeout(scheduleNotifChecks,5000);
 else window.addEventListener('load',function(){setTimeout(scheduleNotifChecks,5000)});
+
+// ===== OBSERVERSHIP STRATEGY ENGINE (v17) =====
+
+var _obsCompareList=[];
+var _obsExpanded={};
+
+function obsInit(){
+  var specSel=document.getElementById('obs-f-spec');
+  var planSpec=document.getElementById('obs-p-spec');
+  if(!specSel)return;
+  var allSpecs={};
+  OBS_PROGRAMS.forEach(function(p){p.specs.forEach(function(s){allSpecs[s]=OBS_SPEC_LABELS[s]||s})});
+  var sorted=Object.keys(allSpecs).sort(function(a,b){return allSpecs[a].localeCompare(allSpecs[b])});
+  sorted.forEach(function(s){
+    var opt=document.createElement('option');opt.value=s;opt.textContent=allSpecs[s];
+    specSel.appendChild(opt);
+    if(planSpec){var o2=opt.cloneNode(true);planSpec.appendChild(o2)}
+  });
+  var stateSel=document.getElementById('obs-f-state');
+  var states={};
+  OBS_PROGRAMS.forEach(function(p){states[p.state]=1});
+  Object.keys(states).sort().forEach(function(s){
+    var opt=document.createElement('option');opt.value=s;opt.textContent=s;
+    stateSel.appendChild(opt);
+  });
+  for(var i=1;i<=3;i++){
+    var sel=document.getElementById('obs-cmp-'+i);
+    if(!sel)continue;
+    OBS_PROGRAMS.forEach(function(p){
+      var opt=document.createElement('option');opt.value=p.id;opt.textContent=p.inst+' — '+p.city+', '+p.state;
+      sel.appendChild(opt);
+    });
+  }
+  var free=OBS_PROGRAMS.filter(function(p){return p.cost===0}).length;
+  var visa=OBS_PROGRAMS.filter(function(p){return p.visaHelp}).length;
+  var hands=OBS_PROGRAMS.filter(function(p){return p.handsOn>=4}).length;
+  var el;
+  el=document.getElementById('obs-stat-total');if(el)el.textContent=OBS_PROGRAMS.length;
+  el=document.getElementById('obs-stat-free');if(el)el.textContent=free;
+  el=document.getElementById('obs-stat-visa');if(el)el.textContent=visa;
+  el=document.getElementById('obs-stat-hands');if(el)el.textContent=hands;
+  if(U&&U.careerProfile){
+    var cp=U.careerProfile;
+    if(cp.specialty){
+      var ps=document.getElementById('obs-p-spec');
+      if(ps){for(var j=0;j<ps.options.length;j++){if(ps.options[j].value===cp.specialty){ps.value=cp.specialty;break}}}
+    }
+    if(cp.step2){var s2=document.getElementById('obs-p-step2');if(s2)s2.value=cp.step2}
+  }
+  obsFilter();
+}
+
+function obsTab(tab){
+  ['find','plan','compare'].forEach(function(t){
+    var el=document.getElementById('obs-'+t);
+    var btn=document.getElementById('obs-tab-'+t);
+    if(el)el.style.display=t===tab?'':'none';
+    if(btn){btn.style.background=t===tab?'var(--accent)':'none';btn.style.color=t===tab?'var(--bg)':'var(--accent)'}
+  });
+}
+
+function obsCalcROI(p){
+  var score=0;
+  score+=p.imgFriendly*4;
+  score+=p.lor*4;
+  score+=p.handsOn*3;
+  score+=p.prestige*2;
+  if(p.cost===0)score+=15;
+  else if(p.cost<=500)score+=10;
+  else if(p.cost<=1000)score+=5;
+  if(p.visaHelp)score+=10;
+  if(p.tags.indexOf('pipeline')>=0)score+=8;
+  if(p.tags.indexOf('high-roi')>=0)score+=5;
+  if(p.tags.indexOf('highest-roi')>=0)score+=8;
+  return Math.min(100,score);
+}
+
+function obsRenderStars(n){
+  var h='';
+  for(var i=0;i<5;i++)h+='<span style="color:'+(i<n?'var(--accent)':'var(--border)')+'">★</span>';
+  return h;
+}
+
+function obsRenderTag(text,color){
+  var bg=color||'rgba(200,168,124,.1)';
+  var tc=color?'#fff':'var(--accent)';
+  return '<span style="display:inline-block;font-size:9px;padding:2px 8px;border-radius:12px;background:'+bg+';color:'+tc+';font-weight:600;margin:2px;white-space:nowrap">'+text+'</span>';
+}
+
+function obsRenderCard(p,expanded){
+  var roi=obsCalcROI(p);
+  var roiColor=roi>=70?'#22c55e':roi>=50?'var(--accent)':'#ef4444';
+  var costDisplay=p.cost===0?'<span style="color:#22c55e;font-weight:700">FREE</span>':'$'+p.cost.toLocaleString()+(p.duration.indexOf('month')>=0?'/mo':'');
+  var h='<div style="padding:14px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;margin-bottom:10px;cursor:pointer;transition:border-color .2s" onclick="obsToggleCard('+p.id+')" onmouseenter="this.style.borderColor=\'rgba(200,168,124,.5)\'" onmouseleave="this.style.borderColor=\'var(--border)\'">';
+  h+='<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">';
+  h+='<div style="flex:1;min-width:0">';
+  h+='<div style="font-size:13px;font-weight:600;color:var(--text);line-height:1.3">'+p.inst+'</div>';
+  h+='<div style="font-size:11px;color:var(--text3);margin-top:2px">'+p.city+', '+p.state+' · '+p.duration+'</div>';
+  h+='</div>';
+  h+='<div style="text-align:right;flex-shrink:0">';
+  h+='<div style="font-size:13px;font-weight:600">'+costDisplay+'</div>';
+  h+='<div style="font-size:10px;color:'+roiColor+';font-weight:600;margin-top:2px">ROI: '+roi+'/100</div>';
+  h+='</div></div>';
+  h+='<div style="display:flex;gap:12px;margin-top:8px;font-size:10px;color:var(--text3)">';
+  h+='<span title="IMG Friendliness">IMG '+obsRenderStars(p.imgFriendly)+'</span>';
+  h+='<span title="LOR Potential">LOR '+obsRenderStars(p.lor)+'</span>';
+  h+='<span title="Hands-On">👐 '+obsRenderStars(p.handsOn)+'</span>';
+  if(p.visaHelp)h+='<span style="color:#22c55e;font-weight:600">✓ Visa</span>';
+  h+='</div>';
+  h+='<div style="margin-top:6px">';
+  if(p.imgFriendly>=5)h+=obsRenderTag('IMG Pipeline');
+  if(p.handsOn>=4)h+=obsRenderTag('Hands-On');
+  if(p.lor>=4)h+=obsRenderTag('Strong LORs');
+  if(p.cost===0)h+=obsRenderTag('No Fee','#22c55e');
+  if(p.prestige>=5)h+=obsRenderTag('Top Prestige');
+  if(p.tags.indexOf('pipeline')>=0&&p.imgFriendly<5)h+=obsRenderTag('Pipeline');
+  h+='</div>';
+
+  if(expanded){
+    h+='<div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border)" onclick="event.stopPropagation()">';
+    h+='<div style="background:rgba(200,168,124,.06);padding:10px;border-radius:8px;margin-bottom:10px;border-left:3px solid var(--accent)">';
+    h+='<div style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">🧠 Match Intelligence</div>';
+    h+='<div style="font-size:12px;color:var(--text2);line-height:1.6">'+p.matchIntel+'</div></div>';
+    h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">';
+    h+='<div style="padding:8px;background:var(--bg);border-radius:6px"><div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-bottom:2px">Prestige</div><div style="font-size:12px">'+obsRenderStars(p.prestige)+' <span style="font-size:10px;color:var(--text3)">('+p.prestige+'/5)</span></div></div>';
+    h+='<div style="padding:8px;background:var(--bg);border-radius:6px"><div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-bottom:2px">Competition</div><div style="font-size:12px">'+obsRenderStars(p.competitiveness)+' <span style="font-size:10px;color:var(--text3)">('+p.competitiveness+'/5)</span></div></div>';
+    h+='<div style="padding:8px;background:var(--bg);border-radius:6px"><div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-bottom:2px">Hands-On</div><div style="font-size:12px;color:var(--text2)">'+p.handsOnNote+'</div></div>';
+    h+='<div style="padding:8px;background:var(--bg);border-radius:6px"><div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-bottom:2px">LOR Potential</div><div style="font-size:12px;color:var(--text2)">'+p.lorNote+'</div></div></div>';
+    h+='<div style="padding:8px;background:var(--bg);border-radius:6px;margin-bottom:10px"><div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-bottom:2px">Visa</div><div style="font-size:12px;color:var(--text2)">'+(p.visaHelp?'✅ ':'⚠️ ')+p.visaNote+'</div></div>';
+    h+='<div style="padding:8px;background:var(--bg);border-radius:6px;margin-bottom:10px"><div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-bottom:2px">💡 Insider Tips</div><div style="font-size:12px;color:var(--text2);line-height:1.5">'+p.tips+'</div></div>';
+    h+='<div style="margin-bottom:10px"><div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-bottom:4px">Specialties</div>';
+    p.specs.forEach(function(s){h+='<span style="display:inline-block;font-size:10px;padding:2px 8px;border-radius:12px;background:var(--bg);color:var(--text2);margin:2px;border:1px solid var(--border)">'+(OBS_SPEC_LABELS[s]||s)+'</span>'});
+    h+='</div>';
+    h+='<div style="margin-bottom:10px"><div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-bottom:4px">Requirements</div>';
+    h+='<ul style="margin:0;padding-left:16px;font-size:11px;color:var(--text2);line-height:1.6">';
+    p.requirements.forEach(function(r){h+='<li>'+r+'</li>'});
+    h+='</ul></div>';
+    h+='<div style="display:flex;gap:8px;margin-top:10px">';
+    if(p.applicationUrl)h+='<a href="'+p.applicationUrl+'" target="_blank" rel="noopener" style="flex:1;display:block;text-align:center;padding:10px;background:var(--accent);color:var(--bg);border-radius:8px;font-size:12px;font-weight:600;text-decoration:none">Apply / Learn More →</a>';
+    h+='<button onclick="event.stopPropagation();obsAddCompare('+p.id+')" style="padding:10px 14px;background:var(--bg);border:1px solid var(--border);border-radius:8px;font-size:12px;cursor:pointer;color:var(--text)">⚖️ Compare</button>';
+    h+='</div>';
+    h+='<div style="margin-top:8px;font-size:9px;color:var(--text3);text-align:right">Last verified: '+p.lastVerified+'</div>';
+    h+='</div>';
+  }
+  h+='</div>';
+  return h;
+}
+
+function obsToggleCard(id){_obsExpanded[id]=!_obsExpanded[id];obsRender()}
+
+function obsFilter(){
+  var search=(document.getElementById('obs-search').value||'').toLowerCase();
+  var spec=document.getElementById('obs-f-spec').value;
+  var region=document.getElementById('obs-f-region').value;
+  var state=document.getElementById('obs-f-state').value;
+  var cost=document.getElementById('obs-f-cost').value;
+  var img=document.getElementById('obs-f-img').value;
+  var hands=document.getElementById('obs-f-hands').value;
+  var lor=document.getElementById('obs-f-lor').value;
+  var visa=document.getElementById('obs-f-visa').value;
+  var sort=document.getElementById('obs-f-sort').value;
+  var filtered=OBS_PROGRAMS.filter(function(p){
+    if(search){
+      var s=p.name.toLowerCase()+' '+p.inst.toLowerCase()+' '+p.city.toLowerCase()+' '+p.state.toLowerCase()+' '+p.specs.map(function(sp){return(OBS_SPEC_LABELS[sp]||sp).toLowerCase()}).join(' ')+' '+p.tags.join(' ');
+      if(s.indexOf(search)<0)return false;
+    }
+    if(spec&&p.specs.indexOf(spec)<0)return false;
+    if(region&&p.region!==region)return false;
+    if(state&&p.state!==state)return false;
+    if(cost==='free'&&p.cost>0)return false;
+    if(cost==='low'&&p.cost>500)return false;
+    if(cost==='mid'&&(p.cost<500||p.cost>1000))return false;
+    if(cost==='high'&&p.cost<1000)return false;
+    if(img&&p.imgFriendly<parseInt(img))return false;
+    if(hands){var hv=parseInt(hands);if(hv>=4&&p.handsOn<4)return false;if(hv===3&&p.handsOn<3)return false}
+    if(lor&&p.lor<parseInt(lor))return false;
+    if(visa==='yes'&&!p.visaHelp)return false;
+    if(visa==='no'&&p.visaHelp)return false;
+    return true;
+  });
+  if(sort==='roi')filtered.sort(function(a,b){return obsCalcROI(b)-obsCalcROI(a)});
+  else if(sort==='prestige')filtered.sort(function(a,b){return b.prestige-a.prestige||(obsCalcROI(b)-obsCalcROI(a))});
+  else if(sort==='img')filtered.sort(function(a,b){return b.imgFriendly-a.imgFriendly||(obsCalcROI(b)-obsCalcROI(a))});
+  else if(sort==='cost-low')filtered.sort(function(a,b){return a.cost-b.cost});
+  else if(sort==='cost-high')filtered.sort(function(a,b){return b.cost-a.cost});
+  else if(sort==='hands')filtered.sort(function(a,b){return b.handsOn-a.handsOn||(obsCalcROI(b)-obsCalcROI(a))});
+  else if(sort==='lor')filtered.sort(function(a,b){return b.lor-a.lor||(obsCalcROI(b)-obsCalcROI(a))});
+  window._obsFiltered=filtered;
+  obsRender();
+}
+
+function obsRender(){
+  var filtered=window._obsFiltered||[];
+  var el=document.getElementById('obs-results');
+  var countEl=document.getElementById('obs-results-count');
+  if(!el)return;
+  countEl.textContent='Showing '+filtered.length+' of '+OBS_PROGRAMS.length+' programs';
+  if(filtered.length===0){
+    el.innerHTML='<div style="text-align:center;padding:40px 20px;color:var(--text3)"><div style="font-size:32px;margin-bottom:12px">🔍</div><div style="font-size:13px">No programs match your filters. Try broadening your search.</div></div>';
+    return;
+  }
+  var h='';
+  filtered.forEach(function(p){h+=obsRenderCard(p,_obsExpanded[p.id])});
+  el.innerHTML=h;
+}
+
+function obsAddCompare(id){
+  obsTab('compare');
+  for(var i=1;i<=3;i++){
+    var sel=document.getElementById('obs-cmp-'+i);
+    if(sel&&!sel.value){sel.value=id;obsCompare();return}
+  }
+  var sel3=document.getElementById('obs-cmp-3');
+  if(sel3){sel3.value=id;obsCompare()}
+}
+
+function obsCompare(){
+  var ids=[];
+  for(var i=1;i<=3;i++){var sel=document.getElementById('obs-cmp-'+i);if(sel&&sel.value)ids.push(parseInt(sel.value))}
+  var el=document.getElementById('obs-compare-results');
+  if(!el)return;
+  if(ids.length<2){el.innerHTML='<div style="text-align:center;padding:30px;color:var(--text3);font-size:12px">Select at least 2 programs to compare</div>';return}
+  var programs=ids.map(function(id){return OBS_PROGRAMS.find(function(p){return p.id===id})}).filter(Boolean);
+  if(programs.length<2){el.innerHTML='';return}
+  var metrics=[
+    {label:'ROI Score',fn:function(p){return obsCalcROI(p)+'/100'},color:function(p){var r=obsCalcROI(p);return r>=70?'#22c55e':r>=50?'var(--accent)':'#ef4444'}},
+    {label:'Cost',fn:function(p){return p.cost===0?'FREE':'$'+p.cost+(p.duration.indexOf('month')>=0?'/mo':'')},color:function(p){return p.cost===0?'#22c55e':'var(--text)'}},
+    {label:'IMG Friendly',fn:function(p){return obsRenderStars(p.imgFriendly)}},
+    {label:'LOR Potential',fn:function(p){return obsRenderStars(p.lor)}},
+    {label:'Hands-On',fn:function(p){return obsRenderStars(p.handsOn)}},
+    {label:'Prestige',fn:function(p){return obsRenderStars(p.prestige)}},
+    {label:'Competition',fn:function(p){return obsRenderStars(p.competitiveness)}},
+    {label:'Visa Help',fn:function(p){return p.visaHelp?'✅ Yes':'❌ No'},color:function(p){return p.visaHelp?'#22c55e':'#ef4444'}},
+    {label:'Duration',fn:function(p){return p.duration}},
+    {label:'Location',fn:function(p){return p.city+', '+p.state}}
+  ];
+  var h='<div style="display:flex;gap:1px;margin-bottom:1px">';
+  programs.forEach(function(p){
+    h+='<div style="flex:1;background:var(--accent);padding:10px;text-align:center"><div style="font-size:12px;font-weight:600;color:var(--bg)">'+p.inst+'</div><div style="font-size:10px;color:var(--bg);opacity:.7">'+p.city+', '+p.state+'</div></div>';
+  });
+  h+='</div>';
+  metrics.forEach(function(m,idx){
+    h+='<div style="display:flex;gap:1px;margin-bottom:1px">';
+    programs.forEach(function(p,pi){
+      var bg=idx%2===0?'var(--bg2)':'var(--bg)';
+      var val=m.fn(p);
+      var col=m.color?m.color(p):'var(--text)';
+      h+='<div style="flex:1;padding:8px;background:'+bg+';text-align:center">';
+      h+='<div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-bottom:3px">'+m.label+'</div>';
+      h+='<div style="font-size:12px;color:'+col+'">'+val+'</div></div>';
+    });
+    h+='</div>';
+  });
+  h+='<div style="margin-top:12px">';
+  programs.forEach(function(p){
+    h+='<div style="padding:10px;background:rgba(200,168,124,.06);border-radius:8px;margin-bottom:8px;border-left:3px solid var(--accent)">';
+    h+='<div style="font-size:10px;font-weight:600;color:var(--accent);margin-bottom:4px">'+p.inst+' — Intelligence</div>';
+    h+='<div style="font-size:11px;color:var(--text2);line-height:1.5">'+p.matchIntel+'</div></div>';
+  });
+  h+='</div>';
+  var best=programs.slice().sort(function(a,b){return obsCalcROI(b)-obsCalcROI(a)})[0];
+  h+='<div style="text-align:center;padding:16px;background:var(--bg2);border-radius:10px;margin-top:12px">';
+  h+='<div style="font-size:10px;text-transform:uppercase;color:var(--text3);letter-spacing:1px;margin-bottom:4px">Recommendation</div>';
+  h+='<div style="font-size:14px;font-weight:600;color:var(--accent)">'+best.inst+'</div>';
+  h+='<div style="font-size:11px;color:var(--text2);margin-top:4px">Highest overall ROI score ('+obsCalcROI(best)+'/100)</div></div>';
+  el.innerHTML=h;
+}
+
+function obsPlanBuild(){
+  var isIMG=document.getElementById('obs-p-img').value;
+  var spec=document.getElementById('obs-p-spec').value;
+  var step2=parseInt(document.getElementById('obs-p-step2').value)||0;
+  var needVisa=document.getElementById('obs-p-visa').value;
+  var budget=parseInt(document.getElementById('obs-p-budget').value);
+  var priority=document.getElementById('obs-p-priority').value;
+  var region=document.getElementById('obs-p-region').value;
+  var timeline=document.getElementById('obs-p-timeline').value;
+  var el=document.getElementById('obs-plan-results');
+  if(!el)return;
+  if(!isIMG||!spec||!priority||isNaN(budget)){
+    el.innerHTML='<div style="padding:20px;text-align:center;color:#ef4444;font-size:13px">Please fill in all required fields above.</div>';
+    return;
+  }
+  var scored=OBS_PROGRAMS.map(function(p){
+    var score=0;var reasons=[];
+    if(p.specs.indexOf(spec)<0)return null;
+    score+=25;reasons.push('Offers '+(OBS_SPEC_LABELS[spec]||spec));
+    if(isIMG==='img'){
+      score+=p.imgFriendly*5;
+      if(p.imgFriendly>=4)reasons.push('IMG-friendly ('+p.imgFriendly+'/5)');
+      if(p.imgFriendly<=2){score-=15;reasons.push('⚠️ Low IMG accessibility')}
+    }
+    if(needVisa==='yes'){
+      if(p.visaHelp){score+=15;reasons.push('✅ Visa support available')}
+      else{score-=20;reasons.push('⚠️ No visa sponsorship')}
+    }
+    if(p.cost>budget){score-=30;reasons.push('⚠️ Over budget ($'+p.cost+')')}
+    else if(p.cost===0){score+=10;reasons.push('No cost')}
+    else reasons.push('Within budget ($'+p.cost+')');
+    if(priority==='lor'){score+=p.lor*5;if(p.lor>=4)reasons.push('Strong LOR culture')}
+    else if(priority==='hands'){score+=p.handsOn*5;if(p.handsOn>=4)reasons.push('Hands-on participation')}
+    else if(priority==='prestige'){score+=p.prestige*5;if(p.prestige>=4)reasons.push('High prestige')}
+    else if(priority==='pipeline'){
+      if(p.tags.indexOf('pipeline')>=0){score+=20;reasons.push('Pipeline to residency')}
+      if(p.tags.indexOf('img-pipeline')>=0)score+=5;
+      score+=p.lor*3;score+=p.handsOn*3;
+    }else if(priority==='balanced'){score+=p.lor*3+p.handsOn*3+p.prestige*2+p.imgFriendly*2}
+    if(region&&p.region===region){score+=8;reasons.push('In preferred region')}
+    if(timeline==='3'){
+      if(p.competitiveness<=2)score+=5;
+      if(p.competitiveness>=4){score-=5;reasons.push('⚠️ Hard to get in quickly')}
+    }
+    score+=Math.floor(obsCalcROI(p)/5);
+    return{program:p,score:score,reasons:reasons};
+  }).filter(Boolean).filter(function(s){return s.score>0}).sort(function(a,b){return b.score-a.score});
+
+  var top5=scored.slice(0,5);
+  var alt=scored.slice(5,8);
+  if(top5.length===0){
+    el.innerHTML='<div style="padding:20px;text-align:center;color:var(--text3);font-size:13px">No programs match your criteria. Try adjusting your filters.</div>';
+    return;
+  }
+  var h='';
+  h+='<div style="text-align:center;padding:20px;background:linear-gradient(160deg,rgba(200,168,124,.1),rgba(200,168,124,.03));border-radius:12px;margin-bottom:16px">';
+  h+='<div style="font-size:28px;margin-bottom:8px">🎯</div>';
+  h+='<div style="font-size:16px;font-weight:600;color:var(--text);font-family:\'Cormorant Garamond\',serif">Your Observership Strategy</div>';
+  h+='<div style="font-size:11px;color:var(--text3);margin-top:4px">'+(isIMG==='img'?'IMG':'US Student')+' · '+(OBS_SPEC_LABELS[spec]||spec)+' · $'+(budget>=99999?'Flexible':budget)+' budget</div>';
+  h+='</div>';
+
+  // Strategy advice
+  var stratAdvice='';
+  if(isIMG==='img'){
+    if(priority==='prestige')stratAdvice='<strong>Strategy: Prestige + Substance.</strong> A prestigious name alone won\'t get you matched. Pair one high-prestige observership with one hands-on pipeline program. The prestige opens doors; the pipeline gets you LORs and clinical skills.';
+    else if(priority==='lor')stratAdvice='<strong>Strategy: LOR-Focused.</strong> Letters of recommendation are the #1 controllable factor in your application. Prioritize programs where attendings have a track record of writing detailed, personalized letters. Spend at least 1 month — 2-week rotations rarely produce strong LORs.';
+    else if(priority==='hands')stratAdvice='<strong>Strategy: Clinical Skills First.</strong> Hands-on experience gives you interview talking points that observation never can. When a PD asks "tell me about a challenging patient," you need real stories. Pipeline programs with clinical participation are your best bet.';
+    else if(priority==='pipeline')stratAdvice='<strong>Strategy: Match Pipeline.</strong> These programs actively recruit from their observer pool. Treat every day as an audition — arrive early, know your patients, offer to present. Your goal is not just experience; it\'s to make them want you as a resident.';
+    else stratAdvice='<strong>Strategy: Balanced Approach.</strong> Combine one higher-prestige program for name recognition with one or two hands-on programs for LORs and clinical skills. Geographic diversity helps if you\'re applying broadly.';
+  }else{
+    stratAdvice='<strong>Strategy: Targeted Exposure.</strong> As a US student/graduate, observerships supplement your rotations. Focus on programs in specialties and regions where you want to match. Use these for networking and specialty-specific LORs that your home institution may not provide.';
+  }
+
+  h+='<div style="padding:14px;background:rgba(200,168,124,.06);border-radius:10px;margin-bottom:16px;border-left:3px solid var(--accent)">';
+  h+='<div style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">📋 Recommended Strategy</div>';
+  h+='<div style="font-size:12px;color:var(--text2);line-height:1.6">'+stratAdvice+'</div></div>';
+
+  // Top picks
+  h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">🏅 Your Top '+top5.length+' Programs</div>';
+
+  top5.forEach(function(item,idx){
+    var p=item.program;
+    var roi=obsCalcROI(p);
+    var roiColor=roi>=70?'#22c55e':roi>=50?'var(--accent)':'#ef4444';
+    var costDisplay=p.cost===0?'<span style="color:#22c55e;font-weight:700">FREE</span>':'$'+p.cost+(p.duration.indexOf('month')>=0?'/mo':'');
+
+    h+='<div style="padding:14px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;margin-bottom:10px;position:relative">';
+    h+='<div style="position:absolute;top:10px;right:12px;font-size:20px;font-weight:700;color:var(--accent);opacity:.3">#'+(idx+1)+'</div>';
+    h+='<div style="font-size:14px;font-weight:600;color:var(--text)">'+p.inst+'</div>';
+    h+='<div style="font-size:11px;color:var(--text3);margin-top:2px">'+p.city+', '+p.state+' · '+p.duration+' · '+costDisplay+'</div>';
+    h+='<div style="display:flex;gap:10px;margin-top:8px;font-size:10px;color:var(--text3)">';
+    h+='<span>IMG '+obsRenderStars(p.imgFriendly)+'</span>';
+    h+='<span>LOR '+obsRenderStars(p.lor)+'</span>';
+    h+='<span>👐 '+obsRenderStars(p.handsOn)+'</span>';
+    h+='<span style="color:'+roiColor+';font-weight:600">ROI: '+roi+'</span>';
+    h+='</div>';
+
+    // Why this program
+    h+='<div style="margin-top:8px;padding:8px;background:var(--bg);border-radius:6px">';
+    h+='<div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-bottom:4px">Why this program for you</div>';
+    h+='<div style="font-size:11px;color:var(--text2);line-height:1.5">'+item.reasons.join(' · ')+'</div>';
+    h+='</div>';
+
+    // Match Intel excerpt
+    h+='<div style="margin-top:6px;font-size:11px;color:var(--text2);line-height:1.4;font-style:italic">'+p.matchIntel.substring(0,200)+(p.matchIntel.length>200?'...':'')+'</div>';
+
+    if(p.applicationUrl)h+='<a href="'+p.applicationUrl+'" target="_blank" rel="noopener" style="display:inline-block;margin-top:8px;font-size:11px;color:var(--accent);text-decoration:none;font-weight:600">Apply / Learn More →</a>';
+    h+='</div>';
+  });
+
+  // Alternatives
+  if(alt.length>0){
+    h+='<div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin:16px 0 10px">Also Consider</div>';
+    alt.forEach(function(item){
+      var p=item.program;
+      h+='<div style="padding:10px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center">';
+      h+='<div><div style="font-size:12px;font-weight:600;color:var(--text)">'+p.inst+'</div>';
+      h+='<div style="font-size:10px;color:var(--text3)">'+p.city+', '+p.state+' · '+(p.cost===0?'Free':'$'+p.cost)+'</div></div>';
+      h+='<div style="font-size:10px;color:var(--accent);font-weight:600">ROI: '+obsCalcROI(p)+'</div>';
+      h+='</div>';
+    });
+  }
+
+  // Timeline
+  h+='<div style="margin-top:20px;padding:14px;background:var(--bg2);border-radius:10px;border:1px solid var(--border)">';
+  h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">📅 Suggested Timeline</div>';
+  if(timeline==='3'){
+    h+='<div style="font-size:12px;color:var(--text2);line-height:1.7">';
+    h+='<strong>Month 1:</strong> Apply to your top 3 programs simultaneously. Focus on accessible programs (competitiveness ≤ 3). Prepare documents: ECFMG status, dean letter, health clearance.<br>';
+    h+='<strong>Month 2:</strong> Begin first observership. Set clear goals: get at least 1 strong LOR, attend all conferences, build relationships with 2-3 attendings.<br>';
+    h+='<strong>Month 3:</strong> Complete rotation, secure LORs, apply to second program if time permits. Begin incorporating experience into personal statement.</div>';
+  }else if(timeline==='6'){
+    h+='<div style="font-size:12px;color:var(--text2);line-height:1.7">';
+    h+='<strong>Months 1-2:</strong> Research and apply to 3-5 programs. Prioritize your #1 choice but have backups. Gather all documents.<br>';
+    h+='<strong>Months 2-3:</strong> First observership — focus on LORs and clinical skills. Take notes daily for your personal statement.<br>';
+    h+='<strong>Months 4-5:</strong> Second observership — diversify (different region or program type). Build your network.<br>';
+    h+='<strong>Month 6:</strong> Consolidate LORs, update CV, refine personal statement with real clinical anecdotes from your observerships.</div>';
+  }else{
+    h+='<div style="font-size:12px;color:var(--text2);line-height:1.7">';
+    h+='<strong>Months 1-3:</strong> Research extensively. Apply to competitive programs early (6+ months in advance for Mayo, Hopkins, etc.). Apply to accessible programs with shorter timelines.<br>';
+    h+='<strong>Months 4-6:</strong> First observership at your highest-priority program. Focus on relationship building and LORs.<br>';
+    h+='<strong>Months 7-9:</strong> Second observership — complement the first (if first was prestige, second should be hands-on, or vice versa).<br>';
+    h+='<strong>Months 10-12:</strong> Optional third program. Consolidate letters, finalize personal statement, prepare residency applications with 2-3 strong US clinical experiences.</div>';
+  }
+  h+='</div>';
+
+  // Budget summary
+  var totalCost=0;
+  top5.slice(0,3).forEach(function(item){totalCost+=item.program.cost});
+  h+='<div style="margin-top:12px;padding:14px;background:var(--bg2);border-radius:10px;border:1px solid var(--border)">';
+  h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">💰 Estimated Budget (Top 3)</div>';
+  h+='<div style="font-size:12px;color:var(--text2);line-height:1.6">';
+  h+='Program fees: <strong>$'+totalCost.toLocaleString()+'</strong><br>';
+  h+='Housing (estimate): <strong>$1,500–$4,000/month</strong> depending on city<br>';
+  h+='Total estimate: <strong>$'+(totalCost+3000).toLocaleString()+'–$'+(totalCost+12000).toLocaleString()+'</strong> for 2-3 months';
+  h+='</div></div>';
+
+  // Save scenario
+  h+='<div style="text-align:center;margin-top:16px"><button onclick="obsSaveScenario()" class="btn" style="padding:10px 24px;font-size:12px">💾 Save This Strategy</button></div>';
+
+  el.innerHTML=h;
+
+  // Record tool use
+  if(typeof recordToolUse==='function'){
+    recordToolUse('Observership Finder',0,'Generated personalized observership strategy for '+(isIMG==='img'?'IMG':'US student')+' targeting '+(OBS_SPEC_LABELS[spec]||spec),{
+      isIMG:isIMG,specialty:spec,step2:step2,budget:budget,priority:priority,region:region,timeline:timeline,
+      topPicks:top5.map(function(i){return{name:i.program.inst,roi:obsCalcROI(i.program),score:i.score}})
+    });
+  }
+}
+
+function obsSaveScenario(){
+  if(typeof saveToolScenario==='function'){
+    var spec=document.getElementById('obs-p-spec').value;
+    var label=(OBS_SPEC_LABELS[spec]||spec)+' strategy';
+    saveToolScenario('Observership Finder',label,document.getElementById('obs-plan-results').innerHTML);
+  }else{
+    if(typeof notify==='function')notify('Scenario saved ✨');
+  }
+}

@@ -856,7 +856,7 @@ function enterApp(){
   b.className='badge '+(bc[U.tier]||'b-free');
   b.textContent=U.tier==='admin'?'MENTOR':TIERS[U.tier]?.name?.toUpperCase()||'FREE';
   document.getElementById('welcome-msg').textContent='Welcome, Dr. '+U.name.split(' ').pop();
-  document.getElementById('nav-admin').style.display=U.tier==='admin'?'':'none';
+  document.getElementById('nav-admin').style.display=(U.tier==='admin'||window._adminBackup)?'':'none';
   var topUpgrade=document.getElementById('topbar-upgrade');
   if(topUpgrade){
     if(U.tier==='free'||U.isTrial){topUpgrade.style.display='';topUpgrade.textContent='Subscribe';topUpgrade.onclick=function(){navTo('scr-profile');showUpgrade()}}
@@ -7380,19 +7380,43 @@ async function admExpireTrial(uid){
 function admSimulateTrial(){
   if(!U||U.tier!=='admin'){notify('Admin only',1);return}
   // Save real admin state
-  window._adminBackup={tier:U.tier,isTrial:U.isTrial,trialEnd:U.trialEnd};
+  window._adminBackup={tier:U.tier,isTrial:U.isTrial,trialEnd:U.trialEnd,role:U.role,email:U.email};
   // Set trial state
   U.tier='core';U.isTrial=true;U.trialEnd=new Date(Date.now()+48*3600000).toISOString();
-  localStorage.setItem('hw_session',JSON.stringify(U));
-  enterApp();
-  notify('🧪 Trial simulation active. You are now seeing the 48-hour guided access experience. Click "Exit Simulation" in admin panel to return.');
+  // Update UI without calling enterApp (which forces admin tier back)
+  var b=document.getElementById('user-badge');
+  if(b){b.className='badge b-core';b.textContent='CORE'}
+  var topUpgrade=document.getElementById('topbar-upgrade');
+  if(topUpgrade){topUpgrade.style.display='';topUpgrade.textContent='Subscribe';topUpgrade.onclick=function(){navTo('scr-profile');showUpgrade()}}
+  // Show trial banner
+  startTrialCountdown();
+  var trialBanner=document.getElementById('trial-countdown-banner');
+  if(trialBanner)trialBanner.style.display='';
+  // Re-render vault if on that screen
+  if(typeof renderVault==='function'){try{renderVault()}catch(e){}}
+  // Close admin panel
+  closeAdmin();
+  notify('🧪 Trial simulation active. You\'re now seeing the 48-hour guided access experience. Open Admin → click "Exit Simulation" when done.');
 }
 function admExitSimulation(){
   if(!window._adminBackup){notify('No simulation active',1);return}
   U.tier=window._adminBackup.tier;U.isTrial=window._adminBackup.isTrial||false;U.trialEnd=window._adminBackup.trialEnd||null;
   delete window._adminBackup;
+  // Restore admin UI
+  var b=document.getElementById('user-badge');
+  if(b){b.className='badge b-admin';b.textContent='MENTOR'}
+  var topUpgrade=document.getElementById('topbar-upgrade');
+  if(topUpgrade)topUpgrade.style.display='none';
+  // Hide trial banner
+  var trialBanner=document.getElementById('trial-countdown-banner');
+  if(trialBanner){trialBanner.style.display='none';trialBanner.innerHTML=''}
+  if(_trialInterval){clearInterval(_trialInterval);_trialInterval=null}
+  // Show admin nav
+  var navAdmin=document.getElementById('nav-admin');
+  if(navAdmin)navAdmin.style.display='';
+  // Re-render vault
+  if(typeof renderVault==='function'){try{renderVault()}catch(e){}}
   localStorage.setItem('hw_session',JSON.stringify(U));
-  enterApp();
   notify('Simulation ended. Admin access restored.');
 }
 async function admRunExpireTrials(silent){

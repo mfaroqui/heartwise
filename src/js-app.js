@@ -6925,6 +6925,8 @@ async function admLoadData(){
   // Parse session_data JSON strings
   if(_sbProfiles&&_sbProfiles.length){_sbProfiles.forEach(function(u){if(u.session_data&&typeof u.session_data==='string'){try{u.session_data=JSON.parse(u.session_data)}catch(e){}}});}
   try{admRenderMetrics();admRender()}catch(e){console.error('Admin render:',e);c.innerHTML='<div style="padding:40px;text-align:center;color:#c44d56">Render error. Check console.</div>'}
+  // Auto-expire trials on admin load
+  admRunExpireTrials(true);
 }
 function admGetUsers(){return (_sbProfiles&&_sbProfiles.length)?_sbProfiles:(DB.users||[])}
 function admGetQuestions(){
@@ -7392,6 +7394,22 @@ function admExitSimulation(){
   localStorage.setItem('hw_session',JSON.stringify(U));
   enterApp();
   notify('Simulation ended. Admin access restored.');
+}
+async function admRunExpireTrials(silent){
+  try{
+    var resp=await fetch(SUPABASE_URL+'/functions/v1/expire-trials',{
+      method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+SUPABASE_KEY}
+    });
+    if(resp.ok){
+      var data=await resp.json();
+      if(data.expired>0){
+        // Update local cache
+        if(_sbProfiles){data.profiles.forEach(function(p){var u=_sbProfiles.find(function(x){return x.email===p.email});if(u){u.tier='free';u.is_trial=false}})}
+        if(!silent){notify(data.expired+' expired trial(s) downgraded to free');admRenderMetrics();admRender()}
+        else{console.log('Auto-expired '+data.expired+' trials')}
+      }else if(!silent){notify('No expired trials found')}
+    }else if(!silent){notify('Expire trials call failed',1)}
+  }catch(e){if(!silent)notify('Error: '+e.message,1);console.warn('Expire trials:',e)}
 }
 async function admDisableUser(uid){
   if(!confirm('Disable this user? They will lose access.'))return;

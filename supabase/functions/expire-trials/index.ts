@@ -50,7 +50,7 @@ Deno.serve(async (req: Request) => {
     for (const profile of expired) {
       const { error: updateErr } = await sb
         .from("profiles")
-        .update({ tier: "free" })
+        .update({ tier: "free", is_trial: false })
         .eq("id", profile.id);
 
       results.push({

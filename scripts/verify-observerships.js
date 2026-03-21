@@ -274,7 +274,33 @@ async function main() {
 
   // Exit with error code if there are critical issues
   if (results.some(r => r.status === 'possibly-closed' || r.status === 'not-found')) {
+    // Write a human-readable summary for the agent to relay
+    const summary = [];
+    summary.push('🏥 Monthly Observership Verification — ' + new Date().toISOString().slice(0, 10));
+    summary.push('');
+    summary.push('✅ ' + active + ' programs confirmed active');
+    if (issues > 0) summary.push('⚠️ ' + issues + ' programs need attention');
+    if (errors > 0) summary.push('💥 ' + errors + ' programs had connection errors');
+    summary.push('');
+    
+    if (flagged.length > 0) {
+      summary.push('NEEDS ATTENTION:');
+      flagged.forEach(r => {
+        summary.push('  • ' + r.name + ' — ' + r.issues.join('; '));
+      });
+    }
+    
+    fs.writeFileSync(path.join(__dirname, '..', 'verification-summary.txt'), summary.join('\n'));
     process.exit(1);
+  } else {
+    const summary = [];
+    summary.push('🏥 Monthly Observership Verification — ' + new Date().toISOString().slice(0, 10));
+    summary.push('');
+    summary.push('✅ All ' + active + ' programs confirmed active. No issues found.');
+    if (errors > 0) summary.push('⚠️ ' + errors + ' programs had connection errors (timeout/DNS) — not critical.');
+    summary.push('lastVerified dates updated. App rebuilt and pushed.');
+    
+    fs.writeFileSync(path.join(__dirname, '..', 'verification-summary.txt'), summary.join('\n'));
   }
 }
 

@@ -1,12 +1,46 @@
 // ===== FRAMEWORK LIBRARY CONTENT =====
 const VAULT_CONTENT={
-v1:`<h3>Fellowship Readiness Calculator</h3>
-<p style="color:var(--text3);font-size:12px;margin-bottom:20px">Rate yourself honestly in each category. Your scores update in real-time.</p>
+v1:`<h3 class="serif">Fellowship Readiness Assessment</h3>
+<p style="color:var(--text3);font-size:12px;margin-bottom:20px">A comprehensive evaluation of your fellowship application strength. Select your target specialty for benchmarked scoring, then rate yourself honestly in each category.</p>
+
+<!-- Target Specialty Selection -->
+<div style="padding:16px;background:var(--accent-dim);border:1px solid var(--border2);border-radius:12px;margin-bottom:20px">
+<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Target Fellowship</div>
+<div class="fg" style="margin-bottom:8px"><label style="font-size:11px;color:var(--text3)">Which fellowship are you targeting?</label>
+<select id="frc-specialty" onchange="frcUpdate()" style="width:100%">
+<option value="">Select target fellowship...</option>
+<option value="cardiology">Cardiology</option>
+<option value="gi">Gastroenterology</option>
+<option value="pulm_crit">Pulmonary & Critical Care</option>
+<option value="heme_onc">Hematology/Oncology</option>
+<option value="endo">Endocrinology</option>
+<option value="nephro">Nephrology</option>
+<option value="rheum">Rheumatology</option>
+<option value="id">Infectious Disease</option>
+<option value="interventional">Interventional Cardiology</option>
+<option value="electrophys">Electrophysiology</option>
+<option value="sports">Sports Medicine</option>
+<option value="geri">Geriatrics</option>
+<option value="allergy">Allergy/Immunology</option>
+<option value="other">Other Subspecialty</option>
+</select></div>
+<div class="fg"><label style="font-size:11px;color:var(--text3)">How far are you from applying?</label>
+<select id="frc-timeline" onchange="frcUpdate()" style="width:100%">
+<option value="">Select timeline...</option>
+<option value="applying">Applying this cycle</option>
+<option value="1yr">~1 year out</option>
+<option value="2yr">~2 years out</option>
+<option value="3yr">3+ years out</option>
+</select></div>
+<div id="frc-spec-note" style="display:none;font-size:11px;color:var(--accent);margin-top:8px;padding:8px;background:var(--bg);border-radius:6px"></div>
+</div>
+
 <div id="frc-calc" style="font-size:13px">
 
 <div style="padding:14px 0;border-bottom:1px solid var(--border)">
 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><strong>1. Research & Scholarly Activity</strong><span id="frc-s1" style="font-weight:600;color:var(--accent)">0/5</span></div>
-<span style="color:var(--text3);font-size:11px;display:block;margin-bottom:10px">Publications, abstracts, presentations. For competitive subspecialties: 2-3 first-author papers expected.</span>
+<span style="color:var(--text3);font-size:11px;display:block;margin-bottom:4px">Publications, abstracts, presentations, case reports.</span>
+<div id="frc-bench1" style="font-size:10px;color:var(--accent);margin-bottom:8px;display:none"></div>
 <input type="range" min="0" max="5" value="0" id="frc-r1" oninput="frcUpdate()" style="width:100%;accent-color:var(--accent)">
 <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text3)"><span>None</span><span>1 abstract</span><span>1-2 pubs</span><span>3+ pubs</span><span>4+ first-author</span><span>5+ w/ impact</span></div>
 <div id="frc-f1" style="font-size:11px;color:var(--text3);margin-top:6px;padding:8px;background:var(--bg2);border-radius:6px"></div>
@@ -14,7 +48,8 @@ v1:`<h3>Fellowship Readiness Calculator</h3>
 
 <div style="padding:14px 0;border-bottom:1px solid var(--border)">
 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><strong>2. Letters of Recommendation</strong><span id="frc-s2" style="font-weight:600;color:var(--accent)">0/5</span></div>
-<span style="color:var(--text3);font-size:11px;display:block;margin-bottom:10px">Specialty-specific, from physicians who know your work deeply.</span>
+<span style="color:var(--text3);font-size:11px;display:block;margin-bottom:4px">Specialty-specific, from physicians who know your clinical work deeply.</span>
+<div id="frc-bench2" style="font-size:10px;color:var(--accent);margin-bottom:8px;display:none"></div>
 <input type="range" min="0" max="5" value="0" id="frc-r2" oninput="frcUpdate()" style="width:100%;accent-color:var(--accent)">
 <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text3)"><span>No writers</span><span>Generic only</span><span>1 strong</span><span>2 strong</span><span>3 specialty</span><span>3+ w/ names</span></div>
 <div id="frc-f2" style="font-size:11px;color:var(--text3);margin-top:6px;padding:8px;background:var(--bg2);border-radius:6px"></div>
@@ -22,7 +57,8 @@ v1:`<h3>Fellowship Readiness Calculator</h3>
 
 <div style="padding:14px 0;border-bottom:1px solid var(--border)">
 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><strong>3. Clinical Performance</strong><span id="frc-s3" style="font-weight:600;color:var(--accent)">0/5</span></div>
-<span style="color:var(--text3);font-size:11px;display:block;margin-bottom:10px">Evaluations, rotation feedback, procedural skills, clinical judgment.</span>
+<span style="color:var(--text3);font-size:11px;display:block;margin-bottom:4px">Evaluations, rotation feedback, procedural skills, clinical judgment.</span>
+<div id="frc-bench3" style="font-size:10px;color:var(--accent);margin-bottom:8px;display:none"></div>
 <input type="range" min="0" max="5" value="0" id="frc-r3" oninput="frcUpdate()" style="width:100%;accent-color:var(--accent)">
 <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text3)"><span>Below avg</span><span>Average</span><span>Good</span><span>Very good</span><span>Outstanding</span><span>Top of class</span></div>
 <div id="frc-f3" style="font-size:11px;color:var(--text3);margin-top:6px;padding:8px;background:var(--bg2);border-radius:6px"></div>
@@ -30,7 +66,8 @@ v1:`<h3>Fellowship Readiness Calculator</h3>
 
 <div style="padding:14px 0;border-bottom:1px solid var(--border)">
 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><strong>4. Board Scores / ITE</strong><span id="frc-s4" style="font-weight:600;color:var(--accent)">0/5</span></div>
-<span style="color:var(--text3);font-size:11px;display:block;margin-bottom:10px">Screening tool — above the cutoff matters more than the exact number.</span>
+<span style="color:var(--text3);font-size:11px;display:block;margin-bottom:4px">Screening tool — above the cutoff matters more than the exact number.</span>
+<div id="frc-bench4" style="font-size:10px;color:var(--accent);margin-bottom:8px;display:none"></div>
 <input type="range" min="0" max="5" value="0" id="frc-r4" oninput="frcUpdate()" style="width:100%;accent-color:var(--accent)">
 <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text3)"><span>Failed/low</span><span>Below avg</span><span>Average</span><span>Above avg</span><span>High</span><span>Top decile</span></div>
 <div id="frc-f4" style="font-size:11px;color:var(--text3);margin-top:6px;padding:8px;background:var(--bg2);border-radius:6px"></div>
@@ -38,7 +75,8 @@ v1:`<h3>Fellowship Readiness Calculator</h3>
 
 <div style="padding:14px 0;border-bottom:1px solid var(--border)">
 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><strong>5. Leadership & Service</strong><span id="frc-s5" style="font-weight:600;color:var(--accent)">0/5</span></div>
-<span style="color:var(--text3);font-size:11px;display:block;margin-bottom:10px">Chief resident, committee roles, QI projects, teaching awards.</span>
+<span style="color:var(--text3);font-size:11px;display:block;margin-bottom:4px">Chief resident, committee roles, QI projects, teaching awards.</span>
+<div id="frc-bench5" style="font-size:10px;color:var(--accent);margin-bottom:8px;display:none"></div>
 <input type="range" min="0" max="5" value="0" id="frc-r5" oninput="frcUpdate()" style="width:100%;accent-color:var(--accent)">
 <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text3)"><span>None</span><span>Minor role</span><span>1 meaningful</span><span>2+ roles</span><span>Chief/lead</span><span>Multiple chief</span></div>
 <div id="frc-f5" style="font-size:11px;color:var(--text3);margin-top:6px;padding:8px;background:var(--bg2);border-radius:6px"></div>
@@ -46,7 +84,8 @@ v1:`<h3>Fellowship Readiness Calculator</h3>
 
 <div style="padding:14px 0;border-bottom:1px solid var(--border)">
 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><strong>6. Networking & Away Rotations</strong><span id="frc-s6" style="font-weight:600;color:var(--accent)">0/5</span></div>
-<span style="color:var(--text3);font-size:11px;display:block;margin-bottom:10px">Program visits, conference attendance, faculty connections at target programs.</span>
+<span style="color:var(--text3);font-size:11px;display:block;margin-bottom:4px">Program visits, conference attendance, faculty connections at target programs.</span>
+<div id="frc-bench6" style="font-size:10px;color:var(--accent);margin-bottom:8px;display:none"></div>
 <input type="range" min="0" max="5" value="0" id="frc-r6" oninput="frcUpdate()" style="width:100%;accent-color:var(--accent)">
 <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text3)"><span>None</span><span>1 conference</span><span>1 away</span><span>2 aways</span><span>2+ w/ contacts</span><span>Strong network</span></div>
 <div id="frc-f6" style="font-size:11px;color:var(--text3);margin-top:6px;padding:8px;background:var(--bg2);border-radius:6px"></div>
@@ -54,7 +93,8 @@ v1:`<h3>Fellowship Readiness Calculator</h3>
 
 <div style="padding:14px 0">
 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><strong>7. Personal Statement</strong><span id="frc-s7" style="font-weight:600;color:var(--accent)">0/5</span></div>
-<span style="color:var(--text3);font-size:11px;display:block;margin-bottom:10px">Clear, specific story. Why this specialty? Why you? Polished through multiple drafts.</span>
+<span style="color:var(--text3);font-size:11px;display:block;margin-bottom:4px">Clear, specific story. Why this specialty? Why you? Polished through multiple drafts.</span>
+<div id="frc-bench7" style="font-size:10px;color:var(--accent);margin-bottom:8px;display:none"></div>
 <input type="range" min="0" max="5" value="0" id="frc-r7" oninput="frcUpdate()" style="width:100%;accent-color:var(--accent)">
 <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text3)"><span>Not started</span><span>First draft</span><span>Reviewed 1x</span><span>Multiple drafts</span><span>Polished</span><span>Exceptional</span></div>
 <div id="frc-f7" style="font-size:11px;color:var(--text3);margin-top:6px;padding:8px;background:var(--bg2);border-radius:6px"></div>
@@ -62,16 +102,60 @@ v1:`<h3>Fellowship Readiness Calculator</h3>
 
 </div>
 
-<div id="frc-result" style="padding:20px;background:var(--bg2);border-radius:12px;margin-top:20px;text-align:center">
-<div style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--text3);margin-bottom:8px">Overall Readiness Score</div>
-<div id="frc-total" style="font-size:48px;font-weight:700;font-family:'Cormorant Garamond',serif;color:var(--accent)">0</div>
-<div id="frc-max" style="font-size:13px;color:var(--text3)">out of 35</div>
-<div id="frc-grade" style="font-size:16px;font-weight:600;margin-top:8px"></div>
-<div id="frc-interp" style="font-size:13px;color:var(--text2);margin-top:12px;line-height:1.7;text-align:left"></div>
-</div>
-<p style="font-size:10px;color:var(--text3);margin-top:12px;font-style:italic">Based on NRMP Charting Outcomes and program director surveys. Weighted scoring reflects relative importance per PD surveys.</p>
-<div style="text-align:center;margin-top:8px"><button onclick="showSavedScenarios('Fellowship Readiness Calculator')" style="background:none;border:none;color:var(--accent);font-size:11px;cursor:pointer;padding:6px 12px;opacity:.7;transition:opacity .15s" onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='.7'">📊 View Saved Scenarios</button></div>`,
+<!-- Weighted Score + Radar-style breakdown -->
+<div id="frc-result" style="padding:24px;background:var(--bg2);border-radius:12px;margin-top:20px">
 
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px">
+<!-- Score -->
+<div style="text-align:center">
+<div style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--text3);margin-bottom:8px">Weighted Readiness Score</div>
+<div id="frc-total" style="font-size:48px;font-weight:700;font-family:'Cormorant Garamond',serif;color:var(--accent)">0</div>
+<div id="frc-max" style="font-size:13px;color:var(--text3)">out of 100</div>
+<div id="frc-grade" style="font-size:16px;font-weight:600;margin-top:8px"></div>
+</div>
+<!-- Bar breakdown -->
+<div id="frc-bars" style="display:flex;flex-direction:column;gap:6px;justify-content:center">
+<div style="font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--text3);margin-bottom:2px">Category Breakdown</div>
+<div id="frc-bar-1" class="frc-bar-row"></div>
+<div id="frc-bar-2" class="frc-bar-row"></div>
+<div id="frc-bar-3" class="frc-bar-row"></div>
+<div id="frc-bar-4" class="frc-bar-row"></div>
+<div id="frc-bar-5" class="frc-bar-row"></div>
+<div id="frc-bar-6" class="frc-bar-row"></div>
+<div id="frc-bar-7" class="frc-bar-row"></div>
+</div>
+</div>
+
+<!-- Interpretation -->
+<div id="frc-interp" style="font-size:13px;color:var(--text2);line-height:1.7;text-align:left"></div>
+
+<!-- Gap Analysis -->
+<div id="frc-gaps" style="display:none;margin-top:16px">
+<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">⚡ Priority Gaps</div>
+<div id="frc-gap-list" style="display:flex;flex-direction:column;gap:6px"></div>
+</div>
+
+<!-- Strengths -->
+<div id="frc-strengths" style="display:none;margin-top:16px">
+<div style="font-size:11px;font-weight:600;color:var(--green);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">✓ Strengths</div>
+<div id="frc-strength-list" style="display:flex;flex-direction:column;gap:6px"></div>
+</div>
+
+<!-- Action Plan -->
+<div id="frc-actions" style="display:none;margin-top:16px;padding:16px;background:var(--bg);border:1px solid var(--border2);border-radius:10px">
+<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">🎯 Recommended Next Steps</div>
+<div id="frc-action-list" style="display:flex;flex-direction:column;gap:8px;font-size:12px;color:var(--text2);line-height:1.6"></div>
+</div>
+
+<!-- Timeline Warning -->
+<div id="frc-timeline-warn" style="display:none;margin-top:16px;padding:12px 16px;background:var(--red-dim);border:1px solid rgba(196,77,86,.15);border-radius:8px">
+<div id="frc-timeline-msg" style="font-size:12px;color:var(--red);line-height:1.6"></div>
+</div>
+
+</div>
+
+<p style="font-size:10px;color:var(--text3);margin-top:12px;font-style:italic">Weighted scoring based on NRMP Charting Outcomes and program director surveys. Category weights vary by specialty competitiveness. This is a self-assessment framework — not a match prediction.</p>
+<div style="text-align:center;margin-top:8px"><button onclick="showSavedScenarios('Fellowship Readiness Calculator')" style="background:none;border:none;color:var(--accent);font-size:11px;cursor:pointer;padding:6px 12px;opacity:.7;transition:opacity .15s" onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='.7'">📊 View Saved Scenarios</button></div>`,
 v2:`<h3 class="serif">Contract Risk Assessment</h3>
 <p style="color:var(--text3);font-size:12px;margin-bottom:20px">Answer these questions about your contract. You'll get a risk score and specific flags to address before signing.</p>
 

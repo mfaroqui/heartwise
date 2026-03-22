@@ -130,9 +130,12 @@ function lpTab(name){
   document.querySelectorAll('.lp-tab-link').forEach(function(a){a.classList.remove('active')});
   var activeLink=document.querySelector('.lp-tab-link[data-lptab="'+name+'"]');
   if(activeLink)activeLink.classList.add('active');
-  // Scroll to top of landing page
+  // Scroll to top of landing page — cover all scroll containers
   var pg=document.getElementById('pg-landing');
   if(pg)pg.scrollTo({top:0,behavior:'instant'});
+  window.scrollTo({top:0,behavior:'instant'});
+  document.documentElement.scrollTop=0;
+  document.body.scrollTop=0;
   // Update topbar — only home tab has light hero
   var tb=document.getElementById('topbar');
   if(tb){

@@ -155,6 +155,14 @@ color:var(--text);background:var(--bg);
 /* Landing sections */
 .lp-sec{padding:80px 32px}
 @media(max-width:480px){.lp-sec{padding:60px 20px}}
+/* Why HeartWise — comparison table mobile */
+@media(max-width:520px){
+  .hw-cmp-row{grid-template-columns:1fr !important}
+  .hw-cmp-row>div:nth-child(2),
+  .hw-cmp-row>div:nth-child(3){border-left:none !important;border-top:1px solid var(--border)}
+  #why-stage-tabs{flex-wrap:nowrap;gap:0}
+  #why-stage-tabs .why-stage-btn{font-size:10px !important;padding:10px 6px !important}
+}
 .lp-sec h2{font-family:var(--font-serif);font-size:36px;font-weight:600;margin-bottom:14px;text-align:center;letter-spacing:.3px}
 @media(max-width:480px){.lp-sec h2{font-size:28px}}
 .lp-sec .sub{color:var(--text3);font-size:14px;text-align:center;margin-bottom:44px;line-height:1.8;max-width:440px;margin-left:auto;margin-right:auto;font-weight:300;letter-spacing:.01em}

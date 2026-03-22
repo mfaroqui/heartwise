@@ -1,3 +1,5 @@
+// ===== GLOBAL CONSTANTS =====
+var HW_PHYSICIAN_COUNT='250+';
 // ===== TOPBAR SCROLL EFFECT =====
 (function(){
   const lp=document.getElementById('pg-landing');
@@ -170,45 +172,59 @@ function whyStage(stage){
 
 // Landing page tool grid with expandable previews
 var LP_TOOLS=[
-  {icon:'\ud83d\udcca',name:'Match Probability Calculator',desc:'Score your profile against benchmarked metrics for your specialty.',
+  {cat:'measure',icon:'\ud83d\udcca',name:'Match Probability Calculator',desc:'Score your profile against benchmarked metrics for your specialty.',
    preview:'<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:10px"><div style="text-align:center;padding:10px 6px;background:rgba(200,168,124,.08);border-radius:8px"><div style="font-size:18px;font-weight:700;color:var(--accent);font-family:var(--font-serif)">78</div><div style="font-size:8px;color:var(--text3)">Competitive</div></div><div style="text-align:center;padding:10px 6px;background:rgba(200,168,124,.08);border-radius:8px"><div style="font-size:18px;font-weight:700;color:var(--accent);font-family:var(--font-serif)">65</div><div style="font-size:8px;color:var(--text3)">Research</div></div><div style="text-align:center;padding:10px 6px;background:rgba(200,168,124,.08);border-radius:8px"><div style="font-size:18px;font-weight:700;color:var(--accent);font-family:var(--font-serif)">82</div><div style="font-size:8px;color:var(--text3)">Readiness</div></div><div style="text-align:center;padding:10px 6px;background:rgba(106,191,75,.08);border-radius:8px"><div style="font-size:18px;font-weight:700;color:#6abf4b;font-family:var(--font-serif)">71</div><div style="font-size:8px;color:var(--text3)">Financial</div></div></div><div style="font-size:10px;color:var(--text3);line-height:1.5;font-style:italic">\u201cResearch score of 65 indicates a gap \u2014 2 additional first-author publications would move this to 78.\u201d</div>'},
-  {icon:'\ud83d\udcc8',name:'Financial Projection Tool',desc:'Model 10\u201330 year income, savings, and debt paths.',
+  {cat:'model',icon:'\ud83d\udcc8',name:'Financial Projection Tool',desc:'Model 10\u201330 year income, savings, and debt paths.',
    preview:'<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px"><div style="padding:8px;background:rgba(106,191,75,.06);border:1px solid rgba(106,191,75,.15);border-radius:8px;text-align:center"><div style="font-size:8px;color:var(--text3)">With PSLF</div><div style="font-size:16px;font-weight:700;color:#6abf4b;font-family:var(--font-serif)">$4.2M</div><div style="font-size:8px;color:var(--text3)">10-yr net worth</div></div><div style="padding:8px;background:rgba(200,168,124,.06);border:1px solid rgba(200,168,124,.15);border-radius:8px;text-align:center"><div style="font-size:8px;color:var(--text3)">Without PSLF</div><div style="font-size:16px;font-weight:700;color:var(--accent);font-family:var(--font-serif)">$3.6M</div><div style="font-size:8px;color:var(--text3)">10-yr net worth</div></div></div><div style="font-size:10px;color:var(--text3);line-height:1.5;font-style:italic">\u201cPSLF creates a $600K advantage over refinancing \u2014 the most common mistake physicians make.\u201d</div>'},
-  {icon:'\ud83d\udcc4',name:'Contract Review Tool',desc:'Decode contracts clause by clause. Surface red flags and negotiation strategies.',
+  {cat:'decide',icon:'\ud83d\udcc4',name:'Contract Review Tool',desc:'Decode contracts clause by clause. Surface red flags and negotiation strategies.',
    preview:'<div style="display:flex;align-items:center;gap:12px;margin-bottom:10px"><div style="text-align:center"><div style="font-size:24px;font-weight:700;color:var(--accent);font-family:var(--font-serif)">B+</div><div style="font-size:8px;color:var(--text3)">Grade</div></div><div style="flex:1"><div style="display:flex;align-items:center;gap:4px;margin-bottom:3px"><span style="font-size:8px;color:var(--text3);width:55px">Base Salary</span><div style="flex:1;height:4px;background:rgba(200,168,124,.15);border-radius:2px"><div style="height:100%;width:82%;background:#6abf4b;border-radius:2px"></div></div></div><div style="display:flex;align-items:center;gap:4px;margin-bottom:3px"><span style="font-size:8px;color:var(--text3);width:55px">RVU Rate</span><div style="flex:1;height:4px;background:rgba(200,168,124,.15);border-radius:2px"><div style="height:100%;width:68%;background:var(--accent);border-radius:2px"></div></div></div><div style="display:flex;align-items:center;gap:4px"><span style="font-size:8px;color:#c44d56;width:55px">Non-compete</span><div style="flex:1;height:4px;background:rgba(200,168,124,.15);border-radius:2px"><div style="height:100%;width:35%;background:#c44d56;border-radius:2px"></div></div><span style="font-size:8px;color:#c44d56">\u26a0</span></div></div></div><div style="font-size:10px;color:var(--text3);line-height:1.5;font-style:italic">\u201cNon-compete: 2yr/30mi is aggressive. Negotiate to 1yr/15mi \u2014 #1 leverage point.\u201d</div>'},
-  {icon:'\ud83e\uddec',name:'Specialty Fit Assessment',desc:'Match your profile and goals against specialties with compatibility scores.',
+  {cat:'define',icon:'\ud83e\uddec',name:'Specialty Fit Assessment',desc:'Match your profile and goals against specialties with compatibility scores.',
    preview:'<div style="margin-bottom:10px"><div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><span style="font-size:9px;color:var(--text2);width:65px">Cardiology</span><div style="flex:1;height:6px;background:rgba(200,168,124,.12);border-radius:3px"><div style="height:100%;width:92%;background:var(--accent);border-radius:3px"></div></div><span style="font-size:9px;font-weight:600;color:var(--accent)">92%</span></div><div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><span style="font-size:9px;color:var(--text2);width:65px">GI</span><div style="flex:1;height:6px;background:rgba(200,168,124,.12);border-radius:3px"><div style="height:100%;width:78%;background:var(--accent);border-radius:3px;opacity:.7"></div></div><span style="font-size:9px;color:var(--text3)">78%</span></div><div style="display:flex;align-items:center;gap:8px"><span style="font-size:9px;color:var(--text2);width:65px">Pulm/Crit</span><div style="flex:1;height:6px;background:rgba(200,168,124,.12);border-radius:3px"><div style="height:100%;width:71%;background:var(--accent);border-radius:3px;opacity:.5"></div></div><span style="font-size:9px;color:var(--text3)">71%</span></div></div><div style="font-size:10px;color:var(--text3);line-height:1.5;font-style:italic">\u201cCardiology is your strongest fit \u2014 driven by procedural interest and research alignment.\u201d</div>'},
-  {icon:'\ud83c\udfaf',name:'Match Probability Calculator',desc:'Calculate weighted match probability by program tier.',
-   preview:'<div style="text-align:center;margin-bottom:10px"><div style="font-size:28px;font-weight:700;color:#6abf4b;font-family:var(--font-serif)">74%</div><div style="font-size:9px;color:var(--text3)">Estimated Match Probability \u2014 Cardiology</div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px"><div style="padding:6px;background:rgba(106,191,75,.06);border-radius:6px;text-align:center"><div style="font-size:9px;color:var(--text3)">Top 20</div><div style="font-size:12px;font-weight:600;color:#6abf4b">68%</div></div><div style="padding:6px;background:rgba(200,168,124,.06);border-radius:6px;text-align:center"><div style="font-size:9px;color:var(--text3)">Top 50</div><div style="font-size:12px;font-weight:600;color:var(--accent)">82%</div></div></div><div style="font-size:10px;color:var(--text3);line-height:1.5;font-style:italic">\u201cStep 2 of 258 is above 75th percentile. Research is your gap \u2014 2 more pubs pushes Top-20 to 79%.\u201d</div>'},
-  {icon:'\ud83d\uddfa\ufe0f',name:'Career Roadmap Tool',desc:'Build a milestone roadmap from current stage to goal.',
+  {cat:'execute',icon:'\ud83d\uddfa\ufe0f',name:'Career Roadmap Tool',desc:'Build a milestone roadmap from current stage to goal.',
    preview:'<div style="margin-bottom:10px;border-left:2px solid var(--accent);padding-left:10px"><div style="margin-bottom:8px"><div style="font-size:9px;font-weight:600;color:var(--accent)">MONTH 1\u20133</div><div style="font-size:10px;color:var(--text2)">Submit 2 abstracts, secure research mentor, begin LOR conversations</div></div><div style="margin-bottom:8px"><div style="font-size:9px;font-weight:600;color:var(--accent)">MONTH 4\u20136</div><div style="font-size:10px;color:var(--text2)">Away rotations, personal statement, submit ERAS</div></div><div><div style="font-size:9px;font-weight:600;color:var(--accent)">MONTH 7\u201312</div><div style="font-size:10px;color:var(--text2)">Interview circuit, rank list strategy, match prep</div></div></div><div style="font-size:10px;color:var(--text3);line-height:1.5;font-style:italic">\u201cCritical window is months 1\u20133. The research gap must close before ERAS opens.\u201d</div>'},
-  {icon:'\ud83c\udfa4',name:'Interview Practice Tool',desc:'Practice specialty-specific interview questions with structured feedback.',
+  {cat:'execute',icon:'\ud83c\udfa4',name:'Interview Practice Tool',desc:'Practice specialty-specific interview questions with structured feedback.',
    preview:'<div style="margin-bottom:10px;padding:10px;background:rgba(200,168,124,.06);border-radius:8px"><div style="font-size:9px;font-weight:600;color:var(--accent);margin-bottom:4px">SAMPLE QUESTION</div><div style="font-size:11px;color:var(--text);font-weight:500;margin-bottom:6px">\u201cWhy cardiology? What draws you to the field?\u201d</div><div style="font-size:9px;color:var(--text3)">Grade: <span style="color:#6abf4b;font-weight:600">B+</span> \u00b7 Structure: Strong \u00b7 Authenticity: Needs work</div></div><div style="font-size:10px;color:var(--text3);line-height:1.5;font-style:italic">\u201cGood structure but sounds rehearsed. Add a specific patient story.\u201d</div>'},
-  {icon:'\ud83c\udfc6',name:'Fellowship Readiness Assessment',desc:'Gap analysis for fellowship applications.',
+  {cat:'measure',icon:'\ud83c\udfc6',name:'Fellowship Readiness Assessment',desc:'Gap analysis for fellowship applications.',
    preview:'<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border)"><span style="font-size:9px;color:var(--text2)">Step 2 Score</span><span style="font-size:9px;font-weight:600;color:#6abf4b">\u2713 Strong</span></div><div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border)"><span style="font-size:9px;color:var(--text2)">Research</span><span style="font-size:9px;font-weight:600;color:#c44d56">\u26a0 Gap</span></div><div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border)"><span style="font-size:9px;color:var(--text2)">LORs</span><span style="font-size:9px;font-weight:600;color:var(--accent)">\u25cb Partial</span></div><div style="display:flex;justify-content:space-between;padding:4px 0"><span style="font-size:9px;color:var(--text2)">Leadership</span><span style="font-size:9px;font-weight:600;color:#6abf4b">\u2713 Strong</span></div></div><div style="font-size:10px;color:var(--text3);line-height:1.5;font-style:italic">\u201cPriority #1: close the research gap before ERAS. Everything else is on track.\u201d</div>'},
-  {icon:'\ud83d\udcb0',name:'RVU Compensation & Offer Comparison',desc:'Side-by-side comparison of job offers and RVU scenarios.',
+  {cat:'decide',icon:'\ud83d\udcb0',name:'RVU Compensation & Offer Comparison',desc:'Side-by-side comparison of job offers and RVU scenarios.',
    preview:'<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px"><div style="padding:8px;background:rgba(106,191,75,.06);border:1px solid rgba(106,191,75,.12);border-radius:8px;text-align:center"><div style="font-size:8px;color:var(--text3)">Offer A (Hospital)</div><div style="font-size:14px;font-weight:700;color:#6abf4b;font-family:var(--font-serif)">$580K</div><div style="font-size:8px;color:var(--text3)">Year 1</div></div><div style="padding:8px;background:rgba(200,168,124,.06);border:1px solid rgba(200,168,124,.12);border-radius:8px;text-align:center"><div style="font-size:8px;color:var(--text3)">Offer B (Private)</div><div style="font-size:14px;font-weight:700;color:var(--accent);font-family:var(--font-serif)">$720K</div><div style="font-size:8px;color:var(--text3)">Year 3+</div></div></div><div style="font-size:10px;color:var(--text3);line-height:1.5;font-style:italic">\u201cOffer B generates $1.4M more over 10 years \u2014 but carries more risk.\u201d</div>'},
-  {icon:'\ud83d\udd04',name:'Career Transition Planner',desc:'Evaluate career changes with structured cost-benefit analysis.',
+  {cat:'decide',icon:'\ud83d\udd04',name:'Career Transition Planner',desc:'Evaluate career changes with structured cost-benefit analysis.',
    preview:'<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px"><div style="padding:8px;background:rgba(200,168,124,.06);border-radius:8px;text-align:center"><div style="font-size:8px;color:var(--text3)">Stay Current</div><div style="font-size:14px;font-weight:700;color:var(--accent);font-family:var(--font-serif)">$8.2M</div><div style="font-size:8px;color:var(--text3)">Lifetime</div></div><div style="padding:8px;background:rgba(106,191,75,.06);border-radius:8px;text-align:center"><div style="font-size:8px;color:var(--text3)">Switch Now</div><div style="font-size:14px;font-weight:700;color:#6abf4b;font-family:var(--font-serif)">$9.8M</div><div style="font-size:8px;color:var(--text3)">Lifetime</div></div></div><div style="font-size:10px;color:var(--text3);line-height:1.5;font-style:italic">\u201cSwitching nets $1.6M more even with 2 extra years of training.\u201d</div>'},
-  {icon:'\ud83d\udd2c',name:'Research Impact Calculator',desc:'Score publications and projects by real competitive value.',
+  {cat:'measure',icon:'\ud83d\udd2c',name:'Research Impact Calculator',desc:'Score publications and projects by real competitive value.',
    preview:'<div style="text-align:center;margin-bottom:10px"><div style="font-size:24px;font-weight:700;color:var(--accent);font-family:var(--font-serif)">62 / 100</div><div style="font-size:9px;color:var(--text3)">Research Portfolio Score</div><div style="height:6px;background:rgba(200,168,124,.12);border-radius:3px;margin-top:6px"><div style="height:100%;width:62%;background:var(--accent);border-radius:3px"></div></div></div><div style="font-size:10px;color:var(--text3);line-height:1.5;font-style:italic">\u201c3 pubs score well, but 0 first-author papers is the gap. One first-author adds ~18 points.\u201d</div>'},
-  {icon:'\ud83d\udccb',name:'Contract Risk Assessment',desc:'Quick 5-minute risk assessment for any offer.',
+  {cat:'decide',icon:'\ud83d\udccb',name:'Contract Risk Assessment',desc:'Quick 5-minute risk assessment for any offer.',
    preview:'<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border)"><span style="font-size:9px;color:var(--text2)">Compensation</span><span style="font-size:9px;font-weight:600;color:#6abf4b">Low Risk</span></div><div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border)"><span style="font-size:9px;color:var(--text2)">Non-Compete</span><span style="font-size:9px;font-weight:600;color:#c44d56">High Risk</span></div><div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border)"><span style="font-size:9px;color:var(--text2)">Tail Coverage</span><span style="font-size:9px;font-weight:600;color:var(--accent)">Medium</span></div><div style="display:flex;justify-content:space-between;padding:4px 0"><span style="font-size:9px;color:var(--text2)">Termination</span><span style="font-size:9px;font-weight:600;color:#6abf4b">Low Risk</span></div></div><div style="font-size:10px;color:var(--text3);line-height:1.5;font-style:italic">\u201cOverall: Medium risk. The non-compete is the issue \u2014 negotiate before signing.\u201d</div>'}
 ];
 function buildLPToolGrid(){
   var grid=document.getElementById('lp-tools-grid');
   if(!grid)return;
+  var cats=[
+    {key:'define',icon:'\ud83e\uddec',title:'Define Your Path'},
+    {key:'measure',icon:'\ud83c\udfc6',title:'Measure Your Position'},
+    {key:'model',icon:'\ud83d\udd2e',title:'Model Your Future'},
+    {key:'decide',icon:'\u2696\ufe0f',title:'Make Better Decisions'},
+    {key:'execute',icon:'\ud83d\ude80',title:'Execute Your Strategy'}
+  ];
   var h='';
-  LP_TOOLS.forEach(function(t,i){
-    h+='<div class="lp-tool-card" onclick="toggleLPPreview('+i+')" style="padding:20px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;cursor:pointer;transition:all .25s">';
-    h+='<div style="display:flex;align-items:center;justify-content:space-between"><div style="font-size:16px;margin-bottom:6px">'+t.icon+'</div><span class="lp-tool-arrow" id="lp-arrow-'+i+'" style="font-size:10px;color:var(--text3);transition:transform .2s">\u25bc</span></div>';
-    h+='<div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:4px">'+t.name+'</div>';
-    h+='<div style="font-size:10px;color:var(--text3);line-height:1.5">'+t.desc+'</div>';
-    h+='<div id="lp-preview-'+i+'" style="display:none;margin-top:14px;padding-top:14px;border-top:1px solid var(--border)">';
-    h+='<div style="font-size:9px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">SAMPLE OUTPUT</div>';
-    h+=t.preview;
-    h+='<div style="text-align:center;margin-top:10px"><span style="font-size:10px;color:var(--accent);font-weight:600;cursor:pointer" onclick="event.stopPropagation();go(\'pg-onboard\')">Try it free \u2192</span></div>';
-    h+='</div></div>';
+  cats.forEach(function(cat){
+    var tools=LP_TOOLS.filter(function(t){return t.cat===cat.key});
+    if(!tools.length)return;
+    h+='<div style="grid-column:1/-1;display:flex;align-items:center;gap:8px;margin-top:18px;margin-bottom:4px">';
+    h+='<span style="font-size:16px">'+cat.icon+'</span>';
+    h+='<span style="font-size:13px;font-weight:600;color:var(--accent);letter-spacing:.3px">'+cat.title+'</span>';
+    h+='</div>';
+    tools.forEach(function(t){
+      var i=LP_TOOLS.indexOf(t);
+      h+='<div class="lp-tool-card" onclick="toggleLPPreview('+i+')" style="padding:20px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;cursor:pointer;transition:all .25s">';
+      h+='<div style="display:flex;align-items:center;justify-content:space-between"><div style="font-size:16px;margin-bottom:6px">'+t.icon+'</div><span class="lp-tool-arrow" id="lp-arrow-'+i+'" style="font-size:10px;color:var(--text3);transition:transform .2s">\u25bc</span></div>';
+      h+='<div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:4px">'+t.name+'</div>';
+      h+='<div style="font-size:10px;color:var(--text3);line-height:1.5">'+t.desc+'</div>';
+      h+='<div id="lp-preview-'+i+'" style="display:none;margin-top:14px;padding-top:14px;border-top:1px solid var(--border)">';
+      h+='<div style="font-size:9px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">SAMPLE OUTPUT</div>';
+      h+=t.preview;
+      h+="<div style=\"text-align:center;margin-top:10px\"><span style=\"font-size:10px;color:var(--accent);font-weight:600;cursor:pointer\" onclick=\"event.stopPropagation();go('pg-onboard')\">Try it free \u2192</span></div>";
+      h+='</div></div>';
+    });
   });
   grid.innerHTML=h;
 }
@@ -226,10 +242,21 @@ function toggleLPPreview(idx){
   if(isOpen){el.style.display='none';if(arrow)arrow.style.transform=''}
   else{el.style.display='';if(arrow)arrow.style.transform='rotate(180deg)';setTimeout(function(){el.scrollIntoView({behavior:'smooth',block:'nearest'})},100)}
 }
-if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',buildLPToolGrid)}else{buildLPToolGrid()}
+if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',function(){buildLPToolGrid();hwSyncCounts()})}else{buildLPToolGrid();hwSyncCounts()}
+function hwSyncCounts(){document.querySelectorAll('.hw-physician-count').forEach(function(el){el.textContent=HW_PHYSICIAN_COUNT})}
 
 // Landing page hook — 3-question quiz with demo previews
 var hookA={stage:null,goal:null,urgency:null};
+
+function hookRetake(){
+  hookA={stage:null,goal:null,urgency:null};
+  document.querySelectorAll('.hook-opt,.hook-opt2,.hook-opt3').forEach(function(b){b.style.borderColor='var(--border)';b.style.background='var(--bg2)'});
+  document.getElementById('hook-q2').style.display='none';
+  document.getElementById('hook-q3').style.display='none';
+  document.getElementById('hook-results').style.display='none';
+  var tp=document.getElementById('hook-tool-preview');if(tp)tp.style.display='none';
+  document.getElementById('hook-q1').scrollIntoView({behavior:'smooth',block:'center'});
+}
 
 function hookQ(q,val,btn){
   var cls=q===1?'.hook-opt':q===2?'.hook-opt2':'.hook-opt3';

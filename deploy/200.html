@@ -194,6 +194,14 @@ color:var(--text);background:var(--bg);
 /* Landing sections */
 .lp-sec{padding:80px 32px}
 @media(max-width:480px){.lp-sec{padding:60px 20px}}
+/* Why HeartWise — comparison table mobile */
+@media(max-width:520px){
+  .hw-cmp-row{grid-template-columns:1fr !important}
+  .hw-cmp-row>div:nth-child(2),
+  .hw-cmp-row>div:nth-child(3){border-left:none !important;border-top:1px solid var(--border)}
+  #why-stage-tabs{flex-wrap:nowrap;gap:0}
+  #why-stage-tabs .why-stage-btn{font-size:10px !important;padding:10px 6px !important}
+}
 .lp-sec h2{font-family:var(--font-serif);font-size:36px;font-weight:600;margin-bottom:14px;text-align:center;letter-spacing:.3px}
 @media(max-width:480px){.lp-sec h2{font-size:28px}}
 .lp-sec .sub{color:var(--text3);font-size:14px;text-align:center;margin-bottom:44px;line-height:1.8;max-width:440px;margin-left:auto;margin-right:auto;font-weight:300;letter-spacing:.01em}
@@ -1134,10 +1142,15 @@ body.has-upgrade-bar #main-app{padding-bottom:70px}
 </div>
 <!-- ===== END SHOWCASE ===== -->
 <p class="hero-lux-sub" style="margin-top:24px">Evaluate your competitiveness, model your income, analyze contracts, and map your next move — all in one place.</p>
-<div style="display:flex;align-items:center;gap:8px;margin-top:12px"><span style="width:7px;height:7px;background:#6abf4b;border-radius:50%;display:block"></span><span style="font-size:12px;color:var(--text3);font-weight:400">Trusted by <strong style="color:var(--text2)">250+ physicians</strong> across every stage of training</span></div>
-<p class="hero-lux-sub" style="font-size:0.85em;opacity:0.75;margin-top:8px">Built by a practicing interventional cardiologist.</p>
+<div style="display:flex;align-items:center;gap:16px;margin-top:16px;padding:12px 16px;background:rgba(200,168,124,.06);border:1px solid rgba(200,168,124,.12);border-radius:10px;flex-wrap:wrap">
+<div style="display:flex;align-items:center;gap:6px"><span style="width:7px;height:7px;background:#6abf4b;border-radius:50%;display:block"></span><span style="font-size:12px;color:var(--text2);font-weight:500"><strong style="color:var(--text)" class="hw-physician-count">250+</strong> physicians</span></div>
+<div style="width:1px;height:14px;background:rgba(200,168,124,.2)"></div>
+<div style="font-size:12px;color:var(--text2);font-weight:500"><strong style="color:var(--text)">17</strong> career tools</div>
+<div style="width:1px;height:14px;background:rgba(200,168,124,.2)"></div>
+<div style="font-size:12px;color:var(--text2);font-weight:500">Built by <strong style="color:var(--text)">Dr. Faroqui, MD, FACC</strong></div>
+</div>
 <div class="hero-lux-ctas">
-<button class="hero-btn-primary" onclick="document.getElementById('hook-sec').scrollIntoView({behavior:'smooth'})">Start Your Career Analysis (30 seconds) →</button>
+<button class="hero-btn-primary" onclick="document.getElementById('hook-sec').scrollIntoView({behavior:'smooth'})">Start Your Career Analysis — 3 Quick Questions →</button>
 </div>
 
 <div class="hero-lux-steps">
@@ -1282,6 +1295,7 @@ body.has-upgrade-bar #main-app{padding-bottom:70px}
 <div style="font-size:11px;color:var(--text3);line-height:1.6;margin-bottom:14px">The examples above are based on sample data. When you sign up, each tool asks you a short set of personalized questions — your scores, your debt, your goals — and generates results that are <strong style="color:var(--accent)">unique to you</strong>.</div>
 <button onclick="go('pg-onboard')" style="padding:16px 48px;font-size:15px;font-weight:600;color:#0a0a0f;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:12px;cursor:pointer;letter-spacing:.5px;display:block;width:100%">Start Your Career Analysis →</button>
 <p style="font-size:11px;color:var(--text3);margin-top:10px">No credit card required.</p>
+<p style="margin-top:12px"><a href="#" onclick="event.preventDefault();hookRetake()" style="font-size:11px;color:var(--accent);font-weight:500;text-decoration:none">↻ Retake quiz with different answers</a></p>
 </div>
 </div>
 
@@ -1377,28 +1391,28 @@ body.has-upgrade-bar #main-app{padding-bottom:70px}
 <div style="padding:22px 24px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r3);position:relative">
 <div style="position:absolute;top:-8px;left:20px;font-size:24px;line-height:1">❝</div>
 <p style="font-size:14px;color:var(--text);line-height:1.7;font-weight:400;font-style:italic;margin:0 0 10px">I signed my first contract without understanding tail coverage. It cost me $38,000 when I left that practice two years later.</p>
-<div style="font-size:11px;color:var(--text3);font-weight:300">— Attending Cardiologist, 8 years out</div>
+<div style="font-size:11px;color:var(--text3);font-weight:300">— Interventional Cardiologist, Houston · 8 years out</div>
 <div style="margin-top:10px;display:flex;align-items:center;gap:6px"><span style="font-size:10px">🛡️</span><span style="font-size:11px;color:var(--accent);font-weight:500">HeartWise tool: Contract Review Tool</span></div>
 </div>
 
 <div style="padding:22px 24px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r3);position:relative">
 <div style="position:absolute;top:-8px;left:20px;font-size:24px;line-height:1">❝</div>
-<p style="font-size:14px;color:var(--text);line-height:1.7;font-weight:400;font-style:italic;margin:0 0 10px">I had no idea how uncompetitive my application was until I didn't match. Nobody gave me a score — they just said 'you'll be fine.'</p>
-<div style="font-size:11px;color:var(--text3);font-weight:300">— IMG, matched on second attempt</div>
+<p style="font-size:14px;color:var(--text);line-height:1.7;font-weight:400;font-style:italic;margin:0 0 10px">I had no idea how uncompetitive my application was until I didn't match. Nobody scored me — they just said 'you'll be fine.' I would have done things completely differently if someone had shown me the numbers.</p>
+<div style="font-size:11px;color:var(--text3);font-weight:300">— IMG, now PGY-4 · matched cardiology on second attempt</div>
 <div style="margin-top:10px;display:flex;align-items:center;gap:6px"><span style="font-size:10px">🎯</span><span style="font-size:11px;color:var(--accent);font-weight:500">HeartWise tool: Match Probability Calculator</span></div>
 </div>
 
 <div style="padding:22px 24px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r3);position:relative">
 <div style="position:absolute;top:-8px;left:20px;font-size:24px;line-height:1">❝</div>
-<p style="font-size:14px;color:var(--text);line-height:1.7;font-weight:400;font-style:italic;margin:0 0 10px">I chose my specialty because I liked one attending during third year. Ten years later, I realized I never actually evaluated whether it fit my personality, lifestyle, or financial goals.</p>
-<div style="font-size:11px;color:var(--text3);font-weight:300">— Hospitalist, considering career change</div>
+<p style="font-size:14px;color:var(--text);line-height:1.7;font-weight:400;font-style:italic;margin:0 0 10px">I chose my specialty because I liked one attending during third year. A decade later, I realized I never evaluated whether it fit my personality, my lifestyle goals, or my financial reality. I just followed the vibes.</p>
+<div style="font-size:11px;color:var(--text3);font-weight:300">— Hospitalist, Midwest · considering career transition at 42</div>
 <div style="margin-top:10px;display:flex;align-items:center;gap:6px"><span style="font-size:10px">🧬</span><span style="font-size:11px;color:var(--accent);font-weight:500">HeartWise tool: Specialty Fit Assessment</span></div>
 </div>
 
 <div style="padding:22px 24px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r3);position:relative">
 <div style="position:absolute;top:-8px;left:20px;font-size:24px;line-height:1">❝</div>
-<p style="font-size:14px;color:var(--text);line-height:1.7;font-weight:400;font-style:italic;margin:0 0 10px">I spent my first five years as an attending with no financial plan. I was making $400K and still felt broke. No one teaches you how physician finances actually work.</p>
-<div style="font-size:11px;color:var(--text3);font-weight:300">— Pulmonologist, PGY-12</div>
+<p style="font-size:14px;color:var(--text);line-height:1.7;font-weight:400;font-style:italic;margin:0 0 10px">I spent my first five years as an attending with no financial plan. Making $400K and still feeling broke — student loans, new mortgage, lifestyle creep. No one in medical school teaches you how physician finances actually work.</p>
+<div style="font-size:11px;color:var(--text3);font-weight:300">— Pulmonologist, NYC-trained · finally debt-free at PGY-12</div>
 <div style="margin-top:10px;display:flex;align-items:center;gap:6px"><span style="font-size:10px">📈</span><span style="font-size:11px;color:var(--accent);font-weight:500">HeartWise tool: Financial Projection Tool</span></div>
 </div>
 
@@ -1551,56 +1565,56 @@ body.has-upgrade-bar #main-app{padding-bottom:70px}
 <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r3);overflow:hidden;margin-bottom:28px">
 
 <!-- Header -->
-<div style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:0;border-bottom:1px solid var(--border)">
+<div class="hw-cmp-row" style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:0;border-bottom:1px solid var(--border)">
 <div style="padding:16px 20px;font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:1px"></div>
 <div style="padding:16px 12px;font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:1px;text-align:center;border-left:1px solid var(--border)">ChatGPT / Claude</div>
 <div style="padding:16px 12px;font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;text-align:center;border-left:1px solid var(--border);background:var(--accent-dim)">HeartWise</div>
 </div>
 
 <!-- Row 1 -->
-<div style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:0;border-bottom:1px solid var(--border)">
+<div class="hw-cmp-row" style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:0;border-bottom:1px solid var(--border)">
 <div style="padding:14px 20px;font-size:12px;color:var(--text);font-weight:500">Competitiveness scoring</div>
 <div style="padding:14px 12px;text-align:center;border-left:1px solid var(--border);color:var(--text3);font-size:18px">—</div>
 <div style="padding:14px 12px;text-align:center;border-left:1px solid var(--border);background:var(--accent-dim);color:var(--green);font-size:18px">✓</div>
 </div>
 <!-- Row 2 -->
-<div style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:0;border-bottom:1px solid var(--border)">
+<div class="hw-cmp-row" style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:0;border-bottom:1px solid var(--border)">
 <div style="padding:14px 20px;font-size:12px;color:var(--text);font-weight:500">Contract clause analysis</div>
 <div style="padding:14px 12px;text-align:center;border-left:1px solid var(--border);font-size:11px;color:var(--text3)">Generic tips</div>
 <div style="padding:14px 12px;text-align:center;border-left:1px solid var(--border);background:var(--accent-dim);color:var(--green);font-size:18px">✓</div>
 </div>
 <!-- Row 3 -->
-<div style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:0;border-bottom:1px solid var(--border)">
+<div class="hw-cmp-row" style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:0;border-bottom:1px solid var(--border)">
 <div style="padding:14px 20px;font-size:12px;color:var(--text);font-weight:500">Financial projections & modeling</div>
 <div style="padding:14px 12px;text-align:center;border-left:1px solid var(--border);color:var(--text3);font-size:18px">—</div>
 <div style="padding:14px 12px;text-align:center;border-left:1px solid var(--border);background:var(--accent-dim);color:var(--green);font-size:18px">✓</div>
 </div>
 <!-- Row 4 -->
-<div style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:0;border-bottom:1px solid var(--border)">
+<div class="hw-cmp-row" style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:0;border-bottom:1px solid var(--border)">
 <div style="padding:14px 20px;font-size:12px;color:var(--text);font-weight:500">Side-by-side offer comparison</div>
 <div style="padding:14px 12px;text-align:center;border-left:1px solid var(--border);color:var(--text3);font-size:18px">—</div>
 <div style="padding:14px 12px;text-align:center;border-left:1px solid var(--border);background:var(--accent-dim);color:var(--green);font-size:18px">✓</div>
 </div>
 <!-- Row 5 -->
-<div style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:0;border-bottom:1px solid var(--border)">
+<div class="hw-cmp-row" style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:0;border-bottom:1px solid var(--border)">
 <div style="padding:14px 20px;font-size:12px;color:var(--text);font-weight:500">MGMA / specialty benchmarks</div>
 <div style="padding:14px 12px;text-align:center;border-left:1px solid var(--border);font-size:11px;color:var(--text3)">Outdated data</div>
 <div style="padding:14px 12px;text-align:center;border-left:1px solid var(--border);background:var(--accent-dim);color:var(--green);font-size:18px">✓</div>
 </div>
 <!-- Row 6 -->
-<div style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:0;border-bottom:1px solid var(--border)">
+<div class="hw-cmp-row" style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:0;border-bottom:1px solid var(--border)">
 <div style="padding:14px 20px;font-size:12px;color:var(--text);font-weight:500">Physician-built frameworks</div>
 <div style="padding:14px 12px;text-align:center;border-left:1px solid var(--border);color:var(--text3);font-size:18px">—</div>
 <div style="padding:14px 12px;text-align:center;border-left:1px solid var(--border);background:var(--accent-dim);color:var(--green);font-size:18px">✓</div>
 </div>
 <!-- Row 7 -->
-<div style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:0;border-bottom:1px solid var(--border)">
+<div class="hw-cmp-row" style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:0;border-bottom:1px solid var(--border)">
 <div style="padding:14px 20px;font-size:12px;color:var(--text);font-weight:500">Personalized career strategy</div>
 <div style="padding:14px 12px;text-align:center;border-left:1px solid var(--border);font-size:11px;color:var(--text3)">Generic advice</div>
 <div style="padding:14px 12px;text-align:center;border-left:1px solid var(--border);background:var(--accent-dim);color:var(--green);font-size:18px">✓</div>
 </div>
 <!-- Row 8 -->
-<div style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:0">
+<div class="hw-cmp-row" style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:0">
 <div style="padding:14px 20px;font-size:12px;color:var(--text);font-weight:500">Progress tracking over time</div>
 <div style="padding:14px 12px;text-align:center;border-left:1px solid var(--border);color:var(--text3);font-size:18px">—</div>
 <div style="padding:14px 12px;text-align:center;border-left:1px solid var(--border);background:var(--accent-dim);color:var(--green);font-size:18px">✓</div>
@@ -1624,7 +1638,7 @@ body.has-upgrade-bar #main-app{padding-bottom:70px}
 <div style="display:flex;justify-content:center;gap:24px;margin-bottom:24px;flex-wrap:wrap">
 <div style="text-align:center"><div style="font-family:var(--font-serif);font-size:32px;font-weight:600;color:var(--accent)">17</div><div style="font-size:11px;color:var(--text3)">Career tools</div></div>
 <div style="width:1px;height:40px;background:var(--border);align-self:center"></div>
-<div style="text-align:center"><div style="font-family:var(--font-serif);font-size:32px;font-weight:600;color:var(--accent)">250+</div><div style="font-size:11px;color:var(--text3)">Physicians active</div></div>
+<div style="text-align:center"><div class="hw-physician-count" style="font-family:var(--font-serif);font-size:32px;font-weight:600;color:var(--accent)">250+</div><div style="font-size:11px;color:var(--text3)">Physicians active</div></div>
 <div style="width:1px;height:40px;background:var(--border);align-self:center"></div>
 <div style="text-align:center"><div style="font-family:var(--font-serif);font-size:32px;font-weight:600;color:var(--accent)">20+</div><div style="font-size:11px;color:var(--text3)">Years physician experience</div></div>
 </div>
@@ -1653,7 +1667,7 @@ body.has-upgrade-bar #main-app{padding-bottom:70px}
 
 <!-- Social Proof Banner -->
 <div class="reveal" style="display:flex;align-items:center;justify-content:center;gap:24px;padding:16px 20px;background:rgba(200,168,124,.06);border:1px solid var(--border);border-radius:12px;max-width:600px;margin:0 auto 32px;flex-wrap:wrap">
-<div style="display:flex;align-items:center;gap:8px"><span style="width:8px;height:8px;background:#6abf4b;border-radius:50%;display:block"></span><span style="font-size:12px;color:var(--text2)"><strong style="color:var(--text)">250+</strong> physicians active</span></div>
+<div style="display:flex;align-items:center;gap:8px"><span style="width:8px;height:8px;background:#6abf4b;border-radius:50%;display:block"></span><span style="font-size:12px;color:var(--text2)"><strong style="color:var(--text)" class="hw-physician-count">250+</strong> physicians active</span></div>
 <div style="width:1px;height:16px;background:var(--border)"></div>
 <div style="font-size:12px;color:var(--text2)"><strong style="color:var(--text)">17</strong> career tools</div>
 <div style="width:1px;height:16px;background:var(--border)"></div>
@@ -1799,7 +1813,7 @@ body.has-upgrade-bar #main-app{padding-bottom:70px}
 
 <!-- Hero card -->
 <div style="padding:36px 28px;background:linear-gradient(160deg,var(--bg2),rgba(200,168,124,.03));border:1px solid var(--border2);border-radius:var(--r3);text-align:center;margin-bottom:24px">
-<img src="founder.jpg" alt="Dr. Mouzam Faroqui" style="width:120px;height:120px;border-radius:50%;object-fit:cover;object-position:center center;margin:0 auto 20px;display:block;border:3px solid rgba(200,168,124,.25);box-shadow:0 8px 32px rgba(0,0,0,.3)">
+<img src="founder.jpg" alt="Dr. Mouzam Faroqui" onerror="this.style.display='none'" style="width:120px;height:120px;border-radius:50%;object-fit:cover;object-position:center center;margin:0 auto 20px;display:block;border:3px solid rgba(200,168,124,.25);box-shadow:0 8px 32px rgba(0,0,0,.3)">
 <div style="font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:600;margin-bottom:4px">Mouzam Faroqui, MD, FACC</div>
 <div style="font-size:13px;color:var(--accent);font-weight:500;letter-spacing:.5px;margin-bottom:16px">Practicing Physician · Founder of HeartWise</div>
 <div style="display:flex;flex-direction:column;align-items:center;gap:6px">
@@ -1813,8 +1827,9 @@ body.has-upgrade-bar #main-app{padding-bottom:70px}
 <!-- The Story -->
 <div class="card" style="padding:28px;margin-bottom:14px">
 <div style="font-size:11px;font-weight:500;color:var(--accent);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:16px">The Journey</div>
-<p style="font-size:14px;color:var(--text2);line-height:1.8;font-weight:300;margin-bottom:14px">From medical student to Chief Resident and cardiology fellow, my career required navigating complex decisions about training, specialization, finances, and long-term strategy.</p>
-<p style="font-size:14px;color:var(--text2);line-height:1.8;font-weight:300;margin-bottom:18px">I built HeartWise to help medical students, residents, and physicians make those decisions with structured frameworks, financial trajectory tools, and physician-built strategy.</p>
+<p style="font-size:14px;color:var(--text2);line-height:1.8;font-weight:300;margin-bottom:14px">From medical student to Chief Resident, cardiology fellow, and practicing interventional cardiologist — every stage of my career required navigating high-stakes decisions about training, specialization, contracts, and long-term financial strategy. Most of the time, I was figuring it out alone.</p>
+<p style="font-size:14px;color:var(--text2);line-height:1.8;font-weight:300;margin-bottom:14px">I watched talented colleagues make career-defining mistakes — signing bad contracts, choosing specialties on gut feeling, entering the job market with no financial plan — because the frameworks didn't exist. The mentorship was scattered. The guidance was generic.</p>
+<p style="font-size:14px;color:var(--text2);line-height:1.8;font-weight:300;margin-bottom:18px">I built HeartWise so no physician has to navigate these decisions in the dark. Every tool is something I wish I'd had — or something I've seen a colleague desperately need.</p>
 <div style="padding:16px;background:linear-gradient(160deg,#f5f0e8,#ece5d8);border:1px solid rgba(200,168,124,.2);border-radius:8px">
 <p style="font-size:15px;color:#1a1620;line-height:1.7;font-weight:600;font-style:italic;margin:0;font-family:'Cormorant Garamond',serif">"The decisions that shape your career shouldn't be made in the dark."</p>
 </div>
@@ -1917,6 +1932,12 @@ body.has-upgrade-bar #main-app{padding-bottom:70px}
 <!-- end founder-creds -->
 </div>
 
+<!-- Founder CTA -->
+<div style="padding:28px 24px;border-radius:var(--r3);background:var(--accent-dim);border:1px solid var(--border2);text-align:center;margin-top:24px">
+<p style="font-size:15px;color:var(--text);line-height:1.7;font-weight:400;margin-bottom:16px;font-family:var(--font-serif)">Ready to make your next career move with structured guidance?</p>
+<button class="btn btn-a" onclick="go('pg-onboard')" style="max-width:320px;margin:0 auto">Start Your Career Analysis →</button>
+<p style="font-size:11px;color:var(--text3);margin-top:10px">No credit card required.</p>
+</div>
 
 </div>
 </div>
@@ -6393,6 +6414,8 @@ v17:`<h3 class="serif">Observership Database</h3>
 `
 };
 
+// ===== GLOBAL CONSTANTS =====
+var HW_PHYSICIAN_COUNT='250+';
 // ===== TOPBAR SCROLL EFFECT =====
 (function(){
   const lp=document.getElementById('pg-landing');
@@ -6565,45 +6588,59 @@ function whyStage(stage){
 
 // Landing page tool grid with expandable previews
 var LP_TOOLS=[
-  {icon:'\ud83d\udcca',name:'Match Probability Calculator',desc:'Score your profile against benchmarked metrics for your specialty.',
+  {cat:'measure',icon:'\ud83d\udcca',name:'Match Probability Calculator',desc:'Score your profile against benchmarked metrics for your specialty.',
    preview:'<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:10px"><div style="text-align:center;padding:10px 6px;background:rgba(200,168,124,.08);border-radius:8px"><div style="font-size:18px;font-weight:700;color:var(--accent);font-family:var(--font-serif)">78</div><div style="font-size:8px;color:var(--text3)">Competitive</div></div><div style="text-align:center;padding:10px 6px;background:rgba(200,168,124,.08);border-radius:8px"><div style="font-size:18px;font-weight:700;color:var(--accent);font-family:var(--font-serif)">65</div><div style="font-size:8px;color:var(--text3)">Research</div></div><div style="text-align:center;padding:10px 6px;background:rgba(200,168,124,.08);border-radius:8px"><div style="font-size:18px;font-weight:700;color:var(--accent);font-family:var(--font-serif)">82</div><div style="font-size:8px;color:var(--text3)">Readiness</div></div><div style="text-align:center;padding:10px 6px;background:rgba(106,191,75,.08);border-radius:8px"><div style="font-size:18px;font-weight:700;color:#6abf4b;font-family:var(--font-serif)">71</div><div style="font-size:8px;color:var(--text3)">Financial</div></div></div><div style="font-size:10px;color:var(--text3);line-height:1.5;font-style:italic">\u201cResearch score of 65 indicates a gap \u2014 2 additional first-author publications would move this to 78.\u201d</div>'},
-  {icon:'\ud83d\udcc8',name:'Financial Projection Tool',desc:'Model 10\u201330 year income, savings, and debt paths.',
+  {cat:'model',icon:'\ud83d\udcc8',name:'Financial Projection Tool',desc:'Model 10\u201330 year income, savings, and debt paths.',
    preview:'<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px"><div style="padding:8px;background:rgba(106,191,75,.06);border:1px solid rgba(106,191,75,.15);border-radius:8px;text-align:center"><div style="font-size:8px;color:var(--text3)">With PSLF</div><div style="font-size:16px;font-weight:700;color:#6abf4b;font-family:var(--font-serif)">$4.2M</div><div style="font-size:8px;color:var(--text3)">10-yr net worth</div></div><div style="padding:8px;background:rgba(200,168,124,.06);border:1px solid rgba(200,168,124,.15);border-radius:8px;text-align:center"><div style="font-size:8px;color:var(--text3)">Without PSLF</div><div style="font-size:16px;font-weight:700;color:var(--accent);font-family:var(--font-serif)">$3.6M</div><div style="font-size:8px;color:var(--text3)">10-yr net worth</div></div></div><div style="font-size:10px;color:var(--text3);line-height:1.5;font-style:italic">\u201cPSLF creates a $600K advantage over refinancing \u2014 the most common mistake physicians make.\u201d</div>'},
-  {icon:'\ud83d\udcc4',name:'Contract Review Tool',desc:'Decode contracts clause by clause. Surface red flags and negotiation strategies.',
+  {cat:'decide',icon:'\ud83d\udcc4',name:'Contract Review Tool',desc:'Decode contracts clause by clause. Surface red flags and negotiation strategies.',
    preview:'<div style="display:flex;align-items:center;gap:12px;margin-bottom:10px"><div style="text-align:center"><div style="font-size:24px;font-weight:700;color:var(--accent);font-family:var(--font-serif)">B+</div><div style="font-size:8px;color:var(--text3)">Grade</div></div><div style="flex:1"><div style="display:flex;align-items:center;gap:4px;margin-bottom:3px"><span style="font-size:8px;color:var(--text3);width:55px">Base Salary</span><div style="flex:1;height:4px;background:rgba(200,168,124,.15);border-radius:2px"><div style="height:100%;width:82%;background:#6abf4b;border-radius:2px"></div></div></div><div style="display:flex;align-items:center;gap:4px;margin-bottom:3px"><span style="font-size:8px;color:var(--text3);width:55px">RVU Rate</span><div style="flex:1;height:4px;background:rgba(200,168,124,.15);border-radius:2px"><div style="height:100%;width:68%;background:var(--accent);border-radius:2px"></div></div></div><div style="display:flex;align-items:center;gap:4px"><span style="font-size:8px;color:#c44d56;width:55px">Non-compete</span><div style="flex:1;height:4px;background:rgba(200,168,124,.15);border-radius:2px"><div style="height:100%;width:35%;background:#c44d56;border-radius:2px"></div></div><span style="font-size:8px;color:#c44d56">\u26a0</span></div></div></div><div style="font-size:10px;color:var(--text3);line-height:1.5;font-style:italic">\u201cNon-compete: 2yr/30mi is aggressive. Negotiate to 1yr/15mi \u2014 #1 leverage point.\u201d</div>'},
-  {icon:'\ud83e\uddec',name:'Specialty Fit Assessment',desc:'Match your profile and goals against specialties with compatibility scores.',
+  {cat:'define',icon:'\ud83e\uddec',name:'Specialty Fit Assessment',desc:'Match your profile and goals against specialties with compatibility scores.',
    preview:'<div style="margin-bottom:10px"><div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><span style="font-size:9px;color:var(--text2);width:65px">Cardiology</span><div style="flex:1;height:6px;background:rgba(200,168,124,.12);border-radius:3px"><div style="height:100%;width:92%;background:var(--accent);border-radius:3px"></div></div><span style="font-size:9px;font-weight:600;color:var(--accent)">92%</span></div><div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><span style="font-size:9px;color:var(--text2);width:65px">GI</span><div style="flex:1;height:6px;background:rgba(200,168,124,.12);border-radius:3px"><div style="height:100%;width:78%;background:var(--accent);border-radius:3px;opacity:.7"></div></div><span style="font-size:9px;color:var(--text3)">78%</span></div><div style="display:flex;align-items:center;gap:8px"><span style="font-size:9px;color:var(--text2);width:65px">Pulm/Crit</span><div style="flex:1;height:6px;background:rgba(200,168,124,.12);border-radius:3px"><div style="height:100%;width:71%;background:var(--accent);border-radius:3px;opacity:.5"></div></div><span style="font-size:9px;color:var(--text3)">71%</span></div></div><div style="font-size:10px;color:var(--text3);line-height:1.5;font-style:italic">\u201cCardiology is your strongest fit \u2014 driven by procedural interest and research alignment.\u201d</div>'},
-  {icon:'\ud83c\udfaf',name:'Match Probability Calculator',desc:'Calculate weighted match probability by program tier.',
-   preview:'<div style="text-align:center;margin-bottom:10px"><div style="font-size:28px;font-weight:700;color:#6abf4b;font-family:var(--font-serif)">74%</div><div style="font-size:9px;color:var(--text3)">Estimated Match Probability \u2014 Cardiology</div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px"><div style="padding:6px;background:rgba(106,191,75,.06);border-radius:6px;text-align:center"><div style="font-size:9px;color:var(--text3)">Top 20</div><div style="font-size:12px;font-weight:600;color:#6abf4b">68%</div></div><div style="padding:6px;background:rgba(200,168,124,.06);border-radius:6px;text-align:center"><div style="font-size:9px;color:var(--text3)">Top 50</div><div style="font-size:12px;font-weight:600;color:var(--accent)">82%</div></div></div><div style="font-size:10px;color:var(--text3);line-height:1.5;font-style:italic">\u201cStep 2 of 258 is above 75th percentile. Research is your gap \u2014 2 more pubs pushes Top-20 to 79%.\u201d</div>'},
-  {icon:'\ud83d\uddfa\ufe0f',name:'Career Roadmap Tool',desc:'Build a milestone roadmap from current stage to goal.',
+  {cat:'execute',icon:'\ud83d\uddfa\ufe0f',name:'Career Roadmap Tool',desc:'Build a milestone roadmap from current stage to goal.',
    preview:'<div style="margin-bottom:10px;border-left:2px solid var(--accent);padding-left:10px"><div style="margin-bottom:8px"><div style="font-size:9px;font-weight:600;color:var(--accent)">MONTH 1\u20133</div><div style="font-size:10px;color:var(--text2)">Submit 2 abstracts, secure research mentor, begin LOR conversations</div></div><div style="margin-bottom:8px"><div style="font-size:9px;font-weight:600;color:var(--accent)">MONTH 4\u20136</div><div style="font-size:10px;color:var(--text2)">Away rotations, personal statement, submit ERAS</div></div><div><div style="font-size:9px;font-weight:600;color:var(--accent)">MONTH 7\u201312</div><div style="font-size:10px;color:var(--text2)">Interview circuit, rank list strategy, match prep</div></div></div><div style="font-size:10px;color:var(--text3);line-height:1.5;font-style:italic">\u201cCritical window is months 1\u20133. The research gap must close before ERAS opens.\u201d</div>'},
-  {icon:'\ud83c\udfa4',name:'Interview Practice Tool',desc:'Practice specialty-specific interview questions with structured feedback.',
+  {cat:'execute',icon:'\ud83c\udfa4',name:'Interview Practice Tool',desc:'Practice specialty-specific interview questions with structured feedback.',
    preview:'<div style="margin-bottom:10px;padding:10px;background:rgba(200,168,124,.06);border-radius:8px"><div style="font-size:9px;font-weight:600;color:var(--accent);margin-bottom:4px">SAMPLE QUESTION</div><div style="font-size:11px;color:var(--text);font-weight:500;margin-bottom:6px">\u201cWhy cardiology? What draws you to the field?\u201d</div><div style="font-size:9px;color:var(--text3)">Grade: <span style="color:#6abf4b;font-weight:600">B+</span> \u00b7 Structure: Strong \u00b7 Authenticity: Needs work</div></div><div style="font-size:10px;color:var(--text3);line-height:1.5;font-style:italic">\u201cGood structure but sounds rehearsed. Add a specific patient story.\u201d</div>'},
-  {icon:'\ud83c\udfc6',name:'Fellowship Readiness Assessment',desc:'Gap analysis for fellowship applications.',
+  {cat:'measure',icon:'\ud83c\udfc6',name:'Fellowship Readiness Assessment',desc:'Gap analysis for fellowship applications.',
    preview:'<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border)"><span style="font-size:9px;color:var(--text2)">Step 2 Score</span><span style="font-size:9px;font-weight:600;color:#6abf4b">\u2713 Strong</span></div><div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border)"><span style="font-size:9px;color:var(--text2)">Research</span><span style="font-size:9px;font-weight:600;color:#c44d56">\u26a0 Gap</span></div><div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border)"><span style="font-size:9px;color:var(--text2)">LORs</span><span style="font-size:9px;font-weight:600;color:var(--accent)">\u25cb Partial</span></div><div style="display:flex;justify-content:space-between;padding:4px 0"><span style="font-size:9px;color:var(--text2)">Leadership</span><span style="font-size:9px;font-weight:600;color:#6abf4b">\u2713 Strong</span></div></div><div style="font-size:10px;color:var(--text3);line-height:1.5;font-style:italic">\u201cPriority #1: close the research gap before ERAS. Everything else is on track.\u201d</div>'},
-  {icon:'\ud83d\udcb0',name:'RVU Compensation & Offer Comparison',desc:'Side-by-side comparison of job offers and RVU scenarios.',
+  {cat:'decide',icon:'\ud83d\udcb0',name:'RVU Compensation & Offer Comparison',desc:'Side-by-side comparison of job offers and RVU scenarios.',
    preview:'<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px"><div style="padding:8px;background:rgba(106,191,75,.06);border:1px solid rgba(106,191,75,.12);border-radius:8px;text-align:center"><div style="font-size:8px;color:var(--text3)">Offer A (Hospital)</div><div style="font-size:14px;font-weight:700;color:#6abf4b;font-family:var(--font-serif)">$580K</div><div style="font-size:8px;color:var(--text3)">Year 1</div></div><div style="padding:8px;background:rgba(200,168,124,.06);border:1px solid rgba(200,168,124,.12);border-radius:8px;text-align:center"><div style="font-size:8px;color:var(--text3)">Offer B (Private)</div><div style="font-size:14px;font-weight:700;color:var(--accent);font-family:var(--font-serif)">$720K</div><div style="font-size:8px;color:var(--text3)">Year 3+</div></div></div><div style="font-size:10px;color:var(--text3);line-height:1.5;font-style:italic">\u201cOffer B generates $1.4M more over 10 years \u2014 but carries more risk.\u201d</div>'},
-  {icon:'\ud83d\udd04',name:'Career Transition Planner',desc:'Evaluate career changes with structured cost-benefit analysis.',
+  {cat:'decide',icon:'\ud83d\udd04',name:'Career Transition Planner',desc:'Evaluate career changes with structured cost-benefit analysis.',
    preview:'<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px"><div style="padding:8px;background:rgba(200,168,124,.06);border-radius:8px;text-align:center"><div style="font-size:8px;color:var(--text3)">Stay Current</div><div style="font-size:14px;font-weight:700;color:var(--accent);font-family:var(--font-serif)">$8.2M</div><div style="font-size:8px;color:var(--text3)">Lifetime</div></div><div style="padding:8px;background:rgba(106,191,75,.06);border-radius:8px;text-align:center"><div style="font-size:8px;color:var(--text3)">Switch Now</div><div style="font-size:14px;font-weight:700;color:#6abf4b;font-family:var(--font-serif)">$9.8M</div><div style="font-size:8px;color:var(--text3)">Lifetime</div></div></div><div style="font-size:10px;color:var(--text3);line-height:1.5;font-style:italic">\u201cSwitching nets $1.6M more even with 2 extra years of training.\u201d</div>'},
-  {icon:'\ud83d\udd2c',name:'Research Impact Calculator',desc:'Score publications and projects by real competitive value.',
+  {cat:'measure',icon:'\ud83d\udd2c',name:'Research Impact Calculator',desc:'Score publications and projects by real competitive value.',
    preview:'<div style="text-align:center;margin-bottom:10px"><div style="font-size:24px;font-weight:700;color:var(--accent);font-family:var(--font-serif)">62 / 100</div><div style="font-size:9px;color:var(--text3)">Research Portfolio Score</div><div style="height:6px;background:rgba(200,168,124,.12);border-radius:3px;margin-top:6px"><div style="height:100%;width:62%;background:var(--accent);border-radius:3px"></div></div></div><div style="font-size:10px;color:var(--text3);line-height:1.5;font-style:italic">\u201c3 pubs score well, but 0 first-author papers is the gap. One first-author adds ~18 points.\u201d</div>'},
-  {icon:'\ud83d\udccb',name:'Contract Risk Assessment',desc:'Quick 5-minute risk assessment for any offer.',
+  {cat:'decide',icon:'\ud83d\udccb',name:'Contract Risk Assessment',desc:'Quick 5-minute risk assessment for any offer.',
    preview:'<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border)"><span style="font-size:9px;color:var(--text2)">Compensation</span><span style="font-size:9px;font-weight:600;color:#6abf4b">Low Risk</span></div><div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border)"><span style="font-size:9px;color:var(--text2)">Non-Compete</span><span style="font-size:9px;font-weight:600;color:#c44d56">High Risk</span></div><div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border)"><span style="font-size:9px;color:var(--text2)">Tail Coverage</span><span style="font-size:9px;font-weight:600;color:var(--accent)">Medium</span></div><div style="display:flex;justify-content:space-between;padding:4px 0"><span style="font-size:9px;color:var(--text2)">Termination</span><span style="font-size:9px;font-weight:600;color:#6abf4b">Low Risk</span></div></div><div style="font-size:10px;color:var(--text3);line-height:1.5;font-style:italic">\u201cOverall: Medium risk. The non-compete is the issue \u2014 negotiate before signing.\u201d</div>'}
 ];
 function buildLPToolGrid(){
   var grid=document.getElementById('lp-tools-grid');
   if(!grid)return;
+  var cats=[
+    {key:'define',icon:'\ud83e\uddec',title:'Define Your Path'},
+    {key:'measure',icon:'\ud83c\udfc6',title:'Measure Your Position'},
+    {key:'model',icon:'\ud83d\udd2e',title:'Model Your Future'},
+    {key:'decide',icon:'\u2696\ufe0f',title:'Make Better Decisions'},
+    {key:'execute',icon:'\ud83d\ude80',title:'Execute Your Strategy'}
+  ];
   var h='';
-  LP_TOOLS.forEach(function(t,i){
-    h+='<div class="lp-tool-card" onclick="toggleLPPreview('+i+')" style="padding:20px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;cursor:pointer;transition:all .25s">';
-    h+='<div style="display:flex;align-items:center;justify-content:space-between"><div style="font-size:16px;margin-bottom:6px">'+t.icon+'</div><span class="lp-tool-arrow" id="lp-arrow-'+i+'" style="font-size:10px;color:var(--text3);transition:transform .2s">\u25bc</span></div>';
-    h+='<div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:4px">'+t.name+'</div>';
-    h+='<div style="font-size:10px;color:var(--text3);line-height:1.5">'+t.desc+'</div>';
-    h+='<div id="lp-preview-'+i+'" style="display:none;margin-top:14px;padding-top:14px;border-top:1px solid var(--border)">';
-    h+='<div style="font-size:9px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">SAMPLE OUTPUT</div>';
-    h+=t.preview;
-    h+='<div style="text-align:center;margin-top:10px"><span style="font-size:10px;color:var(--accent);font-weight:600;cursor:pointer" onclick="event.stopPropagation();go(\'pg-onboard\')">Try it free \u2192</span></div>';
-    h+='</div></div>';
+  cats.forEach(function(cat){
+    var tools=LP_TOOLS.filter(function(t){return t.cat===cat.key});
+    if(!tools.length)return;
+    h+='<div style="grid-column:1/-1;display:flex;align-items:center;gap:8px;margin-top:18px;margin-bottom:4px">';
+    h+='<span style="font-size:16px">'+cat.icon+'</span>';
+    h+='<span style="font-size:13px;font-weight:600;color:var(--accent);letter-spacing:.3px">'+cat.title+'</span>';
+    h+='</div>';
+    tools.forEach(function(t){
+      var i=LP_TOOLS.indexOf(t);
+      h+='<div class="lp-tool-card" onclick="toggleLPPreview('+i+')" style="padding:20px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;cursor:pointer;transition:all .25s">';
+      h+='<div style="display:flex;align-items:center;justify-content:space-between"><div style="font-size:16px;margin-bottom:6px">'+t.icon+'</div><span class="lp-tool-arrow" id="lp-arrow-'+i+'" style="font-size:10px;color:var(--text3);transition:transform .2s">\u25bc</span></div>';
+      h+='<div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:4px">'+t.name+'</div>';
+      h+='<div style="font-size:10px;color:var(--text3);line-height:1.5">'+t.desc+'</div>';
+      h+='<div id="lp-preview-'+i+'" style="display:none;margin-top:14px;padding-top:14px;border-top:1px solid var(--border)">';
+      h+='<div style="font-size:9px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">SAMPLE OUTPUT</div>';
+      h+=t.preview;
+      h+="<div style=\"text-align:center;margin-top:10px\"><span style=\"font-size:10px;color:var(--accent);font-weight:600;cursor:pointer\" onclick=\"event.stopPropagation();go('pg-onboard')\">Try it free \u2192</span></div>";
+      h+='</div></div>';
+    });
   });
   grid.innerHTML=h;
 }
@@ -6621,10 +6658,21 @@ function toggleLPPreview(idx){
   if(isOpen){el.style.display='none';if(arrow)arrow.style.transform=''}
   else{el.style.display='';if(arrow)arrow.style.transform='rotate(180deg)';setTimeout(function(){el.scrollIntoView({behavior:'smooth',block:'nearest'})},100)}
 }
-if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',buildLPToolGrid)}else{buildLPToolGrid()}
+if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',function(){buildLPToolGrid();hwSyncCounts()})}else{buildLPToolGrid();hwSyncCounts()}
+function hwSyncCounts(){document.querySelectorAll('.hw-physician-count').forEach(function(el){el.textContent=HW_PHYSICIAN_COUNT})}
 
 // Landing page hook — 3-question quiz with demo previews
 var hookA={stage:null,goal:null,urgency:null};
+
+function hookRetake(){
+  hookA={stage:null,goal:null,urgency:null};
+  document.querySelectorAll('.hook-opt,.hook-opt2,.hook-opt3').forEach(function(b){b.style.borderColor='var(--border)';b.style.background='var(--bg2)'});
+  document.getElementById('hook-q2').style.display='none';
+  document.getElementById('hook-q3').style.display='none';
+  document.getElementById('hook-results').style.display='none';
+  var tp=document.getElementById('hook-tool-preview');if(tp)tp.style.display='none';
+  document.getElementById('hook-q1').scrollIntoView({behavior:'smooth',block:'center'});
+}
 
 function hookQ(q,val,btn){
   var cls=q===1?'.hook-opt':q===2?'.hook-opt2':'.hook-opt3';

@@ -148,6 +148,26 @@ function lpTab(name){
 
 
 
+// Why HeartWise — stage tabs
+function whyStage(stage){
+  document.querySelectorAll('.why-stage-btn').forEach(function(b){
+    if(b.getAttribute('data-stage')===stage){
+      b.classList.add('why-stage-active');
+      b.style.color='var(--accent)';b.style.background='var(--bg)';b.style.borderColor='var(--border2)';
+    } else {
+      b.classList.remove('why-stage-active');
+      b.style.color='var(--text3)';b.style.background='var(--bg3)';b.style.borderColor='var(--border)';
+    }
+  });
+  document.querySelectorAll('.why-stage-panel').forEach(function(p){
+    if(p.getAttribute('data-stage')===stage){
+      p.style.display='block';p.classList.add('why-stage-show');
+    } else {
+      p.style.display='none';p.classList.remove('why-stage-show');
+    }
+  });
+}
+
 // Landing page tool grid with expandable previews
 var LP_TOOLS=[
   {icon:'\ud83d\udcca',name:'Match Probability Calculator',desc:'Score your profile against benchmarked metrics for your specialty.',

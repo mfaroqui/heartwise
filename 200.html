@@ -4826,6 +4826,8 @@ v1:`<h3 class="serif">Fellowship Readiness Assessment</h3>
 <div id="frc-timeline-msg" style="font-size:12px;color:var(--red);line-height:1.6"></div>
 </div>
 
+<div id="frc-pathway"></div>
+
 </div>
 
 <p style="font-size:10px;color:var(--text3);margin-top:12px;font-style:italic">Weighted scoring based on NRMP Charting Outcomes and program director surveys. Category weights vary by specialty competitiveness. This is a self-assessment framework — not a match prediction.</p>
@@ -6500,6 +6502,32 @@ v17:`<h3 class="serif">Observership Database</h3>
 
 // ===== GLOBAL CONSTANTS =====
 var HW_PHYSICIAN_COUNT='250+';
+
+// ===== TOOL PATHWAY CONNECTOR =====
+function hwPathway(position,actions,nextTool){
+  var h='<div style="margin-top:20px;padding:20px;background:linear-gradient(160deg,var(--bg2),rgba(200,168,124,.03));border:1px solid var(--border2);border-radius:12px">';
+  h+='<div style="font-size:14px;font-weight:600;color:var(--text);line-height:1.6;margin-bottom:16px;font-family:var(--font-serif)">'+position+'</div>';
+  if(actions&&actions.length){
+    h+='<div style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:10px">\u2705 Your Top Actions</div>';
+    actions.forEach(function(a,i){
+      var timeColor=a.when==='this week'?'var(--red)':a.when==='this month'?'var(--accent)':'var(--text3)';
+      h+='<div style="display:flex;gap:10px;padding:10px 12px;background:var(--bg);border-radius:8px;margin-bottom:6px;border-left:3px solid '+(i===0?'var(--green)':i===1?'var(--accent)':'var(--text3)')+'">';
+      h+='<div style="font-size:16px;font-weight:700;color:var(--accent);flex-shrink:0;width:20px;text-align:center">'+(i+1)+'</div>';
+      h+='<div style="flex:1"><div style="font-size:12px;font-weight:600;color:var(--text);line-height:1.5">'+a.text+'</div>';
+      h+='<div style="font-size:10px;color:'+timeColor+';font-weight:500;margin-top:3px">\u23f0 '+a.when+'</div></div></div>';
+    });
+  }
+  if(nextTool){
+    h+='<div style="margin-top:14px;padding:14px;background:var(--accent-dim);border:1px solid var(--border2);border-radius:10px;cursor:pointer;transition:all .2s" onclick="openFramework(\''+nextTool.id+'\')" onmouseenter="this.style.transform=\'translateY(-1px)\'" onmouseleave="this.style.transform=\'none\'">';
+    h+='<div style="display:flex;align-items:center;gap:10px">';
+    h+='<div style="font-size:22px;flex-shrink:0">'+nextTool.icon+'</div>';
+    h+='<div style="flex:1"><div style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:2px">YOUR NEXT STEP \u2192</div>';
+    h+='<div style="font-size:13px;font-weight:600;color:var(--text)">'+nextTool.title+'</div>';
+    h+='<div style="font-size:11px;color:var(--text3);margin-top:2px">'+nextTool.why+'</div></div></div></div>';
+  }
+  h+='</div>';
+  return h;
+}
 // ===== TOPBAR SCROLL EFFECT =====
 (function(){
   const lp=document.getElementById('pg-landing');
@@ -9828,6 +9856,15 @@ function crsCalc(){
   h+='<p style="margin:0">Use the <strong>Job Offer Comparison Tool</strong> to compare this against other offers, or the <strong>RVU Calculator</strong> to model your actual take-home based on the compensation structure.</p>';
   h+='</div></div>';
 
+  // Pathway
+  var crsPos=pct>=85?'This contract protects you. Sign with confidence after a final attorney review.':pct>=70?'Decent contract \u2014 don\u2019t sign until you fix the flagged items.':pct>=50?'Do not sign as-is. You have leverage.':'Walk away or bring an attorney.';
+  var crsAct=[];
+  if(reds.length)crsAct.push({text:'Fix '+reds[0].cat+': '+reds[0].text,when:'this week'});
+  if(reds.length>1)crsAct.push({text:'Fix '+reds[1].cat+': '+reds[1].text,when:'this week'});
+  else if(yellows.length)crsAct.push({text:'Negotiate '+yellows[0].cat+': '+yellows[0].text,when:'before signing'});
+  crsAct.push({text:'Run your compensation through the RVU Calculator.',when:'this week'});
+  h+=hwPathway(crsPos,crsAct,{id:'v4',icon:'\ud83d\udcb0',title:'RVU Compensation Calculator',why:'Verify whether this contract\u2019s compensation is actually competitive for your specialty and volume.'});
+
   // Completion indicator
   if(answered<total){
     h+='<div style="text-align:center;margin-top:12px;font-size:11px;color:var(--text3)">'+answered+' of '+total+' questions answered. Complete all for the most accurate score.</div>';
@@ -10130,6 +10167,11 @@ function ocmCompare(){
   h+='</div></div>';
 
   document.getElementById('ocm-results').innerHTML=h;
+
+  // Pathway
+  var ocmDiff2=Math.round(Math.abs(cA.totalWithRetire-cB.totalWithRetire)/1000);
+  document.getElementById('ocm-results').innerHTML+=hwPathway('<strong>'+winner+' wins</strong> by $'+ocmDiff2+'K in true 10-year value. But money alone doesn\u2019t decide \u2014 factor in non-compete, call, and location.',[{text:'Run both contracts through Contract Risk Assessment for hidden clauses.',when:'this week'},{text:'Model both in the Financial Projection Tool for 30-year compounding.',when:'this week'},{text:'Negotiate the weaker offer\u2019s terms up \u2014 you have leverage.',when:'before signing'}],{id:'v11',icon:'\ud83d\udcc8',title:'Financial Projection Tool',why:'See how each offer compounds over 30 years.'});
+
   applyBlurGate(document.getElementById('ocm-results'));
   document.getElementById('ocm-results').scrollIntoView({behavior:'smooth',block:'start'});
   // Save scenario for compare
@@ -10264,6 +10306,10 @@ function sfaUpdate(){
   h+='</div>';
 
   h+='<p style="font-size:10px;color:var(--text3);font-style:italic;margin-top:12px">This analysis is directional guidance based on your preferences. Shadow, rotate, and talk to physicians in each field before committing.</p>';
+
+  // Pathway
+  h+=hwPathway('Based on your answers, <strong>'+top[0].name+'</strong> is your strongest fit. But a fit score means nothing until you\u2019ve tested it.',[{text:'Shadow or rotate in '+top[0].name+' \u2014 even 2-3 days gives real signal.',when:'this month'},{text:'Talk to a current PGY-3 or fellow for the unfiltered truth.',when:'this month'},{text:'Check your competitiveness before you commit.',when:'this month'}],{id:'v14',icon:'\ud83c\udfaf',title:'Match Probability Calculator',why:'See if you\u2019re actually competitive for '+top[0].name+'.'});
+
   document.getElementById('sfa-results').innerHTML=h;
   applyBlurGate(document.getElementById('sfa-results'));
   // Save scenario for compare
@@ -11390,26 +11436,26 @@ function csbGenerate(){
     h+='</ul></div>';
   });
 
-  // Recommended next tools
-  var nextTools=[];
-  if(firstAuth===0||totalResearch<3)nextTools.push({id:'v7',icon:'\u2696\ufe0f',name:'Research Impact Calculator',why:'See where your research portfolio stands'});
-  if(now!=='fellow'&&now!=='attending')nextTools.push({id:'v14',icon:'\ud83c\udfc6',name:'Match Probability Calculator',why:'Check your match probability with current stats'});
-  if(now==='fellow'||now==='attending')nextTools.push({id:'v12',icon:'\ud83d\udcdd',name:'Contract Review Tool',why:'Score any contract offer before responding'});
-  if(concern==='direction')nextTools.push({id:'v13',icon:'\ud83d\udd2c',name:'Specialty Fit Assessment',why:'Find which specialties match your personality'});
-  if(concern==='finance'||now==='fellow'||now==='attending')nextTools.push({id:'v11',icon:'\ud83d\udcb0',name:'Financial Projection Tool',why:'See 30-year financial impact of your choices'});
-  if(now!=='ms1'&&now!=='ms2')nextTools.push({id:'v16',icon:'\ud83c\udfa4',name:'Interview Practice Tool',why:'Practice real interview questions'});
+  // Pathway: position + prioritized actions + connect forward
+  var csbPos=warnings.length>=2?'Based on your profile, you have significant gaps to close for '+tName+'. But here\u2019s the good news: you have a roadmap now. Most applicants are guessing \u2014 you\u2019re not.'
+    :warnings.length===1&&gaps.length>=2?'You\u2019re in the fight for '+tName+', but you\u2019re not competitive yet. The timeline above is your playbook \u2014 follow it in order, starting this week.'
+    :gaps.length>=2?'Solid foundation for '+tName+', with clear gaps to close. You\u2019re ahead of most applicants because you know exactly where to focus.'
+    :strengths.length>=3?'You\u2019re in a strong position for '+tName+'. Your profile has multiple competitive strengths. Now it\u2019s about execution and polish \u2014 don\u2019t coast.'
+    :'Your roadmap to '+tName+' is built. The difference between applicants who match and those who don\u2019t is execution. Start Phase 1 today.';
+  var csbActs=[];
+  if(phases.length>0&&phases[0].items.length>0)csbActs.push({text:phases[0].items[0].replace(/<[^>]+>/g,''),when:'this week'});
+  if(warnings.length>0)csbActs.push({text:warnings[0],when:'this week'});
+  else if(gaps.length>0)csbActs.push({text:gaps[0],when:'this month'});
+  else if(phases.length>0&&phases[0].items.length>1)csbActs.push({text:phases[0].items[1].replace(/<[^>]+>/g,''),when:'this month'});
+  csbActs.push({text:'Set a weekly 30-minute block to review this roadmap and track progress. Accountability wins.',when:'this week'});
+  var csbNxt;
+  if(firstAuth===0||totalResearch<3)csbNxt={id:'v7',icon:'\u2696\ufe0f',title:'Research Impact Calculator',why:'Research is your biggest lever right now. See exactly which activities move the needle most.'};
+  else if(now!=='fellow'&&now!=='attending')csbNxt={id:'v14',icon:'\ud83c\udfc6',title:'Match Probability Calculator',why:'Get a real match probability with your current stats \u2014 see where you stand.'};
+  else if(now==='attending')csbNxt={id:'v12',icon:'\ud83d\udcdd',title:'Contract Review Tool',why:'Score any contract offer before you respond. Don\u2019t sign anything unreviewed.'};
+  else csbNxt={id:'v1',icon:'\ud83d\udcca',title:'Fellowship Readiness Assessment',why:'Get a detailed score across all 7 dimensions of your application.'};
+  h+=hwPathway(csbPos,csbActs,csbNxt);
 
-  if(nextTools.length){
-    h+='<div style="margin-top:20px;padding:16px;background:var(--bg2);border:1px solid var(--border);border-radius:12px">';
-    h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">\ud83e\udde0 Recommended Next Steps</div>';
-    nextTools.slice(0,4).forEach(function(t){
-      h+='<div onclick="openFramework(\''+t.id+'\')" style="display:flex;align-items:center;gap:10px;padding:10px;margin-bottom:6px;background:var(--bg3);border-radius:8px;cursor:pointer;transition:background .2s" onmouseenter="this.style.background=\'rgba(198,168,94,.08)\'" onmouseleave="this.style.background=\'var(--bg3)\'">';
-      h+='<span style="font-size:18px">'+t.icon+'</span><div><div style="font-size:12px;font-weight:600;color:var(--text)">'+t.name+'</div><div style="font-size:10px;color:var(--text3)">'+t.why+'</div></div></div>';
-    });
-    h+='</div>';
-  }
-
-  h+='<div style="margin-top:20px;padding:14px;background:var(--accent-dim);border:1px solid rgba(198,168,94,.15);border-radius:10px;text-align:center">';
+  h+='<div style="margin-top:14px;padding:14px;background:var(--accent-dim);border:1px solid rgba(198,168,94,.15);border-radius:10px;text-align:center">';
   h+='<div style="font-size:12px;color:var(--accent);font-weight:600;margin-bottom:4px">Want expert review of your roadmap?</div>';
   h+='<div style="font-size:11px;color:var(--text3)">Submit an Application Review for Dr. Faroqui\u2019s personalized assessment.</div></div>';
 
@@ -12260,6 +12306,16 @@ function frcUpdate(){
       tlMsg.innerHTML='<strong>⚠️ Timeline concern:</strong> With 1 year and a score of '+total+'/100, you have time to improve — but it requires urgency. Focus exclusively on your top 2 weighted gaps starting this week.';
     }else{tlWarn.style.display='none'}
   }else if(tlWarn){tlWarn.style.display='none'}
+
+  // Pathway connector
+  var frcPos=total>=80?'You\u2019re ready to compete.'+(sData?' Your '+sData.name+' application is strong.':''):total>=60?'Competitive core, clear gaps. Close them and you\u2019re in the fight.':'Honest truth: you have work to do.'+(total<40?' A strategic delay may be the smart play.':'');
+  var frcAct=[];
+  if(gaps.length>0)frcAct.push({text:gaps[0].cat+' is your #1 gap (weight: '+gaps[0].weight+'%). Fix this first.',when:'this week'});
+  if(gaps.length>1)frcAct.push({text:gaps[1].cat+' is gap #2. Start building a plan.',when:'this month'});
+  frcAct.push({text:total>=60?'Practice interview answers \u2014 a strong app means nothing if you can\u2019t sell it.':'Build your research portfolio \u2014 even one first-author paper changes your profile.',when:total>=60?'this month':'next 3 months'});
+  var frcNxt=total>=70?{id:'v16',icon:'\ud83c\udf99\ufe0f',title:'Interview Practice Tool',why:'Your app is competitive \u2014 now prepare to sell it.'}:rawScores[0]<=2?{id:'v7',icon:'\u2696\ufe0f',title:'Research Impact Calculator',why:'Research is your biggest gap. See which pubs move the needle most.'}:{id:'v14',icon:'\ud83c\udfaf',title:'Match Probability Calculator',why:'Get a full competitiveness score to see where you stand.'};
+  var frcPwEl=document.getElementById('frc-pathway');
+  if(frcPwEl)frcPwEl.innerHTML=hwPathway(frcPos,frcAct,frcNxt);
 
   // Record
   var frcInputs={};var frcHL=[];
@@ -15056,6 +15112,10 @@ function rvuUpdate(){
       }
       negotiateHtml+='</div>';
       document.getElementById('rvu-scenarios').insertAdjacentHTML('afterend', negotiateHtml);
+
+      // Pathway
+      var rvuPw=hwPathway(diffFromMgma<-20000?'You\u2019re significantly underpaid. Negotiate before signing.':diffFromMgma<0?'Below market \u2014 negotiable.':'Compensation is strong. Focus on contract terms.',[{text:diffFromMgma<0?'Counter with a specific per-wRVU rate increase.':'Review non-compete, tail coverage, and call terms.',when:'this week'},{text:'Pull MGMA data for your exact specialty and region.',when:'this week'},{text:'Run the full contract through Contract Review.',when:'before signing'}],diffFromMgma<0?{id:'v3',icon:'\u2696\ufe0f',title:'Job Offer Comparison Tool',why:'Compare against other offers to strengthen your position.'}:{id:'v12',icon:'\ud83d\udcdd',title:'Contract Review Tool',why:'Comp looks good \u2014 make sure the contract terms don\u2019t have hidden costs.'});
+      document.getElementById('rvu-scenarios').insertAdjacentHTML('afterend', rvuPw);
     }
   }
   // Record with resultData for saved scenarios
@@ -15185,6 +15245,9 @@ function fypCalculate(){
     h+='<div style="font-size:12px;color:var(--red);margin-top:10px;line-height:1.6"><strong>\u26a0\ufe0f Reality check:</strong> Your Year 1 savings rate is '+yr1Save+'%. That\u2019s below where it needs to be. Either cut $'+Math.round((0.20*years[0].net-years[0].taxAdv-years[0].investable)/12).toLocaleString()+'/mo from expenses or find $'+Math.round((0.20*years[0].net-years[0].taxAdv-years[0].investable)/12).toLocaleString()+'/mo in additional income (moonlighting, locums weekends).</div>';
   }
   h+='</div>';
+
+  // Pathway
+  h+=hwPathway(y3.netWealth>=0?'Positive net worth by Year 3 \u2014 ahead of most physicians.':'Still in the red at Year 3 \u2014 normal with $'+Math.round(debt/1000)+'K debt. Hold expenses flat.',[{text:'Set up 401k + backdoor Roth this week.',when:'this week'},{text:(pslf==='yes'?'Certify PSLF employment.':'Refinance your loans.')+' Free money.',when:'this week'},{text:'Automate savings at '+yr1Save+'%'+(yr1Save<20?' (push to 20%)':'')+' before lifestyle creep.',when:'this month'}],{id:'v8',icon:'\ud83d\udcb5',title:'Debt & Income Strategy Tool',why:'Get a full financial health score \u2014 disability, tax strategy, advisor quality.'});
 
   document.getElementById('fyp-results').innerHTML=h;
   recordToolUse('3-Year Financial Planner',null,'Y3 Wealth: $'+Math.round(y3.netWealth/1000)+'K | Invested: $'+Math.round(y3.cumInvested/1000)+'K',{inputs:{Salary:'$'+salary.toLocaleString(),Debt:'$'+debt.toLocaleString(),Rate:(rate*100).toFixed(1)+'%',Expenses:'$'+expenses.toLocaleString(),PSLF:pslf||'N/A'},highlights:['Year 3 Net Wealth: $'+Math.round(y3.netWealth/1000)+'K','Total Invested: $'+Math.round(y3.cumInvested/1000)+'K','Remaining Debt: $'+Math.round(y3.remainDebt/1000)+'K']});
@@ -15504,13 +15567,28 @@ function roiUpdate(){
     }
   }
 
-  // Match Calculator link
+  // Pathway: position + prioritized actions + connect forward
   var linkEl=document.getElementById('roi-match-link');
   if(linkEl){
     if(totalItems>0){
-      linkEl.innerHTML='<div style="padding:14px;background:var(--bg2);border-radius:8px;border:1px solid var(--border);text-align:center">'+
-        '<div style="font-size:12px;color:var(--text2);margin-bottom:8px">See how this research score affects your match probability</div>'+
-        '<button onclick="closeModal(\'modal-q\');setTimeout(function(){openFramework(\'v14\')},300)" style="padding:8px 20px;border-radius:8px;border:1px solid var(--accent);background:transparent;color:var(--accent);font-size:12px;font-weight:600;cursor:pointer;transition:all .15s" onmouseenter="this.style.background=\'var(--accent)\';this.style.color=\'var(--bg)\'" onmouseleave="this.style.background=\'transparent\';this.style.color=\'var(--accent)\'">Run Match Calculator →</button></div>';
+      var roiPos=pct>=90?'Your research portfolio exceeds the benchmark for '+(spec?specNames[spec]:'your specialty')+'. Research is no longer your bottleneck — shift your energy to interview prep and letters.'
+        :pct>=70?'Competitive portfolio for '+(spec?specNames[spec]:'your target')+'. You\'re in the fight. One more strategic publication pushes you to excellent.'
+        :pct>=50?'You\'re building, but not competitive yet for '+(spec?specNames[spec]:'competitive specialties')+'. The next 2-3 months of focused effort will define your application.'
+        :pct>=25?'Honest assessment: your research is below where it needs to be. But this is fixable if you start the right project today — not next month, today.'
+        :'You\'re starting from zero. That\'s not fatal — some of the strongest applicants started late. But you need to move fast and pick high-ROI activities.';
+      var roiActs=[];
+      if(pct<50&&first===0)roiActs.push({text:'Start a case report this week. Fastest path to first publication (2-4 months). Pick a case you\'ve already seen.',when:'this week'});
+      else if(pct<70&&first<2)roiActs.push({text:'Begin a first-author project. One first-author paper outweighs 5 middle-author credits.',when:'this week'});
+      else if(pct>=70&&pct<90)roiActs.push({text:'Submit your next manuscript or target a higher-impact journal for maximum portfolio lift.',when:'this month'});
+      else roiActs.push({text:'Shift focus to letters of recommendation — lock in 3 specialty-specific writers who know your work.',when:'this week'});
+      if(abstracts<2)roiActs.push({text:'Submit 2 conference abstracts (ACC, AHA, or your specialty meeting). Fastest CV lines and PD visibility.',when:'this month'});
+      else roiActs.push({text:'Follow up on submitted work — chase revisions, resubmit rejections, push pending manuscripts.',when:'this week'});
+      if(pct<90)roiActs.push({text:'Check your actual match competitiveness with current stats — research is one piece of the puzzle.',when:'this month'});
+      else roiActs.push({text:'Practice interview answers about your research — PDs will ask. Have a 60-second pitch for each project.',when:'this month'});
+      var roiNxt=pct>=80?{id:'v16',icon:'\ud83c\udf99\ufe0f',title:'Interview Practice Tool',why:'Your research is strong — now practice selling it in interviews.'}
+        :pct>=50?{id:'v14',icon:'\ud83c\udfc6',title:'Match Probability Calculator',why:'See how this research score combines with your other stats for a real match probability.'}
+        :{id:'v1',icon:'\ud83d\udcca',title:'Fellowship Readiness Assessment',why:'Research is one category. See where you stand across all 7 dimensions.'};
+      linkEl.innerHTML=hwPathway(roiPos,roiActs,roiNxt);
     }else{
       linkEl.innerHTML='';
     }
@@ -15865,6 +15943,27 @@ async function submitPivot(){
   }
   document.getElementById('pivot-form').classList.add('hidden');
   document.getElementById('pivot-success').classList.remove('hidden');
+  // Pathway: position + prioritized actions + connect forward
+  var pvBest=options.slice().sort(function(a,b){return parseFloat(b.avg)-parseFloat(a.avg)})[0];
+  var pvBestAvg=pvBest?parseFloat(pvBest.avg):0;
+  var pvPos=readiness>=3&&regretVal==='yes'?'Based on your readiness score and regret test, the data says: make the move. Your highest-rated option is <strong>'+pvBest.label+'</strong> ('+pvBest.avg+'/5). Stop deliberating and start executing.'
+    :readiness>=3?'You\u2019ve done the groundwork. Your readiness score says you\u2019re ready to decide. The question isn\u2019t whether to act \u2014 it\u2019s which path to commit to.'
+    :readiness>=2?'You\u2019re almost ready, but you have gaps in your validation checklist. Close those gaps before making a final decision \u2014 one more month of due diligence beats a premature leap.'
+    :'You need more groundwork before deciding. A career transition without proper validation is a coin flip. Complete the readiness checklist items you missed.';
+  var pvActs=[];
+  if(readiness<3){
+    var unchecked=checks.filter(function(c){return !c.done});
+    if(unchecked.length)pvActs.push({text:unchecked[0].label+' \u2014 this is your most critical gap right now.',when:'this week'});
+    if(unchecked.length>1)pvActs.push({text:unchecked[1].label+' \u2014 don\u2019t skip this step.',when:'this month'});
+  }else{
+    pvActs.push({text:'Set a firm decision date within 30 days. Open-ended "maybe someday" never happens.',when:'this week'});
+    pvActs.push({text:pvBestAvg>=4?'Start building your transition plan for '+pvBest.label+'.':'Compare your top 2 options with real conversations \u2014 talk to people who\u2019ve made the move.',when:'this month'});
+  }
+  pvActs.push({text:trainCost>0?'Run the financial reality through the projection tool \u2014 $'+trainCost.toLocaleString()+' transition cost needs a plan.':'Model the financial impact of each option over 30 years.',when:'this month'});
+  var pvNxt=trainCost>50000?{id:'v11',icon:'\ud83d\udcc8',title:'Financial Projection Tool',why:'A $'+Math.round(trainCost/1000)+'K transition cost needs 30-year modeling. Make sure the math works.'}
+    :readiness>=3?{id:'v12',icon:'\ud83d\udcdd',title:'Contract Review Tool',why:'When you get an offer in the new direction, score every clause before signing.'}
+    :{id:'v13',icon:'\ud83e\uddec',title:'Specialty Fit Assessment',why:'Before you pivot, validate that the new direction actually fits who you are now \u2014 not who you were.'};
+  document.getElementById('pivot-success').innerHTML='<div style="font-size:48px;margin-bottom:16px">\u2713</div><h3 class="serif" style="font-size:20px;margin-bottom:8px">Report Submitted</h3><p style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:20px">Your Career Transition Planner report has been sent to Dr. Faroqui for review.</p>'+hwPathway(pvPos,pvActs,pvNxt);
   notify('Decision Engine report submitted!');
   var pivotInputs={'Cause':causeLabel+(causeOther?' — '+causeOther:''),'Burnout':burnout?burnout.value:'—','Training Years':yrs,'Training Cost':'$'+trainCost.toLocaleString()};
   var pivotHL=['Readiness: '+readyLabel+' ('+readiness+'/4)'];
@@ -16384,8 +16483,24 @@ function misGrade(){
 
   h+='</div></div>';
 
+  // Pathway: position + prioritized actions + connect forward
+  var misPos=avgScore>=80?'Based on this session, you\'re interview-ready. Your answers show the specificity, self-awareness, and structure that program directors remember. Now polish delivery.'
+    :avgScore>=60?'You have solid instincts but you\'re leaving points on the table. The difference between "fine" and "they loved me" is 10 hours of targeted practice.'
+    :avgScore>=40?'You\'re not ready for a real interview yet — but that\'s exactly why you\'re here. Focus on the weakest answers above and rewrite them from scratch.'
+    :'Honest truth: if you interviewed today, you\'d be forgotten. But every strong interviewer started here. This is your starting line, not your ceiling.';
+  var misActs=[];
+  if(avgScore<60)misActs.push({text:'Rewrite your weakest answer using STAR format (Situation, Task, Action, Result). Then say it out loud 3 times.',when:'this week'});
+  else misActs.push({text:'Record yourself answering your weakest question. Watch it once. You\'ll immediately see what to fix.',when:'this week'});
+  if(totalRed>0)misActs.push({text:'Eliminate every red flag identified above — any single one can tank an otherwise decent interview.',when:'this week'});
+  else misActs.push({text:'Do a mock interview with an attending — not a friend. You need someone who\'ll be honest, not nice.',when:'this month'});
+  misActs.push({text:'Come back and retake this in 1-2 weeks. Track your score improvement — that\'s evidence of growth.',when:'this month'});
+  var misNxt=avgScore>=70?{id:'v1',icon:'\ud83d\udcca',title:'Fellowship Readiness Assessment',why:'Interviews are one piece. See where you stand across all 7 dimensions.'}
+    :avgScore>=40?{id:'v15',icon:'\ud83d\uddfa\ufe0f',title:'Career Roadmap Tool',why:'Build a complete timeline — interviews are late-stage. Make sure everything else is on track.'}
+    :{id:'v14',icon:'\ud83c\udfc6',title:'Match Probability Calculator',why:'Check your overall competitiveness — interview skills matter more when your stats are borderline.'};
+  h+=hwPathway(misPos,misActs,misNxt);
+
   // Retake button
-  h+='<div style="display:flex;gap:10px">';
+  h+='<div style="display:flex;gap:10px;margin-top:14px">';
   h+='<button onclick="misStart()" class="btn btn-a" style="flex:1;padding:12px;font-size:13px">🔄 Retake Interview</button>';
   h+='<button onclick="misNewType()" class="btn btn-g" style="flex:1;padding:12px;font-size:13px">🔀 Try Different Type</button>';
   h+='</div>';

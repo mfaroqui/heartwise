@@ -152,6 +152,8 @@ v1:`<h3 class="serif">Fellowship Readiness Assessment</h3>
 <div id="frc-timeline-msg" style="font-size:12px;color:var(--red);line-height:1.6"></div>
 </div>
 
+<div id="frc-pathway"></div>
+
 </div>
 
 <p style="font-size:10px;color:var(--text3);margin-top:12px;font-style:italic">Weighted scoring based on NRMP Charting Outcomes and program director surveys. Category weights vary by specialty competitiveness. This is a self-assessment framework — not a match prediction.</p>

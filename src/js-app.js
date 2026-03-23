@@ -3748,6 +3748,21 @@ function sfaUpdate(){
     h+='<p style="font-size:11px;color:var(--text3);margin-top:8px;line-height:1.5">'+s.path+'</p>';
     h+='</div>';
   });
+  // Your Next Move — personalized action plan
+  h+='<div style="padding:16px;background:var(--bg2);border-left:3px solid var(--accent);border-radius:0 10px 10px 0;margin-top:14px;margin-bottom:14px">';
+  h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">\ud83c\udfaf Your Next Move</div>';
+  var topSpec=top[0];
+  h+='<div style="font-size:13px;color:var(--text);line-height:1.8;margin-bottom:12px"><strong>'+topSpec.icon+' '+topSpec.name+'</strong> scored highest for a reason \u2014 your answers point to someone who values '+(q2==='heavy'||q2==='mix'?'procedural work':'cognitive medicine')+', '+(q3==='lifestyle'?'work-life balance':q3==='income'?'strong compensation':q3==='mission'?'mission-driven practice':'a balanced lifestyle')+', and '+(q1==='long'?'long-term patient relationships':q1==='acute'?'high-acuity acute care':'episodic patient interactions')+'. That combination is a real signal, not just an algorithm.</div>';
+  h+='<div style="font-size:12px;color:var(--text2);line-height:1.8;margin-bottom:8px"><strong>Here\u2019s what I\u2019d tell you to do this month:</strong></div>';
+  h+='<div style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:var(--text2);line-height:1.6">';
+  h+='<div style="padding:8px 10px;background:var(--bg3);border-radius:6px;border-left:3px solid var(--green)"><strong>1. Shadow or rotate in '+topSpec.name+'</strong> \u2014 even 2-3 days with an attending gives you a real feel. The day-to-day matters more than the idea of the specialty.</div>';
+  h+='<div style="padding:8px 10px;background:var(--bg3);border-radius:6px;border-left:3px solid var(--green)"><strong>2. Talk to a PGY-3 or fellow</strong> in '+topSpec.name+' \u2014 not an attending. Trainees will tell you what attending life is actually like without the filter.</div>';
+  if(top.length>1) h+='<div style="padding:8px 10px;background:var(--bg3);border-radius:6px;border-left:3px solid var(--accent)"><strong>3. Don\u2019t dismiss your #2 match ('+top[1].name+')</strong> \u2014 the difference between your top 2 is often smaller than you think. Explore both before narrowing.</div>';
+  h+='<div style="padding:8px 10px;background:var(--bg3);border-radius:6px;border-left:3px solid var(--accent)"><strong>'+(top.length>1?'4':'3')+'. Run the Match Probability Calculator</strong> for your top choice \u2014 passion is necessary but not sufficient. Know your competitiveness before you commit.</div>';
+  h+='</div>';
+  h+='<div style="font-size:11px;color:var(--text3);margin-top:10px;line-height:1.6">The worst career mistake in medicine isn\u2019t picking the wrong specialty \u2014 it\u2019s picking one without ever testing whether it actually fits your life. Do the diligence now.</div>';
+  h+='</div>';
+
   h+='<p style="font-size:10px;color:var(--text3);font-style:italic;margin-top:12px">This analysis is directional guidance based on your preferences. Shadow, rotate, and talk to physicians in each field before committing.</p>';
   document.getElementById('sfa-results').innerHTML=h;
   applyBlurGate(document.getElementById('sfa-results'));
@@ -6928,7 +6943,14 @@ function ftCalc(){
       (earnDiff>2000000?'This is a significant career-defining gap.':'The gap narrows when you factor in training length and opportunity cost.')+'</div>'+
       '<div style="margin-bottom:10px">3\ufe0f\u20e3 Increasing savings rate from 10% \u2192 20% roughly doubles retirement assets. The savings rate matters almost as much as the specialty choice.</div>'+
       (scenarios.some(function(s){return s.pracType==='private'})?'<div>4\ufe0f\u20e3 Private practice offers the highest income ceiling but comes with business risk, overhead, and partner dynamics. Factor in your risk tolerance.</div>':'')+
-      '</div>'+debtSection;
+      '</div>';
+
+    // Your Next Move
+    var bestSc=scenarios[sorted[0].idx];
+    var worstSc=scenarios[sorted[sorted.length-1].idx];
+    insEl.innerHTML+='\n<div style="margin-top:16px;padding:16px;background:var(--bg3);border-left:3px solid var(--accent);border-radius:0 10px 10px 0"><div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">\ud83c\udfaf What To Do With This</div><div style="font-size:13px;color:var(--text);line-height:1.8;margin-bottom:8px">The numbers don\u2019t lie: <strong>'+bestSc.label+'</strong> produces $'+(diff/1000000).toFixed(1)+'M more than <strong>'+worstSc.label+'</strong> over 30 years. But here\u2019s what actually matters:</div><div style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:var(--text2);line-height:1.6"><div style="padding:8px 10px;background:var(--bg2);border-radius:6px;border-left:3px solid var(--green)"><strong>Savings rate is your biggest lever.</strong> Going from 10% \u2192 25% matters more than a $50K salary bump. Max your 401k/403b ($23,500), backdoor Roth ($7,000), and HSA ($4,150) before doing anything else.</div><div style="padding:8px 10px;background:var(--bg2);border-radius:6px;border-left:3px solid var(--green)"><strong>Don\u2019t chase money alone.</strong> The highest-paying scenario is only worth it if you can sustain it for 20+ years. Burnout at year 8 erases the advantage. Pick the path where the work energizes you.</div><div style="padding:8px 10px;background:var(--bg2);border-radius:6px;border-left:3px solid var(--accent)"><strong>Run the 3-Year Financial Planner next.</strong> This 30-year view shows the destination. The 3-Year Planner shows you exactly how to start: debt payoff strategy, tax optimization, and cash flow month by month.</div></div></div>';
+
+    insEl.innerHTML+=debtSection;
   }else{
     insEl.innerHTML=debtSection;
   }
@@ -8517,6 +8539,24 @@ function rvuUpdate(){
       scenarios+='<div style="display:flex;justify-content:space-between;padding:4px 0;'+(isCurrent?'font-weight:600;color:var(--accent)':'')+'"><span>'+labels[i]+' ('+sv.toLocaleString()+' wRVUs)</span><span>$'+Math.round(sc).toLocaleString()+'</span></div>';
     });
     document.getElementById('rvu-scenarios').innerHTML=scenarios;
+
+    // Your Negotiation Move
+    if(b&&total>0){
+      var diffFromMgma=total-b.comp;
+      var negotiateHtml='<div style="margin-top:14px;padding:16px;background:var(--bg2);border-left:3px solid '+(diffFromMgma>=0?'var(--green)':'var(--red)')+';border-radius:0 10px 10px 0">';
+      negotiateHtml+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">\ud83c\udfaf Your Negotiation Move</div>';
+      if(diffFromMgma<-20000){
+        negotiateHtml+='<div style="font-size:13px;color:var(--text);line-height:1.8;margin-bottom:8px"><strong style="color:var(--red)">You\u2019re significantly below market.</strong> At $'+Math.round(total).toLocaleString()+', you\u2019re leaving $'+Math.abs(Math.round(diffFromMgma)).toLocaleString()+'/year on the table compared to MGMA median for '+b.name+'. Over 5 years, that\u2019s <strong>$'+Math.round(Math.abs(diffFromMgma)*5/1000)+'K</strong> in lost income.</div>';
+        negotiateHtml+='<div style="font-size:12px;color:var(--text2);line-height:1.7"><strong>What to say:</strong> \u201cI\u2019ve reviewed MGMA data for '+b.name+' and the median total compensation is $'+b.comp.toLocaleString()+'. My offer is $'+Math.abs(Math.round(diffFromMgma)).toLocaleString()+' below that benchmark. I\u2019d like to discuss either a higher per-wRVU rate or an adjusted base to bring this in line with market.\u201d</div>';
+      } else if(diffFromMgma<0){
+        negotiateHtml+='<div style="font-size:13px;color:var(--text);line-height:1.8;margin-bottom:8px"><strong>You\u2019re slightly below MGMA median.</strong> The gap is $'+Math.abs(Math.round(diffFromMgma)).toLocaleString()+'/year. This is negotiable \u2014 most employers expect a counteroffer.</div>';
+        negotiateHtml+='<div style="font-size:12px;color:var(--text2);line-height:1.7"><strong>Your lever:</strong> Ask for a higher per-wRVU rate ($'+(rate+3)+'-$'+(rate+5)+' range) rather than a higher base. It shows you\u2019re willing to earn it through volume, which employers prefer.</div>';
+      } else {
+        negotiateHtml+='<div style="font-size:13px;color:var(--text);line-height:1.8;margin-bottom:8px"><strong style="color:var(--green)">You\u2019re above MGMA median</strong> by $'+Math.round(diffFromMgma).toLocaleString()+'. The compensation is strong. Shift your negotiation focus to non-compete terms, tail coverage, call schedule, and partnership track \u2014 these are where the real money is long-term.</div>';
+      }
+      negotiateHtml+='</div>';
+      document.getElementById('rvu-scenarios').insertAdjacentHTML('afterend', negotiateHtml);
+    }
   }
   // Record with resultData for saved scenarios
   if(total>0){
@@ -8625,6 +8665,27 @@ function fypCalculate(){
   h+='<div>3. HSA (if HDHP) — <strong>$'+maxHSA.toLocaleString()+'</strong></div>';
   h+='<div style="color:var(--text3);font-size:11px;margin-top:4px">Total: $'+totalTaxAdv.toLocaleString()+'/yr</div>';
   h+='</div></div>';
+
+  // Your Next Move — direct action plan
+  h+='<div style="padding:16px;background:var(--bg2);border-left:3px solid var(--accent);border-radius:0 10px 10px 0;margin-top:14px">';
+  h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">\ud83c\udfaf Your First 30 Days as an Attending</div>';
+  h+='<div style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:var(--text2);line-height:1.6">';
+  h+='<div style="padding:8px 10px;background:var(--bg3);border-radius:6px;border-left:3px solid var(--green)"><strong>Week 1:</strong> Set up 401k/403b at your employer\u2019s max ($'+max401k.toLocaleString()+'). If there\u2019s a match, you\u2019re leaving free money on the table every paycheck you wait.</div>';
+  h+='<div style="padding:8px 10px;background:var(--bg3);border-radius:6px;border-left:3px solid var(--green)"><strong>Week 2:</strong> Open a backdoor Roth IRA. This takes 30 minutes and saves you six figures in taxes over your career. Do it before you talk yourself out of it.</div>';
+  if(debt>0){
+    if(pslf==='yes'){
+      h+='<div style="padding:8px 10px;background:var(--bg3);border-radius:6px;border-left:3px solid var(--accent)"><strong>Week 3:</strong> Certify your employment for PSLF immediately. Make IDR payments ($'+idrPayment.toLocaleString()+'/mo) and <strong>do not refinance</strong>. Refinancing disqualifies you from forgiveness of $'+Math.round(Math.max(0,debt-idrPayment*120)/1000)+'K.</div>';
+    } else {
+      h+='<div style="padding:8px 10px;background:var(--bg3);border-radius:6px;border-left:3px solid var(--accent)"><strong>Week 3:</strong> Refinance your loans. At $'+debt.toLocaleString()+', dropping from '+(rate*100).toFixed(1)+'% to '+(refinanceRate*100).toFixed(1)+'% saves you roughly $'+Math.round((standardPayment-refiPayment)*60/1000)+'K over 5 years. Then add $1K/mo extra toward principal.</div>';
+    }
+  }
+  h+='<div style="padding:8px 10px;background:var(--bg3);border-radius:6px;border-left:3px solid var(--accent)"><strong>Week 4:</strong> Set your lifestyle budget at $'+Math.round(expenses/1000)+'K/yr and automate everything. The physicians who build wealth aren\u2019t the ones making the most \u2014 they\u2019re the ones who automated their savings before lifestyle creep took over.</div>';
+  h+='</div>';
+  if(yr1Save<20){
+    h+='<div style="font-size:12px;color:var(--red);margin-top:10px;line-height:1.6"><strong>\u26a0\ufe0f Reality check:</strong> Your Year 1 savings rate is '+yr1Save+'%. That\u2019s below where it needs to be. Either cut $'+Math.round((0.20*years[0].net-years[0].taxAdv-years[0].investable)/12).toLocaleString()+'/mo from expenses or find $'+Math.round((0.20*years[0].net-years[0].taxAdv-years[0].investable)/12).toLocaleString()+'/mo in additional income (moonlighting, locums weekends).</div>';
+  }
+  h+='</div>';
+
   document.getElementById('fyp-results').innerHTML=h;
   recordToolUse('3-Year Financial Planner',null,'Y3 Wealth: $'+Math.round(y3.netWealth/1000)+'K | Invested: $'+Math.round(y3.cumInvested/1000)+'K',{inputs:{Salary:'$'+salary.toLocaleString(),Debt:'$'+debt.toLocaleString(),Rate:(rate*100).toFixed(1)+'%',Expenses:'$'+expenses.toLocaleString(),PSLF:pslf||'N/A'},highlights:['Year 3 Net Wealth: $'+Math.round(y3.netWealth/1000)+'K','Total Invested: $'+Math.round(y3.cumInvested/1000)+'K','Remaining Debt: $'+Math.round(y3.remainDebt/1000)+'K']});
 }
@@ -8732,6 +8793,39 @@ function ilpCalculate(){
     flags.forEach(function(f){h+='<div style="font-size:12px;color:var(--text2);margin-bottom:4px">→ '+f+'</div>'});
     h+='</div>';
   }
+
+  // Your Next Move — priority action plan
+  h+='<div style="padding:16px;background:var(--bg2);border-left:3px solid var(--accent);border-radius:0 10px 10px 0;margin-bottom:14px">';
+  h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">\ud83c\udfaf Your Priority Moves — This Month</div>';
+  h+='<div style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:var(--text2);line-height:1.6">';
+  var moveNum=1;
+  if(disability!=='own_occ'){
+    h+='<div style="padding:8px 10px;background:var(--bg3);border-radius:6px;border-left:3px solid var(--red)"><strong>'+moveNum+'. Get own-occupation disability insurance this week.</strong> Not next month. This week. You are an uninsured $'+Math.round(salary/1000)+'K/yr asset right now. One injury ends your career without this. Cost: ~$'+Math.round(salary*0.025/12).toLocaleString()+'/mo. Non-negotiable.</div>';
+    moveNum++;
+  }
+  if(has401k!=='maxed'){
+    h+='<div style="padding:8px 10px;background:var(--bg3);border-radius:6px;border-left:3px solid var(--green)"><strong>'+moveNum+'. Max your 401k/403b contributions immediately.</strong> Every paycheck without max contributions is money you\u2019re handing to the IRS. At your tax bracket, that\u2019s ~$'+Math.round(23500*effectiveTax).toLocaleString()+'/yr in tax savings alone.</div>';
+    moveNum++;
+  }
+  if(hasAdvisor==='commission'||hasAdvisor==='feebased'){
+    h+='<div style="padding:8px 10px;background:var(--bg3);border-radius:6px;border-left:3px solid var(--accent)"><strong>'+moveNum+'. Fire your commission-based advisor.</strong> Find a fee-only fiduciary at NAPFA.org. Commission advisors cost physicians an average of $100-200K over a career in unnecessary product fees. This is the single biggest financial leak most physicians have.</div>';
+    moveNum++;
+  }
+  if(debt>0&&(employer==='nonprofit'||employer==='government')){
+    h+='<div style="padding:8px 10px;background:var(--bg3);border-radius:6px;border-left:3px solid var(--green)"><strong>'+moveNum+'. Certify your employment for PSLF today.</strong> You\u2019re at a qualifying employer. Every month you delay is a qualifying payment you lose. IDR payments at $'+idr.toLocaleString()+'/mo with $'+Math.round(Math.max(0,debt-idr*120)/1000)+'K in forgiveness is life-changing money.</div>';
+    moveNum++;
+  } else if(debt>100000){
+    h+='<div style="padding:8px 10px;background:var(--bg3);border-radius:6px;border-left:3px solid var(--accent)"><strong>'+moveNum+'. Refinance your student loans.</strong> At $'+debt.toLocaleString()+', dropping your rate saves real money. Then attack it with extra principal payments. Every extra $1K/mo toward principal saves you ~$'+Math.round(debt*loanRate/12000)+'K in interest.</div>';
+    moveNum++;
+  }
+  if(spendPct>60){
+    h+='<div style="padding:8px 10px;background:var(--bg3);border-radius:6px;border-left:3px solid var(--red)"><strong>'+moveNum+'. Your spending is '+spendPct+'% of take-home. That\u2019s too high.</strong> Cut to 40-50% and you\u2019ll build $'+Math.round((altWealth3-wealth3)/1000)+'K more over just 3 years. Automate your savings first, then spend what\u2019s left \u2014 not the other way around.</div>';
+    moveNum++;
+  }
+  h+='</div>';
+  h+='<div style="font-size:11px;color:var(--text3);margin-top:10px;line-height:1.6">The physicians who build real wealth aren\u2019t the highest earners \u2014 they\u2019re the ones who got the fundamentals right in their first 3 years as an attending. Every month you delay these moves costs you real money.</div>';
+  h+='</div>';
+
   document.getElementById('ilp-results').innerHTML=h;
   recordToolUse('Debt & Income Strategy Tool',score+'/'+maxScore,grade+' ('+scorePct+'%)',{inputs:{Salary:'$'+salary.toLocaleString(),Debt:'$'+debt.toLocaleString(),Employer:employer,Disability:disability,Spending:'$'+spending.toLocaleString(),'Tax-Advantaged':has401k,Advisor:hasAdvisor},highlights:['Score: '+score+'/'+maxScore+' ('+grade+')'].concat(wins).concat(flags)});
 }

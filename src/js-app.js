@@ -3014,6 +3014,65 @@ function fprInit(){
   // Where applicants fail — phase-specific warnings
   var failEl=document.getElementById('fpr-fail-points');
   if(!failEl){var fp=document.createElement('div');fp.id='fpr-fail-points';document.getElementById('fpr-phases').insertAdjacentElement('afterend',fp);failEl=fp}
+
+  // Month-by-month precision for current phase
+  var monthlyH='';
+  if(monthsNum>0&&monthsNum<=24){
+    monthlyH+='<div style="margin-bottom:16px;padding:16px;background:linear-gradient(160deg,rgba(200,168,124,.06),rgba(200,168,124,.02));border:1px solid rgba(198,168,94,.15);border-radius:12px">';
+    monthlyH+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">\ud83d\udcc5 Your Month-by-Month Plan (Next 6 Months)</div>';
+    var monthNames=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    var now=new Date();
+    for(var mi=0;mi<6&&mi<monthsNum;mi++){
+      var mDate=new Date(now.getFullYear(),now.getMonth()+mi,1);
+      var mLabel=monthNames[mDate.getMonth()]+' '+mDate.getFullYear();
+      var mLeft=monthsNum-mi;
+      var mTasks=[];
+      // Generate tasks based on months remaining
+      if(mLeft>18){
+        if(mi===0)mTasks.push('Identify target subspecialty. Shadow 2-3 attendings this month.');
+        if(mi===1)mTasks.push('Start first research project \u2014 case report or retrospective study.');
+        if(mi===2)mTasks.push('Begin building relationships with 3 potential letter writers.');
+        if(mi===3)mTasks.push('Join subspecialty society. Register for national conference.');
+        if(mi===4)mTasks.push('Submit first abstract to conference. Continue research.');
+        if(mi===5)mTasks.push('Attend conference. Network with fellows at target programs.');
+      }else if(mLeft>12){
+        if(mi===0)mTasks.push('Submit abstract to national conference. Get feedback on competitiveness.');
+        if(mi===1)mTasks.push('Build initial program list (15-20 programs, tiered).');
+        if(mi===2)mTasks.push('Take on leadership role. Start second research project.');
+        if(mi===3)mTasks.push('Network with fellows at target programs. Research PD interests.');
+        if(mi===4)mTasks.push('Apply for away rotations (6+ months in advance for top programs).');
+        if(mi===5)mTasks.push('Formally confirm letter writers. Give them 8+ week timeline.');
+      }else if(mLeft>6){
+        if(mi===0)mTasks.push('Begin away rotation #1 at target program. Treat as audition.');
+        if(mi===1)mTasks.push('Formally ask letter writers. Provide CV + highlights to each.');
+        if(mi===2)mTasks.push('Complete away rotation. Submit or finalize manuscript.');
+        if(mi===3)mTasks.push('Draft personal statement (version 1). Get 3 readers.');
+        if(mi===4)mTasks.push('Away rotation #2 if applicable. Finalize program list.');
+        if(mi===5)mTasks.push('Personal statement version 3+. Confirm all letters submitted.');
+      }else if(mLeft>3){
+        if(mi===0)mTasks.push('Finalize personal statement (version 5+). Submit ERAS.');
+        if(mi===1)mTasks.push('Confirm all letters submitted. Research each interview program.');
+        if(mi===2)mTasks.push('Practice interviews with attendings. Prepare program-specific questions.');
+        if(mi===3)mTasks.push('Interview season begins. Send thank-you emails within 24 hours.');
+        if(mi===4)mTasks.push('Track interview impressions. Schedule second-looks at top 2-3.');
+        if(mi===5)mTasks.push('Build rank list based on fit. Get mentor input. Submit before deadline.');
+      }else{
+        if(mi===0)mTasks.push('Final interviews. Send thank-you notes with specific program references.');
+        if(mi===1)mTasks.push('Second-look visits at top programs. Finalize rank list.');
+        if(mi===2)mTasks.push('Submit rank list. Prepare for Match Day.');
+        if(mi===3)mTasks.push('Match Day. Begin planning transition.');
+        if(mi===4)mTasks.push('SOAP if needed. Otherwise: celebrate and prepare.');
+        if(mi===5)mTasks.push('Wrap up current position. Transition planning.');
+      }
+      var urgencyColor=mi===0?'var(--red)':mi<=2?'var(--accent)':'var(--text3)';
+      monthlyH+='<div style="display:flex;gap:12px;padding:8px 0;border-bottom:1px solid var(--border)">';
+      monthlyH+='<div style="min-width:70px;font-size:11px;font-weight:600;color:'+urgencyColor+'">'+mLabel+'</div>';
+      monthlyH+='<div style="font-size:12px;color:var(--text2);line-height:1.5">'+(mTasks[0]||'Continue current priorities.')+'<br><span style="font-size:10px;color:var(--text3)">'+mLeft+' months to match</span></div>';
+      monthlyH+='</div>';
+    }
+    monthlyH+='</div>';
+  }
+
   var failH='<div style="margin-top:16px;padding:16px;background:rgba(239,68,68,.03);border:1px solid rgba(239,68,68,.08);border-radius:12px">';
   failH+='<div style="font-size:11px;font-weight:600;color:var(--red);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">\u26a0\ufe0f Where Most Applicants Fail</div>';
   var failPoints=[];
@@ -3037,7 +3096,7 @@ function fprInit(){
     failH+='</div>';
   });
   failH+='</div>';
-  failEl.innerHTML=failH;
+  failEl.innerHTML=monthlyH+failH;
 
   if(monthsNum<=3){fprShowMockInterview(spec)}else{document.getElementById('fpr-mock').innerHTML=''}
 }
@@ -5060,6 +5119,32 @@ function csbGenerate(){
     phase.items.forEach(function(item){h+='<li>'+item+'</li>'});
     h+='</ul></div>';
   });
+
+  // Dependencies — "You cannot do X until Y is done"
+  var deps=[];
+  if(now==='ms3'||now==='intern'||now==='resident'||now==='senior'){
+    if(lors==='none'||lors==='generic')deps.push({blocked:'Submit ERAS application',requires:'Secure 3+ specialty-specific letter writers',why:'Generic letters are a red flag. PDs can tell instantly. Get the right writers first.'});
+    if(ps==='none')deps.push({blocked:'Apply to programs',requires:'Complete personal statement (5+ drafts)',why:'Your PS is read before anything else. A weak PS means your strong stats never get a fair look.'});
+    if(firstAuth===0&&isCompetitive)deps.push({blocked:'Competitive match probability',requires:'At least 1 first-author publication or submission',why:'For '+tName+', research differentiates you from identical applicants with similar board scores.'});
+    if(aways==='0'&&urgency==='1')deps.push({blocked:'Strong rank list with insider knowledge',requires:'Complete at least 1 away rotation',why:'Away rotations give you intel no website can \u2014 culture, call schedule, faculty personality. It\u2019s a month-long interview.'});
+  }
+  if(now==='fellow'||now==='attending'){
+    deps.push({blocked:'Sign any contract',requires:'Run it through Contract Review Tool',why:'A $2-3.5K attorney review saves $20-50K+ in improved terms. Non-competes alone can cost six figures.'});
+    if(now==='fellow')deps.push({blocked:'Accept a job offer',requires:'Model 30-year financial projection',why:'A $30K salary difference compounds to $1M+ over a career. Know the math before you commit.'});
+  }
+  if(!deps.length){
+    deps.push({blocked:'Application submission',requires:'Complete Phase 1 items above',why:'Everything in your application builds on the foundation. Rushing to submit without the groundwork = wasted opportunity.'});
+  }
+  h+='<div style="margin-top:20px;padding:16px;background:rgba(239,68,68,.03);border:1px solid rgba(239,68,68,.08);border-radius:12px;margin-bottom:14px">';
+  h+='<div style="font-size:11px;font-weight:600;color:var(--red);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">\ud83d\udd17 Dependencies \u2014 Order Matters</div>';
+  deps.forEach(function(d){
+    h+='<div style="padding:10px;background:var(--bg2);border-radius:8px;margin-bottom:8px;border-left:3px solid var(--red)">';
+    h+='<div style="font-size:12px;color:var(--text);margin-bottom:4px">\u26d4 <strong>You cannot:</strong> '+d.blocked+'</div>';
+    h+='<div style="font-size:12px;color:var(--green);margin-bottom:4px">\u2705 <strong>Until:</strong> '+d.requires+'</div>';
+    h+='<div style="font-size:11px;color:var(--text3);line-height:1.5">'+d.why+'</div>';
+    h+='</div>';
+  });
+  h+='</div>';
 
   // Pathway: position + prioritized actions + connect forward
   var csbPos=warnings.length>=2?'Based on your profile, you have significant gaps to close for '+tName+'. But here\u2019s the good news: you have a roadmap now. Most applicants are guessing \u2014 you\u2019re not.'
@@ -9169,6 +9254,69 @@ function roiUpdate(){
   }
   document.getElementById('roi-breakdown').innerHTML=bd;
 
+  // 3-Dimension Research Grading: Relevance, Authorship, Impact
+  var dimHtml='';
+  if(totalItems>0){
+    // Authorship Quality (first-author dominance)
+    var authScore=first>0?Math.min(100,Math.round((first*pts.first/(userScore||1))*100)):0;
+    var authGrade=authScore>=60?'Strong':authScore>=30?'Mixed':'Weak';
+    var authColor=authScore>=60?'var(--green)':authScore>=30?'var(--accent)':'var(--red)';
+    var authExplain=authScore>=60?'First-author work dominates your portfolio. PDs see you as someone who drives research, not just participates.'
+      :authScore>=30?'Mix of first and middle-author work. Shift toward first-author projects — they carry 3-5x the weight in applications.'
+      :first===0?'No first-author work yet. This is your biggest research gap. Middle-author papers fill a CV but don\u2019t differentiate you.'
+      :'Your portfolio is mostly middle-author. PDs will question whether you can lead a project independently.';
+
+    // Relevance (specialty alignment — uses spec selection)
+    var relScore=spec?Math.min(100,Math.round((userScore/optimalScore)*100)):Math.min(100,Math.round((userScore/53)*100));
+    var relGrade=relScore>=80?'Aligned':relScore>=50?'Partial':'Misaligned';
+    var relColor=relScore>=80?'var(--green)':relScore>=50?'var(--accent)':'var(--red)';
+    var relExplain=spec?(relScore>=80?'Your output meets or exceeds the benchmark for '+specNames[spec]+'. You\u2019re publishing at the rate competitive applicants publish.'
+      :relScore>=50?'Building toward the '+specNames[spec]+' benchmark ('+optimalScore+' pts). You need '+Math.max(0,optimalScore-userScore)+' more points to reach competitive.'
+      :'Significantly below the '+specNames[spec]+' benchmark. You need '+(optimalScore-userScore)+' more points. At current pace, consider whether your timeline is realistic.')
+      :'Select a specialty above for a specialty-specific relevance grade.';
+
+    // Impact (weighted by publication type hierarchy)
+    var highImpact=(first*pts.first+cases*pts.cases);
+    var lowImpact=(middle*pts.middle+qi*pts.qi);
+    var impactRatio=userScore>0?Math.round((highImpact/userScore)*100):0;
+    var impactGrade=impactRatio>=70?'High':impactRatio>=40?'Moderate':'Low';
+    var impactColor=impactRatio>=70?'var(--green)':impactRatio>=40?'var(--accent)':'var(--red)';
+    var impactExplain=impactRatio>=70?'High-impact items (first-author + case reports) make up '+impactRatio+'% of your portfolio. Quality over quantity.'
+      :impactRatio>=40?'Moderate impact mix. '+Math.round(100-impactRatio)+'% of your points come from lower-impact items (middle-author, QI). Shift toward first-author work.'
+      :'Low-impact portfolio. '+Math.round(100-impactRatio)+'% of your points come from middle-author or QI work. PDs weigh first-author and case reports far more heavily.';
+
+    dimHtml+='<div style="padding:14px;background:var(--bg2);border-radius:10px;border:1px solid var(--border);margin-bottom:14px">';
+    dimHtml+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">\ud83d\udcca Research Grade \u2014 3 Dimensions</div>';
+
+    // Authorship
+    dimHtml+='<div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"><span style="font-size:12px;font-weight:600;color:var(--text)">Authorship Quality</span><span style="font-size:11px;font-weight:700;color:'+authColor+'">'+authGrade.toUpperCase()+'</span></div>';
+    dimHtml+='<div style="height:4px;background:var(--bg3);border-radius:2px;margin-bottom:4px"><div style="height:100%;width:'+authScore+'%;background:'+authColor+';border-radius:2px"></div></div>';
+    dimHtml+='<div style="font-size:11px;color:var(--text3);line-height:1.5">'+authExplain+'</div></div>';
+
+    // Relevance
+    dimHtml+='<div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"><span style="font-size:12px;font-weight:600;color:var(--text)">Specialty Relevance</span><span style="font-size:11px;font-weight:700;color:'+relColor+'">'+relGrade.toUpperCase()+'</span></div>';
+    dimHtml+='<div style="height:4px;background:var(--bg3);border-radius:2px;margin-bottom:4px"><div style="height:100%;width:'+relScore+'%;background:'+relColor+';border-radius:2px"></div></div>';
+    dimHtml+='<div style="font-size:11px;color:var(--text3);line-height:1.5">'+relExplain+'</div></div>';
+
+    // Impact
+    dimHtml+='<div><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"><span style="font-size:12px;font-weight:600;color:var(--text)">Portfolio Impact</span><span style="font-size:11px;font-weight:700;color:'+impactColor+'">'+impactGrade.toUpperCase()+'</span></div>';
+    dimHtml+='<div style="height:4px;background:var(--bg3);border-radius:2px;margin-bottom:4px"><div style="height:100%;width:'+impactRatio+'%;background:'+impactColor+';border-radius:2px"></div></div>';
+    dimHtml+='<div style="font-size:11px;color:var(--text3);line-height:1.5">'+impactExplain+'</div></div>';
+
+    // "Your research is not helping you match because __"
+    var weakestDim=authScore<=relScore&&authScore<=impactRatio?'authorship':relScore<=impactRatio?'relevance':'impact';
+    var notHelpingBecause='';
+    if(pct<70){
+      if(weakestDim==='authorship')notHelpingBecause='<strong style="color:var(--red)">Your research is not helping you match because</strong> you don\u2019t have enough first-author work. PDs see middle-author papers as participation, not leadership. One first-author paper changes the narrative.';
+      else if(weakestDim==='relevance')notHelpingBecause='<strong style="color:var(--red)">Your research is not helping you match because</strong> your output is below the competitive benchmark for '+(spec?specNames[spec]:'your target specialty')+'. You need '+(optimalScore-userScore)+' more points to reach competitive range.';
+      else notHelpingBecause='<strong style="color:var(--red)">Your research is not helping you match because</strong> too much of your portfolio is low-impact work (middle-author, QI). PDs weight first-author and case reports far more heavily. Redirect your effort.';
+      dimHtml+='<div style="margin-top:12px;padding:10px;background:rgba(239,68,68,.04);border-left:3px solid var(--red);border-radius:0 6px 6px 0;font-size:12px;color:var(--text2);line-height:1.6">'+notHelpingBecause+'</div>';
+    }
+    dimHtml+='</div>';
+  }
+  var dimEl=document.getElementById('roi-breakdown');
+  if(dimEl&&dimHtml)dimEl.insertAdjacentHTML('afterend',dimHtml);
+
   // Efficiency chart — points per month of effort
   var effHtml='';
   if(totalItems>0){
@@ -9459,6 +9607,24 @@ async function submitAudit(){
     prelim+='<div style="font-size:11px;color:var(--text2);margin-bottom:12px">Dr. Faroqui will address this directly in the full review. Expect a specific plan to overcome this barrier.</div>';
   }
 
+  // Chances improvement estimate — "from X → Y"
+  if(cvSnap){
+    var compScore2=(compStrengths.length*30)-((compGaps.length)*20)+40;
+    compScore2=Math.max(10,Math.min(90,compScore2));
+    var improvedScore2=Math.min(95,compScore2+20+Math.round(filled/20*15));
+    prelim+='<div style="margin-bottom:16px;padding:16px;background:linear-gradient(160deg,rgba(200,168,124,.08),rgba(200,168,124,.02));border:1px solid rgba(198,168,94,.15);border-radius:10px">';
+    prelim+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">\ud83d\udcc8 If You Follow the Plan</div>';
+    prelim+='<div style="display:flex;align-items:center;gap:16px;justify-content:center">';
+    prelim+='<div style="text-align:center"><div style="font-size:10px;color:var(--text3);margin-bottom:4px">Current Estimate</div><div style="font-size:28px;font-weight:700;color:'+(compScore2>=50?'var(--accent)':'var(--red)')+';font-family:var(--font-serif)">'+compScore2+'%</div></div>';
+    prelim+='<div style="font-size:24px;color:var(--accent)">\u2192</div>';
+    prelim+='<div style="text-align:center"><div style="font-size:10px;color:var(--text3);margin-bottom:4px">After Fix Plan</div><div style="font-size:28px;font-weight:700;color:var(--green);font-family:var(--font-serif)">'+improvedScore2+'%</div></div>';
+    prelim+='</div>';
+    prelim+='<div style="font-size:11px;color:var(--text3);text-align:center;margin-top:8px">Based on your CV snapshot'+(compGaps.length?'. Closing gaps in '+compGaps.join(', ')+' drives the biggest improvement.':'. Dr. Faroqui\u2019s full review will refine this estimate.')+'</div>';
+    prelim+='</div>';
+  }else{
+    prelim+='<div style="margin-bottom:16px;padding:12px;background:var(--bg2);border-radius:8px;font-size:12px;color:var(--text3);text-align:center;line-height:1.6">Complete Part 1 (CV snapshot) for a preliminary competitiveness estimate and improvement projection.</div>';
+  }
+
   prelim+='</div></div>';
 
   // hwPathway
@@ -9741,7 +9907,30 @@ async function submitPivot(){
   var pvNxt=trainCost>50000?{id:'v11',icon:'\ud83d\udcc8',title:'Financial Projection Tool',why:'A $'+Math.round(trainCost/1000)+'K transition cost needs 30-year modeling. Make sure the math works.'}
     :readiness>=3?{id:'v12',icon:'\ud83d\udcdd',title:'Contract Review Tool',why:'When you get an offer in the new direction, score every clause before signing.'}
     :{id:'v13',icon:'\ud83e\uddec',title:'Specialty Fit Assessment',why:'Before you pivot, validate that the new direction actually fits who you are now \u2014 not who you were.'};
-  document.getElementById('pivot-success').innerHTML='<div style="font-size:48px;margin-bottom:16px">\u2713</div><h3 class="serif" style="font-size:20px;margin-bottom:8px">Report Submitted</h3><p style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:20px">Your Career Transition Planner report has been sent to Dr. Faroqui for review.</p>'+hwPathway(pvPos,pvActs,pvNxt);
+
+  // Risk vs Upside breakdown for each option
+  var riskUpside='<div style="margin-top:20px;margin-bottom:16px;padding:16px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;text-align:left">';
+  riskUpside+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">\u2696\ufe0f Risk vs Upside Analysis</div>';
+  options.forEach(function(opt){
+    var optAvg=parseFloat(opt.avg)||0;
+    var risk='';var upside='';
+    if(opt.label.toLowerCase().indexOf('stay')>=0||opt.label.toLowerCase().indexOf('current')>=0){
+      risk='Burnout compounds. If you\u2019re dissatisfied now, it gets worse, not better. Cost of inaction: potentially years of lost fulfillment.';
+      upside='No transition cost. No income disruption. Stable for family. Can still make smaller changes within the same path.';
+    }else{
+      risk='Transition costs ~$'+(trainCost>0?trainCost.toLocaleString():'unknown')+'. Income disruption for '+(trainCost>100000?'2-4':'1-2')+' years. Credentialing delays. New learning curve. Relationship reset with colleagues.';
+      upside='Career satisfaction. New growth trajectory. Alignment with what you actually want. '+(optAvg>=4?'Your own ratings say this scores highest on feasibility, satisfaction, and financial viability.':'Potential improvement, but ratings suggest some uncertainty \u2014 validate before committing.');
+    }
+    riskUpside+='<div style="margin-bottom:12px;padding:10px;background:var(--bg3);border-radius:8px">';
+    riskUpside+='<div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:8px">'+opt.label+' <span style="font-size:11px;color:var(--accent);font-weight:400">('+opt.avg+'/5)</span></div>';
+    riskUpside+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">';
+    riskUpside+='<div style="padding:8px;background:rgba(239,68,68,.04);border-radius:6px;border-left:3px solid var(--red)"><div style="font-size:10px;font-weight:600;color:var(--red);margin-bottom:4px">\ud83d\udea9 RISK</div><div style="font-size:11px;color:var(--text2);line-height:1.5">'+risk+'</div></div>';
+    riskUpside+='<div style="padding:8px;background:rgba(106,191,75,.04);border-radius:6px;border-left:3px solid var(--green)"><div style="font-size:10px;font-weight:600;color:var(--green);margin-bottom:4px">\u2705 UPSIDE</div><div style="font-size:11px;color:var(--text2);line-height:1.5">'+upside+'</div></div>';
+    riskUpside+='</div></div>';
+  });
+  riskUpside+='</div>';
+
+  document.getElementById('pivot-success').innerHTML='<div style="font-size:48px;margin-bottom:16px">\u2713</div><h3 class="serif" style="font-size:20px;margin-bottom:8px">Report Submitted</h3><p style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:20px">Your Career Transition Planner report has been sent to Dr. Faroqui for review.</p>'+riskUpside+hwPathway(pvPos,pvActs,pvNxt);
   notify('Decision Engine report submitted!');
   var pivotInputs={'Cause':causeLabel+(causeOther?' — '+causeOther:''),'Burnout':burnout?burnout.value:'—','Training Years':yrs,'Training Cost':'$'+trainCost.toLocaleString()};
   var pivotHL=['Readiness: '+readyLabel+' ('+readiness+'/4)'];

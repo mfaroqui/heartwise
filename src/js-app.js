@@ -3011,6 +3011,34 @@ function fprInit(){
   document.getElementById('fpr-progress-wrap').style.display='block';
   fprUpdateBar();
 
+  // Where applicants fail — phase-specific warnings
+  var failEl=document.getElementById('fpr-fail-points');
+  if(!failEl){var fp=document.createElement('div');fp.id='fpr-fail-points';document.getElementById('fpr-phases').insertAdjacentElement('afterend',fp);failEl=fp}
+  var failH='<div style="margin-top:16px;padding:16px;background:rgba(239,68,68,.03);border:1px solid rgba(239,68,68,.08);border-radius:12px">';
+  failH+='<div style="font-size:11px;font-weight:600;color:var(--red);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">\u26a0\ufe0f Where Most Applicants Fail</div>';
+  var failPoints=[];
+  if(monthsNum>12){
+    failPoints.push({when:'18-24 months out',fail:'Starting research too late. A first-author paper takes 6-12 months from idea to acceptance. If you start at 12 months out, it won\u2019t be on your ERAS.',fix:'Start a case report THIS WEEK. Pick a patient you\u2019ve already seen.'});
+    failPoints.push({when:'18-24 months out',fail:'Building relationships only with attendings who are "nice" instead of attendings who are recognized in the field.',fix:'Identify 2 faculty with national recognition in your target subspecialty. Offer to help with their research.'});
+  }
+  if(monthsNum<=18&&monthsNum>6){
+    failPoints.push({when:'12-18 months out',fail:'Not getting honest feedback on competitiveness. Applicants avoid asking because they\u2019re afraid of the answer.',fix:'Ask a trusted mentor: "Am I competitive for [specialty] right now? What\u2019s my biggest gap?" You need the truth, not reassurance.'});
+    failPoints.push({when:'6-12 months out',fail:'Skipping away rotations because they\u2019re "inconvenient." Away rotations are essentially month-long interviews.',fix:'Apply to 2-3 away rotations at top-choice programs. This is the single highest-ROI activity for match success.'});
+  }
+  if(monthsNum<=6){
+    failPoints.push({when:'3-6 months out',fail:'Submitting a generic personal statement. PDs read hundreds — they can spot a template in 10 seconds.',fix:'Your PS must answer: Why this specialty? Why you? What specific experiences changed your direction? Show, don\u2019t tell.'});
+    failPoints.push({when:'0-3 months out',fail:'Ranking by prestige instead of fit. The program where you\u2019ll thrive beats the name-brand where you\u2019ll be miserable.',fix:'Rank based on: training quality → culture fit → faculty mentorship → location. Prestige is a tiebreaker, not the driver.'});
+  }
+  failPoints.forEach(function(f){
+    failH+='<div style="padding:10px;background:var(--bg2);border-radius:8px;margin-bottom:8px;border-left:3px solid var(--red)">';
+    failH+='<div style="font-size:10px;color:var(--text3);margin-bottom:2px">'+f.when+'</div>';
+    failH+='<div style="font-size:12px;font-weight:600;color:var(--red);margin-bottom:4px">\u2716 '+f.fail+'</div>';
+    failH+='<div style="font-size:11px;color:var(--green);line-height:1.5">\u2192 <strong>Fix:</strong> '+f.fix+'</div>';
+    failH+='</div>';
+  });
+  failH+='</div>';
+  failEl.innerHTML=failH;
+
   if(monthsNum<=3){fprShowMockInterview(spec)}else{document.getElementById('fpr-mock').innerHTML=''}
 }
 
@@ -3291,10 +3319,10 @@ function crsCalc(){
 
   if(reds.length){
     h+='<div style="margin-bottom:16px">';
-    h+='<div style="font-size:11px;font-weight:600;color:var(--red);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">\ud83d\udea9 RED FLAGS — Negotiate These ('+reds.length+')</div>';
+    h+='<div style="font-size:11px;font-weight:600;color:var(--red);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">\ud83d\udea9 DEAL-BREAKERS \u2014 Do Not Sign Until Fixed ('+reds.length+')</div>';
     reds.forEach(function(f){
       h+='<div style="padding:12px 14px;background:rgba(239,68,68,.05);border:1px solid rgba(239,68,68,.12);border-radius:8px;margin-bottom:8px">';
-      h+='<div style="font-size:12px;font-weight:600;color:var(--red);margin-bottom:4px">'+f.cat+': '+f.text+'</div>';
+      h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"><div style="font-size:12px;font-weight:600;color:var(--red)">'+f.cat+': '+f.text+'</div><span style="font-size:9px;padding:2px 6px;border-radius:4px;background:rgba(239,68,68,.1);color:var(--red);font-weight:700">DEAL-BREAKER</span></div>';
       if(f.detail) h+='<div style="font-size:11px;color:var(--text2);line-height:1.7">'+f.detail+'</div>';
       h+='</div>';
     });
@@ -3303,10 +3331,10 @@ function crsCalc(){
 
   if(yellows.length){
     h+='<div style="margin-bottom:16px">';
-    h+='<div style="font-size:11px;font-weight:600;color:#E67E22;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">\u26a0\ufe0f CAUTION — Review These ('+yellows.length+')</div>';
+    h+='<div style="font-size:11px;font-weight:600;color:#E67E22;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">\u26a0\ufe0f NEGOTIABLE \u2014 Push Back on These ('+yellows.length+')</div>';
     yellows.forEach(function(f){
       h+='<div style="padding:12px 14px;background:rgba(230,126,34,.04);border:1px solid rgba(230,126,34,.10);border-radius:8px;margin-bottom:8px">';
-      h+='<div style="font-size:12px;font-weight:600;color:#E67E22;margin-bottom:4px">'+f.cat+': '+f.text+'</div>';
+      h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"><div style="font-size:12px;font-weight:600;color:#E67E22">'+f.cat+': '+f.text+'</div><span style="font-size:9px;padding:2px 6px;border-radius:4px;background:rgba(230,126,34,.08);color:#E67E22;font-weight:700">NEGOTIABLE</span></div>';
       if(f.detail) h+='<div style="font-size:11px;color:var(--text2);line-height:1.7">'+f.detail+'</div>';
       h+='</div>';
     });
@@ -3315,7 +3343,7 @@ function crsCalc(){
 
   if(greens.length){
     h+='<div style="margin-bottom:16px">';
-    h+='<div style="font-size:11px;font-weight:600;color:var(--green);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">\u2705 STRONG PROVISIONS ('+greens.length+')</div>';
+    h+='<div style="font-size:11px;font-weight:600;color:var(--green);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">\u2705 SAFE TERMS \u2014 These Protect You ('+greens.length+')</div>';
     greens.forEach(function(f){
       h+='<div style="padding:10px 14px;background:rgba(106,191,75,.04);border-left:2px solid var(--green);margin-bottom:6px;border-radius:4px">';
       h+='<div style="font-size:12px;font-weight:500;color:var(--text)">'+f.cat+': '+f.text+'</div>';
@@ -3662,6 +3690,25 @@ function ocmCompare(){
   }
 
   h+='<p style="margin:0">The best offer is the one that aligns with where you want to be in 5 years, not just what looks best on paper today. If you\u2019re unsure, submit both offers through the <strong>Contract Review Tool</strong> for a full risk analysis.</p>';
+
+  // Clear winner statement
+  var winnerScore=cA.totalWithRetire>cB.totalWithRetire?cA:cB;
+  var loserOffer=cA.totalWithRetire>cB.totalWithRetire?b:a;
+  var winnerOffer=cA.totalWithRetire>cB.totalWithRetire?a:b;
+  var loserAnalysis=cA.totalWithRetire>cB.totalWithRetire?bAnalysis:aAnalysis;
+  var winnerAnalysis=cA.totalWithRetire>cB.totalWithRetire?aAnalysis:bAnalysis;
+  var unlessClause='';
+  if(winnerAnalysis.warnings.length>loserAnalysis.warnings.length)unlessClause=winner+' has '+winnerAnalysis.warnings.length+' red flag'+(winnerAnalysis.warnings.length>1?'s':'')+' that need resolving first';
+  else if(loserOffer.pslf==='yes'&&winnerOffer.pslf!=='yes')unlessClause=loser+' offers PSLF eligibility which could be worth $100-300K in loan forgiveness';
+  else if(loserOffer.partner==='yes'&&winnerOffer.partner!=='yes')unlessClause=loser+' has a partnership track with a much higher income ceiling long-term';
+  else if(Math.abs((loserOffer.call||0)-(winnerOffer.call||0))>=3)unlessClause=loser+' has significantly less call ('+(Math.abs(loserOffer.call-winnerOffer.call)*12)+' fewer call days/year), which is a quality-of-life factor you can\u2019t put a price on';
+  else if(totalDiff<20000)unlessClause='the comp difference is small enough that location, culture, or practice style should be your tiebreaker';
+  else unlessClause=loser+' significantly improves their terms during negotiation';
+
+  h+='<div style="margin-top:14px;padding:14px;background:rgba(200,168,124,.08);border-radius:10px;border:1px solid rgba(198,168,94,.15);text-align:center">';
+  h+='<div style="font-size:14px;font-weight:700;color:var(--accent);font-family:var(--font-serif);margin-bottom:6px">\ud83c\udfc6 My Recommendation: Choose '+winner+'</div>';
+  h+='<div style="font-size:12px;color:var(--text2);line-height:1.6">Unless '+unlessClause+'.</div>';
+  h+='</div>';
   h+='</div></div>';
 
   document.getElementById('ocm-results').innerHTML=h;
@@ -3766,47 +3813,85 @@ function sfaUpdate(){
     if(q6==='low'&&(s.name.includes('Dermatology')||s.name.includes('Radiology')||s.name.includes('Psychiatry')))s.fit+=10;
   });
 
-  // Sort and show top 3
+  // Sort all specs
   specs.sort(function(a,b){return b.fit-a.fit});
   var top=specs.slice(0,3);
+  var bottom=specs.slice(-3).reverse();
   var maxFit=top[0].fit||1;
-  var h='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:14px">\u2728 Your Top Specialty Matches</div>';
+
+  // Header: clear recommendation
+  var h='<div style="text-align:center;padding:20px;background:linear-gradient(160deg,rgba(200,168,124,.1),rgba(200,168,124,.03));border:1px solid rgba(198,168,94,.15);border-radius:14px;margin-bottom:20px">';
+  h+='<div style="font-size:11px;color:var(--accent);font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px">My Recommendation</div>';
+  h+='<div style="font-size:20px;font-weight:600;color:var(--text);font-family:var(--font-serif);margin-bottom:6px">You should pursue '+top[0].icon+' '+top[0].name+'</div>';
+  h+='<div style="font-size:12px;color:var(--text3);line-height:1.6;max-width:400px;margin:0 auto">Your answers point to someone who values '+(q2==='heavy'||q2==='mix'?'procedural work':'cognitive medicine')+', '+(q3==='lifestyle'?'work-life balance':q3==='income'?'strong compensation':q3==='mission'?'mission-driven practice':'a balanced lifestyle')+', and '+(q1==='long'?'long-term patient relationships':q1==='acute'?'high-acuity acute care':'episodic patient interactions')+'. That combination maps directly to '+top[0].name+'.</div>';
+  h+='</div>';
+
+  // Ranked top 3 with reasoning
+  h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:14px">\ud83c\udfc6 Your Top 3 \u2014 Ranked</div>';
+  var fitReasons={};
+  specs.forEach(function(s){
+    var r=[];
+    if(q1==='long'&&(s.name.includes('Cardiology')||s.name.includes('Psychiatry')||s.name.includes('Outpatient')))r.push('Matches your preference for long-term patient relationships');
+    if(q1==='episode'&&(s.name.includes('Gastro')||s.name.includes('Hospitalist')||s.name.includes('Pulm')))r.push('Fits your episodic care style');
+    if(q1==='acute'&&(s.name.includes('Emergency')||s.name.includes('Surgery')||s.name.includes('Interventional')))r.push('High-acuity acute care — exactly what you want');
+    if(q1==='minimal'&&(s.name.includes('Radiology')))r.push('Minimal direct patient interaction suits you');
+    if(q2==='heavy'&&(s.name.includes('Interventional')||s.name.includes('Surgery')))r.push('Heavily procedural — satisfies your hands-on preference');
+    if(q2==='mix'&&(s.name.includes('General Cardiology')||s.name.includes('Gastro')||s.name.includes('Pulm')))r.push('Balanced mix of procedures and thinking');
+    if(q2==='cognitive'&&(s.name.includes('Psychiatry')||s.name.includes('Hospitalist')||s.name.includes('Outpatient')))r.push('Primarily cognitive — fits your non-procedural preference');
+    if(q3==='lifestyle'&&(s.name.includes('Dermatology')||s.name.includes('Psychiatry')||s.name.includes('Emergency')||s.name.includes('Radiology')||s.name.includes('Outpatient')))r.push('Strong work-life balance');
+    if(q3==='income'&&(s.name.includes('Interventional')||s.name.includes('Surgery')||s.name.includes('Gastro')))r.push('Top-tier compensation potential');
+    if(q3==='mission'&&(s.name.includes('Psychiatry')||s.name.includes('Emergency')||s.name.includes('Pulm')||s.name.includes('Outpatient')))r.push('Mission-driven practice with real impact');
+    if(q6==='high'&&(s.name.includes('Emergency')||s.name.includes('Surgery')||s.name.includes('Interventional')||s.name.includes('Pulm')))r.push('Thrives in uncertainty — matches your tolerance');
+    if(q6==='low'&&(s.name.includes('Dermatology')||s.name.includes('Radiology')||s.name.includes('Psychiatry')))r.push('Predictable workflow suits your low-uncertainty preference');
+    fitReasons[s.name]=r;
+  });
   top.forEach(function(s,i){
     var pct=Math.round((s.fit/maxFit)*100);
     var border=i===0?'rgba(198,168,94,.20)':'var(--border)';
+    var reasons=fitReasons[s.name]||[];
     h+='<div style="padding:16px;background:var(--bg2);border:1px solid '+border+';border-radius:10px;margin-bottom:10px'+(i===0?';box-shadow:0 0 20px rgba(198,168,94,.06)':'')+'">';
     h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">';
-    h+='<span style="font-size:14px;font-weight:600;color:var(--text)">'+s.icon+' '+s.name+'</span>';
-    if(i===0)h+='<span style="font-size:9px;padding:3px 8px;border-radius:100px;background:var(--accent-dim);color:var(--accent);font-weight:600">#1 FIT</span>';
+    h+='<span style="font-size:14px;font-weight:600;color:var(--text)">#'+(i+1)+' '+s.icon+' '+s.name+'</span>';
+    if(i===0)h+='<span style="font-size:9px;padding:3px 8px;border-radius:100px;background:var(--accent-dim);color:var(--accent);font-weight:600">BEST FIT</span>';
     h+='</div>';
     h+='<div style="height:4px;background:var(--bg3);border-radius:2px;margin-bottom:10px"><div style="height:100%;width:'+pct+'%;background:linear-gradient(90deg,var(--accent),var(--green));border-radius:2px"></div></div>';
+    // Why it fits
+    if(reasons.length){h+='<div style="margin-bottom:10px">';reasons.forEach(function(r){h+='<div style="font-size:11px;color:var(--green);line-height:1.6;padding:2px 0">\u2705 '+r+'</div>'});h+='</div>'}
     h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:11px;color:var(--text2)">';
-    h+='<div>\ud83d\udcb0 <strong>Comp:</strong> '+s.comp+'</div>';
-    h+='<div>\u23f0 <strong>Hours:</strong> '+s.hours+'</div>';
-    h+='<div>\ud83c\udf93 <strong>Training:</strong> '+s.train+'</div>';
+    h+='<div>\ud83d\udcb0 '+s.comp+'</div>';
+    h+='<div>\u23f0 '+s.hours+'</div>';
+    h+='<div>\ud83c\udf93 '+s.train+'</div>';
     h+='</div>';
-    h+='<p style="font-size:11px;color:var(--text3);margin-top:8px;line-height:1.5">'+s.path+'</p>';
     h+='</div>';
   });
-  // Your Next Move — personalized action plan
-  h+='<div style="padding:16px;background:var(--bg2);border-left:3px solid var(--accent);border-radius:0 10px 10px 0;margin-top:14px;margin-bottom:14px">';
-  h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">\ud83c\udfaf Your Next Move</div>';
-  var topSpec=top[0];
-  h+='<div style="font-size:13px;color:var(--text);line-height:1.8;margin-bottom:12px"><strong>'+topSpec.icon+' '+topSpec.name+'</strong> scored highest for a reason \u2014 your answers point to someone who values '+(q2==='heavy'||q2==='mix'?'procedural work':'cognitive medicine')+', '+(q3==='lifestyle'?'work-life balance':q3==='income'?'strong compensation':q3==='mission'?'mission-driven practice':'a balanced lifestyle')+', and '+(q1==='long'?'long-term patient relationships':q1==='acute'?'high-acuity acute care':'episodic patient interactions')+'. That combination is a real signal, not just an algorithm.</div>';
-  h+='<div style="font-size:12px;color:var(--text2);line-height:1.8;margin-bottom:8px"><strong>Here\u2019s what I\u2019d tell you to do this month:</strong></div>';
-  h+='<div style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:var(--text2);line-height:1.6">';
-  h+='<div style="padding:8px 10px;background:var(--bg3);border-radius:6px;border-left:3px solid var(--green)"><strong>1. Shadow or rotate in '+topSpec.name+'</strong> \u2014 even 2-3 days with an attending gives you a real feel. The day-to-day matters more than the idea of the specialty.</div>';
-  h+='<div style="padding:8px 10px;background:var(--bg3);border-radius:6px;border-left:3px solid var(--green)"><strong>2. Talk to a PGY-3 or fellow</strong> in '+topSpec.name+' \u2014 not an attending. Trainees will tell you what attending life is actually like without the filter.</div>';
-  if(top.length>1) h+='<div style="padding:8px 10px;background:var(--bg3);border-radius:6px;border-left:3px solid var(--accent)"><strong>3. Don\u2019t dismiss your #2 match ('+top[1].name+')</strong> \u2014 the difference between your top 2 is often smaller than you think. Explore both before narrowing.</div>';
-  h+='<div style="padding:8px 10px;background:var(--bg3);border-radius:6px;border-left:3px solid var(--accent)"><strong>'+(top.length>1?'4':'3')+'. Run the Match Probability Calculator</strong> for your top choice \u2014 passion is necessary but not sufficient. Know your competitiveness before you commit.</div>';
-  h+='</div>';
-  h+='<div style="font-size:11px;color:var(--text3);margin-top:10px;line-height:1.6">The worst career mistake in medicine isn\u2019t picking the wrong specialty \u2014 it\u2019s picking one without ever testing whether it actually fits your life. Do the diligence now.</div>';
-  h+='</div>';
 
-  h+='<p style="font-size:10px;color:var(--text3);font-style:italic;margin-top:12px">This analysis is directional guidance based on your preferences. Shadow, rotate, and talk to physicians in each field before committing.</p>';
+  // Why NOT the others — personality & lifestyle mismatches
+  h+='<div style="margin-top:20px;margin-bottom:20px;padding:16px;background:rgba(239,68,68,.03);border:1px solid rgba(239,68,68,.10);border-radius:12px">';
+  h+='<div style="font-size:11px;font-weight:600;color:var(--red);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">\ud83d\udeab Why NOT These Specialties</div>';
+  h+='<div style="font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:10px">Based on your personality and priorities, these would be mismatches:</div>';
+  bottom.forEach(function(s){
+    var mismatches=[];
+    if(q1==='long'&&(s.name.includes('Emergency')||s.name.includes('Radiology')))mismatches.push('You want long-term patient relationships \u2014 '+s.name+' is episodic or no direct contact');
+    if(q1==='acute'&&(s.name.includes('Psychiatry')||s.name.includes('Outpatient')||s.name.includes('Dermatology')))mismatches.push('You thrive on acute, high-stakes situations \u2014 '+s.name+' is mostly planned and predictable');
+    if(q1==='minimal'&&(s.name.includes('Psychiatry')||s.name.includes('Outpatient')))mismatches.push('You prefer minimal patient interaction \u2014 '+s.name+' is entirely patient-facing');
+    if(q2==='heavy'&&(s.name.includes('Psychiatry')||s.name.includes('Hospitalist')||s.name.includes('Outpatient')||s.name.includes('Radiology')))mismatches.push('You want hands-on procedures \u2014 '+s.name+' has essentially none');
+    if(q2==='cognitive'&&(s.name.includes('Interventional')||s.name.includes('Surgery')))mismatches.push('You prefer cognitive work \u2014 '+s.name+' is procedure-dominant');
+    if(q2==='none'&&(s.name.includes('Interventional')||s.name.includes('Surgery')||s.name.includes('Gastro')))mismatches.push('Procedures aren\'t for you \u2014 '+s.name+' requires significant procedural volume');
+    if(q3==='lifestyle'&&(s.name.includes('Interventional')||s.name.includes('Surgery')))mismatches.push('You prioritize lifestyle \u2014 '+s.name+' demands 55-70+ hours/week');
+    if(q3==='income'&&(s.name.includes('Psychiatry')||s.name.includes('Outpatient')))mismatches.push('You prioritize income \u2014 '+s.name+' is lower-compensation');
+    if(q6==='low'&&(s.name.includes('Emergency')||s.name.includes('Interventional')))mismatches.push('You prefer predictability \u2014 '+s.name+' is defined by uncertainty');
+    if(q6==='high'&&(s.name.includes('Dermatology')||s.name.includes('Radiology')))mismatches.push('You thrive on uncertainty \u2014 '+s.name+' is highly predictable');
+    if(!mismatches.length)mismatches.push('Low overall alignment with your stated preferences');
+    h+='<div style="padding:8px 10px;background:var(--bg2);border-radius:6px;margin-bottom:6px;border-left:3px solid var(--red)">';
+    h+='<div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:2px">'+s.icon+' '+s.name+'</div>';
+    mismatches.forEach(function(m){h+='<div style="font-size:11px;color:var(--red);line-height:1.5">\u2716 '+m+'</div>'});
+    h+='</div>';
+  });
+  h+='<div style="font-size:10px;color:var(--text3);margin-top:8px;font-style:italic">This doesn\u2019t mean these specialties are bad \u2014 they\u2019re bad <strong>for you</strong> based on what you told me. If you\u2019re surprised by any of these, reconsider whether your answers reflect what you actually want.</div>';
+  h+='</div>';
 
   // Pathway
-  h+=hwPathway('Based on your answers, <strong>'+top[0].name+'</strong> is your strongest fit. But a fit score means nothing until you\u2019ve tested it.',[{text:'Shadow or rotate in '+top[0].name+' \u2014 even 2-3 days gives real signal.',when:'this month'},{text:'Talk to a current PGY-3 or fellow for the unfiltered truth.',when:'this month'},{text:'Check your competitiveness before you commit.',when:'this month'}],{id:'v14',icon:'\ud83c\udfaf',title:'Match Probability Calculator',why:'See if you\u2019re actually competitive for '+top[0].name+'.'});
+  h+=hwPathway('Based on your profile, you should pursue <strong>'+top[0].name+'</strong>. Your #2 ('+top[1].name+') is worth exploring as a backup, but your answers clearly favor #1. Stop browsing specialties and start testing this one.',[{text:'Shadow or rotate in '+top[0].name+' \u2014 2-3 days of real exposure beats months of theorizing.',when:'this week'},{text:'Talk to a current PGY-3 or fellow for the unfiltered truth about daily life.',when:'this month'},{text:'Check whether you\u2019re actually competitive before committing emotionally.',when:'this month'}],{id:'v14',icon:'\ud83c\udfaf',title:'Match Probability Calculator',why:'See if you\u2019re competitive for '+top[0].name+' \u2014 passion without competitiveness is a dead end.'});
 
   document.getElementById('sfa-results').innerHTML=h;
   applyBlurGate(document.getElementById('sfa-results'));
@@ -4168,6 +4253,22 @@ function mccCalculate(){
   h+='</div>';
   h+='<div style="text-align:center;padding:10px;background:var(--bg3);border-radius:8px"><div style="font-size:10px;color:var(--text3);margin-bottom:2px">Overall Match Likelihood</div><div style="font-size:24px;font-weight:700;color:'+probColorFn(matchProb)+'">'+matchProb+'%</div></div>';
   h+='<div style="font-size:9px;color:var(--text3);margin-top:6px;text-align:center">Based on your profile vs. '+sd.positions+' positions / ~'+sd.applicants+' applicants nationally</div>';
+  // Match probability interpretation — High / Moderate / Low with WHY
+  var probLevel=matchProb>=75?'HIGH':matchProb>=50?'MODERATE':'LOW';
+  var probColor2=matchProb>=75?'#6abf4b':matchProb>=50?'#c8a87c':'#ef4444';
+  var probExplain='';
+  if(matchProb>=75)probExplain='Your profile exceeds the matched applicant average in most dimensions. You have the stats to match \u2014 the risk is interview performance and rank list strategy, not your application.';
+  else if(matchProb>=50){
+    var weakAreas=[];factors.forEach(function(f){if(f.pts<f.max*0.4)weakAreas.push(f.name)});
+    probExplain='You\u2019re in range but not safe. '+sd.name+' is '+(sd.compLevel==='very_high'?'extremely':'')+(sd.compLevel==='high'?' highly':'')+' competitive'+(weakAreas.length?' and your weakest areas ('+weakAreas.join(', ')+') are pulling your probability down':'')+'. Fix those gaps and your odds move significantly.';
+  }else{
+    var criticalGaps=[];factors.forEach(function(f){if(f.pts<f.max*0.33)criticalGaps.push(f.name)});
+    probExplain='Honest assessment: you have critical gaps'+(criticalGaps.length?' in '+criticalGaps.join(' and '):'')+' that make matching unlikely without major improvements. This is fixable, but it requires immediate action \u2014 not next month, this week.';
+  }
+  h+='<div style="margin-top:10px;padding:12px;background:rgba('+(matchProb>=75?'106,191,75':matchProb>=50?'200,168,124':'239,68,68')+',.06);border-radius:8px;border:1px solid rgba('+(matchProb>=75?'106,191,75':matchProb>=50?'200,168,124':'239,68,68')+',.12)">';
+  h+='<div style="font-size:12px;font-weight:700;color:'+probColor2+';margin-bottom:4px">'+probLevel+' PROBABILITY \u2014 '+matchProb+'%</div>';
+  h+='<div style="font-size:11px;color:var(--text2);line-height:1.6">'+probExplain+'</div>';
+  h+='</div>';
   h+='</div>';
 
   // 2b. Fellowship-specific: top programs + key success factors
@@ -4355,16 +4456,42 @@ function mccCalculate(){
   h+='<div style="text-align:center;margin-bottom:16px"><button onclick="mccSaveProfile()" class="btn" style="font-size:12px;padding:10px 24px;border:1px solid rgba(198,168,94,.20);color:var(--accent);background:none;cursor:pointer;border-radius:8px">💾 Save Competitiveness Profile</button>';
   h+='<div style="font-size:10px;color:var(--text3);margin-top:6px">Track improvements as your application strengthens.</div></div>';
 
-  // 10. Related Tools
-  h+='<div style="padding:16px;background:var(--bg2);border-radius:10px;border:1px solid var(--border)">';
-  h+='<div style="font-size:11px;font-weight:600;color:var(--accent);margin-bottom:10px">🔗 Recommended Next Tools</div>';
-  var related=[{id:'v7',icon:'📊',title:'Research Impact Calculator',why:'Maximize research impact before you apply'},{id:'v15',icon:'🗺️',title:'Career Roadmap Tool',why:'Build a timeline for your remaining milestones'},{id:'v16',icon:'🎤',title:'Interview Practice Tool',why:'Practice the questions programs will ask you'}];
-  related.forEach(function(t){
-    h+='<div onclick="openFramework(\''+t.id+'\')" style="display:flex;gap:10px;padding:10px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .2s">';
-    h+='<span style="font-size:18px">'+t.icon+'</span>';
-    h+='<div><div style="font-size:12px;font-weight:600;color:var(--text)">'+t.title+'</div><div style="font-size:10px;color:var(--text3)">'+t.why+'</div></div></div>';
-  });
-  h+='</div>';
+  // Pathway: biggest gap → specific next tool
+  var sortedGaps=factors.slice().sort(function(a,b){return (a.pts/a.max)-(b.pts/b.max)});
+  var biggestGap=sortedGaps[0];
+  var fastestWin='';
+  var mccNxt;
+  if(biggestGap.name.indexOf('Research')>=0||biggestGap.name.indexOf('research')>=0){
+    fastestWin='Research is your biggest gap (' +biggestGap.pts+'/'+biggestGap.max+'). One first-author case report (2-4 months) would immediately lift your score. This is the fastest fix available to you.';
+    mccNxt={id:'v7',icon:'\ud83d\udcca',title:'Research Impact Calculator',why:'See exactly which research activities give you the most points per month of effort.'};
+  }else if(biggestGap.name.indexOf('Board')>=0||biggestGap.name.indexOf('Step')>=0){
+    fastestWin='Board scores are your biggest gap ('+biggestGap.pts+'/'+biggestGap.max+'). A focused study block targeting a 10-point improvement would shift your match probability meaningfully.';
+    mccNxt={id:'v1',icon:'\ud83d\udcca',title:'Fellowship Readiness Assessment',why:'See your full application profile — boards are one dimension of seven.'};
+  }else if(biggestGap.name.indexOf('Letter')>=0||biggestGap.name.indexOf('LOR')>=0){
+    fastestWin='Letters of recommendation are your biggest gap ('+biggestGap.pts+'/'+biggestGap.max+'). Securing even one letter from a recognized leader in '+sd.name+' can compensate for weaknesses elsewhere.';
+    mccNxt={id:'v15',icon:'\ud83d\uddfa\ufe0f',title:'Career Roadmap Tool',why:'Build a timeline that prioritizes LOR cultivation alongside your other milestones.'};
+  }else if(biggestGap.name.indexOf('Strategy')>=0){
+    fastestWin='Application strategy is your biggest gap ('+biggestGap.pts+'/'+biggestGap.max+'). Apply to more programs and secure away rotations \u2014 this is low-hanging fruit that directly increases your odds.';
+    mccNxt={id:'v15',icon:'\ud83d\uddfa\ufe0f',title:'Career Roadmap Tool',why:'Build a month-by-month timeline with program targets and away rotation deadlines.'};
+  }else{
+    fastestWin=biggestGap.name+' is your weakest area ('+biggestGap.pts+'/'+biggestGap.max+'). Improving this single dimension would have the biggest impact on your overall competitiveness.';
+    mccNxt={id:'v1',icon:'\ud83d\udcca',title:'Fellowship Readiness Assessment',why:'Get a detailed breakdown of all 7 application dimensions.'};
+  }
+  var mccPos=score>=85?'You are currently <strong>competitive</strong> for '+sd.name+'. Your application would be taken seriously at most programs. Don\u2019t coast \u2014 polish your weakest area and dominate interviews.'
+    :score>=65?'You are <strong>borderline competitive</strong> for '+sd.name+'. You can match, but it\u2019s not guaranteed. '+fastestWin
+    :score>=50?'You are <strong>not yet competitive</strong> for '+sd.name+'. '+fastestWin
+    :'Honest truth: you are <strong>high risk</strong> for '+sd.name+' right now. '+fastestWin;
+  var mccActs=[];
+  if(score<85){
+    mccActs.push({text:fastestWin.split('.')[0]+'.',when:'this week'});
+    if(sortedGaps.length>1&&sortedGaps[1].pts<sortedGaps[1].max*0.5)mccActs.push({text:'Second priority: '+sortedGaps[1].name+' ('+sortedGaps[1].pts+'/'+sortedGaps[1].max+'). Start building a plan.',when:'this month'});
+    else mccActs.push({text:'Come back and re-run this calculator after making improvements. Track your score over time.',when:'this month'});
+  }else{
+    mccActs.push({text:'Focus on interview preparation \u2014 your stats are strong, so interviews become the deciding factor.',when:'this week'});
+    mccActs.push({text:'Research each target program specifically \u2014 generic applications waste a strong profile.',when:'this month'});
+  }
+  mccActs.push({text:'Build your complete application timeline with deadlines and dependencies.',when:'this month'});
+  h+=hwPathway(mccPos,mccActs,mccNxt);
 
   h+='<p style="font-size:10px;color:var(--text3);font-style:italic;margin-top:14px">Based on NRMP Charting Outcomes and specialty match data. Match probabilities are estimates based on aggregate data — individual outcomes depend on interview performance, program fit, geographic preferences, and intangible factors.</p>';
   document.getElementById('mcc-results').innerHTML=h;
@@ -6786,8 +6913,18 @@ function ciCalc(){
       recs.map(function(r,i){return '<div style="margin-bottom:6px">'+(i+1)+'. '+r+'</div>'}).join('')+'</div>';
   }
 
-  // Red flags summary
-  var flags=details.filter(function(d){return d.color==='var(--red)'});
+  // Negotiation scripts — exact wording
+  if(recs.length){
+    out.innerHTML+='<div style="margin-top:16px;font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">\ud83d\udcac Negotiation Scripts \u2014 Use These Words</div>';
+    var scripts='<div style="display:flex;flex-direction:column;gap:8px">';
+    if(salPts<22)scripts+='<div style="padding:12px;background:var(--bg3);border-radius:8px;border-left:3px solid var(--accent)"><div style="font-size:10px;font-weight:600;color:var(--accent);margin-bottom:4px">SALARY</div><div style="font-size:12px;color:var(--text);line-height:1.7;font-style:italic">\u201cI\u2019ve reviewed the MGMA data for '+(FT_SPEC_NAMES[spec]||'my specialty')+' in this region, and the median is $'+mgma.p50+'K. My offer of $'+salaryK+'K falls below that benchmark. I\u2019d like to discuss bringing this to at least $'+mgma.p50+'K to be competitive with market rates.\u201d</div></div>';
+    if(ncPts<12)scripts+='<div style="padding:12px;background:var(--bg3);border-radius:8px;border-left:3px solid var(--accent)"><div style="font-size:10px;font-weight:600;color:var(--accent);margin-bottom:4px">NON-COMPETE</div><div style="font-size:12px;color:var(--text);line-height:1.7;font-style:italic">\u201cI\u2019d like to revisit the non-compete clause. A '+ncRadius+'-mile radius for '+ncYears+' year'+(ncYears>1?'s':'')+' would effectively force me to relocate my family if things don\u2019t work out. Could we reduce this to 15 miles and 1 year, or add a waiver if I\u2019m terminated without cause?\u201d</div></div>';
+    if(tailPts<10)scripts+='<div style="padding:12px;background:var(--bg3);border-radius:8px;border-left:3px solid var(--accent)"><div style="font-size:10px;font-weight:600;color:var(--accent);margin-bottom:4px">TAIL COVERAGE</div><div style="font-size:12px;color:var(--text);line-height:1.7;font-style:italic">\u201cTail coverage is a significant expense \u2014 typically $20-50K. Many organizations include this as part of the employment package. I\u2019d like to request employer-paid tail coverage, or at minimum, a shared arrangement with a cap on my portion.\u201d</div></div>';
+    if(termPts<8)scripts+='<div style="padding:12px;background:var(--bg3);border-radius:8px;border-left:3px solid var(--accent)"><div style="font-size:10px;font-weight:600;color:var(--accent);margin-bottom:4px">TERMINATION</div><div style="font-size:12px;color:var(--text);line-height:1.7;font-style:italic">\u201cThe current '+termNotice+'-day notice period doesn\u2019t give adequate time to transition patient care or find new employment. I\u2019d like to extend this to 90 days for without-cause termination, which is standard in physician contracts.\u201d</div></div>';
+    if(callPts<6)scripts+='<div style="padding:12px;background:var(--bg3);border-radius:8px;border-left:3px solid var(--accent)"><div style="font-size:10px;font-weight:600;color:var(--accent);margin-bottom:4px">CALL COMPENSATION</div><div style="font-size:12px;color:var(--text);line-height:1.7;font-style:italic">\u201cI want to discuss call compensation. Uncompensated call effectively reduces my hourly rate significantly. Could we add a per-diem stipend for call days, or a reduced call frequency as an alternative?\u201d</div></div>';
+    scripts+='</div>';
+    out.innerHTML+=scripts;
+  }
   if(flags.length){
     out.innerHTML+='<div style="margin-top:16px;padding:14px;background:rgba(255,100,100,.05);border:1px solid rgba(255,100,100,.15);border-radius:8px">'+
       '<div style="font-size:10px;font-weight:600;color:var(--red);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">\ud83d\udea9 '+flags.length+' Red Flag'+(flags.length>1?'s':'')+'</div>'+
@@ -6796,6 +6933,19 @@ function ciCalc(){
   }
 
   out.innerHTML+='<p style="font-size:10px;color:var(--text3);margin-top:16px;line-height:1.6;font-style:italic">Based on MGMA 2024 Provider Compensation Report. This is a modeling tool \u2014 not legal advice. Always have a physician contract attorney review your specific contract terms.</p>';
+  // Pathway
+  var ciPos=score>=80?'This is a strong offer. Your compensation and terms are above market. Focus on the small negotiable items before signing.'
+    :score>=60?'Competitive offer with room to negotiate. The scripts above give you exact language \u2014 use them. Don\u2019t sign until you\u2019ve addressed every yellow and red item.'
+    :score>=40?'This offer has significant gaps. Do NOT sign as-is. You have leverage \u2014 most employers expect negotiation. Use the scripts above and consider hiring a physician contract attorney ($2-3K that could save you $50K+).'
+    :'Walk away or bring an attorney. This contract has multiple red flags that could cost you hundreds of thousands over its lifetime.';
+  var ciActs=[];
+  if(flags.length)ciActs.push({text:'Address '+flags.length+' red flag'+(flags.length>1?'s':'')+' before signing \u2014 these are deal-breakers, not preferences.',when:'this week'});
+  if(recs.length&&!flags.length)ciActs.push({text:recs[0],when:'this week'});
+  ciActs.push({text:score<70?'Get a physician contract attorney review ($2-3.5K). Pays for itself.':'Send your counter by email with specific numbers. Verbal asks get forgotten.',when:'before signing'});
+  ciActs.push({text:'Model both scenarios in the Financial Projection Tool to see the 30-year compounding impact.',when:'this week'});
+  var ciNxt=salPts<22?{id:'v4',icon:'\ud83d\udcb0',title:'RVU Compensation Calculator',why:'Verify whether this RVU rate is actually competitive for your specialty and volume.'}
+    :{id:'v11',icon:'\ud83d\udcc8',title:'Financial Projection Tool',why:'See how this contract compounds over 30 years. Small differences now become millions.'};
+  out.innerHTML+=hwPathway(ciPos,ciActs,ciNxt);
   applyBlurGate(out);
   // Record with resultData for saved scenarios
   var ciInputs={Specialty:FT_SPEC_NAMES[spec]||spec,Salary:'$'+salaryK+'K','RVU Rate':'$'+rvu,'Non-Compete':ncRadius+'mi / '+ncYears+'yr',Tail:tail,'Term Notice':termNotice+' days',Call:callFreq+(callComp==='yes'?' (comp)':''),'Ret Match':retMatch+'%',CME:'$'+cme,Signing:'$'+signing+'K'};
@@ -7005,6 +7155,24 @@ function ftCalc(){
     insEl.innerHTML+='\n<div style="margin-top:16px;padding:16px;background:var(--bg3);border-left:3px solid var(--accent);border-radius:0 10px 10px 0"><div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">\ud83c\udfaf What To Do With This</div><div style="font-size:13px;color:var(--text);line-height:1.8;margin-bottom:8px">The numbers don\u2019t lie: <strong>'+bestSc.label+'</strong> produces $'+(diff/1000000).toFixed(1)+'M more than <strong>'+worstSc.label+'</strong> over 30 years. But here\u2019s what actually matters:</div><div style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:var(--text2);line-height:1.6"><div style="padding:8px 10px;background:var(--bg2);border-radius:6px;border-left:3px solid var(--green)"><strong>Savings rate is your biggest lever.</strong> Going from 10% \u2192 25% matters more than a $50K salary bump. Max your 401k/403b ($23,500), backdoor Roth ($7,000), and HSA ($4,150) before doing anything else.</div><div style="padding:8px 10px;background:var(--bg2);border-radius:6px;border-left:3px solid var(--green)"><strong>Don\u2019t chase money alone.</strong> The highest-paying scenario is only worth it if you can sustain it for 20+ years. Burnout at year 8 erases the advantage. Pick the path where the work energizes you.</div><div style="padding:8px 10px;background:var(--bg2);border-radius:6px;border-left:3px solid var(--accent)"><strong>Run the 3-Year Financial Planner next.</strong> This 30-year view shows the destination. The 3-Year Planner shows you exactly how to start: debt payoff strategy, tax optimization, and cash flow month by month.</div></div></div>';
 
     insEl.innerHTML+=debtSection;
+
+    // Financial stability delay comparison
+    var payoffYears=projections.map(function(proj,i){for(var y=0;y<proj.length;y++){if(proj[y].netWorth>=0)return y}return 30});
+    var fastest=Math.min.apply(null,payoffYears);
+    var slowest=Math.max.apply(null,payoffYears);
+    if(projections.length>=2&&slowest>fastest){
+      var delayYrs=slowest-fastest;
+      insEl.innerHTML+='<div style="margin-top:14px;padding:14px;background:rgba(239,68,68,.04);border:1px solid rgba(239,68,68,.10);border-radius:8px"><div style="font-size:11px;font-weight:600;color:var(--red);margin-bottom:6px">\u23f1 Financial Stability Delay</div><div style="font-size:12px;color:var(--text2);line-height:1.7"><strong>'+worstSc.label+'</strong> delays your financial stability by <strong style="color:var(--red)">'+delayYrs+' year'+(delayYrs>1?'s':'')+'</strong> compared to <strong>'+bestSc.label+'</strong>. That\u2019s '+delayYrs+' extra year'+(delayYrs>1?'s':'')+' of carrying debt, '+delayYrs+' fewer year'+(delayYrs>1?'s':'')+' of compounding wealth, and '+delayYrs+' year'+(delayYrs>1?'s':'')+' less freedom.</div></div>';
+    }
+
+    // hwPathway connector
+    var ftPos='<strong>'+bestSc.label+'</strong> wins by $'+(diff/1000000).toFixed(1)+'M in 30-year net worth. But money is one variable \u2014 factor in lifestyle, burnout risk, and whether you can sustain the work for 25+ years before deciding.';
+    var ftActs=[
+      {text:'Max out tax-advantaged accounts first: 401k ($23,500), backdoor Roth ($7,000), HSA ($4,150). This is non-negotiable regardless of which path you choose.',when:'this month'},
+      {text:'If you have competing offers, run them through the Contract Review Tool for hidden financial risks.',when:'this week'},
+      {text:'Build a 3-year cash flow plan \u2014 the 30-year view is the destination, but the first 3 years determine if you get there.',when:'this month'}
+    ];
+    insEl.innerHTML+=hwPathway(ftPos,ftActs,{id:'v5',icon:'\ud83d\udcc5',title:'3-Year Financial Leverage Planner',why:'Turn this 30-year vision into a concrete month-by-month plan for your first 3 years.'});
   }else{
     insEl.innerHTML=debtSection;
   }
@@ -8578,6 +8746,13 @@ function rvuUpdate(){
   }
   document.getElementById('rvu-vs-mgma').innerHTML=mgmaHtml;
 
+  // Practice model interpretation
+  var modelAdvice='';
+  if(model==='production')modelAdvice='<div style="margin-top:10px;padding:10px;background:var(--bg3);border-radius:6px;font-size:11px;color:var(--text2);line-height:1.6"><strong>Production model</strong> favors high-volume private practice. You eat what you kill \u2014 no floor, no ceiling. Best for: productive proceduralists, efficient clinicians, and physicians comfortable with income variability. <strong style="color:var(--red)">Risk:</strong> Income drops if volume drops (parental leave, illness, ramp-up year).</div>';
+  else if(model==='base_bonus')modelAdvice='<div style="margin-top:10px;padding:10px;background:var(--bg3);border-radius:6px;font-size:11px;color:var(--text2);line-height:1.6"><strong>Base + bonus model</strong> favors hospital-employed positions. You get a floor with upside potential. Best for: physicians who want stability while building volume. <strong style="color:var(--accent)">Watch:</strong> Is the threshold achievable? If it\u2019s set above median wRVU, the bonus is effectively unreachable.</div>';
+  else modelAdvice='<div style="margin-top:10px;padding:10px;background:var(--bg3);border-radius:6px;font-size:11px;color:var(--text2);line-height:1.6"><strong>Guaranteed salary</strong> favors academic or new-hire positions. Predictable income, no production pressure. Best for: early career, research-heavy roles, or positions where volume is hard to control. <strong style="color:var(--accent)">Watch:</strong> After the guarantee period (usually 1-2 years), you\u2019ll likely shift to production or base+bonus.</div>';
+  document.getElementById('rvu-vs-mgma').insertAdjacentHTML('afterend', modelAdvice);
+
   // Scenarios
   if(vol>0&&rate>0){
     var scenarios='';
@@ -8744,6 +8919,14 @@ function fypCalculate(){
   }
   h+='</div>';
 
+  // Earning power critical decision
+  var criticalDecision='';
+  if(debt>200000&&pslf!=='yes')criticalDecision='<div style="padding:14px;background:rgba(239,68,68,.04);border:1px solid rgba(239,68,68,.10);border-radius:10px;margin-top:14px"><div style="font-size:11px;font-weight:600;color:var(--red);margin-bottom:6px">\u26a0\ufe0f The Decision That Defines Your First 5 Years</div><div style="font-size:12px;color:var(--text2);line-height:1.7">With $'+Math.round(debt/1000)+'K in debt and no PSLF eligibility, <strong>your debt payoff strategy is the single biggest financial decision of your early career.</strong> Every month at '+(rate*100).toFixed(1)+'% interest costs you $'+Math.round(debt*rate/12).toLocaleString()+'. Aggressively paying this down saves you <strong>$'+Math.round(debt*rate*2.5/1000)+'K+</strong> in interest over 5 years.</div></div>';
+  else if(debt>200000&&pslf==='yes')criticalDecision='<div style="padding:14px;background:rgba(106,191,75,.04);border:1px solid rgba(106,191,75,.10);border-radius:10px;margin-top:14px"><div style="font-size:11px;font-weight:600;color:var(--green);margin-bottom:6px">\ud83d\udca1 Your PSLF Decision Is Worth $'+Math.round(Math.max(0,debt-idrPayment*120)/1000)+'K</div><div style="font-size:12px;color:var(--text2);line-height:1.7"><strong>Staying at a qualifying employer for 10 years is the highest-leverage financial decision you can make.</strong> Every time you\u2019re tempted by a private practice offer, calculate whether the salary bump exceeds $'+Math.round(Math.max(0,debt-idrPayment*120)/10000)+'K/year in forgiven value.</div></div>';
+  else if(yr1Save<15)criticalDecision='<div style="padding:14px;background:rgba(239,68,68,.04);border:1px solid rgba(239,68,68,.10);border-radius:10px;margin-top:14px"><div style="font-size:11px;font-weight:600;color:var(--red);margin-bottom:6px">\u26a0\ufe0f Your Earning Power Depends on This</div><div style="font-size:12px;color:var(--text2);line-height:1.7"><strong>Your savings rate in years 1-3 defines your wealth trajectory for the next 30 years.</strong> At '+yr1Save+'%, you\u2019re building slowly. The lifestyle you set in year 1 is the lifestyle you\u2019ll be stuck with. Push to 25% now — not later.</div></div>';
+  else if(matchPct===0)criticalDecision='<div style="padding:14px;background:rgba(200,168,124,.04);border:1px solid rgba(198,168,94,.10);border-radius:10px;margin-top:14px"><div style="font-size:11px;font-weight:600;color:var(--accent);margin-bottom:6px">\ud83d\udca1 No Employer Match = Missing Free Money</div><div style="font-size:12px;color:var(--text2);line-height:1.7">A 4% match on $'+Math.round(salary/1000)+'K is $'+Math.round(salary*0.04/1000)+'K/year of free money. Factor this into any job comparison.</div></div>';
+  h+=criticalDecision;
+
   // Pathway
   h+=hwPathway(y3.netWealth>=0?'Positive net worth by Year 3 \u2014 ahead of most physicians.':'Still in the red at Year 3 \u2014 normal with $'+Math.round(debt/1000)+'K debt. Hold expenses flat.',[{text:'Set up 401k + backdoor Roth this week.',when:'this week'},{text:(pslf==='yes'?'Certify PSLF employment.':'Refinance your loans.')+' Free money.',when:'this week'},{text:'Automate savings at '+yr1Save+'%'+(yr1Save<20?' (push to 20%)':'')+' before lifestyle creep.',when:'this month'}],{id:'v8',icon:'\ud83d\udcb5',title:'Debt & Income Strategy Tool',why:'Get a full financial health score \u2014 disability, tax strategy, advisor quality.'});
 
@@ -8887,7 +9070,28 @@ function ilpCalculate(){
   h+='<div style="font-size:11px;color:var(--text3);margin-top:10px;line-height:1.6">The physicians who build real wealth aren\u2019t the highest earners \u2014 they\u2019re the ones who got the fundamentals right in their first 3 years as an attending. Every month you delay these moves costs you real money.</div>';
   h+='</div>';
 
+  // Bottom line: ONE strategy recommendation
+  var topPriority='';var avoid='';
+  if(disability!=='own_occ'){topPriority='Get own-occupation disability insurance. Everything else is secondary.';avoid='Do NOT delay this. Every day uninsured is a bet against your career.'}
+  else if(debt>100000&&(employer==='nonprofit'||employer==='government')){topPriority='Maximize PSLF. Stay on IDR payments, certify employment annually, and do NOT refinance your federal loans.';avoid='Refinancing kills your PSLF eligibility. Some refinance companies market aggressively to physicians — don\u2019t fall for it.'}
+  else if(debt>100000){topPriority='Aggressively refinance and pay down debt. Target a 3-5 year payoff.';avoid='Don\u2019t invest in taxable accounts while carrying 6%+ student loans. The guaranteed return on debt payoff beats market uncertainty.'}
+  else if(has401k!=='maxed'){topPriority='Max your tax-advantaged accounts immediately. This is free money.';avoid='Don\u2019t buy a house, upgrade your car, or inflate your lifestyle before maxing retirement contributions.'}
+  else if(spendPct>60){topPriority='Cut spending to 40-50% of take-home. Automate savings first, spend what\u2019s left.';avoid='Don\u2019t match your lifestyle to your salary. The residents-to-attending spending jump is the #1 wealth destroyer for physicians.'}
+  else{topPriority='You\u2019re doing the fundamentals right. Focus on tax-loss harvesting, backdoor Roth, and optimizing your investment allocation.';avoid='Don\u2019t get complacent. Revisit your strategy annually and increase savings rate with every salary bump.'}
+  h+='<div style="padding:14px;background:linear-gradient(160deg,rgba(200,168,124,.08),rgba(200,168,124,.02));border:1px solid rgba(198,168,94,.15);border-radius:10px;margin-bottom:14px">';
+  h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">\ud83c\udfaf Bottom Line</div>';
+  h+='<div style="font-size:13px;color:var(--text);line-height:1.8;margin-bottom:8px"><strong>Do this:</strong> '+topPriority+'</div>';
+  h+='<div style="font-size:12px;color:var(--red);line-height:1.6"><strong>Avoid:</strong> '+avoid+'</div>';
+  h+='</div>';
+
+  // hwPathway
+  h+=hwPathway(scorePct>=80?'Your financial fundamentals are strong. Shift focus to optimizing \u2014 not just saving.':scorePct>=60?'Solid start but you have gaps. Fix the top action item above before anything else.':'Critical financial gaps. The priority moves above are in order \u2014 do them this month, not next quarter.',
+    [{text:topPriority.split('.')[0]+'.',when:'this week'},
+     {text:debt>0?'Run a 30-year projection to see how debt payoff timing affects your net worth.':'Run a 30-year projection comparing your current savings rate vs 5% higher.',when:'this month'},
+     {text:'Set a calendar reminder for quarterly financial review.',when:'this month'}],
+    {id:'v11',icon:'\ud83d\udcc8',title:'Financial Projection Tool',why:'See how today\u2019s decisions compound over 30 years. Small changes now become millions.'});
   document.getElementById('ilp-results').innerHTML=h;
+  applyBlurGate(document.getElementById('ilp-results'));
   recordToolUse('Debt & Income Strategy Tool',score+'/'+maxScore,grade+' ('+scorePct+'%)',{inputs:{Salary:'$'+salary.toLocaleString(),Debt:'$'+debt.toLocaleString(),Employer:employer,Disability:disability,Spending:'$'+spending.toLocaleString(),'Tax-Advantaged':has401k,Advisor:hasAdvisor},highlights:['Score: '+score+'/'+maxScore+' ('+grade+')'].concat(wins).concat(flags)});
 }
 // ===== RESEARCH ROI CALCULATOR =====
@@ -9192,6 +9396,82 @@ async function submitAudit(){
   }
   document.getElementById('audit-form').classList.add('hidden');
   document.getElementById('audit-success').classList.remove('hidden');
+
+  // Instant preliminary analysis — make it feel like a personal review
+  var auditData={};
+  sections.forEach(function(s){s.fields.forEach(function(f){var el=document.getElementById(f.id);auditData[f.id]=el?el.value.trim():''})});
+  var position=auditData['audit-1a']||'';
+  var cvSnap=auditData['audit-1d']||'';
+  var decision=auditData['audit-2a']||'';
+  var timeline=auditData['audit-2c']||'';
+  var holdingBack=auditData['audit-2e']||'';
+  var nonNeg=auditData['audit-3a']||'';
+  var regret=auditData['audit-3e']||'';
+  var worst=auditData['audit-4c']||'';
+  var best=auditData['audit-4d']||'';
+  var reversible=auditData['audit-4e']||'';
+
+  // Build preliminary analysis
+  var prelim='<div style="text-align:left;margin-top:24px">';
+  prelim+='<div style="padding:20px;background:linear-gradient(160deg,rgba(200,168,124,.1),rgba(200,168,124,.03));border:1px solid rgba(198,168,94,.15);border-radius:14px;margin-bottom:16px">';
+  prelim+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">\ud83d\udcdd Preliminary Assessment \u2014 Before Dr. Faroqui\u2019s Full Review</div>';
+  prelim+='<div style="font-size:12px;color:var(--text2);line-height:1.8">';
+
+  // Overall competitiveness snapshot
+  if(cvSnap){
+    var hasPubs=cvSnap.match(/\d+\s*(pub|paper|manuscript|article)/i);
+    var hasScore=cvSnap.match(/(\d{3})\s*(step|score|board)/i);
+    var hasLeadership=cvSnap.match(/chief|lead|director|captain|president/i);
+    var compStrengths=[];var compGaps=[];
+    if(hasPubs)compStrengths.push('research activity');else compGaps.push('research/publications');
+    if(hasScore){var sc=parseInt(hasScore[1]);if(sc>=240)compStrengths.push('strong board scores');else if(sc<230)compGaps.push('board scores below competitive threshold')}
+    if(hasLeadership)compStrengths.push('leadership experience');else compGaps.push('leadership roles');
+    prelim+='<div style="margin-bottom:12px;padding:10px;background:var(--bg2);border-radius:8px"><strong>\ud83c\udfaf Overall Competitiveness:</strong> ';
+    if(compStrengths.length>compGaps.length)prelim+='<span style="color:var(--green)">Competitive foundation</span> with strengths in '+compStrengths.join(', ')+'.';
+    else if(compGaps.length)prelim+='<span style="color:var(--red)">Gaps identified</span> in '+compGaps.join(', ')+' that need addressing.';
+    else prelim+='More detail needed for full assessment.';
+    if(compGaps.length)prelim+=' <strong>Fix plan:</strong> '+compGaps[0]+' should be your #1 priority.';
+    prelim+='</div>';
+  }
+
+  // Red flags from their answers
+  prelim+='<div style="margin-bottom:12px"><strong>\ud83d\udea9 Potential Red Flags:</strong></div>';
+  prelim+='<div style="display:flex;flex-direction:column;gap:6px;margin-bottom:12px">';
+  if(holdingBack&&holdingBack.length>10)prelim+='<div style="padding:8px 10px;background:rgba(239,68,68,.04);border-left:3px solid var(--red);border-radius:0 6px 6px 0;font-size:11px;color:var(--text2)"><strong style="color:var(--red)">Indecision paralysis:</strong> You identified what\u2019s holding you back. The biggest risk isn\u2019t making the wrong choice \u2014 it\u2019s making no choice while the window closes.</div>';
+  if(filled<10)prelim+='<div style="padding:8px 10px;background:rgba(239,68,68,.04);border-left:3px solid var(--red);border-radius:0 6px 6px 0;font-size:11px;color:var(--text2)"><strong style="color:var(--red)">Incomplete submission ('+filled+'/20):</strong> The gaps in your submission may reflect gaps in your own clarity about this decision. Consider revisiting the unanswered questions.</div>';
+  if(worst&&worst.toLowerCase().indexOf('don\'t know')>=0)prelim+='<div style="padding:8px 10px;background:rgba(239,68,68,.04);border-left:3px solid var(--red);border-radius:0 6px 6px 0;font-size:11px;color:var(--text2)"><strong style="color:var(--red)">Undefined downside risk:</strong> You haven\u2019t clearly defined the worst outcome. This suggests you may be avoiding confronting the real stakes.</div>';
+  if(!worst&&!best)prelim+='<div style="padding:8px 10px;background:rgba(200,168,124,.06);border-left:3px solid var(--accent);border-radius:0 6px 6px 0;font-size:11px;color:var(--text2)"><strong style="color:var(--accent)">Risk assessment incomplete:</strong> Without defining best and worst outcomes, you\u2019re making this decision with incomplete data.</div>';
+  prelim+='</div>';
+
+  // Strengths
+  prelim+='<div style="margin-bottom:12px"><strong style="color:var(--green)">\u2705 What\u2019s Working:</strong></div>';
+  prelim+='<div style="display:flex;flex-direction:column;gap:6px;margin-bottom:12px">';
+  if(decision&&decision.length>20)prelim+='<div style="padding:8px 10px;background:rgba(106,191,75,.04);border-left:3px solid var(--green);border-radius:0 6px 6px 0;font-size:11px;color:var(--text2)">You\u2019ve clearly articulated the decision. Most people never get this far \u2014 clarity is the first step.</div>';
+  if(regret&&regret.length>10)prelim+='<div style="padding:8px 10px;background:rgba(106,191,75,.04);border-left:3px solid var(--green);border-radius:0 6px 6px 0;font-size:11px;color:var(--text2)">You\u2019ve done the regret test. Your answer reveals what actually matters to you \u2014 Dr. Faroqui will use this as a compass.</div>';
+  if(nonNeg&&nonNeg.length>10)prelim+='<div style="padding:8px 10px;background:rgba(106,191,75,.04);border-left:3px solid var(--green);border-radius:0 6px 6px 0;font-size:11px;color:var(--text2)">Your non-negotiables are defined. This eliminates options that would make you miserable, even if they look good on paper.</div>';
+  if(reversible)prelim+='<div style="padding:8px 10px;background:rgba(106,191,75,.04);border-left:3px solid var(--green);border-radius:0 6px 6px 0;font-size:11px;color:var(--text2)">You\u2019ve considered reversibility. '+(reversible.toLowerCase().indexOf('yes')>=0?'Knowing this is reversible should give you confidence to act.':'Knowing this is irreversible means the analysis matters even more. Dr. Faroqui will weigh this heavily.')+'</div>';
+  prelim+='</div>';
+
+  // What's holding you back
+  if(holdingBack){
+    prelim+='<div style="margin-bottom:12px"><strong>\ud83e\udde0 What\u2019s Holding You Back:</strong></div>';
+    prelim+='<div style="padding:10px;background:var(--bg2);border-radius:8px;font-size:12px;color:var(--text2);line-height:1.7;font-style:italic;margin-bottom:12px">\u201c'+holdingBack+'\u201d</div>';
+    prelim+='<div style="font-size:11px;color:var(--text2);margin-bottom:12px">Dr. Faroqui will address this directly in the full review. Expect a specific plan to overcome this barrier.</div>';
+  }
+
+  prelim+='</div></div>';
+
+  // hwPathway
+  prelim+=hwPathway('Your audit is submitted. While waiting for Dr. Faroqui\u2019s full review, use these tools to build more data for your decision.',[
+    {text:'Run the '+(!cvSnap||cvSnap.match(/pub|research/i)?'Match Probability Calculator':'Fellowship Readiness Assessment')+' to get an objective competitiveness score.',when:'this week'},
+    {text:'Model the financial implications of your top 2 options in the Financial Projection Tool.',when:'this week'},
+    {text:'When Dr. Faroqui\u2019s review arrives, build your execution plan in the Career Roadmap Tool.',when:'after review'}
+  ],decision&&decision.match(/fellowship|match|apply/i)?{id:'v1',icon:'\ud83d\udcca',title:'Fellowship Readiness Assessment',why:'Get an objective score while you wait. Data + expert review = best possible decision.'}
+    :decision&&decision.match(/contract|offer|job/i)?{id:'v12',icon:'\ud83d\udcdd',title:'Contract Review Tool',why:'If you have an offer on the table, score it now. Don\u2019t wait for the review to act on time-sensitive terms.'}
+    :{id:'v15',icon:'\ud83d\uddfa\ufe0f',title:'Career Roadmap Tool',why:'Build a preliminary timeline while you wait. Dr. Faroqui\u2019s review will refine it.'});
+
+  prelim+='</div>';
+  document.getElementById('audit-success').innerHTML='<div style="font-size:48px;margin-bottom:16px">\u2713</div><h3 class="serif" style="font-size:20px;margin-bottom:8px">Audit Submitted</h3><p style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:6px">Your strategic audit has been sent to Dr. Faroqui. Expect a response within 7 business days.</p><p style="font-size:11px;color:var(--text3);margin-bottom:20px">'+filled+'/20 fields completed \u2014 '+(filled>=15?'comprehensive submission':'consider revisiting and adding more detail for a stronger review')+'</p>'+prelim;
   notify('Strategic audit submitted!');
   recordToolUse('Application Review',null,'Application review submitted for review');
   notifyAdmin(payload);
@@ -11361,6 +11641,56 @@ function obsPlanBuild(){
     h+='<strong>Months 7-9:</strong> Second observership — complement the first (if first was prestige, second should be hands-on, or vice versa).<br>';
     h+='<strong>Months 10-12:</strong> Optional third program. Consolidate letters, finalize personal statement, prepare residency applications with 2-3 strong US clinical experiences.</div>';
   }
+  h+='</div>';
+
+  // Email strategy — how to position yourself
+  h+='<div style="margin-top:16px;padding:16px;background:linear-gradient(160deg,rgba(198,168,94,.06),rgba(200,168,124,.02));border:1px solid rgba(198,168,94,.15);border-radius:12px">';
+  h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">\ud83d\udce7 How to Email Programs \u2014 Templates That Work</div>';
+  h+='<div style="font-size:11px;color:var(--text3);margin-bottom:12px">Most applicants send generic emails. Stand out with targeted, specific outreach.</div>';
+
+  // Initial outreach template
+  h+='<div style="padding:12px;background:var(--bg2);border-radius:8px;margin-bottom:10px;border-left:3px solid var(--accent)">';
+  h+='<div style="font-size:10px;font-weight:600;color:var(--accent);margin-bottom:6px">INITIAL APPLICATION EMAIL</div>';
+  h+='<div style="font-size:12px;color:var(--text2);line-height:1.7;font-family:monospace;padding:10px;background:var(--bg3);border-radius:6px">';
+  h+='Subject: '+(OBS_SPEC_LABELS[spec]||spec)+' Observership Inquiry \u2014 [Your Name], [Your Background]<br><br>';
+  h+='Dear Dr. [Program Director/Coordinator Name],<br><br>';
+  h+='I am writing to express my interest in the '+(OBS_SPEC_LABELS[spec]||spec)+' observership program at [Institution]. I am a [medical graduate/resident] from [Institution/Country] with a particular interest in [specific aspect of the specialty].<br><br>';
+  h+='I was drawn to your program because [SPECIFIC reason \u2014 cite a recent publication, faculty member\u2019s research, or unique program feature]. My background in [relevant experience] aligns with your department\u2019s focus on [their strength].<br><br>';
+  h+='I have attached my CV and [relevant documents]. I am available to begin as early as [date] and am flexible with scheduling.<br><br>';
+  h+='Thank you for your consideration.<br>Sincerely,<br>[Your Name]';
+  h+='</div>';
+  h+='<div style="font-size:10px;color:var(--green);margin-top:6px;line-height:1.5">\u2705 <strong>Key:</strong> Always reference something specific about THEIR program. Generic emails get deleted. Specific emails get responses.</div>';
+  h+='</div>';
+
+  // Follow-up template
+  h+='<div style="padding:12px;background:var(--bg2);border-radius:8px;margin-bottom:10px;border-left:3px solid var(--accent)">';
+  h+='<div style="font-size:10px;font-weight:600;color:var(--accent);margin-bottom:6px">FOLLOW-UP EMAIL (7-10 days later)</div>';
+  h+='<div style="font-size:12px;color:var(--text2);line-height:1.7;font-family:monospace;padding:10px;background:var(--bg3);border-radius:6px">';
+  h+='Subject: Re: '+(OBS_SPEC_LABELS[spec]||spec)+' Observership Inquiry \u2014 [Your Name]<br><br>';
+  h+='Dear [Name],<br><br>';
+  h+='I wanted to follow up on my previous email regarding the observership program. I remain very interested in [Institution\u2019s program] and would welcome the opportunity to contribute to [specific project or clinical area].<br><br>';
+  h+='I understand you receive many inquiries and appreciate your time. Please let me know if there are additional materials I can provide.<br><br>';
+  h+='Best regards,<br>[Your Name]';
+  h+='</div>';
+  h+='<div style="font-size:10px;color:var(--accent);margin-top:6px;line-height:1.5">\ud83d\udca1 <strong>Tip:</strong> Follow up once. If no response after 2 emails, move on. Don\u2019t send 5+ emails \u2014 it reads as desperate, not persistent.</div>';
+  h+='</div>';
+
+  // Positioning tips
+  h+='<div style="padding:12px;background:var(--bg2);border-radius:8px;border-left:3px solid var(--green)">';
+  h+='<div style="font-size:10px;font-weight:600;color:var(--green);margin-bottom:6px">HOW TO POSITION YOURSELF</div>';
+  h+='<div style="font-size:12px;color:var(--text2);line-height:1.8">';
+  if(isIMG==='img'){
+    h+='1. <strong>Lead with your clinical experience</strong> \u2014 not your degree or country. "I managed 30+ patients daily in a cardiac ICU" beats "I graduated from X university."<br>';
+    h+='2. <strong>Show you\u2019ve done homework</strong> on their program \u2014 mention a specific faculty member\u2019s research or the program\u2019s unique curriculum.<br>';
+    h+='3. <strong>Address the visa question early</strong> if applicable \u2014 don\u2019t make them ask. State clearly: "I have [visa type] and can begin immediately."<br>';
+    h+='4. <strong>Offer to contribute</strong> \u2014 "I would welcome the opportunity to participate in ongoing research" shows you\u2019re not just a passive observer.';
+  }else{
+    h+='1. <strong>Explain WHY this program specifically</strong> \u2014 geographic convenience is not enough. Cite their unique strengths.<br>';
+    h+='2. <strong>Connect your goals to their resources</strong> \u2014 "I\u2019m interested in [subspecialty] and your program\u2019s strength in [X] would provide ideal exposure."<br>';
+    h+='3. <strong>Be clear about your timeline</strong> \u2014 "I\u2019m applying for [specialty] this cycle and seeking focused subspecialty exposure before ERAS."<br>';
+    h+='4. <strong>Request a specific faculty mentor</strong> if possible \u2014 this shows initiative and makes your request easier to route internally.';
+  }
+  h+='</div></div>';
   h+='</div>';
 
   // Budget summary

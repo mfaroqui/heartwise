@@ -1,25 +1,63 @@
 // ===== GLOBAL CONSTANTS =====
 var HW_PHYSICIAN_COUNT='250+';
 
+// ===== THINKING SIMULATION =====
+function hwThinking(targetEl,steps,callback){
+  var el=typeof targetEl==='string'?document.getElementById(targetEl):targetEl;
+  if(!el){if(callback)callback();return}
+  var h='<div id="hw-thinking" style="padding:24px;text-align:center">';
+  h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:16px">Reviewing your situation</div>';
+  h+='<div id="hw-think-step" style="font-size:13px;color:var(--text2);line-height:1.6;font-family:var(--font-serif);min-height:40px;transition:opacity .3s">'+steps[0]+'</div>';
+  h+='<div style="margin-top:16px;height:2px;background:var(--bg3);border-radius:1px;overflow:hidden"><div id="hw-think-bar" style="height:100%;width:0%;background:var(--accent);transition:width .8s ease"></div></div>';
+  h+='</div>';
+  el.innerHTML=h;
+  el.style.display='';
+  var bar=document.getElementById('hw-think-bar');
+  var stepEl=document.getElementById('hw-think-step');
+  var i=0;
+  function next(){
+    if(i>=steps.length){if(callback)callback();return}
+    if(bar)bar.style.width=Math.round(((i+1)/steps.length)*100)+'%';
+    if(stepEl){stepEl.style.opacity='0';setTimeout(function(){stepEl.textContent=steps[i];stepEl.style.opacity='1';i++;setTimeout(next,900)},200)}
+    else{i++;setTimeout(next,800)}
+  }
+  next();
+}
+
+// ===== EXPERIENCE INJECTION PHRASES =====
+var HW_EXP_LINES=[
+  'I.ve seen this play out many times.',
+  'In practice, what actually matters here is different from what you.d expect.',
+  'Where people lose time here is worth paying attention to.',
+  'This is one of those situations where the textbook answer and the real answer diverge.',
+  'I.ve walked people through this exact scenario before.',
+  'What I.ve learned from watching this unfold across dozens of cases is this.',
+  'The pattern I see over and over again in this situation is worth calling out.',
+  'In real-world scenarios, this is where the decision actually gets made.'
+];
+function hwExpLine(){return HW_EXP_LINES[Math.floor(Math.random()*HW_EXP_LINES.length)]}
+
 // ===== TOOL PATHWAY CONNECTOR =====
 function hwPathway(position,actions,nextTool){
   var h='<div style="margin-top:20px;padding:20px;background:linear-gradient(160deg,var(--bg2),rgba(200,168,124,.03));border:1px solid var(--border2);border-radius:12px">';
-  h+='<div style="font-size:14px;font-weight:600;color:var(--text);line-height:1.6;margin-bottom:16px;font-family:var(--font-serif)">'+position+'</div>';
+  // Attending Note format
+  h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:12px">Attending Note</div>';
+  h+='<div style="font-size:13px;color:var(--text);line-height:1.7;margin-bottom:16px;font-family:var(--font-serif)">'+position+'</div>';
   if(actions&&actions.length){
-    h+='<div style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:10px">\u2705 Your Top Actions</div>';
+    h+='<div style="font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:10px">What to do next</div>';
     actions.forEach(function(a,i){
       var timeColor=a.when==='this week'?'var(--red)':a.when==='this month'?'var(--accent)':'var(--text3)';
       h+='<div style="display:flex;gap:10px;padding:10px 12px;background:var(--bg);border-radius:8px;margin-bottom:6px;border-left:3px solid '+(i===0?'var(--green)':i===1?'var(--accent)':'var(--text3)')+'">';
-      h+='<div style="font-size:16px;font-weight:700;color:var(--accent);flex-shrink:0;width:20px;text-align:center">'+(i+1)+'</div>';
-      h+='<div style="flex:1"><div style="font-size:12px;font-weight:600;color:var(--text);line-height:1.5">'+a.text+'</div>';
-      h+='<div style="font-size:10px;color:'+timeColor+';font-weight:500;margin-top:3px">\u23f0 '+a.when+'</div></div></div>';
+      h+='<div style="font-size:14px;font-weight:700;color:var(--accent);flex-shrink:0;width:20px;text-align:center">'+(i+1)+'</div>';
+      h+='<div style="flex:1"><div style="font-size:12px;color:var(--text);line-height:1.5">'+a.text+'</div>';
+      h+='<div style="font-size:10px;color:'+timeColor+';font-weight:500;margin-top:3px">'+a.when+'</div></div></div>';
     });
   }
   if(nextTool){
     h+='<div style="margin-top:14px;padding:14px;background:var(--accent-dim);border:1px solid var(--border2);border-radius:10px;cursor:pointer;transition:all .2s" onclick="openFramework(\''+nextTool.id+'\')" onmouseenter="this.style.transform=\'translateY(-1px)\'" onmouseleave="this.style.transform=\'none\'">';
     h+='<div style="display:flex;align-items:center;gap:10px">';
     h+='<div style="font-size:22px;flex-shrink:0">'+nextTool.icon+'</div>';
-    h+='<div style="flex:1"><div style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:2px">YOUR NEXT STEP \u2192</div>';
+    h+='<div style="flex:1"><div style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:2px">Run this next</div>';
     h+='<div style="font-size:13px;font-weight:600;color:var(--text)">'+nextTool.title+'</div>';
     h+='<div style="font-size:11px;color:var(--text3);margin-top:2px">'+nextTool.why+'</div></div></div></div>';
   }
@@ -1475,7 +1513,7 @@ function renderDashboard(){
     if(daysSince>=30){
       refreshEl.style.display='';
       refreshEl.innerHTML='<div style="display:flex;align-items:center;gap:10px;padding:14px 16px;background:linear-gradient(160deg,rgba(198,168,94,.06),rgba(200,168,124,.02));border:1px solid rgba(198,168,94,.15);border-radius:10px;cursor:pointer" onclick="showUpdateProfile()">'
-        +'<span style="font-size:16px">🔄</span>'
+        +'<span style="font-size:16px"></span>'
         +'<div style="flex:1"><div style="font-size:12px;font-weight:600;color:var(--accent)">Your scores are '+daysSince+' days old</div>'
         +'<div style="font-size:11px;color:var(--text3);margin-top:2px">A lot can change in a month. Update your profile to recalculate.</div></div>'
         +'<span style="font-size:12px;font-weight:600;color:var(--accent)">Update →</span></div>';
@@ -2654,9 +2692,9 @@ function showQuestion(id){
     h+='<div class="ai-resp">';
     h+='<div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border)"><span style="font-size:11px;font-weight:600;color:var(--blue);text-transform:uppercase;letter-spacing:1px">AI-Assisted Guidance</span><span style="font-size:10px;color:var(--text3)">•</span><span style="font-size:10px;color:var(--text3)">Powered by evidence-based frameworks</span></div>';
     h+='<h4>📋 Assessment</h4><p>'+q.ai.diag+'</p>';
-    h+='<h4>🔍 Key Considerations</h4><p>'+q.ai.bottleneck+'</p>';
+    h+='<h4> Key Considerations</h4><p>'+q.ai.bottleneck+'</p>';
     h+='<h4>📝 Recommended Approach</h4><ol>'+q.ai.plan.map(s=>'<li>'+s+'</li>').join('')+'</ol>';
-    h+='<h4>⚠️ Common Pitfalls</h4><ul style="list-style:none;padding:0">'+q.ai.mistakes.map(m=>'<li style="padding:4px 0;color:var(--red)">• '+m+'</li>').join('')+'</ul>';
+    h+='<h4>Common Pitfalls</h4><ul style="list-style:none;padding:0">'+q.ai.mistakes.map(m=>'<li style="padding:4px 0;color:var(--red)">• '+m+'</li>').join('')+'</ul>';
     h+='<h4>📅 30-Day Action Plan</h4><p>'+q.ai.action+'</p>';
     if(q.ai.refs){h+='<div style="margin-top:16px;padding:12px;border-radius:var(--r2);background:rgba(100,149,237,.06);border:1px solid rgba(100,149,237,.15)"><div style="font-size:10px;font-weight:600;color:var(--blue);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">📚 References & Sources</div><p style="font-size:11px;color:var(--text3);line-height:1.6">'+q.ai.refs+'</p></div>'}
     h+='<div class="escalate" style="margin-top:12px">'+(q.ai.escalate?'✅ Physician review recommended: ':'ℹ️ Physician review: ')+(q.ai.ereason||'')+'</div>';
@@ -3074,7 +3112,7 @@ function fprInit(){
   }
 
   var failH='<div style="margin-top:16px;padding:16px;background:rgba(239,68,68,.03);border:1px solid rgba(239,68,68,.08);border-radius:12px">';
-  failH+='<div style="font-size:11px;font-weight:600;color:var(--red);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">\u26a0\ufe0f Where Most Applicants Fail</div>';
+  failH+='<div style="font-size:11px;font-weight:600;color:var(--red);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Where Most Applicants Fail</div>';
   var failPoints=[];
   if(monthsNum>12){
     failPoints.push({when:'18-24 months out',fail:'Starting research too late. A first-author paper takes 6-12 months from idea to acceptance. If you start at 12 months out, it won\u2019t be on your ERAS.',fix:'Start a case report THIS WEEK. Pick a patient you\u2019ve already seen.'});
@@ -3091,8 +3129,8 @@ function fprInit(){
   failPoints.forEach(function(f){
     failH+='<div style="padding:10px;background:var(--bg2);border-radius:8px;margin-bottom:8px;border-left:3px solid var(--red)">';
     failH+='<div style="font-size:10px;color:var(--text3);margin-bottom:2px">'+f.when+'</div>';
-    failH+='<div style="font-size:12px;font-weight:600;color:var(--red);margin-bottom:4px">\u2716 '+f.fail+'</div>';
-    failH+='<div style="font-size:11px;color:var(--green);line-height:1.5">\u2192 <strong>Fix:</strong> '+f.fix+'</div>';
+    failH+='<div style="font-size:12px;font-weight:600;color:var(--red);margin-bottom:4px">'+f.fail+'</div>';
+    failH+='<div style="font-size:11px;color:var(--green);line-height:1.5"><strong>Fix:</strong> '+f.fix+'</div>';
     failH+='</div>';
   });
   failH+='</div>';
@@ -3140,7 +3178,7 @@ function fprShowMockInterview(spec){
 }
 
 function fprRenderMockCards(selected){
-  var typeBadge={clinical:'\ud83e\ude7a Clinical',research:'\ud83d\udd2c Research',behavioral:'\ud83e\udde0 Behavioral',career:'\ud83c\udfaf Career',fit:'\ud83c\udfe5 Program Fit'};
+  var typeBadge={clinical:'\ud83e\ude7a Clinical',research:'\ud83d\udd2c Research',behavioral:'\ud83e\udde0 Behavioral',career:'Career',fit:'\ud83c\udfe5 Program Fit'};
   var typeColor={clinical:'#3B82F6',research:'var(--green)',behavioral:'var(--accent)',career:'#8B5CF6',fit:'#E67E22'};
   var h='';
 
@@ -3166,7 +3204,7 @@ function fprRenderMockCards(selected){
   h+='</div>';
 
   h+='<div style="margin-top:14px;padding:12px;background:var(--bg);border:1px solid var(--border);border-radius:8px">';
-  h+='<div style="font-size:11px;font-weight:600;color:var(--accent);margin-bottom:6px">\ud83c\udfaf Interview Prep Tips</div>';
+  h+='<div style="font-size:11px;font-weight:600;color:var(--accent);margin-bottom:6px">Interview Prep Tips</div>';
   h+='<div style="font-size:11px;color:var(--text2);line-height:1.8">';
   h+='\u2022 Practice each answer out loud (aim for 60-90 seconds)<br>';
   h+='\u2022 Record yourself and watch it back \u2014 painful but effective<br>';
@@ -3187,7 +3225,7 @@ function fprShowAll(){
   var questions=window._fprMockQuestions||FPR_MOCK_QUESTIONS.other;
   var spec=window._fprMockSpec||'other';
   var specNames={cardiology:'Cardiology',interventional:'Interventional Cardiology',electrophysiology:'Electrophysiology',gi:'Gastroenterology',pulm_crit:'Pulm/Crit',hemonc:'Heme/Onc',rheum:'Rheumatology',endo:'Endocrinology',neph:'Nephrology',id:'ID',allergy:'Allergy',sports:'Sports Med',geri:'Geriatrics',pain:'Pain',ortho:'Ortho',ctsx:'CT Surgery',vasc:'Vascular',other:'Fellowship'};
-  var typeBadge={clinical:'\ud83e\ude7a Clinical',research:'\ud83d\udd2c Research',behavioral:'\ud83e\udde0 Behavioral',career:'\ud83c\udfaf Career',fit:'\ud83c\udfe5 Fit'};
+  var typeBadge={clinical:'\ud83e\ude7a Clinical',research:'\ud83d\udd2c Research',behavioral:'\ud83e\udde0 Behavioral',career:'Career',fit:'\ud83c\udfe5 Fit'};
   var typeColor={clinical:'#3B82F6',research:'var(--green)',behavioral:'var(--accent)',career:'#8B5CF6',fit:'#E67E22'};
 
   var h='<div style="margin-top:24px;padding:20px;background:var(--bg2);border:1px solid var(--border);border-radius:12px">';
@@ -3378,7 +3416,7 @@ function crsCalc(){
 
   if(reds.length){
     h+='<div style="margin-bottom:16px">';
-    h+='<div style="font-size:11px;font-weight:600;color:var(--red);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">\ud83d\udea9 DEAL-BREAKERS \u2014 Do Not Sign Until Fixed ('+reds.length+')</div>';
+    h+='<div style="font-size:11px;font-weight:600;color:var(--red);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">DEAL-BREAKERS \u2014 Do Not Sign Until Fixed ('+reds.length+')</div>';
     reds.forEach(function(f){
       h+='<div style="padding:12px 14px;background:rgba(239,68,68,.05);border:1px solid rgba(239,68,68,.12);border-radius:8px;margin-bottom:8px">';
       h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"><div style="font-size:12px;font-weight:600;color:var(--red)">'+f.cat+': '+f.text+'</div><span style="font-size:9px;padding:2px 6px;border-radius:4px;background:rgba(239,68,68,.1);color:var(--red);font-weight:700">DEAL-BREAKER</span></div>';
@@ -3390,7 +3428,7 @@ function crsCalc(){
 
   if(yellows.length){
     h+='<div style="margin-bottom:16px">';
-    h+='<div style="font-size:11px;font-weight:600;color:#E67E22;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">\u26a0\ufe0f NEGOTIABLE \u2014 Push Back on These ('+yellows.length+')</div>';
+    h+='<div style="font-size:11px;font-weight:600;color:#E67E22;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">NEGOTIABLE \u2014 Push Back on These ('+yellows.length+')</div>';
     yellows.forEach(function(f){
       h+='<div style="padding:12px 14px;background:rgba(230,126,34,.04);border:1px solid rgba(230,126,34,.10);border-radius:8px;margin-bottom:8px">';
       h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"><div style="font-size:12px;font-weight:600;color:#E67E22">'+f.cat+': '+f.text+'</div><span style="font-size:9px;padding:2px 6px;border-radius:4px;background:rgba(230,126,34,.08);color:#E67E22;font-weight:700">NEGOTIABLE</span></div>';
@@ -3402,7 +3440,7 @@ function crsCalc(){
 
   if(greens.length){
     h+='<div style="margin-bottom:16px">';
-    h+='<div style="font-size:11px;font-weight:600;color:var(--green);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">\u2705 SAFE TERMS \u2014 These Protect You ('+greens.length+')</div>';
+    h+='<div style="font-size:11px;font-weight:600;color:var(--green);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">SAFE TERMS \u2014 These Protect You ('+greens.length+')</div>';
     greens.forEach(function(f){
       h+='<div style="padding:10px 14px;background:rgba(106,191,75,.04);border-left:2px solid var(--green);margin-bottom:6px;border-radius:4px">';
       h+='<div style="font-size:12px;font-weight:500;color:var(--text)">'+f.cat+': '+f.text+'</div>';
@@ -3496,10 +3534,10 @@ function ocmCompare(){
     // Compensation
     if(comp.gross>otherComp.gross){
       var diff=comp.gross-otherComp.gross;
-      pros.push('\ud83d\udcb0 Higher gross compensation by $'+(diff/1000).toFixed(0)+'K/year ($'+(diff*3/1000).toFixed(0)+'K over 3 years)');
+      pros.push('Higher gross compensation by $'+(diff/1000).toFixed(0)+'K/year ($'+(diff*3/1000).toFixed(0)+'K over 3 years)');
     }else if(comp.gross<otherComp.gross){
       var diff=otherComp.gross-comp.gross;
-      cons.push('\ud83d\udcb0 Lower gross compensation by $'+(diff/1000).toFixed(0)+'K/year \u2014 that\u2019s $'+(diff*3/1000).toFixed(0)+'K less over 3 years');
+      cons.push('Lower gross compensation by $'+(diff/1000).toFixed(0)+'K/year \u2014 that\u2019s $'+(diff*3/1000).toFixed(0)+'K less over 3 years');
     }
 
     // Signing bonus
@@ -3512,8 +3550,8 @@ function ocmCompare(){
 
     // RVU rate
     if(offer.rvu>0&&other.rvu>0){
-      if(offer.rvu>other.rvu) pros.push('\ud83d\udcc8 Higher RVU rate: $'+offer.rvu+'/wRVU vs $'+other.rvu+' \u2014 compounds significantly with volume');
-      if(offer.rvu<other.rvu) cons.push('\ud83d\udcc8 Lower RVU rate: $'+offer.rvu+'/wRVU vs $'+other.rvu+' \u2014 you\u2019re being paid less per unit of work');
+      if(offer.rvu>other.rvu) pros.push('Higher RVU rate: $'+offer.rvu+'/wRVU vs $'+other.rvu+' \u2014 compounds significantly with volume');
+      if(offer.rvu<other.rvu) cons.push('Lower RVU rate: $'+offer.rvu+'/wRVU vs $'+other.rvu+' \u2014 you\u2019re being paid less per unit of work');
     }
 
     // Retirement
@@ -3531,7 +3569,7 @@ function ocmCompare(){
     var theirSev=callSeverity[other.calltype]||0;
     if(mySev<theirSev&&theirSev>=2) pros.push('\ud83d\udcde Lighter call type: '+callLabels[offer.calltype]+' vs '+callLabels[other.calltype]+'. The type of call matters as much as the frequency \u2014 phone call from your couch is not the same as sleeping in the hospital.');
     if(mySev>theirSev&&mySev>=3) cons.push('\ud83d\udcde Heavier call type: '+callLabels[offer.calltype]+' vs '+callLabels[other.calltype]+'. In-house call destroys your recovery time and compounds into burnout. Factor this into the real hourly rate.');
-    if(mySev>=4) warnings.push('\ud83d\udea9 24-hour in-house call is the most demanding call structure. Confirm frequency, post-call expectations, and whether you get a post-call day off. This is a sustainability issue, not just a preference.');
+    if(mySev>=4) warnings.push('24-hour in-house call is the most demanding call structure. Confirm frequency, post-call expectations, and whether you get a post-call day off. This is a sustainability issue, not just a preference.');
 
     // Weekly schedule
     var schedLabels={'5day':'5 days/week','4day':'4 days/week','4.5day':'4.5 days/week','7on7off':'7-on/7-off','shift':'shift-based','other':'other schedule'};
@@ -3545,8 +3583,8 @@ function ocmCompare(){
 
     // Clinical hours
     if(offer.hours>0&&other.hours>0){
-      if(offer.hours<other.hours) pros.push('\u23f0 Fewer clinical hours: '+offer.hours+'h/week vs '+other.hours+'h \u2014 '+(other.hours-offer.hours)+' fewer hours weekly adds up to '+Math.round((other.hours-offer.hours)*48)+' hours/year. That\u2019s real life back.');
-      if(offer.hours>other.hours) cons.push('\u23f0 More clinical hours: '+offer.hours+'h/week vs '+other.hours+'h \u2014 '+(offer.hours-other.hours)+' extra hours weekly. Calculate your effective hourly rate \u2014 sometimes the "higher salary" job pays less per hour.');
+      if(offer.hours<other.hours) pros.push('Fewer clinical hours: '+offer.hours+'h/week vs '+other.hours+'h \u2014 '+(other.hours-offer.hours)+' fewer hours weekly adds up to '+Math.round((other.hours-offer.hours)*48)+' hours/year. That\u2019s real life back.');
+      if(offer.hours>other.hours) cons.push('More clinical hours: '+offer.hours+'h/week vs '+other.hours+'h \u2014 '+(offer.hours-other.hours)+' extra hours weekly. Calculate your effective hourly rate \u2014 sometimes the "higher salary" job pays less per hour.');
       if(offer.hours>0&&offer.salary>0){
         var effectiveRate=Math.round(offer.salary/(offer.hours*48));
         if(effectiveRate>0) pros.push('\ud83d\udcb2 Effective hourly rate at '+label+': ~$'+effectiveRate+'/hour (based on '+offer.hours+'h/week \u00d7 48 weeks)');
@@ -3560,7 +3598,7 @@ function ocmCompare(){
     var theirWknd=wkndSeverity[other.weekend]||0;
     if(myWknd<theirWknd&&theirWknd>=2) pros.push('\ud83d\udcc6 Less weekend work: '+(wkndLabels[offer.weekend]||'none')+' vs '+(wkndLabels[other.weekend]||other.weekend)+'. Weekends with your family aren\u2019t a perk \u2014 they\u2019re what makes a career sustainable.');
     if(myWknd>theirWknd&&myWknd>=2) cons.push('\ud83d\udcc6 More weekend rounding: '+(wkndLabels[offer.weekend]||offer.weekend)+' vs '+(wkndLabels[other.weekend]||'none')+'. Every-other-weekend rounding is ~26 Saturdays or Sundays per year you\u2019re not home.');
-    if(myWknd>=3) warnings.push('\u26a0\ufe0f Every-weekend rounding is a significant lifestyle burden. Confirm: is it full rounding or just check-ins? Does it come with extra comp or call pay? This is a leading cause of early career dissatisfaction.');
+    if(myWknd>=3) warnings.push('Every-weekend rounding is a significant lifestyle burden. Confirm: is it full rounding or just check-ins? Does it come with extra comp or call pay? This is a leading cause of early career dissatisfaction.');
 
     // PTO
     var totalTimeOff=offer.pto+(offer.cme||0);
@@ -3569,20 +3607,20 @@ function ocmCompare(){
     if(offer.pto<other.pto) cons.push('\ud83c\udfd6\ufe0f Less PTO: '+offer.pto+' days vs '+other.pto+' \u2014 fewer vacation days compounds into resentment over years');
     if(offer.cme>0&&other.cme>0&&offer.cme>other.cme) pros.push('\ud83d\udcda More CME days: '+offer.cme+' vs '+other.cme+' \u2014 plus CME days are often on top of PTO, giving you '+totalTimeOff+' total days off vs '+otherTimeOff);
     if(offer.cme>0&&other.cme>0&&offer.cme<other.cme) cons.push('\ud83d\udcda Fewer CME days: '+offer.cme+' vs '+other.cme);
-    if(totalTimeOff<20&&offer.pto>0) warnings.push('\u26a0\ufe0f '+totalTimeOff+' total days off (PTO + CME) is below the physician average of 25-30 days. This will catch up with you. Negotiate more PTO before signing.');
+    if(totalTimeOff<20&&offer.pto>0) warnings.push(''+totalTimeOff+' total days off (PTO + CME) is below the physician average of 25-30 days. This will catch up with you. Negotiate more PTO before signing.');
 
     // Non-compete
-    if(offer.noncomp===0&&other.noncomp>0) pros.push('\u2705 No non-compete \u2014 this is a major advantage. You can leave without relocating');
+    if(offer.noncomp===0&&other.noncomp>0) pros.push('No non-compete \u2014 this is a major advantage. You can leave without relocating');
     if(offer.noncomp>0&&offer.noncomp<=other.noncomp&&other.noncomp>0) pros.push('\ud83d\udccd Tighter non-compete: '+offer.noncomp+' miles vs '+other.noncomp+' miles');
     if(offer.noncomp>0){
-      if(offer.noncomp>=20) warnings.push('\ud83d\udea9 '+offer.noncomp+'-mile non-compete is aggressive. If this doesn\u2019t work out, you may have to uproot your family. Negotiate this down or get it removed if terminated without cause.');
+      if(offer.noncomp>=20) warnings.push(''+offer.noncomp+'-mile non-compete is aggressive. If this doesn\u2019t work out, you may have to uproot your family. Negotiate this down or get it removed if terminated without cause.');
       else if(offer.noncomp>0) cons.push('\ud83d\udccd Non-compete: '+offer.noncomp+' miles \u2014 understand exactly what triggers it');
     }
 
     // Tail coverage
     if(offer.tail==='employer') pros.push('\ud83d\udee1\ufe0f Employer-paid tail coverage \u2014 this can be worth $30-80K. This is a real financial advantage');
-    if(offer.tail==='you') warnings.push('\ud83d\udea9 You pay tail coverage. Budget $30-80K for this. It\u2019s a hidden cost that most trainees don\u2019t account for until it\u2019s too late.');
-    if(offer.tail==='none') warnings.push('\u26a0\ufe0f No tail coverage mentioned. Clarify this before signing \u2014 it\u2019s one of the most expensive oversights in physician contracts.');
+    if(offer.tail==='you') warnings.push('You pay tail coverage. Budget $30-80K for this. It\u2019s a hidden cost that most trainees don\u2019t account for until it\u2019s too late.');
+    if(offer.tail==='none') warnings.push('No tail coverage mentioned. Clarify this before signing \u2014 it\u2019s one of the most expensive oversights in physician contracts.');
     if(offer.tail==='shared') cons.push('\ud83d\udee1\ufe0f Shared tail coverage \u2014 get the exact split in writing');
 
     // Partnership
@@ -3765,7 +3803,7 @@ function ocmCompare(){
   else unlessClause=loser+' significantly improves their terms during negotiation';
 
   h+='<div style="margin-top:14px;padding:14px;background:rgba(200,168,124,.08);border-radius:10px;border:1px solid rgba(198,168,94,.15);text-align:center">';
-  h+='<div style="font-size:14px;font-weight:700;color:var(--accent);font-family:var(--font-serif);margin-bottom:6px">\ud83c\udfc6 My Recommendation: Choose '+winner+'</div>';
+  h+='<div style="font-size:14px;font-weight:700;color:var(--accent);font-family:var(--font-serif);margin-bottom:6px">My Recommendation: Choose '+winner+'</div>';
   h+='<div style="font-size:12px;color:var(--text2);line-height:1.6">Unless '+unlessClause+'.</div>';
   h+='</div>';
   h+='</div></div>';
@@ -3824,6 +3862,15 @@ function sfaUpdate(){
   var q5=document.getElementById('sfa-q5').value;
   var q6=document.getElementById('sfa-q6').value;
   if(!q1||!q2||!q3||!q4||!q5||!q6)return;
+  var resEl=document.getElementById('sfa-results');
+  if(resEl&&!resEl.dataset.shown){
+    resEl.dataset.shown='1';
+    hwThinking(resEl,['Looking at your preferences...','Matching against specialty profiles...','Building your recommendation...'],function(){_sfaRun(q1,q2,q3,q4,q5,q6)});
+    return;
+  }
+  _sfaRun(q1,q2,q3,q4,q5,q6);
+}
+function _sfaRun(q1,q2,q3,q4,q5,q6){
 
   var specs=[
     {name:'Interventional Cardiology',icon:'\ud83e\udec0',fit:0,comp:'$600-800K',hours:'55-65h/wk',train:'IM 3yr + Cards 3yr + IC 1yr',path:'Heavily procedural, high-stakes, excellent compensation'},
@@ -3881,12 +3928,12 @@ function sfaUpdate(){
   // Header: clear recommendation
   var h='<div style="text-align:center;padding:20px;background:linear-gradient(160deg,rgba(200,168,124,.1),rgba(200,168,124,.03));border:1px solid rgba(198,168,94,.15);border-radius:14px;margin-bottom:20px">';
   h+='<div style="font-size:11px;color:var(--accent);font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px">My Recommendation</div>';
-  h+='<div style="font-size:20px;font-weight:600;color:var(--text);font-family:var(--font-serif);margin-bottom:6px">You should pursue '+top[0].icon+' '+top[0].name+'</div>';
-  h+='<div style="font-size:12px;color:var(--text3);line-height:1.6;max-width:400px;margin:0 auto">Your answers point to someone who values '+(q2==='heavy'||q2==='mix'?'procedural work':'cognitive medicine')+', '+(q3==='lifestyle'?'work-life balance':q3==='income'?'strong compensation':q3==='mission'?'mission-driven practice':'a balanced lifestyle')+', and '+(q1==='long'?'long-term patient relationships':q1==='acute'?'high-acuity acute care':'episodic patient interactions')+'. That combination maps directly to '+top[0].name+'.</div>';
+  h+='<div style="font-size:20px;font-weight:600;color:var(--text);font-family:var(--font-serif);margin-bottom:6px">Pursue '+top[0].icon+' '+top[0].name+'</div>';
+  h+='<div style="font-size:12px;color:var(--text3);line-height:1.6;max-width:400px;margin:0 auto">Your answers describe someone who values '+(q2==='heavy'||q2==='mix'?'procedural work':'cognitive medicine')+', '+(q3==='lifestyle'?'work-life balance':q3==='income'?'strong compensation':q3==='mission'?'mission-driven practice':'a balanced lifestyle')+', and '+(q1==='long'?'long-term patient relationships':q1==='acute'?'high-acuity acute care':'episodic patient interactions')+'. I\u2019ve seen that combination map to '+top[0].name+' consistently.</div>';
   h+='</div>';
 
   // Ranked top 3 with reasoning
-  h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:14px">\ud83c\udfc6 Your Top 3 \u2014 Ranked</div>';
+  h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:14px">Your Top 3 \u2014 Ranked</div>';
   var fitReasons={};
   specs.forEach(function(s){
     var r=[];
@@ -3915,10 +3962,10 @@ function sfaUpdate(){
     h+='</div>';
     h+='<div style="height:4px;background:var(--bg3);border-radius:2px;margin-bottom:10px"><div style="height:100%;width:'+pct+'%;background:linear-gradient(90deg,var(--accent),var(--green));border-radius:2px"></div></div>';
     // Why it fits
-    if(reasons.length){h+='<div style="margin-bottom:10px">';reasons.forEach(function(r){h+='<div style="font-size:11px;color:var(--green);line-height:1.6;padding:2px 0">\u2705 '+r+'</div>'});h+='</div>'}
+    if(reasons.length){h+='<div style="margin-bottom:10px">';reasons.forEach(function(r){h+='<div style="font-size:11px;color:var(--green);line-height:1.6;padding:2px 0">'+r+'</div>'});h+='</div>'}
     h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:11px;color:var(--text2)">';
-    h+='<div>\ud83d\udcb0 '+s.comp+'</div>';
-    h+='<div>\u23f0 '+s.hours+'</div>';
+    h+='<div>'+s.comp+'</div>';
+    h+='<div>'+s.hours+'</div>';
     h+='<div>\ud83c\udf93 '+s.train+'</div>';
     h+='</div>';
     h+='</div>';
@@ -3926,8 +3973,8 @@ function sfaUpdate(){
 
   // Why NOT the others — personality & lifestyle mismatches
   h+='<div style="margin-top:20px;margin-bottom:20px;padding:16px;background:rgba(239,68,68,.03);border:1px solid rgba(239,68,68,.10);border-radius:12px">';
-  h+='<div style="font-size:11px;font-weight:600;color:var(--red);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">\ud83d\udeab Why NOT These Specialties</div>';
-  h+='<div style="font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:10px">Based on your personality and priorities, these would be mismatches:</div>';
+  h+='<div style="font-size:11px;font-weight:600;color:var(--red);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">Why these would be wrong for you</div>';
+  h+='<div style="font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:10px">I\u2019ve seen people force themselves into specialties that don\u2019t match who they are. Based on what you told me, avoid these:</div>';
   bottom.forEach(function(s){
     var mismatches=[];
     if(q1==='long'&&(s.name.includes('Emergency')||s.name.includes('Radiology')))mismatches.push('You want long-term patient relationships \u2014 '+s.name+' is episodic or no direct contact');
@@ -3943,14 +3990,14 @@ function sfaUpdate(){
     if(!mismatches.length)mismatches.push('Low overall alignment with your stated preferences');
     h+='<div style="padding:8px 10px;background:var(--bg2);border-radius:6px;margin-bottom:6px;border-left:3px solid var(--red)">';
     h+='<div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:2px">'+s.icon+' '+s.name+'</div>';
-    mismatches.forEach(function(m){h+='<div style="font-size:11px;color:var(--red);line-height:1.5">\u2716 '+m+'</div>'});
+    mismatches.forEach(function(m){h+='<div style="font-size:11px;color:var(--red);line-height:1.5">'+m+'</div>'});
     h+='</div>';
   });
-  h+='<div style="font-size:10px;color:var(--text3);margin-top:8px;font-style:italic">This doesn\u2019t mean these specialties are bad \u2014 they\u2019re bad <strong>for you</strong> based on what you told me. If you\u2019re surprised by any of these, reconsider whether your answers reflect what you actually want.</div>';
+  h+='<div style="font-size:10px;color:var(--text3);margin-top:8px;font-style:italic">This doesn\u2019t mean these specialties are bad. They\u2019re bad for you based on what you told me. If any of these surprise you, reconsider whether your answers reflect what you actually want.</div>';
   h+='</div>';
 
   // Pathway
-  h+=hwPathway('Based on your profile, you should pursue <strong>'+top[0].name+'</strong>. Your #2 ('+top[1].name+') is worth exploring as a backup, but your answers clearly favor #1. Stop browsing specialties and start testing this one.',[{text:'Shadow or rotate in '+top[0].name+' \u2014 2-3 days of real exposure beats months of theorizing.',when:'this week'},{text:'Talk to a current PGY-3 or fellow for the unfiltered truth about daily life.',when:'this month'},{text:'Check whether you\u2019re actually competitive before committing emotionally.',when:'this month'}],{id:'v14',icon:'\ud83c\udfaf',title:'Match Probability Calculator',why:'See if you\u2019re competitive for '+top[0].name+' \u2014 passion without competitiveness is a dead end.'});
+  h+=hwPathway('I\u2019d tell you to pursue <strong>'+top[0].name+'</strong>. '+top[1].name+' is a reasonable backup, but your answers clearly favor the first. Stop browsing specialties and start testing this one in real life.',[{text:'Shadow or rotate in '+top[0].name+'. Two or three days of real exposure beats months of theorizing.',when:'this week'},{text:'Talk to a current PGY-3 or fellow. Not an attending. Trainees give you the unfiltered version.',when:'this month'},{text:'Check whether you\u2019re actually competitive before committing emotionally.',when:'this month'}],{id:'v14',icon:'\ud83c\udfaf',title:'Match Probability Calculator',why:'Find out if you\u2019re competitive for '+top[0].name+'. Passion without competitiveness is a dead end.'});
 
   document.getElementById('sfa-results').innerHTML=h;
   applyBlurGate(document.getElementById('sfa-results'));
@@ -4112,6 +4159,15 @@ function mccToggleMode(mode){
 }
 
 function mccCalculate(){
+  var resEl=document.getElementById('mcc-results');
+  if(resEl&&!resEl.dataset.shown){
+    resEl.dataset.shown='1';
+    hwThinking(resEl,['Pulling your profile data...','Comparing against national match data...','Identifying your biggest gaps...','Building your assessment...'],function(){_mccRun()});
+    return;
+  }
+  _mccRun();
+}
+function _mccRun(){
   var mode=document.getElementById('mcc-mode').value||'residency';
   var isFellowship=mode==='fellowship';
   var spec,sd;
@@ -4303,7 +4359,7 @@ function mccCalculate(){
 
   // 2. Match Probability — now with percentages
   h+='<div style="margin-bottom:16px;padding:16px;background:var(--bg2);border-radius:10px;border:1px solid var(--border)">';
-  h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">📊 Estimated Match Probability</div>';
+  h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">Estimated match probability</div>';
   var probColorFn=function(p){return p>=70?'#6abf4b':p>=40?'#c8a87c':'#ef4444'};
   h+='<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center;margin-bottom:10px">';
   h+='<div style="padding:12px;background:var(--bg3);border-radius:8px"><div style="font-size:10px;color:var(--text3);margin-bottom:4px">Top-tier Programs</div><div style="font-size:20px;font-weight:700;color:'+probColorFn(topProb)+'">'+topProb+'%</div></div>';
@@ -4333,7 +4389,7 @@ function mccCalculate(){
   // 2b. Fellowship-specific: top programs + key success factors
   if(isFellowship&&sd.topPrograms){
     h+='<div style="margin-bottom:16px;padding:16px;background:var(--bg2);border-radius:10px;border:1px solid var(--border)">';
-    h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">🏥 Top '+sd.name+' Programs</div>';
+    h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">Top '+sd.name+' Programs</div>';
     h+='<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px">';
     sd.topPrograms.forEach(function(p,i){
       h+='<span style="font-size:11px;padding:4px 10px;background:var(--bg3);border-radius:6px;color:'+(i<3?'var(--accent)':'var(--text2)')+'">'+p+'</span>';
@@ -4355,7 +4411,7 @@ function mccCalculate(){
 
   // 3. Factor Breakdown
   h+='<div style="margin-bottom:16px;padding:16px;background:var(--bg2);border-radius:10px;border:1px solid var(--border)">';
-  h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">📋 Factor Breakdown</div>';
+  h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">Factor breakdown</div>';
   factors.forEach(function(f){
     var pct=Math.round(f.pts/f.max*100);
     h+='<div style="margin-bottom:10px">';
@@ -4368,7 +4424,7 @@ function mccCalculate(){
 
   // 4. Benchmark Comparison
   h+='<div style="margin-bottom:16px;padding:16px;background:var(--bg2);border-radius:10px;border:1px solid var(--border)">';
-  h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">📈 '+(isFellowship?'Fellowship':'NRMP')+' Benchmark — '+sd.name+'</div>';
+  h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">'+(isFellowship?'Fellowship':'NRMP')+' Benchmark — '+sd.name+'</div>';
   h+='<div style="font-size:10px;color:var(--text3);margin-bottom:10px">Average matched applicant profile'+(isFellowship?' (NRMP Specialty Match data)':' (NRMP Charting Outcomes)')+'</div>';
   var benchmarks=[
     {label:isFellowship?(step3>0?'Board Score (blended)':'Step 2 CK'):'Step 2 CK',yours:isFellowship&&step3>0?boardScore:step2,avg:sd.avgStep,unit:''},
@@ -4536,9 +4592,9 @@ function mccCalculate(){
     fastestWin=biggestGap.name+' is your weakest area ('+biggestGap.pts+'/'+biggestGap.max+'). Improving this single dimension would have the biggest impact on your overall competitiveness.';
     mccNxt={id:'v1',icon:'\ud83d\udcca',title:'Fellowship Readiness Assessment',why:'Get a detailed breakdown of all 7 application dimensions.'};
   }
-  var mccPos=score>=85?'You are currently <strong>competitive</strong> for '+sd.name+'. Your application would be taken seriously at most programs. Don\u2019t coast \u2014 polish your weakest area and dominate interviews.'
-    :score>=65?'You are <strong>borderline competitive</strong> for '+sd.name+'. You can match, but it\u2019s not guaranteed. '+fastestWin
-    :score>=50?'You are <strong>not yet competitive</strong> for '+sd.name+'. '+fastestWin
+  var mccPos=score>=85?'I\'ve seen profiles like yours match successfully. You are currently <strong>competitive</strong> for '+sd.name+'. Your application would be taken seriously at most programs. Don\u2019t coast \u2014 polish your weakest area and dominate interviews.'
+    :score>=65?'I\'ve walked people through this exact situation. You are <strong>borderline competitive</strong> for '+sd.name+'. You can match, but it\u2019s not guaranteed. '+fastestWin
+    :score>=50?'In practice, here is where you stand. You are <strong>not yet competitive</strong> for '+sd.name+'. '+fastestWin
     :'Honest truth: you are <strong>high risk</strong> for '+sd.name+' right now. '+fastestWin;
   var mccActs=[];
   if(score<85){
@@ -4560,7 +4616,7 @@ function mccCalculate(){
   var mccInputs={Specialty:sd.name,Mode:isFellowship?'Fellowship':'Residency',Step2:step2,Publications:pubs,School:school,Background:bg,LORs:lors,Leadership:leadership,Programs:programs,Aways:aways};
   if(isFellowship){mccInputs['Residency Year']=felResYear;mccInputs['Program Rep']=felProgramRep;mccInputs['Procedural Exp']=felProceduralExp;mccInputs['First Author']=felFirstAuthor}
   var mccHighlights=[outlook+' — '+score+'/100','Overall match: '+matchProb+'%','Top-tier: '+topProb+'% | Mid-tier: '+midProb+'% | Community: '+commProb+'%'];
-  factors.forEach(function(f){if(f.pts<f.max*0.4) mccHighlights.push('⚠ '+f.name+': '+f.pts+'/'+f.max)});
+  factors.forEach(function(f){if(f.pts<f.max*0.4) mccHighlights.push(''+f.name+': '+f.pts+'/'+f.max)});
   recordToolUse('Match Probability Calculator',score,outlook+' for '+sd.name,{inputs:mccInputs,highlights:mccHighlights});
 }
 
@@ -4841,6 +4897,15 @@ function csbUpdate(){}
 // Inline tool link helper for CSB roadmap
 function _csbTool(id,label){return '<span onclick="openFramework(\''+id+'\')" style="color:var(--accent);cursor:pointer;text-decoration:underline;font-weight:600">'+label+' \u2192</span>'}
 function csbGenerate(){
+  var resEl=document.getElementById('csb-results');
+  if(resEl&&!resEl.dataset.shown){
+    resEl.dataset.shown='1';
+    hwThinking(resEl,['Looking at your stage and goals...','Mapping your timeline...','Identifying gaps and dependencies...','Building your roadmap...'],function(){_csbRun()});
+    return;
+  }
+  _csbRun();
+}
+function _csbRun(){
   var now=document.getElementById('csb-now').value;
   var target=document.getElementById('csb-target').value;
   var urgency=document.getElementById('csb-urgency').value;
@@ -4977,7 +5042,7 @@ function csbGenerate(){
     p1.push('Make your interest in '+tName+' clear to your PD \u2014 ask for relevant rotations');
     if(firstAuth===0){
       p1.push('Research is your biggest gap. Start a first-author project THIS MONTH. '+_csbTool('v7','Check Research Impact'));
-      if(urgency==='1')p1.push('\u26a0\ufe0f Applying this cycle with no first-author pubs: target 1 case report + 2-3 abstracts before ERAS');
+      if(urgency==='1')p1.push('Applying this cycle with no first-author pubs: target 1 case report + 2-3 abstracts before ERAS');
     }else if(firstAuth<3&&isCompetitive){
       p1.push('Push for '+(3-firstAuth)+' more first-author publications. Target manuscript submission within 3 months.');
     }
@@ -5081,10 +5146,10 @@ function csbGenerate(){
   // Assessment card
   if(strengths.length||gaps.length||warnings.length){
     h+='<div style="margin-bottom:20px;padding:16px;background:var(--bg2);border:1px solid var(--border);border-radius:12px">';
-    h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">\ud83c\udfaf Application Assessment</div>';
-    if(strengths.length){h+='<div style="margin-bottom:10px">';strengths.forEach(function(s){h+='<div style="font-size:12px;color:var(--green);line-height:1.6;padding:3px 0">\u2705 '+s+'</div>'});h+='</div>'}
-    if(gaps.length){h+='<div style="margin-bottom:10px">';gaps.forEach(function(g){h+='<div style="font-size:12px;color:var(--accent);line-height:1.6;padding:3px 0">\u26a0\ufe0f '+g+'</div>'});h+='</div>'}
-    if(warnings.length){h+='<div style="padding:10px;background:rgba(239,68,68,.05);border:1px solid rgba(239,68,68,.12);border-radius:8px">';warnings.forEach(function(w){h+='<div style="font-size:12px;color:var(--red);line-height:1.6;padding:3px 0">\ud83d\udea9 '+w+'</div>'});h+='</div>'}
+    h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">Application Assessment</div>';
+    if(strengths.length){h+='<div style="margin-bottom:10px">';strengths.forEach(function(s){h+='<div style="font-size:12px;color:var(--green);line-height:1.6;padding:3px 0">'+s+'</div>'});h+='</div>'}
+    if(gaps.length){h+='<div style="margin-bottom:10px">';gaps.forEach(function(g){h+='<div style="font-size:12px;color:var(--accent);line-height:1.6;padding:3px 0">'+g+'</div>'});h+='</div>'}
+    if(warnings.length){h+='<div style="padding:10px;background:rgba(239,68,68,.05);border:1px solid rgba(239,68,68,.12);border-radius:8px">';warnings.forEach(function(w){h+='<div style="font-size:12px;color:var(--red);line-height:1.6;padding:3px 0">'+w+'</div>'});h+='</div>'}
     h+='</div>';
   }
 
@@ -5136,11 +5201,11 @@ function csbGenerate(){
     deps.push({blocked:'Application submission',requires:'Complete Phase 1 items above',why:'Everything in your application builds on the foundation. Rushing to submit without the groundwork = wasted opportunity.'});
   }
   h+='<div style="margin-top:20px;padding:16px;background:rgba(239,68,68,.03);border:1px solid rgba(239,68,68,.08);border-radius:12px;margin-bottom:14px">';
-  h+='<div style="font-size:11px;font-weight:600;color:var(--red);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">\ud83d\udd17 Dependencies \u2014 Order Matters</div>';
+  h+='<div style="font-size:11px;font-weight:600;color:var(--red);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Dependencies \u2014 Order Matters</div>';
   deps.forEach(function(d){
     h+='<div style="padding:10px;background:var(--bg2);border-radius:8px;margin-bottom:8px;border-left:3px solid var(--red)">';
-    h+='<div style="font-size:12px;color:var(--text);margin-bottom:4px">\u26d4 <strong>You cannot:</strong> '+d.blocked+'</div>';
-    h+='<div style="font-size:12px;color:var(--green);margin-bottom:4px">\u2705 <strong>Until:</strong> '+d.requires+'</div>';
+    h+='<div style="font-size:12px;color:var(--text);margin-bottom:4px"><strong>You cannot:</strong> '+d.blocked+'</div>';
+    h+='<div style="font-size:12px;color:var(--green);margin-bottom:4px"><strong>Until:</strong> '+d.requires+'</div>';
     h+='<div style="font-size:11px;color:var(--text3);line-height:1.5">'+d.why+'</div>';
     h+='</div>';
   });
@@ -5796,6 +5861,15 @@ var FRC_SPECS={
 };
 
 function frcUpdate(){
+  var resEl=document.getElementById('frc-results');
+  if(resEl&&!resEl.dataset.shown){
+    resEl.dataset.shown='1';
+    hwThinking(resEl,['Evaluating your application profile...','Scoring across 7 dimensions...','Identifying your weakest links...'],function(){_frcRun()});
+    return;
+  }
+  _frcRun();
+}
+function _frcRun(){
   var fb={
     1:[
       'No research yet. This is your biggest gap — start a case report or abstract this month.',
@@ -6010,10 +6084,10 @@ function frcUpdate(){
   if(tlWarn&&tlMsg&&tl){
     if(tl==='applying'&&total<60){
       tlWarn.style.display='';
-      tlMsg.innerHTML='<strong>⚠️ Timeline concern:</strong> You\'re applying this cycle with a score of '+total+'/100. '+(gaps.length>=3?'With '+gaps.length+' significant gaps, ':'')+'consider whether a strategic delay would meaningfully improve your chances. One strong cycle beats two weak ones.';
+      tlMsg.innerHTML='<strong>Timeline concern:</strong> You\'re applying this cycle with a score of '+total+'/100. '+(gaps.length>=3?'With '+gaps.length+' significant gaps, ':'')+'consider whether a strategic delay would meaningfully improve your chances. One strong cycle beats two weak ones.';
     }else if(tl==='1yr'&&total<40){
       tlWarn.style.display='';
-      tlMsg.innerHTML='<strong>⚠️ Timeline concern:</strong> With 1 year and a score of '+total+'/100, you have time to improve — but it requires urgency. Focus exclusively on your top 2 weighted gaps starting this week.';
+      tlMsg.innerHTML='<strong>Timeline concern:</strong> With 1 year and a score of '+total+'/100, you have time to improve — but it requires urgency. Focus exclusively on your top 2 weighted gaps starting this week.';
     }else{tlWarn.style.display='none'}
   }else if(tlWarn){tlWarn.style.display='none'}
 
@@ -6148,9 +6222,9 @@ function showQDetail(qid){
     h+='<div style="border-top:1px solid var(--border);padding-top:16px;margin-top:16px">';
     h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">AI Strategic Assessment</div>';
     h+='<h4 style="font-size:12px;color:var(--text3);margin-bottom:6px">📋 Assessment</h4><p style="font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:14px">'+q.ai.diag+'</p>';
-    h+='<h4 style="font-size:12px;color:var(--text3);margin-bottom:6px">🔍 Key Considerations</h4><p style="font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:14px">'+q.ai.bottleneck+'</p>';
+    h+='<h4 style="font-size:12px;color:var(--text3);margin-bottom:6px"> Key Considerations</h4><p style="font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:14px">'+q.ai.bottleneck+'</p>';
     h+='<h4 style="font-size:12px;color:var(--text3);margin-bottom:6px">📝 Recommended Approach</h4><ol style="padding-left:20px;margin-bottom:14px">'+q.ai.plan.map(function(s){return '<li style="font-size:13px;color:var(--text2);line-height:1.7;padding:2px 0">'+s+'</li>'}).join('')+'</ol>';
-    h+='<h4 style="font-size:12px;color:var(--text3);margin-bottom:6px">⚠️ Common Pitfalls</h4><ul style="list-style:none;padding:0;margin-bottom:14px">'+q.ai.mistakes.map(function(m){return '<li style="padding:3px 0;color:var(--red);font-size:13px">• '+m+'</li>'}).join('')+'</ul>';
+    h+='<h4 style="font-size:12px;color:var(--text3);margin-bottom:6px">Common Pitfalls</h4><ul style="list-style:none;padding:0;margin-bottom:14px">'+q.ai.mistakes.map(function(m){return '<li style="padding:3px 0;color:var(--red);font-size:13px">• '+m+'</li>'}).join('')+'</ul>';
     h+='<h4 style="font-size:12px;color:var(--text3);margin-bottom:6px">📅 30-Day Action Plan</h4><p style="font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:14px">'+q.ai.action+'</p>';
     if(q.ai.refs){h+='<div style="margin-top:12px;padding:12px;border-radius:var(--r2);background:rgba(100,149,237,.06);border:1px solid rgba(100,149,237,.15)"><div style="font-size:10px;font-weight:600;color:var(--blue);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">📚 References</div><p style="font-size:11px;color:var(--text3);line-height:1.6">'+q.ai.refs+'</p></div>'}
     h+='</div>';
@@ -6495,7 +6569,7 @@ async function renderGoalTracker(){
     // Action buttons (only if not done)
     if(!isDone){
       h+='<div style="display:flex;gap:6px;margin-top:8px">';
-      h+='<button onclick="markGoalBlocked(\''+goalId+'\')" style="font-size:10px;padding:4px 10px;border:1px solid '+(isBlocked?'var(--red)':'var(--border)')+';border-radius:6px;color:'+(isBlocked?'var(--red)':'var(--text3)')+';background:transparent;cursor:pointer">'+(isBlocked?'\ud83d\udea9 Blocked':'Report Blocker')+'</button>';
+      h+='<button onclick="markGoalBlocked(\''+goalId+'\')" style="font-size:10px;padding:4px 10px;border:1px solid '+(isBlocked?'var(--red)':'var(--border)')+';border-radius:6px;color:'+(isBlocked?'var(--red)':'var(--text3)')+';background:transparent;cursor:pointer">'+(isBlocked?'Blocked':'Report Blocker')+'</button>';
       h+='</div>';
     }
 
@@ -6517,7 +6591,7 @@ async function renderGoalTracker(){
   var daysSince=lastCheckin?Math.floor((Date.now()-new Date(lastCheckin))/(24*60*60*1000)):999;
   if(daysSince>=7){
     h+='<div style="margin-top:14px;padding:14px;background:linear-gradient(135deg,rgba(198,168,94,.08),rgba(200,168,124,.02));border:1px solid rgba(198,168,94,.15);border-radius:10px">';
-    h+='<div style="font-size:12px;font-weight:600;color:var(--accent);margin-bottom:6px">\ud83d\udcac Weekly Check-In</div>';
+    h+='<div style="font-size:12px;font-weight:600;color:var(--accent);margin-bottom:6px">Weekly Check-In</div>';
     h+='<p style="font-size:11px;color:var(--text3);margin-bottom:10px">How\'s this '+(currentGoals.label||'month')+' going? Your update goes directly to Dr. Faroqui.</p>';
     h+='<textarea id="goal-checkin-text" rows="3" placeholder="What progress did you make this week? What\'s blocking you?" style="width:100%;font-family:inherit;font-size:12px;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);resize:vertical;margin-bottom:8px;box-sizing:border-box"></textarea>';
     h+='<button class="btn btn-a btn-sm" onclick="submitGoalCheckin()" style="width:100%;padding:10px">Submit Check-In</button>';
@@ -6993,14 +7067,14 @@ function ciCalc(){
     if(cme<3000)recs.push('Request CME allowance of $3,000+ with dedicated CME days.');
   }
   if(recs.length){
-    out.innerHTML+='<div style="margin-top:16px;font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">\ud83c\udfaf Recommended Negotiation Points</div>'+
+    out.innerHTML+='<div style="margin-top:16px;font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Recommended Negotiation Points</div>'+
       '<div style="background:var(--bg3);border:1px solid rgba(198,168,94,.15);border-radius:8px;padding:14px;font-size:12px;color:var(--text2);line-height:1.8">'+
       recs.map(function(r,i){return '<div style="margin-bottom:6px">'+(i+1)+'. '+r+'</div>'}).join('')+'</div>';
   }
 
   // Negotiation scripts — exact wording
   if(recs.length){
-    out.innerHTML+='<div style="margin-top:16px;font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">\ud83d\udcac Negotiation Scripts \u2014 Use These Words</div>';
+    out.innerHTML+='<div style="margin-top:16px;font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Negotiation Scripts \u2014 Use These Words</div>';
     var scripts='<div style="display:flex;flex-direction:column;gap:8px">';
     if(salPts<22)scripts+='<div style="padding:12px;background:var(--bg3);border-radius:8px;border-left:3px solid var(--accent)"><div style="font-size:10px;font-weight:600;color:var(--accent);margin-bottom:4px">SALARY</div><div style="font-size:12px;color:var(--text);line-height:1.7;font-style:italic">\u201cI\u2019ve reviewed the MGMA data for '+(FT_SPEC_NAMES[spec]||'my specialty')+' in this region, and the median is $'+mgma.p50+'K. My offer of $'+salaryK+'K falls below that benchmark. I\u2019d like to discuss bringing this to at least $'+mgma.p50+'K to be competitive with market rates.\u201d</div></div>';
     if(ncPts<12)scripts+='<div style="padding:12px;background:var(--bg3);border-radius:8px;border-left:3px solid var(--accent)"><div style="font-size:10px;font-weight:600;color:var(--accent);margin-bottom:4px">NON-COMPETE</div><div style="font-size:12px;color:var(--text);line-height:1.7;font-style:italic">\u201cI\u2019d like to revisit the non-compete clause. A '+ncRadius+'-mile radius for '+ncYears+' year'+(ncYears>1?'s':'')+' would effectively force me to relocate my family if things don\u2019t work out. Could we reduce this to 15 miles and 1 year, or add a waiver if I\u2019m terminated without cause?\u201d</div></div>';
@@ -7012,16 +7086,16 @@ function ciCalc(){
   }
   if(flags.length){
     out.innerHTML+='<div style="margin-top:16px;padding:14px;background:rgba(255,100,100,.05);border:1px solid rgba(255,100,100,.15);border-radius:8px">'+
-      '<div style="font-size:10px;font-weight:600;color:var(--red);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">\ud83d\udea9 '+flags.length+' Red Flag'+(flags.length>1?'s':'')+'</div>'+
+      '<div style="font-size:10px;font-weight:600;color:var(--red);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">'+flags.length+' Red Flag'+(flags.length>1?'s':'')+'</div>'+
       flags.map(function(f){return '<div style="font-size:11px;color:var(--red);margin-bottom:4px">\u2022 '+f.label+': '+f.note+'</div>'}).join('')+
-      '<div style="margin-top:8px;font-size:11px;color:var(--text2);font-weight:500">\u2192 Strongly recommend physician contract attorney review ($2-3.5K).</div></div>';
+      '<div style="margin-top:8px;font-size:11px;color:var(--text2);font-weight:500">Strongly recommend physician contract attorney review ($2-3.5K).</div></div>';
   }
 
   out.innerHTML+='<p style="font-size:10px;color:var(--text3);margin-top:16px;line-height:1.6;font-style:italic">Based on MGMA 2024 Provider Compensation Report. This is a modeling tool \u2014 not legal advice. Always have a physician contract attorney review your specific contract terms.</p>';
   // Pathway
-  var ciPos=score>=80?'This is a strong offer. Your compensation and terms are above market. Focus on the small negotiable items before signing.'
-    :score>=60?'Competitive offer with room to negotiate. The scripts above give you exact language \u2014 use them. Don\u2019t sign until you\u2019ve addressed every yellow and red item.'
-    :score>=40?'This offer has significant gaps. Do NOT sign as-is. You have leverage \u2014 most employers expect negotiation. Use the scripts above and consider hiring a physician contract attorney ($2-3K that could save you $50K+).'
+  var ciPos=score>=80?'I\'ve reviewed hundreds of contracts. This is a strong offer. Your compensation and terms are above market. Focus on the small negotiable items before signing.'
+    :score>=60?'I see this pattern often. Competitive offer with room to negotiate. The scripts above give you exact language \u2014 use them. Don\u2019t sign until you\u2019ve addressed every yellow and red item.'
+    :score>=40?'Where people lose money in this situation is exactly what you\u2019re looking at. This offer has significant gaps. Do NOT sign as-is. You have leverage. Most employers expect negotiation. Use the scripts above and consider hiring a physician contract attorney ($2-3K that could save you $50K+).'
     :'Walk away or bring an attorney. This contract has multiple red flags that could cost you hundreds of thousands over its lifetime.';
   var ciActs=[];
   if(flags.length)ciActs.push({text:'Address '+flags.length+' red flag'+(flags.length>1?'s':'')+' before signing \u2014 these are deal-breakers, not preferences.',when:'this week'});
@@ -7185,7 +7259,7 @@ function ftCalc(){
 
   // Summary cards
   var sumEl=document.getElementById('ft-summary');
-  sumEl.innerHTML='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:12px">\ud83d\udcca Results at Year 30</div>'+
+  sumEl.innerHTML='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:12px">Results at Year 30</div>'+
     '<div style="display:grid;grid-template-columns:repeat('+Math.min(scenarios.length,3)+',1fr);gap:10px">'+
     projections.map(function(data,idx){
       var last=data[data.length-1];
@@ -7230,14 +7304,14 @@ function ftCalc(){
       '<div style="margin-bottom:10px">1\ufe0f\u20e3 <strong>Scenario '+labels[sorted[0].idx]+'</strong> ('+scenarios[sorted[0].idx].label+') produces <strong style="color:var(--accent)">$'+(diff/1000000).toFixed(1)+'M more</strong> in net worth over 30 years.</div>'+
       '<div style="margin-bottom:10px">2\ufe0f\u20e3 Lifetime earnings difference: <strong>$'+(earnDiff/1000000).toFixed(1)+'M</strong>. '+
       (earnDiff>2000000?'This is a significant career-defining gap.':'The gap narrows when you factor in training length and opportunity cost.')+'</div>'+
-      '<div style="margin-bottom:10px">3\ufe0f\u20e3 Increasing savings rate from 10% \u2192 20% roughly doubles retirement assets. The savings rate matters almost as much as the specialty choice.</div>'+
+      '<div style="margin-bottom:10px">3\ufe0f\u20e3 Increasing savings rate from 10% 20% roughly doubles retirement assets. The savings rate matters almost as much as the specialty choice.</div>'+
       (scenarios.some(function(s){return s.pracType==='private'})?'<div>4\ufe0f\u20e3 Private practice offers the highest income ceiling but comes with business risk, overhead, and partner dynamics. Factor in your risk tolerance.</div>':'')+
       '</div>';
 
     // Your Next Move
     var bestSc=scenarios[sorted[0].idx];
     var worstSc=scenarios[sorted[sorted.length-1].idx];
-    insEl.innerHTML+='\n<div style="margin-top:16px;padding:16px;background:var(--bg3);border-left:3px solid var(--accent);border-radius:0 10px 10px 0"><div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">\ud83c\udfaf What To Do With This</div><div style="font-size:13px;color:var(--text);line-height:1.8;margin-bottom:8px">The numbers don\u2019t lie: <strong>'+bestSc.label+'</strong> produces $'+(diff/1000000).toFixed(1)+'M more than <strong>'+worstSc.label+'</strong> over 30 years. But here\u2019s what actually matters:</div><div style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:var(--text2);line-height:1.6"><div style="padding:8px 10px;background:var(--bg2);border-radius:6px;border-left:3px solid var(--green)"><strong>Savings rate is your biggest lever.</strong> Going from 10% \u2192 25% matters more than a $50K salary bump. Max your 401k/403b ($23,500), backdoor Roth ($7,000), and HSA ($4,150) before doing anything else.</div><div style="padding:8px 10px;background:var(--bg2);border-radius:6px;border-left:3px solid var(--green)"><strong>Don\u2019t chase money alone.</strong> The highest-paying scenario is only worth it if you can sustain it for 20+ years. Burnout at year 8 erases the advantage. Pick the path where the work energizes you.</div><div style="padding:8px 10px;background:var(--bg2);border-radius:6px;border-left:3px solid var(--accent)"><strong>Run the 3-Year Financial Planner next.</strong> This 30-year view shows the destination. The 3-Year Planner shows you exactly how to start: debt payoff strategy, tax optimization, and cash flow month by month.</div></div></div>';
+    insEl.innerHTML+='\n<div style="margin-top:16px;padding:16px;background:var(--bg3);border-left:3px solid var(--accent);border-radius:0 10px 10px 0"><div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">What To Do With This</div><div style="font-size:13px;color:var(--text);line-height:1.8;margin-bottom:8px">The numbers don\u2019t lie: <strong>'+bestSc.label+'</strong> produces $'+(diff/1000000).toFixed(1)+'M more than <strong>'+worstSc.label+'</strong> over 30 years. But here\u2019s what actually matters:</div><div style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:var(--text2);line-height:1.6"><div style="padding:8px 10px;background:var(--bg2);border-radius:6px;border-left:3px solid var(--green)"><strong>Savings rate is your biggest lever.</strong> Going from 10% 25% matters more than a $50K salary bump. Max your 401k/403b ($23,500), backdoor Roth ($7,000), and HSA ($4,150) before doing anything else.</div><div style="padding:8px 10px;background:var(--bg2);border-radius:6px;border-left:3px solid var(--green)"><strong>Don\u2019t chase money alone.</strong> The highest-paying scenario is only worth it if you can sustain it for 20+ years. Burnout at year 8 erases the advantage. Pick the path where the work energizes you.</div><div style="padding:8px 10px;background:var(--bg2);border-radius:6px;border-left:3px solid var(--accent)"><strong>Run the 3-Year Financial Planner next.</strong> This 30-year view shows the destination. The 3-Year Planner shows you exactly how to start: debt payoff strategy, tax optimization, and cash flow month by month.</div></div></div>';
 
     insEl.innerHTML+=debtSection;
 
@@ -7247,7 +7321,7 @@ function ftCalc(){
     var slowest=Math.max.apply(null,payoffYears);
     if(projections.length>=2&&slowest>fastest){
       var delayYrs=slowest-fastest;
-      insEl.innerHTML+='<div style="margin-top:14px;padding:14px;background:rgba(239,68,68,.04);border:1px solid rgba(239,68,68,.10);border-radius:8px"><div style="font-size:11px;font-weight:600;color:var(--red);margin-bottom:6px">\u23f1 Financial Stability Delay</div><div style="font-size:12px;color:var(--text2);line-height:1.7"><strong>'+worstSc.label+'</strong> delays your financial stability by <strong style="color:var(--red)">'+delayYrs+' year'+(delayYrs>1?'s':'')+'</strong> compared to <strong>'+bestSc.label+'</strong>. That\u2019s '+delayYrs+' extra year'+(delayYrs>1?'s':'')+' of carrying debt, '+delayYrs+' fewer year'+(delayYrs>1?'s':'')+' of compounding wealth, and '+delayYrs+' year'+(delayYrs>1?'s':'')+' less freedom.</div></div>';
+      insEl.innerHTML+='<div style="margin-top:14px;padding:14px;background:rgba(239,68,68,.04);border:1px solid rgba(239,68,68,.10);border-radius:8px"><div style="font-size:11px;font-weight:600;color:var(--red);margin-bottom:6px">Financial Stability Delay</div><div style="font-size:12px;color:var(--text2);line-height:1.7"><strong>'+worstSc.label+'</strong> delays your financial stability by <strong style="color:var(--red)">'+delayYrs+' year'+(delayYrs>1?'s':'')+'</strong> compared to <strong>'+bestSc.label+'</strong>. That\u2019s '+delayYrs+' extra year'+(delayYrs>1?'s':'')+' of carrying debt, '+delayYrs+' fewer year'+(delayYrs>1?'s':'')+' of compounding wealth, and '+delayYrs+' year'+(delayYrs>1?'s':'')+' less freedom.</div></div>';
     }
 
     // hwPathway connector
@@ -7492,7 +7566,7 @@ function admRenderMetrics(){
   // Warn if no users loaded — likely a data fetch issue, not real deletion
   if(tot===0){
     var m=document.getElementById('adm-metrics');
-    if(m)m.innerHTML='<div style="padding:16px;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);border-radius:10px;text-align:center;grid-column:1/-1"><div style="font-size:14px;font-weight:600;color:var(--red);margin-bottom:4px">⚠️ No users loaded</div><div style="font-size:12px;color:var(--text3)">This is likely a database connection issue, not data loss. Users are safe in Supabase. Try refreshing the page.</div></div>';
+    if(m)m.innerHTML='<div style="padding:16px;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);border-radius:10px;text-align:center;grid-column:1/-1"><div style="font-size:14px;font-weight:600;color:var(--red);margin-bottom:4px">No users loaded</div><div style="font-size:12px;color:var(--text3)">This is likely a database connection issue, not data loss. Users are safe in Supabase. Try refreshing the page.</div></div>';
     return;
   }
   var fr=users.filter(function(u){return !u.tier||u.tier==='free'}).length;
@@ -7629,7 +7703,7 @@ function admRenderUserDetail(c){
     var tRemain=new Date(trialEnd)-new Date();
     if(tRemain>0){var tHrs=Math.floor(tRemain/3600000);var tMin=Math.floor((tRemain%3600000)/60000);h+='<div style="padding:8px 12px;background:rgba(198,168,94,.08);border:1px solid rgba(198,168,94,.15);border-radius:8px;margin-bottom:10px;font-size:11px;color:var(--accent);display:flex;align-items:center;gap:8px"><span>✦</span> <strong>48h Guided Access Active</strong> — '+tHrs+'h '+tMin+'m remaining (expires '+new Date(trialEnd).toLocaleString()+')</div>'}
     else{h+='<div style="padding:8px 12px;background:rgba(196,77,86,.08);border:1px solid rgba(196,77,86,.15);border-radius:8px;margin-bottom:10px;font-size:11px;color:var(--red);display:flex;align-items:center;gap:8px"><span>⏰</span> <strong>Trial expired</strong> — ended '+new Date(trialEnd).toLocaleString()+' (still marked as trial in DB — click Expire Trial to clean up)</div>'}
-  }else if(isTrial){h+='<div style="padding:8px 12px;background:rgba(196,77,86,.08);border:1px solid rgba(196,77,86,.15);border-radius:8px;margin-bottom:10px;font-size:11px;color:var(--red)">⚠️ Trial flag set but no trial_end date</div>'}
+  }else if(isTrial){h+='<div style="padding:8px 12px;background:rgba(196,77,86,.08);border:1px solid rgba(196,77,86,.15);border-radius:8px;margin-bottom:10px;font-size:11px;color:var(--red)">Trial flag set but no trial_end date</div>'}
   h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:13px">';
   h+='<div><span style="color:var(--text3)">Stage:</span> <strong>'+stage+'</strong></div>';
   h+='<div><span style="color:var(--text3)">Specialty:</span> <strong>'+spec+'</strong></div>';
@@ -8033,7 +8107,7 @@ function admRenderFeedback(c){
   h+='<div><select id="adm-msg-to" style="width:100%;font-size:12px;padding:8px 12px;border:1px solid var(--border);border-radius:6px;background:var(--bg3);color:var(--text)"><option value="">Select user...</option><option value="__all__">📢 All Users (Broadcast)</option>';
   users.forEach(function(u){h+='<option value="'+u.email+'">'+((u.name||u.email)||'Unknown')+' ('+(u.email||'')+')</option>'});
   h+='</select></div>';
-  h+='<div><select id="adm-msg-type" style="width:100%;font-size:12px;padding:8px 12px;border:1px solid var(--border);border-radius:6px;background:var(--bg3);color:var(--text)"><option value="feedback_request">🙏 Feedback Request</option><option value="announcement">📢 Announcement</option><option value="tip">💡 Tip / Suggestion</option><option value="welcome">👋 Welcome</option><option value="followup">🔄 Follow-up</option></select></div>';
+  h+='<div><select id="adm-msg-type" style="width:100%;font-size:12px;padding:8px 12px;border:1px solid var(--border);border-radius:6px;background:var(--bg3);color:var(--text)"><option value="feedback_request">🙏 Feedback Request</option><option value="announcement">📢 Announcement</option><option value="tip">💡 Tip / Suggestion</option><option value="welcome">👋 Welcome</option><option value="followup"> Follow-up</option></select></div>';
   h+='</div>';
   h+='<textarea id="adm-msg-text" rows="3" placeholder="Write your message..." style="width:100%;font-size:12px;padding:10px 12px;border:1px solid var(--border);border-radius:8px;background:var(--bg3);color:var(--text);resize:vertical;margin-bottom:10px;box-sizing:border-box"></textarea>';
   h+='<button onclick="admSendMessage()" class="btn btn-a" style="padding:10px 20px">Send Message</button>';
@@ -8042,7 +8116,7 @@ function admRenderFeedback(c){
   var unread=msgs.filter(function(m){return !m.read&&!m.from_admin}).length;
   h+='<div style="font-size:11px;color:var(--text3);margin-bottom:12px">'+msgs.length+' messages \u00b7 '+unread+' unread</div>';
   msgs.forEach(function(m){
-    var tl={career:'\ud83c\udfaf Career',finance:'\ud83d\udcb0 Finance',contract:'\ud83d\udccb Contract',bug:'\ud83d\udc1b Bug',suggestion:'\ud83d\udca1 Suggestion',question:'\u2753 Question',feedback:'\ud83d\udcdd Feedback',progress:'\ud83d\udcc8 Progress',other:'\ud83d\udcce Other'};
+    var tl={career:'Career',finance:'Finance',contract:'\ud83d\udccb Contract',bug:'\ud83d\udc1b Bug',suggestion:'\ud83d\udca1 Suggestion',question:'\u2753 Question',feedback:'Feedback',progress:'Progress',other:'\ud83d\udcce Other'};
     var d=m.date?new Date(m.date).toLocaleDateString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}):'';
     var isUnread=!m.read&&!m.from_admin;
     h+='<div class="adm-card" style="'+(isUnread?'border-left:3px solid var(--accent);':'')+'"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><div><span style="font-weight:600;font-size:13px">'+(m.user_name||'Unknown')+'</span> <span style="font-size:11px;color:var(--text3)">'+(m.user_email||'')+'</span>'+(m.from_admin?' <span style="font-size:9px;padding:1px 6px;background:var(--accent);color:#1C1A17;border-radius:3px;font-weight:600">SENT</span>':'')+'</div><span style="font-size:10px;color:var(--text3)">'+d+'</span></div>';
@@ -8531,7 +8605,7 @@ function genReport(){
   myPlan.forEach(step=>{h+='<li style="padding:4px 0">'+step+'</li>'});
   h+='</ol></div>';
   // Risk
-  h+='<div class="report-sec" style="border-color:rgba(198,168,94,.15)"><h4>⚠️ Key Risk Areas</h4>';
+  h+='<div class="report-sec" style="border-color:rgba(198,168,94,.15)"><h4>Key Risk Areas</h4>';
   if(hasPubsField&&pubs<2)h+='<p>• Low research output limits competitiveness for selective programs</p>';
   if(!p.goal)h+='<p>• No defined strategic goal — decisions without direction lead to drift</p>';
   if(p.stage==='attending'&&!p.debt)h+='<p>• Loan strategy undefined — every month of delay has compounding cost</p>';
@@ -8858,7 +8932,7 @@ function rvuUpdate(){
     if(b&&total>0){
       var diffFromMgma=total-b.comp;
       var negotiateHtml='<div style="margin-top:14px;padding:16px;background:var(--bg2);border-left:3px solid '+(diffFromMgma>=0?'var(--green)':'var(--red)')+';border-radius:0 10px 10px 0">';
-      negotiateHtml+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">\ud83c\udfaf Your Negotiation Move</div>';
+      negotiateHtml+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Your Negotiation Move</div>';
       if(diffFromMgma<-20000){
         negotiateHtml+='<div style="font-size:13px;color:var(--text);line-height:1.8;margin-bottom:8px"><strong style="color:var(--red)">You\u2019re significantly below market.</strong> At $'+Math.round(total).toLocaleString()+', you\u2019re leaving $'+Math.abs(Math.round(diffFromMgma)).toLocaleString()+'/year on the table compared to MGMA median for '+b.name+'. Over 5 years, that\u2019s <strong>$'+Math.round(Math.abs(diffFromMgma)*5/1000)+'K</strong> in lost income.</div>';
         negotiateHtml+='<div style="font-size:12px;color:var(--text2);line-height:1.7"><strong>What to say:</strong> \u201cI\u2019ve reviewed MGMA data for '+b.name+' and the median total compensation is $'+b.comp.toLocaleString()+'. My offer is $'+Math.abs(Math.round(diffFromMgma)).toLocaleString()+' below that benchmark. I\u2019d like to discuss either a higher per-wRVU rate or an adjusted base to bring this in line with market.\u201d</div>';
@@ -8986,7 +9060,7 @@ function fypCalculate(){
 
   // Your Next Move — direct action plan
   h+='<div style="padding:16px;background:var(--bg2);border-left:3px solid var(--accent);border-radius:0 10px 10px 0;margin-top:14px">';
-  h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">\ud83c\udfaf Your First 30 Days as an Attending</div>';
+  h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Your First 30 Days as an Attending</div>';
   h+='<div style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:var(--text2);line-height:1.6">';
   h+='<div style="padding:8px 10px;background:var(--bg3);border-radius:6px;border-left:3px solid var(--green)"><strong>Week 1:</strong> Set up 401k/403b at your employer\u2019s max ($'+max401k.toLocaleString()+'). If there\u2019s a match, you\u2019re leaving free money on the table every paycheck you wait.</div>';
   h+='<div style="padding:8px 10px;background:var(--bg3);border-radius:6px;border-left:3px solid var(--green)"><strong>Week 2:</strong> Open a backdoor Roth IRA. This takes 30 minutes and saves you six figures in taxes over your career. Do it before you talk yourself out of it.</div>';
@@ -9000,15 +9074,15 @@ function fypCalculate(){
   h+='<div style="padding:8px 10px;background:var(--bg3);border-radius:6px;border-left:3px solid var(--accent)"><strong>Week 4:</strong> Set your lifestyle budget at $'+Math.round(expenses/1000)+'K/yr and automate everything. The physicians who build wealth aren\u2019t the ones making the most \u2014 they\u2019re the ones who automated their savings before lifestyle creep took over.</div>';
   h+='</div>';
   if(yr1Save<20){
-    h+='<div style="font-size:12px;color:var(--red);margin-top:10px;line-height:1.6"><strong>\u26a0\ufe0f Reality check:</strong> Your Year 1 savings rate is '+yr1Save+'%. That\u2019s below where it needs to be. Either cut $'+Math.round((0.20*years[0].net-years[0].taxAdv-years[0].investable)/12).toLocaleString()+'/mo from expenses or find $'+Math.round((0.20*years[0].net-years[0].taxAdv-years[0].investable)/12).toLocaleString()+'/mo in additional income (moonlighting, locums weekends).</div>';
+    h+='<div style="font-size:12px;color:var(--red);margin-top:10px;line-height:1.6"><strong>Reality check:</strong> Your Year 1 savings rate is '+yr1Save+'%. That\u2019s below where it needs to be. Either cut $'+Math.round((0.20*years[0].net-years[0].taxAdv-years[0].investable)/12).toLocaleString()+'/mo from expenses or find $'+Math.round((0.20*years[0].net-years[0].taxAdv-years[0].investable)/12).toLocaleString()+'/mo in additional income (moonlighting, locums weekends).</div>';
   }
   h+='</div>';
 
   // Earning power critical decision
   var criticalDecision='';
-  if(debt>200000&&pslf!=='yes')criticalDecision='<div style="padding:14px;background:rgba(239,68,68,.04);border:1px solid rgba(239,68,68,.10);border-radius:10px;margin-top:14px"><div style="font-size:11px;font-weight:600;color:var(--red);margin-bottom:6px">\u26a0\ufe0f The Decision That Defines Your First 5 Years</div><div style="font-size:12px;color:var(--text2);line-height:1.7">With $'+Math.round(debt/1000)+'K in debt and no PSLF eligibility, <strong>your debt payoff strategy is the single biggest financial decision of your early career.</strong> Every month at '+(rate*100).toFixed(1)+'% interest costs you $'+Math.round(debt*rate/12).toLocaleString()+'. Aggressively paying this down saves you <strong>$'+Math.round(debt*rate*2.5/1000)+'K+</strong> in interest over 5 years.</div></div>';
+  if(debt>200000&&pslf!=='yes')criticalDecision='<div style="padding:14px;background:rgba(239,68,68,.04);border:1px solid rgba(239,68,68,.10);border-radius:10px;margin-top:14px"><div style="font-size:11px;font-weight:600;color:var(--red);margin-bottom:6px">The Decision That Defines Your First 5 Years</div><div style="font-size:12px;color:var(--text2);line-height:1.7">With $'+Math.round(debt/1000)+'K in debt and no PSLF eligibility, <strong>your debt payoff strategy is the single biggest financial decision of your early career.</strong> Every month at '+(rate*100).toFixed(1)+'% interest costs you $'+Math.round(debt*rate/12).toLocaleString()+'. Aggressively paying this down saves you <strong>$'+Math.round(debt*rate*2.5/1000)+'K+</strong> in interest over 5 years.</div></div>';
   else if(debt>200000&&pslf==='yes')criticalDecision='<div style="padding:14px;background:rgba(106,191,75,.04);border:1px solid rgba(106,191,75,.10);border-radius:10px;margin-top:14px"><div style="font-size:11px;font-weight:600;color:var(--green);margin-bottom:6px">\ud83d\udca1 Your PSLF Decision Is Worth $'+Math.round(Math.max(0,debt-idrPayment*120)/1000)+'K</div><div style="font-size:12px;color:var(--text2);line-height:1.7"><strong>Staying at a qualifying employer for 10 years is the highest-leverage financial decision you can make.</strong> Every time you\u2019re tempted by a private practice offer, calculate whether the salary bump exceeds $'+Math.round(Math.max(0,debt-idrPayment*120)/10000)+'K/year in forgiven value.</div></div>';
-  else if(yr1Save<15)criticalDecision='<div style="padding:14px;background:rgba(239,68,68,.04);border:1px solid rgba(239,68,68,.10);border-radius:10px;margin-top:14px"><div style="font-size:11px;font-weight:600;color:var(--red);margin-bottom:6px">\u26a0\ufe0f Your Earning Power Depends on This</div><div style="font-size:12px;color:var(--text2);line-height:1.7"><strong>Your savings rate in years 1-3 defines your wealth trajectory for the next 30 years.</strong> At '+yr1Save+'%, you\u2019re building slowly. The lifestyle you set in year 1 is the lifestyle you\u2019ll be stuck with. Push to 25% now — not later.</div></div>';
+  else if(yr1Save<15)criticalDecision='<div style="padding:14px;background:rgba(239,68,68,.04);border:1px solid rgba(239,68,68,.10);border-radius:10px;margin-top:14px"><div style="font-size:11px;font-weight:600;color:var(--red);margin-bottom:6px">Your Earning Power Depends on This</div><div style="font-size:12px;color:var(--text2);line-height:1.7"><strong>Your savings rate in years 1-3 defines your wealth trajectory for the next 30 years.</strong> At '+yr1Save+'%, you\u2019re building slowly. The lifestyle you set in year 1 is the lifestyle you\u2019ll be stuck with. Push to 25% now — not later.</div></div>';
   else if(matchPct===0)criticalDecision='<div style="padding:14px;background:rgba(200,168,124,.04);border:1px solid rgba(198,168,94,.10);border-radius:10px;margin-top:14px"><div style="font-size:11px;font-weight:600;color:var(--accent);margin-bottom:6px">\ud83d\udca1 No Employer Match = Missing Free Money</div><div style="font-size:12px;color:var(--text2);line-height:1.7">A 4% match on $'+Math.round(salary/1000)+'K is $'+Math.round(salary*0.04/1000)+'K/year of free money. Factor this into any job comparison.</div></div>';
   h+=criticalDecision;
 
@@ -9125,7 +9199,7 @@ function ilpCalculate(){
 
   // Your Next Move — priority action plan
   h+='<div style="padding:16px;background:var(--bg2);border-left:3px solid var(--accent);border-radius:0 10px 10px 0;margin-bottom:14px">';
-  h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">\ud83c\udfaf Your Priority Moves — This Month</div>';
+  h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Your Priority Moves — This Month</div>';
   h+='<div style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:var(--text2);line-height:1.6">';
   var moveNum=1;
   if(disability!=='own_occ'){
@@ -9164,13 +9238,13 @@ function ilpCalculate(){
   else if(spendPct>60){topPriority='Cut spending to 40-50% of take-home. Automate savings first, spend what\u2019s left.';avoid='Don\u2019t match your lifestyle to your salary. The residents-to-attending spending jump is the #1 wealth destroyer for physicians.'}
   else{topPriority='You\u2019re doing the fundamentals right. Focus on tax-loss harvesting, backdoor Roth, and optimizing your investment allocation.';avoid='Don\u2019t get complacent. Revisit your strategy annually and increase savings rate with every salary bump.'}
   h+='<div style="padding:14px;background:linear-gradient(160deg,rgba(200,168,124,.08),rgba(200,168,124,.02));border:1px solid rgba(198,168,94,.15);border-radius:10px;margin-bottom:14px">';
-  h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">\ud83c\udfaf Bottom Line</div>';
+  h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Bottom Line</div>';
   h+='<div style="font-size:13px;color:var(--text);line-height:1.8;margin-bottom:8px"><strong>Do this:</strong> '+topPriority+'</div>';
   h+='<div style="font-size:12px;color:var(--red);line-height:1.6"><strong>Avoid:</strong> '+avoid+'</div>';
   h+='</div>';
 
   // hwPathway
-  h+=hwPathway(scorePct>=80?'Your financial fundamentals are strong. Shift focus to optimizing \u2014 not just saving.':scorePct>=60?'Solid start but you have gaps. Fix the top action item above before anything else.':'Critical financial gaps. The priority moves above are in order \u2014 do them this month, not next quarter.',
+  h+=hwPathway(scorePct>=80?'I\u2019ve seen what separates physicians who build wealth from those who don\u2019t. Your financial fundamentals are strong. Shift focus to optimizing, not just saving.':scorePct>=60?'Solid start but you have gaps. Fix the top action item above before anything else.':'This is one of those situations where acting now versus next quarter makes a real difference. Critical financial gaps. The priority moves above are in order. Do them this month, not next quarter.',
     [{text:topPriority.split('.')[0]+'.',when:'this week'},
      {text:debt>0?'Run a 30-year projection to see how debt payoff timing affects your net worth.':'Run a 30-year projection comparing your current savings rate vs 5% higher.',when:'this month'},
      {text:'Set a calendar reminder for quarterly financial review.',when:'this month'}],
@@ -9286,7 +9360,7 @@ function roiUpdate(){
       :'Low-impact portfolio. '+Math.round(100-impactRatio)+'% of your points come from middle-author or QI work. PDs weigh first-author and case reports far more heavily.';
 
     dimHtml+='<div style="padding:14px;background:var(--bg2);border-radius:10px;border:1px solid var(--border);margin-bottom:14px">';
-    dimHtml+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">\ud83d\udcca Research Grade \u2014 3 Dimensions</div>';
+    dimHtml+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">Research Grade \u2014 3 Dimensions</div>';
 
     // Authorship
     dimHtml+='<div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"><span style="font-size:12px;font-weight:600;color:var(--text)">Authorship Quality</span><span style="font-size:11px;font-weight:700;color:'+authColor+'">'+authGrade.toUpperCase()+'</span></div>';
@@ -9381,13 +9455,13 @@ function roiUpdate(){
     activities.sort(function(a,b){return b.ppm-a.ppm});
     var topMoves=activities.slice(0,3);
 
-    movesHtml+='<div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">🎯 Next Best Moves (Ranked by Efficiency)</div>';
+    movesHtml+='<div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">Next best moves, ranked by efficiency</div>';
     topMoves.forEach(function(m,i){
       var achievable=true;
       var warn='';
       if(months>0&&m.minMo>months){
         achievable=false;
-        warn='<div style="font-size:10px;color:var(--red);margin-top:6px">⚠ May not finish within '+months+' months (needs '+m.minMo+'-'+m.maxMo+' mo)</div>';
+        warn='<div style="font-size:10px;color:var(--red);margin-top:6px">May not finish within '+months+' months (needs '+m.minMo+'-'+m.maxMo+' mo)</div>';
       }else if(months>0&&m.avgMo<=months){
         warn='<div style="font-size:10px;color:var(--green);margin-top:6px">✓ Achievable within your timeline</div>';
       }else if(months>0){
@@ -9399,7 +9473,7 @@ function roiUpdate(){
         '<div style="display:flex;justify-content:space-between;align-items:center"><span style="font-weight:600;font-size:13px;color:var(--text)">#'+(i+1)+' '+m.name+'</span><span style="font-size:11px;font-weight:600;color:var(--accent)">+'+m.addPts+' pts</span></div>'+
         '<div style="display:flex;gap:16px;margin-top:6px;font-size:11px;color:var(--text2)">'+
         '<span>⏱ '+m.minMo+'-'+m.maxMo+' months</span>'+
-        '<span>📈 '+m.ppm.toFixed(2)+' pts/mo</span>'+
+        '<span>'+m.ppm.toFixed(2)+' pts/mo</span>'+
         '<span>→ '+newPct+'% of optimal</span>'+
         '</div>'+warn+'</div>';
     });
@@ -9562,7 +9636,7 @@ async function submitAudit(){
   // Build preliminary analysis
   var prelim='<div style="text-align:left;margin-top:24px">';
   prelim+='<div style="padding:20px;background:linear-gradient(160deg,rgba(200,168,124,.1),rgba(200,168,124,.03));border:1px solid rgba(198,168,94,.15);border-radius:14px;margin-bottom:16px">';
-  prelim+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">\ud83d\udcdd Preliminary Assessment \u2014 Before Dr. Faroqui\u2019s Full Review</div>';
+  prelim+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Preliminary Assessment \u2014 Before Dr. Faroqui\u2019s Full Review</div>';
   prelim+='<div style="font-size:12px;color:var(--text2);line-height:1.8">';
 
   // Overall competitiveness snapshot
@@ -9574,7 +9648,7 @@ async function submitAudit(){
     if(hasPubs)compStrengths.push('research activity');else compGaps.push('research/publications');
     if(hasScore){var sc=parseInt(hasScore[1]);if(sc>=240)compStrengths.push('strong board scores');else if(sc<230)compGaps.push('board scores below competitive threshold')}
     if(hasLeadership)compStrengths.push('leadership experience');else compGaps.push('leadership roles');
-    prelim+='<div style="margin-bottom:12px;padding:10px;background:var(--bg2);border-radius:8px"><strong>\ud83c\udfaf Overall Competitiveness:</strong> ';
+    prelim+='<div style="margin-bottom:12px;padding:10px;background:var(--bg2);border-radius:8px"><strong>Overall Competitiveness:</strong> ';
     if(compStrengths.length>compGaps.length)prelim+='<span style="color:var(--green)">Competitive foundation</span> with strengths in '+compStrengths.join(', ')+'.';
     else if(compGaps.length)prelim+='<span style="color:var(--red)">Gaps identified</span> in '+compGaps.join(', ')+' that need addressing.';
     else prelim+='More detail needed for full assessment.';
@@ -9583,7 +9657,7 @@ async function submitAudit(){
   }
 
   // Red flags from their answers
-  prelim+='<div style="margin-bottom:12px"><strong>\ud83d\udea9 Potential Red Flags:</strong></div>';
+  prelim+='<div style="margin-bottom:12px"><strong>Potential Red Flags:</strong></div>';
   prelim+='<div style="display:flex;flex-direction:column;gap:6px;margin-bottom:12px">';
   if(holdingBack&&holdingBack.length>10)prelim+='<div style="padding:8px 10px;background:rgba(239,68,68,.04);border-left:3px solid var(--red);border-radius:0 6px 6px 0;font-size:11px;color:var(--text2)"><strong style="color:var(--red)">Indecision paralysis:</strong> You identified what\u2019s holding you back. The biggest risk isn\u2019t making the wrong choice \u2014 it\u2019s making no choice while the window closes.</div>';
   if(filled<10)prelim+='<div style="padding:8px 10px;background:rgba(239,68,68,.04);border-left:3px solid var(--red);border-radius:0 6px 6px 0;font-size:11px;color:var(--text2)"><strong style="color:var(--red)">Incomplete submission ('+filled+'/20):</strong> The gaps in your submission may reflect gaps in your own clarity about this decision. Consider revisiting the unanswered questions.</div>';
@@ -9592,7 +9666,7 @@ async function submitAudit(){
   prelim+='</div>';
 
   // Strengths
-  prelim+='<div style="margin-bottom:12px"><strong style="color:var(--green)">\u2705 What\u2019s Working:</strong></div>';
+  prelim+='<div style="margin-bottom:12px"><strong style="color:var(--green)">What\u2019s Working:</strong></div>';
   prelim+='<div style="display:flex;flex-direction:column;gap:6px;margin-bottom:12px">';
   if(decision&&decision.length>20)prelim+='<div style="padding:8px 10px;background:rgba(106,191,75,.04);border-left:3px solid var(--green);border-radius:0 6px 6px 0;font-size:11px;color:var(--text2)">You\u2019ve clearly articulated the decision. Most people never get this far \u2014 clarity is the first step.</div>';
   if(regret&&regret.length>10)prelim+='<div style="padding:8px 10px;background:rgba(106,191,75,.04);border-left:3px solid var(--green);border-radius:0 6px 6px 0;font-size:11px;color:var(--text2)">You\u2019ve done the regret test. Your answer reveals what actually matters to you \u2014 Dr. Faroqui will use this as a compass.</div>';
@@ -9613,7 +9687,7 @@ async function submitAudit(){
     compScore2=Math.max(10,Math.min(90,compScore2));
     var improvedScore2=Math.min(95,compScore2+20+Math.round(filled/20*15));
     prelim+='<div style="margin-bottom:16px;padding:16px;background:linear-gradient(160deg,rgba(200,168,124,.08),rgba(200,168,124,.02));border:1px solid rgba(198,168,94,.15);border-radius:10px">';
-    prelim+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">\ud83d\udcc8 If You Follow the Plan</div>';
+    prelim+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">If You Follow the Plan</div>';
     prelim+='<div style="display:flex;align-items:center;gap:16px;justify-content:center">';
     prelim+='<div style="text-align:center"><div style="font-size:10px;color:var(--text3);margin-bottom:4px">Current Estimate</div><div style="font-size:28px;font-weight:700;color:'+(compScore2>=50?'var(--accent)':'var(--red)')+';font-family:var(--font-serif)">'+compScore2+'%</div></div>';
     prelim+='<div style="font-size:24px;color:var(--accent)">\u2192</div>';
@@ -9910,7 +9984,7 @@ async function submitPivot(){
 
   // Risk vs Upside breakdown for each option
   var riskUpside='<div style="margin-top:20px;margin-bottom:16px;padding:16px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;text-align:left">';
-  riskUpside+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">\u2696\ufe0f Risk vs Upside Analysis</div>';
+  riskUpside+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">Risk vs Upside Analysis</div>';
   options.forEach(function(opt){
     var optAvg=parseFloat(opt.avg)||0;
     var risk='';var upside='';
@@ -9924,8 +9998,8 @@ async function submitPivot(){
     riskUpside+='<div style="margin-bottom:12px;padding:10px;background:var(--bg3);border-radius:8px">';
     riskUpside+='<div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:8px">'+opt.label+' <span style="font-size:11px;color:var(--accent);font-weight:400">('+opt.avg+'/5)</span></div>';
     riskUpside+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">';
-    riskUpside+='<div style="padding:8px;background:rgba(239,68,68,.04);border-radius:6px;border-left:3px solid var(--red)"><div style="font-size:10px;font-weight:600;color:var(--red);margin-bottom:4px">\ud83d\udea9 RISK</div><div style="font-size:11px;color:var(--text2);line-height:1.5">'+risk+'</div></div>';
-    riskUpside+='<div style="padding:8px;background:rgba(106,191,75,.04);border-radius:6px;border-left:3px solid var(--green)"><div style="font-size:10px;font-weight:600;color:var(--green);margin-bottom:4px">\u2705 UPSIDE</div><div style="font-size:11px;color:var(--text2);line-height:1.5">'+upside+'</div></div>';
+    riskUpside+='<div style="padding:8px;background:rgba(239,68,68,.04);border-radius:6px;border-left:3px solid var(--red)"><div style="font-size:10px;font-weight:600;color:var(--red);margin-bottom:4px">RISK</div><div style="font-size:11px;color:var(--text2);line-height:1.5">'+risk+'</div></div>';
+    riskUpside+='<div style="padding:8px;background:rgba(106,191,75,.04);border-radius:6px;border-left:3px solid var(--green)"><div style="font-size:10px;font-weight:600;color:var(--green);margin-bottom:4px">UPSIDE</div><div style="font-size:11px;color:var(--text2);line-height:1.5">'+upside+'</div></div>';
     riskUpside+='</div></div>';
   });
   riskUpside+='</div>';
@@ -10124,7 +10198,7 @@ function misStart(){
   var settingNames={academic:'Academic Medical Center',community:'Community Hospital',private:'Private Group Practice',va:'VA / Government'};
 
   var hdr='<div style="display:flex;align-items:center;gap:12px">';
-  hdr+='<div style="font-size:32px">🎙️</div>';
+  hdr+='<div style="font-size:32px"></div>';
   hdr+='<div>';
   hdr+='<div style="font-size:15px;font-weight:600;color:var(--accent);font-family:var(--font-serif)">'+(typeNames[type]||'Interview Simulation')+'</div>';
   hdr+='<div style="font-size:11px;color:var(--text3)">'+(settingNames[setting]||setting)+' • 5 Questions • Answer as if you\'re in the room</div>';
@@ -10387,7 +10461,7 @@ function misGrade(){
     if(g.concerns.length>0){
       h+='<div style="margin-bottom:10px">';
       g.concerns.forEach(function(c){
-        h+='<div style="font-size:11px;color:#E67E22;line-height:1.6;padding:4px 0">⚠️ '+c+'</div>';
+        h+='<div style="font-size:11px;color:#E67E22;line-height:1.6;padding:4px 0">'+c+'</div>';
       });
       h+='</div>';
     }
@@ -10417,7 +10491,7 @@ function misGrade(){
 
   // Bottom section: overall tips
   h+='<div style="padding:20px;background:linear-gradient(160deg,rgba(198,168,94,.06),rgba(200,168,124,.02));border:1px solid rgba(198,168,94,.10);border-radius:12px;margin-bottom:16px">';
-  h+='<div style="font-size:12px;font-weight:600;color:var(--accent);margin-bottom:12px;font-family:var(--font-serif)">🎯 The Honest Debrief</div>';
+  h+='<div style="font-size:12px;font-weight:600;color:var(--accent);margin-bottom:12px;font-family:var(--font-serif)">The honest debrief</div>';
   h+='<div style="font-size:12px;color:var(--text2);line-height:1.8">';
 
   // Count red flags across all answers
@@ -10468,8 +10542,8 @@ function misGrade(){
 
   // Retake button
   h+='<div style="display:flex;gap:10px;margin-top:14px">';
-  h+='<button onclick="misStart()" class="btn btn-a" style="flex:1;padding:12px;font-size:13px">🔄 Retake Interview</button>';
-  h+='<button onclick="misNewType()" class="btn btn-g" style="flex:1;padding:12px;font-size:13px">🔀 Try Different Type</button>';
+  h+='<button onclick="misStart()" class="btn btn-a" style="flex:1;padding:12px;font-size:13px"> Retake Interview</button>';
+  h+='<button onclick="misNewType()" class="btn btn-g" style="flex:1;padding:12px;font-size:13px"> Try Different Type</button>';
   h+='</div>';
   h+='</div>';
 
@@ -10731,9 +10805,9 @@ function levCalcScore(){
       var prev=U.leverageScores[U.leverageScores.length-2];
       var delta=score-prev.score;
       var histHtml='Previous: '+prev.score+'/100';
-      if(delta>0)histHtml+=' \u2192 <span style="color:var(--green)">+'+delta+' improvement</span>';
-      else if(delta<0)histHtml+=' \u2192 <span style="color:var(--red)">'+delta+'</span>';
-      else histHtml+=' \u2192 No change';
+      if(delta>0)histHtml+=' <span style="color:var(--green)">+'+delta+' improvement</span>';
+      else if(delta<0)histHtml+=' <span style="color:var(--red)">'+delta+'</span>';
+      else histHtml+=' No change';
       document.getElementById('lev-score-history').innerHTML=histHtml;
     }
   }
@@ -10794,7 +10868,7 @@ function levSubmit(wfId,ev){
   var respEl=document.getElementById('lev-resp-'+wfId);
   var h='<div style="margin-top:16px">';
   h+='<div style="padding:18px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;margin-bottom:12px">';
-  h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">\ud83d\udcac Straight Answer</div>';
+  h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Straight Answer</div>';
   h+='<p style="font-size:14px;color:var(--text);line-height:1.7;margin:0">'+resp.answer+'</p>';
   h+='</div>';
   h+='<div style="padding:18px;background:linear-gradient(160deg,rgba(100,149,237,.06),rgba(100,149,237,.02));border:1px solid rgba(100,149,237,.15);border-radius:12px;margin-bottom:12px">';
@@ -10802,7 +10876,7 @@ function levSubmit(wfId,ev){
   h+='<p style="font-size:14px;color:var(--text2);line-height:1.7;margin:0">'+resp.aiTip+'</p>';
   h+='</div>';
   h+='<div style="padding:18px;background:rgba(92,184,154,.06);border:1px solid rgba(92,184,154,.12);border-radius:12px">';
-  h+='<div style="font-size:11px;font-weight:600;color:var(--green);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">\ud83c\udfaf Do This Now</div>';
+  h+='<div style="font-size:11px;font-weight:600;color:var(--green);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Do This Now</div>';
   h+='<p style="font-size:14px;color:var(--text2);line-height:1.7;margin:0">'+resp.nextStep+'</p>';
   h+='</div>';
   h+='<div style="margin-top:10px;font-size:10px;color:var(--text3);font-style:italic;text-align:center">No physician credits used</div>';
@@ -11099,7 +11173,7 @@ function showWeeklyCheckin(){
     h+='<div style="padding:10px 14px;background:var(--bg2);border-radius:8px;font-size:12px;color:var(--text);margin-bottom:8px">"'+lastGoal.goal+'"</div>';
     h+='<div style="display:flex;gap:8px"><input type="hidden" id="ci-status" value="">';
     h+='<button onclick="this.parentElement.querySelectorAll(\'button\').forEach(function(b){b.style.borderColor=\'var(--border)\';b.style.background=\'var(--bg)\'});this.style.borderColor=\'var(--green)\';this.style.background=\'rgba(106,170,100,.1)\';document.getElementById(\'ci-status\').value=\'completed\'" style="flex:1;padding:10px;border:2px solid var(--border);border-radius:8px;background:var(--bg);cursor:pointer;font-size:11px;font-weight:600;color:var(--green)">✅ Done</button>';
-    h+='<button onclick="this.parentElement.querySelectorAll(\'button\').forEach(function(b){b.style.borderColor=\'var(--border)\';b.style.background=\'var(--bg)\'});this.style.borderColor=\'var(--accent)\';this.style.background=\'rgba(200,168,124,.1)\';document.getElementById(\'ci-status\').value=\'progress\'" style="flex:1;padding:10px;border:2px solid var(--border);border-radius:8px;background:var(--bg);cursor:pointer;font-size:11px;font-weight:600;color:var(--accent)">🔄 In Progress</button>';
+    h+='<button onclick="this.parentElement.querySelectorAll(\'button\').forEach(function(b){b.style.borderColor=\'var(--border)\';b.style.background=\'var(--bg)\'});this.style.borderColor=\'var(--accent)\';this.style.background=\'rgba(200,168,124,.1)\';document.getElementById(\'ci-status\').value=\'progress\'" style="flex:1;padding:10px;border:2px solid var(--border);border-radius:8px;background:var(--bg);cursor:pointer;font-size:11px;font-weight:600;color:var(--accent)"> In Progress</button>';
     h+='<button onclick="this.parentElement.querySelectorAll(\'button\').forEach(function(b){b.style.borderColor=\'var(--border)\';b.style.background=\'var(--bg)\'});this.style.borderColor=\'var(--red)\';this.style.background=\'rgba(192,96,96,.1)\';document.getElementById(\'ci-status\').value=\'missed\'" style="flex:1;padding:10px;border:2px solid var(--border);border-radius:8px;background:var(--bg);cursor:pointer;font-size:11px;font-weight:600;color:var(--red)">❌ Missed</button>';
     h+='</div></div>';
   }
@@ -11135,7 +11209,7 @@ function renderWhatsChanged(){
   }else if(daysSinceCheckin>=7){
     items.push({icon:'📋',text:'<span onclick="showWeeklyCheckin()" style="color:var(--accent);cursor:pointer;text-decoration:underline">Weekly check-in ready</span> — 2 min'});
   }
-  if(cp.lastUpdated){var age=Math.floor((now-new Date(cp.lastUpdated))/86400000);if(age>=30)items.push({icon:'🔄',text:'Scores are <strong>'+age+'d old</strong>. <span onclick="showUpdateProfile()" style="color:var(--accent);cursor:pointer;text-decoration:underline">Refresh</span>'})}
+  if(cp.lastUpdated){var age=Math.floor((now-new Date(cp.lastUpdated))/86400000);if(age>=30)items.push({icon:'',text:'Scores are <strong>'+age+'d old</strong>. <span onclick="showUpdateProfile()" style="color:var(--accent);cursor:pointer;text-decoration:underline">Refresh</span>'})}
   var m=now.getMonth();var alerts={student:[{m:8,t:'ERAS opens soon — personal statement ready?'},{m:2,t:'Match Day this month! 🎉'},{m:6,t:'Away rotation season'}],resident:[{m:5,t:'Fellowship apps opening soon'},{m:9,t:'Contract season — run Contract Review'}],fellow:[{m:9,t:'Job search — analyze every offer'}],attending:[{m:0,t:'New year — review financial trajectory'},{m:9,t:'Contract renewal season'}]};
   (alerts[stage]||alerts.student).forEach(function(a){if(a.m===m)items.push({icon:'📅',text:a.t})});
   if(U.toolHistory&&U.toolHistory.length){var lt=U.toolHistory[U.toolHistory.length-1];items.push({icon:'🧭',text:'Last ran <strong>'+lt.tool+'</strong>'+(lt.score?' ('+lt.score+')':'')})}
@@ -11539,15 +11613,15 @@ function obsRenderCard(p,expanded){
   if(expanded){
     h+='<div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border)" onclick="event.stopPropagation()">';
     h+='<div style="background:rgba(200,168,124,.06);padding:10px;border-radius:8px;margin-bottom:10px;border-left:3px solid var(--accent)">';
-    h+='<div style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">🧠 Match Intelligence</div>';
+    h+='<div style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Match intelligence</div>';
     h+='<div style="font-size:12px;color:var(--text2);line-height:1.6">'+p.matchIntel+'</div></div>';
     h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">';
     h+='<div style="padding:8px;background:var(--bg);border-radius:6px"><div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-bottom:2px">Prestige</div><div style="font-size:12px">'+obsRenderStars(p.prestige)+' <span style="font-size:10px;color:var(--text3)">('+p.prestige+'/5)</span></div></div>';
     h+='<div style="padding:8px;background:var(--bg);border-radius:6px"><div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-bottom:2px">Competition</div><div style="font-size:12px">'+obsRenderStars(p.competitiveness)+' <span style="font-size:10px;color:var(--text3)">('+p.competitiveness+'/5)</span></div></div>';
     h+='<div style="padding:8px;background:var(--bg);border-radius:6px"><div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-bottom:2px">Hands-On</div><div style="font-size:12px;color:var(--text2)">'+p.handsOnNote+'</div></div>';
     h+='<div style="padding:8px;background:var(--bg);border-radius:6px"><div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-bottom:2px">LOR Potential</div><div style="font-size:12px;color:var(--text2)">'+p.lorNote+'</div></div></div>';
-    h+='<div style="padding:8px;background:var(--bg);border-radius:6px;margin-bottom:10px"><div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-bottom:2px">Visa</div><div style="font-size:12px;color:var(--text2)">'+(p.visaHelp?'✅ ':'⚠️ ')+p.visaNote+'</div></div>';
-    h+='<div style="padding:8px;background:var(--bg);border-radius:6px;margin-bottom:10px"><div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-bottom:2px">💡 Insider Tips</div><div style="font-size:12px;color:var(--text2);line-height:1.5">'+p.tips+'</div></div>';
+    h+='<div style="padding:8px;background:var(--bg);border-radius:6px;margin-bottom:10px"><div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-bottom:2px">Visa</div><div style="font-size:12px;color:var(--text2)">'+(p.visaHelp?'✅ ':'')+p.visaNote+'</div></div>';
+    h+='<div style="padding:8px;background:var(--bg);border-radius:6px;margin-bottom:10px"><div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-bottom:2px">Insider tips</div><div style="font-size:12px;color:var(--text2);line-height:1.5">'+p.tips+'</div></div>';
     h+='<div style="margin-bottom:10px"><div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-bottom:4px">Specialties</div>';
     p.specs.forEach(function(s){h+='<span style="display:inline-block;font-size:10px;padding:2px 8px;border-radius:12px;background:var(--bg);color:var(--text2);margin:2px;border:1px solid var(--border)">'+(OBS_SPEC_LABELS[s]||s)+'</span>'});
     h+='</div>';
@@ -11616,7 +11690,7 @@ function obsRender(){
   if(!el)return;
   countEl.textContent='Showing '+filtered.length+' of '+OBS_PROGRAMS.length+' programs';
   if(filtered.length===0){
-    el.innerHTML='<div style="text-align:center;padding:40px 20px;color:var(--text3)"><div style="font-size:32px;margin-bottom:12px">🔍</div><div style="font-size:13px">No programs match your filters. Try broadening your search.</div></div>';
+    el.innerHTML='<div style="text-align:center;padding:40px 20px;color:var(--text3)"><div style="font-size:32px;margin-bottom:12px"></div><div style="font-size:13px">No programs match your filters. Try broadening your search.</div></div>';
     return;
   }
   var h='';
@@ -11708,13 +11782,13 @@ function obsPlanBuild(){
     if(isIMG==='img'){
       score+=p.imgFriendly*5;
       if(p.imgFriendly>=4)reasons.push('IMG-friendly ('+p.imgFriendly+'/5)');
-      if(p.imgFriendly<=2){score-=15;reasons.push('⚠️ Low IMG accessibility')}
+      if(p.imgFriendly<=2){score-=15;reasons.push('Low IMG accessibility')}
     }
     if(needVisa==='yes'){
       if(p.visaHelp){score+=15;reasons.push('✅ Visa support available')}
-      else{score-=20;reasons.push('⚠️ No visa sponsorship')}
+      else{score-=20;reasons.push('No visa sponsorship')}
     }
-    if(p.cost>budget){score-=30;reasons.push('⚠️ Over budget ($'+p.cost+')')}
+    if(p.cost>budget){score-=30;reasons.push('Over budget ($'+p.cost+')')}
     else if(p.cost===0){score+=10;reasons.push('No cost')}
     else reasons.push('Within budget ($'+p.cost+')');
     if(priority==='lor'){score+=p.lor*5;if(p.lor>=4)reasons.push('Strong LOR culture')}
@@ -11728,7 +11802,7 @@ function obsPlanBuild(){
     if(region&&p.region===region){score+=8;reasons.push('In preferred region')}
     if(timeline==='3'){
       if(p.competitiveness<=2)score+=5;
-      if(p.competitiveness>=4){score-=5;reasons.push('⚠️ Hard to get in quickly')}
+      if(p.competitiveness>=4){score-=5;reasons.push('Hard to get in quickly')}
     }
     score+=Math.floor(obsCalcROI(p)/5);
     return{program:p,score:score,reasons:reasons};
@@ -11760,11 +11834,11 @@ function obsPlanBuild(){
   }
 
   h+='<div style="padding:14px;background:rgba(200,168,124,.06);border-radius:10px;margin-bottom:16px;border-left:3px solid var(--accent)">';
-  h+='<div style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">📋 Recommended Strategy</div>';
+  h+='<div style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">My recommended strategy</div>';
   h+='<div style="font-size:12px;color:var(--text2);line-height:1.6">'+stratAdvice+'</div></div>';
 
   // Top picks
-  h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">🏅 Your Top '+top5.length+' Programs</div>';
+  h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Your top '+top5.length+' Programs</div>';
 
   top5.forEach(function(item,idx){
     var p=item.program;
@@ -11811,7 +11885,7 @@ function obsPlanBuild(){
 
   // Timeline
   h+='<div style="margin-top:20px;padding:14px;background:var(--bg2);border-radius:10px;border:1px solid var(--border)">';
-  h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">📅 Suggested Timeline</div>';
+  h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Suggested timeline</div>';
   if(timeline==='3'){
     h+='<div style="font-size:12px;color:var(--text2);line-height:1.7">';
     h+='<strong>Month 1:</strong> Apply to your top 3 programs simultaneously. Focus on accessible programs (competitiveness ≤ 3). Prepare documents: ECFMG status, dean letter, health clearance.<br>';
@@ -11834,7 +11908,7 @@ function obsPlanBuild(){
 
   // Email strategy — how to position yourself
   h+='<div style="margin-top:16px;padding:16px;background:linear-gradient(160deg,rgba(198,168,94,.06),rgba(200,168,124,.02));border:1px solid rgba(198,168,94,.15);border-radius:12px">';
-  h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">\ud83d\udce7 How to Email Programs \u2014 Templates That Work</div>';
+  h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">How to Email Programs \u2014 Templates That Work</div>';
   h+='<div style="font-size:11px;color:var(--text3);margin-bottom:12px">Most applicants send generic emails. Stand out with targeted, specific outreach.</div>';
 
   // Initial outreach template
@@ -11848,7 +11922,7 @@ function obsPlanBuild(){
   h+='I have attached my CV and [relevant documents]. I am available to begin as early as [date] and am flexible with scheduling.<br><br>';
   h+='Thank you for your consideration.<br>Sincerely,<br>[Your Name]';
   h+='</div>';
-  h+='<div style="font-size:10px;color:var(--green);margin-top:6px;line-height:1.5">\u2705 <strong>Key:</strong> Always reference something specific about THEIR program. Generic emails get deleted. Specific emails get responses.</div>';
+  h+='<div style="font-size:10px;color:var(--green);margin-top:6px;line-height:1.5"><strong>Key:</strong> Always reference something specific about THEIR program. Generic emails get deleted. Specific emails get responses.</div>';
   h+='</div>';
 
   // Follow-up template
@@ -11886,7 +11960,7 @@ function obsPlanBuild(){
   var totalCost=0;
   top5.slice(0,3).forEach(function(item){totalCost+=item.program.cost});
   h+='<div style="margin-top:12px;padding:14px;background:var(--bg2);border-radius:10px;border:1px solid var(--border)">';
-  h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">💰 Estimated Budget (Top 3)</div>';
+  h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Estimated budget for top 3</div>';
   h+='<div style="font-size:12px;color:var(--text2);line-height:1.6">';
   h+='Program fees: <strong>$'+totalCost.toLocaleString()+'</strong><br>';
   h+='Housing (estimate): <strong>$1,500–$4,000/month</strong> depending on city<br>';

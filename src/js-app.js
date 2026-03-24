@@ -26,12 +26,12 @@ function hwThinking(targetEl,steps,callback){
 
 // ===== EXPERIENCE INJECTION PHRASES =====
 var HW_EXP_LINES=[
-  'I.ve seen this play out many times.',
-  'In practice, what actually matters here is different from what you.d expect.',
+  'I\u2019ve seen this play out many times.',
+  'In practice, what actually matters here is different from what you\u2019d expect.',
   'Where people lose time here is worth paying attention to.',
   'This is one of those situations where the textbook answer and the real answer diverge.',
-  'I.ve walked people through this exact scenario before.',
-  'What I.ve learned from watching this unfold across dozens of cases is this.',
+  'I\u2019ve walked people through this exact scenario before.',
+  'What I\u2019ve learned from watching this unfold across dozens of cases is worth sharing.',
   'The pattern I see over and over again in this situation is worth calling out.',
   'In real-world scenarios, this is where the decision actually gets made.'
 ];
@@ -3112,7 +3112,7 @@ function fprInit(){
   }
 
   var failH='<div style="margin-top:16px;padding:16px;background:rgba(239,68,68,.03);border:1px solid rgba(239,68,68,.08);border-radius:12px">';
-  failH+='<div style="font-size:11px;font-weight:600;color:var(--red);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Where Most Applicants Fail</div>';
+  failH+='<div style="font-size:11px;font-weight:600;color:var(--red);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Where I see people blow it</div>';
   var failPoints=[];
   if(monthsNum>12){
     failPoints.push({when:'18-24 months out',fail:'Starting research too late. A first-author paper takes 6-12 months from idea to acceptance. If you start at 12 months out, it won\u2019t be on your ERAS.',fix:'Start a case report THIS WEEK. Pick a patient you\u2019ve already seen.'});
@@ -3753,7 +3753,7 @@ function ocmCompare(){
 
   // Bottom line
   h+='<div style="padding:18px;background:linear-gradient(160deg,rgba(198,168,94,.06),rgba(200,168,124,.02));border:1px solid rgba(198,168,94,.15);border-radius:12px;margin-top:4px">';
-  h+='<div style="font-size:12px;font-weight:600;color:var(--accent);margin-bottom:8px">\ud83e\udde0 The Honest Bottom Line</div>';
+  h+='<div style="font-size:12px;font-weight:600;color:var(--accent);margin-bottom:8px">Here is what I actually think</div>';
   h+='<div style="font-size:12px;color:var(--text2);line-height:1.8">';
 
   var aWarnings=aAnalysis.warnings.length;
@@ -7074,7 +7074,7 @@ function ciCalc(){
 
   // Negotiation scripts — exact wording
   if(recs.length){
-    out.innerHTML+='<div style="margin-top:16px;font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Negotiation Scripts \u2014 Use These Words</div>';
+    out.innerHTML+='<div style="margin-top:16px;font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">What to say, word for word \u2014 Use These Words</div>';
     var scripts='<div style="display:flex;flex-direction:column;gap:8px">';
     if(salPts<22)scripts+='<div style="padding:12px;background:var(--bg3);border-radius:8px;border-left:3px solid var(--accent)"><div style="font-size:10px;font-weight:600;color:var(--accent);margin-bottom:4px">SALARY</div><div style="font-size:12px;color:var(--text);line-height:1.7;font-style:italic">\u201cI\u2019ve reviewed the MGMA data for '+(FT_SPEC_NAMES[spec]||'my specialty')+' in this region, and the median is $'+mgma.p50+'K. My offer of $'+salaryK+'K falls below that benchmark. I\u2019d like to discuss bringing this to at least $'+mgma.p50+'K to be competitive with market rates.\u201d</div></div>';
     if(ncPts<12)scripts+='<div style="padding:12px;background:var(--bg3);border-radius:8px;border-left:3px solid var(--accent)"><div style="font-size:10px;font-weight:600;color:var(--accent);margin-bottom:4px">NON-COMPETE</div><div style="font-size:12px;color:var(--text);line-height:1.7;font-style:italic">\u201cI\u2019d like to revisit the non-compete clause. A '+ncRadius+'-mile radius for '+ncYears+' year'+(ncYears>1?'s':'')+' would effectively force me to relocate my family if things don\u2019t work out. Could we reduce this to 15 miles and 1 year, or add a waiver if I\u2019m terminated without cause?\u201d</div></div>';
@@ -8932,7 +8932,7 @@ function rvuUpdate(){
     if(b&&total>0){
       var diffFromMgma=total-b.comp;
       var negotiateHtml='<div style="margin-top:14px;padding:16px;background:var(--bg2);border-left:3px solid '+(diffFromMgma>=0?'var(--green)':'var(--red)')+';border-radius:0 10px 10px 0">';
-      negotiateHtml+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Your Negotiation Move</div>';
+      negotiateHtml+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Your negotiation play</div>';
       if(diffFromMgma<-20000){
         negotiateHtml+='<div style="font-size:13px;color:var(--text);line-height:1.8;margin-bottom:8px"><strong style="color:var(--red)">You\u2019re significantly below market.</strong> At $'+Math.round(total).toLocaleString()+', you\u2019re leaving $'+Math.abs(Math.round(diffFromMgma)).toLocaleString()+'/year on the table compared to MGMA median for '+b.name+'. Over 5 years, that\u2019s <strong>$'+Math.round(Math.abs(diffFromMgma)*5/1000)+'K</strong> in lost income.</div>';
         negotiateHtml+='<div style="font-size:12px;color:var(--text2);line-height:1.7"><strong>What to say:</strong> \u201cI\u2019ve reviewed MGMA data for '+b.name+' and the median total compensation is $'+b.comp.toLocaleString()+'. My offer is $'+Math.abs(Math.round(diffFromMgma)).toLocaleString()+' below that benchmark. I\u2019d like to discuss either a higher per-wRVU rate or an adjusted base to bring this in line with market.\u201d</div>';
@@ -9060,7 +9060,7 @@ function fypCalculate(){
 
   // Your Next Move — direct action plan
   h+='<div style="padding:16px;background:var(--bg2);border-left:3px solid var(--accent);border-radius:0 10px 10px 0;margin-top:14px">';
-  h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Your First 30 Days as an Attending</div>';
+  h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Your first 30 days</div>';
   h+='<div style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:var(--text2);line-height:1.6">';
   h+='<div style="padding:8px 10px;background:var(--bg3);border-radius:6px;border-left:3px solid var(--green)"><strong>Week 1:</strong> Set up 401k/403b at your employer\u2019s max ($'+max401k.toLocaleString()+'). If there\u2019s a match, you\u2019re leaving free money on the table every paycheck you wait.</div>';
   h+='<div style="padding:8px 10px;background:var(--bg3);border-radius:6px;border-left:3px solid var(--green)"><strong>Week 2:</strong> Open a backdoor Roth IRA. This takes 30 minutes and saves you six figures in taxes over your career. Do it before you talk yourself out of it.</div>';
@@ -9199,7 +9199,7 @@ function ilpCalculate(){
 
   // Your Next Move — priority action plan
   h+='<div style="padding:16px;background:var(--bg2);border-left:3px solid var(--accent);border-radius:0 10px 10px 0;margin-bottom:14px">';
-  h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Your Priority Moves — This Month</div>';
+  h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">What to fix first</div>';
   h+='<div style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:var(--text2);line-height:1.6">';
   var moveNum=1;
   if(disability!=='own_occ'){
@@ -9238,7 +9238,7 @@ function ilpCalculate(){
   else if(spendPct>60){topPriority='Cut spending to 40-50% of take-home. Automate savings first, spend what\u2019s left.';avoid='Don\u2019t match your lifestyle to your salary. The residents-to-attending spending jump is the #1 wealth destroyer for physicians.'}
   else{topPriority='You\u2019re doing the fundamentals right. Focus on tax-loss harvesting, backdoor Roth, and optimizing your investment allocation.';avoid='Don\u2019t get complacent. Revisit your strategy annually and increase savings rate with every salary bump.'}
   h+='<div style="padding:14px;background:linear-gradient(160deg,rgba(200,168,124,.08),rgba(200,168,124,.02));border:1px solid rgba(198,168,94,.15);border-radius:10px;margin-bottom:14px">';
-  h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Bottom Line</div>';
+  h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">The bottom line</div>';
   h+='<div style="font-size:13px;color:var(--text);line-height:1.8;margin-bottom:8px"><strong>Do this:</strong> '+topPriority+'</div>';
   h+='<div style="font-size:12px;color:var(--red);line-height:1.6"><strong>Avoid:</strong> '+avoid+'</div>';
   h+='</div>';
@@ -9360,7 +9360,7 @@ function roiUpdate(){
       :'Low-impact portfolio. '+Math.round(100-impactRatio)+'% of your points come from middle-author or QI work. PDs weigh first-author and case reports far more heavily.';
 
     dimHtml+='<div style="padding:14px;background:var(--bg2);border-radius:10px;border:1px solid var(--border);margin-bottom:14px">';
-    dimHtml+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">Research Grade \u2014 3 Dimensions</div>';
+    dimHtml+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">How your research actually stacks up</div>';
 
     // Authorship
     dimHtml+='<div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"><span style="font-size:12px;font-weight:600;color:var(--text)">Authorship Quality</span><span style="font-size:11px;font-weight:700;color:'+authColor+'">'+authGrade.toUpperCase()+'</span></div>';
@@ -9636,7 +9636,7 @@ async function submitAudit(){
   // Build preliminary analysis
   var prelim='<div style="text-align:left;margin-top:24px">';
   prelim+='<div style="padding:20px;background:linear-gradient(160deg,rgba(200,168,124,.1),rgba(200,168,124,.03));border:1px solid rgba(198,168,94,.15);border-radius:14px;margin-bottom:16px">';
-  prelim+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Preliminary Assessment \u2014 Before Dr. Faroqui\u2019s Full Review</div>';
+  prelim+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">My preliminary read \u2014 Before Dr. Faroqui\u2019s Full Review</div>';
   prelim+='<div style="font-size:12px;color:var(--text2);line-height:1.8">';
 
   // Overall competitiveness snapshot
@@ -9984,7 +9984,7 @@ async function submitPivot(){
 
   // Risk vs Upside breakdown for each option
   var riskUpside='<div style="margin-top:20px;margin-bottom:16px;padding:16px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;text-align:left">';
-  riskUpside+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">Risk vs Upside Analysis</div>';
+  riskUpside+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">Risk versus upside</div>';
   options.forEach(function(opt){
     var optAvg=parseFloat(opt.avg)||0;
     var risk='';var upside='';
@@ -11908,7 +11908,7 @@ function obsPlanBuild(){
 
   // Email strategy — how to position yourself
   h+='<div style="margin-top:16px;padding:16px;background:linear-gradient(160deg,rgba(198,168,94,.06),rgba(200,168,124,.02));border:1px solid rgba(198,168,94,.15);border-radius:12px">';
-  h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">How to Email Programs \u2014 Templates That Work</div>';
+  h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">How to actually get responses</div>';
   h+='<div style="font-size:11px;color:var(--text3);margin-bottom:12px">Most applicants send generic emails. Stand out with targeted, specific outreach.</div>';
 
   // Initial outreach template

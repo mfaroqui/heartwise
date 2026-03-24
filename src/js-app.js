@@ -100,10 +100,18 @@ function hwPathway(position,actions,nextTool){
       });
       setTimeout(function(){document.querySelectorAll('.showcase-slide[data-slide="0"] .sc-tag').forEach(function(t){t.style.opacity='1'})},1200);
     }else if(idx===1){
-      // Observership Database
-      setTimeout(function(){document.querySelectorAll('.obs-row').forEach(function(r){r.style.opacity='1';r.style.transform='translateX(0)'})},100);
-      setTimeout(function(){document.querySelectorAll('.obs-tag').forEach(function(t){t.style.opacity='1'})},600);
+      // Contract Review Tool
+      var valEl=document.querySelector('.contract-val'),rvuEl=document.querySelector('.contract-rvu');
+      var tv=685000,cv=0;
+      var vi=setInterval(function(){cv+=15000;if(cv>=tv){cv=tv;clearInterval(vi)}if(valEl)valEl.textContent='$'+cv.toLocaleString()},30);
+      var tr=55,cr=0;
+      var ri=setInterval(function(){cr+=1;if(cr>=tr){cr=tr;clearInterval(ri)}if(rvuEl)rvuEl.innerHTML='$'+cr+'<span style="font-size:11px;font-weight:300;color:var(--text3)">/wRVU</span>'},30);
+      setTimeout(function(){document.querySelectorAll('.contract-flag').forEach(function(f){f.style.opacity='1';f.style.transform='translateX(0)'})},400);
     }else if(idx===2){
+      // Specialty Fit Assessment
+      setTimeout(function(){document.querySelectorAll('.sfa-row').forEach(function(r){r.style.opacity='1';r.style.transform='translateX(0)'})},100);
+      setTimeout(function(){document.querySelectorAll('.sfa-tag').forEach(function(t){t.style.opacity='1'})},600);
+    }else if(idx===3){
       // Financial Projection Tool
       var amtEl=document.querySelector('.fin-amount'), diffEl=document.querySelector('.fin-diff');
       var t1=14.2,c1=0;
@@ -114,23 +122,16 @@ function hwPathway(position,actions,nextTool){
         document.querySelectorAll('.fin-line-base,.fin-line-strat').forEach(function(l){l.style.strokeDashoffset='0'});
         var dot=document.querySelector('.fin-dot');if(dot)dot.style.opacity='1';
       },100);
-    }else if(idx===3){
-      // Contract Review Tool
-      var valEl=document.querySelector('.contract-val'),rvuEl=document.querySelector('.contract-rvu');
-      var tv=685000,cv=0;
-      var vi=setInterval(function(){cv+=15000;if(cv>=tv){cv=tv;clearInterval(vi)}if(valEl)valEl.textContent='$'+cv.toLocaleString()},30);
-      var tr=55,cr=0;
-      var ri=setInterval(function(){cr+=1;if(cr>=tr){cr=tr;clearInterval(ri)}if(rvuEl)rvuEl.innerHTML='$'+cr+'<span style="font-size:11px;font-weight:300;color:var(--text3)">/wRVU</span>'},30);
-      setTimeout(function(){document.querySelectorAll('.contract-flag').forEach(function(f){f.style.opacity='1';f.style.transform='translateX(0)'})},400);
     }else if(idx===4){
-      // Job Offer Comparison Tool
-      setTimeout(function(){document.querySelectorAll('.offer-row').forEach(function(r){r.style.opacity='1';r.style.transform='translateX(0)'})},100);
-      setTimeout(function(){document.querySelectorAll('.offer-tag').forEach(function(t){t.style.opacity='1'})},800);
+      // Fellowship Application Planner
+      setTimeout(function(){document.querySelectorAll('.fap-step').forEach(function(s){s.style.opacity='1';s.style.transform='translateX(0)'})},100);
+      setTimeout(function(){document.querySelectorAll('.fap-tag').forEach(function(t){t.style.opacity='1'})},700);
     }else if(idx===5){
-      // Career Transition Planner
-      setTimeout(function(){document.querySelectorAll('.pivot-card').forEach(function(c){c.style.opacity='1';c.style.transform='translateY(0)'})},100);
-      setTimeout(function(){document.querySelectorAll('.pivot-factor').forEach(function(f){f.style.opacity='1';f.style.transform='translateX(0)'})},300);
-      setTimeout(function(){var ps=document.querySelector('.pivot-score');if(ps)ps.style.opacity='1'},600);
+      // All 17 Tools
+      var numEl=document.querySelector('.all17-number');
+      if(numEl){numEl.style.opacity='1';numEl.style.transform='scale(1)'}
+      setTimeout(function(){document.querySelectorAll('.all17-cat').forEach(function(c){c.style.opacity='1';c.style.transform='translateY(0)'})},200);
+      setTimeout(function(){var cta=document.querySelector('.all17-cta');if(cta)cta.style.opacity='1'},500);
     }
   }
   window.goShowcase=function(idx){

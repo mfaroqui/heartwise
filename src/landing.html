@@ -67,44 +67,78 @@
 <span class="sc-tag" style="font-size:9px;padding:4px 10px;border-radius:100px;background:var(--green-dim);color:var(--green);font-weight:500;border:1px solid rgba(139,184,160,.15);opacity:0;transition:opacity .6s ease">✓ 2 strengths</span>
 </div>
 </div>
-<!-- Slide 2: Observership Database -->
+<!-- Slide 2: Contract Review Tool -->
 <div class="showcase-slide" data-slide="1" style="display:none">
 <div style="display:flex;align-items:center;gap:10px;margin-bottom:18px">
-<span style="font-size:18px">🔍</span>
+<span style="font-size:18px">📄</span>
 <div>
-<div style="font-size:13px;font-weight:600;color:var(--text)">Observership Database</div>
-<div style="font-size:10px;color:var(--text3)">Verified U.S. observership programs with strategic insights</div>
+<div style="font-size:13px;font-weight:600;color:var(--text)">Contract Review Tool</div>
+<div style="font-size:10px;color:var(--text3)">Surface red flags and get exact negotiation language</div>
 </div>
 </div>
-<div style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px">
-<div class="obs-row" style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:rgba(139,184,160,.08);border-radius:8px;border:1px solid rgba(139,184,160,.12);opacity:0;transform:translateX(-10px);transition:all .4s ease">
-<div style="width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0"></div>
-<div style="flex:1"><div style="font-size:11px;font-weight:500;color:var(--text)">Cleveland Clinic · Cardiology</div><div style="font-size:9px;color:var(--text3)">IMG-friendly · Hands-on · LOR available</div></div>
-<div style="font-size:11px;font-weight:600;color:var(--green)">ROI 94</div>
+<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border)">
+<div>
+<div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:2px">Total Year 1 Value</div>
+<div class="contract-val" style="font-family:var(--font-serif);font-size:28px;font-weight:600;color:var(--accent)">$0</div>
 </div>
-<div class="obs-row" style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:rgba(200,168,124,.08);border-radius:8px;border:1px solid rgba(200,168,124,.12);opacity:0;transform:translateX(-10px);transition:all .4s ease .12s">
-<div style="width:8px;height:8px;border-radius:50%;background:var(--accent);flex-shrink:0"></div>
-<div style="flex:1"><div style="font-size:11px;font-weight:500;color:var(--text)">Mayo Clinic · Internal Medicine</div><div style="font-size:9px;color:var(--text3)">High prestige · Research track · $500 fee</div></div>
-<div style="font-size:11px;font-weight:600;color:var(--accent)">ROI 87</div>
+<div style="text-align:right">
+<div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:2px">RVU Rate</div>
+<div class="contract-rvu" style="font-family:var(--font-serif);font-size:20px;font-weight:600;color:var(--text)">$0<span style="font-size:11px;font-weight:300;color:var(--text3)">/wRVU</span></div>
 </div>
-<div class="obs-row" style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:rgba(240,236,230,.05);border-radius:8px;border:1px solid var(--border);opacity:0;transform:translateX(-10px);transition:all .4s ease .24s">
-<div style="width:8px;height:8px;border-radius:50%;background:var(--text3);flex-shrink:0"></div>
-<div style="flex:1"><div style="font-size:11px;font-weight:500;color:var(--text)">Johns Hopkins · Neurology</div><div style="font-size:9px;color:var(--text3)">Visa support · Clinical exposure · Free</div></div>
-<div style="font-size:11px;font-weight:600;color:var(--text2)">ROI 82</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:8px">
+<div class="contract-flag" style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--red-dim);border-radius:8px;border:1px solid rgba(196,77,86,.15);opacity:0;transform:translateX(-10px);transition:all .4s ease">
+<span style="font-size:11px">🚩</span>
+<span style="font-size:10px;color:var(--red);font-weight:500">Non-compete: 25mi / 2yr — above market</span>
+</div>
+<div class="contract-flag" style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--green-dim);border-radius:8px;border:1px solid rgba(139,184,160,.15);opacity:0;transform:translateX(-10px);transition:all .4s ease .15s">
+<span style="font-size:11px">✓</span>
+<span style="font-size:10px;color:var(--green);font-weight:500">RVU rate $55 — above 75th %ile MGMA</span>
+</div>
+<div class="contract-flag" style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--accent-dim);border-radius:8px;border:1px solid rgba(200,168,124,.15);opacity:0;transform:translateX(-10px);transition:all .4s ease .3s">
+<span style="font-size:11px">⚠️</span>
+<span style="font-size:10px;color:var(--accent);font-weight:500">Tail coverage not included — negotiate</span>
+</div>
+</div>
+</div>
+<!-- Slide 3: Specialty Fit Assessment -->
+<div class="showcase-slide" data-slide="2" style="display:none">
+<div style="display:flex;align-items:center;gap:10px;margin-bottom:18px">
+<span style="font-size:18px">🧬</span>
+<div>
+<div style="font-size:13px;font-weight:600;color:var(--text)">Specialty Fit Assessment</div>
+<div style="font-size:10px;color:var(--text3)">Your top 3 matches ranked by compatibility — and 3 to avoid</div>
+</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px">
+<div class="sfa-row" style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:rgba(139,184,160,.08);border-radius:8px;border:1px solid rgba(139,184,160,.12);opacity:0;transform:translateX(-10px);transition:all .4s ease">
+<div style="font-size:14px;font-weight:700;color:var(--green);font-family:var(--font-serif);min-width:22px">#1</div>
+<div style="flex:1"><div style="font-size:11px;font-weight:600;color:var(--text)">Cardiology</div><div style="font-size:9px;color:var(--text3)">Procedural drive + research alignment + lifestyle match</div></div>
+<div style="font-size:13px;font-weight:700;color:var(--green)">94%</div>
+</div>
+<div class="sfa-row" style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:rgba(200,168,124,.06);border-radius:8px;border:1px solid rgba(200,168,124,.12);opacity:0;transform:translateX(-10px);transition:all .4s ease .12s">
+<div style="font-size:14px;font-weight:700;color:var(--accent);font-family:var(--font-serif);min-width:22px">#2</div>
+<div style="flex:1"><div style="font-size:11px;font-weight:600;color:var(--text)">Gastroenterology</div><div style="font-size:9px;color:var(--text3)">Strong procedural fit + income alignment</div></div>
+<div style="font-size:13px;font-weight:700;color:var(--accent)">81%</div>
+</div>
+<div class="sfa-row" style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:rgba(240,236,230,.05);border-radius:8px;border:1px solid var(--border);opacity:0;transform:translateX(-10px);transition:all .4s ease .24s">
+<div style="font-size:14px;font-weight:700;color:var(--text3);font-family:var(--font-serif);min-width:22px">#3</div>
+<div style="flex:1"><div style="font-size:11px;font-weight:600;color:var(--text)">Pulm/Critical Care</div><div style="font-size:9px;color:var(--text3)">Intellectual curiosity match but lifestyle conflict</div></div>
+<div style="font-size:13px;font-weight:700;color:var(--text3)">72%</div>
 </div>
 </div>
 <div style="display:flex;gap:6px;flex-wrap:wrap">
-<span class="obs-tag" style="font-size:9px;padding:4px 10px;border-radius:100px;background:var(--green-dim);color:var(--green);font-weight:500;border:1px solid rgba(139,184,160,.15);opacity:0;transition:opacity .6s ease .4s">✦ 23 free programs</span>
-<span class="obs-tag" style="font-size:9px;padding:4px 10px;border-radius:100px;background:var(--accent-dim);color:var(--accent);font-weight:500;border:1px solid rgba(200,168,124,.15);opacity:0;transition:opacity .6s ease .5s">🌐 41 offer visa support</span>
+<span class="sfa-tag" style="font-size:9px;padding:4px 10px;border-radius:100px;background:var(--red-dim);color:var(--red);font-weight:500;border:1px solid rgba(196,77,86,.15);opacity:0;transition:opacity .6s ease .4s">✗ Avoid: Pathology — personality mismatch</span>
+<span class="sfa-tag" style="font-size:9px;padding:4px 10px;border-radius:100px;background:var(--accent-dim);color:var(--accent);font-weight:500;border:1px solid rgba(200,168,124,.15);opacity:0;transition:opacity .6s ease .55s">→ Next: Run Match Probability</span>
 </div>
 </div>
-<!-- Slide 3: Financial Projection Tool -->
-<div class="showcase-slide" data-slide="2" style="display:none">
+<!-- Slide 4: Financial Projection Tool -->
+<div class="showcase-slide" data-slide="3" style="display:none">
 <div style="display:flex;align-items:center;gap:10px;margin-bottom:18px">
 <span style="font-size:18px">📈</span>
 <div>
 <div style="font-size:13px;font-weight:600;color:var(--text)">Financial Projection Tool</div>
-<div style="font-size:10px;color:var(--text3)">Visualize the long-term impact of every career path</div>
+<div style="font-size:10px;color:var(--text3)">See the 20-year financial impact of every career decision</div>
 </div>
 </div>
 <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:14px">
@@ -133,18 +167,64 @@
 <div style="display:flex;align-items:center;gap:5px"><div style="width:12px;height:2px;background:#C6A75E;border-radius:1px"></div><span style="font-size:9px;color:var(--accent)">Strategic</span></div>
 </div>
 </div>
-<!-- Slide 4: Contract Review Tool -->
-<div class="showcase-slide" data-slide="3" style="display:none">
+<!-- Slide 5: Fellowship Application Planner -->
+<div class="showcase-slide" data-slide="4" style="display:none">
 <div style="display:flex;align-items:center;gap:10px;margin-bottom:18px">
-<span style="font-size:18px">📄</span>
+<span style="font-size:18px">📅</span>
 <div>
-<div style="font-size:13px;font-weight:600;color:var(--text)">Contract Review Tool</div>
-<div style="font-size:10px;color:var(--text3)">Contract details translated into negotiation strategy</div>
+<div style="font-size:13px;font-weight:600;color:var(--text)">Fellowship Application Planner</div>
+<div style="font-size:10px;color:var(--text3)">Your exact timeline from now to match day</div>
 </div>
 </div>
-<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border)">
-<div>
-<div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:2px">Total Year 1 Value</div>
+<div style="margin-bottom:14px;border-left:2px solid var(--accent);padding-left:12px">
+<div class="fap-step" style="margin-bottom:12px;opacity:0;transform:translateX(-10px);transition:all .4s ease">
+<div style="display:flex;align-items:center;gap:6px;margin-bottom:3px"><div style="width:6px;height:6px;border-radius:50%;background:var(--red);flex-shrink:0"></div><div style="font-size:10px;font-weight:700;color:var(--red);text-transform:uppercase;letter-spacing:.5px">Now — Critical</div></div>
+<div style="font-size:11px;color:var(--text);line-height:1.5">Lock 3 LOR writers. Start personal statement. This window closes fast.</div>
+</div>
+<div class="fap-step" style="margin-bottom:12px;opacity:0;transform:translateX(-10px);transition:all .4s ease .15s">
+<div style="display:flex;align-items:center;gap:6px;margin-bottom:3px"><div style="width:6px;height:6px;border-radius:50%;background:var(--accent);flex-shrink:0"></div><div style="font-size:10px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.5px">Month 2–4</div></div>
+<div style="font-size:11px;color:var(--text);line-height:1.5">Submit 2 abstracts. Schedule away rotations. Finalize CV gaps.</div>
+</div>
+<div class="fap-step" style="margin-bottom:12px;opacity:0;transform:translateX(-10px);transition:all .4s ease .3s">
+<div style="display:flex;align-items:center;gap:6px;margin-bottom:3px"><div style="width:6px;height:6px;border-radius:50%;background:var(--green);flex-shrink:0"></div><div style="font-size:10px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.5px">Month 5–8</div></div>
+<div style="font-size:11px;color:var(--text);line-height:1.5">ERAS open. Interview prep. Program signaling strategy.</div>
+</div>
+</div>
+<div style="display:flex;gap:6px;flex-wrap:wrap">
+<span class="fap-tag" style="font-size:9px;padding:4px 10px;border-radius:100px;background:var(--red-dim);color:var(--red);font-weight:500;border:1px solid rgba(196,77,86,.15);opacity:0;transition:opacity .6s ease .5s">⚡ 6 months to match</span>
+<span class="fap-tag" style="font-size:9px;padding:4px 10px;border-radius:100px;background:var(--accent-dim);color:var(--accent);font-weight:500;border:1px solid rgba(200,168,124,.15);opacity:0;transition:opacity .6s ease .6s">Research window: months 1–2 only</span>
+</div>
+</div>
+<!-- Slide 6: All 17 Tools -->
+<div class="showcase-slide" data-slide="5" style="display:none">
+<div style="text-align:center;margin-bottom:16px">
+<div class="all17-number" style="font-family:var(--font-serif);font-size:48px;font-weight:700;color:var(--accent);line-height:1;opacity:0;transform:scale(.8);transition:all .6s ease">17</div>
+<div style="font-size:13px;font-weight:600;color:var(--text);margin-top:4px">Physician-Built Tools</div>
+<div style="font-size:10px;color:var(--text3);margin-top:2px">One platform. Every career decision covered.</div>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:14px">
+<div class="all17-cat" style="padding:8px 10px;background:rgba(200,168,124,.06);border-radius:8px;border:1px solid rgba(200,168,124,.08);opacity:0;transform:translateY(6px);transition:all .3s ease">
+<div style="font-size:9px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">Match & Apply</div>
+<div style="font-size:9px;color:var(--text3);line-height:1.4">Match Probability · Fellowship Readiness · Application Review · Interview Prep</div>
+</div>
+<div class="all17-cat" style="padding:8px 10px;background:rgba(139,184,160,.06);border-radius:8px;border:1px solid rgba(139,184,160,.08);opacity:0;transform:translateY(6px);transition:all .3s ease .1s">
+<div style="font-size:9px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">Money & Contracts</div>
+<div style="font-size:9px;color:var(--text3);line-height:1.4">Contract Review · RVU Modeling · Financial Projection · Debt Strategy · Offer Comparison</div>
+</div>
+<div class="all17-cat" style="padding:8px 10px;background:rgba(200,168,124,.06);border-radius:8px;border:1px solid rgba(200,168,124,.08);opacity:0;transform:translateY(6px);transition:all .3s ease .2s">
+<div style="font-size:9px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">Find Your Path</div>
+<div style="font-size:9px;color:var(--text3);line-height:1.4">Specialty Fit · Career Roadmap · Career Transition · Fellowship Planner</div>
+</div>
+<div class="all17-cat" style="padding:8px 10px;background:rgba(139,184,160,.06);border-radius:8px;border:1px solid rgba(139,184,160,.08);opacity:0;transform:translateY(6px);transition:all .3s ease .3s">
+<div style="font-size:9px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">Research & IMG</div>
+<div style="font-size:9px;color:var(--text3);line-height:1.4">Research Impact · Observership Database · Contract Risk · 3-Year Planner</div>
+</div>
+</div>
+<div class="all17-cta" style="text-align:center;opacity:0;transition:opacity .5s ease .5s">
+<div style="font-size:12px;color:var(--text);font-weight:500;line-height:1.6;font-family:var(--font-serif);margin-bottom:10px">The decisions you make in the next 12 months<br>will define the next 20 years of your career.<br><span style="color:var(--accent);font-weight:600">Make them with the right tools.</span></div>
+<span style="font-size:11px;color:var(--accent);font-weight:600;cursor:pointer;border-bottom:1px solid rgba(200,168,124,.3);padding-bottom:1px" onclick="go('pg-onboard')">Start your 48-hour free trial →</span>
+</div>
+</div> 1 Value</div>
 <div class="contract-val" style="font-family:var(--font-serif);font-size:28px;font-weight:600;color:var(--accent)">$0</div>
 </div>
 <div style="text-align:right">
@@ -164,79 +244,6 @@
 <div class="contract-flag" style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--accent-dim);border-radius:8px;border:1px solid rgba(200,168,124,.15);opacity:0;transform:translateX(-10px);transition:all .4s ease .3s">
 <span style="font-size:11px">⚠️</span>
 <span style="font-size:10px;color:var(--accent);font-weight:500">Tail coverage not included — negotiate</span>
-</div>
-</div>
-</div>
-<!-- Slide 5: Job Offer Comparison Tool -->
-<div class="showcase-slide" data-slide="4" style="display:none">
-<div style="display:flex;align-items:center;gap:10px;margin-bottom:18px">
-<span style="font-size:18px">⚖️</span>
-<div>
-<div style="font-size:13px;font-weight:600;color:var(--text)">Job Offer Comparison Tool</div>
-<div style="font-size:10px;color:var(--text3)">Compare job offers side-by-side with structured criteria</div>
-</div>
-</div>
-<div style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px">
-<div class="offer-row" style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:rgba(200,168,124,.08);border-radius:8px;border:1px solid rgba(200,168,124,.12);opacity:0;transform:translateX(-10px);transition:all .4s ease">
-<div style="width:8px;height:8px;border-radius:50%;background:var(--accent);flex-shrink:0"></div>
-<div style="flex:1"><div style="font-size:11px;font-weight:500;color:var(--text)">Academic Medical Center · Houston</div><div style="font-size:9px;color:var(--text3)">Base $420K + research day · PSLF eligible</div></div>
-<div style="font-size:12px;font-weight:600;color:var(--accent)">82</div>
-</div>
-<div class="offer-row" style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:rgba(139,184,160,.08);border-radius:8px;border:1px solid rgba(139,184,160,.12);opacity:0;transform:translateX(-10px);transition:all .4s ease .15s">
-<div style="width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0"></div>
-<div style="flex:1"><div style="font-size:11px;font-weight:500;color:var(--text)">Private Group · Dallas</div><div style="font-size:9px;color:var(--text3)">Base $580K + partner track yr 3</div></div>
-<div style="font-size:12px;font-weight:600;color:var(--green)">91</div>
-</div>
-<div class="offer-row" style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:rgba(240,236,230,.05);border-radius:8px;border:1px solid var(--border);opacity:0;transform:translateX(-10px);transition:all .4s ease .3s">
-<div style="width:8px;height:8px;border-radius:50%;background:var(--text3);flex-shrink:0"></div>
-<div style="flex:1"><div style="font-size:11px;font-weight:500;color:var(--text)">Hospital Employed · Austin</div><div style="font-size:9px;color:var(--text3)">Base $510K + sign-on $50K · 2yr non-compete</div></div>
-<div style="font-size:12px;font-weight:600;color:var(--text3)">74</div>
-</div>
-</div>
-<div style="display:flex;gap:6px;flex-wrap:wrap">
-<span class="offer-tag" style="font-size:9px;padding:4px 10px;border-radius:100px;background:var(--green-dim);color:var(--green);font-weight:500;border:1px solid rgba(139,184,160,.15);opacity:0;transition:opacity .6s ease .5s">✦ Best 10-year net: Private Group</span>
-<span class="offer-tag" style="font-size:9px;padding:4px 10px;border-radius:100px;background:var(--accent-dim);color:var(--accent);font-weight:500;border:1px solid rgba(200,168,124,.15);opacity:0;transition:opacity .6s ease .6s">⚠️ Non-compete risk: Hospital</span>
-</div>
-</div>
-<!-- Slide 6: Career Transition Planner -->
-<div class="showcase-slide" data-slide="5" style="display:none">
-<div style="display:flex;align-items:center;gap:10px;margin-bottom:18px">
-<span style="font-size:18px">🔄</span>
-<div>
-<div style="font-size:13px;font-weight:600;color:var(--text)">Career Transition Planner</div>
-<div style="font-size:10px;color:var(--text3)">Evaluate specialty or practice changes with structured guidance</div>
-</div>
-</div>
-<div style="margin-bottom:14px">
-<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-<div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px">Pivot Analysis</div>
-<div class="pivot-score" style="font-size:9px;padding:3px 10px;border-radius:100px;background:var(--accent-dim);color:var(--accent);font-weight:600;opacity:0;transition:opacity .5s ease .6s">Pivot Score: 73/100</div>
-</div>
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">
-<div class="pivot-card" style="padding:10px;background:var(--bg);border-radius:8px;border:1px solid var(--border);opacity:0;transform:translateY(8px);transition:all .4s ease">
-<div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-bottom:4px">Current</div>
-<div style="font-size:12px;font-weight:500;color:var(--text)">General Cardiology</div>
-<div style="font-size:10px;color:var(--text3)">Academic · $380K</div>
-</div>
-<div class="pivot-card" style="padding:10px;background:rgba(200,168,124,.06);border-radius:8px;border:1px solid rgba(200,168,124,.15);opacity:0;transform:translateY(8px);transition:all .4s ease .15s">
-<div style="font-size:9px;color:var(--accent);text-transform:uppercase;margin-bottom:4px">Target</div>
-<div style="font-size:12px;font-weight:500;color:var(--accent)">Interventional</div>
-<div style="font-size:10px;color:var(--text3)">Private · $650K</div>
-</div>
-</div>
-</div>
-<div style="display:flex;flex-direction:column;gap:6px">
-<div class="pivot-factor" style="display:flex;align-items:center;gap:8px;opacity:0;transform:translateX(-8px);transition:all .4s ease .3s">
-<div style="width:4px;height:4px;border-radius:50%;background:var(--green);flex-shrink:0"></div>
-<div style="flex:1;font-size:10px;color:var(--text2)">Financial impact: +$270K/yr after fellowship</div>
-</div>
-<div class="pivot-factor" style="display:flex;align-items:center;gap:8px;opacity:0;transform:translateX(-8px);transition:all .4s ease .4s">
-<div style="width:4px;height:4px;border-radius:50%;background:var(--accent);flex-shrink:0"></div>
-<div style="flex:1;font-size:10px;color:var(--text2)">Timeline: 1-year IC fellowship required</div>
-</div>
-<div class="pivot-factor" style="display:flex;align-items:center;gap:8px;opacity:0;transform:translateX(-8px);transition:all .4s ease .5s">
-<div style="width:4px;height:4px;border-radius:50%;background:var(--red);flex-shrink:0"></div>
-<div style="flex:1;font-size:10px;color:var(--text2)">Risk: Income gap during additional training</div>
 </div>
 </div>
 </div>

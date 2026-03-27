@@ -91,6 +91,45 @@ if (scrDepth < 0) {
 }
 console.log(`✅ Screen nesting check passed (${scrScreens.length} screens, all at depth ${expectedDepth})`);
 
+// ===== STEP 4c: Validate landing page tab nesting =====
+const landingHtml = read('landing.html');
+const lpLines = landingHtml.split('\n');
+let lpDepth = 0;
+const lpTabs = [];
+for (let i = 0; i < lpLines.length; i++) {
+  const line = lpLines[i];
+  const opens = (line.match(/<div[\s>]/g) || []).length;
+  const closes = (line.match(/<\/div>/g) || []).length;
+  lpDepth += opens - closes;
+  // Match lp-tab panel divs (not lp-tab-link nav links)
+  const tabMatch = line.match(/class="[^"]*lp-tab[^"]*"[^>]*data-lptab="([^"]+)"/);
+  if (tabMatch && !/lp-tab-link/.test(line)) {
+    lpTabs.push({ tab: tabMatch[1], line: i + 1, depth: lpDepth });
+  }
+}
+if (lpTabs.length > 0) {
+  const lpExpected = lpTabs[0].depth;
+  let lpNestOk = true;
+  lpTabs.forEach(t => {
+    if (t.depth !== lpExpected) {
+      console.error(`❌ Landing tab "${t.tab}" at line ${t.line} has depth ${t.depth} (expected ${lpExpected}) — broken nesting!`);
+      lpNestOk = false;
+    }
+  });
+  if (!lpNestOk) {
+    console.error('\n❌ BUILD FAILED — Landing page tab nesting is broken. Tab navigation will not work.\n');
+    process.exit(1);
+  }
+  console.log(`✅ Landing tab nesting check passed (${lpTabs.length} tabs, all at depth ${lpExpected})`);
+} else {
+  console.log('⚠️  No landing tabs found (skipping tab nesting check)');
+}
+if (lpDepth !== 0) {
+  console.error(`❌ BUILD FAILED — landing.html has unbalanced divs (final depth: ${lpDepth}, expected 0)`);
+  console.error('   This means there are unclosed or extra </div> tags that will break the page layout.\n');
+  process.exit(1);
+}
+
 console.log('✅ HTML integrity check passed');
 
 // ===== STEP 5: Write output =====

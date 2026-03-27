@@ -86,6 +86,48 @@ function hwPathway(position,actions,nextTool){
 // ===== HERO SHOWCASE CAROUSEL =====
 (function(){
   var currentSlide=0, totalSlides=6, timer=null, animated=[];
+  var SLIDE_INTERVAL=6000;
+  var taglines=[
+    '72% of applicants overestimate their competitiveness',
+    'The average physician loses $43K on their first contract',
+    '68% of physicians say they\'d choose a different specialty',
+    'A 2-year delay in financial planning costs $340K+',
+    'The application window closes faster than you think',
+    'One platform. Every career decision covered.'
+  ];
+  function updateTagline(idx){
+    var el=document.getElementById('showcase-tagline');
+    if(!el)return;
+    el.style.opacity='0';
+    setTimeout(function(){el.textContent=taglines[idx]||'';el.style.opacity='1'},300);
+  }
+  function updatePeek(idx){
+    var left=document.querySelector('.showcase-peek-left');
+    var right=document.querySelector('.showcase-peek-right');
+    if(left)left.style.opacity=idx>0?'1':'0';
+    if(right)right.style.opacity=idx<totalSlides-1?'1':'0';
+  }
+  var progressRAF=null, progressStart=0;
+  function startProgress(){
+    var bar=document.getElementById('showcase-progress');
+    if(!bar)return;
+    bar.style.transition='none';
+    bar.style.width='0%';
+    if(progressRAF)cancelAnimationFrame(progressRAF);
+    progressStart=performance.now();
+    function tick(now){
+      var elapsed=now-progressStart;
+      var pct=Math.min((elapsed/SLIDE_INTERVAL)*100,100);
+      bar.style.width=pct+'%';
+      if(pct<100)progressRAF=requestAnimationFrame(tick);
+    }
+    progressRAF=requestAnimationFrame(tick);
+  }
+  function stopProgress(){
+    if(progressRAF){cancelAnimationFrame(progressRAF);progressRAF=null}
+    var bar=document.getElementById('showcase-progress');
+    if(bar){bar.style.transition='width .3s ease';bar.style.width='0%'}
+  }
   function animateSlide(idx){
     if(animated[idx])return; animated[idx]=true;
     if(idx===0){
@@ -137,6 +179,7 @@ function hwPathway(position,actions,nextTool){
   window.goShowcase=function(idx){
     if(idx===currentSlide)return;
     clearInterval(timer);
+    stopProgress();
     document.querySelectorAll('.showcase-slide').forEach(function(s){s.style.display='none'});
     document.querySelectorAll('.showcase-dot').forEach(function(d){d.style.background='var(--border2)';d.classList.remove('showcase-dot-active')});
     var slide=document.querySelector('.showcase-slide[data-slide="'+idx+'"]');
@@ -144,12 +187,15 @@ function hwPathway(position,actions,nextTool){
     if(slide)slide.style.display='block';
     if(dot){dot.style.background='var(--accent)';dot.classList.add('showcase-dot-active')}
     currentSlide=idx;
+    updateTagline(idx);
+    updatePeek(idx);
     setTimeout(function(){animateSlide(idx)},50);
     startTimer();
   };
   function startTimer(){
     clearInterval(timer);
-    timer=setInterval(function(){goShowcase((currentSlide+1)%totalSlides)},2750);
+    startProgress();
+    timer=setInterval(function(){goShowcase((currentSlide+1)%totalSlides)},SLIDE_INTERVAL);
   }
   // Init on load via IntersectionObserver
   function initShowcase(){
@@ -158,11 +204,11 @@ function hwPathway(position,actions,nextTool){
     if('IntersectionObserver' in window){
       var obs=new IntersectionObserver(function(entries){
         entries.forEach(function(e){
-          if(e.isIntersecting){animateSlide(0);startTimer();obs.disconnect()}
+          if(e.isIntersecting){animateSlide(0);updatePeek(0);startTimer();obs.disconnect()}
         });
       },{threshold:0.3});
       obs.observe(el);
-    }else{animateSlide(0);startTimer()}
+    }else{animateSlide(0);updatePeek(0);startTimer()}
   }
   if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',initShowcase)}else{initShowcase()}
 })();

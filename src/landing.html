@@ -36,8 +36,8 @@
 <h1 class="hero-lux-h1">Know exactly where you stand — <em>across every stage of your medical career.</em></h1>
 <!-- ===== TOOL SHOWCASE CAROUSEL ===== -->
 <div id="hero-showcase" style="margin-top:20px;max-width:480px">
-<div style="font-size:14px;font-weight:600;color:#1A1A1A;text-align:center;margin-bottom:14px;font-style:italic">Most physicians don't see this until it's too late</div>
-<div style="position:relative;background:var(--bg2);border:1px solid var(--border2);border-radius:16px;padding:24px;overflow:hidden;min-height:260px">
+<div id="showcase-tagline" style="font-size:13px;font-weight:600;color:#1A1A1A;text-align:center;margin-bottom:14px;font-style:italic;min-height:20px;transition:opacity .4s ease">72% of applicants overestimate their competitiveness</div>
+<div style="position:relative;background:var(--bg2);border:1px solid var(--border2);border-radius:16px;padding:24px 32px;overflow:hidden;min-height:260px">
 <!-- Slide 1: Match Probability Calculator -->
 <div class="showcase-slide showcase-active" data-slide="0">
 <div style="display:flex;align-items:center;gap:10px;margin-bottom:18px">
@@ -224,6 +224,13 @@
 <div style="font-size:12px;color:var(--text);font-weight:500;line-height:1.6;font-family:var(--font-serif);margin-bottom:10px">The decisions you make in the next 12 months<br>will define the next 20 years of your career.<br><span style="color:var(--accent);font-weight:600">Make them with the right tools.</span></div>
 <span style="font-size:11px;color:var(--accent);font-weight:600;cursor:pointer;border-bottom:1px solid rgba(200,168,124,.3);padding-bottom:1px" onclick="go('pg-onboard')">Start your 48-hour free trial →</span>
 </div>
+</div>
+<!-- Peek shadows (left/right edge hints) -->
+<div class="showcase-peek showcase-peek-left" style="position:absolute;top:0;left:0;width:28px;height:100%;background:linear-gradient(90deg,rgba(200,168,124,.07),transparent);border-radius:16px 0 0 16px;pointer-events:none;opacity:0;transition:opacity .4s ease;z-index:2"></div>
+<div class="showcase-peek showcase-peek-right" style="position:absolute;top:0;right:0;width:28px;height:100%;background:linear-gradient(270deg,rgba(200,168,124,.07),transparent);border-radius:0 16px 16px 0;pointer-events:none;opacity:0;transition:opacity .4s ease;z-index:2"></div>
+<!-- Progress bar -->
+<div style="position:absolute;bottom:0;left:0;right:0;height:3px;background:rgba(200,168,124,.08);border-radius:0 0 16px 16px;overflow:hidden;z-index:3">
+<div id="showcase-progress" style="height:100%;width:0%;background:linear-gradient(90deg,var(--accent),var(--accent2,#d4b96a));border-radius:0 2px 2px 0;transition:none"></div>
 </div>
 <!-- Dots -->
 <div style="display:flex;justify-content:center;gap:8px;margin-top:16px">

@@ -107,6 +107,10 @@ function hwPathway(position,actions,nextTool){
     if(left)left.style.opacity=idx>0?'1':'0';
     if(right)right.style.opacity=idx<totalSlides-1?'1':'0';
   }
+  function updateCounter(idx){
+    var el=document.getElementById('showcase-cur');
+    if(el)el.textContent=idx+1;
+  }
   var progressRAF=null, progressStart=0;
   function startProgress(){
     var bar=document.getElementById('showcase-progress');
@@ -189,6 +193,7 @@ function hwPathway(position,actions,nextTool){
     currentSlide=idx;
     updateTagline(idx);
     updatePeek(idx);
+    updateCounter(idx);
     setTimeout(function(){animateSlide(idx)},50);
     startTimer();
   };
@@ -210,7 +215,48 @@ function hwPathway(position,actions,nextTool){
       obs.observe(el);
     }else{animateSlide(0);updatePeek(0);startTimer()}
   }
-  if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',initShowcase)}else{initShowcase()}
+  // Swipe support
+  function initSwipe(){
+    var card=document.getElementById('showcase-card');
+    if(!card)return;
+    var startX=0,startY=0,tracking=false;
+    card.addEventListener('touchstart',function(e){
+      startX=e.touches[0].clientX;
+      startY=e.touches[0].clientY;
+      tracking=true;
+    },{passive:true});
+    card.addEventListener('touchmove',function(e){
+      if(!tracking)return;
+      var dx=e.touches[0].clientX-startX;
+      var dy=e.touches[0].clientY-startY;
+      if(Math.abs(dx)>Math.abs(dy)&&Math.abs(dx)>10){
+        e.preventDefault();
+      }
+    },{passive:false});
+    card.addEventListener('touchend',function(e){
+      if(!tracking)return;
+      tracking=false;
+      var endX=e.changedTouches[0].clientX;
+      var dx=endX-startX;
+      if(Math.abs(dx)<40)return;
+      if(dx<0&&currentSlide<totalSlides-1){goShowcase(currentSlide+1)}
+      else if(dx>0&&currentSlide>0){goShowcase(currentSlide-1)}
+    },{passive:true});
+    // Mouse drag for desktop
+    var mouseDown=false,mouseX=0;
+    card.addEventListener('mousedown',function(e){mouseDown=true;mouseX=e.clientX;e.preventDefault()});
+    card.addEventListener('mousemove',function(e){if(mouseDown)e.preventDefault()});
+    card.addEventListener('mouseup',function(e){
+      if(!mouseDown)return;
+      mouseDown=false;
+      var dx=e.clientX-mouseX;
+      if(Math.abs(dx)<40)return;
+      if(dx<0&&currentSlide<totalSlides-1){goShowcase(currentSlide+1)}
+      else if(dx>0&&currentSlide>0){goShowcase(currentSlide-1)}
+    });
+    card.addEventListener('mouseleave',function(){mouseDown=false});
+  }
+  if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',function(){initShowcase();initSwipe()})}else{initShowcase();initSwipe()}
 })();
 
 // ===== LANDING MENU =====

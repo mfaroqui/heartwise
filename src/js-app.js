@@ -259,6 +259,27 @@ function hwPathway(position,actions,nextTool){
   if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',function(){initShowcase();initSwipe()})}else{initShowcase();initSwipe()}
 })();
 
+// ===== STICKY MOBILE CTA =====
+(function(){
+  var sticky=null,heroBtn=null,shown=false;
+  function initSticky(){
+    sticky=document.getElementById('sticky-cta');
+    heroBtn=document.querySelector('.hero-btn-primary');
+    if(!sticky||!heroBtn)return;
+    // Only show on screens <= 768px wide
+    function checkScroll(){
+      if(window.innerWidth>768){if(shown){sticky.style.transform='translateY(100%)';shown=false}return}
+      var rect=heroBtn.getBoundingClientRect();
+      var heroGone=rect.bottom<0;
+      if(heroGone&&!shown){sticky.style.display='';setTimeout(function(){sticky.style.transform='translateY(0)'},10);shown=true}
+      else if(!heroGone&&shown){sticky.style.transform='translateY(100%)';shown=false}
+    }
+    window.addEventListener('scroll',checkScroll,{passive:true});
+    window.addEventListener('resize',checkScroll,{passive:true});
+  }
+  if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',initSticky)}else{initSticky()}
+})();
+
 // ===== LANDING MENU =====
 function toggleLandingMenu(e){
   e.stopPropagation();
@@ -621,6 +642,21 @@ function hookShowResults(){
 
   // Build tabbed tool preview
   buildToolPreview(dList,s,g);
+  // Cost of inaction message
+  var costEl=document.getElementById('hook-cost-inaction');
+  if(costEl){
+    var costMsgs={
+      contract:'Physicians who don\'t review their first contract leave an average of $40K–$80K on the table. <span style="font-size:10px;color:var(--text3);font-weight:400">(Source: MGMA Physician Compensation Data)</span>',
+      finance:'A 2-year delay in strategic financial planning costs physicians $340K+ over 20 years in lost compound growth. <span style="font-size:10px;color:var(--text3);font-weight:400">(Source: AAMC Financial Wellness Study)</span>',
+      match:'33% of applicants who fail to match had fixable gaps they never identified. <span style="font-size:10px;color:var(--text3);font-weight:400">(Source: NRMP Charting Outcomes)</span>',
+      fellowship:'Fellowship positions have a 60–70% rejection rate. Most applicants don\'t benchmark themselves until it\'s too late. <span style="font-size:10px;color:var(--text3);font-weight:400">(Source: NRMP Specialty Match Data)</span>',
+      specialty:'68% of mid-career physicians say they\'d choose a different specialty if they could start over. <span style="font-size:10px;color:var(--text3);font-weight:400">(Source: Medscape Physician Lifestyle Report)</span>',
+      direction:'Physicians who change careers without structured planning take 2–3 years longer and earn 40% less during transition. <span style="font-size:10px;color:var(--text3);font-weight:400">(Source: AMA Practice Transformation)</span>'
+    };
+    var msg=costMsgs[g];
+    if(msg){costEl.innerHTML=msg;costEl.style.display=''}
+    else{costEl.style.display='none'}
+  }
   document.getElementById('hook-results').style.display='';
   setTimeout(function(){document.getElementById('hook-results').scrollIntoView({behavior:'smooth',block:'nearest'})},100);
 }
@@ -833,6 +869,9 @@ function go(id){
   // Show/hide topbar
   const tb=document.getElementById('topbar');
   if(tb)tb.style.display=(id==='pg-landing')?'':'none';
+  // Hide sticky CTA when leaving landing
+  var stk=document.getElementById('sticky-cta');
+  if(stk&&id!=='pg-landing'){stk.style.transform='translateY(100%)';stk.style.display='none'}
   if(!_skipPush&&id!==_lastPage){history.pushState({page:id},'',null);_lastPage=id}
 }
 

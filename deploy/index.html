@@ -920,7 +920,7 @@ body.has-upgrade-bar #main-app{padding-bottom:70px}
 <div class="hero-lux-inner">
 <div class="hero-lux-text">
 <div class="hero-lux-badge">Physician-Led Career Decision Platform</div>
-<h1 class="hero-lux-h1">Know exactly where you stand — <em>across every stage of your medical career.</em></h1>
+<h1 class="hero-lux-h1">The decisions you're about to make will define the next 20 years of your career. <em>Most physicians make them blind.</em></h1>
 <!-- ===== TOOL SHOWCASE CAROUSEL ===== -->
 <div id="hero-showcase" style="margin-top:20px;max-width:480px;position:relative">
 <div id="showcase-tagline" style="font-size:13px;font-weight:600;color:#1A1A1A;text-align:center;margin-bottom:8px;font-style:italic;min-height:20px;transition:opacity .4s ease">72% of applicants overestimate their competitiveness</div>
@@ -1139,27 +1139,7 @@ body.has-upgrade-bar #main-app{padding-bottom:70px}
 <div class="hero-lux-ctas">
 <button class="hero-btn-primary" onclick="document.getElementById('hook-sec').scrollIntoView({behavior:'smooth'})">Start Your Career Analysis — 3 Quick Questions →</button>
 </div>
-
-<div class="hero-lux-steps">
-<div class="hero-lux-steps-label">In under 5 minutes</div>
-<div class="hero-lux-steps-row">
-<div class="hero-lux-step">
-<div class="hero-lux-step-num">1</div>
-<div class="hero-lux-step-text">Choose your stage<span class="hero-lux-step-sub">Medical student → Attending</span></div>
-</div>
-<svg class="hero-lux-step-arrow" width="28" height="12" viewBox="0 0 28 12"><path d="M0 6h22M18 1l6 5-6 5" fill="none" stroke="#C6A75E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-<div class="hero-lux-step">
-<div class="hero-lux-step-num">2</div>
-<div class="hero-lux-step-text">Evaluate yourself<span class="hero-lux-step-sub">Using our framework tools</span></div>
-</div>
-<svg class="hero-lux-step-arrow" width="28" height="12" viewBox="0 0 28 12"><path d="M0 6h22M18 1l6 5-6 5" fill="none" stroke="#C6A75E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-<div class="hero-lux-step">
-<div class="hero-lux-step-num">3</div>
-<div class="hero-lux-step-text">Get your strategy report</div>
-</div>
-</div>
-</div>
-<p class="hero-lux-fine">Everything you need to match, negotiate, and plan your career. No credit card required.</p>
+<p class="hero-lux-fine">17 physician-built tools. No credit card required. Free for 48 hours.</p>
 </div>
 <div class="hero-lux-portrait">
 <div class="hero-lux-img-wrap">
@@ -1279,6 +1259,7 @@ body.has-upgrade-bar #main-app{padding-bottom:70px}
 <!-- Personalization reminder + CTA -->
 <div style="text-align:center;padding:18px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;margin-bottom:16px">
 <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:6px">Ready to see <em>your</em> numbers?</div>
+<div id="hook-cost-inaction" style="display:none;font-size:12px;color:var(--red);font-weight:500;line-height:1.5;margin-bottom:12px;padding:10px 14px;background:rgba(196,77,86,.06);border:1px solid rgba(196,77,86,.12);border-radius:8px"></div>
 <div style="font-size:11px;color:var(--text3);line-height:1.6;margin-bottom:14px">The examples above are based on sample data. When you sign up, each tool asks you a short set of personalized questions — your scores, your debt, your goals — and generates results that are <strong style="color:var(--accent)">unique to you</strong>.</div>
 <button onclick="go('pg-onboard')" style="padding:16px 48px;font-size:15px;font-weight:600;color:#0a0a0f;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:12px;cursor:pointer;letter-spacing:.5px;display:block;width:100%">Start Your Career Analysis →</button>
 <p style="font-size:11px;color:var(--text3);margin-top:10px">No credit card required.</p>
@@ -2016,6 +1997,12 @@ body.has-upgrade-bar #main-app{padding-bottom:70px}
 
 </div>
 </div>
+
+<!-- Sticky mobile CTA -->
+<div id="sticky-cta" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:900;padding:10px 16px;background:rgba(10,10,15,.95);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-top:1px solid rgba(200,168,124,.15);transform:translateY(100%);transition:transform .35s ease">
+<button onclick="go('pg-onboard')" style="width:100%;padding:14px;font-size:14px;font-weight:600;color:#0a0a0f;background:linear-gradient(135deg,var(--accent),var(--accent2,#d4b96a));border:none;border-radius:10px;cursor:pointer;letter-spacing:.3px">Start Free Trial — 48 Hours Full Access</button>
+</div>
+
 </div>
 
 <!-- ===== AUTH PAGES ===== -->
@@ -6748,6 +6735,27 @@ function hwPathway(position,actions,nextTool){
   if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',function(){initShowcase();initSwipe()})}else{initShowcase();initSwipe()}
 })();
 
+// ===== STICKY MOBILE CTA =====
+(function(){
+  var sticky=null,heroBtn=null,shown=false;
+  function initSticky(){
+    sticky=document.getElementById('sticky-cta');
+    heroBtn=document.querySelector('.hero-btn-primary');
+    if(!sticky||!heroBtn)return;
+    // Only show on screens <= 768px wide
+    function checkScroll(){
+      if(window.innerWidth>768){if(shown){sticky.style.transform='translateY(100%)';shown=false}return}
+      var rect=heroBtn.getBoundingClientRect();
+      var heroGone=rect.bottom<0;
+      if(heroGone&&!shown){sticky.style.display='';setTimeout(function(){sticky.style.transform='translateY(0)'},10);shown=true}
+      else if(!heroGone&&shown){sticky.style.transform='translateY(100%)';shown=false}
+    }
+    window.addEventListener('scroll',checkScroll,{passive:true});
+    window.addEventListener('resize',checkScroll,{passive:true});
+  }
+  if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',initSticky)}else{initSticky()}
+})();
+
 // ===== LANDING MENU =====
 function toggleLandingMenu(e){
   e.stopPropagation();
@@ -7110,6 +7118,21 @@ function hookShowResults(){
 
   // Build tabbed tool preview
   buildToolPreview(dList,s,g);
+  // Cost of inaction message
+  var costEl=document.getElementById('hook-cost-inaction');
+  if(costEl){
+    var costMsgs={
+      contract:'Physicians who don\'t review their first contract leave an average of $40K–$80K on the table. <span style="font-size:10px;color:var(--text3);font-weight:400">(Source: MGMA Physician Compensation Data)</span>',
+      finance:'A 2-year delay in strategic financial planning costs physicians $340K+ over 20 years in lost compound growth. <span style="font-size:10px;color:var(--text3);font-weight:400">(Source: AAMC Financial Wellness Study)</span>',
+      match:'33% of applicants who fail to match had fixable gaps they never identified. <span style="font-size:10px;color:var(--text3);font-weight:400">(Source: NRMP Charting Outcomes)</span>',
+      fellowship:'Fellowship positions have a 60–70% rejection rate. Most applicants don\'t benchmark themselves until it\'s too late. <span style="font-size:10px;color:var(--text3);font-weight:400">(Source: NRMP Specialty Match Data)</span>',
+      specialty:'68% of mid-career physicians say they\'d choose a different specialty if they could start over. <span style="font-size:10px;color:var(--text3);font-weight:400">(Source: Medscape Physician Lifestyle Report)</span>',
+      direction:'Physicians who change careers without structured planning take 2–3 years longer and earn 40% less during transition. <span style="font-size:10px;color:var(--text3);font-weight:400">(Source: AMA Practice Transformation)</span>'
+    };
+    var msg=costMsgs[g];
+    if(msg){costEl.innerHTML=msg;costEl.style.display=''}
+    else{costEl.style.display='none'}
+  }
   document.getElementById('hook-results').style.display='';
   setTimeout(function(){document.getElementById('hook-results').scrollIntoView({behavior:'smooth',block:'nearest'})},100);
 }
@@ -7322,6 +7345,9 @@ function go(id){
   // Show/hide topbar
   const tb=document.getElementById('topbar');
   if(tb)tb.style.display=(id==='pg-landing')?'':'none';
+  // Hide sticky CTA when leaving landing
+  var stk=document.getElementById('sticky-cta');
+  if(stk&&id!=='pg-landing'){stk.style.transform='translateY(100%)';stk.style.display='none'}
   if(!_skipPush&&id!==_lastPage){history.pushState({page:id},'',null);_lastPage=id}
 }
 

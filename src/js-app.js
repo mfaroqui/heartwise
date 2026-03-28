@@ -2375,6 +2375,7 @@ function renderHome(){
     try{renderMonthlyCheckinTrigger()}catch(e){console.error('MonthlyCheckin:',e)}
     try{renderSeasonalCalendar()}catch(e){console.error('SeasonalCal:',e)}
     try{renderPeerBenchmarkCard()}catch(e){console.error('PeerBenchmark:',e)}
+    try{renderCompIntelCard()}catch(e){console.error('CompIntelCard:',e)}
     try{renderQuarterlySnapshotBtn()}catch(e){console.error('QuarterlySnapshot:',e)}
   }else{
     ['weekly-focus','login-streak','tool-of-week','upcoming-deadlines','whats-changed','checkin-trigger','tool-progress','tripwire-alerts','revisit-prompts','decision-journal-home','rerun-reminders','monthly-checkin-trigger','seasonal-calendar','peer-benchmark-card','quarterly-snapshot-btn'].forEach(function(id){var el=document.getElementById(id);if(el)el.style.display='none'});
@@ -6628,6 +6629,7 @@ function renderProfile(){
   try{renderDecisionTimeline()}catch(e){console.error('DecisionTimeline:',e)}
   try{renderDecisionPatterns()}catch(e){console.error('DecisionPatterns:',e)}
   try{renderOutcomesOnProfile()}catch(e){console.error('OutcomesProfile:',e)}
+  try{renderCompProfile()}catch(e){console.error('CompProfile:',e)}
   // Show admin tier switcher
   var sw=document.getElementById('admin-tier-switcher');
   if(sw){sw.classList.toggle('hidden',U.email.toLowerCase()!==AE.toLowerCase())}
@@ -8368,6 +8370,11 @@ function admRenderUserDetail(c){
   // Outcomes section
   if(typeof admRenderUserOutcomes==='function'){
     h+=admRenderUserOutcomes(u);
+  }
+
+  // Comp intel section
+  if(typeof admRenderCompIntel==='function'){
+    h+=admRenderCompIntel(u);
   }
 
   c.innerHTML=h;
@@ -11839,6 +11846,827 @@ function renderWhatsChanged(){
   h+='</div>';el.innerHTML=h;
 }
 
+
+// ===== COMPENSATION INTELLIGENCE — MARKET TRACKING & ALERTS =====
+// Ongoing comp monitoring: benchmarks, alerts, renegotiation timing, trend tracking
+// NOT a tool — a persistent layer across the platform
+// Data: U.compIntel = {snapshots:[], alerts:[], contractDate:'', nextReview:'', region:'', practiceModel:''}
+
+// --- MGMA-BASED COMP DATA (percentile ranges by specialty, region, practice model) ---
+var HW_COMP_BENCHMARKS={
+  // Each specialty: {p25, p50, p75, p90, growth (annual % increase)}
+  // Sources: MGMA 2024-2025 DataDive, SullivanCotter, Doximity
+  'cardiology':{p25:480000,p50:600000,p75:720000,p90:850000,growth:0.045},
+  'interventional cardiology':{p25:600000,p50:750000,p75:900000,p90:1100000,growth:0.05},
+  'gastroenterology':{p25:430000,p50:550000,p75:680000,p90:800000,growth:0.04},
+  'orthopedic surgery':{p25:520000,p50:650000,p75:810000,p90:950000,growth:0.04},
+  'dermatology':{p25:400000,p50:500000,p75:620000,p90:750000,growth:0.035},
+  'radiology':{p25:400000,p50:500000,p75:620000,p90:740000,growth:0.035},
+  'anesthesiology':{p25:370000,p50:450000,p75:540000,p90:640000,growth:0.03},
+  'emergency medicine':{p25:310000,p50:380000,p75:450000,p90:520000,growth:0.025},
+  'internal medicine':{p25:240000,p50:300000,p75:360000,p90:430000,growth:0.03},
+  'family medicine':{p25:220000,p50:275000,p75:335000,p90:400000,growth:0.03},
+  'pediatrics':{p25:225000,p50:280000,p75:340000,p90:400000,growth:0.025},
+  'psychiatry':{p25:260000,p50:310000,p75:380000,p90:450000,growth:0.04},
+  'neurology':{p25:290000,p50:350000,p75:420000,p90:500000,growth:0.035},
+  'surgery':{p25:400000,p50:500000,p75:620000,p90:750000,growth:0.035},
+  'urology':{p25:400000,p50:500000,p75:620000,p90:740000,growth:0.04},
+  'pulmonology':{p25:360000,p50:440000,p75:530000,p90:620000,growth:0.035},
+  'oncology':{p25:390000,p50:480000,p75:580000,p90:690000,growth:0.035},
+  'nephrology':{p25:310000,p50:380000,p75:450000,p90:530000,growth:0.03},
+  'endocrinology':{p25:240000,p50:300000,p75:360000,p90:430000,growth:0.025},
+  'rheumatology':{p25:260000,p50:320000,p75:390000,p90:460000,growth:0.03},
+  'infectious disease':{p25:230000,p50:290000,p75:350000,p90:420000,growth:0.025},
+  'hospitalist':{p25:270000,p50:340000,p75:410000,p90:480000,growth:0.035},
+  'critical care':{p25:350000,p50:430000,p75:520000,p90:610000,growth:0.04},
+  'vascular surgery':{p25:450000,p50:560000,p75:680000,p90:800000,growth:0.04},
+  'pain medicine':{p25:380000,p50:470000,p75:570000,p90:670000,growth:0.035},
+  'sports medicine':{p25:320000,p50:400000,p75:490000,p90:580000,growth:0.03},
+  'palliative care':{p25:240000,p50:300000,p75:360000,p90:430000,growth:0.025},
+  'hematology':{p25:350000,p50:430000,p75:520000,p90:620000,growth:0.035}
+};
+
+// Region multipliers (vs national median)
+var HW_REGION_MULT={
+  'northeast':1.05,'mid-atlantic':1.02,'southeast':0.95,'midwest':0.92,
+  'south':0.93,'southwest':0.97,'mountain':0.96,'west':1.08,'pacific':1.12,
+  'rural':0.88,'urban':1.06,'suburban':1.0
+};
+
+// Practice model multipliers
+var HW_PRACTICE_MULT={
+  'academic':0.78,'employed':0.95,'private':1.15,'hybrid':1.05,
+  'locums':1.20,'eat-what-you-kill':1.25,'government':0.82
+};
+
+// Resident/fellow stipend data by PGY
+var HW_TRAINEE_STIPENDS={
+  'PGY-1':{p25:58000,p50:63000,p75:68000},
+  'PGY-2':{p25:60000,p50:65000,p75:70000},
+  'PGY-3':{p25:62000,p50:67000,p75:73000},
+  'PGY-4':{p25:64000,p50:70000,p75:76000},
+  'PGY-5':{p25:66000,p50:72000,p75:79000},
+  'PGY-6':{p25:68000,p50:75000,p75:82000},
+  'PGY-7':{p25:70000,p50:78000,p75:86000}
+};
+
+// --- CORE ENGINE ---
+
+function getCompBenchmark(specialty,region,practiceModel){
+  var spec=specialty?specialty.toLowerCase():'';
+  var bench=HW_COMP_BENCHMARKS[spec];
+  if(!bench)return null;
+  var regionMult=HW_REGION_MULT[region]||1.0;
+  var practiceMult=HW_PRACTICE_MULT[practiceModel]||1.0;
+  return{
+    p25:Math.round(bench.p25*regionMult*practiceMult),
+    p50:Math.round(bench.p50*regionMult*practiceMult),
+    p75:Math.round(bench.p75*regionMult*practiceMult),
+    p90:Math.round(bench.p90*regionMult*practiceMult),
+    growth:bench.growth,
+    region:region||'national',
+    practiceModel:practiceModel||'employed',
+    specialty:specialty,
+    raw:bench
+  };
+}
+
+function getCompPercentile(salary,benchmark){
+  if(!benchmark||!salary)return null;
+  if(salary<=benchmark.p25)return Math.round((salary/benchmark.p25)*25);
+  if(salary<=benchmark.p50)return 25+Math.round(((salary-benchmark.p25)/(benchmark.p50-benchmark.p25))*25);
+  if(salary<=benchmark.p75)return 50+Math.round(((salary-benchmark.p50)/(benchmark.p75-benchmark.p50))*25);
+  if(salary<=benchmark.p90)return 75+Math.round(((salary-benchmark.p75)/(benchmark.p90-benchmark.p75))*15);
+  return 90+Math.round(((salary-benchmark.p90)/(benchmark.p90*0.3))*10);
+}
+
+function getCompGap(salary,benchmark){
+  if(!benchmark||!salary)return null;
+  var medianGap=benchmark.p50-salary;
+  var p75Gap=benchmark.p75-salary;
+  return{
+    vsMedian:medianGap,
+    vs75th:p75Gap,
+    pctile:getCompPercentile(salary,benchmark),
+    monthlyGap:Math.round(medianGap/12),
+    fiveYearGap:medianGap*5,
+    tenYearGap:medianGap*10,
+    lifetimeGap:Math.round(medianGap*25*(1+benchmark.growth*12.5))
+  };
+}
+
+// --- SNAPSHOT TRACKING ---
+
+function recordCompSnapshot(){
+  if(!U)return;
+  var cp=U.careerProfile||{};
+  var comp=parseInt(String(cp.comp||'0').replace(/[^0-9]/g,''))||0;
+  var spec=cp.specialty||'';
+  if(!comp||!spec)return;
+
+  if(!U.compIntel)U.compIntel={snapshots:[],alerts:[],contractDate:'',nextReview:'',region:'',practiceModel:''};
+  var ci=U.compIntel;
+  var bench=getCompBenchmark(spec,ci.region,ci.practiceModel);
+  if(!bench)return;
+
+  var snapshot={
+    date:new Date().toISOString(),
+    salary:comp,
+    specialty:spec,
+    percentile:getCompPercentile(comp,bench),
+    p50AtTime:bench.p50,
+    p75AtTime:bench.p75,
+    region:ci.region||'',
+    practiceModel:ci.practiceModel||'',
+    stage:cp.stage||''
+  };
+
+  // Don't record duplicates within 7 days
+  var last=ci.snapshots.length?ci.snapshots[ci.snapshots.length-1]:null;
+  if(last&&(Date.now()-new Date(last.date).getTime())<604800000&&last.salary===comp)return;
+
+  ci.snapshots.push(snapshot);
+  if(ci.snapshots.length>24)ci.snapshots=ci.snapshots.slice(-24); // 2 years of monthly snapshots
+  U.compIntel=ci;
+  saveUser();
+}
+
+// --- ALERT GENERATION ---
+
+function checkCompAlerts(){
+  if(!U)return[];
+  var cp=U.careerProfile||{};
+  var stage=cp.stage||'student';
+  if(!U.compIntel)U.compIntel={snapshots:[],alerts:[],contractDate:'',nextReview:'',region:'',practiceModel:''};
+  var ci=U.compIntel;
+  var alerts=[];
+  var comp=parseInt(String(cp.comp||'0').replace(/[^0-9]/g,''))||0;
+  var spec=cp.specialty||'';
+  var now=Date.now();
+
+  // ALERT 1: Below-market compensation (fellows + attendings)
+  if((stage==='fellow'||stage==='attending')&&comp&&spec){
+    var bench=getCompBenchmark(spec,ci.region,ci.practiceModel);
+    if(bench){
+      var gap=getCompGap(comp,bench);
+      if(gap.vsMedian>0){
+        var severity=gap.pctile<25?'critical':gap.pctile<40?'warning':'info';
+        alerts.push({
+          id:'below-market',
+          severity:severity,
+          title:'Your compensation is below market median',
+          detail:'You are at the '+gap.pctile+'th percentile for '+spec+'. Median is $'+fmt2(bench.p50)+'. You are leaving $'+fmt2(gap.vsMedian)+'/year on the table — that is $'+fmt2(gap.fiveYearGap)+' over 5 years.',
+          action:'Run the RVU Compensation Calculator to model your actual market position',
+          tool:'RVU Compensation & Offer Comparison',
+          dollars:gap.vsMedian
+        });
+      }
+      // Above 75th? Congratulate + protect
+      if(gap.pctile>=75){
+        alerts.push({
+          id:'above-market',
+          severity:'positive',
+          title:'Your compensation is above the 75th percentile',
+          detail:'At $'+fmt2(comp)+', you are at the '+gap.pctile+'th percentile for '+spec+'. Focus now shifts to protecting this: non-compete terms, partnership track, and contract renewal terms.',
+          action:'Run Contract Review to make sure your terms match your comp level',
+          tool:'Contract Review Tool',
+          dollars:0
+        });
+      }
+    }
+  }
+
+  // ALERT 2: Contract anniversary / renegotiation window
+  if(ci.contractDate){
+    var cDate=new Date(ci.contractDate);
+    var monthsSince=Math.floor((now-cDate.getTime())/(2592000000));
+    // Nudge at 10 months (prep), 11 months (negotiate), 23 months (annual)
+    if(monthsSince>=10&&monthsSince<=12){
+      alerts.push({
+        id:'contract-anniversary',
+        severity:'warning',
+        title:'Contract anniversary approaching — renegotiation window',
+        detail:'Your contract started '+monthsSince+' months ago. Most employers expect a compensation conversation at the 12-month mark. Start preparing now.',
+        action:'Review your contract terms and prepare your case with market data',
+        tool:'Contract Review Tool',
+        dollars:null
+      });
+    }
+    if(monthsSince>=22&&monthsSince<=25){
+      alerts.push({
+        id:'contract-2yr',
+        severity:'warning',
+        title:'2-year contract review window',
+        detail:'You have been under this contract for '+monthsSince+' months. The 2-year mark is the strongest renegotiation point — you have a track record now. Use it.',
+        action:'Model your current RVU production against your contract terms',
+        tool:'RVU Compensation & Offer Comparison',
+        dollars:null
+      });
+    }
+  }
+
+  // ALERT 3: Comp hasn't changed but market moved (stale comp)
+  if(ci.snapshots.length>=2){
+    var oldest=ci.snapshots[0];
+    var newest=ci.snapshots[ci.snapshots.length-1];
+    var monthsTracked=Math.floor((new Date(newest.date)-new Date(oldest.date))/(2592000000));
+    if(monthsTracked>=6&&oldest.salary===newest.salary&&spec){
+      var bench2=getCompBenchmark(spec,ci.region,ci.practiceModel);
+      if(bench2){
+        var marketGrowth=bench2.growth*monthsTracked/12;
+        var expectedIncrease=Math.round(oldest.salary*marketGrowth);
+        if(expectedIncrease>5000){
+          alerts.push({
+            id:'stale-comp',
+            severity:'warning',
+            title:'Your compensation has not changed in '+monthsTracked+' months',
+            detail:'Market compensation for '+spec+' grew approximately '+Math.round(marketGrowth*100)+'% in that period. You have lost $'+fmt2(expectedIncrease)+' in relative value. Without a raise, you are effectively taking a pay cut.',
+            action:'Prepare your renegotiation case with current market data',
+            tool:'Contract Review Tool',
+            dollars:expectedIncrease
+          });
+        }
+      }
+    }
+  }
+
+  // ALERT 4: Percentile dropping over time
+  if(ci.snapshots.length>=3){
+    var recent3=ci.snapshots.slice(-3);
+    if(recent3[0].percentile&&recent3[2].percentile&&recent3[0].percentile-recent3[2].percentile>=5){
+      alerts.push({
+        id:'percentile-drop',
+        severity:'warning',
+        title:'Your market position is declining',
+        detail:'Your percentile dropped from '+recent3[0].percentile+'th to '+recent3[2].percentile+'th over recent snapshots. The market is moving faster than your compensation.',
+        action:'Review market rates and prepare for a compensation conversation',
+        tool:'RVU Compensation & Offer Comparison',
+        dollars:null
+      });
+    }
+  }
+
+  // ALERT 5: Students/residents — expected attending salary context
+  if(stage==='student'||stage==='resident'){
+    if(spec){
+      var bench3=getCompBenchmark(spec,ci.region||'','');
+      if(bench3){
+        alerts.push({
+          id:'future-earnings',
+          severity:'info',
+          title:'Expected attending compensation: '+spec,
+          detail:'Median attending salary for '+spec+': $'+fmt2(bench3.p50)+' (range: $'+fmt2(bench3.p25)+' to $'+fmt2(bench3.p90)+'). Annual growth rate: '+Math.round(bench3.growth*100)+'%. Understanding this now helps you make better specialty and financial decisions.',
+          action:'Model different specialty paths with the Financial Projection Tool',
+          tool:'Financial Projection Tool',
+          dollars:null
+        });
+      }
+    }
+  }
+
+  // ALERT 6: Next review date reminder
+  if(ci.nextReview){
+    var nrDate=new Date(ci.nextReview);
+    var daysUntil=Math.floor((nrDate.getTime()-now)/86400000);
+    if(daysUntil>0&&daysUntil<=60){
+      alerts.push({
+        id:'review-upcoming',
+        severity:daysUntil<=14?'critical':'warning',
+        title:'Compensation review in '+daysUntil+' days',
+        detail:'Your scheduled review is on '+nrDate.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})+'. '+(daysUntil<=14?'Start preparing your case now — gather your RVU data, patient satisfaction scores, and market benchmarks.':'Good time to start pulling together your data.'),
+        action:'Run RVU Calculator with your latest production numbers',
+        tool:'RVU Compensation & Offer Comparison',
+        dollars:null
+      });
+    }
+  }
+
+  // ALERT 7: Practice model opportunity
+  if((stage==='fellow'||stage==='attending')&&ci.practiceModel&&comp&&spec){
+    var currentBench=getCompBenchmark(spec,ci.region,ci.practiceModel);
+    var models=['academic','employed','private','hybrid'];
+    var better=[];
+    models.forEach(function(m){
+      if(m===ci.practiceModel)return;
+      var altBench=getCompBenchmark(spec,ci.region,m);
+      if(altBench&&altBench.p50>comp*1.15){
+        better.push({model:m,p50:altBench.p50,gain:altBench.p50-comp});
+      }
+    });
+    if(better.length){
+      better.sort(function(a,b){return b.gain-a.gain});
+      var top=better[0];
+      alerts.push({
+        id:'practice-model-opp',
+        severity:'info',
+        title:'Higher comp available in '+top.model+' practice',
+        detail:top.model.charAt(0).toUpperCase()+top.model.slice(1)+' practice median for '+spec+' is $'+fmt2(top.p50)+' — $'+fmt2(top.gain)+'/year more than your current compensation. Worth considering if it aligns with your career goals.',
+        action:'Use Career Transition Planner to compare practice models',
+        tool:'Career Transition Planner',
+        dollars:top.gain
+      });
+    }
+  }
+
+  // Store alerts
+  ci.alerts=alerts;
+  U.compIntel=ci;
+  return alerts;
+}
+
+// --- HOME SCREEN CARD ---
+
+function renderCompIntelCard(){
+  var el=document.getElementById('comp-intel-card');
+  if(!el||!U)return;
+  var hasPlan=U.tier==='core'||U.tier==='elite'||U.tier==='admin'||U.isTrial;
+  if(!hasPlan){el.style.display='none';return}
+
+  var cp=U.careerProfile||{};
+  var stage=cp.stage||'student';
+  var spec=cp.specialty||'';
+  var comp=parseInt(String(cp.comp||'0').replace(/[^0-9]/g,''))||0;
+
+  // Initialize compIntel if needed
+  if(!U.compIntel)U.compIntel={snapshots:[],alerts:[],contractDate:'',nextReview:'',region:'',practiceModel:''};
+  var ci=U.compIntel;
+
+  // Record a snapshot on load
+  recordCompSnapshot();
+
+  // Check alerts
+  var alerts=checkCompAlerts();
+
+  // Need at least specialty to show anything
+  if(!spec){
+    el.style.display='';
+    el.innerHTML='<div class="card" style="padding:16px;border-left:3px solid var(--accent)">'+
+      '<div style="font-size:14px;font-weight:600;color:var(--text);font-family:var(--font-serif);margin-bottom:6px">📊 Compensation Intelligence</div>'+
+      '<div style="font-size:12px;color:var(--text3);margin-bottom:10px">Set your specialty in your Profile to unlock market benchmarking, salary alerts, and renegotiation timing.</div>'+
+      '<button onclick="navTo(\'scr-profile\')" style="padding:8px 16px;font-size:12px;background:var(--accent);color:#1C1A17;border:none;border-radius:8px;cursor:pointer;font-weight:600">Update Profile →</button></div>';
+    return;
+  }
+
+  el.style.display='';
+  var bench=getCompBenchmark(spec,ci.region,ci.practiceModel);
+
+  var h='<div class="card" style="padding:16px;border-left:3px solid var(--accent)">';
+  h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">';
+  h+='<div style="font-size:14px;font-weight:600;color:var(--text);font-family:var(--font-serif)">📊 Compensation Intelligence</div>';
+  h+='<button onclick="showCompSettings()" style="padding:4px 10px;font-size:10px;border:1px solid var(--border);border-radius:6px;background:var(--bg3);color:var(--text3);cursor:pointer">⚙ Settings</button>';
+  h+='</div>';
+
+  // --- TRAINEE VIEW (students + residents) ---
+  if(stage==='student'||stage==='resident'){
+    if(bench){
+      h+='<div style="padding:12px;background:var(--bg2);border-radius:10px;margin-bottom:10px">';
+      h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Expected Attending Compensation: '+spec+'</div>';
+      h+='<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;text-align:center">';
+      h+='<div><div style="font-size:9px;color:var(--text3)">25th</div><div style="font-size:14px;font-weight:700;color:var(--text3)">$'+fmt2(bench.p25)+'</div></div>';
+      h+='<div><div style="font-size:9px;color:var(--accent)">MEDIAN</div><div style="font-size:14px;font-weight:700;color:var(--accent)">$'+fmt2(bench.p50)+'</div></div>';
+      h+='<div><div style="font-size:9px;color:var(--text3)">75th</div><div style="font-size:14px;font-weight:700;color:var(--text)">$'+fmt2(bench.p75)+'</div></div>';
+      h+='<div><div style="font-size:9px;color:var(--text3)">90th</div><div style="font-size:14px;font-weight:700;color:var(--text3)">$'+fmt2(bench.p90)+'</div></div>';
+      h+='</div>';
+      // Practice model comparison
+      h+='<div style="margin-top:10px;font-size:11px;color:var(--text3)">';
+      h+='Academic: ~$'+fmt2(Math.round(bench.raw.p50*0.78))+' · Employed: ~$'+fmt2(Math.round(bench.raw.p50*0.95))+' · Private: ~$'+fmt2(Math.round(bench.raw.p50*1.15));
+      h+='</div>';
+      // Lifetime context
+      var lifetime25=bench.p50*25;
+      h+='<div style="margin-top:6px;font-size:11px;color:var(--text2)">Estimated 25-year career earnings at median: <strong style="color:var(--accent)">$'+fmt2(lifetime25)+'</strong></div>';
+      h+='</div>';
+
+      // Trainee stipend comparison
+      var pgy=cp.pgy||'';
+      if(pgy&&HW_TRAINEE_STIPENDS[pgy]){
+        var stipend=HW_TRAINEE_STIPENDS[pgy];
+        var currentStipend=comp||stipend.p50;
+        h+='<div style="padding:10px;background:var(--bg2);border-radius:8px;margin-bottom:10px;font-size:12px">';
+        h+='<span style="color:var(--text3)">'+pgy+' Stipend Range:</span> $'+fmt2(stipend.p25)+' – $'+fmt2(stipend.p75);
+        if(currentStipend&&currentStipend<stipend.p25)h+=' <span style="color:var(--red);font-weight:600">· Your stipend is below average</span>';
+        h+='</div>';
+      }
+    }
+
+    // Time-to-attending countdown
+    var pgyNum=parseInt((cp.pgy||'').replace(/\D/g,''))||1;
+    var residencyYears={'internal medicine':3,'family medicine':3,'pediatrics':3,'emergency medicine':3,'surgery':5,'orthopedic surgery':5,'neurology':4,'dermatology':4,'radiology':5,'anesthesiology':4,'psychiatry':4,'urology':5};
+    var specYears=residencyYears[spec.toLowerCase()]||3;
+    var yearsLeft=Math.max(0,specYears-pgyNum);
+    if(stage==='student')yearsLeft=specYears+Math.max(0,4-pgyNum);
+    if(yearsLeft>0&&bench){
+      var stipendLost=yearsLeft*(bench.p50-(comp||65000));
+      h+='<div style="padding:10px;background:rgba(198,168,94,.06);border:1px solid rgba(198,168,94,.12);border-radius:8px;font-size:12px;color:var(--text2)">';
+      h+='<strong style="color:var(--accent)">~'+yearsLeft+' years</strong> until attending salary. Every year of training is ~$'+fmt2(bench.p50-(comp||65000))+' in opportunity cost vs attending earnings.';
+      h+='</div>';
+    }
+  }
+
+  // --- FELLOW / ATTENDING VIEW ---
+  if((stage==='fellow'||stage==='attending')&&bench&&comp){
+    var gap=getCompGap(comp,bench);
+
+    // Market position gauge
+    h+='<div style="padding:12px;background:var(--bg2);border-radius:10px;margin-bottom:10px">';
+    h+='<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px">';
+    h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px">Your Market Position</div>';
+    var pctColor=gap.pctile>=60?'var(--green)':gap.pctile>=40?'var(--accent)':'#c44d56';
+    h+='<div style="font-size:18px;font-weight:700;color:'+pctColor+'">'+gap.pctile+'<span style="font-size:11px;font-weight:400">th percentile</span></div>';
+    h+='</div>';
+
+    // Visual bar
+    h+='<div style="position:relative;height:24px;background:var(--bg);border-radius:12px;overflow:hidden;margin-bottom:8px">';
+    h+='<div style="position:absolute;left:0;top:0;height:100%;width:'+Math.min(100,gap.pctile)+'%;background:linear-gradient(90deg,#c44d56 0%,var(--accent) 50%,var(--green) 100%);border-radius:12px;transition:width .5s"></div>';
+    // Marker labels
+    h+='<div style="position:absolute;left:24%;top:0;height:100%;border-left:1px dashed var(--border)"></div>';
+    h+='<div style="position:absolute;left:49%;top:0;height:100%;border-left:1px dashed var(--border)"></div>';
+    h+='<div style="position:absolute;left:74%;top:0;height:100%;border-left:1px dashed var(--border)"></div>';
+    h+='</div>';
+
+    // Labels
+    h+='<div style="display:flex;justify-content:space-between;font-size:9px;color:var(--text3)">';
+    h+='<span>$'+fmt2(bench.p25)+'</span>';
+    h+='<span>$'+fmt2(bench.p50)+'</span>';
+    h+='<span>$'+fmt2(bench.p75)+'</span>';
+    h+='<span>$'+fmt2(bench.p90)+'</span>';
+    h+='</div>';
+
+    // Your salary marker
+    h+='<div style="text-align:center;margin-top:6px;font-size:13px;font-weight:600;color:var(--text)">Your comp: $'+fmt2(comp)+'</div>';
+
+    // Gap callout
+    if(gap.vsMedian>0){
+      h+='<div style="margin-top:8px;padding:8px 10px;background:rgba(196,77,86,.08);border-radius:6px;font-size:12px;color:#c44d56">';
+      h+='<strong>$'+fmt2(gap.vsMedian)+'/year below median</strong> — $'+fmt2(gap.fiveYearGap)+' over 5 years';
+      h+='</div>';
+    } else if(gap.vsMedian<0){
+      h+='<div style="margin-top:8px;padding:8px 10px;background:rgba(88,166,92,.08);border-radius:6px;font-size:12px;color:var(--green)">';
+      h+='<strong>$'+fmt2(Math.abs(gap.vsMedian))+'/year above median</strong> — strong market position';
+      h+='</div>';
+    }
+    h+='</div>';
+
+    // Trend sparkline (if snapshots exist)
+    if(ci.snapshots.length>=2){
+      h+='<div style="padding:10px;background:var(--bg2);border-radius:8px;margin-bottom:10px">';
+      h+='<div style="font-size:11px;font-weight:600;color:var(--text);margin-bottom:6px">Comp Tracking History</div>';
+      h+='<div style="display:flex;align-items:flex-end;gap:3px;height:40px">';
+      var maxP=0;ci.snapshots.forEach(function(s){if(s.percentile>maxP)maxP=s.percentile});
+      ci.snapshots.forEach(function(s,i){
+        var ht=Math.max(4,Math.round((s.percentile/(maxP||1))*36));
+        var col=s.percentile>=60?'var(--green)':s.percentile>=40?'var(--accent)':'#c44d56';
+        var dt=new Date(s.date).toLocaleDateString('en-US',{month:'short'});
+        h+='<div style="flex:1;text-align:center" title="'+dt+': '+s.percentile+'th pctile, $'+fmt2(s.salary)+'">';
+        h+='<div style="height:'+ht+'px;background:'+col+';border-radius:2px;margin:0 auto;width:80%"></div>';
+        if(i===0||i===ci.snapshots.length-1)h+='<div style="font-size:8px;color:var(--text3);margin-top:2px">'+dt+'</div>';
+        h+='</div>';
+      });
+      h+='</div></div>';
+    }
+
+    // Contract dates
+    if(ci.contractDate||ci.nextReview){
+      h+='<div style="display:flex;gap:8px;margin-bottom:10px">';
+      if(ci.contractDate){
+        var cAge=Math.floor((now-(new Date(ci.contractDate)).getTime())/(2592000000));
+        h+='<div style="flex:1;padding:8px;background:var(--bg2);border-radius:8px;font-size:11px;text-align:center">';
+        h+='<div style="color:var(--text3)">Contract Start</div>';
+        h+='<div style="font-weight:600;color:var(--text)">'+new Date(ci.contractDate).toLocaleDateString('en-US',{month:'short',year:'numeric'})+'</div>';
+        h+='<div style="color:var(--text3)">'+cAge+' months ago</div></div>';
+      }
+      if(ci.nextReview){
+        var dUntil=Math.floor(((new Date(ci.nextReview)).getTime()-now)/86400000);
+        var rColor=dUntil<=30?'#c44d56':dUntil<=60?'var(--accent)':'var(--text)';
+        h+='<div style="flex:1;padding:8px;background:var(--bg2);border-radius:8px;font-size:11px;text-align:center">';
+        h+='<div style="color:var(--text3)">Next Review</div>';
+        h+='<div style="font-weight:600;color:'+rColor+'">'+new Date(ci.nextReview).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})+'</div>';
+        h+='<div style="color:'+rColor+'">'+(dUntil>0?dUntil+' days away':'Overdue')+'</div></div>';
+      }
+      h+='</div>';
+    }
+  }
+
+  // --- ALERTS (all stages) ---
+  var actionableAlerts=alerts.filter(function(a){return a.severity!=='info'&&a.severity!=='positive'});
+  var infoAlerts=alerts.filter(function(a){return a.severity==='info'||a.severity==='positive'});
+
+  if(actionableAlerts.length){
+    h+='<div style="margin-bottom:8px">';
+    actionableAlerts.forEach(function(a){
+      var borderColor=a.severity==='critical'?'#c44d56':'var(--accent)';
+      var bgColor=a.severity==='critical'?'rgba(196,77,86,.06)':'rgba(198,168,94,.06)';
+      var icon=a.severity==='critical'?'🚨':'⚠️';
+      h+='<div style="padding:10px 12px;background:'+bgColor+';border:1px solid '+borderColor+'22;border-radius:8px;margin-bottom:6px">';
+      h+='<div style="font-size:12px;font-weight:600;color:var(--text)">'+icon+' '+a.title+'</div>';
+      h+='<div style="font-size:11px;color:var(--text2);margin:4px 0;line-height:1.5">'+a.detail+'</div>';
+      if(a.action)h+='<a href="#" onclick="event.preventDefault();openToolByName(\''+a.tool+'\')" style="font-size:11px;color:var(--accent);text-decoration:none;font-weight:600">→ '+a.action+'</a>';
+      h+='</div>';
+    });
+    h+='</div>';
+  }
+
+  // Compact info alerts
+  if(infoAlerts.length){
+    infoAlerts.forEach(function(a){
+      var icon=a.severity==='positive'?'✅':'💡';
+      h+='<div style="padding:8px 10px;background:var(--bg2);border-radius:8px;margin-bottom:4px;font-size:11px">';
+      h+='<span>'+icon+'</span> <span style="color:var(--text2)">'+a.title+'</span>';
+      if(a.action)h+=' <a href="#" onclick="event.preventDefault();openToolByName(\''+a.tool+'\')" style="color:var(--accent);text-decoration:none">→ Take action</a>';
+      h+='</div>';
+    });
+  }
+
+  // Setup prompt if no contract/review dates set
+  if((stage==='fellow'||stage==='attending')&&!ci.contractDate&&!ci.nextReview&&comp){
+    h+='<div style="padding:10px;background:rgba(198,168,94,.06);border:1px solid rgba(198,168,94,.12);border-radius:8px;margin-top:6px;font-size:11px;color:var(--text2)">';
+    h+='<strong style="color:var(--accent)">Set your contract dates</strong> to get renegotiation timing alerts. ';
+    h+='<a href="#" onclick="event.preventDefault();showCompSettings()" style="color:var(--accent);text-decoration:none;font-weight:600">Configure →</a>';
+    h+='</div>';
+  }
+
+  h+='</div>';
+  el.innerHTML=h;
+}
+
+// Helper: navigate to tool by name
+function openToolByName(name){
+  navTo('scr-frameworks');
+  // Small delay to let screen render
+  setTimeout(function(){
+    var cards=document.querySelectorAll('[data-fw]');
+    cards.forEach(function(c){
+      if(c.textContent.indexOf(name)>=0||c.dataset.fw===name){c.click()}
+    });
+  },300);
+}
+
+// --- COMP SETTINGS MODAL ---
+
+function showCompSettings(){
+  if(!U)return;
+  if(!U.compIntel)U.compIntel={snapshots:[],alerts:[],contractDate:'',nextReview:'',region:'',practiceModel:''};
+  var ci=U.compIntel;
+  var cp=U.careerProfile||{};
+
+  var h='<div style="padding:24px;max-width:480px;margin:0 auto">';
+  h+='<div style="text-align:center;margin-bottom:20px"><div style="font-size:20px;font-weight:600;color:var(--text);font-family:var(--font-serif)">Compensation Settings</div>';
+  h+='<div style="font-size:12px;color:var(--text3);margin-top:4px">Refine your market benchmarks and set contract tracking dates.</div></div>';
+
+  // Region
+  h+='<div style="margin-bottom:14px"><label style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px">Region</label>';
+  h+='<select id="ci-region" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-size:13px;margin-top:4px">';
+  h+='<option value="">National Average</option>';
+  var regions=[['northeast','Northeast'],['mid-atlantic','Mid-Atlantic'],['southeast','Southeast'],['midwest','Midwest'],['south','South'],['southwest','Southwest'],['mountain','Mountain West'],['west','West'],['pacific','Pacific / CA'],['rural','Rural'],['urban','Urban'],['suburban','Suburban']];
+  regions.forEach(function(r){h+='<option value="'+r[0]+'"'+(ci.region===r[0]?' selected':'')+'>'+r[1]+(HW_REGION_MULT[r[0]]!==1?' ('+(HW_REGION_MULT[r[0]]>1?'+':'')+Math.round((HW_REGION_MULT[r[0]]-1)*100)+'%)':'')+'</option>'});
+  h+='</select></div>';
+
+  // Practice model
+  h+='<div style="margin-bottom:14px"><label style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px">Practice Model</label>';
+  h+='<select id="ci-practice" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-size:13px;margin-top:4px">';
+  var models=[['','Not Set'],['academic','Academic'],['employed','Hospital Employed'],['private','Private Practice'],['hybrid','Hybrid'],['locums','Locums'],['eat-what-you-kill','Eat-What-You-Kill'],['government','Government / VA']];
+  models.forEach(function(m){h+='<option value="'+m[0]+'"'+(ci.practiceModel===m[0]?' selected':'')+'>'+m[1]+(m[0]&&HW_PRACTICE_MULT[m[0]]!==1&&HW_PRACTICE_MULT[m[0]]?' ('+(HW_PRACTICE_MULT[m[0]]>1?'+':'')+Math.round((HW_PRACTICE_MULT[m[0]]-1)*100)+'% vs employed)':'')+'</option>'});
+  h+='</select></div>';
+
+  // Contract start date
+  h+='<div style="margin-bottom:14px"><label style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px">Contract Start Date</label>';
+  h+='<input type="date" id="ci-contract" value="'+(ci.contractDate||'')+'" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-size:13px;margin-top:4px">';
+  h+='<div style="font-size:10px;color:var(--text3);margin-top:3px">Used to calculate renegotiation timing alerts.</div></div>';
+
+  // Next review date
+  h+='<div style="margin-bottom:14px"><label style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px">Next Compensation Review Date</label>';
+  h+='<input type="date" id="ci-review" value="'+(ci.nextReview||'')+'" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-size:13px;margin-top:4px">';
+  h+='<div style="font-size:10px;color:var(--text3);margin-top:3px">We will alert you as the date approaches with preparation steps.</div></div>';
+
+  // Save button
+  h+='<button onclick="saveCompSettings()" style="width:100%;padding:14px;background:var(--accent);color:#1C1A17;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer">Save Settings</button>';
+
+  // Preview with current settings
+  h+='<div id="ci-preview" style="margin-top:16px"></div>';
+  h+='</div>';
+
+  document.getElementById('modal-q-content').innerHTML=h;
+  document.getElementById('modal-q').classList.remove('hidden');
+
+  // Live preview
+  updateCompPreview();
+  document.getElementById('ci-region').addEventListener('change',updateCompPreview);
+  document.getElementById('ci-practice').addEventListener('change',updateCompPreview);
+}
+
+function updateCompPreview(){
+  var el=document.getElementById('ci-preview');
+  if(!el)return;
+  var cp=U.careerProfile||{};
+  var spec=cp.specialty||'';
+  var comp=parseInt(String(cp.comp||'0').replace(/[^0-9]/g,''))||0;
+  if(!spec){el.innerHTML='<div style="font-size:11px;color:var(--text3);text-align:center;padding:8px">Set specialty in Profile to see preview.</div>';return}
+
+  var region=document.getElementById('ci-region').value;
+  var practice=document.getElementById('ci-practice').value;
+  var bench=getCompBenchmark(spec,region,practice);
+  if(!bench){el.innerHTML='';return}
+
+  var h='<div style="padding:12px;background:var(--bg2);border-radius:10px">';
+  h+='<div style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Preview: '+spec+' · '+(region||'national')+' · '+(practice||'all models')+'</div>';
+  h+='<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:4px;text-align:center;font-size:11px">';
+  h+='<div><div style="color:var(--text3)">25th</div><div style="font-weight:600">$'+fmt2(bench.p25)+'</div></div>';
+  h+='<div><div style="color:var(--accent)">50th</div><div style="font-weight:700;color:var(--accent)">$'+fmt2(bench.p50)+'</div></div>';
+  h+='<div><div style="color:var(--text3)">75th</div><div style="font-weight:600">$'+fmt2(bench.p75)+'</div></div>';
+  h+='<div><div style="color:var(--text3)">90th</div><div style="font-weight:600">$'+fmt2(bench.p90)+'</div></div>';
+  h+='</div>';
+  if(comp){
+    var pctile=getCompPercentile(comp,bench);
+    var pColor=pctile>=60?'var(--green)':pctile>=40?'var(--accent)':'#c44d56';
+    h+='<div style="text-align:center;margin-top:8px;font-size:12px;color:var(--text)">Your $'+fmt2(comp)+' = <strong style="color:'+pColor+'">'+pctile+'th percentile</strong></div>';
+  }
+  h+='</div>';
+  el.innerHTML=h;
+}
+
+function saveCompSettings(){
+  if(!U)return;
+  if(!U.compIntel)U.compIntel={snapshots:[],alerts:[],contractDate:'',nextReview:'',region:'',practiceModel:''};
+  var ci=U.compIntel;
+  ci.region=document.getElementById('ci-region').value||'';
+  ci.practiceModel=document.getElementById('ci-practice').value||'';
+  ci.contractDate=document.getElementById('ci-contract').value||'';
+  ci.nextReview=document.getElementById('ci-review').value||'';
+  U.compIntel=ci;
+  saveUser();
+  closeModal('modal-q');
+  notify('Compensation settings saved. Your benchmarks have been updated.');
+  // Re-snapshot with new settings
+  recordCompSnapshot();
+  // Re-render
+  if(typeof renderCompIntelCard==='function')renderCompIntelCard();
+  if(typeof renderCompProfile==='function')renderCompProfile();
+}
+
+// --- PROFILE SCREEN: COMP TRACKING SECTION ---
+
+function renderCompProfile(){
+  var el=document.getElementById('profile-comp-intel');
+  if(!el||!U)return;
+  var hasPlan=U.tier==='core'||U.tier==='elite'||U.tier==='admin'||U.isTrial;
+  if(!hasPlan){el.style.display='none';return}
+
+  var cp=U.careerProfile||{};
+  var stage=cp.stage||'student';
+  var spec=cp.specialty||'';
+  var comp=parseInt(String(cp.comp||'0').replace(/[^0-9]/g,''))||0;
+  if(!U.compIntel)U.compIntel={snapshots:[],alerts:[],contractDate:'',nextReview:'',region:'',practiceModel:''};
+  var ci=U.compIntel;
+
+  el.style.display='';
+  var h='<div class="card" style="padding:16px">';
+  h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">';
+  h+='<div style="font-size:14px;font-weight:600;color:var(--text);font-family:var(--font-serif)">💰 Compensation Tracker</div>';
+  h+='<button onclick="showCompSettings()" style="padding:4px 10px;font-size:10px;border:1px solid var(--border);border-radius:6px;background:var(--bg3);color:var(--text3);cursor:pointer">⚙ Configure</button>';
+  h+='</div>';
+
+  if(!spec||(!comp&&stage!=='student')){
+    h+='<div style="font-size:12px;color:var(--text3);padding:10px 0">Update your specialty'+(stage!=='student'?' and compensation':'')+ ' in your profile above to see your market position over time.</div>';
+    h+='</div>';
+    el.innerHTML=h;return;
+  }
+
+  var bench=getCompBenchmark(spec,ci.region,ci.practiceModel);
+
+  // Current settings
+  h+='<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px">';
+  h+='<span style="font-size:10px;padding:3px 8px;background:var(--bg2);border-radius:10px;color:var(--text3)">'+spec+'</span>';
+  if(ci.region)h+='<span style="font-size:10px;padding:3px 8px;background:var(--bg2);border-radius:10px;color:var(--text3)">'+ci.region+'</span>';
+  if(ci.practiceModel)h+='<span style="font-size:10px;padding:3px 8px;background:var(--bg2);border-radius:10px;color:var(--text3)">'+ci.practiceModel+'</span>';
+  h+='</div>';
+
+  // Snapshot history table
+  if(ci.snapshots.length){
+    h+='<div style="font-size:11px;font-weight:600;color:var(--text);margin-bottom:6px">History ('+ci.snapshots.length+' snapshots)</div>';
+    h+='<div style="max-height:200px;overflow-y:auto">';
+    ci.snapshots.slice().reverse().forEach(function(s){
+      var dt=new Date(s.date).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+      var pColor=s.percentile>=60?'var(--green)':s.percentile>=40?'var(--accent)':'#c44d56';
+      h+='<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px">';
+      h+='<span style="color:var(--text3)">'+dt+'</span>';
+      h+='<span style="color:var(--text)">$'+fmt2(s.salary)+'</span>';
+      h+='<span style="color:'+pColor+';font-weight:600">'+s.percentile+'th</span>';
+      h+='<span style="color:var(--text3)">Median: $'+fmt2(s.p50AtTime)+'</span>';
+      h+='</div>';
+    });
+    h+='</div>';
+
+    // Progress narrative
+    if(ci.snapshots.length>=2){
+      var first=ci.snapshots[0];
+      var last=ci.snapshots[ci.snapshots.length-1];
+      var salaryChange=last.salary-first.salary;
+      var pctileChange=last.percentile-first.percentile;
+      var timeDiff=Math.floor((new Date(last.date)-new Date(first.date))/(2592000000));
+      if(timeDiff>0){
+        h+='<div style="padding:10px;background:var(--bg2);border-radius:8px;margin-top:10px;font-size:12px;color:var(--text2);line-height:1.6">';
+        h+='<strong>Over '+timeDiff+' months: </strong>';
+        if(salaryChange>0)h+='Comp increased $'+fmt2(salaryChange)+'. ';
+        else if(salaryChange===0)h+='Comp unchanged. ';
+        else h+='Comp decreased $'+fmt2(Math.abs(salaryChange))+'. ';
+        if(pctileChange>0)h+='Market position improved by '+pctileChange+' percentile points. ';
+        else if(pctileChange<0)h+='Market position dropped '+Math.abs(pctileChange)+' percentile points — market is outpacing your raises. ';
+        else h+='Market position stable. ';
+        h+='</div>';
+      }
+    }
+  } else {
+    h+='<div style="font-size:12px;color:var(--text3);padding:10px 0">No snapshots yet. Your compensation will be tracked each time you visit the dashboard or update your profile.</div>';
+  }
+
+  // Contract info
+  if(ci.contractDate||ci.nextReview){
+    h+='<div style="margin-top:12px;padding:10px;background:var(--bg2);border-radius:8px">';
+    h+='<div style="font-size:11px;font-weight:600;color:var(--text);margin-bottom:4px">Contract Tracking</div>';
+    if(ci.contractDate){
+      var mSince=Math.floor((Date.now()-new Date(ci.contractDate).getTime())/(2592000000));
+      h+='<div style="font-size:12px;color:var(--text2)">Contract started: '+new Date(ci.contractDate).toLocaleDateString('en-US',{month:'long',year:'numeric'})+' ('+mSince+' months ago)</div>';
+    }
+    if(ci.nextReview){
+      var dLeft=Math.floor((new Date(ci.nextReview).getTime()-Date.now())/86400000);
+      h+='<div style="font-size:12px;color:'+(dLeft<=30?'#c44d56':'var(--text2)')+'">Next review: '+new Date(ci.nextReview).toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})+' ('+(dLeft>0?dLeft+' days away':'Overdue')+')</div>';
+    }
+    h+='</div>';
+  }
+
+  h+='</div>';
+  el.innerHTML=h;
+}
+
+// --- TOOL OUTPUT INJECTION ---
+// Call hwCompContext() inside tool render functions to inject market context
+// This is a lightweight addition — NOT the full RVU analysis (that's what the tool itself does)
+
+function hwCompContext(salary,specialty){
+  if(!U)return'';
+  if(!U.compIntel)U.compIntel={snapshots:[],alerts:[],contractDate:'',nextReview:'',region:'',practiceModel:''};
+  var ci=U.compIntel;
+  var sal=parseInt(String(salary||'0').replace(/[^0-9]/g,''))||0;
+  var spec=(specialty||'').toLowerCase();
+  if(!sal||!spec)return'';
+
+  var bench=getCompBenchmark(spec,ci.region,ci.practiceModel);
+  if(!bench)return'';
+
+  var pctile=getCompPercentile(sal,bench);
+  var gap=bench.p50-sal;
+  var pColor=pctile>=60?'var(--green)':pctile>=40?'var(--accent)':'#c44d56';
+
+  var h='<div style="margin:12px 0;padding:12px;background:rgba(198,168,94,.04);border:1px solid rgba(198,168,94,.12);border-radius:10px">';
+  h+='<div style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">📊 Market Context</div>';
+  h+='<div style="display:flex;justify-content:space-between;align-items:center;font-size:12px">';
+  h+='<span style="color:var(--text2)">$'+fmt2(sal)+' = <strong style="color:'+pColor+'">'+pctile+'th percentile</strong> for '+spec+'</span>';
+  if(gap>0)h+='<span style="color:#c44d56;font-weight:600">$'+fmt2(gap)+' below median</span>';
+  else if(gap<0)h+='<span style="color:var(--green);font-weight:600">$'+fmt2(Math.abs(gap))+' above median</span>';
+  h+='</div>';
+
+  if(ci.region||ci.practiceModel){
+    h+='<div style="font-size:10px;color:var(--text3);margin-top:4px">Adjusted for: '+(ci.region||'national')+', '+(ci.practiceModel||'all practice types')+'</div>';
+  }
+  h+='</div>';
+  return h;
+}
+
+// --- ADMIN VIEW: COMP INTEL ACROSS USERS ---
+
+function admRenderCompIntel(u){
+  var ci=u.compIntel||(u.session_data&&u.session_data.compIntel);
+  if(!ci||typeof ci==='string'){try{ci=JSON.parse(ci)}catch(e){ci=null}}
+  if(!ci)return'';
+  if(!ci.snapshots||!ci.snapshots.length)return'';
+
+  var h='<div class="adm-card"><div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:8px">📊 Compensation Tracking</div>';
+
+  var last=ci.snapshots[ci.snapshots.length-1];
+  var pColor=last.percentile>=60?'var(--green)':last.percentile>=40?'var(--accent)':'#c44d56';
+  h+='<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 10px;background:var(--bg3);border-radius:6px;margin-bottom:6px">';
+  h+='<div><span style="font-size:13px;font-weight:600;color:var(--text)">$'+fmt2(last.salary)+'</span>';
+  h+='<span style="font-size:11px;color:var(--text3)"> · '+(last.specialty||'')+'</span></div>';
+  h+='<span style="font-size:13px;font-weight:700;color:'+pColor+'">'+last.percentile+'th pctile</span>';
+  h+='</div>';
+
+  if(ci.snapshots.length>=2){
+    var first=ci.snapshots[0];
+    var change=last.salary-first.salary;
+    var pChange=last.percentile-first.percentile;
+    h+='<div style="font-size:11px;color:var(--text3);padding:2px 0">';
+    h+='Tracking '+ci.snapshots.length+' snapshots · Salary change: '+(change>=0?'+':'')+('$'+fmt2(change))+' · Percentile: '+(pChange>=0?'+':'')+pChange;
+    h+='</div>';
+  }
+
+  if(ci.contractDate)h+='<div style="font-size:10px;color:var(--text3);margin-top:2px">Contract: '+new Date(ci.contractDate).toLocaleDateString('en-US',{month:'short',year:'numeric'})+'</div>';
+  if(ci.nextReview){
+    var d=Math.floor((new Date(ci.nextReview).getTime()-Date.now())/86400000);
+    h+='<div style="font-size:10px;color:'+(d<=30?'#c44d56':'var(--text3)')+'">Next review: '+new Date(ci.nextReview).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})+(d>0?' ('+d+'d)':' (overdue)')+'</div>';
+  }
+
+  h+='</div>';
+  return h;
+}
 // ===== OUTCOME TRACKER — GOAL ACHIEVEMENT DOCUMENTATION =====
 // Users document when they reach career goals. Data stored in U.outcomes.
 // Visible on user Profile (private) and admin Outcomes tab (admin only).

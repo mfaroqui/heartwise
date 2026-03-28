@@ -2769,6 +2769,9 @@ Sign Out</button>
 <!-- Decision Patterns -->
 <div id="decision-patterns" style="display:none;margin-bottom:16px"></div>
 
+<!-- Outcomes / Achievements -->
+<div id="profile-outcomes" style="display:none;margin-bottom:16px"></div>
+
 <!-- Goal Tracker (Core + Mentorship) -->
 <div id="goal-tracker" style="display:none"></div>
 
@@ -3398,6 +3401,7 @@ Sign Out</button>
 <button class="atab" onclick="adminTab('analytics',this)">Analytics</button>
 <button class="atab" onclick="adminTab('cancellations',this)">Cancellations</button>
 <button class="atab" onclick="adminTab('toolactivity',this)">Tool Activity</button>
+<button class="atab" onclick="adminTab('outcomes',this)">Outcomes</button>
 </div>
 
 <!-- Content -->
@@ -13151,6 +13155,7 @@ function renderProfile(){
   renderProfileAchievements();
   try{renderDecisionTimeline()}catch(e){console.error('DecisionTimeline:',e)}
   try{renderDecisionPatterns()}catch(e){console.error('DecisionPatterns:',e)}
+  try{renderOutcomesOnProfile()}catch(e){console.error('OutcomesProfile:',e)}
   // Show admin tier switcher
   var sw=document.getElementById('admin-tier-switcher');
   if(sw){sw.classList.toggle('hidden',U.email.toLowerCase()!==AE.toLowerCase())}
@@ -14660,6 +14665,7 @@ function admRender(){
   else if(curAdminTab==='analytics')admRenderAnalytics(c);
   else if(curAdminTab==='cancellations')admRenderCancellations(c);
   else if(curAdminTab==='toolactivity')admRenderToolActivity(c);
+  else if(curAdminTab==='outcomes')admRenderOutcomes(c);
 }
 
 // ---- DASHBOARD ----
@@ -14886,6 +14892,11 @@ function admRenderUserDetail(c){
     }
   }
   h+='</div>';
+
+  // Outcomes section
+  if(typeof admRenderUserOutcomes==='function'){
+    h+=admRenderUserOutcomes(u);
+  }
 
   c.innerHTML=h;
 }
@@ -18356,6 +18367,411 @@ function renderWhatsChanged(){
   h+='</div>';el.innerHTML=h;
 }
 
+// ===== OUTCOME TRACKER — GOAL ACHIEVEMENT DOCUMENTATION =====
+// Users document when they reach career goals. Data stored in U.outcomes.
+// Visible on user Profile (private) and admin Outcomes tab (admin only).
+
+// ===== USER-FACING: OUTCOME CAPTURE =====
+function showOutcomeCapture(){
+  if(!U)return;
+  if(!U.outcomes)U.outcomes=[];
+  var cp=U.careerProfile||{};
+  var stage=cp.stage||'student';
+
+  // Outcome types by stage
+  var outcomeTypes={
+    student:[
+      {v:'matched',l:'Matched into a program',icon:'🎉'},
+      {v:'matched-top3',l:'Matched into top 3 choice',icon:'🏆'},
+      {v:'step-score',l:'Achieved target exam score',icon:'📊'},
+      {v:'published',l:'Published a paper',icon:'📄'},
+      {v:'first-author',l:'Published as first author',icon:'⭐'},
+      {v:'lor-secured',l:'Secured a strong LOR',icon:'✉️'},
+      {v:'award',l:'Received an award or honor',icon:'🏅'},
+      {v:'research-position',l:'Got a research position',icon:'🔬'},
+      {v:'away-rotation',l:'Completed away rotation',icon:'🏥'},
+      {v:'interview-invite',l:'Received interview invitations',icon:'📨'},
+      {v:'gap-year-productive',l:'Completed a productive gap year',icon:'📅'},
+      {v:'specialty-confirmed',l:'Confirmed specialty choice',icon:'✅'},
+      {v:'other',l:'Other achievement',icon:'🎯'}
+    ],
+    resident:[
+      {v:'fellowship-match',l:'Matched into fellowship',icon:'🎉'},
+      {v:'matched-top3',l:'Matched into top 3 choice',icon:'🏆'},
+      {v:'published',l:'Published a paper',icon:'📄'},
+      {v:'first-author',l:'Published as first author',icon:'⭐'},
+      {v:'job-offer',l:'Received a job offer',icon:'💼'},
+      {v:'accepted-position',l:'Accepted a position',icon:'✅'},
+      {v:'negotiated-contract',l:'Successfully negotiated contract',icon:'📝'},
+      {v:'board-certified',l:'Achieved board certification',icon:'🏅'},
+      {v:'presentation',l:'Gave a major presentation',icon:'🎤'},
+      {v:'leadership-role',l:'Took on a leadership role',icon:'👔'},
+      {v:'other',l:'Other achievement',icon:'🎯'}
+    ],
+    fellow:[
+      {v:'job-offer',l:'Received a job offer',icon:'💼'},
+      {v:'accepted-position',l:'Accepted an attending position',icon:'✅'},
+      {v:'negotiated-contract',l:'Successfully negotiated contract',icon:'📝'},
+      {v:'negotiated-increase',l:'Negotiated a salary increase',icon:'💰'},
+      {v:'published',l:'Published a paper',icon:'📄'},
+      {v:'board-certified',l:'Achieved board certification',icon:'🏅'},
+      {v:'presentation',l:'Major presentation or lecture',icon:'🎤'},
+      {v:'leadership-role',l:'Took on a leadership role',icon:'👔'},
+      {v:'debt-milestone',l:'Hit a debt payoff milestone',icon:'📉'},
+      {v:'financial-goal',l:'Reached a financial goal',icon:'💰'},
+      {v:'other',l:'Other achievement',icon:'🎯'}
+    ],
+    attending:[
+      {v:'negotiated-increase',l:'Negotiated a raise or better terms',icon:'💰'},
+      {v:'new-position',l:'Landed a new position',icon:'💼'},
+      {v:'partnership',l:'Achieved partnership',icon:'🤝'},
+      {v:'leadership-role',l:'Promoted to leadership',icon:'👔'},
+      {v:'debt-free',l:'Became debt-free',icon:'🎉'},
+      {v:'debt-milestone',l:'Hit a debt payoff milestone',icon:'📉'},
+      {v:'financial-goal',l:'Reached a financial milestone',icon:'💰'},
+      {v:'net-worth-milestone',l:'Hit a net worth milestone',icon:'📈'},
+      {v:'published',l:'Published a paper or book',icon:'📄'},
+      {v:'career-pivot',l:'Successfully pivoted careers',icon:'🔄'},
+      {v:'work-life-balance',l:'Achieved work-life balance goal',icon:'⚖️'},
+      {v:'board-certified',l:'New certification or credential',icon:'🏅'},
+      {v:'other',l:'Other achievement',icon:'🎯'}
+    ]
+  };
+  var types=outcomeTypes[stage]||outcomeTypes.student;
+
+  var h='<div style="padding:24px;max-width:520px;margin:0 auto">';
+  h+='<div style="text-align:center;margin-bottom:20px"><div style="font-size:36px;margin-bottom:8px">🏆</div>';
+  h+='<div style="font-size:20px;font-weight:600;color:var(--text);font-family:var(--font-serif)">Document Your Win</div>';
+  h+='<div style="font-size:12px;color:var(--text3);margin-top:4px">Record career milestones you\'ve achieved. This is your private record.</div></div>';
+
+  // Type selection
+  h+='<div style="margin-bottom:16px"><div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">What did you achieve?</div>';
+  h+='<div style="display:flex;flex-wrap:wrap;gap:6px">';
+  types.forEach(function(t){
+    h+='<button onclick="ocSelectType(this,\''+t.v+'\')" data-val="'+t.v+'" style="padding:8px 14px;font-size:12px;border:1px solid var(--border);border-radius:20px;background:var(--bg3);color:var(--text3);cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:4px"><span>'+t.icon+'</span> '+t.l+'</button>';
+  });
+  h+='</div></div>';
+
+  // When
+  h+='<div style="margin-bottom:16px"><div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">When did this happen?</div>';
+  h+='<input type="date" id="oc-date" value="'+new Date().toISOString().split('T')[0]+'" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-size:13px"></div>';
+
+  // Details
+  h+='<div style="margin-bottom:16px"><div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Tell the story</div>';
+  h+='<textarea id="oc-details" rows="4" placeholder="What happened? What program, salary, or milestone? What made the difference? This is for your records — be specific." style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-size:12px;resize:vertical;font-family:var(--font-body)"></textarea></div>';
+
+  // Numbers (context-dependent)
+  h+='<div style="margin-bottom:16px"><div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Key Numbers (optional)</div>';
+  h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">';
+  if(stage==='fellow'||stage==='attending'||stage==='resident'){
+    h+='<div><label style="font-size:10px;color:var(--text3)">Salary / Comp</label><input type="text" id="oc-salary" placeholder="e.g. $450,000" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:6px;background:var(--bg);color:var(--text);font-size:12px"></div>';
+    h+='<div><label style="font-size:10px;color:var(--text3)">Signing Bonus</label><input type="text" id="oc-bonus" placeholder="e.g. $25,000" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:6px;background:var(--bg);color:var(--text);font-size:12px"></div>';
+  }
+  h+='<div><label style="font-size:10px;color:var(--text3)">Program / Employer</label><input type="text" id="oc-program" placeholder="e.g. Cleveland Clinic" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:6px;background:var(--bg);color:var(--text);font-size:12px"></div>';
+  h+='<div><label style="font-size:10px;color:var(--text3)">Location</label><input type="text" id="oc-location" placeholder="e.g. Ohio" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:6px;background:var(--bg);color:var(--text);font-size:12px"></div>';
+  h+='</div></div>';
+
+  // What HeartWise tools helped
+  h+='<div style="margin-bottom:16px"><div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Which HeartWise tools helped? (optional)</div>';
+  var usedTools=(U.toolHistory||[]).map(function(t){return t.tool}).filter(function(v,i,a){return a.indexOf(v)===i});
+  if(usedTools.length){
+    h+='<div style="display:flex;flex-wrap:wrap;gap:4px">';
+    usedTools.forEach(function(t){
+      h+='<button onclick="this.classList.toggle(\'oc-tool-active\');this.style.background=this.classList.contains(\'oc-tool-active\')?\'rgba(198,168,94,.15)\':\'var(--bg3)\';this.style.borderColor=this.classList.contains(\'oc-tool-active\')?\'var(--accent)\':\'var(--border)\';this.style.color=this.classList.contains(\'oc-tool-active\')?\'var(--accent)\':\'var(--text3)\'" data-tool="'+t+'" style="padding:5px 10px;font-size:10px;border:1px solid var(--border);border-radius:16px;background:var(--bg3);color:var(--text3);cursor:pointer;transition:all .15s">'+t+'</button>';
+    });
+    h+='</div>';
+  } else {
+    h+='<div style="font-size:11px;color:var(--text3)">No tools used yet.</div>';
+  }
+  h+='</div>';
+
+  // Would you recommend HeartWise
+  h+='<div style="margin-bottom:20px"><div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Did HeartWise help you reach this goal?</div>';
+  h+='<div style="display:flex;gap:6px" id="oc-helped">';
+  h+='<button onclick="ocSelectHelped(this,\'yes\')" data-val="yes" style="flex:1;padding:10px;font-size:12px;border:1px solid var(--border);border-radius:8px;background:var(--bg3);color:var(--text3);cursor:pointer">Yes, significantly</button>';
+  h+='<button onclick="ocSelectHelped(this,\'somewhat\')" data-val="somewhat" style="flex:1;padding:10px;font-size:12px;border:1px solid var(--border);border-radius:8px;background:var(--bg3);color:var(--text3);cursor:pointer">Somewhat</button>';
+  h+='<button onclick="ocSelectHelped(this,\'no\')" data-val="no" style="flex:1;padding:10px;font-size:12px;border:1px solid var(--border);border-radius:8px;background:var(--bg3);color:var(--text3);cursor:pointer">Not really</button>';
+  h+='</div></div>';
+
+  h+='<button onclick="saveOutcome()" style="width:100%;padding:14px;background:var(--accent);color:#1C1A17;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer">Save Achievement 🏆</button>';
+  h+='<div style="text-align:center;margin-top:6px;font-size:10px;color:var(--text3)">This is saved privately to your profile.</div>';
+  h+='</div>';
+
+  document.getElementById('modal-q-content').innerHTML=h;
+  document.getElementById('modal-q').classList.remove('hidden');
+}
+
+function ocSelectType(btn,val){
+  btn.parentElement.querySelectorAll('button').forEach(function(b){
+    b.style.background='var(--bg3)';b.style.borderColor='var(--border)';b.style.color='var(--text3)';
+  });
+  btn.style.background='rgba(198,168,94,.15)';btn.style.borderColor='var(--accent)';btn.style.color='var(--accent)';
+  btn.dataset.selected='true';
+}
+
+function ocSelectHelped(btn,val){
+  document.querySelectorAll('#oc-helped button').forEach(function(b){
+    b.style.background='var(--bg3)';b.style.borderColor='var(--border)';b.style.color='var(--text3)';
+  });
+  btn.style.background='rgba(198,168,94,.15)';btn.style.borderColor='var(--accent)';btn.style.color='var(--accent)';
+  btn.dataset.selected='true';
+}
+
+function saveOutcome(){
+  if(!U)return;
+  if(!U.outcomes)U.outcomes=[];
+  // Get selected type
+  var typeBtn=document.querySelector('[data-val][data-selected="true"][onclick*="ocSelectType"]');
+  if(!typeBtn){notify('Select what you achieved',1);return}
+  var type=typeBtn.dataset.val;
+  var details=(document.getElementById('oc-details')||{}).value||'';
+  if(!details.trim()){notify('Tell us what happened — even a sentence helps',1);return}
+  var dateVal=(document.getElementById('oc-date')||{}).value||new Date().toISOString().split('T')[0];
+
+  // Get helpful tools
+  var helpfulTools=[];
+  document.querySelectorAll('.oc-tool-active').forEach(function(b){helpfulTools.push(b.dataset.tool)});
+
+  // Get helped rating
+  var helpedBtn=document.querySelector('#oc-helped button[data-selected="true"]');
+  var helped=helpedBtn?helpedBtn.dataset.val:'';
+
+  var outcome={
+    id:'oc-'+Date.now(),
+    date:dateVal,
+    type:type,
+    typeLabel:typeBtn.textContent.trim(),
+    details:details,
+    salary:(document.getElementById('oc-salary')||{}).value||'',
+    bonus:(document.getElementById('oc-bonus')||{}).value||'',
+    program:(document.getElementById('oc-program')||{}).value||'',
+    location:(document.getElementById('oc-location')||{}).value||'',
+    helpfulTools:helpfulTools,
+    helped:helped,
+    recordedAt:new Date().toISOString(),
+    // Snapshot scores at time of achievement
+    scoresAtTime:U.scoreHistory&&U.scoreHistory.length?JSON.parse(JSON.stringify(U.scoreHistory[U.scoreHistory.length-1].scores)):null,
+    profileAtTime:{
+      stage:(U.careerProfile||{}).stage||'',
+      specialty:(U.careerProfile||{}).specialty||'',
+      pubs:(U.careerProfile||{}).pubs||'',
+      step2:(U.careerProfile||{}).step2||''
+    }
+  };
+
+  U.outcomes.push(outcome);
+  if(U.outcomes.length>50)U.outcomes=U.outcomes.slice(-50);
+  saveUser();
+  closeModal('modal-q');
+  notify('Achievement documented! 🏆 This is saved to your profile.');
+  if(typeof renderProfile==='function')renderProfile();
+  if(typeof renderOutcomesOnProfile==='function')renderOutcomesOnProfile();
+}
+
+// ===== USER-FACING: OUTCOMES ON PROFILE =====
+function renderOutcomesOnProfile(){
+  var el=document.getElementById('profile-outcomes');
+  if(!el||!U)return;
+  var outcomes=U.outcomes||[];
+  var hasPlan=U.tier==='core'||U.tier==='elite'||U.tier==='admin'||U.isTrial;
+  if(!hasPlan){el.style.display='none';return}
+
+  el.style.display='';
+  var h='<div class="card" style="padding:16px">';
+  h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">';
+  h+='<div style="font-size:14px;font-weight:600;color:var(--text);font-family:var(--font-serif)">🏆 My Achievements</div>';
+  h+='<button onclick="showOutcomeCapture()" style="padding:6px 14px;font-size:11px;background:var(--accent);color:#1C1A17;border:none;border-radius:8px;cursor:pointer;font-weight:600">+ Record Win</button>';
+  h+='</div>';
+
+  if(!outcomes.length){
+    h+='<div style="text-align:center;padding:20px 0">';
+    h+='<div style="font-size:28px;margin-bottom:8px">🎯</div>';
+    h+='<div style="font-size:13px;color:var(--text2)">No achievements documented yet.</div>';
+    h+='<div style="font-size:11px;color:var(--text3);margin-top:4px">When you reach a career milestone — match, job offer, negotiation win, debt payoff — record it here.</div>';
+    h+='</div>';
+  } else {
+    outcomes.slice().reverse().forEach(function(o,idx){
+      var oDate=new Date(o.date).toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+      h+='<div style="padding:12px;background:var(--bg2);border-radius:10px;margin-bottom:8px;border-left:3px solid var(--accent)">';
+      h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">';
+      h+='<div style="font-size:13px;font-weight:600;color:var(--text)">'+o.typeLabel+'</div>';
+      h+='<span style="font-size:10px;color:var(--text3)">'+oDate+'</span></div>';
+      h+='<div style="font-size:12px;color:var(--text2);line-height:1.6">'+o.details+'</div>';
+      var meta=[];
+      if(o.program)meta.push(o.program);
+      if(o.location)meta.push(o.location);
+      if(o.salary)meta.push(o.salary);
+      if(meta.length)h+='<div style="font-size:11px;color:var(--text3);margin-top:4px">'+meta.join(' · ')+'</div>';
+      if(o.helpfulTools&&o.helpfulTools.length){
+        h+='<div style="display:flex;flex-wrap:wrap;gap:3px;margin-top:6px">';
+        o.helpfulTools.forEach(function(t){
+          h+='<span style="font-size:9px;padding:2px 8px;background:rgba(198,168,94,.08);color:var(--accent);border-radius:10px">'+t+'</span>';
+        });
+        h+='</div>';
+      }
+      // Score snapshot comparison
+      if(o.scoresAtTime){
+        var currentScores=U.scoreHistory&&U.scoreHistory.length?U.scoreHistory[U.scoreHistory.length-1].scores:{};
+        h+='<div style="display:flex;gap:6px;margin-top:6px">';
+        ['competitiveness','research','readiness','financial'].forEach(function(d){
+          var then=o.scoresAtTime[d]||0;
+          h+='<span style="font-size:9px;color:var(--text3);padding:2px 6px;background:var(--bg);border-radius:4px">'+d.substring(0,4)+': '+then+'</span>';
+        });
+        h+='</div>';
+      }
+      h+='</div>';
+    });
+  }
+  h+='</div>';
+  el.innerHTML=h;
+}
+
+// ===== ADMIN-FACING: OUTCOMES TAB =====
+function admRenderOutcomes(c){
+  var users=admGetUsers();
+  var allOutcomes=[];
+
+  users.forEach(function(u){
+    var outcomes=u.outcomes||(u.session_data&&u.session_data.outcomes)||[];
+    if(typeof outcomes==='string'){try{outcomes=JSON.parse(outcomes)}catch(e){outcomes=[]}}
+    if(!Array.isArray(outcomes))outcomes=[];
+    outcomes.forEach(function(o){
+      allOutcomes.push({
+        user:u.name||u.email||'Unknown',
+        userId:u.id,
+        email:u.email||'',
+        stage:u.stage||u.training_stage||(u.profile_data&&u.profile_data.stage)||'',
+        specialty:u.specialty||(u.profile_data&&u.profile_data.specialty)||'',
+        tier:u.tier||'free',
+        outcome:o
+      });
+    });
+  });
+
+  // Sort by date descending
+  allOutcomes.sort(function(a,b){return new Date(b.outcome.date)-new Date(a.outcome.date)});
+
+  var h='<div style="margin-bottom:16px">';
+  h+='<div style="font-size:16px;font-weight:600;color:var(--text);font-family:var(--font-serif);margin-bottom:4px">🏆 User Outcomes & Achievements</div>';
+  h+='<div style="font-size:12px;color:var(--text3);margin-bottom:16px">'+allOutcomes.length+' documented outcome'+(allOutcomes.length!==1?'s':'')+' across all users. This data is private — only visible to admin.</div>';
+  h+='</div>';
+
+  if(!allOutcomes.length){
+    h+='<div style="text-align:center;padding:40px 0">';
+    h+='<div style="font-size:40px;margin-bottom:12px">📊</div>';
+    h+='<div style="font-size:14px;color:var(--text2)">No outcomes documented yet.</div>';
+    h+='<div style="font-size:12px;color:var(--text3);margin-top:4px">When users record career achievements, they\'ll appear here.</div>';
+    h+='</div>';
+    c.innerHTML=h;return;
+  }
+
+  // Summary stats
+  var typeCount={};var helpedCount={yes:0,somewhat:0,no:0};var toolMentions={};
+  allOutcomes.forEach(function(ao){
+    var o=ao.outcome;
+    typeCount[o.type]=(typeCount[o.type]||0)+1;
+    if(o.helped)helpedCount[o.helped]=(helpedCount[o.helped]||0)+1;
+    if(o.helpfulTools)o.helpfulTools.forEach(function(t){toolMentions[t]=(toolMentions[t]||0)+1});
+  });
+
+  h+='<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px">';
+  h+='<div style="text-align:center;padding:12px;background:var(--bg2);border-radius:10px"><div style="font-size:24px;font-weight:700;color:var(--accent)">'+allOutcomes.length+'</div><div style="font-size:10px;color:var(--text3)">Total Outcomes</div></div>';
+  h+='<div style="text-align:center;padding:12px;background:var(--bg2);border-radius:10px"><div style="font-size:24px;font-weight:700;color:var(--green)">'+helpedCount.yes+'</div><div style="font-size:10px;color:var(--text3)">HW Helped (Yes)</div></div>';
+  h+='<div style="text-align:center;padding:12px;background:var(--bg2);border-radius:10px"><div style="font-size:24px;font-weight:700;color:var(--text)">'+helpedCount.somewhat+'</div><div style="font-size:10px;color:var(--text3)">Somewhat</div></div>';
+  var uniqueUsers={};allOutcomes.forEach(function(ao){uniqueUsers[ao.userId]=true});
+  h+='<div style="text-align:center;padding:12px;background:var(--bg2);border-radius:10px"><div style="font-size:24px;font-weight:700;color:var(--text)">'+Object.keys(uniqueUsers).length+'</div><div style="font-size:10px;color:var(--text3)">Users w/ Outcomes</div></div>';
+  h+='</div>';
+
+  // Top mentioned tools
+  var sortedTools=Object.entries(toolMentions).sort(function(a,b){return b[1]-a[1]});
+  if(sortedTools.length){
+    h+='<div style="margin-bottom:16px;padding:12px;background:var(--bg2);border-radius:10px">';
+    h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Most Helpful Tools (User-Reported)</div>';
+    sortedTools.slice(0,5).forEach(function(t){
+      h+='<div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0">';
+      h+='<span style="font-size:12px;color:var(--text)">'+t[0]+'</span>';
+      h+='<span style="font-size:12px;font-weight:600;color:var(--accent)">'+t[1]+' mention'+(t[1]>1?'s':'')+'</span>';
+      h+='</div>';
+    });
+    h+='</div>';
+  }
+
+  // Individual outcomes
+  allOutcomes.forEach(function(ao){
+    var o=ao.outcome;
+    var oDate=new Date(o.date).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+    var tc=ao.tier==='elite'?'var(--green)':ao.tier==='core'?'var(--accent)':'var(--text3)';
+    var helpColor=o.helped==='yes'?'var(--green)':o.helped==='somewhat'?'var(--accent)':'var(--text3)';
+    var helpLabel=o.helped==='yes'?'HW Helped ✅':o.helped==='somewhat'?'Somewhat':o.helped==='no'?'Not really':'—';
+
+    h+='<div class="adm-card" style="border-left:3px solid '+(o.helped==='yes'?'var(--green)':'var(--accent)')+'">';
+    h+='<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">';
+    h+='<div>';
+    h+='<div style="font-size:14px;font-weight:600;color:var(--text)">'+o.typeLabel+'</div>';
+    h+='<div style="font-size:11px;color:var(--text3)"><a href="#" onclick="event.preventDefault();admShowUser(\''+ao.userId+'\')" style="color:var(--accent);text-decoration:none">'+ao.user+'</a> · '+ao.email+' · <span style="color:'+tc+'">'+ao.tier.toUpperCase()+'</span></div>';
+    h+='</div>';
+    h+='<div style="text-align:right"><div style="font-size:11px;color:var(--text3)">'+oDate+'</div>';
+    h+='<div style="font-size:10px;color:'+helpColor+';font-weight:600">'+helpLabel+'</div>';
+    h+='</div></div>';
+
+    h+='<div style="font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:6px">'+o.details+'</div>';
+
+    var meta=[];
+    if(o.program)meta.push('📍 '+o.program);
+    if(o.location)meta.push(o.location);
+    if(o.salary)meta.push('💰 '+o.salary);
+    if(o.bonus)meta.push('Signing: '+o.bonus);
+    if(ao.stage)meta.push('Stage: '+ao.stage);
+    if(ao.specialty)meta.push('Spec: '+ao.specialty);
+    if(meta.length)h+='<div style="font-size:11px;color:var(--text3);margin-bottom:4px">'+meta.join(' · ')+'</div>';
+
+    if(o.helpfulTools&&o.helpfulTools.length){
+      h+='<div style="display:flex;flex-wrap:wrap;gap:3px;margin-top:4px">';
+      o.helpfulTools.forEach(function(t){
+        h+='<span style="font-size:9px;padding:2px 8px;background:rgba(198,168,94,.08);color:var(--accent);border-radius:10px">'+t+'</span>';
+      });
+      h+='</div>';
+    }
+
+    if(o.scoresAtTime){
+      h+='<div style="display:flex;gap:4px;margin-top:6px">';
+      ['competitiveness','research','readiness','financial'].forEach(function(d){
+        var v=o.scoresAtTime[d]||0;
+        h+='<span style="font-size:9px;color:var(--text3);padding:2px 6px;background:var(--bg3);border-radius:4px">'+d.substring(0,4)+': '+v+'</span>';
+      });
+      h+='</div>';
+    }
+    h+='</div>';
+  });
+
+  c.innerHTML=h;
+}
+
+// ===== ADMIN: OUTCOMES IN USER DETAIL =====
+function admRenderUserOutcomes(u){
+  var outcomes=u.outcomes||(u.session_data&&u.session_data.outcomes)||[];
+  if(typeof outcomes==='string'){try{outcomes=JSON.parse(outcomes)}catch(e){outcomes=[]}}
+  if(!Array.isArray(outcomes))outcomes=[];
+  if(!outcomes.length)return'';
+
+  var h='<div class="adm-card"><div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:8px">🏆 Documented Achievements ('+outcomes.length+')</div>';
+  outcomes.slice().reverse().forEach(function(o){
+    var oDate=new Date(o.date).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+    var helpColor=o.helped==='yes'?'var(--green)':o.helped==='somewhat'?'var(--accent)':'var(--text3)';
+    h+='<div style="padding:10px 12px;background:var(--bg3);border-radius:8px;margin-bottom:6px;border-left:3px solid var(--accent)">';
+    h+='<div style="display:flex;justify-content:space-between;align-items:center">';
+    h+='<div style="font-size:13px;font-weight:600;color:var(--text)">'+o.typeLabel+'</div>';
+    h+='<span style="font-size:10px;color:var(--text3)">'+oDate+'</span></div>';
+    h+='<div style="font-size:12px;color:var(--text2);margin-top:2px;line-height:1.5">'+o.details+'</div>';
+    var meta=[];
+    if(o.program)meta.push(o.program);if(o.location)meta.push(o.location);if(o.salary)meta.push(o.salary);
+    if(meta.length)h+='<div style="font-size:10px;color:var(--text3);margin-top:4px">'+meta.join(' · ')+'</div>';
+    if(o.helped)h+='<div style="font-size:10px;color:'+helpColor+';margin-top:2px">HeartWise helped: '+(o.helped==='yes'?'Yes ✅':o.helped==='somewhat'?'Somewhat':'Not really')+'</div>';
+    h+='</div>';
+  });
+  h+='</div>';
+  return h;
+}
 // ===== LIFETIME IMPACT CALCULATOR — "WHAT THIS COSTS YOU" =====
 // Renders a gold-bordered impact box with dollar amounts, delay tax, and alternative paths
 // Called from inside tool result sections, right before hwPathway()

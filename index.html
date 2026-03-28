@@ -331,6 +331,7 @@ color:var(--text);background:var(--bg);
 @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 @keyframes scaleIn{from{opacity:0;transform:scale(0.8)}to{opacity:1;transform:scale(1)}}
+@keyframes slideUp{from{opacity:0;transform:translateX(-50%) translateY(20px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
 @keyframes hookFadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 @keyframes slideInLeft{from{opacity:0;transform:translateX(-20px)}to{opacity:1;transform:translateX(0)}}
 @keyframes pulseGlow{0%,100%{box-shadow:0 0 0 0 rgba(198,168,94,.3)}50%{box-shadow:0 0 12px 4px rgba(198,168,94,.15)}}
@@ -2287,6 +2288,21 @@ Sign Out</button>
 <div id="tool-progress" style="margin-bottom:12px;display:none"></div>
 </div>
 
+<!-- ===== TRIPWIRE ALERTS ===== -->
+<div style="padding:0 24px">
+<div id="tripwire-alerts" style="display:none;margin-bottom:12px"></div>
+</div>
+
+<!-- ===== REVISIT PROMPTS ===== -->
+<div style="padding:0 24px">
+<div id="revisit-prompts" style="display:none;margin-bottom:12px"></div>
+</div>
+
+<!-- ===== DECISION JOURNAL HOME CARD ===== -->
+<div style="padding:0 24px">
+<div id="decision-journal-home" style="display:none;margin-bottom:12px"></div>
+</div>
+
 <!-- ===== TOOL RE-RUN REMINDERS ===== -->
 <div style="padding:0 24px">
 <div id="rerun-reminders" style="display:none;margin-bottom:12px"></div>
@@ -2746,6 +2762,12 @@ Sign Out</button>
 
 <!-- Progress Dashboard -->
 <div id="progress-dashboard" style="margin-bottom:16px"></div>
+
+<!-- Decision Journal Timeline -->
+<div id="decision-timeline" style="display:none;margin-bottom:16px"></div>
+
+<!-- Decision Patterns -->
+<div id="decision-patterns" style="display:none;margin-bottom:16px"></div>
 
 <!-- Goal Tracker (Core + Mentorship) -->
 <div id="goal-tracker" style="display:none"></div>
@@ -8631,6 +8653,8 @@ function recordToolUse(toolName,score,summary,resultData){
   saveUser();
   // Check for new achievements after each tool use
   try{checkAchievements()}catch(e){console.error('Achievements:',e)}
+  // Prompt decision capture for paid users
+  try{if(typeof promptDecisionCapture==='function')promptDecisionCapture(toolName,score,summary,resultData)}catch(e){console.error('DecisionPrompt:',e)}
 }
 
 // ===== SHARED PROFILE DATA LAYER =====
@@ -8868,13 +8892,16 @@ function renderHome(){
     try{renderWhatsChanged()}catch(e){console.error('WhatsChanged:',e)}
     try{renderCheckinTrigger()}catch(e){console.error('CheckinTrigger:',e)}
     try{renderToolProgress()}catch(e){console.error('ToolProgress:',e)}
+    try{renderTripwireAlerts()}catch(e){console.error('TripwireAlerts:',e)}
+    try{renderRevisitPrompts()}catch(e){console.error('RevisitPrompts:',e)}
+    try{renderDecisionJournalHome()}catch(e){console.error('DecisionJournal:',e)}
     try{renderRerunReminders()}catch(e){console.error('RerunReminders:',e)}
     try{renderMonthlyCheckinTrigger()}catch(e){console.error('MonthlyCheckin:',e)}
     try{renderSeasonalCalendar()}catch(e){console.error('SeasonalCal:',e)}
     try{renderPeerBenchmarkCard()}catch(e){console.error('PeerBenchmark:',e)}
     try{renderQuarterlySnapshotBtn()}catch(e){console.error('QuarterlySnapshot:',e)}
   }else{
-    ['weekly-focus','login-streak','tool-of-week','upcoming-deadlines','whats-changed','checkin-trigger','tool-progress','rerun-reminders','monthly-checkin-trigger','seasonal-calendar','peer-benchmark-card','quarterly-snapshot-btn'].forEach(function(id){var el=document.getElementById(id);if(el)el.style.display='none'});
+    ['weekly-focus','login-streak','tool-of-week','upcoming-deadlines','whats-changed','checkin-trigger','tool-progress','tripwire-alerts','revisit-prompts','decision-journal-home','rerun-reminders','monthly-checkin-trigger','seasonal-calendar','peer-benchmark-card','quarterly-snapshot-btn'].forEach(function(id){var el=document.getElementById(id);if(el)el.style.display='none'});
   }
   // Single contextual upgrade nudge (not for trial — they have the banner)
   renderUpgradeNudge();
@@ -13055,6 +13082,8 @@ function renderProfile(){
   renderProgressDashboard();
   renderGoalTracker();
   renderProfileAchievements();
+  try{renderDecisionTimeline()}catch(e){console.error('DecisionTimeline:',e)}
+  try{renderDecisionPatterns()}catch(e){console.error('DecisionPatterns:',e)}
   // Show admin tier switcher
   var sw=document.getElementById('admin-tier-switcher');
   if(sw){sw.classList.toggle('hidden',U.email.toLowerCase()!==AE.toLowerCase())}
@@ -18150,6 +18179,911 @@ function renderWhatsChanged(){
   h+='</div>';el.innerHTML=h;
 }
 
+// ===== DECISION JOURNAL — CAREER CO-PILOT =====
+// 7 components: Decision Capture, Tripwire Alerts, Timeline View,
+// 6-Month Revisits, Pre-Decision Mode, Decision Patterns, Shared Decision Context
+
+// ===== 1. STRUCTURED DECISION CAPTURE =====
+// Called after every recordToolUse — prompts user to capture their decision
+
+function promptDecisionCapture(toolName, score, summary, resultData){
+  if(!U)return;
+  if(!U.decisions)U.decisions=[];
+  // Don't prompt every single time — only after meaningful tools
+  var meaningfulTools=['Contract Review Scorecard','Job Offer Comparison Tool','Specialty Fit Assessment',
+    'Match Probability Calculator','Career Roadmap Tool','Fellowship Readiness Calculator',
+    'Contract Review Tool','Financial Projection Tool','RVU Compensation Calculator',
+    '3-Year Financial Planner','Debt & Income Strategy','Career Transition Planner',
+    'Application Review Tool','Mock Interview Simulator','Observership Database'];
+  if(meaningfulTools.indexOf(toolName)<0)return;
+  // Don't prompt if they just did one in the last hour
+  var lastDecision=U.decisions.length?U.decisions[U.decisions.length-1]:null;
+  if(lastDecision&&(Date.now()-new Date(lastDecision.date).getTime())<3600000)return;
+
+  // Store context for the prompt
+  window._djToolContext={toolName:toolName,score:score,summary:summary,resultData:resultData};
+
+  // Show a subtle, non-intrusive prompt after a delay
+  setTimeout(function(){
+    showDecisionPrompt(toolName,score,summary);
+  },1500);
+}
+
+function showDecisionPrompt(toolName,score,summary){
+  // Floating prompt at bottom of results — not a modal
+  var existing=document.getElementById('dj-capture-prompt');
+  if(existing)existing.remove();
+
+  var prompt=document.createElement('div');
+  prompt.id='dj-capture-prompt';
+  prompt.style.cssText='position:fixed;bottom:80px;left:50%;transform:translateX(-50%);width:calc(100% - 48px);max-width:480px;background:#1a1620;border:1px solid rgba(198,168,94,.3);border-radius:16px;padding:20px;box-shadow:0 12px 40px rgba(0,0,0,.3);z-index:800;animation:slideUp .4s ease';
+  prompt.innerHTML='<div style="display:flex;align-items:flex-start;gap:14px">'
+    +'<span style="font-size:24px;flex-shrink:0">🧭</span>'
+    +'<div style="flex:1">'
+    +'<div style="font-size:14px;font-weight:600;color:#f0ece6;margin-bottom:4px">What are you going to do with this?</div>'
+    +'<div style="font-size:11px;color:#b8b3ac;line-height:1.5">Recording your decision now helps you track what works and revisit it later.</div>'
+    +'</div>'
+    +'<button onclick="this.parentElement.parentElement.remove()" style="background:none;border:none;color:#b8b3ac;cursor:pointer;font-size:16px;padding:0;line-height:1">✕</button>'
+    +'</div>'
+    +'<div style="display:flex;gap:8px;margin-top:14px">'
+    +'<button onclick="openDecisionCapture()" style="flex:1;padding:12px;background:var(--accent);color:#1a1620;border:none;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer">Record Decision</button>'
+    +'<button onclick="this.closest(\'#dj-capture-prompt\').remove()" style="padding:12px 16px;background:rgba(255,255,255,.08);color:#b8b3ac;border:none;border-radius:10px;font-size:13px;cursor:pointer">Skip</button>'
+    +'</div>';
+  document.body.appendChild(prompt);
+
+  // Auto-dismiss after 20 seconds
+  setTimeout(function(){var el=document.getElementById('dj-capture-prompt');if(el)el.remove()},20000);
+}
+
+function openDecisionCapture(){
+  var el=document.getElementById('dj-capture-prompt');if(el)el.remove();
+  if(!U)return;
+  var ctx=window._djToolContext||{};
+  var cp=U.careerProfile||{};
+  var stage=cp.stage||'student';
+
+  // Decision type options by stage
+  var decisionTypes={
+    student:[
+      {v:'choose-specialty',l:'Choose / confirm a specialty'},
+      {v:'apply-program',l:'Apply to a specific program'},
+      {v:'rank-program',l:'Rank a program higher or lower'},
+      {v:'pursue-research',l:'Pursue a research opportunity'},
+      {v:'take-away',l:'Do an away rotation'},
+      {v:'change-plan',l:'Change my career plan'},
+      {v:'seek-mentor',l:'Seek out a specific mentor/LOR'},
+      {v:'improve-score',l:'Retake or improve an exam'},
+      {v:'gap-year',l:'Take a gap/research year'},
+      {v:'financial',l:'Make a financial decision'},
+      {v:'wait',l:'Wait and reassess later'},
+      {v:'other',l:'Something else'}
+    ],
+    resident:[
+      {v:'apply-fellowship',l:'Apply for fellowship'},
+      {v:'choose-subspecialty',l:'Choose a subspecialty'},
+      {v:'pursue-research',l:'Pursue research / publication'},
+      {v:'evaluate-offer',l:'Evaluate a job offer'},
+      {v:'negotiate',l:'Negotiate terms'},
+      {v:'accept-position',l:'Accept a position'},
+      {v:'reject-offer',l:'Reject an offer'},
+      {v:'change-direction',l:'Change career direction'},
+      {v:'financial',l:'Make a financial decision'},
+      {v:'seek-mentor',l:'Seek mentorship / LOR'},
+      {v:'wait',l:'Wait and reassess later'},
+      {v:'other',l:'Something else'}
+    ],
+    fellow:[
+      {v:'evaluate-offer',l:'Evaluate a job offer'},
+      {v:'negotiate',l:'Negotiate contract terms'},
+      {v:'accept-position',l:'Accept a position'},
+      {v:'reject-offer',l:'Reject an offer'},
+      {v:'academic-vs-private',l:'Choose academic vs. private'},
+      {v:'location',l:'Choose a location/region'},
+      {v:'pursue-research',l:'Continue research track'},
+      {v:'financial',l:'Make a financial decision'},
+      {v:'change-direction',l:'Change career direction'},
+      {v:'wait',l:'Wait and reassess later'},
+      {v:'other',l:'Something else'}
+    ],
+    attending:[
+      {v:'evaluate-offer',l:'Evaluate a new opportunity'},
+      {v:'negotiate',l:'Negotiate / renegotiate contract'},
+      {v:'accept-position',l:'Accept a position'},
+      {v:'reject-offer',l:'Reject an offer'},
+      {v:'career-pivot',l:'Career pivot or transition'},
+      {v:'partnership',l:'Partnership / buy-in decision'},
+      {v:'financial',l:'Major financial decision'},
+      {v:'reduce-hours',l:'Reduce hours / part-time'},
+      {v:'leadership',l:'Pursue leadership role'},
+      {v:'wait',l:'Wait and reassess later'},
+      {v:'other',l:'Something else'}
+    ]
+  };
+  var types=decisionTypes[stage]||decisionTypes.student;
+
+  var h='<div style="padding:24px;max-width:520px;margin:0 auto">';
+  h+='<div style="text-align:center;margin-bottom:20px"><div style="font-size:32px;margin-bottom:8px">🧭</div>';
+  h+='<div style="font-size:20px;font-weight:600;color:var(--text);font-family:var(--font-serif)">Decision Journal</div>';
+  if(ctx.toolName)h+='<div style="font-size:12px;color:var(--text3);margin-top:4px">Based on: '+ctx.toolName+(ctx.score?' ('+ctx.score+')':'')+'</div>';
+  h+='</div>';
+
+  // Q1: What's the decision?
+  h+='<div style="margin-bottom:18px"><div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">What are you deciding?</div>';
+  h+='<select id="dj-type" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-size:13px" onchange="document.getElementById(\'dj-type-other\').style.display=this.value===\'other\'?\'block\':\'none\'">';
+  h+='<option value="">Select...</option>';
+  types.forEach(function(t){h+='<option value="'+t.v+'">'+t.l+'</option>'});
+  h+='</select>';
+  h+='<input type="text" id="dj-type-other" placeholder="Describe your decision..." style="display:none;width:100%;margin-top:6px;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-size:12px"></div>';
+
+  // Q2: Gut feeling
+  h+='<div style="margin-bottom:18px"><div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">What\'s your gut saying?</div>';
+  h+='<div style="display:flex;gap:4px" id="dj-gut">';
+  var gutLabels=['Strongly against','Leaning no','Torn','Leaning yes','Strongly for'];
+  for(var i=1;i<=5;i++){
+    h+='<button onclick="djSelectGut('+i+')" data-val="'+i+'" style="flex:1;padding:10px 4px;font-size:9px;border:1px solid var(--border);border-radius:8px;background:var(--bg3);color:var(--text3);cursor:pointer;text-align:center;line-height:1.3;transition:all .15s">'+gutLabels[i-1]+'</button>';
+  }
+  h+='</div></div>';
+
+  // Q3: Biggest risk IF you do this
+  h+='<div style="margin-bottom:18px"><div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Biggest risk if you DO this</div>';
+  h+='<input type="text" id="dj-risk-do" placeholder="e.g., Lock into a non-compete for 2 years..." style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-size:12px"></div>';
+
+  // Q4: Biggest risk if you DON'T
+  h+='<div style="margin-bottom:18px"><div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Biggest risk if you DON\'T</div>';
+  h+='<input type="text" id="dj-risk-dont" placeholder="e.g., Miss out on the best offer I\'ve seen..." style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-size:12px"></div>';
+
+  // Q5: THE KILLER QUESTION — Tripwire
+  h+='<div style="margin-bottom:18px;padding:14px;background:linear-gradient(160deg,rgba(198,168,94,.08),transparent);border:1px solid rgba(198,168,94,.15);border-radius:10px">';
+  h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">⚡ What would make this the wrong decision?</div>';
+  h+='<div style="font-size:10px;color:var(--text3);margin-bottom:8px">Define your tripwire — we\'ll alert you if conditions change.</div>';
+  h+='<input type="text" id="dj-tripwire" placeholder="e.g., If my Step 2 comes back below 250... If they don\'t remove the non-compete..." style="width:100%;padding:10px;border:1px solid rgba(198,168,94,.3);border-radius:8px;background:var(--bg);color:var(--text);font-size:12px"></div>';
+
+  // Q6: Tripwire metric (optional - for auto-detection)
+  h+='<div style="margin-bottom:18px"><div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Tripwire Metric (optional)</div>';
+  h+='<div style="font-size:10px;color:var(--text3);margin-bottom:6px">If this number changes, we\'ll remind you to revisit.</div>';
+  h+='<div style="display:flex;gap:8px">';
+  h+='<select id="dj-tw-metric" style="flex:1;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-size:12px">';
+  h+='<option value="">None</option>';
+  h+='<option value="competitiveness">Competitiveness Score</option>';
+  h+='<option value="research">Research Score</option>';
+  h+='<option value="readiness">Readiness Score</option>';
+  h+='<option value="financial">Financial Score</option>';
+  h+='<option value="salary">Salary</option>';
+  h+='<option value="debt">Debt Amount</option>';
+  h+='<option value="pubs">Publication Count</option>';
+  h+='<option value="step2">Step 2 CK Score</option>';
+  h+='</select>';
+  h+='<select id="dj-tw-dir" style="width:100px;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-size:12px"><option value="below">Falls below</option><option value="above">Rises above</option></select>';
+  h+='<input type="number" id="dj-tw-val" placeholder="Value" style="width:80px;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-size:12px">';
+  h+='</div></div>';
+
+  // Q7: Notes
+  h+='<div style="margin-bottom:20px"><div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Any other context?</div>';
+  h+='<textarea id="dj-notes" rows="2" placeholder="Why this feels right, who you talked to, what you\'re weighing..." style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-size:12px;resize:vertical;font-family:var(--font-body)"></textarea></div>';
+
+  h+='<button onclick="saveDecision()" style="width:100%;padding:14px;background:var(--accent);color:#1C1A17;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer">Save Decision →</button>';
+  h+='<div style="text-align:center;margin-top:8px"><button onclick="closeModal(\'modal-q\')" style="background:none;border:none;color:var(--text3);font-size:12px;cursor:pointer">Not making a decision right now</button></div>';
+  h+='</div>';
+
+  document.getElementById('modal-q-content').innerHTML=h;
+  document.getElementById('modal-q').classList.remove('hidden');
+}
+
+function djSelectGut(val){
+  document.querySelectorAll('#dj-gut button').forEach(function(b){
+    b.style.background='var(--bg3)';b.style.borderColor='var(--border)';b.style.color='var(--text3)';
+  });
+  var btn=document.querySelector('#dj-gut button[data-val="'+val+'"]');
+  if(btn){btn.style.background='rgba(198,168,94,.15)';btn.style.borderColor='var(--accent)';btn.style.color='var(--accent)'}
+}
+
+function saveDecision(){
+  if(!U)return;
+  if(!U.decisions)U.decisions=[];
+  var ctx=window._djToolContext||{};
+  var typeEl=document.getElementById('dj-type');
+  var typeVal=typeEl?typeEl.value:'';
+  if(!typeVal){notify('Select what you\'re deciding',1);return}
+  if(typeVal==='other'){var otherEl=document.getElementById('dj-type-other');typeVal=otherEl?otherEl.value.trim():'other'}
+
+  var gutBtn=document.querySelector('#dj-gut button[style*="accent"]');
+  var gut=gutBtn?parseInt(gutBtn.dataset.val)||3:3;
+
+  var decision={
+    id:'dj-'+Date.now(),
+    date:new Date().toISOString(),
+    type:typeVal,
+    gut:gut,
+    riskDo:(document.getElementById('dj-risk-do')||{}).value||'',
+    riskDont:(document.getElementById('dj-risk-dont')||{}).value||'',
+    tripwire:(document.getElementById('dj-tripwire')||{}).value||'',
+    tripwireMetric:{
+      metric:(document.getElementById('dj-tw-metric')||{}).value||'',
+      direction:(document.getElementById('dj-tw-dir')||{}).value||'below',
+      value:parseFloat((document.getElementById('dj-tw-val')||{}).value)||null
+    },
+    notes:(document.getElementById('dj-notes')||{}).value||'',
+    tool:ctx.toolName||'',
+    toolScore:ctx.score||null,
+    toolSummary:ctx.summary||'',
+    status:'active',
+    revisitDate:new Date(Date.now()+180*86400000).toISOString(),
+    revisits:[]
+  };
+
+  // Capture current scores at time of decision
+  if(U.scoreHistory&&U.scoreHistory.length){
+    decision.scoresAtTime=JSON.parse(JSON.stringify(U.scoreHistory[U.scoreHistory.length-1].scores));
+  }
+  if(U.careerProfile){
+    decision.profileAtTime={
+      stage:U.careerProfile.stage,
+      specialty:U.careerProfile.specialty,
+      pubs:U.careerProfile.pubs,
+      step2:U.careerProfile.step2,
+      comp:U.careerProfile.comp,
+      debt:U.careerProfile.debt
+    };
+  }
+
+  U.decisions.push(decision);
+  if(U.decisions.length>50)U.decisions=U.decisions.slice(-50);
+  saveUser();
+  closeModal('modal-q');
+  notify('Decision recorded. We\'ll check in on this in 6 months. 🧭');
+  window._djToolContext=null;
+}
+
+// ===== 2. TRIPWIRE ALERTS =====
+// Check on every renderHome if any tripwires have been triggered
+
+function checkTripwireAlerts(){
+  if(!U||!U.decisions)return[];
+  var cp=U.careerProfile||{};
+  var scores=U.scoreHistory&&U.scoreHistory.length?U.scoreHistory[U.scoreHistory.length-1].scores:{};
+  var alerts=[];
+
+  U.decisions.forEach(function(d){
+    if(d.status!=='active')return;
+    if(!d.tripwireMetric||!d.tripwireMetric.metric||!d.tripwireMetric.value)return;
+
+    var currentVal=null;
+    var m=d.tripwireMetric.metric;
+    if(m==='competitiveness')currentVal=scores.competitiveness;
+    else if(m==='research')currentVal=scores.research;
+    else if(m==='readiness')currentVal=scores.readiness;
+    else if(m==='financial')currentVal=scores.financial;
+    else if(m==='salary')currentVal=parseInt(String(cp.comp||'0').replace(/[^0-9]/g,''))||0;
+    else if(m==='debt')currentVal=parseInt(String(cp.debt||'0').replace(/[^0-9]/g,''))||0;
+    else if(m==='pubs')currentVal=parseInt(cp.pubs)||0;
+    else if(m==='step2')currentVal=parseInt(cp.step2)||0;
+
+    if(currentVal===null)return;
+    var triggered=false;
+    if(d.tripwireMetric.direction==='below'&&currentVal<d.tripwireMetric.value)triggered=true;
+    if(d.tripwireMetric.direction==='above'&&currentVal>d.tripwireMetric.value)triggered=true;
+
+    if(triggered){
+      // Check if already alerted
+      if(!d._tripwireAlerted){
+        alerts.push({decision:d,metric:m,currentVal:currentVal,threshold:d.tripwireMetric.value,direction:d.tripwireMetric.direction});
+      }
+    }
+  });
+  return alerts;
+}
+
+function renderTripwireAlerts(){
+  var el=document.getElementById('tripwire-alerts');
+  if(!el||!U)return;
+  var alerts=checkTripwireAlerts();
+  if(!alerts.length){el.style.display='none';return}
+
+  el.style.display='';
+  var h='';
+  alerts.forEach(function(a){
+    var typeLabels={
+      'choose-specialty':'Specialty choice','apply-program':'Program application','rank-program':'Rank list',
+      'pursue-research':'Research decision','evaluate-offer':'Job offer evaluation','negotiate':'Negotiation',
+      'accept-position':'Position acceptance','reject-offer':'Offer rejection','financial':'Financial decision',
+      'apply-fellowship':'Fellowship application','choose-subspecialty':'Subspecialty choice',
+      'academic-vs-private':'Academic vs private','career-pivot':'Career pivot','partnership':'Partnership decision',
+      'wait':'Wait decision','change-direction':'Direction change','location':'Location choice',
+      'take-away':'Away rotation','gap-year':'Gap year','change-plan':'Plan change',
+      'seek-mentor':'Mentor decision','improve-score':'Score improvement','reduce-hours':'Hours reduction',
+      'leadership':'Leadership pursuit'
+    };
+    var label=typeLabels[a.decision.type]||a.decision.type;
+    var decDate=new Date(a.decision.date).toLocaleDateString('en-US',{month:'short',day:'numeric'});
+    h+='<div style="padding:16px;background:linear-gradient(160deg,rgba(192,96,96,.08),transparent);border:1px solid rgba(192,96,96,.2);border-radius:14px;margin-bottom:8px">';
+    h+='<div style="display:flex;align-items:flex-start;gap:12px">';
+    h+='<span style="font-size:22px;flex-shrink:0">⚡</span>';
+    h+='<div style="flex:1">';
+    h+='<div style="font-size:13px;font-weight:600;color:var(--red)">Tripwire Triggered</div>';
+    h+='<div style="font-size:12px;color:var(--text);line-height:1.6;margin-top:4px">';
+    h+='On '+decDate+', you decided: <strong>'+label+'</strong>. You said this would be wrong if <strong>'+a.metric+'</strong> '+a.direction+' '+a.threshold+'.';
+    h+='</div>';
+    h+='<div style="font-size:12px;color:var(--red);font-weight:600;margin-top:4px">Current value: '+a.currentVal+' — it has '+(a.direction==='below'?'fallen below':'risen above')+' your threshold.</div>';
+    if(a.decision.tripwire)h+='<div style="font-size:11px;color:var(--text3);margin-top:6px;font-style:italic">"'+a.decision.tripwire+'"</div>';
+    h+='<div style="display:flex;gap:8px;margin-top:10px">';
+    h+='<button onclick="openDecisionRevisit(\''+a.decision.id+'\')" style="padding:8px 16px;background:var(--accent);color:#1C1A17;border:none;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer">Revisit Decision</button>';
+    h+='<button onclick="dismissTripwire(\''+a.decision.id+'\')" style="padding:8px 16px;background:var(--bg2);color:var(--text3);border:1px solid var(--border);border-radius:8px;font-size:12px;cursor:pointer">Dismiss</button>';
+    h+='</div></div></div></div>';
+  });
+  el.innerHTML=h;
+}
+
+function dismissTripwire(decisionId){
+  if(!U||!U.decisions)return;
+  var d=U.decisions.find(function(x){return x.id===decisionId});
+  if(d)d._tripwireAlerted=true;
+  saveUser();renderTripwireAlerts();
+}
+
+// ===== 3. DECISION TIMELINE VIEW =====
+function renderDecisionTimeline(){
+  var el=document.getElementById('decision-timeline');
+  if(!el||!U)return;
+  if(!U.decisions||!U.decisions.length){
+    el.style.display='none';return;
+  }
+  el.style.display='';
+  var decisions=U.decisions.slice().reverse();
+  var typeLabels={
+    'choose-specialty':'Specialty Choice','apply-program':'Program Application','rank-program':'Rank List',
+    'pursue-research':'Research','evaluate-offer':'Job Offer','negotiate':'Negotiation',
+    'accept-position':'Accepted Position','reject-offer':'Rejected Offer','financial':'Financial',
+    'apply-fellowship':'Fellowship App','choose-subspecialty':'Subspecialty',
+    'academic-vs-private':'Academic vs Private','career-pivot':'Career Pivot','partnership':'Partnership',
+    'wait':'Wait & Reassess','change-direction':'Direction Change','location':'Location',
+    'take-away':'Away Rotation','gap-year':'Gap Year','change-plan':'Plan Change',
+    'seek-mentor':'Mentorship','improve-score':'Score Improvement','reduce-hours':'Hours',
+    'leadership':'Leadership'
+  };
+  var statusColors={active:'var(--accent)',revisited:'var(--green)',changed:'var(--red)',completed:'var(--green)'};
+  var statusLabels={active:'Active',revisited:'Revisited',changed:'Changed Course',completed:'Completed'};
+
+  var h='<div class="card" style="padding:20px">';
+  h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">';
+  h+='<div style="font-size:14px;font-weight:600;color:var(--text);font-family:var(--font-serif)">🧭 Decision Journal</div>';
+  h+='<div style="font-size:10px;color:var(--text3)">'+decisions.length+' decision'+(decisions.length!==1?'s':'')+'</div>';
+  h+='</div>';
+
+  // Score at time comparison header
+  var currentScores=U.scoreHistory&&U.scoreHistory.length?U.scoreHistory[U.scoreHistory.length-1].scores:{};
+
+  decisions.forEach(function(d,idx){
+    var date=new Date(d.date);
+    var dateStr=date.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+    var daysAgo=Math.floor((Date.now()-date.getTime())/86400000);
+    var timeLabel=daysAgo===0?'Today':daysAgo===1?'Yesterday':daysAgo+'d ago';
+    var label=typeLabels[d.type]||d.type;
+    var sColor=statusColors[d.status]||'var(--text3)';
+    var sLabel=statusLabels[d.status]||d.status;
+    var gutLabels=['','Strongly against','Leaning no','Torn','Leaning yes','Strongly for'];
+
+    // Timeline connector
+    if(idx>0)h+='<div style="width:2px;height:16px;background:var(--border);margin:0 0 0 15px"></div>';
+
+    h+='<div style="display:flex;gap:14px;align-items:flex-start" onclick="toggleDecisionDetail(\'dj-detail-'+idx+'\')" style="cursor:pointer">';
+    // Timeline dot
+    h+='<div style="flex-shrink:0;margin-top:4px"><div style="width:12px;height:12px;border-radius:50%;border:2px solid '+sColor+';background:'+(d.status==='active'?sColor:'transparent')+'"></div></div>';
+    // Content
+    h+='<div style="flex:1;cursor:pointer">';
+    h+='<div style="display:flex;justify-content:space-between;align-items:center">';
+    h+='<div style="font-size:13px;font-weight:600;color:var(--text)">'+label+'</div>';
+    h+='<div style="display:flex;align-items:center;gap:6px">';
+    h+='<span style="font-size:9px;padding:2px 8px;border-radius:10px;background:rgba(198,168,94,.1);color:'+sColor+';font-weight:600">'+sLabel+'</span>';
+    h+='<span style="font-size:10px;color:var(--text3)">'+timeLabel+'</span>';
+    h+='</div></div>';
+    // Summary line
+    if(d.tool)h+='<div style="font-size:11px;color:var(--text3);margin-top:2px">Based on '+d.tool+(d.toolScore?' ('+d.toolScore+')':'')+'</div>';
+    h+='<div style="font-size:11px;color:var(--text2);margin-top:4px">Gut: '+gutLabels[d.gut||3]+'</div>';
+
+    // Expandable detail
+    h+='<div id="dj-detail-'+idx+'" style="display:none;margin-top:10px;padding:12px;background:var(--bg2);border-radius:10px">';
+    if(d.riskDo)h+='<div style="font-size:11px;margin-bottom:6px"><span style="color:var(--red);font-weight:600">Risk if yes:</span> <span style="color:var(--text2)">'+d.riskDo+'</span></div>';
+    if(d.riskDont)h+='<div style="font-size:11px;margin-bottom:6px"><span style="color:var(--accent);font-weight:600">Risk if no:</span> <span style="color:var(--text2)">'+d.riskDont+'</span></div>';
+    if(d.tripwire)h+='<div style="font-size:11px;margin-bottom:6px"><span style="color:var(--accent);font-weight:600">⚡ Tripwire:</span> <span style="color:var(--text2)">'+d.tripwire+'</span></div>';
+    if(d.notes)h+='<div style="font-size:11px;color:var(--text3);font-style:italic;margin-bottom:6px">"'+d.notes+'"</div>';
+    // Score snapshot
+    if(d.scoresAtTime){
+      var dims=['competitiveness','research','readiness','financial'];
+      h+='<div style="display:flex;gap:8px;margin-top:8px">';
+      dims.forEach(function(dim){
+        var then=d.scoresAtTime[dim]||0;
+        var now2=currentScores[dim]||0;
+        var diff=now2-then;
+        h+='<div style="flex:1;text-align:center;padding:6px;background:var(--bg);border-radius:6px">';
+        h+='<div style="font-size:9px;color:var(--text3);text-transform:uppercase">'+dim.substring(0,4)+'</div>';
+        h+='<div style="font-size:12px;font-weight:600;color:var(--text)">'+then+'</div>';
+        if(diff!==0)h+='<div style="font-size:9px;color:'+(diff>0?'var(--green)':'var(--red)')+'">Now: '+now2+' ('+(diff>0?'+':'')+diff+')</div>';
+        h+='</div>';
+      });
+      h+='</div>';
+    }
+    // Revisit history
+    if(d.revisits&&d.revisits.length){
+      h+='<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border)">';
+      h+='<div style="font-size:10px;font-weight:600;color:var(--text3);margin-bottom:4px">REVISIT HISTORY</div>';
+      d.revisits.forEach(function(r){
+        var rd=new Date(r.date).toLocaleDateString('en-US',{month:'short',day:'numeric'});
+        var feelLabels={right:'Still right ✅','not-sure':'Not sure anymore 🤔',different:'Would decide differently ❌'};
+        h+='<div style="font-size:10px;color:var(--text2);padding:2px 0">'+rd+': '+(feelLabels[r.feeling]||r.feeling)+(r.notes?' — '+r.notes:'')+'</div>';
+      });
+      h+='</div>';
+    }
+    // Revisit button
+    h+='<div style="margin-top:8px"><button onclick="event.stopPropagation();openDecisionRevisit(\''+d.id+'\')" style="padding:6px 14px;background:var(--accent);color:#1C1A17;border:none;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer">Revisit →</button></div>';
+    h+='</div>'; // end detail
+
+    h+='</div></div>'; // end content + flex
+  });
+  h+='</div>';
+  el.innerHTML=h;
+}
+
+function toggleDecisionDetail(id){
+  var el=document.getElementById(id);
+  if(el)el.style.display=el.style.display==='none'?'block':'none';
+}
+
+// ===== 4. SIX-MONTH REVISIT PROMPTS =====
+function checkRevisitDue(){
+  if(!U||!U.decisions)return[];
+  var now=Date.now();
+  var due=[];
+  U.decisions.forEach(function(d){
+    if(d.status!=='active')return;
+    if(!d.revisitDate)return;
+    if(new Date(d.revisitDate).getTime()<=now){
+      // Check if already revisited recently (within 14 days)
+      var lastRevisit=d.revisits&&d.revisits.length?d.revisits[d.revisits.length-1]:null;
+      if(lastRevisit&&(now-new Date(lastRevisit.date).getTime())<14*86400000)return;
+      due.push(d);
+    }
+  });
+  return due;
+}
+
+function renderRevisitPrompts(){
+  var el=document.getElementById('revisit-prompts');
+  if(!el||!U)return;
+  var due=checkRevisitDue();
+  if(!due.length){el.style.display='none';return}
+  el.style.display='';
+  var typeLabels={
+    'choose-specialty':'specialty choice','apply-program':'program application','rank-program':'rank list',
+    'pursue-research':'research decision','evaluate-offer':'job offer','negotiate':'negotiation',
+    'accept-position':'position acceptance','reject-offer':'offer rejection','financial':'financial decision',
+    'apply-fellowship':'fellowship application','choose-subspecialty':'subspecialty choice',
+    'academic-vs-private':'academic vs private choice','career-pivot':'career pivot','partnership':'partnership decision',
+    'wait':'wait decision','change-direction':'direction change','location':'location choice',
+    'take-away':'away rotation','gap-year':'gap year','change-plan':'plan change',
+    'seek-mentor':'mentorship decision','improve-score':'score improvement','reduce-hours':'hours decision',
+    'leadership':'leadership decision'
+  };
+  var h='';
+  due.slice(0,2).forEach(function(d){
+    var label=typeLabels[d.type]||d.type;
+    var decDate=new Date(d.date).toLocaleDateString('en-US',{month:'long',year:'numeric'});
+    var monthsAgo=Math.floor((Date.now()-new Date(d.date).getTime())/(30*86400000));
+    h+='<div style="padding:16px;background:linear-gradient(160deg,rgba(198,168,94,.06),transparent);border:1px solid rgba(198,168,94,.2);border-radius:14px;margin-bottom:8px">';
+    h+='<div style="display:flex;align-items:flex-start;gap:12px">';
+    h+='<span style="font-size:22px;flex-shrink:0">🔄</span>';
+    h+='<div style="flex:1">';
+    h+='<div style="font-size:13px;font-weight:600;color:var(--text)">Time to Revisit</div>';
+    h+='<div style="font-size:12px;color:var(--text2);line-height:1.6;margin-top:4px">';
+    h+=monthsAgo+' months ago, you made a '+label+'. ';
+    if(d.tripwire)h+='You said it would be wrong if: <em>"'+d.tripwire+'"</em>. ';
+    h+='How do you feel about it now?</div>';
+    // Show score changes since decision
+    if(d.scoresAtTime){
+      var currentScores=U.scoreHistory&&U.scoreHistory.length?U.scoreHistory[U.scoreHistory.length-1].scores:{};
+      var changes=[];
+      ['competitiveness','research','readiness','financial'].forEach(function(dim){
+        var then=d.scoresAtTime[dim]||0;var now2=currentScores[dim]||0;var diff=now2-then;
+        if(Math.abs(diff)>=5)changes.push(dim.charAt(0).toUpperCase()+dim.slice(1)+': '+(diff>0?'+':'')+diff);
+      });
+      if(changes.length){
+        h+='<div style="font-size:11px;color:var(--text3);margin-top:4px">Since then: '+changes.join(', ')+'</div>';
+      }
+    }
+    h+='<div style="display:flex;gap:6px;margin-top:10px">';
+    h+='<button onclick="openDecisionRevisit(\''+d.id+'\')" style="padding:8px 16px;background:var(--accent);color:#1C1A17;border:none;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer">Revisit →</button>';
+    h+='</div></div></div></div>';
+  });
+  el.innerHTML=h;
+}
+
+function openDecisionRevisit(decisionId){
+  if(!U||!U.decisions)return;
+  var d=U.decisions.find(function(x){return x.id===decisionId});
+  if(!d)return;
+  var typeLabels={
+    'choose-specialty':'specialty choice','apply-program':'program application',
+    'evaluate-offer':'job offer evaluation','negotiate':'negotiation',
+    'accept-position':'position acceptance','financial':'financial decision',
+    'apply-fellowship':'fellowship application','career-pivot':'career pivot',
+    'wait':'wait decision','change-direction':'direction change'
+  };
+  var label=typeLabels[d.type]||d.type;
+  var decDate=new Date(d.date).toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+
+  var h='<div style="padding:24px;max-width:480px;margin:0 auto">';
+  h+='<div style="text-align:center;margin-bottom:20px"><div style="font-size:32px;margin-bottom:8px">🔄</div>';
+  h+='<div style="font-size:18px;font-weight:600;color:var(--text);font-family:var(--font-serif)">Decision Revisit</div>';
+  h+='<div style="font-size:12px;color:var(--text3);margin-top:4px">'+decDate+' — '+label+'</div></div>';
+
+  // Show original context
+  h+='<div style="padding:12px;background:var(--bg2);border-radius:10px;margin-bottom:16px">';
+  h+='<div style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Original Decision</div>';
+  if(d.tool)h+='<div style="font-size:11px;color:var(--text2)">Based on: '+d.tool+(d.toolScore?' ('+d.toolScore+')':'')+'</div>';
+  if(d.riskDo)h+='<div style="font-size:11px;color:var(--text2);margin-top:4px">Risk if yes: '+d.riskDo+'</div>';
+  if(d.riskDont)h+='<div style="font-size:11px;color:var(--text2);margin-top:4px">Risk if no: '+d.riskDont+'</div>';
+  if(d.tripwire)h+='<div style="font-size:11px;color:var(--accent);margin-top:4px">⚡ Tripwire: '+d.tripwire+'</div>';
+  if(d.notes)h+='<div style="font-size:11px;color:var(--text3);font-style:italic;margin-top:4px">"'+d.notes+'"</div>';
+  h+='</div>';
+
+  // How do you feel?
+  h+='<div style="margin-bottom:16px"><div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">How do you feel about this decision now?</div>';
+  h+='<div style="display:flex;gap:6px" id="dj-revisit-feel">';
+  h+='<button onclick="djSelectRevisitFeel(this,\'right\')" data-val="right" style="flex:1;padding:12px 8px;font-size:11px;border:2px solid var(--border);border-radius:10px;background:var(--bg);cursor:pointer;text-align:center;color:var(--green);font-weight:600;transition:all .15s">✅<br>Still right</button>';
+  h+='<button onclick="djSelectRevisitFeel(this,\'not-sure\')" data-val="not-sure" style="flex:1;padding:12px 8px;font-size:11px;border:2px solid var(--border);border-radius:10px;background:var(--bg);cursor:pointer;text-align:center;color:var(--accent);font-weight:600;transition:all .15s">🤔<br>Not sure</button>';
+  h+='<button onclick="djSelectRevisitFeel(this,\'different\')" data-val="different" style="flex:1;padding:12px 8px;font-size:11px;border:2px solid var(--border);border-radius:10px;background:var(--bg);cursor:pointer;text-align:center;color:var(--red);font-weight:600;transition:all .15s">❌<br>Would decide<br>differently</button>';
+  h+='</div></div>';
+
+  // What's changed?
+  h+='<div style="margin-bottom:16px"><div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">What\'s changed since then?</div>';
+  h+='<textarea id="dj-revisit-notes" rows="3" placeholder="New information, changed circumstances, different perspective..." style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-size:12px;resize:vertical;font-family:var(--font-body)"></textarea></div>';
+
+  // Mark decision status
+  h+='<div style="margin-bottom:20px"><div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Update Status</div>';
+  h+='<div style="display:flex;gap:6px">';
+  h+='<button onclick="djSelectStatus(this,\'active\')" data-val="active" style="flex:1;padding:8px;font-size:11px;border:1px solid var(--accent);border-radius:8px;background:rgba(198,168,94,.1);color:var(--accent);cursor:pointer;font-weight:600">Still Active</button>';
+  h+='<button onclick="djSelectStatus(this,\'completed\')" data-val="completed" style="flex:1;padding:8px;font-size:11px;border:1px solid var(--border);border-radius:8px;background:var(--bg3);color:var(--text3);cursor:pointer">Completed</button>';
+  h+='<button onclick="djSelectStatus(this,\'changed\')" data-val="changed" style="flex:1;padding:8px;font-size:11px;border:1px solid var(--border);border-radius:8px;background:var(--bg3);color:var(--text3);cursor:pointer">Changed Course</button>';
+  h+='</div></div>';
+
+  h+='<input type="hidden" id="dj-revisit-id" value="'+decisionId+'">';
+  h+='<button onclick="saveDecisionRevisit()" style="width:100%;padding:14px;background:var(--accent);color:#1C1A17;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer">Save Revisit →</button>';
+  h+='</div>';
+
+  document.getElementById('modal-q-content').innerHTML=h;
+  document.getElementById('modal-q').classList.remove('hidden');
+}
+
+function djSelectRevisitFeel(btn,val){
+  document.querySelectorAll('#dj-revisit-feel button').forEach(function(b){b.style.borderColor='var(--border)';b.style.background='var(--bg)'});
+  btn.style.borderColor=val==='right'?'var(--green)':val==='not-sure'?'var(--accent)':'var(--red)';
+  btn.style.background=val==='right'?'rgba(106,191,75,.1)':val==='not-sure'?'rgba(198,168,94,.1)':'rgba(192,96,96,.1)';
+  btn.dataset.selected='true';
+}
+
+function djSelectStatus(btn,val){
+  document.querySelectorAll('#dj-revisit-feel+div+div button, [onclick*="djSelectStatus"] ').forEach(function(b){
+    if(b.onclick&&String(b.onclick).indexOf('djSelectStatus')>=0){b.style.borderColor='var(--border)';b.style.background='var(--bg3)';b.style.color='var(--text3)'}
+  });
+  btn.style.borderColor='var(--accent)';btn.style.background='rgba(198,168,94,.1)';btn.style.color='var(--accent)';
+}
+
+function saveDecisionRevisit(){
+  if(!U||!U.decisions)return;
+  var decisionId=(document.getElementById('dj-revisit-id')||{}).value;
+  var d=U.decisions.find(function(x){return x.id===decisionId});
+  if(!d){notify('Decision not found',1);return}
+
+  var feelBtn=document.querySelector('#dj-revisit-feel button[data-selected="true"]');
+  var feeling=feelBtn?feelBtn.dataset.val:'right';
+  var notes=(document.getElementById('dj-revisit-notes')||{}).value||'';
+
+  // Find selected status
+  var statusBtns=document.querySelectorAll('[onclick*="djSelectStatus"]');
+  var newStatus='active';
+  statusBtns.forEach(function(b){if(b.style.color==='var(--accent)')newStatus=b.dataset.val});
+
+  if(!d.revisits)d.revisits=[];
+  d.revisits.push({
+    date:new Date().toISOString(),
+    feeling:feeling,
+    notes:notes,
+    scoresAtRevisit:U.scoreHistory&&U.scoreHistory.length?JSON.parse(JSON.stringify(U.scoreHistory[U.scoreHistory.length-1].scores)):null
+  });
+
+  d.status=newStatus;
+  // Schedule next revisit if still active
+  if(newStatus==='active'){
+    d.revisitDate=new Date(Date.now()+180*86400000).toISOString();
+  }
+  d._tripwireAlerted=false; // reset for new monitoring
+
+  saveUser();
+  closeModal('modal-q');
+  var msgs={right:'Good — staying the course. We\'ll check again in 6 months. 🧭','not-sure':'Worth re-examining. Consider re-running the relevant tool with updated data.','different':'Course change noted. Your decision history will help you learn from this.'};
+  notify(msgs[feeling]||'Revisit saved.');
+  renderDecisionTimeline();renderTripwireAlerts();renderRevisitPrompts();
+}
+
+// ===== 5. PRE-DECISION MODE =====
+// Before running a tool, capture what they're trying to decide
+function showPreDecisionCapture(toolId, toolName){
+  if(!U)return false;
+  // Only show for first-time or if they haven't used this tool in 30 days
+  var lastUse=(U.toolHistory||[]).filter(function(t){return t.tool===toolName}).slice(-1)[0];
+  if(lastUse&&(Date.now()-new Date(lastUse.date).getTime())<30*86400000)return false;
+  // Don't show if they have a pre-decision pending
+  if(window._djPreDecision)return false;
+  // Only for paid users
+  var hasPlan=U.tier==='core'||U.tier==='elite'||U.tier==='admin'||U.isTrial;
+  if(!hasPlan)return false;
+
+  var cp=U.careerProfile||{};
+  var stage=cp.stage||'student';
+  var contexts={
+    student:['Choosing which specialty to pursue','Deciding where to apply','Figuring out if I\'m competitive enough','Planning my application timeline','Comparing financial paths'],
+    resident:['Deciding on fellowship vs. practice','Evaluating a job opportunity','Planning my application strategy','Comparing career paths','Assessing my competitiveness'],
+    fellow:['Evaluating a job offer','Comparing practice settings','Negotiating contract terms','Planning my transition to attending','Weighing location options'],
+    attending:['Evaluating a new opportunity','Renegotiating my contract','Considering a career change','Assessing my financial position','Planning next career move']
+  };
+  var options=contexts[stage]||contexts.student;
+
+  var el=document.getElementById('pre-decision-banner');
+  if(!el){
+    el=document.createElement('div');
+    el.id='pre-decision-banner';
+    el.style.cssText='padding:0 24px;margin-bottom:12px';
+    // Insert before the tool content
+    var toolEl=document.querySelector('.fw-content')||document.querySelector('.scr.on');
+    if(toolEl&&toolEl.firstChild)toolEl.insertBefore(el,toolEl.children[1]||toolEl.firstChild);
+    else return false;
+  }
+
+  var h='<div style="padding:14px;background:linear-gradient(160deg,rgba(198,168,94,.06),transparent);border:1px solid rgba(198,168,94,.15);border-radius:12px">';
+  h+='<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">';
+  h+='<span style="font-size:16px">🧭</span>';
+  h+='<div style="font-size:12px;font-weight:600;color:var(--accent)">What are you trying to decide?</div>';
+  h+='<button onclick="this.closest(\'#pre-decision-banner\').style.display=\'none\'" style="margin-left:auto;background:none;border:none;color:var(--text3);cursor:pointer;font-size:14px">✕</button>';
+  h+='</div>';
+  h+='<div style="display:flex;flex-wrap:wrap;gap:4px">';
+  options.forEach(function(opt){
+    h+='<button onclick="setPreDecision(this,\''+opt.replace(/'/g,"\\'")+'\')" style="padding:6px 12px;font-size:11px;border:1px solid var(--border);border-radius:20px;background:var(--bg3);color:var(--text3);cursor:pointer;transition:all .15s">'+opt+'</button>';
+  });
+  h+='</div>';
+  h+='<input type="text" id="pre-decision-custom" placeholder="Or type your own..." style="display:none;width:100%;margin-top:6px;padding:8px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-size:11px">';
+  h+='</div>';
+  el.innerHTML=h;
+  return true;
+}
+
+function setPreDecision(btn,text){
+  // Toggle selection
+  btn.parentElement.querySelectorAll('button').forEach(function(b){
+    b.style.background='var(--bg3)';b.style.borderColor='var(--border)';b.style.color='var(--text3)';
+  });
+  btn.style.background='rgba(198,168,94,.15)';btn.style.borderColor='var(--accent)';btn.style.color='var(--accent)';
+  window._djPreDecision={text:text,setAt:new Date().toISOString()};
+}
+
+// ===== 6. DECISION PATTERNS & SELF-AWARENESS =====
+function getDecisionPatterns(){
+  if(!U||!U.decisions||U.decisions.length<3)return null;
+  var decisions=U.decisions;
+  var patterns={};
+
+  // Pattern: How often gut matches outcome
+  var revisited=decisions.filter(function(d){return d.revisits&&d.revisits.length});
+  var gutAccuracy=0;var gutTotal=0;
+  revisited.forEach(function(d){
+    var lastRevisit=d.revisits[d.revisits.length-1];
+    if(lastRevisit.feeling==='right'&&d.gut>=4){gutAccuracy++;gutTotal++}
+    else if(lastRevisit.feeling==='different'&&d.gut<=2){gutAccuracy++;gutTotal++}
+    else if(lastRevisit.feeling){gutTotal++}
+  });
+
+  // Pattern: Decision speed (time between tool use and decision)
+  var speeds=decisions.map(function(d){return d.type}).reduce(function(acc,type){acc[type]=(acc[type]||0)+1;return acc},{});
+
+  // Pattern: Most common decision types
+  var typeCounts={};
+  decisions.forEach(function(d){typeCounts[d.type]=(typeCounts[d.type]||0)+1});
+  var topTypes=Object.entries(typeCounts).sort(function(a,b){return b[1]-a[1]}).slice(0,3);
+
+  // Pattern: Confidence trend
+  var confidences=decisions.map(function(d){return d.gut}).filter(function(g){return g});
+  var avgGut=confidences.length?Math.round(confidences.reduce(function(a,b){return a+b},0)/confidences.length*10)/10:null;
+  var recentGut=confidences.slice(-3);
+  var recentAvg=recentGut.length?Math.round(recentGut.reduce(function(a,b){return a+b},0)/recentGut.length*10)/10:null;
+  var gutTrend=avgGut&&recentAvg?(recentAvg-avgGut):null;
+
+  return{
+    total:decisions.length,
+    active:decisions.filter(function(d){return d.status==='active'}).length,
+    completed:decisions.filter(function(d){return d.status==='completed'}).length,
+    changed:decisions.filter(function(d){return d.status==='changed'}).length,
+    gutAccuracy:gutTotal>0?Math.round(gutAccuracy/gutTotal*100):null,
+    gutTotal:gutTotal,
+    topTypes:topTypes,
+    avgGut:avgGut,
+    gutTrend:gutTrend,
+    revisited:revisited.length
+  };
+}
+
+function renderDecisionPatterns(){
+  var el=document.getElementById('decision-patterns');
+  if(!el||!U)return;
+  var p=getDecisionPatterns();
+  if(!p||p.total<3){el.style.display='none';return}
+
+  el.style.display='';
+  var typeLabels={
+    'choose-specialty':'Specialty','apply-program':'Applications','evaluate-offer':'Job Offers',
+    'negotiate':'Negotiations','financial':'Financial','pursue-research':'Research',
+    'accept-position':'Acceptances','career-pivot':'Career Changes','wait':'Waiting',
+    'apply-fellowship':'Fellowship','change-direction':'Direction Changes'
+  };
+
+  var h='<div class="card" style="padding:16px">';
+  h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">🧠 Decision Patterns</div>';
+
+  // Stats row
+  h+='<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:12px">';
+  h+='<div style="text-align:center;padding:8px;background:var(--bg2);border-radius:8px"><div style="font-size:18px;font-weight:700;color:var(--text)">'+p.total+'</div><div style="font-size:9px;color:var(--text3)">Total</div></div>';
+  h+='<div style="text-align:center;padding:8px;background:var(--bg2);border-radius:8px"><div style="font-size:18px;font-weight:700;color:var(--accent)">'+p.active+'</div><div style="font-size:9px;color:var(--text3)">Active</div></div>';
+  h+='<div style="text-align:center;padding:8px;background:var(--bg2);border-radius:8px"><div style="font-size:18px;font-weight:700;color:var(--green)">'+p.completed+'</div><div style="font-size:9px;color:var(--text3)">Done</div></div>';
+  h+='<div style="text-align:center;padding:8px;background:var(--bg2);border-radius:8px"><div style="font-size:18px;font-weight:700;color:var(--red)">'+p.changed+'</div><div style="font-size:9px;color:var(--text3)">Changed</div></div>';
+  h+='</div>';
+
+  // Gut accuracy
+  if(p.gutAccuracy!==null&&p.gutTotal>=2){
+    h+='<div style="padding:10px;background:var(--bg2);border-radius:8px;margin-bottom:8px">';
+    h+='<div style="font-size:12px;color:var(--text)"><strong>Gut Accuracy: '+p.gutAccuracy+'%</strong></div>';
+    h+='<div style="font-size:11px;color:var(--text3);margin-top:2px">';
+    if(p.gutAccuracy>=75)h+='Your instincts have been reliable. Trust them more, but keep using data to confirm.';
+    else if(p.gutAccuracy>=50)h+='Your gut is right about half the time. Use the tools to stress-test your instincts.';
+    else h+='Your initial instincts haven\'t always matched outcomes. Let the data lead — then check your gut.';
+    h+='</div></div>';
+  }
+
+  // Confidence trend
+  if(p.avgGut&&p.gutTrend!==null){
+    h+='<div style="padding:10px;background:var(--bg2);border-radius:8px;margin-bottom:8px">';
+    h+='<div style="font-size:12px;color:var(--text)"><strong>Avg Confidence: '+p.avgGut+'/5</strong>';
+    if(Math.abs(p.gutTrend)>=0.3)h+=' <span style="color:'+(p.gutTrend>0?'var(--green)':'var(--red)')+';font-size:11px">'+(p.gutTrend>0?'↑ trending up':'↓ trending down')+'</span>';
+    h+='</div>';
+    h+='<div style="font-size:11px;color:var(--text3);margin-top:2px">';
+    if(p.gutTrend>0.5)h+='You\'re feeling increasingly confident about your career direction. That\'s usually a sign you\'re on the right path.';
+    else if(p.gutTrend<-0.5)h+='Your confidence has been dropping. It might be time for a bigger strategic reassessment.';
+    h+='</div></div>';
+  }
+
+  // Most common decision areas
+  if(p.topTypes.length){
+    h+='<div style="font-size:10px;color:var(--text3);margin-top:8px">Most decisions about: ';
+    h+=p.topTypes.map(function(t){return '<strong style="color:var(--text2)">'+(typeLabels[t[0]]||t[0])+'</strong> ('+t[1]+')'}).join(', ');
+    h+='</div>';
+  }
+  h+='</div>';
+  el.innerHTML=h;
+}
+
+// ===== 7. SHARED DECISION CONTEXT =====
+// Cross-reference active decisions when running tools
+function getRelevantDecisions(toolName){
+  if(!U||!U.decisions)return[];
+  var activeDecisions=U.decisions.filter(function(d){return d.status==='active'});
+  if(!activeDecisions.length)return[];
+
+  // Map tool names to relevant decision types
+  var toolDecisionMap={
+    'Contract Review Scorecard':['evaluate-offer','negotiate','accept-position','reject-offer'],
+    'Contract Review Tool':['evaluate-offer','negotiate','accept-position','reject-offer'],
+    'Job Offer Comparison Tool':['evaluate-offer','accept-position','reject-offer','academic-vs-private','location'],
+    'RVU Compensation Calculator':['evaluate-offer','negotiate','financial'],
+    '3-Year Financial Planner':['financial','accept-position','academic-vs-private'],
+    'Debt & Income Strategy':['financial'],
+    'Financial Projection Tool':['financial','evaluate-offer','academic-vs-private','career-pivot'],
+    'Fellowship Readiness Calculator':['apply-fellowship','choose-subspecialty','pursue-research'],
+    'Match Probability Calculator':['choose-specialty','apply-program','rank-program','apply-fellowship'],
+    'Specialty Fit Assessment':['choose-specialty','change-direction','choose-subspecialty'],
+    'Career Roadmap Tool':['change-direction','career-pivot','wait'],
+    'Career Transition Planner':['career-pivot','change-direction','evaluate-offer'],
+    'Application Review Tool':['apply-program','apply-fellowship','rank-program'],
+    'Mock Interview Simulator':['apply-program','apply-fellowship','rank-program'],
+    'Research Impact Calculator':['pursue-research','apply-fellowship'],
+    'Observership Database':['apply-program','take-away','gap-year']
+  };
+
+  var relevantTypes=toolDecisionMap[toolName]||[];
+  return activeDecisions.filter(function(d){
+    return relevantTypes.indexOf(d.type)>=0;
+  });
+}
+
+function renderDecisionContext(toolName){
+  var relevant=getRelevantDecisions(toolName);
+  if(!relevant.length)return'';
+  var typeLabels={
+    'choose-specialty':'specialty choice','apply-program':'program application',
+    'evaluate-offer':'job offer evaluation','negotiate':'negotiation',
+    'accept-position':'position acceptance','financial':'financial decision',
+    'apply-fellowship':'fellowship application','career-pivot':'career pivot',
+    'academic-vs-private':'academic vs private choice','location':'location choice',
+    'change-direction':'direction change'
+  };
+
+  var h='<div style="margin:12px 0;padding:14px;background:linear-gradient(160deg,rgba(198,168,94,.06),transparent);border:1px solid rgba(198,168,94,.15);border-radius:10px">';
+  h+='<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">';
+  h+='<span style="font-size:14px">🧭</span>';
+  h+='<span style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px">Connected Decisions</span>';
+  h+='</div>';
+  relevant.slice(0,3).forEach(function(d){
+    var label=typeLabels[d.type]||d.type;
+    var dateStr=new Date(d.date).toLocaleDateString('en-US',{month:'short',day:'numeric'});
+    h+='<div style="display:flex;align-items:center;gap:8px;padding:4px 0;font-size:12px">';
+    h+='<span style="width:6px;height:6px;border-radius:50%;background:var(--accent);flex-shrink:0"></span>';
+    h+='<span style="color:var(--text)">Active '+label+' <span style="color:var(--text3)">('+dateStr+')</span></span>';
+    h+='</div>';
+    if(d.tripwire){
+      h+='<div style="font-size:10px;color:var(--text3);margin-left:14px;font-style:italic">Tripwire: '+d.tripwire+'</div>';
+    }
+  });
+  h+='<div style="font-size:10px;color:var(--text3);margin-top:6px">This tool\'s results feed into your active decisions.</div>';
+  h+='</div>';
+  return h;
+}
+
+// ===== HOME SCREEN INTEGRATION =====
+// Renders the Decision Journal card on home screen
+function renderDecisionJournalHome(){
+  var el=document.getElementById('decision-journal-home');
+  if(!el||!U)return;
+  var hasPlan=U.tier==='core'||U.tier==='elite'||U.tier==='admin'||U.isTrial;
+  if(!hasPlan){el.style.display='none';return}
+  var decisions=U.decisions||[];
+  var active=decisions.filter(function(d){return d.status==='active'});
+
+  if(!decisions.length){
+    // Teaser for new users
+    el.style.display='';
+    el.innerHTML='<div onclick="openDecisionCapture()" style="display:flex;align-items:center;gap:14px;padding:16px;background:var(--bg2);border:1px solid var(--border);border-radius:14px;cursor:pointer;transition:all .2s" onmouseenter="this.style.borderColor=\'var(--accent)\'" onmouseleave="this.style.borderColor=\'var(--border)\'">'
+      +'<span style="font-size:22px">🧭</span>'
+      +'<div style="flex:1"><div style="font-size:13px;font-weight:600;color:var(--text)">Start Your Decision Journal</div>'
+      +'<div style="font-size:11px;color:var(--text3);margin-top:2px">Track career decisions, set tripwires, and revisit with data</div></div>'
+      +'<span style="font-size:12px;color:var(--accent);font-weight:600">Start →</span></div>';
+    return;
+  }
+
+  el.style.display='';
+  var h='<div class="card" style="padding:16px">';
+  h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">';
+  h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px">🧭 Decision Journal</div>';
+  h+='<div style="display:flex;align-items:center;gap:6px">';
+  h+='<span style="font-size:10px;color:var(--text3)">'+active.length+' active</span>';
+  h+='<button onclick="openDecisionCapture()" style="padding:4px 10px;font-size:10px;background:var(--accent);color:#1C1A17;border:none;border-radius:6px;cursor:pointer;font-weight:600">+ New</button>';
+  h+='</div></div>';
+
+  // Show last 3 active decisions
+  active.slice(0,3).forEach(function(d){
+    var typeLabels={
+      'choose-specialty':'Specialty Choice','evaluate-offer':'Job Offer','negotiate':'Negotiation',
+      'accept-position':'Acceptance','financial':'Financial','apply-fellowship':'Fellowship App',
+      'career-pivot':'Career Pivot','wait':'Waiting','pursue-research':'Research'
+    };
+    var label=typeLabels[d.type]||d.type;
+    var daysAgo=Math.floor((Date.now()-new Date(d.date).getTime())/86400000);
+    h+='<div style="display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid var(--border)">';
+    h+='<div style="width:8px;height:8px;border-radius:50%;background:var(--accent);flex-shrink:0"></div>';
+    h+='<div style="flex:1"><div style="font-size:12px;color:var(--text)">'+label+'</div>';
+    h+='<div style="font-size:10px;color:var(--text3)">'+daysAgo+'d ago'+(d.tool?' · '+d.tool:'')+'</div></div>';
+    h+='</div>';
+  });
+
+  // View all link
+  h+='<div style="text-align:center;padding-top:8px"><button onclick="navTo(\'scr-profile\');setTimeout(function(){var tl=document.getElementById(\'decision-timeline\');if(tl)tl.scrollIntoView({behavior:\'smooth\'})},300)" style="background:none;border:none;color:var(--accent);font-size:11px;font-weight:600;cursor:pointer">View Full Timeline →</button></div>';
+  h+='</div>';
+  el.innerHTML=h;
+}
 // ===== FEATURE 1: MONTHLY CAREER CHECK-IN =====
 function renderMonthlyCheckinTrigger(){
   var el=document.getElementById('monthly-checkin-trigger');

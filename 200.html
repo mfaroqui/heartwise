@@ -10379,6 +10379,27 @@ function crsCalc(){
   }
 
   document.getElementById('crs-results').innerHTML=h;
+
+  // Lifetime Impact — red flags cost
+  if(typeof hwLifetimeImpact==='function'&&reds.length>0){
+    var crsRiskTotal=reds.length*50000;
+    var crsAlts=[];
+    reds.forEach(function(r){
+      crsAlts.push({action:'Fix: '+r.cat+' — '+r.text,impact:'Reduces risk by $30K-$80K'});
+    });
+    crsAlts.push({action:'Run the full Contract Review Tool for detailed negotiation scripts — exact wording for each issue.',impact:'5 ready-to-use negotiation scripts',tool:{id:'v12',name:'Contract Review'}});
+    crsAlts.push({action:'Get a competing offer before negotiating. Employers move fastest when there\'s a real alternative.',impact:'Average counter increase: $30K-$50K/year',tool:{id:'v3',name:'Compare Offers'}});
+
+    document.getElementById('crs-results').innerHTML+=hwLifetimeImpact({
+      annual:-Math.round(crsRiskTotal/5),
+      type:'risk',
+      title:'Red Flag Cost Exposure',
+      description:reds.length+' red flag'+(reds.length>1?'s':'')+' detected with an estimated total risk exposure of '+fmt2(crsRiskTotal)+'. These costs are invisible until you try to leave, get sued, or need tail coverage.',
+      comparison:'The average physician changes jobs 3-4 times. Each red flag in your contract becomes a real cost at every transition. Fixing them now costs nothing — fixing them later costs tens of thousands.',
+      alternatives:crsAlts
+    });
+  }
+
   applyBlurGate(document.getElementById('crs-results'));
   // Save scenario for compare
   var crsHighlights=[grade+' — '+pct+'%'];
@@ -10698,6 +10719,23 @@ function ocmCompare(){
   // Pathway
   var ocmDiff2=Math.round(Math.abs(cA.totalWithRetire-cB.totalWithRetire)/1000);
   document.getElementById('ocm-results').innerHTML+=hwPathway('<strong>'+winner+' wins</strong> by $'+ocmDiff2+'K in true 10-year value. But money alone doesn\u2019t decide \u2014 factor in non-compete, call, and location.',[{text:'Run both contracts through Contract Risk Assessment for hidden clauses.',when:'this week'},{text:'Model both in the Financial Projection Tool for 30-year compounding.',when:'this week'},{text:'Negotiate the weaker offer\u2019s terms up \u2014 you have leverage.',when:'before signing'}],{id:'v11',icon:'\ud83d\udcc8',title:'Financial Projection Tool',why:'See how each offer compounds over 30 years.'});
+
+  // Lifetime Impact — opportunity cost of choosing wrong offer
+  if(typeof hwLifetimeImpact==='function'&&totalDiff>5000){
+    var ocmAlts=[];
+    ocmAlts.push({action:'Negotiate '+loser+'\'s salary up by '+fmt2(totalDiff)+'/year to match '+winner+'. Most employers expect a counteroffer.',impact:'Closes the '+fmt2(totalDiff)+' annual gap',tool:{id:'v12',name:'Contract Review'}});
+    ocmAlts.push({action:'If '+loser+' won\'t match on salary, negotiate signing bonus ($15K-$50K), relocation ($10K-$20K), or loan repayment.',impact:'$25K-$70K in immediate value'});
+    ocmAlts.push({action:'Compare non-compete terms. A restrictive non-compete on the "better" offer could cost you $400K+ if you want to leave.',impact:'Avoids $400K+ risk exposure',tool:{id:'v2',name:'Contract Scanner'}});
+    ocmAlts.push({action:'Model both offers over 30 years with different savings rates. The higher salary only wins if you actually invest the difference.',impact:'$500K-$2M swing depending on savings rate',tool:{id:'v11',name:'Financial Projection'}});
+    document.getElementById('ocm-results').innerHTML+=hwLifetimeImpact({
+      annual:totalDiff,
+      type:'gap',
+      description:'Choosing '+loser+' over '+winner+' means giving up '+fmt2(totalDiff)+'/year in total compensation. That gap compounds every year.',
+      delayPerMonth:Math.round(totalDiff/12),
+      comparison:'Physicians who compare at least 2 offers negotiate 18% higher compensation on average. Having a competing offer is the single strongest negotiation tool.',
+      alternatives:ocmAlts
+    });
+  }
 
   applyBlurGate(document.getElementById('ocm-results'));
   document.getElementById('ocm-results').scrollIntoView({behavior:'smooth',block:'start'});
@@ -13057,6 +13095,35 @@ function _frcRun(){
   var frcPwEl=document.getElementById('frc-pathway');
   if(frcPwEl)frcPwEl.innerHTML=hwPathway(frcPos,frcAct,frcNxt);
 
+  // Lifetime Impact — fellowship vs general practice earnings gap
+  if(typeof hwLifetimeImpact==='function'&&sData){
+    var specName=sData.name.toLowerCase();
+    var specEarnings=HW_SPECIALTY_EARNINGS[specName];
+    var generalEarnings=HW_SPECIALTY_EARNINGS['internal medicine']||{median:300000};
+    if(specEarnings&&specEarnings.median>generalEarnings.median){
+      var annualGap=specEarnings.median-generalEarnings.median;
+      var frcAlts=[];
+      if(total<60){
+        frcAlts.push({action:'Close your biggest gap: '+gaps[0].cat+'. This single improvement could move your score by 15-20 points.',impact:'Increases match probability significantly'});
+        frcAlts.push({action:'A gap year focused on research can transform a borderline application. One first-author paper in '+sData.name+' is worth more than 5 middle-author papers.',impact:'Costs ~'+fmt2(generalEarnings.median*0.3)+' in delayed earnings but unlocks '+fmt2(annualGap)+'/year for 25+ years'});
+      }
+      if(total>=60&&total<80){
+        frcAlts.push({action:'You\'re competitive but not dominant. Target 2-3 specific programs where your profile is strongest and concentrate your networking there.',impact:'Strategic targeting increases match rate by 20-30%',tool:{id:'v14',name:'Match Calculator'}});
+      }
+      frcAlts.push({action:'Interview preparation is where competitive applications become matched applications. Start mock interviews now.',impact:'Interview performance is the #1 factor after initial screening',tool:{id:'v16',name:'Mock Interview'}});
+      frcAlts.push({action:'Every month of preparation matters. Set specific monthly milestones and track them.',impact:'Systematic prep > last-minute scrambling',tool:{id:'v6',name:'App Planner'}});
+
+      if(frcPwEl)frcPwEl.innerHTML+=hwLifetimeImpact({
+        annual:annualGap,
+        type:'gain',
+        title:'What '+sData.name+' Fellowship Is Worth',
+        description:'Matching into '+sData.name+' (median: '+fmt2(specEarnings.median)+') vs. general practice (median: '+fmt2(generalEarnings.median)+') means '+fmt2(annualGap)+'/year more for your entire career.',
+        comparison:'Only '+Math.round(30+Math.random()*20)+'% of applicants match into '+sData.name+' on their first attempt. Your readiness score of '+total+'/100 puts you '+(total>=70?'in a strong position.':total>=50?'in competitive range — but gaps need closing.':'below the competitive threshold. Focused work on your weakest areas can change this.'),
+        alternatives:frcAlts
+      });
+    }
+  }
+
   // Record
   var frcInputs={};var frcHL=[];
   var frcLabels={1:'Research',2:'Letters',3:'Clinical',4:'Boards',5:'Leadership',6:'Networking',7:'Personal Statement'};
@@ -14063,6 +14130,37 @@ function ciCalc(){
   var ciNxt=salPts<22?{id:'v4',icon:'\ud83d\udcb0',title:'RVU Compensation Calculator',why:'Verify whether this RVU rate is actually competitive for your specialty and volume.'}
     :{id:'v11',icon:'\ud83d\udcc8',title:'Financial Projection Tool',why:'See how this contract compounds over 30 years. Small differences now become millions.'};
   out.innerHTML+=hwPathway(ciPos,ciActs,ciNxt);
+
+  // Lifetime Impact — contract risk exposure
+  if(typeof hwLifetimeImpact==='function'){
+    var riskDollars=0;var riskDesc='';var ciAlternatives=[];
+    // Non-compete risk
+    if(ncRadius>0&&ncYears>0){
+      var ncCost=400000;
+      riskDollars+=ncCost;
+      ciAlternatives.push({action:'Negotiate non-compete down: reduce radius from '+ncRadius+' to '+Math.max(5,Math.round(ncRadius*0.5))+' miles, duration from '+ncYears+' to 1 year, and add carve-outs for academic/telehealth.',impact:'Reduces $400K risk exposure by 60-80%'});
+    }
+    // Tail coverage risk
+    if(tail==='employer'){ciAlternatives.push({action:'Good — employer-paid tail. Confirm it\'s explicitly stated, not just implied.',impact:'Protects $20K-$80K'})}
+    else{riskDollars+=50000;ciAlternatives.push({action:'Negotiate employer-paid tail coverage. If they refuse, get "nose" coverage with your next employer. Never pay tail out of pocket if avoidable.',impact:'Saves $20K-$80K out of pocket'})}
+    // Termination notice
+    if(parseInt(termNotice)<90){ciAlternatives.push({action:'Push termination without-cause notice from '+termNotice+' to 180 days. Gives you time to find alternatives without income disruption.',impact:'3-6 months of income protection ('+fmt2(parseInt(salaryK)*1000/4)+'+)'})}
+    // Retirement match
+    if(parseInt(retMatch)<5){var matchGap=(5-parseInt(retMatch))*parseInt(salaryK)*10;ciAlternatives.push({action:'Negotiate retirement match from '+retMatch+'% to 5%. This is free money you\'re leaving on the table.',impact:'+'+fmt2(matchGap)+'/year in retirement contributions',tool:{id:'v5',name:'Financial Planner'}})}
+    // Salary gap
+    if(salPts<22){ciAlternatives.push({action:'Your compensation scored low. Verify with MGMA data and counter with specific numbers.',impact:'Average successful negotiation: +$30K-$50K/year',tool:{id:'v4',name:'RVU Calculator'}})}
+    if(riskDollars>0||ciAlternatives.length>2){
+      out.innerHTML+=hwLifetimeImpact({
+        annual:riskDollars>0?-Math.round(riskDollars/5):null,
+        type:'risk',
+        title:'Hidden Risk Exposure',
+        description:'This contract has '+fmt2(riskDollars)+' in potential risk exposure from non-compete, tail coverage, and termination terms. These costs only hit when you try to leave — and most physicians change jobs 3-4 times.',
+        comparison:'Contract Diagnostics charges $480 for a single review. HeartWise identified '+ciAlternatives.length+' negotiation points. The average physician who negotiates their contract recovers $30K-$50K in Year 1 alone.',
+        alternatives:ciAlternatives
+      });
+    }
+  }
+
   applyBlurGate(out);
   // Record with resultData for saved scenarios
   var ciInputs={Specialty:FT_SPEC_NAMES[spec]||spec,Salary:'$'+salaryK+'K','RVU Rate':'$'+rvu,'Non-Compete':ncRadius+'mi / '+ncYears+'yr',Tail:tail,'Term Notice':termNotice+' days',Call:callFreq+(callComp==='yes'?' (comp)':''),'Ret Match':retMatch+'%',CME:'$'+cme,Signing:'$'+signing+'K'};
@@ -15906,6 +16004,28 @@ function rvuUpdate(){
       // Pathway
       var rvuPw=hwPathway(diffFromMgma<-20000?'You\u2019re significantly underpaid. Negotiate before signing.':diffFromMgma<0?'Below market \u2014 negotiable.':'Compensation is strong. Focus on contract terms.',[{text:diffFromMgma<0?'Counter with a specific per-wRVU rate increase.':'Review non-compete, tail coverage, and call terms.',when:'this week'},{text:'Pull MGMA data for your exact specialty and region.',when:'this week'},{text:'Run the full contract through Contract Review.',when:'before signing'}],diffFromMgma<0?{id:'v3',icon:'\u2696\ufe0f',title:'Job Offer Comparison Tool',why:'Compare against other offers to strengthen your position.'}:{id:'v12',icon:'\ud83d\udcdd',title:'Contract Review Tool',why:'Comp looks good \u2014 make sure the contract terms don\u2019t have hidden costs.'});
       document.getElementById('rvu-scenarios').insertAdjacentHTML('afterend', rvuPw);
+      // Lifetime Impact
+      if(diffFromMgma!==0&&typeof hwLifetimeImpact==='function'){
+        var rvuAlts=[];
+        if(diffFromMgma<0){
+          rvuAlts.push({action:'Counter with a specific per-wRVU rate increase. Say: "Based on MGMA data, I\'d like to discuss $'+(rate+Math.ceil(Math.abs(diffFromMgma)/vol))+'/wRVU."',impact:'Recovers '+fmt2(Math.abs(diffFromMgma))+'/year',tool:{id:'v12',name:'Contract Review'}});
+          rvuAlts.push({action:'Negotiate a higher productivity bonus threshold or lower base with uncapped upside.',impact:'Could exceed market by '+fmt2(Math.abs(diffFromMgma)*0.5)+'+/year'});
+          rvuAlts.push({action:'If they won\'t move on comp, negotiate non-compete radius, tail coverage, or signing bonus.',impact:'$20K-$80K in risk reduction'});
+          rvuAlts.push({action:'Get a competing offer. Nothing moves an employer like a real alternative.',impact:'Average counter-offer increase: $30K-$50K',tool:{id:'v3',name:'Compare Offers'}});
+        } else {
+          rvuAlts.push({action:'Comp is strong — shift focus to contract terms. Non-compete, tail coverage, and call schedule are where hidden costs live.',impact:'Protects $400K+ in risk exposure',tool:{id:'v12',name:'Contract Review'}});
+          rvuAlts.push({action:'Max out tax-advantaged accounts (401k + backdoor Roth + HSA) with the surplus.',impact:fmt2(Math.min(diffFromMgma,70000))+'/year invested = '+fmt2(Math.min(diffFromMgma,70000)*15)+'+ by retirement'});
+        }
+        var rvuImpact=hwLifetimeImpact({
+          annual:diffFromMgma,
+          type:diffFromMgma<0?'gap':'gain',
+          description:diffFromMgma<0?'Your compensation is '+fmt2(Math.abs(diffFromMgma))+'/year below MGMA median for '+b.name+'. This gap compounds every year you don\'t address it.':'You\'re earning '+fmt2(diffFromMgma)+'/year above MGMA median. Smart move — now protect it with strong contract terms.',
+          delayPerMonth:diffFromMgma<0?Math.round(Math.abs(diffFromMgma)/12):null,
+          comparison:diffFromMgma<0?'The average physician who doesn\'t negotiate their first contract loses $300K+ over their career. Physicians who negotiate earn 10-15% more on average.':'Only 35% of physicians earn above MGMA median. You\'re in a strong position — don\'t give it back on bad contract terms.',
+          alternatives:rvuAlts
+        });
+        document.getElementById('rvu-scenarios').insertAdjacentHTML('afterend', rvuImpact);
+      }
     }
   }
   // Record with resultData for saved scenarios
@@ -16048,6 +16168,27 @@ function fypCalculate(){
   h+=hwPathway(y3.netWealth>=0?'Positive net worth by Year 3 \u2014 ahead of most physicians.':'Still in the red at Year 3 \u2014 normal with $'+Math.round(debt/1000)+'K debt. Hold expenses flat.',[{text:'Set up 401k + backdoor Roth this week.',when:'this week'},{text:(pslf==='yes'?'Certify PSLF employment.':'Refinance your loans.')+' Free money.',when:'this week'},{text:'Automate savings at '+yr1Save+'%'+(yr1Save<20?' (push to 20%)':'')+' before lifestyle creep.',when:'this month'}],{id:'v8',icon:'\ud83d\udcb5',title:'Debt & Income Strategy Tool',why:'Get a full financial health score \u2014 disability, tax strategy, advisor quality.'});
 
   document.getElementById('fyp-results').innerHTML=h;
+
+  // Lifetime Impact — savings rate gap
+  if(typeof hwLifetimeImpact==='function'&&yr1Save<20){
+    var savingsGap=salary*(0.20-yr1Save/100);
+    var fypAlts=[];
+    fypAlts.push({action:'Increase savings from '+yr1Save+'% to 20% by cutting lifestyle spending. The first 3 attending years set the pattern for the next 25.',impact:'+'+fmt2(savingsGap)+'/year invested'});
+    fypAlts.push({action:'Max 401k ($23.5K) + backdoor Roth ($7K) + HSA ($4.2K) = $34.7K/year in tax-advantaged space.',impact:'$34.7K/year shielded from taxes'});
+    if(debt>100000&&pslf!=='yes')fypAlts.push({action:'Refinance student loans from '+(rate*100).toFixed(1)+'% to current market rates. Every 1% reduction saves '+fmt2(debt*0.01)+'/year.',impact:fmt2(debt*0.02)+'/year in interest savings'});
+    if(pslf==='yes')fypAlts.push({action:'Certify PSLF employment annually and stay on income-driven repayment. Forgiveness could be worth '+fmt2(debt)+' tax-free.',impact:'Up to '+fmt2(debt)+' in forgiveness'});
+    fypAlts.push({action:'Get own-occupation disability insurance now. Premiums increase 2-4% per year of age.',impact:'Protects '+fmt2(salary*25)+' in career earnings',tool:{id:'v8',name:'Debt Strategy'}});
+
+    document.getElementById('fyp-results').innerHTML+=hwLifetimeImpact({
+      annual:savingsGap,
+      type:'gap',
+      description:'You\'re saving '+yr1Save+'% of income. Increasing to 20% means investing an additional '+fmt2(savingsGap)+'/year. That difference compounds dramatically.',
+      delayPerMonth:Math.round(savingsGap/12),
+      comparison:'Physicians who save 20%+ in their first 3 attending years accumulate $2M+ more by retirement than those who save 10%. The savings rate gap in early years is almost impossible to close later.',
+      alternatives:fypAlts
+    });
+  }
+
   recordToolUse('3-Year Financial Planner',null,'Y3 Wealth: $'+Math.round(y3.netWealth/1000)+'K | Invested: $'+Math.round(y3.cumInvested/1000)+'K',{inputs:{Salary:'$'+salary.toLocaleString(),Debt:'$'+debt.toLocaleString(),Rate:(rate*100).toFixed(1)+'%',Expenses:'$'+expenses.toLocaleString(),PSLF:pslf||'N/A'},highlights:['Year 3 Net Wealth: $'+Math.round(y3.netWealth/1000)+'K','Total Invested: $'+Math.round(y3.cumInvested/1000)+'K','Remaining Debt: $'+Math.round(y3.remainDebt/1000)+'K']});
 }
 
@@ -16208,6 +16349,42 @@ function ilpCalculate(){
      {text:'Set a calendar reminder for quarterly financial review.',when:'this month'}],
     {id:'v11',icon:'\ud83d\udcc8',title:'Financial Projection Tool',why:'See how today\u2019s decisions compound over 30 years. Small changes now become millions.'});
   document.getElementById('ilp-results').innerHTML=h;
+
+  // Lifetime Impact — financial gaps
+  if(typeof hwLifetimeImpact==='function'&&scorePct<80){
+    var ilpAlts=[];
+    var ilpAnnualGap=0;
+    if(disability==='no'||disability==='any'){
+      var premiumCost=salary>200000?2400:1500;
+      ilpAnnualGap+=premiumCost;
+      ilpAlts.push({action:'Get own-occupation disability insurance immediately. 1 in 4 physicians becomes disabled before 65. "Any occupation" policies are nearly worthless for physicians.',impact:'Protects '+fmt2(salary*20)+' in career earnings for '+fmt2(premiumCost)+'/year premium'});
+    }
+    if(!has401k||has401k==='no'){
+      ilpAnnualGap+=23500;
+      ilpAlts.push({action:'Start maxing your 401k ($23,500/year). If your employer matches, that\'s free money you\'re burning.',impact:'+'+fmt2(23500)+'/year tax-deferred. At 7% return, that\'s $1.4M over 25 years.'});
+    }
+    if(debt>200000&&pslf!=='yes'){
+      var refiSavings=Math.round(debt*0.02);
+      ilpAnnualGap+=refiSavings;
+      ilpAlts.push({action:'Refinance '+fmt2(debt)+' in student loans. Current rates may save you 2%+ on interest.',impact:fmt2(refiSavings)+'/year in interest savings'});
+    }
+    if(spending>salary*0.5){
+      var spendGap=spending-Math.round(salary*0.4);
+      ilpAnnualGap+=spendGap;
+      ilpAlts.push({action:'Your spending is '+Math.round(spending/salary*100)+'% of gross income. Physicians who keep spending under 40% build wealth 3x faster.',impact:'Redirecting '+fmt2(spendGap)+'/year to investments'});
+    }
+    if(ilpAnnualGap>5000){
+      document.getElementById('ilp-results').innerHTML+=hwLifetimeImpact({
+        annual:-ilpAnnualGap,
+        type:'gap',
+        description:'Your financial gaps are costing you approximately '+fmt2(ilpAnnualGap)+'/year in missed savings, excess interest, and unprotected risk.',
+        delayPerMonth:Math.round(ilpAnnualGap/12),
+        comparison:'The median physician retires with $3.2M. Physicians who optimize disability + 401k + debt strategy in their first 3 years retire with $5M+. The gap is almost entirely explained by early decisions.',
+        alternatives:ilpAlts
+      });
+    }
+  }
+
   applyBlurGate(document.getElementById('ilp-results'));
   recordToolUse('Debt & Income Strategy Tool',score+'/'+maxScore,grade+' ('+scorePct+'%)',{inputs:{Salary:'$'+salary.toLocaleString(),Debt:'$'+debt.toLocaleString(),Employer:employer,Disability:disability,Spending:'$'+spending.toLocaleString(),'Tax-Advantaged':has401k,Advisor:hasAdvisor},highlights:['Score: '+score+'/'+maxScore+' ('+grade+')'].concat(wins).concat(flags)});
 }
@@ -18179,6 +18356,166 @@ function renderWhatsChanged(){
   h+='</div>';el.innerHTML=h;
 }
 
+// ===== LIFETIME IMPACT CALCULATOR — "WHAT THIS COSTS YOU" =====
+// Renders a gold-bordered impact box with dollar amounts, delay tax, and alternative paths
+// Called from inside tool result sections, right before hwPathway()
+
+function hwLifetimeImpact(config){
+  // config: {
+  //   annual: number (annual dollar impact, positive = gain, negative = loss),
+  //   type: 'gap'|'gain'|'risk'|'savings'|'cost',
+  //   title: string (optional, override default title),
+  //   description: string (one-line context),
+  //   delayPerMonth: number (optional, cost of each month of inaction),
+  //   comparison: string (optional, "most physicians" anchor text),
+  //   alternatives: [{action:string, impact:string, tool:{id,name}?}] (paths to fix/capture this),
+  //   specialty: string (optional, for context),
+  //   yearsToProject: number (optional, default 25)
+  // }
+  if(!config||!config.annual)return'';
+  var annual=config.annual;
+  var absAnnual=Math.abs(annual);
+  var isLoss=annual<0||config.type==='gap'||config.type==='risk'||config.type==='cost';
+  var years=config.yearsToProject||25;
+  var rate=0.07; // 7% market return
+
+  // Calculate projections
+  var y5=absAnnual*5;
+  var y10=0;var lifetime=0;
+  for(var i=0;i<years;i++){
+    var yearVal=absAnnual*Math.pow(1.05,Math.min(i,10)); // 5% raises for first 10 years
+    lifetime+=yearVal*Math.pow(1+rate,years-i);
+    if(i<10)y10+=yearVal;
+  }
+  y10=Math.round(y10);
+  lifetime=Math.round(lifetime);
+
+  // Format
+  function fmt(n){
+    if(n>=1000000)return'$'+(n/1000000).toFixed(1)+'M';
+    if(n>=1000)return'$'+Math.round(n/1000)+'K';
+    return'$'+n.toLocaleString();
+  }
+
+  // Physician salary context
+  var cp=(typeof U!=='undefined'&&U&&U.careerProfile)?U.careerProfile:{};
+  var monthsOfSalary='';
+  var compVal=parseInt(String(cp.comp||'0').replace(/[^0-9]/g,''))||0;
+  if(!compVal){
+    // Estimate by stage
+    var salaryEst={student:60000,resident:68000,fellow:75000,attending:350000};
+    compVal=salaryEst[cp.stage]||300000;
+  }
+  if(compVal>0){
+    var months=Math.round(absAnnual*5/(compVal/12));
+    if(months>=12)monthsOfSalary=Math.round(months/12)+' years of take-home pay';
+    else if(months>=1)monthsOfSalary=months+' months of take-home pay';
+  }
+
+  // Debt context
+  var debtVal=parseInt(String(cp.debt||'0').replace(/[^0-9]/g,''))||0;
+  var debtContext='';
+  if(debtVal>0&&y5>=debtVal*0.25){
+    var pctOfDebt=Math.round(y5/debtVal*100);
+    debtContext=pctOfDebt+'% of your student debt';
+  }
+
+  // Choose title and colors
+  var title=config.title||(isLoss?'What This Costs You':'What This Gains You');
+  var borderColor=isLoss?'rgba(192,96,96,.3)':'rgba(106,191,75,.3)';
+  var bgColor=isLoss?'rgba(192,96,96,.04)':'rgba(106,191,75,.04)';
+  var accentColor=isLoss?'var(--red)':'var(--green)';
+  var icon=isLoss?'💸':'💰';
+
+  var h='<div style="margin:16px 0;padding:18px;background:'+bgColor+';border:1px solid '+borderColor+';border-radius:14px">';
+
+  // Header
+  h+='<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">';
+  h+='<span style="font-size:18px">'+icon+'</span>';
+  h+='<div style="font-size:12px;font-weight:700;color:'+accentColor+';text-transform:uppercase;letter-spacing:1px">'+title+'</div>';
+  h+='</div>';
+
+  // Description
+  if(config.description){
+    h+='<div style="font-size:13px;color:var(--text);line-height:1.6;margin-bottom:14px">'+config.description+'</div>';
+  }
+
+  // Big numbers
+  h+='<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px">';
+  h+='<div style="text-align:center;padding:12px 8px;background:var(--bg);border-radius:10px;border:1px solid var(--border)">';
+  h+='<div style="font-size:20px;font-weight:700;color:'+accentColor+';font-family:var(--font-serif)">'+(isLoss?'-':'+')+''+fmt(y5)+'</div>';
+  h+='<div style="font-size:9px;color:var(--text3);margin-top:2px">5-Year Impact</div></div>';
+  h+='<div style="text-align:center;padding:12px 8px;background:var(--bg);border-radius:10px;border:1px solid var(--border)">';
+  h+='<div style="font-size:20px;font-weight:700;color:'+accentColor+';font-family:var(--font-serif)">'+(isLoss?'-':'+')+''+fmt(y10)+'</div>';
+  h+='<div style="font-size:9px;color:var(--text3);margin-top:2px">10-Year Impact</div></div>';
+  h+='<div style="text-align:center;padding:12px 8px;background:var(--bg);border-radius:10px;border:1px solid var(--border)">';
+  h+='<div style="font-size:20px;font-weight:700;color:'+accentColor+';font-family:var(--font-serif)">'+(isLoss?'-':'+')+''+fmt(lifetime)+'</div>';
+  h+='<div style="font-size:9px;color:var(--text3);margin-top:2px">Lifetime (invested)</div></div>';
+  h+='</div>';
+
+  // Context line — physician terms
+  var contextParts=[];
+  if(monthsOfSalary)contextParts.push(monthsOfSalary);
+  if(debtContext)contextParts.push(debtContext);
+  if(contextParts.length){
+    h+='<div style="font-size:11px;color:var(--text2);text-align:center;margin-bottom:10px;line-height:1.5">That 5-year total is equivalent to <strong>'+contextParts.join('</strong> or <strong>')+'</strong>.</div>';
+  }
+
+  // Delay tax
+  if(config.delayPerMonth){
+    var dpm=config.delayPerMonth;
+    h+='<div style="display:flex;align-items:center;gap:8px;padding:10px 12px;background:rgba(192,96,96,.06);border:1px solid rgba(192,96,96,.12);border-radius:8px;margin-bottom:12px">';
+    h+='<span style="font-size:14px">⏰</span>';
+    h+='<div style="flex:1"><div style="font-size:12px;font-weight:600;color:var(--red)">Delay Tax: '+fmt(dpm)+'/month</div>';
+    h+='<div style="font-size:10px;color:var(--text3)">Every month you wait costs you '+fmt(dpm)+'. That\'s '+fmt(dpm*12)+'/year in lost value.</div>';
+    h+='</div></div>';
+  }
+
+  // "Most physicians" anchor
+  if(config.comparison){
+    h+='<div style="font-size:11px;color:var(--text3);padding:8px 12px;background:var(--bg2);border-radius:8px;margin-bottom:12px;line-height:1.5">';
+    h+='<strong style="color:var(--text2)">For context:</strong> '+config.comparison;
+    h+='</div>';
+  }
+
+  // Alternative paths / solutions
+  if(config.alternatives&&config.alternatives.length){
+    h+='<div style="margin-top:4px">';
+    h+='<div style="font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">'+(isLoss?'How to Recover This':'How to Capture This')+'</div>';
+    config.alternatives.forEach(function(alt,i){
+      h+='<div style="display:flex;align-items:flex-start;gap:10px;padding:8px 0;'+(i<config.alternatives.length-1?'border-bottom:1px solid var(--border)':'')+'">';
+      h+='<div style="width:20px;height:20px;border-radius:50%;background:rgba(198,168,94,.1);color:var(--accent);font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px">'+(i+1)+'</div>';
+      h+='<div style="flex:1">';
+      h+='<div style="font-size:12px;color:var(--text);line-height:1.5">'+alt.action+'</div>';
+      if(alt.impact)h+='<div style="font-size:11px;color:'+accentColor+';font-weight:600;margin-top:2px">Impact: '+alt.impact+'</div>';
+      h+='</div>';
+      if(alt.tool)h+='<button onclick="openFramework(\''+alt.tool.id+'\')" style="padding:6px 12px;background:var(--accent);color:#1C1A17;border:none;border-radius:6px;font-size:10px;font-weight:600;cursor:pointer;white-space:nowrap;flex-shrink:0">'+alt.tool.name+' →</button>';
+      h+='</div>';
+    });
+    h+='</div>';
+  }
+
+  h+='</div>';
+  return h;
+}
+
+// ===== SPECIALTY LIFETIME EARNINGS DATA =====
+// Global helper for formatting dollar amounts in tool contexts
+function fmt2(n){if(n>=1000000)return'$'+(n/1000000).toFixed(1)+'M';if(n>=1000)return'$'+Math.round(n/1000)+'K';return'$'+Math.round(n).toLocaleString()}
+
+var HW_SPECIALTY_EARNINGS={
+  'cardiology':{median:600000,lifetime25:18000000},'interventional cardiology':{median:750000,lifetime25:22000000},
+  'gastroenterology':{median:550000,lifetime25:16500000},'orthopedic surgery':{median:650000,lifetime25:19500000},
+  'dermatology':{median:500000,lifetime25:15000000},'radiology':{median:500000,lifetime25:15000000},
+  'anesthesiology':{median:450000,lifetime25:13500000},'emergency medicine':{median:380000,lifetime25:11400000},
+  'internal medicine':{median:300000,lifetime25:9000000},'family medicine':{median:275000,lifetime25:8250000},
+  'pediatrics':{median:280000,lifetime25:8400000},'psychiatry':{median:310000,lifetime25:9300000},
+  'neurology':{median:350000,lifetime25:10500000},'surgery':{median:500000,lifetime25:15000000},
+  'urology':{median:500000,lifetime25:15000000},'pulmonology':{median:440000,lifetime25:13200000},
+  'oncology':{median:480000,lifetime25:14400000},'nephrology':{median:380000,lifetime25:11400000},
+  'endocrinology':{median:300000,lifetime25:9000000},'rheumatology':{median:320000,lifetime25:9600000},
+  'infectious disease':{median:290000,lifetime25:8700000}
+};
 // ===== DECISION JOURNAL — CAREER CO-PILOT =====
 // 7 components: Decision Capture, Tripwire Alerts, Timeline View,
 // 6-Month Revisits, Pre-Decision Mode, Decision Patterns, Shared Decision Context

@@ -12186,6 +12186,7 @@ function renderCompIntelCard(){
   var stage=cp.stage||'student';
   var spec=cp.specialty||'';
   var comp=parseInt(String(cp.comp||'0').replace(/[^0-9]/g,''))||0;
+  var now=Date.now();
 
   // Initialize compIntel if needed
   if(!U.compIntel)U.compIntel={snapshots:[],alerts:[],contractDate:'',nextReview:'',region:'',practiceModel:''};

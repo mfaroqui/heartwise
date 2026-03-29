@@ -6529,6 +6529,54 @@ function hwPathway(position,actions,nextTool){
   h+='</div>';
   return h;
 }
+
+// ===== COLLAPSIBLE RESULTS SECTIONS =====
+var hwSecCounter=0;
+function hwSection(title,summary,content,open){
+  var id='hw-sec-'+(++hwSecCounter);
+  var h='<div class="hw-sec" style="margin-bottom:8px;border:1px solid var(--border);border-radius:10px;overflow:hidden">';
+  h+='<div onclick="hwToggleSec(\''+id+'\')" style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;cursor:pointer;background:var(--bg2);-webkit-tap-highlight-color:transparent;user-select:none">';
+  h+='<span style="font-size:12px;font-weight:600;color:var(--text)">'+title+'</span>';
+  h+='<div style="display:flex;align-items:center;gap:8px">';
+  if(summary)h+='<span style="font-size:11px;color:var(--accent);font-weight:500">'+summary+'</span>';
+  h+='<span id="'+id+'-arrow" style="font-size:9px;color:var(--text3);transition:transform .2s;display:inline-block;transform:rotate('+(open?'90':'0')+'deg)">\u25B6</span>';
+  h+='</div></div>';
+  h+='<div id="'+id+'" style="'+(open?'':'display:none;')+'padding:14px;border-top:1px solid var(--border)">';
+  h+=content;
+  h+='</div></div>';
+  return h;
+}
+function hwToggleSec(id){
+  var el=document.getElementById(id);
+  var arrow=document.getElementById(id+'-arrow');
+  if(!el)return;
+  if(el.style.display==='none'){
+    el.style.display='';
+    if(arrow)arrow.style.transform='rotate(90deg)';
+  }else{
+    el.style.display='none';
+    if(arrow)arrow.style.transform='rotate(0deg)';
+  }
+}
+function hwExpandAll(container){
+  var secs=container?container.querySelectorAll('.hw-sec'):document.querySelectorAll('.hw-sec');
+  secs.forEach(function(sec){
+    var body=sec.querySelector('[id^="hw-sec-"]:not([id$="-arrow"])');
+    var arrow=sec.querySelector('[id$="-arrow"]');
+    if(body&&body.style)body.style.display='';
+    if(arrow)arrow.style.transform='rotate(90deg)';
+  });
+}
+function hwCollapseAll(container){
+  var secs=container?container.querySelectorAll('.hw-sec'):document.querySelectorAll('.hw-sec');
+  secs.forEach(function(sec){
+    var body=sec.querySelector('[id^="hw-sec-"]:not([id$="-arrow"])');
+    var arrow=sec.querySelector('[id$="-arrow"]');
+    if(body&&body.style)body.style.display='none';
+    if(arrow)arrow.style.transform='rotate(0deg)';
+  });
+}
+
 // ===== TOPBAR SCROLL EFFECT =====
 (function(){
   const lp=document.getElementById('pg-landing');
@@ -11644,33 +11692,52 @@ function _mccRun(){
 
   var scoreColor=score>=85?'#6abf4b':score>=65?'#c8a87c':score>=50?'#e8a33c':'#ef4444';
 
-  // ===== RENDER OUTPUT =====
+  // ===== RENDER OUTPUT (Progressive Disclosure) =====
+  hwSecCounter=0; // reset section counter
   var h='';
-
-  // 1. Competitiveness Score
-  h+='<div style="text-align:center;padding:28px;background:var(--bg2);border:1px solid '+scoreColor+';border-radius:14px;margin-bottom:16px">';
-  h+='<div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:10px">'+(isFellowship?'Fellowship':'Residency')+' — '+sd.name+'</div>';
-  h+='<div style="position:relative;width:120px;height:120px;margin:0 auto 12px">';
-  h+='<svg viewBox="0 0 120 120" style="transform:rotate(-90deg)"><circle cx="60" cy="60" r="52" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="8"/><circle cx="60" cy="60" r="52" fill="none" stroke="'+scoreColor+'" stroke-width="8" stroke-dasharray="'+Math.round(score*3.27)+' 327" stroke-linecap="round"/></svg>';
-  h+='<div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center"><div style="font-size:36px;font-weight:700;color:'+scoreColor+';font-family:var(--font-serif)">'+score+'</div><div style="font-size:10px;color:var(--text3)">/ 100</div></div>';
-  h+='</div>';
-  h+='<div style="font-size:14px;font-weight:600;color:'+scoreColor+'">'+outlook+'</div>';
-  h+='<div style="display:flex;justify-content:center;gap:12px;margin-top:12px;font-size:9px;color:var(--text3)">';
-  h+='<span>85+ Highly Competitive</span><span>65–84 Competitive</span><span>50–64 Borderline</span><span>&lt;50 High Risk</span></div>';
-  h+='</div>';
-
-  // 2. Match Probability — now with percentages
-  h+='<div style="margin-bottom:16px;padding:16px;background:var(--bg2);border-radius:10px;border:1px solid var(--border)">';
-  h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">Estimated match probability</div>';
+  var sec=''; // temp var for building section content
   var probColorFn=function(p){return p>=70?'#6abf4b':p>=40?'#c8a87c':'#ef4444'};
-  h+='<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center;margin-bottom:10px">';
-  h+='<div style="padding:12px;background:var(--bg3);border-radius:8px"><div style="font-size:10px;color:var(--text3);margin-bottom:4px">Top-tier Programs</div><div style="font-size:20px;font-weight:700;color:'+probColorFn(topProb)+'">'+topProb+'%</div></div>';
-  h+='<div style="padding:12px;background:var(--bg3);border-radius:8px"><div style="font-size:10px;color:var(--text3);margin-bottom:4px">Mid-tier Programs</div><div style="font-size:20px;font-weight:700;color:'+probColorFn(midProb)+'">'+midProb+'%</div></div>';
-  h+='<div style="padding:12px;background:var(--bg3);border-radius:8px"><div style="font-size:10px;color:var(--text3);margin-bottom:4px">Community Programs</div><div style="font-size:20px;font-weight:700;color:'+probColorFn(commProb)+'">'+commProb+'%</div></div>';
+
+  // ───── HERO CARD (always visible) ─────
+  var sortedGaps=factors.slice().sort(function(a,b){return (a.pts/a.max)-(b.pts/b.max)});
+  var biggestGap=sortedGaps[0];
+  var heroAction=needle.sims.length>0?needle.sims[0].label:(biggestGap.name+' needs work');
+  h+='<div style="text-align:center;padding:24px 20px;background:var(--bg2);border:1px solid '+scoreColor+';border-radius:14px;margin-bottom:12px">';
+  h+='<div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:10px">'+(isFellowship?'Fellowship':'Residency')+' \u2014 '+sd.name+'</div>';
+  h+='<div style="position:relative;width:110px;height:110px;margin:0 auto 10px">';
+  h+='<svg viewBox="0 0 120 120" style="transform:rotate(-90deg)"><circle cx="60" cy="60" r="52" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="8"/><circle cx="60" cy="60" r="52" fill="none" stroke="'+scoreColor+'" stroke-width="8" stroke-dasharray="'+Math.round(score*3.27)+' 327" stroke-linecap="round"/></svg>';
+  h+='<div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center"><div style="font-size:34px;font-weight:700;color:'+scoreColor+';font-family:var(--font-serif)">'+score+'</div><div style="font-size:10px;color:var(--text3)">/ 100</div></div>';
   h+='</div>';
-  h+='<div style="text-align:center;padding:10px;background:var(--bg3);border-radius:8px"><div style="font-size:10px;color:var(--text3);margin-bottom:2px">Overall Match Likelihood</div><div style="font-size:24px;font-weight:700;color:'+probColorFn(matchProb)+'">'+matchProb+'%</div></div>';
-  h+='<div style="font-size:9px;color:var(--text3);margin-top:6px;text-align:center">Based on your profile vs. '+sd.positions+' positions / ~'+sd.applicants+' applicants nationally</div>';
-  // Match probability interpretation — High / Moderate / Low with WHY
+  h+='<div style="font-size:14px;font-weight:600;color:'+scoreColor+';margin-bottom:8px">'+outlook+'</div>';
+  // Quick stats row
+  h+='<div style="display:flex;justify-content:center;gap:16px;margin-bottom:10px">';
+  h+='<div><div style="font-size:18px;font-weight:700;color:'+probColorFn(matchProb)+'">'+matchProb+'%</div><div style="font-size:9px;color:var(--text3)">Match Odds</div></div>';
+  h+='<div style="width:1px;background:var(--border)"></div>';
+  h+='<div><div style="font-size:18px;font-weight:700;color:'+biggestGap.color+'">'+biggestGap.name.split(' ')[0]+'</div><div style="font-size:9px;color:var(--text3)">Biggest Gap</div></div>';
+  if(needle.sims.length>0){
+  h+='<div style="width:1px;background:var(--border)"></div>';
+  h+='<div><div style="font-size:18px;font-weight:700;color:#6abf4b">+'+needle.combined.delta+'</div><div style="font-size:9px;color:var(--text3)">Pts Possible</div></div>';
+  }
+  h+='</div>';
+  // #1 action callout
+  h+='<div style="padding:8px 12px;background:rgba(200,168,124,.08);border-radius:8px;font-size:11px;color:var(--text2)"><strong style="color:var(--accent)">#1 Action:</strong> '+heroAction+'</div>';
+  h+='</div>';
+
+  // Expand/Collapse all toggle
+  h+='<div style="display:flex;justify-content:flex-end;gap:12px;margin-bottom:6px;padding:0 2px">';
+  h+='<span onclick="hwExpandAll(this.closest(\'#mcc-results\'))" style="font-size:10px;color:var(--accent);cursor:pointer;opacity:.7">Expand all</span>';
+  h+='<span onclick="hwCollapseAll(this.closest(\'#mcc-results\'))" style="font-size:10px;color:var(--text3);cursor:pointer;opacity:.7">Collapse all</span>';
+  h+='</div>';
+
+  // ───── SECTION: Match Probability ─────
+  sec='';
+  sec+='<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center;margin-bottom:10px">';
+  sec+='<div style="padding:12px;background:var(--bg3);border-radius:8px"><div style="font-size:10px;color:var(--text3);margin-bottom:4px">Top-tier</div><div style="font-size:20px;font-weight:700;color:'+probColorFn(topProb)+'">'+topProb+'%</div></div>';
+  sec+='<div style="padding:12px;background:var(--bg3);border-radius:8px"><div style="font-size:10px;color:var(--text3);margin-bottom:4px">Mid-tier</div><div style="font-size:20px;font-weight:700;color:'+probColorFn(midProb)+'">'+midProb+'%</div></div>';
+  sec+='<div style="padding:12px;background:var(--bg3);border-radius:8px"><div style="font-size:10px;color:var(--text3);margin-bottom:4px">Community</div><div style="font-size:20px;font-weight:700;color:'+probColorFn(commProb)+'">'+commProb+'%</div></div>';
+  sec+='</div>';
+  sec+='<div style="text-align:center;padding:10px;background:var(--bg3);border-radius:8px"><div style="font-size:10px;color:var(--text3);margin-bottom:2px">Overall Match Likelihood</div><div style="font-size:24px;font-weight:700;color:'+probColorFn(matchProb)+'">'+matchProb+'%</div></div>';
+  sec+='<div style="font-size:9px;color:var(--text3);margin-top:6px;text-align:center">Based on your profile vs. '+sd.positions+' positions / ~'+sd.applicants+' applicants nationally</div>';
   var probLevel=matchProb>=75?'HIGH':matchProb>=50?'MODERATE':'LOW';
   var probColor2=matchProb>=75?'#6abf4b':matchProb>=50?'#c8a87c':'#ef4444';
   var probExplain='';
@@ -11682,242 +11749,208 @@ function _mccRun(){
     var criticalGaps=[];factors.forEach(function(f){if(f.pts<f.max*0.33)criticalGaps.push(f.name)});
     probExplain='Honest assessment: you have critical gaps'+(criticalGaps.length?' in '+criticalGaps.join(' and '):'')+' that make matching unlikely without major improvements. This is fixable, but it requires immediate action \u2014 not next month, this week.';
   }
-  h+='<div style="margin-top:10px;padding:12px;background:rgba('+(matchProb>=75?'106,191,75':matchProb>=50?'200,168,124':'239,68,68')+',.06);border-radius:8px;border:1px solid rgba('+(matchProb>=75?'106,191,75':matchProb>=50?'200,168,124':'239,68,68')+',.12)">';
-  h+='<div style="font-size:12px;font-weight:700;color:'+probColor2+';margin-bottom:4px">'+probLevel+' PROBABILITY \u2014 '+matchProb+'%</div>';
-  h+='<div style="font-size:11px;color:var(--text2);line-height:1.6">'+probExplain+'</div>';
-  h+='</div>';
-  h+='</div>';
+  sec+='<div style="margin-top:10px;padding:12px;background:rgba('+(matchProb>=75?'106,191,75':matchProb>=50?'200,168,124':'239,68,68')+',.06);border-radius:8px;border:1px solid rgba('+(matchProb>=75?'106,191,75':matchProb>=50?'200,168,124':'239,68,68')+',.12)">';
+  sec+='<div style="font-size:12px;font-weight:700;color:'+probColor2+';margin-bottom:4px">'+probLevel+' PROBABILITY \u2014 '+matchProb+'%</div>';
+  sec+='<div style="font-size:11px;color:var(--text2);line-height:1.6">'+probExplain+'</div>';
+  sec+='</div>';
+  h+=hwSection('Match Probability',matchProb+'% overall',sec,false);
 
-  // 2b. Fellowship-specific: top programs + key success factors
+  // ───── SECTION: Top Programs (fellowship only) ─────
   if(isFellowship&&sd.topPrograms){
-    h+='<div style="margin-bottom:16px;padding:16px;background:var(--bg2);border-radius:10px;border:1px solid var(--border)">';
-    h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">Top '+sd.name+' Programs</div>';
-    h+='<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px">';
+    sec='';
+    sec+='<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px">';
     sd.topPrograms.forEach(function(p,i){
-      h+='<span style="font-size:11px;padding:4px 10px;background:var(--bg3);border-radius:6px;color:'+(i<3?'var(--accent)':'var(--text2)')+'">'+p+'</span>';
+      sec+='<span style="font-size:11px;padding:4px 10px;background:var(--bg3);border-radius:6px;color:'+(i<3?'var(--accent)':'var(--text2)')+'">'+p+'</span>';
     });
-    h+='</div>';
-    h+='<div style="font-size:11px;color:var(--text2);line-height:1.6"><strong style="color:var(--accent)">What top programs look for:</strong> '+sd.keyFactors+'</div>';
+    sec+='</div>';
+    sec+='<div style="font-size:11px;color:var(--text2);line-height:1.6"><strong style="color:var(--accent)">What top programs look for:</strong> '+sd.keyFactors+'</div>';
     if(sd.erasMonth){
-      h+='<div style="margin-top:10px;padding:10px;background:var(--bg3);border-radius:6px">';
-      h+='<div style="font-size:10px;font-weight:600;color:var(--accent);margin-bottom:6px">📅 Application Timeline</div>';
-      h+='<div style="font-size:11px;color:var(--text2);line-height:1.8">';
-      h+='ERAS Opens: <strong>'+sd.erasMonth+'</strong><br>';
-      h+='Submit Applications: <strong>'+sd.submitMonth+'</strong><br>';
-      h+='Interview Season: <strong>'+sd.interviewSeason+'</strong><br>';
-      h+='Match Day: <strong>'+sd.matchDay+'</strong>';
-      h+='</div></div>';
+      sec+='<div style="margin-top:10px;padding:10px;background:var(--bg3);border-radius:6px">';
+      sec+='<div style="font-size:10px;font-weight:600;color:var(--accent);margin-bottom:6px">\ud83d\udcc5 Application Timeline</div>';
+      sec+='<div style="font-size:11px;color:var(--text2);line-height:1.8">';
+      sec+='ERAS Opens: <strong>'+sd.erasMonth+'</strong><br>';
+      sec+='Submit Applications: <strong>'+sd.submitMonth+'</strong><br>';
+      sec+='Interview Season: <strong>'+sd.interviewSeason+'</strong><br>';
+      sec+='Match Day: <strong>'+sd.matchDay+'</strong>';
+      sec+='</div></div>';
     }
-    h+='</div>';
+    h+=hwSection('Top '+sd.name+' Programs',sd.topPrograms.length+' programs',sec,false);
   }
 
-  // 3. Factor Breakdown
-  h+='<div style="margin-bottom:16px;padding:16px;background:var(--bg2);border-radius:10px;border:1px solid var(--border)">';
-  h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">Factor breakdown</div>';
+  // ───── SECTION: Factor Breakdown ─────
+  sec='';
   factors.forEach(function(f){
     var pct=Math.round(f.pts/f.max*100);
-    h+='<div style="margin-bottom:10px">';
-    h+='<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span style="color:var(--text)">'+f.name+'</span><span style="color:'+f.color+';font-weight:600">'+f.pts+' / '+f.max+'</span></div>';
-    h+='<div style="height:6px;background:rgba(255,255,255,.06);border-radius:3px;overflow:hidden"><div style="height:100%;width:'+pct+'%;background:'+f.color+';border-radius:3px"></div></div>';
-    h+='<div style="font-size:10px;color:var(--text3);margin-top:2px">'+f.value+(f.benchmark?' — specialty avg: '+f.benchmark:'')+'</div>';
-    h+='</div>';
+    sec+='<div style="margin-bottom:10px">';
+    sec+='<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span style="color:var(--text)">'+f.name+'</span><span style="color:'+f.color+';font-weight:600">'+f.pts+' / '+f.max+'</span></div>';
+    sec+='<div style="height:6px;background:rgba(255,255,255,.06);border-radius:3px;overflow:hidden"><div style="height:100%;width:'+pct+'%;background:'+f.color+';border-radius:3px"></div></div>';
+    sec+='<div style="font-size:10px;color:var(--text3);margin-top:2px">'+f.value+(f.benchmark?' \u2014 specialty avg: '+f.benchmark:'')+'</div>';
+    sec+='</div>';
   });
-  h+='</div>';
+  h+=hwSection('Factor Breakdown',score+'/100',sec,true);
 
-  // 4. Benchmark Comparison
-  h+='<div style="margin-bottom:16px;padding:16px;background:var(--bg2);border-radius:10px;border:1px solid var(--border)">';
-  h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">'+(isFellowship?'Fellowship':'NRMP')+' Benchmark — '+sd.name+'</div>';
-  h+='<div style="font-size:10px;color:var(--text3);margin-bottom:10px">Average matched applicant profile'+(isFellowship?' (NRMP Specialty Match data)':' (NRMP Charting Outcomes)')+'</div>';
+  // ───── SECTION: Benchmark Comparison ─────
+  sec='';
+  sec+='<div style="font-size:10px;color:var(--text3);margin-bottom:10px">Average matched applicant profile'+(isFellowship?' (NRMP Specialty Match data)':' (NRMP Charting Outcomes)')+'</div>';
   var benchmarks=[
     {label:isFellowship?(step3>0?'Board Score (blended)':'Step 2 CK'):'Step 2 CK',yours:isFellowship&&step3>0?boardScore:step2,avg:sd.avgStep,unit:''},
     {label:'Research Experiences',yours:pubLabels[pubs],avg:sd.avgPubs,unit:''},
     {label:'Overall Match Rate',yours:score>=65?'Above avg':'Below avg',avg:sd.matchRate+'%',unit:''},
-    {label:'Programs Applied',yours:programs||'—',avg:sd.recPrograms+' rec.',unit:''}
+    {label:'Programs Applied',yours:programs||'\u2014',avg:sd.recPrograms+' rec.',unit:''}
   ];
-  if(isFellowship)benchmarks.push({label:'Positions Available',yours:'—',avg:sd.positions,unit:''});
+  if(isFellowship)benchmarks.push({label:'Positions Available',yours:'\u2014',avg:sd.positions,unit:''});
   benchmarks.forEach(function(b){
     var yourVal=typeof b.yours==='number'?b.yours:b.yours;
     var diff=typeof b.yours==='number'&&typeof b.avg==='number'?b.yours-b.avg:null;
     var dColor=diff===null?'var(--text3)':diff>=0?'#6abf4b':'#ef4444';
-    h+='<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px">';
-    h+='<span style="color:var(--text3)">'+b.label+'</span>';
-    h+='<span><span style="color:var(--text);font-weight:500">'+yourVal+'</span> <span style="color:var(--text3)">vs</span> <span style="color:'+dColor+';font-weight:500">'+b.avg+'</span></span>';
-    h+='</div>';
+    sec+='<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px">';
+    sec+='<span style="color:var(--text3)">'+b.label+'</span>';
+    sec+='<span><span style="color:var(--text);font-weight:500">'+yourVal+'</span> <span style="color:var(--text3)">vs</span> <span style="color:'+dColor+';font-weight:500">'+b.avg+'</span></span>';
+    sec+='</div>';
   });
-  h+='</div>';
+  h+=hwSection((isFellowship?'Fellowship':'NRMP')+' Benchmark \u2014 '+sd.name,'',sec,false);
 
-  // 5. Pre-ERAS Strategic Action Plan
-  h+='<div style="margin-bottom:16px;padding:16px;background:var(--bg2);border-radius:10px;border-left:3px solid var(--accent)">';
-  h+='<div style="font-size:11px;font-weight:600;color:var(--accent);margin-bottom:4px">📋 Pre-ERAS Strategic Action Plan</div>';
-  h+='<div style="font-size:10px;color:var(--text3);margin-bottom:12px">Key steps to maximize your application before submission</div>';
-
-  var timeline=[];
-  // Phase 1: 12-6 months out
+  // ───── SECTION: Pre-ERAS Action Plan ─────
+  sec='';
   var phase1=[];
-  if(pubs<=2)phase1.push({task:'Start 1-2 targeted research projects in '+sd.name,detail:'Focus on case reports or retrospective studies — fastest to publish',priority:'high'});
+  if(pubs<=2)phase1.push({task:'Start 1-2 targeted research projects in '+sd.name,detail:'Focus on case reports or retrospective studies \u2014 fastest to publish',priority:'high'});
   if(pubs<=1&&(sd.compLevel==='high'||sd.compLevel==='very_high'))phase1.push({task:'Secure a research mentor in '+sd.name,detail:'Reach out to faculty with active research. Offer to help with data collection on existing projects',priority:'high'});
   if(lors!=='notable'&&lors!=='strong')phase1.push({task:'Identify and cultivate relationships with LOR writers',detail:'You need 3-4 strong letters. Start working with faculty who can speak to your clinical skill and dedication',priority:'high'});
   if(!isFellowship&&aoa!=='aoa'&&aoa!=='honors'&&sd.compLevel==='very_high')phase1.push({task:'Maximize remaining clerkship performance',detail:'Honors in '+sd.name+'-related rotations carry significant weight',priority:'high'});
   if(isFellowship)phase1.push({task:'Discuss fellowship plans with your PD early',detail:'Your program director\'s support and letter are often the most important factor in fellowship match',priority:'high'});
   phase1.push({task:'Build a specialty-specific CV',detail:'Tailor your CV to highlight '+sd.name+' experiences, research, and clinical rotations',priority:'medium'});
-
-  // Phase 2: 6-3 months out
   var phase2=[];
-  if(aways<1&&(sd.compLevel==='high'||sd.compLevel==='very_high'))phase2.push({task:'Apply for away rotations at 2-3 target programs',detail:'Away rotations are your best chance to get noticed. Apply early — spots fill fast',priority:'high'});
-  phase2.push({task:'Draft personal statement — start early',detail:'Get feedback from 3+ people. Your PS should explain WHY this specialty and what drives you',priority:'high'});
+  if(aways<1&&(sd.compLevel==='high'||sd.compLevel==='very_high'))phase2.push({task:'Apply for away rotations at 2-3 target programs',detail:'Away rotations are your best chance to get noticed. Apply early \u2014 spots fill fast',priority:'high'});
+  phase2.push({task:'Draft personal statement \u2014 start early',detail:'Get feedback from 3+ people. Your PS should explain WHY this specialty and what drives you',priority:'high'});
   if(pubs<=2)phase2.push({task:'Submit abstracts to national conferences',detail:'Even poster presentations show scholarly activity. Target specialty-specific conferences',priority:'medium'});
   if(isFellowship)phase2.push({task:'Attend national specialty conferences',detail:'Networking at conferences can lead to interview invitations and visibility with fellowship directors',priority:'medium'});
-
-  // Phase 3: 3-0 months out (pre-ERAS)
   var phase3=[];
-  phase3.push({task:'Finalize your program list — research each program',detail:'Apply to '+sd.recPrograms+'+ programs. Know each program\'s strengths, case volume, and faculty',priority:'high'});
+  phase3.push({task:'Finalize your program list \u2014 research each program',detail:'Apply to '+sd.recPrograms+'+ programs. Know each program\'s strengths, case volume, and faculty',priority:'high'});
   phase3.push({task:'Request all letters of recommendation',detail:'Give writers 4-6 weeks minimum. Provide your CV, PS draft, and specific program info',priority:'high'});
-  phase3.push({task:'ERAS application — submit on Day 1',detail:'First-day submission signals commitment. Have everything ready before ERAS opens',priority:'high'});
+  phase3.push({task:'ERAS application \u2014 submit on Day 1',detail:'First-day submission signals commitment. Have everything ready before ERAS opens',priority:'high'});
   if(isFellowship)phase3.push({task:'Update fellowship-specific CV with procedure logs',detail:'Include specific case numbers, procedures performed, and clinical volumes',priority:'medium'});
-  phase3.push({task:'Prepare for interviews — mock practice',detail:'Start mock interviews early. Know your application inside out. Prepare 3-5 questions for each program',priority:'medium'});
-
-  // Render timeline
-  var phases=[{title:'12–6 Months Before ERAS',items:phase1,icon:'🔴'},{title:'6–3 Months Before ERAS',items:phase2,icon:'🟡'},{title:'3–0 Months Before Submission',items:phase3,icon:'🟢'}];
+  phase3.push({task:'Prepare for interviews \u2014 mock practice',detail:'Start mock interviews early. Know your application inside out. Prepare 3-5 questions for each program',priority:'medium'});
+  var phases=[{title:'12\u20136 Months Before ERAS',items:phase1,icon:'\ud83d\udd34'},{title:'6\u20133 Months Before ERAS',items:phase2,icon:'\ud83d\udfe1'},{title:'3\u20130 Months Before Submission',items:phase3,icon:'\ud83d\udfe2'}];
+  var totalTasks=0;
   phases.forEach(function(p){
     if(p.items.length===0)return;
-    h+='<div style="margin-bottom:14px">';
-    h+='<div style="font-size:11px;font-weight:600;color:var(--text);margin-bottom:8px">'+p.icon+' '+p.title+'</div>';
+    totalTasks+=p.items.length;
+    sec+='<div style="margin-bottom:14px">';
+    sec+='<div style="font-size:11px;font-weight:600;color:var(--text);margin-bottom:8px">'+p.icon+' '+p.title+'</div>';
     p.items.forEach(function(item){
       var priColor=item.priority==='high'?'#ef4444':'#c8a87c';
-      h+='<div style="padding:8px 10px;margin-bottom:4px;background:var(--bg3);border-radius:6px;border-left:3px solid '+priColor+'">';
-      h+='<div style="font-size:12px;font-weight:600;color:var(--text)">'+item.task+'</div>';
-      h+='<div style="font-size:10px;color:var(--text3);margin-top:2px">'+item.detail+'</div>';
-      h+='</div>';
+      sec+='<div style="padding:8px 10px;margin-bottom:4px;background:var(--bg3);border-radius:6px;border-left:3px solid '+priColor+'">';
+      sec+='<div style="font-size:12px;font-weight:600;color:var(--text)">'+item.task+'</div>';
+      sec+='<div style="font-size:10px;color:var(--text3);margin-top:2px">'+item.detail+'</div>';
+      sec+='</div>';
     });
-    h+='</div>';
+    sec+='</div>';
   });
-  h+='</div>';
+  h+=hwSection('Pre-ERAS Action Plan',totalTasks+' steps',sec,false);
 
-  // 6. LOR Strategy — How to Secure Letters from Subspecialty Leaders
-  h+='<div style="margin-bottom:16px;padding:16px;background:linear-gradient(160deg,rgba(198,168,94,.06),rgba(200,168,124,.01));border:1px solid rgba(198,168,94,.15);border-radius:10px">';
-  h+='<div style="font-size:11px;font-weight:600;color:var(--accent);margin-bottom:4px">✉️ How to Secure Strong Letters from Subspecialty Leaders</div>';
-  h+='<div style="font-size:10px;color:var(--text3);margin-bottom:12px">Letters from recognized leaders can transform a borderline application into a competitive one</div>';
-
+  // ───── SECTION: LOR Strategy ─────
+  sec='';
+  sec+='<div style="font-size:10px;color:var(--text3);margin-bottom:12px">Letters from recognized leaders can transform a borderline application into a competitive one</div>';
   var lorStrats=[];
-  lorStrats.push({step:'Start Early — Build the Relationship',detail:'Identify 2-3 faculty leaders in '+sd.name+' at least 6 months before ERAS. Attend their lectures, participate in their clinics, and show genuine intellectual curiosity. The best LORs come from attendings who have worked with you directly.',icon:'👋'});
-  lorStrats.push({step:'Contribute to Their Research',detail:'Ask to help with an ongoing project — even chart reviews or data entry. Co-authoring a paper or abstract with a nationally known faculty member creates a strong bond AND adds to your CV simultaneously.',icon:'🔬'});
-  lorStrats.push({step:'Be the Resident/Student They Remember',detail:'Read before cases. Follow up on patients. Ask thoughtful questions. Send brief updates on interesting outcomes. The small things — punctuality, preparation, follow-through — separate you from the crowd.',icon:'⭐'});
-  lorStrats.push({step:'The Ask: Be Specific and Make It Easy',detail:'When requesting the letter, provide: (1) your updated CV, (2) personal statement draft, (3) a bullet list of shared experiences they can reference, (4) your program list with deadlines. Ask: "Would you be able to write me a strong letter?" — this gives them an out if they can\'t.',icon:'📝'});
-  if(isFellowship)lorStrats.push({step:'Program Director Letter is Critical',detail:'For fellowship applications, your residency PD\'s letter often carries the most weight. Meet with your PD early to discuss fellowship plans. Share your goals, timeline, and the specific programs you\'re targeting.',icon:'🎯'});
-  lorStrats.push({step:'Follow Up and Thank',detail:'Send a reminder 3 weeks before the deadline. After match, send a personal thank-you note regardless of outcome. These relationships last your entire career.',icon:'🙏'});
-
+  lorStrats.push({step:'Start Early \u2014 Build the Relationship',detail:'Identify 2-3 faculty leaders in '+sd.name+' at least 6 months before ERAS. Attend their lectures, participate in their clinics, and show genuine intellectual curiosity.',icon:'\ud83d\udc4b'});
+  lorStrats.push({step:'Contribute to Their Research',detail:'Ask to help with an ongoing project \u2014 even chart reviews or data entry. Co-authoring with a nationally known faculty member creates a strong bond AND adds to your CV.',icon:'\ud83d\udd2c'});
+  lorStrats.push({step:'Be the Resident/Student They Remember',detail:'Read before cases. Follow up on patients. Ask thoughtful questions. The small things \u2014 punctuality, preparation, follow-through \u2014 separate you from the crowd.',icon:'\u2b50'});
+  lorStrats.push({step:'The Ask: Be Specific and Make It Easy',detail:'Provide: (1) your updated CV, (2) personal statement draft, (3) a bullet list of shared experiences, (4) your program list with deadlines. Ask: "Would you be able to write me a strong letter?"',icon:'\ud83d\udcdd'});
+  if(isFellowship)lorStrats.push({step:'Program Director Letter is Critical',detail:'For fellowship applications, your residency PD\'s letter often carries the most weight. Meet with your PD early to discuss fellowship plans.',icon:'\ud83c\udfaf'});
+  lorStrats.push({step:'Follow Up and Thank',detail:'Send a reminder 3 weeks before the deadline. After match, send a personal thank-you note regardless of outcome.',icon:'\ud83d\ude4f'});
   lorStrats.forEach(function(s){
-    h+='<div style="display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)">';
-    h+='<span style="font-size:16px;flex-shrink:0;margin-top:2px">'+s.icon+'</span>';
-    h+='<div><div style="font-size:12px;font-weight:600;color:var(--text)">'+s.step+'</div>';
-    h+='<div style="font-size:10px;color:var(--text3);margin-top:2px;line-height:1.5">'+s.detail+'</div></div>';
-    h+='</div>';
+    sec+='<div style="display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)">';
+    sec+='<span style="font-size:16px;flex-shrink:0;margin-top:2px">'+s.icon+'</span>';
+    sec+='<div><div style="font-size:12px;font-weight:600;color:var(--text)">'+s.step+'</div>';
+    sec+='<div style="font-size:10px;color:var(--text3);margin-top:2px;line-height:1.5">'+s.detail+'</div></div>';
+    sec+='</div>';
   });
-  h+='</div>';
+  h+=hwSection('LOR Strategy',lorStrats.length+' steps',sec,false);
 
-  // 7. Strategy Recommendations (context-aware)
-  h+='<div style="margin-bottom:16px;padding:16px;background:var(--bg2);border-radius:10px;border-left:3px solid var(--accent)">';
-  h+='<div style="font-size:11px;font-weight:600;color:var(--accent);margin-bottom:10px">🎯 Personalized Strategy Recommendations</div>';
-  h+='<ul style="font-size:12px;color:var(--text2);line-height:2;padding-left:16px;margin:0">';
+  // ───── SECTION: Strategy Recommendations ─────
+  sec='';
   var recs=[];
   if(stepDiff<-10)recs.push('<strong>Board Score Gap:</strong> Your score is '+Math.abs(stepDiff)+' points below the specialty average. Consider focused board prep or explore specialties where your score is more competitive');
-  else if(stepDiff<0)recs.push('<strong>Board Score:</strong> Slightly below average — still competitive, but improving by even 5 points can shift your profile significantly');
+  else if(stepDiff<0)recs.push('<strong>Board Score:</strong> Slightly below average \u2014 still competitive, but improving by even 5 points can shift your profile significantly');
   if(pubs<=1&&(sd.compLevel==='high'||sd.compLevel==='very_high'))recs.push('<strong>Research is a Critical Gap:</strong> Aim for '+Math.max(5,sd.avgPubs)+' publications for '+sd.name+'. Start with case reports (fastest turnaround), then target retrospective studies');
-  else if(pubs<=1)recs.push('<strong>Research:</strong> 2-3 publications will strengthen your application. Consider quality improvement projects — they count and are faster than bench research');
+  else if(pubs<=1)recs.push('<strong>Research:</strong> 2-3 publications will strengthen your application. Consider quality improvement projects \u2014 they count and are faster than bench research');
   if(isFellowship&&felProgramRep==='community')recs.push('<strong>Residency Background:</strong> Community program applicants should focus extra on research output and away rotations to demonstrate academic commitment');
   if(isFellowship&&felFirstAuthor<1&&sd.compLevel!=='low')recs.push('<strong>First-Author Papers:</strong> Fellowship programs weigh first-author publications heavily. Even one first-author paper in '+sd.name+' significantly strengthens your application');
-  if(aways<1&&(sd.compLevel==='high'||sd.compLevel==='very_high'))recs.push('<strong>Away Rotations:</strong> Complete 1-2 rotations at your top-choice programs. This is how '+sd.name+' programs get to know you — it\'s essentially a month-long interview');
+  if(aways<1&&(sd.compLevel==='high'||sd.compLevel==='very_high'))recs.push('<strong>Away Rotations:</strong> Complete 1-2 rotations at your top-choice programs. This is how '+sd.name+' programs get to know you \u2014 it\'s essentially a month-long interview');
   else if(aways<1)recs.push('<strong>Away Rotations:</strong> Consider at least 1 away rotation at a top-choice program to demonstrate interest and build connections');
-  if(programs<sd.recPrograms)recs.push('<strong>Program List:</strong> Apply to at least '+sd.recPrograms+' programs. You currently plan '+programs+' — casting a wider net is especially important for competitive specialties');
+  if(programs<sd.recPrograms)recs.push('<strong>Program List:</strong> Apply to at least '+sd.recPrograms+' programs. You currently plan '+programs+' \u2014 casting a wider net is especially important for competitive specialties');
   if(bg==='nonusimg'||bg==='usimg')recs.push('<strong>IMG Strategy:</strong> Focus on strong board scores, US clinical experience, and research as key differentiators. Target IMG-friendly programs while still applying broadly');
-  if(lors!=='notable'&&lors!=='strong'&&(sd.compLevel==='high'||sd.compLevel==='very_high'))recs.push('<strong>Letters of Recommendation:</strong> For '+sd.name+', letters from nationally recognized faculty can make or break your application. See the LOR strategy section above');
+  if(lors!=='notable'&&lors!=='strong'&&(sd.compLevel==='high'||sd.compLevel==='very_high'))recs.push('<strong>Letters of Recommendation:</strong> For '+sd.name+', letters from nationally recognized faculty can make or break your application');
   if(!isFellowship&&aoa!=='aoa'&&aoa!=='honors'&&sd.compLevel==='very_high')recs.push('<strong>Clerkship Performance:</strong> AOA or multiple Honors are common among matched applicants in '+sd.name+'. Maximize your remaining clinical rotations');
-  if(leadership!=='significant')recs.push('<strong>Leadership:</strong> Add meaningful leadership — chief resident, QI project lead, committee chair, or national organization role');
+  if(leadership!=='significant')recs.push('<strong>Leadership:</strong> Add meaningful leadership \u2014 chief resident, QI project lead, committee chair, or national organization role');
   if(score>=85)recs.push('<strong>Strong Position:</strong> Focus your energy on interview preparation, thoughtful rank list strategy, and program-specific fit');
   if(isFellowship&&sd.compLevel==='very_high')recs.push('<strong>Networking:</strong> Attend the national '+sd.name+' conference. Introduce yourself to fellowship directors. Follow up with a brief email after meeting them');
-  if(recs.length===0)recs.push('Solid application overall — focus on interview performance and personal statement quality');
-  recs.forEach(function(r){h+='<li>'+r+'</li>'});
-  h+='</ul></div>';
+  if(recs.length===0)recs.push('Solid application overall \u2014 focus on interview performance and personal statement quality');
+  sec+='<ul style="font-size:12px;color:var(--text2);line-height:2;padding-left:16px;margin:0">';
+  recs.forEach(function(r){sec+='<li>'+r+'</li>'});
+  sec+='</ul>';
+  h+=hwSection('Strategy Recommendations',recs.length+' items',sec,false);
 
-  // 8. WHAT MOVES YOUR NEEDLE — ROI-ranked improvement simulator
+  // ───── SECTION: What Moves Your Needle (DEFAULT OPEN) ─────
   if(needle.sims.length>0){
-  h+='<div style="margin-bottom:16px;padding:20px;background:linear-gradient(160deg,rgba(198,168,94,.06),rgba(200,168,124,.02));border:1px solid rgba(198,168,94,.2);border-radius:12px">';
-  h+='<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px"><span style="font-size:18px">\ud83c\udfaf</span><div style="font-size:13px;font-weight:700;color:var(--accent);letter-spacing:.3px">What Moves Your Needle</div></div>';
-  h+='<div style="font-size:11px;color:var(--text3);margin-bottom:16px">Ranked by points gained per month of effort. Focus on #1 first.</div>';
+  sec='';
+  sec+='<div style="font-size:11px;color:var(--text3);margin-bottom:16px">Ranked by points gained per month of effort. Focus on #1 first.</div>';
 
   // Individual simulations
   needle.sims.forEach(function(sim,i){
     var isTop=i===0;
     var barPct=Math.min(100,Math.round(sim.delta/needle.sims[0].delta*100));
     var tag=i===0?'BEST ROI':sim.delta>=needle.sims[0].delta?'MOST POINTS':'';
-    // Find quickest win
     if(i>0&&sim.timeMonths<=needle.sims[0].timeMonths&&sim.delta>0)tag='QUICK WIN';
-    if(i===0){
-      // Check if another sim has more points
-      for(var j=1;j<needle.sims.length;j++){if(needle.sims[j].delta>sim.delta){tag='BEST ROI';break}}
-    }
+    if(i===0){for(var j=1;j<needle.sims.length;j++){if(needle.sims[j].delta>sim.delta){tag='BEST ROI';break}}}
 
-    h+='<div style="padding:12px;margin-bottom:8px;background:var(--bg2);border-radius:8px;border-left:3px solid '+(isTop?'var(--accent)':'rgba(200,168,124,.3)')+'">';
-
-    // Header row: rank + label + delta
-    h+='<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">';
-    h+='<div style="display:flex;align-items:center;gap:8px;flex:1;min-width:0">';
-    h+='<span style="font-size:14px;font-weight:700;color:'+(isTop?'var(--accent)':'var(--text3)')+';flex-shrink:0">#'+(i+1)+'</span>';
-    h+='<span style="font-size:12px;font-weight:600;color:var(--text);line-height:1.3">'+sim.label+'</span>';
-    h+='</div>';
-    h+='<div style="text-align:right;flex-shrink:0;margin-left:8px">';
-    h+='<div style="font-size:16px;font-weight:700;color:#6abf4b">+'+sim.delta+'</div>';
-    h+='<div style="font-size:9px;color:var(--text3)">points</div>';
-    h+='</div></div>';
-
-    // Progress bar
-    h+='<div style="height:4px;background:rgba(255,255,255,.06);border-radius:2px;margin-bottom:8px;overflow:hidden"><div style="height:100%;width:'+barPct+'%;background:linear-gradient(90deg,var(--accent),#6abf4b);border-radius:2px"></div></div>';
-
-    // Score + Match prob + ROI + Effort row
-    h+='<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px">';
-    h+='<span style="font-size:10px;padding:3px 8px;background:var(--bg3);border-radius:4px;color:var(--text2)">Score: '+score+' \u2192 <strong>'+sim.newScore+'</strong></span>';
-    if(sim.matchDelta>0)h+='<span style="font-size:10px;padding:3px 8px;background:rgba(106,191,75,.08);border-radius:4px;color:#6abf4b">Match: '+matchProb+'% \u2192 <strong>'+sim.newMatchProb+'%</strong> (+'+sim.matchDelta+'%)</span>';
-    h+='<span style="font-size:10px;padding:3px 8px;background:var(--bg3);border-radius:4px;color:var(--text3)">\u23f1 '+sim.effort+'</span>';
-    h+='<span style="font-size:10px;padding:3px 8px;background:var(--bg3);border-radius:4px;color:var(--text3)">ROI: '+sim.roi+' pts/mo</span>';
-    if(tag)h+='<span style="font-size:9px;padding:3px 8px;background:rgba(198,168,94,.12);border-radius:4px;color:var(--accent);font-weight:700;letter-spacing:.5px">'+tag+'</span>';
-    h+='</div>';
-
-    // Actionable step
-    h+='<div style="font-size:11px;color:var(--text3);line-height:1.4;padding-left:22px;border-left:2px solid rgba(200,168,124,.15)">'+sim.action+'</div>';
-    h+='</div>';
+    sec+='<div style="padding:12px;margin-bottom:8px;background:var(--bg3);border-radius:8px;border-left:3px solid '+(isTop?'var(--accent)':'rgba(200,168,124,.3)')+'">';
+    sec+='<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">';
+    sec+='<div style="display:flex;align-items:center;gap:8px;flex:1;min-width:0">';
+    sec+='<span style="font-size:14px;font-weight:700;color:'+(isTop?'var(--accent)':'var(--text3)')+';flex-shrink:0">#'+(i+1)+'</span>';
+    sec+='<span style="font-size:12px;font-weight:600;color:var(--text);line-height:1.3">'+sim.label+'</span>';
+    sec+='</div>';
+    sec+='<div style="text-align:right;flex-shrink:0;margin-left:8px">';
+    sec+='<div style="font-size:16px;font-weight:700;color:#6abf4b">+'+sim.delta+'</div>';
+    sec+='<div style="font-size:9px;color:var(--text3)">points</div>';
+    sec+='</div></div>';
+    sec+='<div style="height:4px;background:rgba(255,255,255,.06);border-radius:2px;margin-bottom:8px;overflow:hidden"><div style="height:100%;width:'+barPct+'%;background:linear-gradient(90deg,var(--accent),#6abf4b);border-radius:2px"></div></div>';
+    sec+='<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px">';
+    sec+='<span style="font-size:10px;padding:3px 8px;background:var(--bg2);border-radius:4px;color:var(--text2)">Score: '+score+' \u2192 <strong>'+sim.newScore+'</strong></span>';
+    if(sim.matchDelta>0)sec+='<span style="font-size:10px;padding:3px 8px;background:rgba(106,191,75,.08);border-radius:4px;color:#6abf4b">Match: '+matchProb+'% \u2192 <strong>'+sim.newMatchProb+'%</strong> (+'+sim.matchDelta+'%)</span>';
+    sec+='<span style="font-size:10px;padding:3px 8px;background:var(--bg2);border-radius:4px;color:var(--text3)">\u23f1 '+sim.effort+'</span>';
+    sec+='<span style="font-size:10px;padding:3px 8px;background:var(--bg2);border-radius:4px;color:var(--text3)">ROI: '+sim.roi+' pts/mo</span>';
+    if(tag)sec+='<span style="font-size:9px;padding:3px 8px;background:rgba(198,168,94,.12);border-radius:4px;color:var(--accent);font-weight:700;letter-spacing:.5px">'+tag+'</span>';
+    sec+='</div>';
+    sec+='<div style="font-size:11px;color:var(--text3);line-height:1.4;padding-left:22px;border-left:2px solid rgba(200,168,124,.15)">'+sim.action+'</div>';
+    sec+='</div>';
   });
 
-  // Combined projection — if you do the top actions together
+  // Combined projection
   if(needle.combined.delta>0&&needle.sims.length>=2){
     var comb=needle.combined;
     var combColor=comb.score>=85?'#6abf4b':comb.score>=65?'#c8a87c':'#e8a33c';
-    h+='<div style="margin-top:12px;padding:14px;background:rgba(106,191,75,.06);border:1px solid rgba(106,191,75,.15);border-radius:10px">';
-    h+='<div style="font-size:11px;font-weight:700;color:#6abf4b;text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px">\u26a1 Combined Projection \u2014 Do the Top '+(comb.actions.length)+' Together</div>';
-
-    h+='<div style="display:flex;gap:8px;flex-wrap:wrap;text-align:center;margin-bottom:10px">';
-    h+='<div style="flex:1;min-width:80px;padding:10px;background:var(--bg2);border-radius:8px"><div style="font-size:9px;color:var(--text3);margin-bottom:2px">Score</div><div style="font-size:11px;color:var(--text3)">'+score+'</div><div style="font-size:16px;font-weight:700;color:'+combColor+'">'+comb.score+'</div><div style="font-size:10px;color:#6abf4b;font-weight:600">+'+comb.delta+'</div></div>';
-    h+='<div style="flex:1;min-width:80px;padding:10px;background:var(--bg2);border-radius:8px"><div style="font-size:9px;color:var(--text3);margin-bottom:2px">Match Odds</div><div style="font-size:11px;color:var(--text3)">'+matchProb+'%</div><div style="font-size:16px;font-weight:700;color:'+combColor+'">'+comb.matchProb+'%</div>'+(comb.matchDelta>0?'<div style="font-size:10px;color:#6abf4b;font-weight:600">+'+comb.matchDelta+'%</div>':'')+'</div>';
-    h+='<div style="flex:1;min-width:80px;padding:10px;background:var(--bg2);border-radius:8px"><div style="font-size:9px;color:var(--text3);margin-bottom:2px">Outlook</div><div style="font-size:11px;color:var(--text3)">'+outlook+'</div><div style="font-size:13px;font-weight:700;color:'+combColor+'">'+comb.outlook+'</div></div>';
-    h+='<div style="flex:1;min-width:80px;padding:10px;background:var(--bg2);border-radius:8px"><div style="font-size:9px;color:var(--text3);margin-bottom:2px">Timeline</div><div style="font-size:16px;font-weight:700;color:var(--accent)">~'+Math.ceil(comb.timeMonths)+'</div><div style="font-size:10px;color:var(--text3)">months</div></div>';
-    h+='</div>';
-
-    // Steps summary
-    h+='<div style="font-size:11px;color:var(--text2);line-height:1.6">';
-    comb.actions.forEach(function(a,i){h+='<div style="padding:2px 0"><span style="color:var(--accent);font-weight:600">'+(i+1)+'.</span> '+a.label+'</div>'});
-    h+='</div>';
-    h+='</div>';
+    sec+='<div style="margin-top:12px;padding:14px;background:rgba(106,191,75,.06);border:1px solid rgba(106,191,75,.15);border-radius:10px">';
+    sec+='<div style="font-size:11px;font-weight:700;color:#6abf4b;text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px">\u26a1 Combined Projection \u2014 Do the Top '+(comb.actions.length)+' Together</div>';
+    sec+='<div style="display:flex;gap:8px;flex-wrap:wrap;text-align:center;margin-bottom:10px">';
+    sec+='<div style="flex:1;min-width:70px;padding:10px;background:var(--bg2);border-radius:8px"><div style="font-size:9px;color:var(--text3);margin-bottom:2px">Score</div><div style="font-size:11px;color:var(--text3)">'+score+'</div><div style="font-size:16px;font-weight:700;color:'+combColor+'">'+comb.score+'</div><div style="font-size:10px;color:#6abf4b;font-weight:600">+'+comb.delta+'</div></div>';
+    sec+='<div style="flex:1;min-width:70px;padding:10px;background:var(--bg2);border-radius:8px"><div style="font-size:9px;color:var(--text3);margin-bottom:2px">Match Odds</div><div style="font-size:11px;color:var(--text3)">'+matchProb+'%</div><div style="font-size:16px;font-weight:700;color:'+combColor+'">'+comb.matchProb+'%</div>'+(comb.matchDelta>0?'<div style="font-size:10px;color:#6abf4b;font-weight:600">+'+comb.matchDelta+'%</div>':'')+'</div>';
+    sec+='<div style="flex:1;min-width:70px;padding:10px;background:var(--bg2);border-radius:8px"><div style="font-size:9px;color:var(--text3);margin-bottom:2px">Outlook</div><div style="font-size:11px;color:var(--text3)">'+outlook+'</div><div style="font-size:13px;font-weight:700;color:'+combColor+'">'+comb.outlook+'</div></div>';
+    sec+='<div style="flex:1;min-width:70px;padding:10px;background:var(--bg2);border-radius:8px"><div style="font-size:9px;color:var(--text3);margin-bottom:2px">Timeline</div><div style="font-size:16px;font-weight:700;color:var(--accent)">~'+Math.ceil(comb.timeMonths)+'</div><div style="font-size:10px;color:var(--text3)">months</div></div>';
+    sec+='</div>';
+    sec+='<div style="font-size:11px;color:var(--text2);line-height:1.6">';
+    comb.actions.forEach(function(a,i){sec+='<div style="padding:2px 0"><span style="color:var(--accent);font-weight:600">'+(i+1)+'.</span> '+a.label+'</div>'});
+    sec+='</div>';
+    sec+='</div>';
+  }
+  h+=hwSection('\ud83c\udfaf What Moves Your Needle','+'+needle.combined.delta+' pts possible',sec,true);
   }
 
-  h+='</div>';
-  }
-
-  // 9. Save Profile
-  h+='<div style="text-align:center;margin-bottom:16px"><button onclick="mccSaveProfile()" class="btn" style="font-size:12px;padding:10px 24px;border:1px solid rgba(198,168,94,.20);color:var(--accent);background:none;cursor:pointer;border-radius:8px">💾 Save Competitiveness Profile</button>';
+  // ───── Save Profile ─────
+  h+='<div style="text-align:center;margin-bottom:16px"><button onclick="mccSaveProfile()" class="btn" style="font-size:12px;padding:10px 24px;border:1px solid rgba(198,168,94,.20);color:var(--accent);background:none;cursor:pointer;border-radius:8px">\ud83d\udcbe Save Competitiveness Profile</button>';
   h+='<div style="font-size:10px;color:var(--text3);margin-top:6px">Track improvements as your application strengthens.</div></div>';
 
-  // Pathway: biggest gap → specific next tool
-  var sortedGaps=factors.slice().sort(function(a,b){return (a.pts/a.max)-(b.pts/b.max)});
-  var biggestGap=sortedGaps[0];
+  // ───── Attending Note (always visible) ─────
   var fastestWin='';
   var mccNxt;
   if(biggestGap.name.indexOf('Research')>=0||biggestGap.name.indexOf('research')>=0){

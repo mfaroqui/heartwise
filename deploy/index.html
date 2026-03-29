@@ -3036,6 +3036,12 @@ Sign Out</button>
 </div>
 </div>
 
+<div style="margin-bottom:12px">
+<div class="card" style="cursor:pointer;padding:16px 20px" onclick="restartTour()">
+<div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:14px">🗺️ Replay Guided Tour</span><span style="color:var(--text3)">›</span></div>
+</div>
+</div>
+
 <div style="margin-bottom:24px">
 <div class="card" style="cursor:pointer;padding:16px 20px" onclick="doLogout()">
 <div style="color:var(--red);font-size:14px">Sign Out</div>
@@ -23549,6 +23555,11 @@ function repositionTour(){
   tt.style.left=ttLeft+'px';
 }
 
+function restartTour(){
+  localStorage.removeItem('hw_tour_done');
+  navTo('scr-home');
+  setTimeout(startTour,500);
+}
 function endTour(){
   var hl=document.getElementById('tour-highlight');
   var tt=document.getElementById('tour-tooltip');

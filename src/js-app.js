@@ -16838,6 +16838,11 @@ function repositionTour(){
   tt.style.left=ttLeft+'px';
 }
 
+function restartTour(){
+  localStorage.removeItem('hw_tour_done');
+  navTo('scr-home');
+  setTimeout(startTour,500);
+}
 function endTour(){
   var hl=document.getElementById('tour-highlight');
   var tt=document.getElementById('tour-tooltip');

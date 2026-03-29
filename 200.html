@@ -11356,6 +11356,235 @@ function mccCalculate(){
   }
   _mccRun();
 }
+// ===== PURE SCORING ENGINE — mccScoreProfile() =====
+// Extracted so we can call it multiple times for "What Moves the Needle" simulations
+function mccScoreProfile(p){
+  var score=0,factors=[];
+  var isFellowship=p.isFellowship;
+  var sd=p.sd;
+  var pubLabels=['None','1-2','3-5','6-10','10+'];
+
+  // Step 2 CK / Step 3 (max 25 pts for fellowship, 30 for residency)
+  var stepMax=isFellowship?25:30;
+  var boardScore=p.step2;
+  if(isFellowship&&p.step3>0){boardScore=Math.round(p.step2*0.6+p.step3*0.4)}
+  var stepDiff=boardScore-sd.avgStep;
+  var stepPts=0;
+  if(stepDiff>=20)stepPts=stepMax;
+  else if(stepDiff>=10)stepPts=Math.round(stepMax*0.83);
+  else if(stepDiff>=5)stepPts=Math.round(stepMax*0.67);
+  else if(stepDiff>=0)stepPts=Math.round(stepMax*0.5);
+  else if(stepDiff>=-5)stepPts=Math.round(stepMax*0.33);
+  else if(stepDiff>=-10)stepPts=Math.round(stepMax*0.17);
+  else stepPts=0;
+  score+=stepPts;
+  var boardLabel=isFellowship?(p.step3>0?'Board Scores (Step 2: '+p.step2+' / Step 3: '+p.step3+')':'Step 2 CK'):'Step 2 CK';
+  factors.push({name:boardLabel,value:boardScore,benchmark:sd.avgStep,pts:stepPts,max:stepMax,status:stepDiff>=0?'above':'below',color:stepPts>=stepMax*0.67?'#6abf4b':stepPts>=stepMax*0.33?'#c8a87c':'#ef4444'});
+
+  // Research (max 20 pts residency, 25 pts fellowship)
+  var pubMax=isFellowship?25:20;
+  var pubPts=0;
+  if(p.pubs>=4)pubPts=pubMax;
+  else if(p.pubs>=3)pubPts=Math.round(pubMax*0.8);
+  else if(p.pubs>=2)pubPts=Math.round(pubMax*0.6);
+  else if(p.pubs>=1)pubPts=Math.round(pubMax*0.3);
+  else pubPts=0;
+  if(isFellowship&&p.felFirstAuthor>=3)pubPts=Math.min(pubMax,pubPts+3);
+  else if(isFellowship&&p.felFirstAuthor>=1)pubPts=Math.min(pubMax,pubPts+1);
+  score+=pubPts;
+  var researchLabel=pubLabels[p.pubs]+(isFellowship&&p.felFirstAuthor>0?' ('+p.felFirstAuthor+' first-author)':'');
+  factors.push({name:'Research Output',value:researchLabel,benchmark:sd.avgPubs+' avg',pts:pubPts,max:pubMax,color:pubPts>=pubMax*0.6?'#6abf4b':pubPts>=pubMax*0.3?'#c8a87c':'#ef4444'});
+
+  // School + Background (max 15 pts residency, 10 pts fellowship)
+  var schoolMax=isFellowship?10:15;
+  var schoolPts=0;
+  if(p.school==='top20')schoolPts=schoolMax;
+  else if(p.school==='top50')schoolPts=Math.round(schoolMax*0.8);
+  else if(p.school==='mid')schoolPts=Math.round(schoolMax*0.53);
+  else if(p.school==='do')schoolPts=Math.round(schoolMax*0.27);
+  else if(p.school==='img')schoolPts=Math.round(schoolMax*0.13);
+  if(p.bg==='usmd')schoolPts=Math.min(schoolMax,schoolPts+Math.round(schoolMax*0.13));
+  else if(p.bg==='usdo')schoolPts=Math.max(0,schoolPts-1);
+  else if(p.bg==='usimg')schoolPts=Math.max(0,schoolPts-2);
+  else if(p.bg==='nonusimg')schoolPts=Math.max(0,schoolPts-Math.round(schoolMax*0.27));
+  score+=schoolPts;
+  var bgLabels={usmd:'US MD',usdo:'US DO',usimg:'US IMG',nonusimg:'Non-US IMG'};
+  var schoolLabels={top20:'Top 20',top50:'Top 50',mid:'Mid-tier',do:'DO',img:'IMG'};
+  factors.push({name:'School & Background',value:(schoolLabels[p.school]||'')+' / '+(bgLabels[p.bg]||''),pts:schoolPts,max:schoolMax,color:schoolPts>=schoolMax*0.67?'#6abf4b':schoolPts>=schoolMax*0.4?'#c8a87c':'#ef4444'});
+
+  if(!isFellowship){
+    var aoaPts=0;
+    if(p.aoa==='aoa')aoaPts=10;
+    else if(p.aoa==='honors')aoaPts=7;
+    else if(p.aoa==='pass')aoaPts=3;
+    score+=aoaPts;
+    var aoaLabels={aoa:'AOA',honors:'Multiple Honors',pass:'High Pass / Pass'};
+    factors.push({name:'Clerkship Performance',value:aoaLabels[p.aoa]||'Not specified',pts:aoaPts,max:10,color:aoaPts>=7?'#6abf4b':aoaPts>=3?'#c8a87c':'#ef4444'});
+  }
+
+  if(isFellowship){
+    var repPts=0;
+    if(p.felProgramRep==='top10')repPts=15;
+    else if(p.felProgramRep==='top30')repPts=12;
+    else if(p.felProgramRep==='academic')repPts=8;
+    else if(p.felProgramRep==='community_teach')repPts=5;
+    else if(p.felProgramRep==='community')repPts=2;
+    score+=repPts;
+    var repLabels={top10:'Top 10 Academic',top30:'Top 30 Academic',academic:'Academic Program',community_teach:'Community w/ Teaching',community:'Community Program'};
+    factors.push({name:'Residency Program Reputation',value:repLabels[p.felProgramRep]||'Not specified',pts:repPts,max:15,color:repPts>=10?'#6abf4b':repPts>=5?'#c8a87c':'#ef4444'});
+
+    var procSpec=['cardiology','gi','interventional_cardio','ep','advanced_hf','pulm_crit','sports_med','critical_care_surg'];
+    if(procSpec.indexOf(p.spec)>=0){
+      var procPts=0;
+      if(p.felProceduralExp==='extensive')procPts=5;
+      else if(p.felProceduralExp==='moderate')procPts=3;
+      else if(p.felProceduralExp==='minimal')procPts=1;
+      score+=procPts;
+      var procLabels={extensive:'Extensive (logged 50+ procedures)',moderate:'Moderate (20-50 procedures)',minimal:'Minimal (<20 procedures)'};
+      factors.push({name:'Procedural Experience',value:procLabels[p.felProceduralExp]||'Not specified',pts:procPts,max:5,color:procPts>=3?'#6abf4b':procPts>=1?'#c8a87c':'#ef4444'});
+    }
+  }
+
+  var lorPts=0;
+  if(p.lors==='notable')lorPts=10;
+  else if(p.lors==='strong')lorPts=7;
+  else if(p.lors==='avg')lorPts=4;
+  score+=lorPts;
+  factors.push({name:'Letters of Rec',value:p.lors==='notable'?'From nationally recognized leaders':p.lors==='strong'?'Strong \u2014 recognized in the field':p.lors==='avg'?'Average \u2014 local attendings':'Not specified',pts:lorPts,max:10,color:lorPts>=7?'#6abf4b':lorPts>=4?'#c8a87c':'#ef4444'});
+
+  var leadPts=0;
+  if(p.leadership==='significant')leadPts=5;
+  else if(p.leadership==='some')leadPts=3;
+  else leadPts=0;
+  score+=leadPts;
+  factors.push({name:'Leadership',value:p.leadership==='significant'?'Significant (chief, national, QI lead)':p.leadership==='some'?'Some':'None',pts:leadPts,max:5,color:leadPts>=3?'#6abf4b':'#c8a87c'});
+
+  var stratPts=0;
+  var recP=sd.recPrograms;
+  if(p.programs>=recP)stratPts+=5;
+  else if(p.programs>=recP*0.6)stratPts+=3;
+  else if(p.programs>0)stratPts+=1;
+  stratPts+=Math.min(5,p.aways*2);
+  stratPts=Math.min(10,stratPts);
+  score+=stratPts;
+  factors.push({name:'Application Strategy',value:p.programs+' programs, '+p.aways+' aways/rotations',pts:stratPts,max:10,color:stratPts>=7?'#6abf4b':stratPts>=4?'#c8a87c':'#ef4444'});
+
+  score=Math.max(5,Math.min(100,score));
+
+  // Match probability
+  var baseRate=sd.matchRate;
+  var matchProb,topProb,midProb,commProb;
+  if(score>=85){matchProb=Math.min(99,baseRate+8);topProb=Math.min(85,Math.round(baseRate*0.75));midProb=Math.min(95,Math.round(baseRate*0.95));commProb=Math.min(99,baseRate+5);}
+  else if(score>=70){matchProb=Math.min(95,baseRate+3);topProb=Math.min(60,Math.round(baseRate*0.5));midProb=Math.min(90,Math.round(baseRate*0.85));commProb=Math.min(98,baseRate+4);}
+  else if(score>=55){matchProb=Math.max(40,baseRate-10);topProb=Math.max(10,Math.round(baseRate*0.2));midProb=Math.max(45,Math.round(baseRate*0.55));commProb=Math.min(90,Math.round(baseRate*0.8));}
+  else{matchProb=Math.max(20,baseRate-25);topProb=Math.max(3,Math.round(baseRate*0.08));midProb=Math.max(20,Math.round(baseRate*0.3));commProb=Math.max(50,Math.round(baseRate*0.55));}
+
+  var outlook;
+  if(score>=85)outlook='Highly Competitive';
+  else if(score>=65)outlook='Competitive';
+  else if(score>=50)outlook='Borderline';
+  else outlook='High Risk';
+
+  return {score:score,factors:factors,matchProb:matchProb,topProb:topProb,midProb:midProb,commProb:commProb,outlook:outlook,pubLabels:pubLabels};
+}
+
+// ===== NEEDLE MOVER ENGINE =====
+// Runs the scoring engine with each variable incremented, returns ROI-sorted simulations
+function mccNeedleMover(params){
+  var base=mccScoreProfile(params);
+  var sims=[];
+  var sd=params.sd;
+
+  // Define all possible improvements with effort estimates
+  var scenarios=[];
+
+  // Board score +10
+  if(params.step2<270){
+    scenarios.push({field:'step2',newVal:params.step2+10,label:'Board score +10 points ('+params.step2+' \u2192 '+(params.step2+10)+')',effort:'2\u20133 months focused prep',timeMonths:3,action:'Dedicated board study block with question banks'});
+  }
+
+  // Research — pubs up one tier
+  if(params.pubs<4){
+    var pubLabels=['None','1\u20132','3\u20135','6\u201310','10+'];
+    scenarios.push({field:'pubs',newVal:Math.min(4,params.pubs+1),label:'Add publications ('+pubLabels[params.pubs]+' \u2192 '+pubLabels[Math.min(4,params.pubs+1)]+')',effort:params.pubs===0?'2\u20134 months (case report)':'3\u20136 months',timeMonths:params.pubs===0?3:5,action:params.pubs===0?'Start with a case report \u2014 fastest path to first publication':'Target a retrospective study or systematic review'});
+  }
+
+  // LORs upgrade
+  var lorUpgrades={'':{newVal:'avg',label:'Get LORs from attendings who know you',effort:'1\u20132 months',timeMonths:1.5,action:'Identify 3\u20134 faculty and build relationships on rotations'},avg:{newVal:'strong',label:'Upgrade LORs \u2192 recognized faculty in the field',effort:'2\u20134 months',timeMonths:3,action:'Work with specialty leaders \u2014 do research or sub-I with them'},strong:{newVal:'notable',label:'Upgrade LORs \u2192 nationally recognized leaders',effort:'3\u20136 months',timeMonths:4,action:'Build relationship with national leaders through research collaboration'}};
+  if(lorUpgrades[params.lors]){
+    var lu=lorUpgrades[params.lors];
+    scenarios.push({field:'lors',newVal:lu.newVal,label:lu.label,effort:lu.effort,timeMonths:lu.timeMonths,action:lu.action});
+  }
+
+  // Leadership upgrade
+  var leadUpgrades={'':{newVal:'some',label:'Add leadership roles',effort:'1\u20132 months',timeMonths:1.5,action:'Join a committee, lead a QI project, or take on a student org role'},none:{newVal:'some',label:'Add leadership roles',effort:'1\u20132 months',timeMonths:1.5,action:'Join a committee, lead a QI project, or take on a student org role'},some:{newVal:'significant',label:'Upgrade to significant leadership',effort:'2\u20134 months',timeMonths:3,action:'Become chief resident, QI project lead, or national committee chair'}};
+  if(leadUpgrades[params.leadership]){
+    var leadU=leadUpgrades[params.leadership];
+    scenarios.push({field:'leadership',newVal:leadU.newVal,label:leadU.label,effort:leadU.effort,timeMonths:leadU.timeMonths,action:leadU.action});
+  }
+
+  // Away rotations
+  if(params.aways<3){
+    scenarios.push({field:'aways',newVal:Math.min(3,params.aways+1),label:'+1 away rotation at target program',effort:'1 month rotation + application time',timeMonths:1.5,action:'Apply for away at your top-choice program \u2014 this is a month-long interview'});
+  }
+
+  // Programs applied — only if below recommended
+  if(params.programs<sd.recPrograms){
+    scenarios.push({field:'programs',newVal:sd.recPrograms,label:'Apply to '+sd.recPrograms+' programs (currently '+params.programs+')',effort:'1\u20132 weeks research + applications',timeMonths:0.5,action:'Expand your program list \u2014 research each program and apply broadly'});
+  }
+
+  // Fellowship-specific: first-author pubs
+  if(params.isFellowship&&params.felFirstAuthor<5){
+    scenarios.push({field:'felFirstAuthor',newVal:params.felFirstAuthor+2,label:'+2 first-author publications ('+params.felFirstAuthor+' \u2192 '+(params.felFirstAuthor+2)+')',effort:'4\u20138 months',timeMonths:6,action:'Lead 2 research projects to first-author publication in your fellowship specialty'});
+  }
+
+  // Fellowship-specific: procedural experience upgrade
+  if(params.isFellowship){
+    var procSpec=['cardiology','gi','interventional_cardio','ep','advanced_hf','pulm_crit','sports_med','critical_care_surg'];
+    if(procSpec.indexOf(params.spec)>=0){
+      var procUpgrades={'':{newVal:'moderate',label:'Build procedural experience (0 \u2192 20\u201350 cases)',effort:'3\u20136 months',timeMonths:4,action:'Seek procedural rotations, log every case, ask to first-assist'},minimal:{newVal:'moderate',label:'Increase procedures (minimal \u2192 moderate: 20\u201350 cases)',effort:'2\u20134 months',timeMonths:3,action:'Request additional procedural rotations and log aggressively'},moderate:{newVal:'extensive',label:'Increase procedures (moderate \u2192 extensive: 50+ cases)',effort:'3\u20136 months',timeMonths:4,action:'Seek high-volume rotations and elective procedural time'}};
+      if(procUpgrades[params.felProceduralExp]){
+        var pu=procUpgrades[params.felProceduralExp];
+        scenarios.push({field:'felProceduralExp',newVal:pu.newVal,label:pu.label,effort:pu.effort,timeMonths:pu.timeMonths,action:pu.action});
+      }
+    }
+  }
+
+  // Residency-specific: AOA/clerkship upgrade
+  if(!params.isFellowship){
+    var aoaUpgrades={'':{newVal:'pass',label:'Improve clerkship grades to High Pass',effort:'Ongoing (next rotations)',timeMonths:3,action:'Read before rounds, follow up on patients, seek feedback early'},pass:{newVal:'honors',label:'Upgrade clerkship performance \u2192 Honors',effort:'Ongoing (next rotations)',timeMonths:4,action:'Go above and beyond on remaining clerkships \u2014 shelf exam prep is key'},honors:{newVal:'aoa',label:'Achieve AOA status',effort:'Maintain through remaining rotations',timeMonths:6,action:'Continue strong performance and engage in scholarly activity'}};
+    if(aoaUpgrades[params.aoa]){
+      var aoaU=aoaUpgrades[params.aoa];
+      scenarios.push({field:'aoa',newVal:aoaU.newVal,label:aoaU.label,effort:aoaU.effort,timeMonths:aoaU.timeMonths,action:aoaU.action});
+    }
+  }
+
+  // Run each simulation
+  scenarios.forEach(function(sim){
+    var modified={};
+    for(var k in params)modified[k]=params[k];
+    modified[sim.field]=sim.newVal;
+    var result=mccScoreProfile(modified);
+    var delta=result.score-base.score;
+    if(delta>0){
+      sims.push({label:sim.label,newScore:result.score,delta:delta,newMatchProb:result.matchProb,matchDelta:result.matchProb-base.matchProb,newOutlook:result.outlook,effort:sim.effort,timeMonths:sim.timeMonths,action:sim.action,roi:Math.round(delta/sim.timeMonths*10)/10,field:sim.field,newVal:sim.newVal});
+    }
+  });
+
+  // Sort by ROI (points per month)
+  sims.sort(function(a,b){return b.roi-a.roi});
+
+  // Calculate combined projection — top 3 improvements together
+  var combined={};
+  for(var k in params)combined[k]=params[k];
+  var topN=sims.slice(0,3);
+  var maxTime=0;
+  topN.forEach(function(s){combined[s.field]=s.newVal;if(s.timeMonths>maxTime)maxTime=s.timeMonths});
+  var combinedResult=mccScoreProfile(combined);
+
+  return {base:base,sims:sims,combined:{score:combinedResult.score,matchProb:combinedResult.matchProb,outlook:combinedResult.outlook,delta:combinedResult.score-base.score,matchDelta:combinedResult.matchProb-base.matchProb,timeMonths:maxTime,actions:topN}};
+}
+
 function _mccRun(){
   var mode=document.getElementById('mcc-mode').value||'residency';
   var isFellowship=mode==='fellowship';
@@ -11393,141 +11622,25 @@ function _mccRun(){
   if(!spec||!step2||!school||!bg){notify('Please complete at least the Academic Profile section',1);return}
   if(!sd)return;
 
-  // ===== SCORING ENGINE (0-100) =====
-  var score=0;
-  var factors=[];
-  var pubLabels=['None','1-2','3-5','6-10','10+'];
+  // Build params object for pure scoring engine
+  var params={step2:step2,step3:step3,pubs:pubs,school:school,bg:bg,lors:lors,leadership:leadership,programs:programs,aways:aways,aoa:aoa,isFellowship:isFellowship,spec:spec,sd:sd,felResYear:felResYear,felProgramRep:felProgramRep,felProceduralExp:felProceduralExp,felFirstAuthor:felFirstAuthor};
 
-  // Step 2 CK / Step 3 (max 25 pts for fellowship, 30 for residency)
-  var stepMax=isFellowship?25:30;
-  // For fellowship, blend Step 2 (60%) and Step 3 (40%) if Step 3 is provided
+  // Run scoring engine
+  var R=mccScoreProfile(params);
+  var score=R.score,factors=R.factors,matchProb=R.matchProb,topProb=R.topProb,midProb=R.midProb,commProb=R.commProb,outlook=R.outlook,pubLabels=R.pubLabels;
+
+  // Derived values needed by render code
   var boardScore=step2;
   if(isFellowship&&step3>0){boardScore=Math.round(step2*0.6+step3*0.4)}
   var stepDiff=boardScore-sd.avgStep;
-  var stepPts=0;
-  if(stepDiff>=20)stepPts=stepMax;
-  else if(stepDiff>=10)stepPts=Math.round(stepMax*0.83);
-  else if(stepDiff>=5)stepPts=Math.round(stepMax*0.67);
-  else if(stepDiff>=0)stepPts=Math.round(stepMax*0.5);
-  else if(stepDiff>=-5)stepPts=Math.round(stepMax*0.33);
-  else if(stepDiff>=-10)stepPts=Math.round(stepMax*0.17);
-  else stepPts=0;
-  score+=stepPts;
-  var boardLabel=isFellowship?(step3>0?'Board Scores (Step 2: '+step2+' / Step 3: '+step3+')':'Step 2 CK'):'Step 2 CK';
-  factors.push({name:boardLabel,value:boardScore,benchmark:sd.avgStep,pts:stepPts,max:stepMax,status:stepDiff>=0?'above':'below',color:stepPts>=stepMax*0.67?'#6abf4b':stepPts>=stepMax*0.33?'#c8a87c':'#ef4444'});
 
-  // Research (max 20 pts residency, 25 pts fellowship)
-  var pubMax=isFellowship?25:20;
-  var pubPts=0;
-  if(pubs>=4)pubPts=pubMax;
-  else if(pubs>=3)pubPts=Math.round(pubMax*0.8);
-  else if(pubs>=2)pubPts=Math.round(pubMax*0.6);
-  else if(pubs>=1)pubPts=Math.round(pubMax*0.3);
-  else pubPts=0;
-  // Fellowship first-author bonus
-  if(isFellowship&&felFirstAuthor>=3)pubPts=Math.min(pubMax,pubPts+3);
-  else if(isFellowship&&felFirstAuthor>=1)pubPts=Math.min(pubMax,pubPts+1);
-  score+=pubPts;
-  var researchLabel=pubLabels[pubs]+(isFellowship&&felFirstAuthor>0?' ('+felFirstAuthor+' first-author)':'');
-  factors.push({name:'Research Output',value:researchLabel,benchmark:sd.avgPubs+' avg',pts:pubPts,max:pubMax,color:pubPts>=pubMax*0.6?'#6abf4b':pubPts>=pubMax*0.3?'#c8a87c':'#ef4444'});
+  // Run needle mover engine
+  var needle=mccNeedleMover(params);
 
-  // School + Background (max 15 pts residency, 10 pts fellowship — matters less for fellowship)
-  var schoolMax=isFellowship?10:15;
-  var schoolPts=0;
-  if(school==='top20')schoolPts=schoolMax;
-  else if(school==='top50')schoolPts=Math.round(schoolMax*0.8);
-  else if(school==='mid')schoolPts=Math.round(schoolMax*0.53);
-  else if(school==='do')schoolPts=Math.round(schoolMax*0.27);
-  else if(school==='img')schoolPts=Math.round(schoolMax*0.13);
-  if(bg==='usmd')schoolPts=Math.min(schoolMax,schoolPts+Math.round(schoolMax*0.13));
-  else if(bg==='usdo')schoolPts=Math.max(0,schoolPts-1);
-  else if(bg==='usimg')schoolPts=Math.max(0,schoolPts-2);
-  else if(bg==='nonusimg')schoolPts=Math.max(0,schoolPts-Math.round(schoolMax*0.27));
-  score+=schoolPts;
-  var bgLabels={usmd:'US MD',usdo:'US DO',usimg:'US IMG',nonusimg:'Non-US IMG'};
-  var schoolLabels={top20:'Top 20',top50:'Top 50',mid:'Mid-tier',do:'DO',img:'IMG'};
-  factors.push({name:'School & Background',value:(schoolLabels[school]||'')+' / '+(bgLabels[bg]||''),pts:schoolPts,max:schoolMax,color:schoolPts>=schoolMax*0.67?'#6abf4b':schoolPts>=schoolMax*0.4?'#c8a87c':'#ef4444'});
+  var scoreColor=score>=85?'#6abf4b':score>=65?'#c8a87c':score>=50?'#e8a33c':'#ef4444';
 
-  if(!isFellowship){
-    // AOA / Clerkship (max 10 pts) — residency only
-    var aoaPts=0;
-    if(aoa==='aoa')aoaPts=10;
-    else if(aoa==='honors')aoaPts=7;
-    else if(aoa==='pass')aoaPts=3;
-    score+=aoaPts;
-    var aoaLabels={aoa:'AOA',honors:'Multiple Honors',pass:'High Pass / Pass'};
-    factors.push({name:'Clerkship Performance',value:aoaLabels[aoa]||'Not specified',pts:aoaPts,max:10,color:aoaPts>=7?'#6abf4b':aoaPts>=3?'#c8a87c':'#ef4444'});
-  }
-
-  if(isFellowship){
-    // Residency program reputation (max 15 pts) — fellowship only
-    var repPts=0;
-    if(felProgramRep==='top10')repPts=15;
-    else if(felProgramRep==='top30')repPts=12;
-    else if(felProgramRep==='academic')repPts=8;
-    else if(felProgramRep==='community_teach')repPts=5;
-    else if(felProgramRep==='community')repPts=2;
-    score+=repPts;
-    var repLabels={top10:'Top 10 Academic',top30:'Top 30 Academic',academic:'Academic Program',community_teach:'Community w/ Teaching',community:'Community Program'};
-    factors.push({name:'Residency Program Reputation',value:repLabels[felProgramRep]||'Not specified',pts:repPts,max:15,color:repPts>=10?'#6abf4b':repPts>=5?'#c8a87c':'#ef4444'});
-
-    // Procedural experience (max 5 pts) — for procedural fellowships
-    var procSpec=['cardiology','gi','interventional_cardio','ep','advanced_hf','pulm_crit','sports_med','critical_care_surg'];
-    if(procSpec.indexOf(spec)>=0){
-      var procPts=0;
-      if(felProceduralExp==='extensive')procPts=5;
-      else if(felProceduralExp==='moderate')procPts=3;
-      else if(felProceduralExp==='minimal')procPts=1;
-      score+=procPts;
-      var procLabels={extensive:'Extensive (logged 50+ procedures)',moderate:'Moderate (20-50 procedures)',minimal:'Minimal (<20 procedures)'};
-      factors.push({name:'Procedural Experience',value:procLabels[felProceduralExp]||'Not specified',pts:procPts,max:5,color:procPts>=3?'#6abf4b':procPts>=1?'#c8a87c':'#ef4444'});
-    }
-  }
-
-  // Letters (max 10 pts)
-  var lorPts=0;
-  if(lors==='notable')lorPts=10;
-  else if(lors==='strong')lorPts=7;
-  else if(lors==='avg')lorPts=4;
-  score+=lorPts;
-  factors.push({name:'Letters of Rec',value:lors==='notable'?'From nationally recognized leaders':lors==='strong'?'Strong — recognized in the field':lors==='avg'?'Average — local attendings':'Not specified',pts:lorPts,max:10,color:lorPts>=7?'#6abf4b':lorPts>=4?'#c8a87c':'#ef4444'});
-
-  // Leadership (max 5 pts)
-  var leadPts=0;
-  if(leadership==='significant')leadPts=5;
-  else if(leadership==='some')leadPts=3;
-  else leadPts=0;
-  score+=leadPts;
-  factors.push({name:'Leadership',value:leadership==='significant'?'Significant (chief, national, QI lead)':leadership==='some'?'Some':'None',pts:leadPts,max:5,color:leadPts>=3?'#6abf4b':'#c8a87c'});
-
-  // Strategy: Programs + Aways (max 10 pts)
-  var stratPts=0;
-  var recP=sd.recPrograms;
-  if(programs>=recP)stratPts+=5;
-  else if(programs>=recP*0.6)stratPts+=3;
-  else if(programs>0)stratPts+=1;
-  stratPts+=Math.min(5,aways*2);
-  stratPts=Math.min(10,stratPts);
-  score+=stratPts;
-  factors.push({name:'Application Strategy',value:programs+' programs, '+aways+' aways/rotations',pts:stratPts,max:10,color:stratPts>=7?'#6abf4b':stratPts>=4?'#c8a87c':'#ef4444'});
-
-  score=Math.max(5,Math.min(100,score));
-
-  // ===== MATCH PROBABILITY ENGINE =====
-  // Calculate actual estimated match probability based on score + specialty data
-  var baseRate=sd.matchRate;
-  var matchProb,topProb,midProb,commProb;
-  if(score>=85){matchProb=Math.min(99,baseRate+8);topProb=Math.min(85,Math.round(baseRate*0.75));midProb=Math.min(95,Math.round(baseRate*0.95));commProb=Math.min(99,baseRate+5);}
-  else if(score>=70){matchProb=Math.min(95,baseRate+3);topProb=Math.min(60,Math.round(baseRate*0.5));midProb=Math.min(90,Math.round(baseRate*0.85));commProb=Math.min(98,baseRate+4);}
-  else if(score>=55){matchProb=Math.max(40,baseRate-10);topProb=Math.max(10,Math.round(baseRate*0.2));midProb=Math.max(45,Math.round(baseRate*0.55));commProb=Math.min(90,Math.round(baseRate*0.8));}
-  else{matchProb=Math.max(20,baseRate-25);topProb=Math.max(3,Math.round(baseRate*0.08));midProb=Math.max(20,Math.round(baseRate*0.3));commProb=Math.max(50,Math.round(baseRate*0.55));}
-
-  // ===== MATCH OUTLOOK LABELS =====
-  var outlook;
-  if(score>=85)outlook='Highly Competitive';
-  else if(score>=65)outlook='Competitive';
-  else if(score>=50)outlook='Borderline';
-  else outlook='High Risk';
+  // (Scoring engine extracted to mccScoreProfile — see above)
+  // (Needle mover engine in mccNeedleMover — see above)
 
   var scoreColor=score>=85?'#6abf4b':score>=65?'#c8a87c':score>=50?'#e8a33c':'#ef4444';
 
@@ -11726,35 +11839,77 @@ function _mccRun(){
   recs.forEach(function(r){h+='<li>'+r+'</li>'});
   h+='</ul></div>';
 
-  // 8. What-If Scenarios
-  h+='<div style="margin-bottom:16px;padding:16px;background:linear-gradient(160deg,rgba(198,168,94,.04),rgba(200,168,124,.01));border:1px solid rgba(198,168,94,.15);border-radius:10px">';
-  h+='<div style="font-size:11px;font-weight:600;color:var(--accent);margin-bottom:10px">🔬 What-If Scenarios</div>';
-  h+='<div style="font-size:11px;color:var(--text3);margin-bottom:10px">See how improvements change your score and match probability.</div>';
-  var simStep=step2+10;
-  var simStepDiff2=simStep-sd.avgStep;
-  var simStepPts2=simStepDiff2>=20?stepMax:simStepDiff2>=10?Math.round(stepMax*0.83):simStepDiff2>=5?Math.round(stepMax*0.67):simStepDiff2>=0?Math.round(stepMax*0.5):simStepDiff2>=-5?Math.round(stepMax*0.33):simStepDiff2>=-10?Math.round(stepMax*0.17):0;
-  var simScoreStep=score-stepPts+simStepPts2;
-  var simPubPts2=Math.min(pubMax,[0,Math.round(pubMax*0.3),Math.round(pubMax*0.6),Math.round(pubMax*0.8),pubMax][Math.min(4,pubs+1)]);
-  var simScorePub=score-pubPts+simPubPts2;
-  var simLorPts=lors==='notable'?lorPts:10;
-  var simScoreLor=score-lorPts+simLorPts;
+  // 8. WHAT MOVES YOUR NEEDLE — ROI-ranked improvement simulator
+  if(needle.sims.length>0){
+  h+='<div style="margin-bottom:16px;padding:20px;background:linear-gradient(160deg,rgba(198,168,94,.06),rgba(200,168,124,.02));border:1px solid rgba(198,168,94,.2);border-radius:12px">';
+  h+='<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px"><span style="font-size:18px">\ud83c\udfaf</span><div style="font-size:13px;font-weight:700;color:var(--accent);letter-spacing:.3px">What Moves Your Needle</div></div>';
+  h+='<div style="font-size:11px;color:var(--text3);margin-bottom:16px">Ranked by points gained per month of effort. Focus on #1 first.</div>';
 
-  h+='<div style="display:flex;flex-direction:column;gap:6px">';
-  if(step2<270){
-    var stepGain=simScoreStep-score;
-    h+='<div style="display:flex;justify-content:space-between;padding:8px 10px;background:var(--bg2);border-radius:6px;font-size:12px"><span>Board score '+step2+' → '+simStep+'</span><span style="color:'+(stepGain>0?'#6abf4b':'var(--text3)')+';font-weight:600">Score: '+score+' → '+simScoreStep+(stepGain>0?' (+'+stepGain+')':'')+'</span></div>';
+  // Individual simulations
+  needle.sims.forEach(function(sim,i){
+    var isTop=i===0;
+    var barPct=Math.min(100,Math.round(sim.delta/needle.sims[0].delta*100));
+    var tag=i===0?'BEST ROI':sim.delta>=needle.sims[0].delta?'MOST POINTS':'';
+    // Find quickest win
+    if(i>0&&sim.timeMonths<=needle.sims[0].timeMonths&&sim.delta>0)tag='QUICK WIN';
+    if(i===0){
+      // Check if another sim has more points
+      for(var j=1;j<needle.sims.length;j++){if(needle.sims[j].delta>sim.delta){tag='BEST ROI';break}}
+    }
+
+    h+='<div style="padding:12px;margin-bottom:8px;background:var(--bg2);border-radius:8px;border-left:3px solid '+(isTop?'var(--accent)':'rgba(200,168,124,.3)')+'">';
+
+    // Header row: rank + label + delta
+    h+='<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">';
+    h+='<div style="display:flex;align-items:center;gap:8px;flex:1;min-width:0">';
+    h+='<span style="font-size:14px;font-weight:700;color:'+(isTop?'var(--accent)':'var(--text3)')+';flex-shrink:0">#'+(i+1)+'</span>';
+    h+='<span style="font-size:12px;font-weight:600;color:var(--text);line-height:1.3">'+sim.label+'</span>';
+    h+='</div>';
+    h+='<div style="text-align:right;flex-shrink:0;margin-left:8px">';
+    h+='<div style="font-size:16px;font-weight:700;color:#6abf4b">+'+sim.delta+'</div>';
+    h+='<div style="font-size:9px;color:var(--text3)">points</div>';
+    h+='</div></div>';
+
+    // Progress bar
+    h+='<div style="height:4px;background:rgba(255,255,255,.06);border-radius:2px;margin-bottom:8px;overflow:hidden"><div style="height:100%;width:'+barPct+'%;background:linear-gradient(90deg,var(--accent),#6abf4b);border-radius:2px"></div></div>';
+
+    // Score + Match prob + ROI + Effort row
+    h+='<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px">';
+    h+='<span style="font-size:10px;padding:3px 8px;background:var(--bg3);border-radius:4px;color:var(--text2)">Score: '+score+' \u2192 <strong>'+sim.newScore+'</strong></span>';
+    if(sim.matchDelta>0)h+='<span style="font-size:10px;padding:3px 8px;background:rgba(106,191,75,.08);border-radius:4px;color:#6abf4b">Match: '+matchProb+'% \u2192 <strong>'+sim.newMatchProb+'%</strong> (+'+sim.matchDelta+'%)</span>';
+    h+='<span style="font-size:10px;padding:3px 8px;background:var(--bg3);border-radius:4px;color:var(--text3)">\u23f1 '+sim.effort+'</span>';
+    h+='<span style="font-size:10px;padding:3px 8px;background:var(--bg3);border-radius:4px;color:var(--text3)">ROI: '+sim.roi+' pts/mo</span>';
+    if(tag)h+='<span style="font-size:9px;padding:3px 8px;background:rgba(198,168,94,.12);border-radius:4px;color:var(--accent);font-weight:700;letter-spacing:.5px">'+tag+'</span>';
+    h+='</div>';
+
+    // Actionable step
+    h+='<div style="font-size:11px;color:var(--text3);line-height:1.4;padding-left:22px;border-left:2px solid rgba(200,168,124,.15)">'+sim.action+'</div>';
+    h+='</div>';
+  });
+
+  // Combined projection — if you do the top actions together
+  if(needle.combined.delta>0&&needle.sims.length>=2){
+    var comb=needle.combined;
+    var combColor=comb.score>=85?'#6abf4b':comb.score>=65?'#c8a87c':'#e8a33c';
+    h+='<div style="margin-top:12px;padding:14px;background:rgba(106,191,75,.06);border:1px solid rgba(106,191,75,.15);border-radius:10px">';
+    h+='<div style="font-size:11px;font-weight:700;color:#6abf4b;text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px">\u26a1 Combined Projection \u2014 Do the Top '+(comb.actions.length)+' Together</div>';
+
+    h+='<div style="display:flex;gap:8px;flex-wrap:wrap;text-align:center;margin-bottom:10px">';
+    h+='<div style="flex:1;min-width:80px;padding:10px;background:var(--bg2);border-radius:8px"><div style="font-size:9px;color:var(--text3);margin-bottom:2px">Score</div><div style="font-size:11px;color:var(--text3)">'+score+'</div><div style="font-size:16px;font-weight:700;color:'+combColor+'">'+comb.score+'</div><div style="font-size:10px;color:#6abf4b;font-weight:600">+'+comb.delta+'</div></div>';
+    h+='<div style="flex:1;min-width:80px;padding:10px;background:var(--bg2);border-radius:8px"><div style="font-size:9px;color:var(--text3);margin-bottom:2px">Match Odds</div><div style="font-size:11px;color:var(--text3)">'+matchProb+'%</div><div style="font-size:16px;font-weight:700;color:'+combColor+'">'+comb.matchProb+'%</div>'+(comb.matchDelta>0?'<div style="font-size:10px;color:#6abf4b;font-weight:600">+'+comb.matchDelta+'%</div>':'')+'</div>';
+    h+='<div style="flex:1;min-width:80px;padding:10px;background:var(--bg2);border-radius:8px"><div style="font-size:9px;color:var(--text3);margin-bottom:2px">Outlook</div><div style="font-size:11px;color:var(--text3)">'+outlook+'</div><div style="font-size:13px;font-weight:700;color:'+combColor+'">'+comb.outlook+'</div></div>';
+    h+='<div style="flex:1;min-width:80px;padding:10px;background:var(--bg2);border-radius:8px"><div style="font-size:9px;color:var(--text3);margin-bottom:2px">Timeline</div><div style="font-size:16px;font-weight:700;color:var(--accent)">~'+Math.ceil(comb.timeMonths)+'</div><div style="font-size:10px;color:var(--text3)">months</div></div>';
+    h+='</div>';
+
+    // Steps summary
+    h+='<div style="font-size:11px;color:var(--text2);line-height:1.6">';
+    comb.actions.forEach(function(a,i){h+='<div style="padding:2px 0"><span style="color:var(--accent);font-weight:600">'+(i+1)+'.</span> '+a.label+'</div>'});
+    h+='</div>';
+    h+='</div>';
   }
-  if(pubs<4){
-    var pubGain=simScorePub-score;
-    h+='<div style="display:flex;justify-content:space-between;padding:8px 10px;background:var(--bg2);border-radius:6px;font-size:12px"><span>More research ('+pubLabels[pubs]+' → '+pubLabels[Math.min(4,pubs+1)]+')</span><span style="color:'+(pubGain>0?'#6abf4b':'var(--text3)')+';font-weight:600">Score: '+score+' → '+simScorePub+(pubGain>0?' (+'+pubGain+')':'')+'</span></div>';
-  }
-  if(lors!=='notable'){
-    var lorGain=simScoreLor-score;
-    h+='<div style="display:flex;justify-content:space-between;padding:8px 10px;background:var(--bg2);border-radius:6px;font-size:12px"><span>Stronger LORs → nationally recognized leaders</span><span style="color:'+(lorGain>0?'#6abf4b':'var(--text3)')+';font-weight:600">Score: '+score+' → '+simScoreLor+(lorGain>0?' (+'+lorGain+')':'')+'</span></div>';
-  }
+
   h+='</div>';
-  h+='<div style="font-size:10px;color:var(--text3);margin-top:8px;font-style:italic">Adjust your inputs above and re-analyze to see exact score changes.</div>';
-  h+='</div>';
+  }
 
   // 9. Save Profile
   h+='<div style="text-align:center;margin-bottom:16px"><button onclick="mccSaveProfile()" class="btn" style="font-size:12px;padding:10px 24px;border:1px solid rgba(198,168,94,.20);color:var(--accent);background:none;cursor:pointer;border-radius:8px">💾 Save Competitiveness Profile</button>';

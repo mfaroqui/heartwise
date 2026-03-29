@@ -6686,7 +6686,7 @@ function hwCollapseAll(container){
       setTimeout(function(){document.querySelectorAll('.fap-step').forEach(function(s){s.style.opacity='1';s.style.transform='translateX(0)'})},100);
       setTimeout(function(){document.querySelectorAll('.fap-tag').forEach(function(t){t.style.opacity='1'})},700);
     }else if(idx===5){
-      // All 17 Tools
+      // All 15 Tools
       var numEl=document.querySelector('.all17-number');
       if(numEl){numEl.style.opacity='1';numEl.style.transform='scale(1)'}
       setTimeout(function(){document.querySelectorAll('.all17-cat').forEach(function(c){c.style.opacity='1';c.style.transform='translateY(0)'})},200);
@@ -7619,7 +7619,7 @@ function enterApp(){
       if(typeof _supaClient!=='undefined'&&_supaClient){
         _supaClient.from('profiles').update({tier:'free',is_trial:false}).eq('email',U.email).then(function(){});
       }
-      notify('Your guided access has ended. Subscribe to unlock all 17 tools.',1);
+      notify('Your guided access has ended. Subscribe to unlock all 15 tools.',1);
     }
   }
   const b=document.getElementById('user-badge');
@@ -7784,7 +7784,7 @@ function updateTrialBanner(){
     if(typeof _supaClient!=='undefined'&&_supaClient){
       _supaClient.from('profiles').update({tier:'free',is_trial:false}).eq('email',U.email).then(function(){});
     }
-    el.innerHTML='<div style="display:flex;align-items:center;gap:12px"><span style="font-size:18px">⏰</span><div style="flex:1"><div style="font-size:13px;font-weight:600;color:var(--red)">Your guided access has ended</div><div style="font-size:11px;color:var(--text2);margin-top:2px">Subscribe now to unlock all 17 tools and build your complete strategy.</div></div><button class="btn btn-a btn-sm" onclick="navTo(\'scr-profile\');showUpgrade()" style="flex-shrink:0;width:auto">Subscribe →</button></div>';
+    el.innerHTML='<div style="display:flex;align-items:center;gap:12px"><span style="font-size:18px">⏰</span><div style="flex:1"><div style="font-size:13px;font-weight:600;color:var(--red)">Your guided access has ended</div><div style="font-size:11px;color:var(--text2);margin-top:2px">Subscribe now to unlock all 15 tools and build your complete strategy.</div></div><button class="btn btn-a btn-sm" onclick="navTo(\'scr-profile\');showUpgrade()" style="flex-shrink:0;width:auto">Subscribe →</button></div>';
     if(_trialInterval){clearInterval(_trialInterval);_trialInterval=null}
     enterApp();
     return;
@@ -7796,7 +7796,7 @@ function updateTrialBanner(){
   var urgencyBorder=hours<6?'rgba(196,77,86,.2)':hours<12?'rgba(198,168,94,.15)':'rgba(139,184,160,.2)';
   el.style.background=urgencyBg;
   el.style.borderColor=urgencyBorder;
-  el.innerHTML='<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap"><span style="font-size:18px">✦</span><div style="flex:1;min-width:180px"><div style="font-size:13px;font-weight:600;color:'+urgency+'">48-Hour Core Access — '+hours+'h '+mins+'m remaining</div><div style="font-size:11px;color:var(--text2);margin-top:2px">Explore your curated tools. Upgrade anytime for full access to all 17.</div></div><button class="btn btn-a btn-sm" onclick="navTo(\'scr-profile\');showUpgrade()" style="flex-shrink:0;width:auto;padding:8px 18px">Unlock Everything →</button></div>';
+  el.innerHTML='<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap"><span style="font-size:18px">✦</span><div style="flex:1;min-width:180px"><div style="font-size:13px;font-weight:600;color:'+urgency+'">48-Hour Core Access — '+hours+'h '+mins+'m remaining</div><div style="font-size:11px;color:var(--text2);margin-top:2px">Explore your curated tools. Upgrade anytime for full access to all 15 tools.</div></div><button class="btn btn-a btn-sm" onclick="navTo(\'scr-profile\');showUpgrade()" style="flex-shrink:0;width:auto;padding:8px 18px">Unlock Everything →</button></div>';
 }
 
 // ===== CAREER DASHBOARD ENGINE =====
@@ -8973,7 +8973,7 @@ function renderHeroCard(){
       h+='<div onclick="navTo(\'scr-vault\')" style="display:flex;align-items:center;gap:14px;padding:12px 16px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:12px;cursor:pointer;margin-bottom:8px">';
       h+='<div style="width:32px;height:32px;border-radius:10px;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:rgba(237,235,231,.5);flex-shrink:0">2</div>';
       h+='<div style="flex:1"><div style="font-size:13px;font-weight:600;color:rgba(237,235,231,.6)">Run Your First Career Tool</div>';
-      h+='<div style="font-size:11px;color:rgba(237,235,231,.35)">17 tools for match strategy, contracts, compensation, and financial planning</div></div></div>';
+      h+='<div style="font-size:11px;color:rgba(237,235,231,.35)">15 tools for match strategy, contracts, compensation, and financial planning</div></div></div>';
 
       // Step 3: Track
       h+='<div style="display:flex;align-items:center;gap:14px;padding:12px 16px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:12px">';
@@ -9166,7 +9166,7 @@ function renderWelcomeQuickstart(){
     h+='<div onclick="navTo(\'scr-vault\')" style="display:flex;align-items:center;gap:14px;padding:14px 16px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:12px;cursor:pointer;margin-bottom:8px;transition:all .15s" onmouseenter="this.style.background=\'rgba(255,255,255,.06)\'" onmouseleave="this.style.background=\'rgba(255,255,255,.03)\'">';
     h+='<div style="width:32px;height:32px;border-radius:10px;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:rgba(237,235,231,.5);flex-shrink:0">2</div>';
     h+='<div style="flex:1"><div style="font-size:13px;font-weight:600;color:rgba(237,235,231,.6)">Run Your First Career Tool</div>';
-    h+='<div style="font-size:11px;color:rgba(237,235,231,.35)">17 structured tools covering match strategy, contracts, compensation, and financial planning.</div></div>';
+    h+='<div style="font-size:11px;color:rgba(237,235,231,.35)">15 structured tools covering match strategy, contracts, compensation, and financial planning.</div></div>';
     h+='</div>';
 
     // Step 3: Track progress
@@ -11061,7 +11061,7 @@ function ocmCompare(){
     var ocmAlts=[];
     ocmAlts.push({action:'Negotiate '+loser+'\'s salary up by '+fmt2(totalDiff)+'/year to match '+winner+'. Most employers expect a counteroffer.',impact:'Closes the '+fmt2(totalDiff)+' annual gap',tool:{id:'v12',name:'Contract Review'}});
     ocmAlts.push({action:'If '+loser+' won\'t match on salary, negotiate signing bonus ($15K-$50K), relocation ($10K-$20K), or loan repayment.',impact:'$25K-$70K in immediate value'});
-    ocmAlts.push({action:'Compare non-compete terms. A restrictive non-compete on the "better" offer could cost you $400K+ if you want to leave.',impact:'Avoids $400K+ risk exposure',tool:{id:'v2',name:'Contract Scanner'}});
+    ocmAlts.push({action:'Compare non-compete terms. A restrictive non-compete on the "better" offer could cost you $400K+ if you want to leave.',impact:'Avoids $400K+ risk exposure',tool:{id:'v12',name:'Contract Review'}});
     ocmAlts.push({action:'Model both offers over 30 years with different savings rates. The higher salary only wins if you actually invest the difference.',impact:'$500K-$2M swing depending on savings rate',tool:{id:'v11',name:'Financial Projection'}});
     document.getElementById('ocm-results').innerHTML+=hwLifetimeImpact({
       annual:totalDiff,
@@ -11993,7 +11993,7 @@ function _mccRun(){
     mccNxt={id:'v7',icon:'\ud83d\udcca',title:'Research Impact Calculator',why:'See exactly which research activities give you the most points per month of effort.'};
   }else if(biggestGap.name.indexOf('Board')>=0||biggestGap.name.indexOf('Step')>=0){
     fastestWin='Board scores are your biggest gap ('+biggestGap.pts+'/'+biggestGap.max+'). A focused study block targeting a 10-point improvement would shift your match probability meaningfully.';
-    mccNxt={id:'v1',icon:'\ud83d\udcca',title:'Fellowship Readiness Assessment',why:'See your full application profile — boards are one dimension of seven.'};
+    mccNxt={id:'v15',icon:'\ud83d\uddfa\ufe0f',title:'Career Strategy Builder',why:'You know where you stand. Now build your step-by-step roadmap to match day.'};
   }else if(biggestGap.name.indexOf('Letter')>=0||biggestGap.name.indexOf('LOR')>=0){
     fastestWin='Letters of recommendation are your biggest gap ('+biggestGap.pts+'/'+biggestGap.max+'). Securing even one letter from a recognized leader in '+sd.name+' can compensate for weaknesses elsewhere.';
     mccNxt={id:'v15',icon:'\ud83d\uddfa\ufe0f',title:'Career Roadmap Tool',why:'Build a timeline that prioritizes LOR cultivation alongside your other milestones.'};
@@ -12002,7 +12002,7 @@ function _mccRun(){
     mccNxt={id:'v15',icon:'\ud83d\uddfa\ufe0f',title:'Career Roadmap Tool',why:'Build a month-by-month timeline with program targets and away rotation deadlines.'};
   }else{
     fastestWin=biggestGap.name+' is your weakest area ('+biggestGap.pts+'/'+biggestGap.max+'). Improving this single dimension would have the biggest impact on your overall competitiveness.';
-    mccNxt={id:'v1',icon:'\ud83d\udcca',title:'Fellowship Readiness Assessment',why:'Get a detailed breakdown of all 7 application dimensions.'};
+    mccNxt={id:'v15',icon:'\ud83d\uddfa\ufe0f',title:'Career Strategy Builder',why:'Build your step-by-step roadmap with personalized timeline.'};
   }
   var mccPos=score>=85?'I\'ve seen profiles like yours match successfully. You are currently <strong>competitive</strong> for '+sd.name+'. Your application would be taken seriously at most programs. Don\u2019t coast \u2014 polish your weakest area and dominate interviews.'
     :score>=65?'I\'ve walked people through this exact situation. You are <strong>borderline competitive</strong> for '+sd.name+'. You can match, but it\u2019s not guaranteed. '+fastestWin
@@ -12475,7 +12475,7 @@ function _csbRun(){
         'Submit ERAS on day one. No delays.',
         _csbTool('v16','Interview Practice Tool')+' \u2014 practice 3+ full sessions',
         'Send targeted interest emails after each interview',
-        'Rank by where you\'d be happiest for 3+ years, not prestige. '+_csbTool('v1','Check Fellowship Readiness'),
+        'Rank by where you\'d be happiest for 3+ years, not prestige. '+_csbTool('v14','Check Match Competitiveness'),
         'If couples matching, start coordinating NOW'
       ]});
     }else{
@@ -12654,7 +12654,7 @@ function _csbRun(){
   if(firstAuth===0||totalResearch<3)csbNxt={id:'v7',icon:'\u2696\ufe0f',title:'Research Impact Calculator',why:'Research is your biggest lever right now. See exactly which activities move the needle most.'};
   else if(now!=='fellow'&&now!=='attending')csbNxt={id:'v14',icon:'\ud83c\udfc6',title:'Match Probability Calculator',why:'Get a real match probability with your current stats \u2014 see where you stand.'};
   else if(now==='attending')csbNxt={id:'v12',icon:'\ud83d\udcdd',title:'Contract Review Tool',why:'Score any contract offer before you respond. Don\u2019t sign anything unreviewed.'};
-  else csbNxt={id:'v1',icon:'\ud83d\udcca',title:'Fellowship Readiness Assessment',why:'Get a detailed score across all 7 dimensions of your application.'};
+  else csbNxt={id:'v14',icon:'\ud83c\udfc6',title:'Match Competitiveness Calculator',why:'See where you stand with a real competitiveness score and match probability.'};
   h+=hwGatePathway(hwPathway(csbPos,csbActs,csbNxt));
 
   h+='<div style="margin-top:14px;padding:14px;background:var(--accent-dim);border:1px solid rgba(198,168,94,.15);border-radius:10px;text-align:center">';
@@ -12684,41 +12684,41 @@ var quizAnswers={stage:null,goal:null,urgency:null};
 var QUIZ_RECS={
   // STUDENT
   'student_specialty':   [{id:'v13',why:'Discover which specialties match your personality and values'},{id:'v14',why:'Check your competitiveness for each target specialty'},{id:'v17',why:'Explore observerships in specialties you\'re considering'},{id:'v11',why:'Compare financial trajectories across specialties'},{id:'v15',why:'Build a roadmap once you decide'}],
-  'student_match':       [{id:'v14',why:'See your real match probability based on scores and research'},{id:'v16',why:'Practice the exact questions program directors will ask'},{id:'v15',why:'Build a step-by-step roadmap to your target specialty'},{id:'v1',why:'Score your application against successful profiles'},{id:'v7',why:'Know which research activities move the needle most'},{id:'v17',why:'Find the best observerships for your specialty and profile'}],
-  'student_fellowship':  [{id:'v14',why:'See your real match probability based on scores and research'},{id:'v16',why:'Practice the exact questions program directors will ask'},{id:'v15',why:'Build a step-by-step roadmap to your target specialty'},{id:'v1',why:'Score your application against successful profiles'},{id:'v7',why:'Know which research activities move the needle most'},{id:'v17',why:'Find observerships that build your fellowship profile'}],
-  'student_contract':    [{id:'v3',why:'Learn what to look for before you ever see an offer'},{id:'v2',why:'Know the red flags before you need to negotiate'},{id:'v5',why:'Plan your first 3 years of attending income'},{id:'v8',why:'PSLF vs refinance — make this decision early'}],
+  'student_match':       [{id:'v14',why:'See your real match probability and what moves the needle'},{id:'v16',why:'Practice the exact questions program directors will ask'},{id:'v15',why:'Build a step-by-step roadmap to your target specialty'},{id:'v7',why:'Know which research activities move the needle most'},{id:'v17',why:'Find the best observerships for your specialty and profile'}],
+  'student_fellowship':  [{id:'v14',why:'See your real match probability and what moves the needle'},{id:'v16',why:'Practice the exact questions program directors will ask'},{id:'v15',why:'Build a step-by-step roadmap to your target specialty'},{id:'v7',why:'Know which research activities move the needle most'},{id:'v17',why:'Find observerships that build your fellowship profile'}],
+  'student_contract':    [{id:'v3',why:'Learn what to look for before you ever see an offer'},{id:'v12',why:'Scan your contract for red flags and get negotiation scripts'},{id:'v5',why:'Plan your first 3 years of attending income'},{id:'v8',why:'PSLF vs refinance — make this decision early'}],
   'student_finance':     [{id:'v11',why:'See how specialty choice impacts lifetime wealth'},{id:'v8',why:'The 5 financial decisions worth millions'},{id:'v5',why:'Map your post-training financial trajectory'},{id:'v4',why:'Understand how RVU compensation actually works'}],
   'student_direction':   [{id:'v13',why:'Discover which specialties fit your personality and goals'},{id:'v14',why:'Check your competitiveness for each target specialty'},{id:'v17',why:'Observerships let you test-drive a specialty before committing'},{id:'v15',why:'Build a roadmap once you choose'},{id:'v11',why:'Compare financial trajectories side by side'}],
 
   // RESIDENT
   'resident_specialty':  [{id:'v13',why:'Find which specialties actually fit you'},{id:'v14',why:'Check how competitive you are for each option'},{id:'v17',why:'Observerships help you explore before switching specialties'},{id:'v11',why:'Compare the financial trajectory of each path'},{id:'v10',why:'Use the pivot engine if you\'re rethinking your direction'}],
-  'resident_match':      [{id:'v14',why:'See your real match probability with current stats'},{id:'v16',why:'Practice real interview questions with honest feedback'},{id:'v15',why:'Build your personalized roadmap'},{id:'v1',why:'Score your application against successful profiles'},{id:'v7',why:'Maximize research ROI with limited time'},{id:'v17',why:'Find observerships to strengthen your application'}],
-  'resident_fellowship': [{id:'v14',why:'See your real match probability with current stats'},{id:'v16',why:'Practice real fellowship interview questions with honest feedback'},{id:'v15',why:'Build your personalized fellowship roadmap'},{id:'v1',why:'Score your application against successful profiles'},{id:'v7',why:'Maximize research ROI with limited time'},{id:'v17',why:'Find observerships at top fellowship programs'}],
-  'resident_contract':   [{id:'v2',why:'Identify red flags in any contract'},{id:'v16',why:'Practice your negotiation pitch and job interview answers'},{id:'v3',why:'Compare offers systematically'},{id:'v4',why:'Model your real compensation by RVU volume'},{id:'v12',why:'Full contract analysis with risk scoring'}],
+  'resident_match':      [{id:'v14',why:'See your real match probability and what moves the needle'},{id:'v16',why:'Practice real interview questions with honest feedback'},{id:'v15',why:'Build your personalized roadmap'},{id:'v7',why:'Maximize research ROI with limited time'},{id:'v17',why:'Find observerships to strengthen your application'}],
+  'resident_fellowship': [{id:'v14',why:'See your real match probability and what moves the needle'},{id:'v16',why:'Practice real fellowship interview questions with honest feedback'},{id:'v15',why:'Build your personalized fellowship roadmap'},{id:'v7',why:'Maximize research ROI with limited time'},{id:'v17',why:'Find observerships at top fellowship programs'}],
+  'resident_contract':   [{id:'v12',why:'Full contract analysis with risk flags and negotiation scripts'},{id:'v16',why:'Practice your negotiation pitch and job interview answers'},{id:'v3',why:'Compare offers systematically'},{id:'v4',why:'Model your real compensation by RVU volume'}],
   'resident_finance':    [{id:'v5',why:'Your first 3 years determine the next 20'},{id:'v8',why:'PSLF, disability, tax strategy — get these right'},{id:'v11',why:'30-year wealth projection by career path'},{id:'v4',why:'Model what you\'ll actually earn'}],
   'resident_direction':  [{id:'v13',why:'Find which specialties actually fit you'},{id:'v17',why:'Explore observerships in a new direction before committing'},{id:'v10',why:'Should you pivot? Structured decision engine'},{id:'v15',why:'Build a roadmap to the new target'},{id:'v11',why:'Compare financial trajectories across paths'}],
 
   // FELLOW
   'fellow_specialty':    [{id:'v13',why:'Reassess your fit if you\'re reconsidering'},{id:'v11',why:'Model the financial impact of different paths'},{id:'v10',why:'Structured pivot analysis'},{id:'v9',why:'Get a strategic assessment from Dr. Faroqui'}],
-  'fellow_match':        [{id:'v1',why:'Benchmark yourself for advanced fellowship'},{id:'v16',why:'Practice the questions fellowship directors actually ask'},{id:'v7',why:'Optimize your research portfolio'},{id:'v17',why:'Find observerships at programs where you want advanced fellowship'},{id:'v6',why:'Position for advanced subspecialty programs'}],
-  'fellow_fellowship':   [{id:'v1',why:'Benchmark yourself for advanced fellowship'},{id:'v16',why:'Practice the questions fellowship directors actually ask'},{id:'v7',why:'Optimize your research portfolio for the next step'},{id:'v17',why:'Find observerships at programs offering advanced subspecialty training'},{id:'v6',why:'Position for advanced subspecialty programs'},{id:'v9',why:'Get a strategic assessment from Dr. Faroqui'}],
-  'fellow_contract':     [{id:'v12',why:'Score your first attending contract'},{id:'v16',why:'Practice your job interview and salary negotiation answers'},{id:'v2',why:'Catch red flags before you sign'},{id:'v3',why:'Compare multiple offers with real data'},{id:'v4',why:'Model your actual take-home compensation'}],
+  'fellow_match':        [{id:'v14',why:'Check your competitiveness for advanced fellowship'},{id:'v16',why:'Practice the questions fellowship directors actually ask'},{id:'v7',why:'Optimize your research portfolio'},{id:'v17',why:'Find observerships at programs where you want advanced fellowship'},{id:'v6',why:'Position for advanced subspecialty programs'}],
+  'fellow_fellowship':   [{id:'v14',why:'Check your competitiveness for advanced fellowship'},{id:'v16',why:'Practice the questions fellowship directors actually ask'},{id:'v7',why:'Optimize your research portfolio for the next step'},{id:'v17',why:'Find observerships at programs offering advanced subspecialty training'},{id:'v6',why:'Position for advanced subspecialty programs'},{id:'v9',why:'Get a strategic assessment from Dr. Faroqui'}],
+  'fellow_contract':     [{id:'v12',why:'Score your first attending contract'},{id:'v16',why:'Practice your job interview and salary negotiation answers'},{id:'v3',why:'Compare multiple offers with real data'},{id:'v4',why:'Model your actual take-home compensation'}],
   'fellow_finance':      [{id:'v11',why:'Visualize your lifetime wealth trajectory'},{id:'v5',why:'Plan your first 3 years strategically'},{id:'v8',why:'PSLF decision, disability insurance, tax optimization'},{id:'v4',why:'Understand your future compensation structure'}],
   'fellow_direction':    [{id:'v10',why:'Evaluating a pivot? Use this framework'},{id:'v11',why:'Compare career paths financially'},{id:'v9',why:'Get Dr. Faroqui\'s strategic assessment'},{id:'v3',why:'Weigh your options systematically'}],
 
   // ATTENDING
   'attending_specialty': [{id:'v13',why:'Reassess your fit — it\'s never too late'},{id:'v10',why:'Structured career pivot decision engine'},{id:'v11',why:'Financial cost of changing paths'},{id:'v9',why:'Get a strategic assessment from Dr. Faroqui'}],
-  'attending_match':     [{id:'v1',why:'Assess competitiveness for additional training'},{id:'v7',why:'Build a research portfolio strategically'},{id:'v6',why:'Timeline planning for fellowship re-entry'},{id:'v17',why:'Observerships ease the path back into training programs'},{id:'v11',why:'Financial impact of more training'}],
-  'attending_fellowship':[{id:'v1',why:'Assess competitiveness for additional training'},{id:'v7',why:'Build a research portfolio strategically'},{id:'v6',why:'Timeline planning for fellowship re-entry'},{id:'v17',why:'Observerships ease the path back into fellowship programs'},{id:'v11',why:'Financial impact of more training'}],
-  'attending_contract':  [{id:'v12',why:'Full contract intelligence with benchmarks'},{id:'v16',why:'Practice salary negotiation and job interview answers'},{id:'v2',why:'Risk scorecard for your contract terms'},{id:'v4',why:'Model compensation scenarios'},{id:'v3',why:'Compare offers side by side'}],
+  'attending_match':     [{id:'v14',why:'Check your competitiveness for additional training'},{id:'v7',why:'Build a research portfolio strategically'},{id:'v6',why:'Timeline planning for fellowship re-entry'},{id:'v17',why:'Observerships ease the path back into training programs'},{id:'v11',why:'Financial impact of more training'}],
+  'attending_fellowship':[{id:'v14',why:'Check your competitiveness for additional training'},{id:'v7',why:'Build a research portfolio strategically'},{id:'v6',why:'Timeline planning for fellowship re-entry'},{id:'v17',why:'Observerships ease the path back into fellowship programs'},{id:'v11',why:'Financial impact of more training'}],
+  'attending_contract':  [{id:'v12',why:'Full contract intelligence with benchmarks'},{id:'v16',why:'Practice salary negotiation and job interview answers'},{id:'v4',why:'Model compensation scenarios'},{id:'v3',why:'Compare offers side by side'}],
   'attending_finance':   [{id:'v11',why:'30-year trajectory — are you on track?'},{id:'v5',why:'Leverage planner for wealth acceleration'},{id:'v8',why:'Tax strategy, disability, advisor selection'},{id:'v4',why:'Are you being paid fairly? RVU benchmarks'}],
   'attending_direction': [{id:'v10',why:'Career pivot decision engine with financial modeling'},{id:'v9',why:'Submit for Dr. Faroqui\'s strategic review'},{id:'v11',why:'What does a pivot cost over 30 years?'},{id:'v3',why:'Compare your options objectively'}],
 
   // PIVOT (maps to attending + direction by default)
   'pivot_specialty':     [{id:'v13',why:'Discover which specialties match where you are now'},{id:'v10',why:'Run a structured pivot analysis'},{id:'v17',why:'Try observerships in specialties you\'re considering pivoting to'},{id:'v11',why:'Model the financial cost of changing'},{id:'v9',why:'Get a strategic assessment from Dr. Faroqui'}],
   'pivot_match':         [{id:'v14',why:'Check your competitiveness for the new target'},{id:'v16',why:'Practice interview questions for the new path'},{id:'v17',why:'Observerships help you explore the new specialty hands-on'},{id:'v10',why:'Structured pivot decision engine'},{id:'v11',why:'Financial impact of retraining'}],
-  'pivot_fellowship':    [{id:'v1',why:'Benchmark yourself for the new subspecialty'},{id:'v10',why:'Is this pivot worth it? Run the numbers'},{id:'v17',why:'Find observerships at programs in your target subspecialty'},{id:'v16',why:'Practice fellowship interview questions'},{id:'v11',why:'Model the financial cost of more training'}],
-  'pivot_contract':      [{id:'v12',why:'Score contracts in your new field'},{id:'v2',why:'Know the red flags before signing'},{id:'v3',why:'Compare offers across specialties'},{id:'v10',why:'Make sure the pivot makes financial sense'}],
+  'pivot_fellowship':    [{id:'v14',why:'Check your competitiveness for the new subspecialty'},{id:'v10',why:'Is this pivot worth it? Run the numbers'},{id:'v17',why:'Find observerships at programs in your target subspecialty'},{id:'v16',why:'Practice fellowship interview questions'},{id:'v11',why:'Model the financial cost of more training'}],
+  'pivot_contract':      [{id:'v12',why:'Score contracts in your new field'},{id:'v3',why:'Compare offers across specialties'},{id:'v10',why:'Make sure the pivot makes financial sense'}],
   'pivot_finance':       [{id:'v11',why:'What does this career change cost over 30 years?'},{id:'v10',why:'Decision engine with financial modeling'},{id:'v5',why:'Plan the financial bridge during transition'},{id:'v8',why:'Protect your finances during the pivot'}],
   'pivot_direction':     [{id:'v10',why:'The definitive career pivot decision engine'},{id:'v13',why:'Discover what actually fits you now'},{id:'v9',why:'Submit for Dr. Faroqui\'s strategic review'},{id:'v11',why:'Model the 30-year financial impact'}]
 };
@@ -12859,9 +12859,9 @@ function renderVault(){
     {
       key:'measure',
       title:'Measure Your Position',
-      icon:'🏆',
-      goal:'Understand exactly where you stand — and where you need to improve.',
-      tools:['v14','v1','v7']
+      icon:'\ud83c\udfc6',
+      goal:'Understand exactly where you stand \u2014 and where you need to improve.',
+      tools:['v14','v7']
     },
     {
       key:'model',
@@ -12873,9 +12873,9 @@ function renderVault(){
     {
       key:'decide',
       title:'Make Better Decisions',
-      icon:'⚖️',
+      icon:'\u2696\ufe0f',
       goal:'Evaluate offers, contracts, and career moves with precision.',
-      tools:['v3','v2','v12','v10']
+      tools:['v3','v12','v10']
     },
     {
       key:'execute',
@@ -12937,7 +12937,7 @@ function renderVault(){
 var TRIAL_TOOLS={
   full:['v3','v6','v14','v13'],
   partial:['v1','v15','v11'],
-  locked:['v2','v4','v5','v7','v8','v9','v10','v12','v16','v17']
+  locked:['v4','v5','v7','v8','v9','v10','v12','v16','v17']
 };
 function getTrialAccess(id){
   if(!U||!U.isTrial)return 'full';
@@ -12978,7 +12978,7 @@ var TRIAL_PARTIAL_MSG={
 
 function showTrialLockedOverlay(id){
   var t=TRIAL_TEASERS[id];
-  if(!t)t={icon:'🔒',headline:'This tool is part of Core access.',teaser:'Upgrade to unlock all 17 tools and build your complete strategy.'};
+  if(!t)t={icon:'🔒',headline:'This tool is part of Core access.',teaser:'Upgrade to unlock all 15 tools and build your complete strategy.'};
   var item=VAULT_ITEMS.find(function(v){return v.id===id});
   var title=item?item.title:'Premium Tool';
   var html='<div style="display:flex;flex-direction:column;align-items:center;text-align:center;padding:40px 24px">';
@@ -12997,7 +12997,7 @@ function showTrialLockedOverlay(id){
   html+='<div style="font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--text3);margin-bottom:8px">🔒 '+title+'</div>';
   html+='<div style="font-size:11px;color:var(--text2);line-height:1.5">Available with <strong style="color:var(--accent)">Core</strong> or <strong style="color:var(--accent)">Mentorship</strong> access</div>';
   html+='</div>';
-  html+='<button onclick="closeModal(\'modal-q\');setTimeout(function(){navTo(\'scr-profile\');showUpgrade()},300)" class="btn btn-a" style="padding:12px 32px;font-size:13px">Unlock All 17 Tools →</button>';
+  html+='<button onclick="closeModal(\'modal-q\');setTimeout(function(){navTo(\'scr-profile\');showUpgrade()},300)" class="btn btn-a" style="padding:12px 32px;font-size:13px">Unlock All 15 Tools →</button>';
   html+='<p style="font-size:10px;color:var(--text3);margin-top:12px">Your guided access has '+(U.trialEnd?formatTrialRemaining():'tools')+'</p>';
   html+='</div>';
   document.getElementById('modal-q-content').innerHTML=html;
@@ -13035,6 +13035,9 @@ function injectPartialOverlay(id){
 }
 
 function openFramework(id){
+  // Merged tool redirects: v1→v14, v2→v12
+  if(id==='v1')id='v14';
+  if(id==='v2')id='v12';
   // Trial access gating
   if(U&&U.isTrial&&U.tier!=='admin'){
     var access=getTrialAccess(id);
@@ -17239,7 +17242,7 @@ function roiUpdate(){
       else roiActs.push({text:'Practice interview answers about your research — PDs will ask. Have a 60-second pitch for each project.',when:'this month'});
       var roiNxt=pct>=80?{id:'v16',icon:'\ud83c\udf99\ufe0f',title:'Interview Practice Tool',why:'Your research is strong — now practice selling it in interviews.'}
         :pct>=50?{id:'v14',icon:'\ud83c\udfc6',title:'Match Probability Calculator',why:'See how this research score combines with your other stats for a real match probability.'}
-        :{id:'v1',icon:'\ud83d\udcca',title:'Fellowship Readiness Assessment',why:'Research is one category. See where you stand across all 7 dimensions.'};
+        :{id:'v14',icon:'\ud83c\udfc6',title:'Match Competitiveness Calculator',why:'Research is one factor. See your full competitiveness score and what moves the needle.'};
       linkEl.innerHTML=hwGatePathway(hwPathway(roiPos,roiActs,roiNxt));
     }else{
       linkEl.innerHTML='';
@@ -17434,7 +17437,7 @@ async function submitAudit(){
     {text:'Run the '+(!cvSnap||cvSnap.match(/pub|research/i)?'Match Probability Calculator':'Fellowship Readiness Assessment')+' to get an objective competitiveness score.',when:'this week'},
     {text:'Model the financial implications of your top 2 options in the Financial Projection Tool.',when:'this week'},
     {text:'When Dr. Faroqui\u2019s review arrives, build your execution plan in the Career Roadmap Tool.',when:'after review'}
-  ],decision&&decision.match(/fellowship|match|apply/i)?{id:'v1',icon:'\ud83d\udcca',title:'Fellowship Readiness Assessment',why:'Get an objective score while you wait. Data + expert review = best possible decision.'}
+  ],decision&&decision.match(/fellowship|match|apply/i)?{id:'v14',icon:'\ud83d\udcca',title:'Match Competitiveness Calculator',why:'Get your competitiveness score while you wait. Data + expert review = best possible decision.'}
     :decision&&decision.match(/contract|offer|job/i)?{id:'v12',icon:'\ud83d\udcdd',title:'Contract Review Tool',why:'If you have an offer on the table, score it now. Don\u2019t wait for the review to act on time-sensitive terms.'}
     :{id:'v15',icon:'\ud83d\uddfa\ufe0f',title:'Career Roadmap Tool',why:'Build a preliminary timeline while you wait. Dr. Faroqui\u2019s review will refine it.'}));
 
@@ -18263,7 +18266,7 @@ function misGrade(){
   if(totalRed>0)misActs.push({text:'Eliminate every red flag identified above — any single one can tank an otherwise decent interview.',when:'this week'});
   else misActs.push({text:'Do a mock interview with an attending — not a friend. You need someone who\'ll be honest, not nice.',when:'this month'});
   misActs.push({text:'Come back and retake this in 1-2 weeks. Track your score improvement — that\'s evidence of growth.',when:'this month'});
-  var misNxt=avgScore>=70?{id:'v1',icon:'\ud83d\udcca',title:'Fellowship Readiness Assessment',why:'Interviews are one piece. See where you stand across all 7 dimensions.'}
+  var misNxt=avgScore>=70?{id:'v14',icon:'\ud83d\udcca',title:'Match Competitiveness Calculator',why:'Interviews are one piece. See your full competitiveness score and what moves the needle.'}
     :avgScore>=40?{id:'v15',icon:'\ud83d\uddfa\ufe0f',title:'Career Roadmap Tool',why:'Build a complete timeline — interviews are late-stage. Make sure everything else is on track.'}
     :{id:'v14',icon:'\ud83c\udfc6',title:'Match Probability Calculator',why:'Check your overall competitiveness — interview skills matter more when your stats are borderline.'};
   h+=hwGatePathway(hwPathway(misPos,misActs,misNxt));
@@ -21844,26 +21847,26 @@ function renderSeasonalCalendar(){
       {m:[0,1],season:'Match Prep Season',desc:'Final push before rank lists. Mock interviews and application polish.',tools:[{id:'v16',name:'Mock Interview Simulator',why:'Practice before real interviews'},{id:'v9',name:'Application Review',why:'Last chance to strengthen your app'}],icon:'🎯',urgent:true},
       {m:[2],season:'Match Day',desc:'Results are in. Time to plan your next move — whether celebrating or scrambling.',tools:[{id:'v5',name:'3-Year Financial Planner',why:'Start planning your resident finances'},{id:'v15',name:'Career Strategy Builder',why:'Map your residency strategy'}],icon:'🎉',urgent:true},
       {m:[3,4],season:'Post-Match Planning',desc:'Transition period. Set financial foundations before residency starts.',tools:[{id:'v8',name:'Debt & Income Strategy',why:'Get your loan strategy set before training'},{id:'v5',name:'3-Year Financial Planner',why:'Plan your resident budget'}],icon:'📋'},
-      {m:[5,6],season:'Away Rotation Season',desc:'Applications open for away rotations. Strategic program exposure.',tools:[{id:'v14',name:'Match Competitiveness Calculator',why:'Know where you stand before choosing aways'},{id:'v1',name:'Fellowship Readiness Calculator',why:'Assess your readiness'}],icon:'🏥'},
+      {m:[5,6],season:'Away Rotation Season',desc:'Applications open for away rotations. Strategic program exposure.',tools:[{id:'v14',name:'Match Competitiveness Calculator',why:'Know where you stand and what moves the needle'}],icon:'🏥'},
       {m:[7,8],season:'ERAS Season',desc:'Applications are opening. Submit Day 1 for competitive specialties.',tools:[{id:'v6',name:'Fellowship Application Planner',why:'Month-by-month application plan'},{id:'v9',name:'Application Review',why:'Get your chances projection'}],icon:'🚀',urgent:true},
       {m:[9,10],season:'Interview Season',desc:'Interviews are happening. Practice, prepare, and track your ranking.',tools:[{id:'v16',name:'Mock Interview Simulator',why:'Honest debrief on your performance'},{id:'v13',name:'Specialty Fit Analyzer',why:'Confirm your specialty choice'}],icon:'🗓️'},
       {m:[11],season:'Rank List Finalization',desc:'Finalize your rank list. This decision shapes your next 3-7 years.',tools:[{id:'v3',name:'Job Offer Comparison',why:'Compare programs systematically'},{id:'v15',name:'Career Strategy Builder',why:'Think long-term about each option'}],icon:'📊'}
     ],
     resident:[
-      {m:[0,1,2],season:'Fellowship App Prep',desc:'If applying for fellowship, now is the time to build your CV.',tools:[{id:'v1',name:'Fellowship Readiness Calculator',why:'Know your gaps before applying'},{id:'v7',name:'Research Impact Calculator',why:'Quantify your research profile'}],icon:'📚'},
+      {m:[0,1,2],season:'Fellowship App Prep',desc:'If applying for fellowship, now is the time to build your CV.',tools:[{id:'v14',name:'Match Competitiveness Calculator',why:'Know your gaps and what moves the needle'},{id:'v7',name:'Research Impact Calculator',why:'Quantify your research profile'}],icon:'📚'},
       {m:[3,4,5],season:'Research & Publication Push',desc:'Summer conferences approaching. Get abstracts submitted and papers finished.',tools:[{id:'v7',name:'Research Impact Calculator',why:'Track your research growth'},{id:'v6',name:'Fellowship Application Planner',why:'Timeline your application'}],icon:'🔬'},
       {m:[6,7,8],season:'Fellowship Application Season',desc:'ERAS opens. Submit applications and prepare for interviews.',tools:[{id:'v9',name:'Application Review',why:'Chances projection'},{id:'v14',name:'Match Competitiveness Calculator',why:'Where do you stand?'}],icon:'🚀',urgent:true},
-      {m:[9,10,11],season:'Contract & Job Search Season',desc:'Graduating residents: start reviewing contracts and negotiating.',tools:[{id:'v2',name:'Contract Risk Scanner',why:'Scan every offer for red flags'},{id:'v4',name:'RVU Compensation Modeler',why:'Is the pay actually competitive?'}],icon:'📝'}
+      {m:[9,10,11],season:'Contract & Job Search Season',desc:'Graduating residents: start reviewing contracts and negotiating.',tools:[{id:'v12',name:'Contract Review Tool',why:'Scan for red flags and get negotiation scripts'},{id:'v4',name:'RVU Compensation Modeler',why:'Is the pay actually competitive?'}],icon:'📝'}
     ],
     fellow:[
       {m:[0,1,2],season:'Job Market Peak',desc:'Most attending positions open Q1. Start scanning and applying.',tools:[{id:'v3',name:'Job Offer Comparison',why:'Compare offers systematically'},{id:'v11',name:'Financial Projection Tool',why:'30-year view of each option'}],icon:'💼',urgent:true},
-      {m:[3,4,5],season:'Contract Negotiation Season',desc:'Offers are coming in. Every term is negotiable.',tools:[{id:'v2',name:'Contract Risk Scanner',why:'Find the hidden risks'},{id:'v12',name:'Contract Review Tool',why:'Get negotiation scripts'},{id:'v4',name:'RVU Compensation Modeler',why:'Verify your comp is fair'}],icon:'📝',urgent:true},
+      {m:[3,4,5],season:'Contract Negotiation Season',desc:'Offers are coming in. Every term is negotiable.',tools:[{id:'v12',name:'Contract Review Tool',why:'Find hidden risks and get negotiation scripts'},{id:'v4',name:'RVU Compensation Modeler',why:'Verify your comp is fair'}],icon:'📝',urgent:true},
       {m:[6,7,8],season:'Transition Planning',desc:'Preparing for attending life. Financial setup is critical now.',tools:[{id:'v5',name:'3-Year Financial Planner',why:'Plan your first 3 attending years'},{id:'v8',name:'Debt & Income Strategy',why:'Optimize your loan strategy'}],icon:'🔄'},
       {m:[9,10,11],season:'Early Opportunities',desc:'Some positions open early. Get ahead of the cycle.',tools:[{id:'v10',name:'Career Transition Planner',why:'Evaluate the risk vs. upside'},{id:'v15',name:'Career Strategy Builder',why:'Build your attending career strategy'}],icon:'🎯'}
     ],
     attending:[
       {m:[0,1,2],season:'Annual Financial Review',desc:'New year — review your financial trajectory and tax strategy.',tools:[{id:'v11',name:'Financial Projection Tool',why:'Update your 30-year projection'},{id:'v8',name:'Debt & Income Strategy',why:'Optimize for this year'}],icon:'📊'},
-      {m:[3,4,5],season:'Contract Renewal Prep',desc:'Many contracts renew mid-year. Review before auto-renewal.',tools:[{id:'v2',name:'Contract Risk Scanner',why:'Re-scan your current contract'},{id:'v4',name:'RVU Compensation Modeler',why:'Are you still competitive?'}],icon:'📋'},
+      {m:[3,4,5],season:'Contract Renewal Prep',desc:'Many contracts renew mid-year. Review before auto-renewal.',tools:[{id:'v12',name:'Contract Review Tool',why:'Re-scan your current contract for risks'},{id:'v4',name:'RVU Compensation Modeler',why:'Are you still competitive?'}],icon:'📋'},
       {m:[6,7,8],season:'Mid-Year Career Check',desc:'Good time to reassess: are you where you want to be?',tools:[{id:'v10',name:'Career Transition Planner',why:'Thinking about a change?'},{id:'v15',name:'Career Strategy Builder',why:'Refine your 5-year plan'}],icon:'🧭'},
       {m:[9,10,11],season:'Market Assessment',desc:'Job market heats up. Know your worth even if you\'re staying.',tools:[{id:'v4',name:'RVU Compensation Modeler',why:'Check current market rates'},{id:'v3',name:'Job Offer Comparison',why:'Evaluate any new opportunities'}],icon:'💰'}
     ]

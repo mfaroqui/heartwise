@@ -1611,7 +1611,8 @@ function renderDashboard(){
   initCareerProfile();
   var cp=U.careerProfile;
   if(!cp||!cp.lastUpdated){
-    document.getElementById('career-dashboard').style.display='none';
+    // FIRST-TIME USER — show welcome quickstart instead of hiding dashboard
+    renderWelcomeQuickstart();
     return;
   }
   document.getElementById('career-dashboard').style.display='';
@@ -2426,22 +2427,99 @@ function renderHome(){
   }
 }
 
+
+// ===== FIRST-TIME USER WELCOME QUICKSTART =====
+// Replaces empty dashboard for users who haven't set up their profile yet.
+// Shows a premium, stage-aware onboarding experience instead of empty scores.
+
+function renderWelcomeQuickstart(){
+  var el=document.getElementById('career-dashboard');
+  if(!el||!U)return;
+  el.style.display='';
+  var hasPlan=U.tier==='core'||U.tier==='elite'||U.tier==='admin'||U.isTrial;
+  var name=U.name?'Dr. '+U.name.split(' ').pop():'';
+  var toolsUsed=(U.toolHistory||[]).length;
+
+  var h='';
+
+  // ===== STEP 1: No profile, no tools used — true first-time =====
+  if(!toolsUsed){
+    h+='<div style="background:#111318;border-radius:18px;padding:28px 24px;color:#EDEBE7;position:relative;overflow:hidden">';
+    // Subtle accent glow
+    h+='<div style="position:absolute;top:-30%;right:-10%;width:200px;height:200px;background:radial-gradient(circle,rgba(198,168,94,.12),transparent 60%);border-radius:50%"></div>';
+    h+='<div style="position:relative">';
+
+    // Welcome headline
+    h+='<div style="font-family:var(--font-serif);font-size:20px;font-weight:600;color:#EDEBE7;line-height:1.3;margin-bottom:6px">';
+    if(name)h+='Welcome, '+name+'.';
+    else h+='Welcome to HeartWise.';
+    h+='</div>';
+    h+='<div style="font-size:13px;color:rgba(237,235,231,.65);line-height:1.6;margin-bottom:20px">Every career decision you make in the next few years will compound for decades. HeartWise gives you the tools and frameworks to make them count.</div>';
+
+    // Quickstart steps (visual checklist)
+    h+='<div style="margin-bottom:20px">';
+    h+='<div style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:12px">Get Started in 3 Steps</div>';
+
+    // Step 1: Profile
+    h+='<div onclick="showUpdateProfile()" style="display:flex;align-items:center;gap:14px;padding:14px 16px;background:rgba(198,168,94,.08);border:1px solid rgba(198,168,94,.2);border-radius:12px;cursor:pointer;margin-bottom:8px;transition:all .15s" onmouseenter="this.style.background=\'rgba(198,168,94,.12)\'" onmouseleave="this.style.background=\'rgba(198,168,94,.08)\'">';
+    h+='<div style="width:32px;height:32px;border-radius:10px;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#1C1A17;flex-shrink:0">1</div>';
+    h+='<div style="flex:1"><div style="font-size:13px;font-weight:600;color:#EDEBE7">Set Up Your Career Profile</div>';
+    h+='<div style="font-size:11px;color:rgba(237,235,231,.5)">Takes 2 minutes. Unlocks personalized scores, benchmarks, and recommendations.</div></div>';
+    h+='<span style="font-size:12px;color:var(--accent);font-weight:600">Start →</span>';
+    h+='</div>';
+
+    // Step 2: Run first tool
+    h+='<div onclick="navTo(\'scr-vault\')" style="display:flex;align-items:center;gap:14px;padding:14px 16px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:12px;cursor:pointer;margin-bottom:8px;transition:all .15s" onmouseenter="this.style.background=\'rgba(255,255,255,.06)\'" onmouseleave="this.style.background=\'rgba(255,255,255,.03)\'">';
+    h+='<div style="width:32px;height:32px;border-radius:10px;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:rgba(237,235,231,.5);flex-shrink:0">2</div>';
+    h+='<div style="flex:1"><div style="font-size:13px;font-weight:600;color:rgba(237,235,231,.6)">Run Your First Career Tool</div>';
+    h+='<div style="font-size:11px;color:rgba(237,235,231,.35)">17 structured tools covering match strategy, contracts, compensation, and financial planning.</div></div>';
+    h+='</div>';
+
+    // Step 3: Track progress
+    h+='<div style="display:flex;align-items:center;gap:14px;padding:14px 16px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:12px;cursor:default;margin-bottom:0">';
+    h+='<div style="width:32px;height:32px;border-radius:10px;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:rgba(237,235,231,.5);flex-shrink:0">3</div>';
+    h+='<div style="flex:1"><div style="font-size:13px;font-weight:600;color:rgba(237,235,231,.6)">Track Your Progress Over Time</div>';
+    h+='<div style="font-size:11px;color:rgba(237,235,231,.35)">Market benchmarks, compensation tracking, decision journal, and milestone celebrations.</div></div>';
+    h+='</div>';
+
+    h+='</div>';
+
+    // What makes HeartWise different — social proof
+    h+='<div style="padding:12px 14px;background:rgba(255,255,255,.04);border-radius:10px;font-size:11px;color:rgba(237,235,231,.5);line-height:1.6">';
+    h+='<span style="color:var(--accent);font-weight:600">Built by a physician, for physicians.</span> Every tool is built on real clinical career data, MGMA benchmarks, and match outcomes — not generic advice from a career coach who has never rounded on patients.';
+    h+='</div>';
+
+    h+='</div></div>';
+
+  // ===== STEP 2: Profile set up, but no tools used yet =====
+  } else if(toolsUsed>0){
+    // This shouldn't hit (they have tools but no profile), but just in case
+    h+='<div style="background:#111318;border-radius:18px;padding:24px;color:#EDEBE7">';
+    h+='<div style="font-family:var(--font-serif);font-size:17px;font-weight:600;margin-bottom:8px">';
+    if(name)h+=name+', set up your profile to unlock your career dashboard.';
+    else h+='Set up your profile to unlock personalized scores.';
+    h+='</div>';
+    h+='<div style="font-size:12px;color:rgba(237,235,231,.6);margin-bottom:14px">You have already used '+toolsUsed+' tool'+(toolsUsed!==1?'s':'')+'. Adding your profile data connects everything together.</div>';
+    h+='<div onclick="showUpdateProfile()" style="display:inline-flex;align-items:center;gap:6px;padding:10px 18px;background:var(--accent);color:#1C1A17;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer">Set Up Profile →</div>';
+    h+='</div>';
+  }
+
+  document.getElementById('home-score-card').innerHTML=h;
+}
 // ===== PERSONALIZED NEXT STEP =====
 function renderNextStep(){
   var el=document.getElementById('home-next-step');
   if(!el||!U)return;
   var cp=U.careerProfile||{};
   var toolsUsed=(U.toolHistory||[]).map(function(t){return t.tool});
+  var toolCount=(U.toolHistory||[]).length;
   var h='';
 
-  // No profile yet — prompt to set up
+  // No profile yet — the quickstart handles it, keep hero clean
   if(!cp.lastUpdated){
     var _hasPlan2=U.tier==='core'||U.tier==='elite'||U.tier==='admin'||U.isTrial;
     if(_hasPlan2){
-      h='<div onclick="showUpdateProfile()" style="cursor:pointer;margin-top:4px">';
-      h+='<p style="font-family:var(--font-serif);font-size:16px;color:#1C1A17;line-height:1.4;font-weight:600;margin:0 0 8px">Set up your Career Profile to get personalized scores and recommendations.</p>';
-      h+='<span style="font-size:12px;color:#9a8a72;font-weight:600">Takes 2 minutes → personalized dashboard ✨</span>';
-      h+='</div>';
+      h='<p style="font-family:var(--font-serif);font-size:16px;color:#1C1A17;line-height:1.4;font-weight:600;margin:0">The career decisions you make now will compound for decades.</p>';
     }else{
       h='<p style="font-family:var(--font-serif);font-size:16px;color:#1C1A17;line-height:1.4;font-weight:600;margin:0">Your career is too important for guesswork.</p>';
     }
@@ -2449,54 +2527,112 @@ function renderNextStep(){
     return;
   }
 
-  // Has profile — find highest-impact next action
+  // Has profile — personalized, encouraging next step
   var stage=cp.stage||'student';
-  var goal=cp.goal||'';
   var scores=calcDashScores(cp);
+  var overall=Math.round((scores.competitiveness+scores.research+scores.readiness+scores.financial)/4);
 
-  // Find weakest score
-  var lowest={key:'competitiveness',val:100};
-  ['competitiveness','research','readiness','financial'].forEach(function(k){
-    if((scores[k]||0)<lowest.val){lowest={key:k,val:scores[k]||0}}
-  });
-
-  var toolMap={
-    competitiveness:'Match Probability Calculator',
-    research:'Research Impact Calculator',
-    readiness:'Career Roadmap Tool',
-    financial:'Financial Projection Tool'
+  // Stage-aware messages (not deficit-focused)
+  var stageMessages={
+    student:{
+      first:'The decisions you make in the next 12 months will shape the next 30 years of your career.',
+      returning:'Every tool you run sharpens your strategy. Keep building.',
+      strong:'You are building a competitive profile. Stay focused on what moves the needle.'
+    },
+    resident:{
+      first:'You have a narrow window to position yourself for fellowship and beyond. Use it wisely.',
+      returning:'Your strategy is taking shape. Each data point you add makes your plan sharper.',
+      strong:'You are ahead of most residents in career planning. That advantage compounds.'
+    },
+    fellow:{
+      first:'Your first attending contract will set the financial trajectory for your entire career.',
+      returning:'The financial decisions you make now will determine your wealth for the next 25 years.',
+      strong:'You are making informed decisions. That separates you from physicians who sign blind.'
+    },
+    attending:{
+      first:'Most physicians never negotiate after their first contract. Do not be most physicians.',
+      returning:'Ongoing market awareness is the difference between earning well and leaving money on the table.',
+      strong:'You are tracking your career like a professional. Most physicians never do this.'
+    }
   };
-  var actionMap={
-    competitiveness:'Run the Match Probability Calculator to see exactly where the gaps are.',
-    research:'Use the Research Impact Calculator to find the highest-impact research moves.',
-    readiness:'Try the Career Roadmap Tool to map your next steps.',
-    financial:'Run the Financial Projection Tool to model your 30-year wealth path.'
-  };
+  var msgs=stageMessages[stage]||stageMessages.student;
 
-  // Check if they've already used the recommended tool
-  var recTool=toolMap[lowest.key];
-  var usedRec=toolsUsed.indexOf(recTool)!==-1;
+  // Check if they've used any tools
+  var recTool=getNextBestTool(cp,scores,toolsUsed);
 
-  if(usedRec){
-    // Stale scores?
+  if(!toolCount){
+    // Has profile but no tools used — encourage first tool
+    h='<div onclick="navTo(\'scr-vault\')" style="cursor:pointer;margin-top:4px">';
+    h+='<p style="font-family:var(--font-serif);font-size:16px;color:#1C1A17;line-height:1.4;font-weight:600;margin:0 0 6px">'+msgs.first+'</p>';
+    h+='<span style="font-size:12px;color:#9a8a72;font-weight:600">Explore Career Tools →</span>';
+    h+='</div>';
+  } else if(recTool){
+    // Has profile and some tools — suggest the next high-value tool
     var lastUpdate=cp.lastUpdated?new Date(cp.lastUpdated):null;
     var daysSince=lastUpdate?Math.floor((new Date()-lastUpdate)/86400000):999;
     if(daysSince>=30){
       h='<div onclick="showUpdateProfile()" style="cursor:pointer;margin-top:4px">';
       h+='<p style="font-family:var(--font-serif);font-size:16px;color:#1C1A17;line-height:1.4;font-weight:600;margin:0 0 6px">Your scores are '+daysSince+' days old.</p>';
-      h+='<p style="font-size:12px;color:#6a6560;margin:0">Update your profile to see how you\'ve progressed. <span style="color:#9a8a72;font-weight:600">Update →</span></p>';
+      h+='<p style="font-size:12px;color:#6a6560;margin:0">Update your profile to see how far you have come. <span style="color:#9a8a72;font-weight:600">Update →</span></p>';
       h+='</div>';
-    }else{
-      h='<p style="font-family:var(--font-serif);font-size:16px;color:#1C1A17;line-height:1.4;font-weight:600;margin:0 0 6px">You\'re on track.</p>';
-      h+='<p style="font-size:12px;color:#6a6560;margin:0">Ask a question or explore a new tool to keep building your strategy.</p>';
+    } else {
+      h='<div onclick="navTo(\'scr-vault\')" style="cursor:pointer;margin-top:4px">';
+      h+='<p style="font-family:var(--font-serif);font-size:16px;color:#1C1A17;line-height:1.4;font-weight:600;margin:0 0 6px">'+recTool.why+'</p>';
+      h+='<span style="font-size:12px;color:#9a8a72;font-weight:600">'+recTool.label+' →</span>';
+      h+='</div>';
     }
-  }else{
-    h='<div onclick="navTo(\'scr-vault\')" style="cursor:pointer;margin-top:4px">';
-    h+='<p style="font-family:var(--font-serif);font-size:16px;color:#1C1A17;line-height:1.4;font-weight:600;margin:0 0 6px">Your <span style="color:#C6A85E">'+lowest.key+'</span> score is '+lowest.val+'. '+actionMap[lowest.key]+'</p>';
-    h+='<span style="font-size:12px;color:#9a8a72;font-weight:600">Open Career Tools →</span>';
-    h+='</div>';
+  } else {
+    // Used most tools — affirm and suggest maintenance
+    h='<p style="font-family:var(--font-serif);font-size:16px;color:#1C1A17;line-height:1.4;font-weight:600;margin:0 0 6px">'+(overall>=65?msgs.strong:msgs.returning)+'</p>';
+    h+='<p style="font-size:12px;color:#6a6560;margin:0">Ask a question or revisit a tool to refine your strategy.</p>';
   }
   el.innerHTML=h;
+}
+
+// Get next best tool recommendation based on stage and what they haven't used
+function getNextBestTool(cp,scores,usedTools){
+  var stage=cp.stage||'student';
+  // Stage-specific tool priority with opportunity-focused messaging
+  var toolPriority={
+    student:[
+      {name:'Match Competitiveness Calculator',label:'Run Match Calculator',why:'See exactly where you stand and what gaps to close before applications open.'},
+      {name:'Specialty Fit Assessment',label:'Try Specialty Fit',why:'Make sure you are aiming at specialties that match your strengths and priorities.'},
+      {name:'Research Impact Calculator',label:'Run Research Calculator',why:'Know which research activities will actually move your application forward.'},
+      {name:'Fellowship Readiness Calculator',label:'Check Readiness',why:'Get a clear picture of your readiness across the 7 domains that matter.'},
+      {name:'Career Strategy Builder',label:'Build Your Strategy',why:'Map out the dependencies between your goals so nothing falls through the cracks.'},
+      {name:'Mock Interview Simulator',label:'Practice Interviews',why:'The honest debrief most people never get until it is too late.'}
+    ],
+    resident:[
+      {name:'Match Competitiveness Calculator',label:'Run Match Calculator',why:'Know your real fellowship match probability before application season.'},
+      {name:'Fellowship Readiness Calculator',label:'Check Readiness',why:'Score yourself across the 7 domains fellowship programs care about most.'},
+      {name:'Research Impact Calculator',label:'Run Research Calculator',why:'Maximize the impact of limited research time during residency.'},
+      {name:'Career Strategy Builder',label:'Build Your Strategy',why:'Connect the dots between your goals, timelines, and actions.'},
+      {name:'Financial Projection Tool',label:'Model Your Finances',why:'Understand what your financial trajectory looks like over the next decade.'},
+      {name:'Mock Interview Simulator',label:'Practice Interviews',why:'Practice the hard questions before they are asked for real.'}
+    ],
+    fellow:[
+      {name:'Contract Review Tool',label:'Review Your Contract',why:'Your first attending contract sets the financial trajectory for your entire career.'},
+      {name:'RVU Compensation & Offer Comparison',label:'Check Compensation',why:'Know your market value before you sit down at the negotiation table.'},
+      {name:'Job Offer Comparison',label:'Compare Offers',why:'Side-by-side analysis that shows which offer actually wins over 5 years.'},
+      {name:'3-Year Financial Planner',label:'Plan Your Finances',why:'The financial decisions you make in year one determine your wealth at year 20.'},
+      {name:'Debt & Income Strategy',label:'Optimize Debt Strategy',why:'One wrong move on PSLF or refinancing can cost you six figures.'},
+      {name:'Career Transition Planner',label:'Compare Paths',why:'Model the risk and upside of different career paths before you commit.'}
+    ],
+    attending:[
+      {name:'Contract Review Tool',label:'Review Contract',why:'Most physicians lose money on contract terms they never questioned.'},
+      {name:'RVU Compensation & Offer Comparison',label:'Check Market Rate',why:'Know if you are being paid fairly compared to MGMA benchmarks for your specialty.'},
+      {name:'3-Year Financial Planner',label:'Plan Finances',why:'Optimize your savings rate, 401k, backdoor Roth, and debt payoff sequence.'},
+      {name:'Financial Projection Tool',label:'Model Wealth',why:'See your 30-year wealth trajectory and what changes would have the biggest impact.'},
+      {name:'Career Transition Planner',label:'Evaluate Options',why:'Thinking about a change? Model the financial and career impact before you leap.'},
+      {name:'Debt & Income Strategy',label:'Optimize Debt',why:'The right debt strategy can save you $100K+ over the payoff period.'}
+    ]
+  };
+
+  var priority=toolPriority[stage]||toolPriority.student;
+  for(var i=0;i<priority.length;i++){
+    if(usedTools.indexOf(priority[i].name)===-1)return priority[i];
+  }
+  return null; // Used all recommended tools
 }
 
 // ===== PERSONALIZED TOOL RECOMMENDATIONS =====

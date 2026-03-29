@@ -8084,57 +8084,15 @@ function renderDashboard(){
     renderHeroCard();
     return;
   }
-  document.getElementById('career-dashboard').style.display='';
+  // Score card is handled by renderHeroCard — skip duplicate here
+  // Just render the detail sections (graph, benchmarks, milestones, history)
+  document.getElementById('career-dashboard').style.display='none';
+  var _scoreCardEl=document.getElementById('home-score-card');
+  if(_scoreCardEl)_scoreCardEl.innerHTML='';
+  var refreshEl=document.getElementById('dash-score-refresh');
+  if(refreshEl)refreshEl.style.display='none';
   var scores=calcDashScores(cp);
   var stage=cp.stage||'student';
-
-  // Single prominent score card — dark spotlight per design system
-  var overall=Math.round((scores.competitiveness+scores.research+scores.readiness+scores.financial)/4);
-  var prev=U.scoreHistory.length>1?U.scoreHistory[U.scoreHistory.length-2].scores:null;
-  var prevOverall=prev?Math.round((prev.competitiveness+prev.research+prev.readiness+prev.financial)/4):null;
-  var delta=prevOverall!==null?overall-prevOverall:0;
-  var overallColor=overall>=75?'#5E8B6F':overall>=55?'#C6A85E':'#B85C5C';
-  var ringColor=overall>=75?'#5E8B6F':overall>=55?'#C6A85E':'#B85C5C';
-  var r=34,circ=2*Math.PI*r,offset=circ-(overall/100)*circ;
-
-  var sh='<div style="background:#111318;border-radius:18px;padding:20px;display:flex;align-items:center;gap:18px;color:#EDEBE7">';
-  sh+='<div style="position:relative;width:76px;height:76px;flex-shrink:0">';
-  sh+='<svg viewBox="0 0 76 76" style="width:76px;height:76px;transform:rotate(-90deg)">';
-  sh+='<circle cx="38" cy="38" r="'+r+'" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="5"/>';
-  sh+='<circle cx="38" cy="38" r="'+r+'" fill="none" stroke="'+ringColor+'" stroke-width="5" stroke-linecap="round" stroke-dasharray="'+circ.toFixed(1)+'" stroke-dashoffset="'+offset.toFixed(1)+'" style="transition:stroke-dashoffset .8s ease"/>';
-  sh+='</svg>';
-  sh+='<div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:24px;font-weight:700;color:'+overallColor+';font-family:var(--font-serif)">'+overall+'</div>';
-  sh+='</div>';
-  sh+='<div style="flex:1">';
-  sh+='<div style="font-size:14px;font-weight:600;color:#EDEBE7;margin-bottom:4px">Career Score</div>';
-  if(delta!==0) sh+='<div style="font-size:11px;color:'+(delta>0?'#5E8B6F':'#B85C5C')+';font-weight:600;margin-bottom:4px">'+(delta>0?'↑ +':'↓ ')+delta+' since last update</div>';
-  // Mini breakdown
-  sh+='<div style="display:flex;gap:12px;flex-wrap:wrap">';
-  [['🏆',scores.competitiveness],['🔬',scores.research],['🎯',scores.readiness],['💰',scores.financial]].forEach(function(s){
-    sh+='<span style="font-size:10px;color:rgba(237,235,231,.6)">'+s[0]+' '+s[1]+'</span>';
-  });
-  sh+='</div>';
-  sh+='</div>';
-  sh+='<div onclick="showUpdateProfile()" style="cursor:pointer;padding:8px 14px;background:rgba(255,255,255,.08);border-radius:10px;font-size:11px;font-weight:600;color:#C6A85E;white-space:nowrap;transition:background .2s" onmouseenter="this.style.background=\'rgba(255,255,255,.12)\'" onmouseleave="this.style.background=\'rgba(255,255,255,.08)\'">Update</div>';
-  sh+='</div>';
-  document.getElementById('home-score-card').innerHTML=sh;
-
-  // Score Refresh Prompt — show if scores are older than 30 days
-  var refreshEl=document.getElementById('dash-score-refresh');
-  if(refreshEl){
-    var lastUpdate=cp.lastUpdated?new Date(cp.lastUpdated):null;
-    var daysSince=lastUpdate?Math.floor((new Date()-lastUpdate)/86400000):999;
-    if(daysSince>=30){
-      refreshEl.style.display='';
-      refreshEl.innerHTML='<div style="display:flex;align-items:center;gap:10px;padding:14px 16px;background:linear-gradient(160deg,rgba(198,168,94,.06),rgba(200,168,124,.02));border:1px solid rgba(198,168,94,.15);border-radius:10px;cursor:pointer" onclick="showUpdateProfile()">'
-        +'<span style="font-size:16px"></span>'
-        +'<div style="flex:1"><div style="font-size:12px;font-weight:600;color:var(--accent)">Your scores are '+daysSince+' days old</div>'
-        +'<div style="font-size:11px;color:var(--text3);margin-top:2px">A lot can change in a month. Update your profile to recalculate.</div></div>'
-        +'<span style="font-size:12px;font-weight:600;color:var(--accent)">Update →</span></div>';
-    }else{
-      refreshEl.style.display='none';
-    }
-  }
 
   // Progress Graph
   if(U.scoreHistory.length>1){
@@ -8837,52 +8795,63 @@ function renderToolHistory(){
 
 function renderHome(){
   if(!U)return;
-  // Render unified hero card (welcome + score + direction)
+  // Zone 1: Hero card (welcome + score ring + direction OR quickstart for new users)
   renderHeroCard();
   // Trial banner
   var trialBanner=document.getElementById('trial-countdown-banner');
   if(trialBanner)trialBanner.style.display=U.isTrial&&U.trialEnd?'':'none';
   if(U.isTrial&&U.trialEnd)updateTrialBanner();
-  // Score change detection
+  // Score change notification (only shows when there IS a change)
   try{renderScoreChange()}catch(e){console.error('ScoreChange:',e)}
-  // Personalized tool recommendation
+  // Zone 2: Recommended tool (single card, not a list)
   renderRecommendedTools();
-  // Engagement sections (paid users only)
+  // Check if paid user
   var _hasPlan=U.tier==='core'||U.tier==='elite'||U.tier==='admin'||U.isTrial;
+  // Hide all engagement sections by default — only show ones with actual content
+  var _engIds=['comp-intel-card','tripwire-alerts','revisit-prompts','upcoming-deadlines','home-score-breakdown','tool-progress','decision-journal-home','weekly-focus','monthly-checkin-trigger','seasonal-calendar','quarterly-snapshot-btn','peer-benchmark-card'];
+  _engIds.forEach(function(id){var el=document.getElementById(id);if(el)el.style.display='none'});
   if(_hasPlan){
-    // Zone 3: Active alerts
-    try{renderCompIntelCard()}catch(e){console.error('CompIntelCard:',e)}
+    // Zone 3: Alerts — only render if there's actual alert data
+    var _hasCompData=(U.compIntel&&(U.compIntel.snapshots&&U.compIntel.snapshots.length||U.compIntel.alerts&&U.compIntel.alerts.length||U.compIntel.contractDate||U.compIntel.region));
+    if(_hasCompData)try{renderCompIntelCard()}catch(e){console.error('CompIntelCard:',e)}
     try{renderTripwireAlerts()}catch(e){console.error('TripwireAlerts:',e)}
-    try{renderRevisitPrompts()}catch(e){console.error('RevisitPrompts:',e)}
-    try{renderUpcomingDeadlines()}catch(e){console.error('Deadlines:',e)}
-    // Zone 4: Progress
+    // Zone 4: Score breakdown (the labeled bars — core value prop)
     try{renderScoreBreakdown()}catch(e){console.error('ScoreBreakdown:',e)}
-    try{renderToolProgress()}catch(e){console.error('ToolProgress:',e)}
-    try{renderDecisionJournalHome()}catch(e){console.error('DecisionJournal:',e)}
-    // Zone 5: Plan & explore
-    try{renderWeeklyFocus()}catch(e){console.error('WeeklyFocus:',e)}
-    try{renderMonthlyCheckinTrigger()}catch(e){console.error('MonthlyCheckin:',e)}
-    try{renderSeasonalCalendar()}catch(e){console.error('SeasonalCal:',e)}
-    try{renderQuarterlySnapshotBtn()}catch(e){console.error('QuarterlySnapshot:',e)}
-    try{renderPeerBenchmarkCard()}catch(e){console.error('PeerBenchmark:',e)}
-  }else{
-    ['comp-intel-card','tripwire-alerts','revisit-prompts','upcoming-deadlines','home-score-breakdown','tool-progress','decision-journal-home','weekly-focus','monthly-checkin-trigger','seasonal-calendar','quarterly-snapshot-btn','peer-benchmark-card'].forEach(function(id){var el=document.getElementById(id);if(el)el.style.display='none'});
+    // Zone 5: Active items only — decision journal & monthly check-in (skip if no content)
+    var _hasDecisions=U.decisions&&U.decisions.length>0;
+    if(_hasDecisions)try{renderDecisionJournalHome()}catch(e){console.error('DecisionJournal:',e)}
+    var _hasCheckins=U.monthlyCheckins&&U.monthlyCheckins.length>0;
+    var _lastCheckin=_hasCheckins?U.monthlyCheckins[U.monthlyCheckins.length-1]:null;
+    var _daysSinceCheckin=_lastCheckin?Math.floor((Date.now()-new Date(_lastCheckin.date).getTime())/86400000):999;
+    if(_daysSinceCheckin>=25)try{renderMonthlyCheckinTrigger()}catch(e){console.error('MonthlyCheckin:',e)}
   }
-  // Render the old dashboard sections (graph, benchmarks, milestones, history) inside collapsed area
-  renderDashboard();
+  // Hide old dashboard — hero card handles the score display now
+  var _dashEl=document.getElementById('career-dashboard');
+  if(_dashEl)_dashEl.style.display='none';
+  // Detailed analytics toggle (graph, benchmarks, milestones, history) — keep collapsed
+  var _hasProfile=U.careerProfile&&U.careerProfile.specialty;
+  var _hasHistory=U.scoreHistory&&U.scoreHistory.length>1;
+  var _hasTools=U.toolHistory&&U.toolHistory.length>0;
+  var _detailToggle=document.getElementById('dash-detail-toggle');
+  if(_detailToggle){
+    if(_hasPlan&&(_hasHistory||_hasTools)){
+      _detailToggle.style.display='';
+      // Render details content (stays hidden until user clicks toggle)
+      renderDashboard();
+    }else{
+      _detailToggle.style.display='none';
+    }
+  }
   // Upgrade nudge
   renderUpgradeNudge();
   // Nav badges
   try{renderNavBadges()}catch(e){console.error('NavBadges:',e)}
-  // Recent analyses
+  // Recent analyses — only if there are reviewed questions
   var feedSection=document.getElementById('home-feed-section');
-  var now=new Date();var weekAgo=new Date(now);weekAgo.setDate(weekAgo.getDate()-7);var weekStr=weekAgo.toISOString().split('T')[0];
-  var reviewed=DB.questions.filter(function(q){return q.status==='reviewed'&&q.reviewNote}).sort(function(a,b){return b.date.localeCompare(a.date)});
-  var thisWeek=reviewed.filter(function(q){return(q.reviewDate||q.date)>=weekStr});
-  var featured=thisWeek.length>=3?thisWeek.slice(0,5):reviewed.slice(0,5);
-  if(featured.length){
+  var reviewed=(DB.questions||[]).filter(function(q){return q.status==='reviewed'&&q.reviewNote}).sort(function(a,b){return b.date.localeCompare(a.date)});
+  if(reviewed.length>0){
     if(feedSection)feedSection.style.display='';
-    document.getElementById('home-feed').innerHTML=featured.map(renderQCard).join('');
+    document.getElementById('home-feed').innerHTML=reviewed.slice(0,3).map(renderQCard).join('');
   }else{
     if(feedSection)feedSection.style.display='none';
   }

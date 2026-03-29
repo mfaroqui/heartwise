@@ -2413,11 +2413,11 @@ function renderHome(){
   // Hide all engagement sections by default — only show ones with actual content
   var _engIds=['comp-intel-card','tripwire-alerts','revisit-prompts','upcoming-deadlines','home-score-breakdown','tool-progress','decision-journal-home','weekly-focus','monthly-checkin-trigger','seasonal-calendar','quarterly-snapshot-btn','peer-benchmark-card','monthly-progress-report','cost-of-inaction'];
   _engIds.forEach(function(id){var el=document.getElementById(id);if(el)el.style.display='none'});
+  // Zone 0b: Cost of Inaction / Day 1 Stakes — shows for ALL users (free, trial, paid)
+  try{renderCostOfInaction()}catch(e){console.error('CostInaction:',e)}
   if(_hasPlan){
     // Zone 0: Monthly Progress Report (auto-triggers on first visit of the month)
     try{renderMonthlyProgressReport()}catch(e){console.error('MonthlyReport:',e)}
-    // Zone 0b: Cost of Inaction (shows when tools are overdue)
-    try{renderCostOfInaction()}catch(e){console.error('CostInaction:',e)}
     // Zone 3: Alerts — only render if there's actual alert data
     var _hasCompData=(U.compIntel&&(U.compIntel.snapshots&&U.compIntel.snapshots.length||U.compIntel.alerts&&U.compIntel.alerts.length||U.compIntel.contractDate||U.compIntel.region));
     if(_hasCompData)try{renderCompIntelCard()}catch(e){console.error('CompIntelCard:',e)}

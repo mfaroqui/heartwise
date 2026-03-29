@@ -11561,10 +11561,8 @@ function mccNeedleMover(params){
   // Define all possible improvements with effort estimates
   var scenarios=[];
 
-  // Board score +10
-  if(params.step2<270){
-    scenarios.push({field:'step2',newVal:params.step2+10,label:'Board score +10 points ('+params.step2+' \u2192 '+(params.step2+10)+')',effort:'2\u20133 months focused prep',timeMonths:3,action:'Dedicated board study block with question banks'});
-  }
+  // Board score — removed from simulation. Once taken, board scores are fixed.
+  // Users entering their score have already taken the exam.
 
   // Research — pubs up one tier
   if(params.pubs<4){

@@ -2411,9 +2411,13 @@ function renderHome(){
   // Check if paid user
   var _hasPlan=U.tier==='core'||U.tier==='elite'||U.tier==='admin'||U.isTrial;
   // Hide all engagement sections by default — only show ones with actual content
-  var _engIds=['comp-intel-card','tripwire-alerts','revisit-prompts','upcoming-deadlines','home-score-breakdown','tool-progress','decision-journal-home','weekly-focus','monthly-checkin-trigger','seasonal-calendar','quarterly-snapshot-btn','peer-benchmark-card'];
+  var _engIds=['comp-intel-card','tripwire-alerts','revisit-prompts','upcoming-deadlines','home-score-breakdown','tool-progress','decision-journal-home','weekly-focus','monthly-checkin-trigger','seasonal-calendar','quarterly-snapshot-btn','peer-benchmark-card','monthly-progress-report','cost-of-inaction'];
   _engIds.forEach(function(id){var el=document.getElementById(id);if(el)el.style.display='none'});
   if(_hasPlan){
+    // Zone 0: Monthly Progress Report (auto-triggers on first visit of the month)
+    try{renderMonthlyProgressReport()}catch(e){console.error('MonthlyReport:',e)}
+    // Zone 0b: Cost of Inaction (shows when tools are overdue)
+    try{renderCostOfInaction()}catch(e){console.error('CostInaction:',e)}
     // Zone 3: Alerts — only render if there's actual alert data
     var _hasCompData=(U.compIntel&&(U.compIntel.snapshots&&U.compIntel.snapshots.length||U.compIntel.alerts&&U.compIntel.alerts.length||U.compIntel.contractDate||U.compIntel.region));
     if(_hasCompData)try{renderCompIntelCard()}catch(e){console.error('CompIntelCard:',e)}
@@ -15589,6 +15593,296 @@ function renderDecisionJournalHome(){
   el.innerHTML=h;
 }
 // ===== FEATURE 1: MONTHLY CAREER CHECK-IN =====
+// ===== MONTHLY PROGRESS REPORT =====
+function renderMonthlyProgressReport(){
+  var el=document.getElementById('monthly-progress-report');
+  if(!el||!U)return;
+  var th=U.toolHistory||[];
+  var sh=U.scoreHistory||[];
+  if(th.length<2){el.style.display='none';return}
+
+  // Check if already dismissed this month
+  var now=new Date();
+  var monthKey=now.getFullYear()+'-'+(now.getMonth()+1);
+  if(U._reportDismissed===monthKey){el.style.display='none';return}
+
+  // Find tools used this month vs last month
+  var thisMonth=now.getMonth(),thisYear=now.getFullYear();
+  var lastMonth=thisMonth===0?11:thisMonth-1;
+  var lastYear=thisMonth===0?thisYear-1:thisYear;
+
+  var thisMonthTools=th.filter(function(t){var d=new Date(t.date);return d.getMonth()===thisMonth&&d.getFullYear()===thisYear});
+  var lastMonthTools=th.filter(function(t){var d=new Date(t.date);return d.getMonth()===lastMonth&&d.getFullYear()===lastYear});
+
+  // Don't show if user just started (no last month data)
+  if(lastMonthTools.length===0&&thisMonthTools.length<3){el.style.display='none';return}
+
+  // Score comparison
+  var currentScores=sh.length?sh[sh.length-1].scores:{};
+  var prevScores=sh.length>1?sh[sh.length-2].scores:{};
+  var scoreDims=['competitiveness','research','financial','readiness'];
+  var dimLabels={competitiveness:'Competitiveness',research:'Research',financial:'Financial',readiness:'Readiness'};
+  var scoreChanges=[];
+  scoreDims.forEach(function(dim){
+    var curr=currentScores[dim]||0;
+    var prev=prevScores[dim]||0;
+    var delta=curr-prev;
+    if(curr>0)scoreChanges.push({dim:dim,label:dimLabels[dim],curr:curr,prev:prev,delta:delta});
+  });
+
+  // Tool usage summary
+  var uniqueToolsThisMonth={};
+  thisMonthTools.forEach(function(t){uniqueToolsThisMonth[t.tool]=true});
+  var toolCount=Object.keys(uniqueToolsThisMonth).length;
+  var runCount=thisMonthTools.length;
+
+  // Overdue tools (haven't been run in recommended interval)
+  var retoolDays={
+    'Match Competitiveness Calculator':30,'Research Impact Calculator':30,
+    'Specialty Fit Assessment':90,'Career Roadmap Tool':60,
+    'Contract Review Tool':45,'3-Year Financial Planner':60,
+    'Debt & Income Strategy':60,'Financial Projection Tool':90,
+    'Application Review':60,'Job Offer Comparison':45
+  };
+  var overdue=[];
+  var lastRuns={};
+  th.forEach(function(t){lastRuns[t.tool]=new Date(t.date)});
+  Object.keys(retoolDays).forEach(function(tool){
+    if(lastRuns[tool]){
+      var daysSince=Math.floor((now-lastRuns[tool])/86400000);
+      if(daysSince>retoolDays[tool])overdue.push({tool:tool,days:daysSince,recommended:retoolDays[tool]});
+    }
+  });
+
+  // Build the report
+  el.style.display='';
+  var monthName=now.toLocaleDateString('en-US',{month:'long',year:'numeric'});
+  var h='<div style="padding:18px;background:linear-gradient(160deg,rgba(200,168,124,.08),rgba(139,184,160,.04));border:1px solid rgba(198,168,94,.2);border-radius:14px;position:relative">';
+
+  // Dismiss button
+  h+='<div onclick="dismissMonthlyReport()" style="position:absolute;top:12px;right:12px;font-size:16px;color:var(--text3);cursor:pointer;opacity:.5;transition:opacity .15s" onmouseenter="this.style.opacity=\'1\'" onmouseleave="this.style.opacity=\'.5\'">\u00d7</div>';
+
+  h+='<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">';
+  h+='<span style="font-size:22px">\ud83d\udcca</span>';
+  h+='<div><div style="font-size:14px;font-weight:600;color:var(--text);font-family:var(--font-serif)">'+monthName+' Progress Report</div>';
+  h+='<div style="font-size:11px;color:var(--text3)">'+runCount+' analyses across '+toolCount+' tools this month</div></div></div>';
+
+  // Score deltas
+  if(scoreChanges.length){
+    h+='<div style="display:grid;grid-template-columns:repeat('+Math.min(scoreChanges.length,4)+',1fr);gap:8px;margin-bottom:14px">';
+    scoreChanges.forEach(function(sc){
+      var color=sc.delta>0?'var(--green)':sc.delta<0?'var(--red)':'var(--text3)';
+      var arrow=sc.delta>0?'\u25b2':sc.delta<0?'\u25bc':'\u2022';
+      h+='<div style="padding:10px;background:var(--bg2);border-radius:10px;text-align:center">';
+      h+='<div style="font-size:10px;color:var(--text3);margin-bottom:4px">'+sc.label+'</div>';
+      h+='<div style="font-size:18px;font-weight:700;color:var(--text);font-family:var(--font-serif)">'+sc.curr+'</div>';
+      h+='<div style="font-size:11px;font-weight:600;color:'+color+'">'+arrow+' '+(sc.delta>0?'+':'')+sc.delta+'</div>';
+      h+='</div>';
+    });
+    h+='</div>';
+  }
+
+  // Activity summary
+  if(thisMonthTools.length){
+    h+='<div style="font-size:11px;color:var(--text2);line-height:1.6;margin-bottom:10px">';
+    var toolNames=Object.keys(uniqueToolsThisMonth);
+    if(toolNames.length<=3)h+='Tools used: <strong>'+toolNames.join(', ')+'</strong>';
+    else h+='<strong>'+toolNames.length+'</strong> different tools used, <strong>'+runCount+'</strong> total analyses';
+    if(lastMonthTools.length>0){
+      var diff=runCount-lastMonthTools.length;
+      if(diff>0)h+=' — <span style="color:var(--green)">'+diff+' more than last month</span>';
+      else if(diff<0)h+=' — <span style="color:var(--red)">'+Math.abs(diff)+' fewer than last month</span>';
+    }
+    h+='</div>';
+  }
+
+  // Overdue tools
+  if(overdue.length){
+    h+='<div style="padding:10px;background:rgba(196,77,86,.05);border-left:3px solid var(--red);border-radius:0 8px 8px 0;margin-bottom:10px">';
+    h+='<div style="font-size:10px;font-weight:600;color:var(--red);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">OVERDUE FOR RE-RUN</div>';
+    overdue.slice(0,3).forEach(function(o){
+      h+='<div onclick="openFramework(\''+getToolId(o.tool)+'\')" style="font-size:11px;color:var(--text2);line-height:1.6;cursor:pointer"><span style="color:var(--red);font-weight:600">'+o.tool+'</span> \u2014 last run '+o.days+' days ago (recommended every '+o.recommended+'d) <span style="color:var(--accent)">\u2192</span></div>';
+    });
+    h+='</div>';
+  }
+
+  // CTA: Monthly check-in or re-run top tool
+  h+='<div style="display:flex;gap:8px;margin-top:12px">';
+  if(overdue.length)h+='<button onclick="openFramework(\''+getToolId(overdue[0].tool)+'\')" style="flex:1;padding:10px;background:var(--accent);color:#1C1A17;border:none;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer">Re-run '+overdue[0].tool.split(' ')[0]+' \u2192</button>';
+  h+='<button onclick="showMonthlyCheckin()" style="flex:1;padding:10px;background:var(--bg2);color:var(--accent);border:1px solid rgba(198,168,94,.2);border-radius:8px;font-size:12px;font-weight:600;cursor:pointer">Full Check-in \u2192</button>';
+  h+='</div>';
+
+  h+='</div>';
+  el.innerHTML=h;
+}
+
+function dismissMonthlyReport(){
+  var now=new Date();
+  U._reportDismissed=now.getFullYear()+'-'+(now.getMonth()+1);
+  var el=document.getElementById('monthly-progress-report');
+  if(el)el.style.display='none';
+}
+
+function getToolId(toolName){
+  var map={'Match Competitiveness Calculator':'v14','Research Impact Calculator':'v7','Specialty Fit Assessment':'v13','Career Roadmap Tool':'v15','Contract Review Tool':'v12','3-Year Financial Planner':'v5','Debt & Income Strategy':'v8','Financial Projection Tool':'v11','Application Review':'v9','Job Offer Comparison':'v3','RVU Compensation Calculator':'v4','Mock Interview Simulator':'v16','Observership Database':'v17','Fellowship Application Planner':'v6','Career Transition Planner':'v10','Burnout vs Misfit Diagnostic':'v13'};
+  return map[toolName]||'v14';
+}
+
+// ===== COST OF INACTION ENGINE =====
+function renderCostOfInaction(){
+  var el=document.getElementById('cost-of-inaction');
+  if(!el||!U)return;
+  var cp=U.careerProfile||{};
+  var th=U.toolHistory||[];
+  var stage=cp.stage||'student';
+  var now=new Date();
+
+  // Don't show if user is very active (ran tools in last 7 days)
+  var sevenAgo=new Date(now);sevenAgo.setDate(sevenAgo.getDate()-7);
+  var recentRuns=th.filter(function(t){return new Date(t.date)>=sevenAgo});
+  if(recentRuns.length>=3){el.style.display='none';return}
+
+  // Don't show if no tools run yet (new user)
+  if(th.length===0){el.style.display='none';return}
+
+  // Calculate days since last tool use
+  var lastRun=th.length?new Date(th[th.length-1].date):null;
+  var daysSinceLast=lastRun?Math.floor((now-lastRun)/86400000):999;
+  if(daysSinceLast<14){el.style.display='none';return}
+
+  // Determine the cost message based on stage and what they haven't done
+  var costs=[];
+  var lastRuns={};
+  th.forEach(function(t){lastRuns[t.tool]=new Date(t.date)});
+
+  // Contract review gaps
+  if((stage==='fellow'||stage==='attending')&&!lastRuns['Contract Review Tool']){
+    costs.push({
+      icon:'\ud83d\udcb0',urgency:'high',
+      headline:'Unreviewed contracts cost physicians $40K\u2013$80K',
+      detail:'The average physician leaves $40,000\u201380,000 on the table in their first contract by not negotiating tail coverage, non-compete terms, and compensation structure.',
+      source:'MGMA Physician Compensation Data',
+      action:'Run Contract Review',tool:'v12',
+      timeframe:'Every contract cycle'
+    });
+  }
+
+  // Financial planning delays
+  if((stage==='resident'||stage==='fellow'||stage==='attending')&&!lastRuns['3-Year Financial Planner']&&!lastRuns['Financial Projection Tool']){
+    costs.push({
+      icon:'\ud83d\udcc9',urgency:'high',
+      headline:'Every month without a plan costs you ~$2,800',
+      detail:'A 2-year delay in strategic financial planning costs physicians $340,000+ over 20 years in lost compound growth. That is $14,167/year or $1,180/month of wealth you are not building.',
+      source:'AAMC Financial Wellness Study',
+      action:'Start Financial Plan',tool:'v5',
+      timeframe:'Update quarterly'
+    });
+  }
+
+  // Match competitiveness — stale data
+  if((stage==='student'||stage==='resident')&&lastRuns['Match Competitiveness Calculator']){
+    var daysSinceMCC=Math.floor((now-lastRuns['Match Competitiveness Calculator'])/86400000);
+    if(daysSinceMCC>45){
+      var monthsStale=Math.round(daysSinceMCC/30);
+      costs.push({
+        icon:'\u23f3',urgency:'moderate',
+        headline:monthsStale+' months of blind spots in your application',
+        detail:'Your competitiveness score is '+daysSinceMCC+' days old. Research, LORs, and grades may have changed. 33% of applicants who fail to match had fixable gaps they never identified in time.',
+        source:'NRMP Charting Outcomes',
+        action:'Update Score',tool:'v14',
+        timeframe:'Monthly during application year'
+      });
+    }
+  }else if((stage==='student'||stage==='resident')&&!lastRuns['Match Competitiveness Calculator']){
+    costs.push({
+      icon:'\ud83d\udea8',urgency:'high',
+      headline:'You do not know your real match probability',
+      detail:'33% of applicants who fail to match had fixable gaps they never identified. Every month without benchmarking is a month of working on the wrong things.',
+      source:'NRMP Charting Outcomes',
+      action:'Check Score',tool:'v14',
+      timeframe:'Run it today'
+    });
+  }
+
+  // Research gaps
+  if((stage==='student'||stage==='resident')&&lastRuns['Research Impact Calculator']){
+    var daysSinceRIC=Math.floor((now-lastRuns['Research Impact Calculator'])/86400000);
+    if(daysSinceRIC>60){
+      costs.push({
+        icon:'\ud83d\udd2c',urgency:'moderate',
+        headline:'Your research profile is '+Math.round(daysSinceRIC/30)+' months out of date',
+        detail:'One first-author publication adds more competitive value than five middle-author papers. Are you spending time on the right projects? Without tracking, most applicants cannot answer that question.',
+        source:'NRMP Charting Outcomes',
+        action:'Update Research Score',tool:'v7',
+        timeframe:'Every 2 months'
+      });
+    }
+  }
+
+  // Specialty/burnout check
+  if(stage==='attending'&&!lastRuns['Burnout vs Misfit Diagnostic']&&!lastRuns['Specialty Fit Assessment']){
+    costs.push({
+      icon:'\ud83d\udd25',urgency:'moderate',
+      headline:'49% of physicians report burnout. Do you know your type?',
+      detail:'Burnout, specialty misfit, and practice model mismatch require completely different solutions. Misdiagnosing which one you have costs years and hundreds of thousands of dollars in wrong-direction career moves.',
+      source:'Medscape 2024 Physician Burnout Report',
+      action:'Take the Diagnostic',tool:'v13',
+      timeframe:'Annually'
+    });
+  }
+
+  // Career roadmap staleness
+  if(lastRuns['Career Roadmap Tool']){
+    var daysSinceCSB=Math.floor((now-lastRuns['Career Roadmap Tool'])/86400000);
+    if(daysSinceCSB>90){
+      costs.push({
+        icon:'\ud83d\uddfa\ufe0f',urgency:'low',
+        headline:'Your career roadmap is '+Math.round(daysSinceCSB/30)+' months old',
+        detail:'Circumstances change. Your roadmap should too. Physicians who revisit their strategy quarterly make faster progress than those who set-and-forget.',
+        source:'HeartWise User Data',
+        action:'Update Roadmap',tool:'v15',
+        timeframe:'Every 3 months'
+      });
+    }
+  }
+
+  // General inactivity
+  if(daysSinceLast>=30&&costs.length===0){
+    var weeksInactive=Math.round(daysSinceLast/7);
+    costs.push({
+      icon:'\u26a0\ufe0f',urgency:'moderate',
+      headline:weeksInactive+' weeks without updating your career data',
+      detail:'Your career profile, scores, and strategy are snapshots in time. The longer you go without updating them, the more they drift from reality. Data-driven decisions require current data.',
+      source:'',
+      action:'Run a Check-in',tool:'',
+      timeframe:'Bi-weekly recommended'
+    });
+  }
+
+  if(!costs.length){el.style.display='none';return}
+
+  // Sort by urgency
+  var urgOrder={high:0,moderate:1,low:2};
+  costs.sort(function(a,b){return(urgOrder[a.urgency]||1)-(urgOrder[b.urgency]||1)});
+
+  // Render top 2
+  el.style.display='';
+  var h='';
+  costs.slice(0,2).forEach(function(c){
+    var borderColor=c.urgency==='high'?'var(--red)':c.urgency==='moderate'?'var(--accent)':'var(--border)';
+    h+='<div style="padding:16px;background:var(--bg2);border-left:3px solid '+borderColor+';border-radius:0 12px 12px 0;margin-bottom:8px">';
+    h+='<div style="display:flex;align-items:flex-start;gap:12px">';
+    h+='<span style="font-size:20px;flex-shrink:0;margin-top:2px">'+c.icon+'</span>';
+    h+='<div style="flex:1">';
+    h+='<div style="font-size:13px;font-weight:600;color:var(--text);line-height:1.4;margin-bottom:4px">'+c.headline+'</div>';
+    h+='<div style="font-size:11px;color:var(--text3);line-height:1.6">'+c.detail+'</div>';
+    if(c.source)h+='<div style="font-size:9px;color:var(--text3);margin-top:4px;opacity:.7">Source: '+c.source+'</div>';
+    if(c.tool)h+='<div style="margin-top:8px"><span onclick="openFramework(\''+c.tool+'\')" style="font-size:11px;font-weight:600;color:var(--accent);cursor:pointer">'+c.action+' \u2192</span></div>';
+    h+='</div></div></div>';
+  });
+  el.innerHTML=h;
+}
+
 function renderMonthlyCheckinTrigger(){
   var el=document.getElementById('monthly-checkin-trigger');
   if(!el||!U)return;

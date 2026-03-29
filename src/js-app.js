@@ -413,16 +413,14 @@ var LP_TOOLS=[
    preview:'<div style="margin-bottom:10px;border-left:2px solid var(--accent);padding-left:10px"><div style="margin-bottom:8px"><div style="font-size:9px;font-weight:600;color:var(--accent)">MONTH 1\u20133</div><div style="font-size:10px;color:var(--text2)">Submit 2 abstracts, secure research mentor, begin LOR conversations</div></div><div style="margin-bottom:8px"><div style="font-size:9px;font-weight:600;color:var(--accent)">MONTH 4\u20136</div><div style="font-size:10px;color:var(--text2)">Away rotations, personal statement, submit ERAS</div></div><div><div style="font-size:9px;font-weight:600;color:var(--accent)">MONTH 7\u201312</div><div style="font-size:10px;color:var(--text2)">Interview circuit, rank list strategy, match prep</div></div></div><div style="font-size:10px;color:var(--text3);line-height:1.5;font-style:italic">\u201cCritical window is months 1\u20133. The research gap must close before ERAS opens.\u201d</div>'},
   {cat:'execute',icon:'\ud83c\udfa4',name:'Interview Practice Tool',desc:'Practice specialty-specific interview questions with structured feedback.',
    preview:'<div style="margin-bottom:10px;padding:10px;background:rgba(200,168,124,.06);border-radius:8px"><div style="font-size:9px;font-weight:600;color:var(--accent);margin-bottom:4px">SAMPLE QUESTION</div><div style="font-size:11px;color:var(--text);font-weight:500;margin-bottom:6px">\u201cWhy cardiology? What draws you to the field?\u201d</div><div style="font-size:9px;color:var(--text3)">Grade: <span style="color:#6abf4b;font-weight:600">B+</span> \u00b7 Structure: Strong \u00b7 Authenticity: Needs work</div></div><div style="font-size:10px;color:var(--text3);line-height:1.5;font-style:italic">\u201cGood structure but sounds rehearsed. Add a specific patient story.\u201d</div>'},
-  {cat:'measure',icon:'\ud83c\udfc6',name:'Fellowship Readiness Assessment',desc:'Gap analysis for fellowship applications.',
-   preview:'<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border)"><span style="font-size:9px;color:var(--text2)">Step 2 Score</span><span style="font-size:9px;font-weight:600;color:#6abf4b">\u2713 Strong</span></div><div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border)"><span style="font-size:9px;color:var(--text2)">Research</span><span style="font-size:9px;font-weight:600;color:#c44d56">\u26a0 Gap</span></div><div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border)"><span style="font-size:9px;color:var(--text2)">LORs</span><span style="font-size:9px;font-weight:600;color:var(--accent)">\u25cb Partial</span></div><div style="display:flex;justify-content:space-between;padding:4px 0"><span style="font-size:9px;color:var(--text2)">Leadership</span><span style="font-size:9px;font-weight:600;color:#6abf4b">\u2713 Strong</span></div></div><div style="font-size:10px;color:var(--text3);line-height:1.5;font-style:italic">\u201cPriority #1: close the research gap before ERAS. Everything else is on track.\u201d</div>'},
+
   {cat:'decide',icon:'\ud83d\udcb0',name:'RVU Compensation & Offer Comparison',desc:'Side-by-side comparison of job offers and RVU scenarios.',
    preview:'<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px"><div style="padding:8px;background:rgba(106,191,75,.06);border:1px solid rgba(106,191,75,.12);border-radius:8px;text-align:center"><div style="font-size:8px;color:var(--text3)">Offer A (Hospital)</div><div style="font-size:14px;font-weight:700;color:#6abf4b;font-family:var(--font-serif)">$580K</div><div style="font-size:8px;color:var(--text3)">Year 1</div></div><div style="padding:8px;background:rgba(200,168,124,.06);border:1px solid rgba(200,168,124,.12);border-radius:8px;text-align:center"><div style="font-size:8px;color:var(--text3)">Offer B (Private)</div><div style="font-size:14px;font-weight:700;color:var(--accent);font-family:var(--font-serif)">$720K</div><div style="font-size:8px;color:var(--text3)">Year 3+</div></div></div><div style="font-size:10px;color:var(--text3);line-height:1.5;font-style:italic">\u201cOffer B generates $1.4M more over 10 years \u2014 but carries more risk.\u201d</div>'},
   {cat:'decide',icon:'\ud83d\udd04',name:'Career Transition Planner',desc:'Evaluate career changes with structured cost-benefit analysis.',
    preview:'<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px"><div style="padding:8px;background:rgba(200,168,124,.06);border-radius:8px;text-align:center"><div style="font-size:8px;color:var(--text3)">Stay Current</div><div style="font-size:14px;font-weight:700;color:var(--accent);font-family:var(--font-serif)">$8.2M</div><div style="font-size:8px;color:var(--text3)">Lifetime</div></div><div style="padding:8px;background:rgba(106,191,75,.06);border-radius:8px;text-align:center"><div style="font-size:8px;color:var(--text3)">Switch Now</div><div style="font-size:14px;font-weight:700;color:#6abf4b;font-family:var(--font-serif)">$9.8M</div><div style="font-size:8px;color:var(--text3)">Lifetime</div></div></div><div style="font-size:10px;color:var(--text3);line-height:1.5;font-style:italic">\u201cSwitching nets $1.6M more even with 2 extra years of training.\u201d</div>'},
   {cat:'measure',icon:'\ud83d\udd2c',name:'Research Impact Calculator',desc:'Score publications and projects by real competitive value.',
    preview:'<div style="text-align:center;margin-bottom:10px"><div style="font-size:24px;font-weight:700;color:var(--accent);font-family:var(--font-serif)">62 / 100</div><div style="font-size:9px;color:var(--text3)">Research Portfolio Score</div><div style="height:6px;background:rgba(200,168,124,.12);border-radius:3px;margin-top:6px"><div style="height:100%;width:62%;background:var(--accent);border-radius:3px"></div></div></div><div style="font-size:10px;color:var(--text3);line-height:1.5;font-style:italic">\u201c3 pubs score well, but 0 first-author papers is the gap. One first-author adds ~18 points.\u201d</div>'},
-  {cat:'decide',icon:'\ud83d\udccb',name:'Contract Risk Assessment',desc:'Quick 5-minute risk assessment for any offer.',
-   preview:'<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border)"><span style="font-size:9px;color:var(--text2)">Compensation</span><span style="font-size:9px;font-weight:600;color:#6abf4b">Low Risk</span></div><div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border)"><span style="font-size:9px;color:var(--text2)">Non-Compete</span><span style="font-size:9px;font-weight:600;color:#c44d56">High Risk</span></div><div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border)"><span style="font-size:9px;color:var(--text2)">Tail Coverage</span><span style="font-size:9px;font-weight:600;color:var(--accent)">Medium</span></div><div style="display:flex;justify-content:space-between;padding:4px 0"><span style="font-size:9px;color:var(--text2)">Termination</span><span style="font-size:9px;font-weight:600;color:#6abf4b">Low Risk</span></div></div><div style="font-size:10px;color:var(--text3);line-height:1.5;font-style:italic">\u201cOverall: Medium risk. The non-compete is the issue \u2014 negotiate before signing.\u201d</div>'},
+
   {cat:'decide',icon:'\u2696\ufe0f',name:'Job Offer Comparison',desc:'Side-by-side offer analysis with a clear winner recommendation.',
    preview:'<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px"><div style="padding:8px;background:rgba(106,191,75,.06);border:1px solid rgba(106,191,75,.12);border-radius:8px;text-align:center"><div style="font-size:8px;color:var(--text3)">Offer A</div><div style="font-size:14px;font-weight:700;color:#6abf4b;font-family:var(--font-serif)">82</div><div style="font-size:8px;color:var(--text3)">Overall Score</div></div><div style="padding:8px;background:rgba(200,168,124,.06);border:1px solid rgba(200,168,124,.12);border-radius:8px;text-align:center"><div style="font-size:8px;color:var(--text3)">Offer B</div><div style="font-size:14px;font-weight:700;color:var(--accent);font-family:var(--font-serif)">68</div><div style="font-size:8px;color:var(--text3)">Overall Score</div></div></div><div style="font-size:10px;color:var(--text3);line-height:1.5;font-style:italic">\u201cChoose Offer A. Better total comp, no non-compete, and stronger benefits package. Unless location is a dealbreaker.\u201d</div>'},
   {cat:'model',icon:'\ud83d\udcb5',name:'3-Year Financial Planner',desc:'Map salary, debt payoff, and savings milestones for your first 3 years.',
@@ -2828,13 +2826,13 @@ function getNextBestTool(cp,scores,usedTools){
       {name:'Match Competitiveness Calculator',label:'Run Match Calculator',why:'See exactly where you stand and what gaps to close before applications open.'},
       {name:'Specialty Fit Assessment',label:'Try Specialty Fit',why:'Make sure you are aiming at specialties that match your strengths and priorities.'},
       {name:'Research Impact Calculator',label:'Run Research Calculator',why:'Know which research activities will actually move your application forward.'},
-      {name:'Fellowship Readiness Calculator',label:'Check Readiness',why:'Get a clear picture of your readiness across the 7 domains that matter.'},
+      {name:'Match Competitiveness Calculator',label:'Check Competitiveness',why:'Get your competitiveness score and see what moves the needle most.'},
       {name:'Career Strategy Builder',label:'Build Your Strategy',why:'Map out the dependencies between your goals so nothing falls through the cracks.'},
       {name:'Mock Interview Simulator',label:'Practice Interviews',why:'The honest debrief most people never get until it is too late.'}
     ],
     resident:[
       {name:'Match Competitiveness Calculator',label:'Run Match Calculator',why:'Know your real fellowship match probability before application season.'},
-      {name:'Fellowship Readiness Calculator',label:'Check Readiness',why:'Score yourself across the 7 domains fellowship programs care about most.'},
+      {name:'Match Competitiveness Calculator',label:'Check Competitiveness',why:'Score your competitiveness and see your real match probability.'},
       {name:'Research Impact Calculator',label:'Run Research Calculator',why:'Maximize the impact of limited research time during residency.'},
       {name:'Career Strategy Builder',label:'Build Your Strategy',why:'Connect the dots between your goals, timelines, and actions.'},
       {name:'Financial Projection Tool',label:'Model Your Finances',why:'Understand what your financial trajectory looks like over the next decade.'},
@@ -4589,7 +4587,7 @@ function ocmCompare(){
 
   // Pathway
   var ocmDiff2=Math.round(Math.abs(cA.totalWithRetire-cB.totalWithRetire)/1000);
-  document.getElementById('ocm-results').innerHTML+=hwGatePathway(hwPathway('<strong>'+winner+' wins</strong> by $'+ocmDiff2+'K in true 10-year value. But money alone doesn\u2019t decide \u2014 factor in non-compete, call, and location.',[{text:'Run both contracts through Contract Risk Assessment for hidden clauses.',when:'this week'},{text:'Model both in the Financial Projection Tool for 30-year compounding.',when:'this week'},{text:'Negotiate the weaker offer\u2019s terms up \u2014 you have leverage.',when:'before signing'}],{id:'v11',icon:'\ud83d\udcc8',title:'Financial Projection Tool',why:'See how each offer compounds over 30 years.'}));
+  document.getElementById('ocm-results').innerHTML+=hwGatePathway(hwPathway('<strong>'+winner+' wins</strong> by $'+ocmDiff2+'K in true 10-year value. But money alone doesn\u2019t decide \u2014 factor in non-compete, call, and location.',[{text:'Run both contracts through Contract Review Tool for hidden clauses.',when:'this week'},{text:'Model both in the Financial Projection Tool for 30-year compounding.',when:'this week'},{text:'Negotiate the weaker offer\u2019s terms up \u2014 you have leverage.',when:'before signing'}],{id:'v11',icon:'\ud83d\udcc8',title:'Financial Projection Tool',why:'See how each offer compounds over 30 years.'}));
 
   // Lifetime Impact — opportunity cost of choosing wrong offer
   if(typeof hwLifetimeImpact==='function'&&totalDiff>5000){
@@ -7248,7 +7246,7 @@ function _frcRun(){
   if(spec&&sData)frcInputs['Target Fellowship']=sData.name;
   if(tl)frcInputs['Timeline']=tl;
   frcHL.unshift(gl+' — '+total+'/100'+(sData?' ('+sData.name+')':''));
-  recordToolUse('Fellowship Readiness Calculator',total+'/100',gl,{inputs:frcInputs,highlights:frcHL});
+  recordToolUse(total+'/100',gl,{inputs:frcInputs,highlights:frcHL});
 }
 // ===== PROFILE =====
 function renderProfile(){
@@ -7534,7 +7532,7 @@ var GOAL_TEMPLATES={
     title:'Contract & Job Search',
     months:[
       {label:'Month 1',goals:['Research MGMA median compensation for your specialty','Understand RVU-based vs salary-based compensation models','Learn the 7 key contract red flags (non-compete, tail, termination)','Talk to 2 attendings about their contract negotiation experience']},
-      {label:'Month 2',goals:['Use the Contract Risk Assessment on a sample contract','Start building a list of target employers/practices','Get an introduction to a healthcare attorney (for when you need one)','Understand your geographic flexibility and non-negotiables']},
+      {label:'Month 2',goals:['Use the Contract Review Tool on a sample contract','Start building a list of target employers/practices','Get an introduction to a healthcare attorney (for when you need one)','Understand your geographic flexibility and non-negotiables']},
       {label:'Month 3',goals:['Compare at least 2 real or sample offers using the Comparison Matrix','Calculate your true compensation (base + RVU + benefits + call)','Draft your negotiation priorities list','Determine your PSLF eligibility — this affects which employers to target']}
     ]
   },
@@ -10969,7 +10967,7 @@ async function submitAudit(){
 
   // hwPathway
   prelim+=hwGatePathway(hwPathway('Your audit is submitted. While waiting for Dr. Faroqui\u2019s full review, use these tools to build more data for your decision.',[
-    {text:'Run the '+(!cvSnap||cvSnap.match(/pub|research/i)?'Match Probability Calculator':'Fellowship Readiness Assessment')+' to get an objective competitiveness score.',when:'this week'},
+    {text:'Run the '+(!cvSnap||cvSnap.match(/pub|research/i)?'Match Probability Calculator':' Match Competitiveness Calculator')+' to get an objective competitiveness score.',when:'this week'},
     {text:'Model the financial implications of your top 2 options in the Financial Projection Tool.',when:'this week'},
     {text:'When Dr. Faroqui\u2019s review arrives, build your execution plan in the Career Roadmap Tool.',when:'after review'}
   ],decision&&decision.match(/fellowship|match|apply/i)?{id:'v14',icon:'\ud83d\udcca',title:'Match Competitiveness Calculator',why:'Get your competitiveness score while you wait. Data + expert review = best possible decision.'}
@@ -13580,7 +13578,7 @@ function showCaseEditor(editId){
   // Related Tools
   h+='<div style="margin-bottom:12px"><label style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px">Related HeartWise Tools</label>';
   h+='<div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:4px">';
-  var toolNames=['Fellowship Readiness Calculator','Contract Review Tool','RVU Compensation Calculator','Job Offer Comparison','3-Year Financial Planner','Debt & Income Strategy','Specialty Fit Assessment','Match Competitiveness Calculator','Career Strategy Builder','Career Transition Planner','Mock Interview Simulator','Financial Projection Tool','Application Review Tool','Research Impact Calculator'];
+  var toolNames=['Contract Review Tool','RVU Compensation Calculator','Job Offer Comparison','3-Year Financial Planner','Debt & Income Strategy','Specialty Fit Assessment','Match Competitiveness Calculator','Career Strategy Builder','Career Transition Planner','Mock Interview Simulator','Financial Projection Tool','Application Review Tool','Research Impact Calculator'];
   var selTools=existing&&existing.relatedTools?existing.relatedTools:[];
   toolNames.forEach(function(t){
     var sel=selTools.indexOf(t)>=0;
@@ -14279,7 +14277,7 @@ function promptDecisionCapture(toolName, score, summary, resultData){
   if(!U.decisions)U.decisions=[];
   // Don't prompt every single time — only after meaningful tools
   var meaningfulTools=['Contract Review Scorecard','Job Offer Comparison Tool','Specialty Fit Assessment',
-    'Match Probability Calculator','Career Roadmap Tool','Fellowship Readiness Calculator',
+    'Match Probability Calculator','Career Roadmap Tool',
     'Contract Review Tool','Financial Projection Tool','RVU Compensation Calculator',
     '3-Year Financial Planner','Debt & Income Strategy','Career Transition Planner',
     'Application Review Tool','Mock Interview Simulator','Observership Database'];
@@ -15318,7 +15316,7 @@ function renderRerunReminders(){
   // Tools worth re-running and their suggested intervals (days)
   var rerunnable={
     'Fellowship Readiness Calculator':{days:30,reason:'Your readiness score may have changed with new experiences.',icon:'🎯'},
-    'Contract Risk Scanner':{days:45,reason:'Re-scan if you\'ve received a revised offer or new contract.',icon:'📋'},
+    'Contract Review Tool_dup':{days:45,reason:'Re-scan if you\'ve received a revised offer or new contract.',icon:'📋'},
     'Job Offer Comparison':{days:30,reason:'Compare again if you have new offers on the table.',icon:'⚖️'},
     'RVU Compensation Modeler':{days:60,reason:'Market rates shift — make sure your comp is still competitive.',icon:'💰'},
     '3-Year Financial Planner':{days:60,reason:'Update with actual income and expenses for a more accurate plan.',icon:'📅'},

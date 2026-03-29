@@ -22324,10 +22324,10 @@ function renderCostOfInaction(){
   var stage=cp.stage||'student';
   var now=new Date();
 
-  // Don't show if user is very active (ran tools in last 7 days)
-  var sevenAgo=new Date(now);sevenAgo.setDate(sevenAgo.getDate()-7);
-  var recentRuns=th.filter(function(t){return new Date(t.date)>=sevenAgo});
-  if(recentRuns.length>=3){el.style.display='none';return}
+  // Don't show if user is very active (ran a tool in last 3 days)
+  var threeAgo=new Date(now);threeAgo.setDate(threeAgo.getDate()-3);
+  var recentRuns=th.filter(function(t){return new Date(t.date)>=threeAgo});
+  if(recentRuns.length>=2){el.style.display='none';return}
 
   // Don't show if no tools run yet (new user)
   if(th.length===0){el.style.display='none';return}
@@ -22335,7 +22335,7 @@ function renderCostOfInaction(){
   // Calculate days since last tool use
   var lastRun=th.length?new Date(th[th.length-1].date):null;
   var daysSinceLast=lastRun?Math.floor((now-lastRun)/86400000):999;
-  if(daysSinceLast<14){el.style.display='none';return}
+  if(daysSinceLast<7){el.style.display='none';return}
 
   // Determine the cost message based on stage and what they haven't done
   var costs=[];

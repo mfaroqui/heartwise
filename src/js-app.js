@@ -407,7 +407,7 @@ var LP_TOOLS=[
    preview:'<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px"><div style="padding:8px;background:rgba(106,191,75,.06);border:1px solid rgba(106,191,75,.15);border-radius:8px;text-align:center"><div style="font-size:8px;color:var(--text3)">With PSLF</div><div style="font-size:16px;font-weight:700;color:#6abf4b;font-family:var(--font-serif)">$4.2M</div><div style="font-size:8px;color:var(--text3)">10-yr net worth</div></div><div style="padding:8px;background:rgba(200,168,124,.06);border:1px solid rgba(200,168,124,.15);border-radius:8px;text-align:center"><div style="font-size:8px;color:var(--text3)">Without PSLF</div><div style="font-size:16px;font-weight:700;color:var(--accent);font-family:var(--font-serif)">$3.6M</div><div style="font-size:8px;color:var(--text3)">10-yr net worth</div></div></div><div style="font-size:10px;color:var(--text3);line-height:1.5;font-style:italic">\u201cPSLF creates a $600K advantage over refinancing \u2014 the most common mistake physicians make.\u201d</div>'},
   {cat:'decide',icon:'\ud83d\udcc4',name:'Contract Review Tool',desc:'Decode contracts clause by clause. Surface red flags and negotiation strategies.',
    preview:'<div style="display:flex;align-items:center;gap:12px;margin-bottom:10px"><div style="text-align:center"><div style="font-size:24px;font-weight:700;color:var(--accent);font-family:var(--font-serif)">B+</div><div style="font-size:8px;color:var(--text3)">Grade</div></div><div style="flex:1"><div style="display:flex;align-items:center;gap:4px;margin-bottom:3px"><span style="font-size:8px;color:var(--text3);width:55px">Base Salary</span><div style="flex:1;height:4px;background:rgba(200,168,124,.15);border-radius:2px"><div style="height:100%;width:82%;background:#6abf4b;border-radius:2px"></div></div></div><div style="display:flex;align-items:center;gap:4px;margin-bottom:3px"><span style="font-size:8px;color:var(--text3);width:55px">RVU Rate</span><div style="flex:1;height:4px;background:rgba(200,168,124,.15);border-radius:2px"><div style="height:100%;width:68%;background:var(--accent);border-radius:2px"></div></div></div><div style="display:flex;align-items:center;gap:4px"><span style="font-size:8px;color:#c44d56;width:55px">Non-compete</span><div style="flex:1;height:4px;background:rgba(200,168,124,.15);border-radius:2px"><div style="height:100%;width:35%;background:#c44d56;border-radius:2px"></div></div><span style="font-size:8px;color:#c44d56">\u26a0</span></div></div></div><div style="font-size:10px;color:var(--text3);line-height:1.5;font-style:italic">\u201cNon-compete: 2yr/30mi is aggressive. Negotiate to 1yr/15mi \u2014 #1 leverage point.\u201d</div>'},
-  {cat:'define',icon:'\ud83e\uddec',name:'Specialty Fit Assessment',desc:'Match your profile and goals against specialties with compatibility scores.',
+  {cat:'define',icon:'\ud83e\uddec',name:'Specialty Fit Assessment',desc:'Find your ideal specialty or diagnose burnout vs. misfit vs. practice model mismatch.',
    preview:'<div style="margin-bottom:10px"><div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><span style="font-size:9px;color:var(--text2);width:65px">Cardiology</span><div style="flex:1;height:6px;background:rgba(200,168,124,.12);border-radius:3px"><div style="height:100%;width:92%;background:var(--accent);border-radius:3px"></div></div><span style="font-size:9px;font-weight:600;color:var(--accent)">92%</span></div><div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><span style="font-size:9px;color:var(--text2);width:65px">GI</span><div style="flex:1;height:6px;background:rgba(200,168,124,.12);border-radius:3px"><div style="height:100%;width:78%;background:var(--accent);border-radius:3px;opacity:.7"></div></div><span style="font-size:9px;color:var(--text3)">78%</span></div><div style="display:flex;align-items:center;gap:8px"><span style="font-size:9px;color:var(--text2);width:65px">Pulm/Crit</span><div style="flex:1;height:6px;background:rgba(200,168,124,.12);border-radius:3px"><div style="height:100%;width:71%;background:var(--accent);border-radius:3px;opacity:.5"></div></div><span style="font-size:9px;color:var(--text3)">71%</span></div></div><div style="font-size:10px;color:var(--text3);line-height:1.5;font-style:italic">\u201cCardiology is your strongest fit \u2014 driven by procedural interest and research alignment.\u201d</div>'},
   {cat:'execute',icon:'\ud83d\uddfa\ufe0f',name:'Career Roadmap Tool',desc:'Build a milestone roadmap from current stage to goal.',
    preview:'<div style="margin-bottom:10px;border-left:2px solid var(--accent);padding-left:10px"><div style="margin-bottom:8px"><div style="font-size:9px;font-weight:600;color:var(--accent)">MONTH 1\u20133</div><div style="font-size:10px;color:var(--text2)">Submit 2 abstracts, secure research mentor, begin LOR conversations</div></div><div style="margin-bottom:8px"><div style="font-size:9px;font-weight:600;color:var(--accent)">MONTH 4\u20136</div><div style="font-size:10px;color:var(--text2)">Away rotations, personal statement, submit ERAS</div></div><div><div style="font-size:9px;font-weight:600;color:var(--accent)">MONTH 7\u201312</div><div style="font-size:10px;color:var(--text2)">Interview circuit, rank list strategy, match prep</div></div></div><div style="font-size:10px;color:var(--text3);line-height:1.5;font-style:italic">\u201cCritical window is months 1\u20133. The research gap must close before ERAS opens.\u201d</div>'},
@@ -4812,6 +4812,309 @@ function _sfaRun(q1,q2,q3,q4,q5,q6){
   var sfaInputs={'Patient Interaction':q1,'Procedural':q2,'Priority':q3,'Intellectual':q4,'Setting':q5,'Uncertainty':q6};
   var sfaHL=[];top.forEach(function(s,i){sfaHL.push('#'+(i+1)+' '+s.name+' — '+s.comp)});
   recordToolUse('Specialty Fit Assessment',null,'Top: '+top[0].name,{inputs:sfaInputs,highlights:sfaHL});
+}
+
+// ===== BURNOUT vs MISFIT DIAGNOSTIC (v13 mode 2) =====
+function sfaToggleMode(mode){
+  var fitPanel=document.getElementById('sfa-fit-panel');
+  var burnPanel=document.getElementById('sfa-burn-panel');
+  var btnFit=document.getElementById('sfa-btn-fit');
+  var btnBurn=document.getElementById('sfa-btn-burn');
+  if(!fitPanel||!burnPanel)return;
+  if(mode==='fit'){
+    fitPanel.style.display='';burnPanel.style.display='none';
+    btnFit.style.background='var(--accent)';btnFit.style.color='var(--bg)';
+    btnBurn.style.background='none';btnBurn.style.color='var(--accent)';
+  }else{
+    fitPanel.style.display='none';burnPanel.style.display='';
+    btnBurn.style.background='var(--accent)';btnBurn.style.color='var(--bg)';
+    btnFit.style.background='none';btnFit.style.color='var(--accent)';
+  }
+}
+
+function bmdUpdate(){
+  var qs=[];
+  for(var i=1;i<=8;i++){
+    var el=document.getElementById('bmd-q'+i);
+    if(!el||!el.value)return;
+    qs.push(el.value);
+  }
+  var resEl=document.getElementById('bmd-results');
+  if(resEl&&!resEl.dataset.shown){
+    resEl.dataset.shown='1';
+    hwThinking(resEl,[
+      'Analyzing your situation...',
+      'Separating environment from fit...',
+      'Comparing against physician career patterns...',
+      'Building your diagnosis...'
+    ],function(){_bmdRun(qs)});
+    return;
+  }
+  _bmdRun(qs);
+}
+
+function _bmdRun(qs){
+  // qs[0]: clinical work enjoyment
+  // qs[1]: dread source
+  // qs[2]: energy after work
+  // qs[3]: environment change thought experiment
+  // qs[4]: autonomy & culture
+  // qs[5]: schedule & workload
+  // qs[6]: compensation fairness
+  // qs[7]: identity alignment
+
+  var burnout=0,misfit=0,modelMismatch=0;
+
+  // Q1: Core clinical work enjoyment
+  if(qs[0]==='love')misfit-=15;
+  else if(qs[0]==='neutral'){burnout+=5;modelMismatch+=5}
+  else if(qs[0]==='dread_parts'){misfit+=10;modelMismatch+=5}
+  else if(qs[0]==='dread_all')misfit+=25;
+
+  // Q2: What do you dread most?
+  if(qs[1]==='clinical')misfit+=20;
+  else if(qs[1]==='admin'){burnout+=10;modelMismatch+=10}
+  else if(qs[1]==='culture')burnout+=20;
+  else if(qs[1]==='hours')modelMismatch+=15;
+  else if(qs[1]==='comp')modelMismatch+=20;
+
+  // Q3: Energy after clinical work
+  if(qs[2]==='energized')misfit-=10;
+  else if(qs[2]==='neutral')burnout+=5;
+  else if(qs[2]==='drained'){burnout+=10;misfit+=5}
+  else if(qs[2]==='empty'){burnout+=15;misfit+=10}
+
+  // Q4: Same specialty, different environment thought experiment
+  if(qs[3]==='yes_excited'){modelMismatch+=20;misfit-=10}
+  else if(qs[3]==='maybe')modelMismatch+=10;
+  else if(qs[3]==='no_same'){misfit+=20;modelMismatch-=5}
+  else if(qs[3]==='no_done')misfit+=25;
+
+  // Q5: Autonomy & culture
+  if(qs[4]==='great')burnout-=10;
+  else if(qs[4]==='ok')burnout+=5;
+  else if(qs[4]==='poor'){burnout+=15;modelMismatch+=5}
+  else if(qs[4]==='toxic')burnout+=25;
+
+  // Q6: Schedule & workload
+  if(qs[5]==='sustainable')burnout-=5;
+  else if(qs[5]==='heavy'){burnout+=10;modelMismatch+=5}
+  else if(qs[5]==='unsustainable'){burnout+=20;modelMismatch+=10}
+  else if(qs[5]==='destroying')burnout+=25;
+
+  // Q7: Compensation fairness
+  if(qs[6]==='fair'){modelMismatch-=5}
+  else if(qs[6]==='low'){modelMismatch+=10}
+  else if(qs[6]==='unfair'){modelMismatch+=15;burnout+=5}
+  else if(qs[6]==='insulting'){modelMismatch+=20;burnout+=10}
+
+  // Q8: Identity alignment
+  if(qs[7]==='yes')misfit-=15;
+  else if(qs[7]==='sometimes'){misfit+=5;burnout+=5}
+  else if(qs[7]==='rarely')misfit+=15;
+  else if(qs[7]==='no')misfit+=25;
+
+  // Normalize — floor at 0
+  burnout=Math.max(0,burnout);
+  misfit=Math.max(0,misfit);
+  modelMismatch=Math.max(0,modelMismatch);
+  var total=burnout+misfit+modelMismatch||1;
+  var bPct=Math.round(burnout/total*100);
+  var mPct=Math.round(misfit/total*100);
+  var pPct=Math.round(modelMismatch/total*100);
+
+  // Determine primary diagnosis
+  var primary,primaryLabel,primaryColor,primaryIcon;
+  if(burnout>=misfit&&burnout>=modelMismatch){
+    primary='burnout';primaryLabel='Program / Environment Burnout';primaryColor='var(--accent)';primaryIcon='\ud83d\udfe1';
+  }else if(misfit>=burnout&&misfit>=modelMismatch){
+    primary='misfit';primaryLabel='Specialty Misfit';primaryColor='var(--red)';primaryIcon='\ud83d\udd34';
+  }else{
+    primary='model';primaryLabel='Practice Model Mismatch';primaryColor='var(--blue,#8badc4)';primaryIcon='\ud83d\udfe0';
+  }
+
+  // Severity
+  var maxScore=Math.max(burnout,misfit,modelMismatch);
+  var severity=maxScore>=40?'significant':maxScore>=20?'moderate':'mild';
+
+  // Build output
+  hwSecCounter=0;
+  var h='';
+
+  // ───── HERO ─────
+  h+='<div style="text-align:center;padding:24px 20px;background:linear-gradient(160deg,rgba(200,168,124,.1),rgba(200,168,124,.03));border:1px solid rgba(198,168,94,.15);border-radius:14px;margin-bottom:12px">';
+  h+='<div style="font-size:11px;color:var(--accent);font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">My Assessment</div>';
+  h+='<div style="font-size:22px;font-weight:600;color:var(--text);font-family:var(--font-serif);margin-bottom:6px">'+primaryIcon+' '+primaryLabel+'</div>';
+  h+='<div style="font-size:12px;color:var(--text3);line-height:1.6;max-width:420px;margin:0 auto;margin-bottom:12px">';
+  if(primary==='burnout')h+='Your distress is coming from your environment, not your specialty. The clinical work itself is not the problem. This is temporary and fixable without changing careers.';
+  else if(primary==='misfit')h+='The data suggests a structural mismatch between who you are and what this specialty requires day-to-day. This is not burnout. This is a fit problem, and no practice model change will fix it.';
+  else h+='You chose the right specialty but the wrong way to practice it. The work itself resonates. The structure around it does not. This is fixable without retraining.';
+  h+='</div>';
+
+  // Severity badge
+  h+='<div style="display:inline-block;padding:4px 14px;border-radius:100px;font-size:10px;font-weight:600;letter-spacing:.5px;';
+  if(severity==='significant')h+='background:rgba(196,77,86,.12);color:var(--red)">SIGNIFICANT — ACT NOW';
+  else if(severity==='moderate')h+='background:var(--accent-dim);color:var(--accent)">MODERATE — WORTH ADDRESSING';
+  else h+='background:rgba(139,184,160,.12);color:var(--green)">MILD — MONITOR';
+  h+='</div></div>';
+
+  // Expand/Collapse
+  h+='<div style="display:flex;justify-content:flex-end;gap:12px;margin-bottom:6px;padding:0 2px">';
+  h+='<span onclick="hwExpandAll(this.closest(\'#bmd-results\'))" style="font-size:10px;color:var(--accent);cursor:pointer;opacity:.7">Expand all</span>';
+  h+='<span onclick="hwCollapseAll(this.closest(\'#bmd-results\'))" style="font-size:10px;color:var(--text3);cursor:pointer;opacity:.7">Collapse all</span>';
+  h+='</div>';
+
+  // ───── SECTION: Breakdown ─────
+  var sec='';
+  sec+='<div style="display:flex;flex-direction:column;gap:10px">';
+
+  // Burnout bar
+  sec+='<div style="padding:12px 14px;background:var(--bg3);border-radius:10px;border-left:3px solid var(--accent)">';
+  sec+='<div style="display:flex;justify-content:space-between;margin-bottom:6px"><span style="font-size:12px;font-weight:600;color:var(--text)">\ud83d\udfe1 Environment Burnout</span><span style="font-size:12px;font-weight:700;color:var(--accent)">'+bPct+'%</span></div>';
+  sec+='<div style="height:6px;background:var(--bg2);border-radius:3px"><div style="height:100%;width:'+bPct+'%;background:var(--accent);border-radius:3px;transition:width .5s"></div></div>';
+  sec+='<div style="font-size:10px;color:var(--text3);margin-top:6px;line-height:1.5">';
+  if(bPct>=50)sec+='Your environment is a significant driver. Toxic culture, unsustainable hours, or lack of autonomy are wearing you down. The specialty is not the enemy here.';
+  else if(bPct>=25)sec+='Some environmental stress is present. Not the primary issue, but it is amplifying whatever else is going on.';
+  else sec+='Your environment is not a major factor. Look at the other dimensions.';
+  sec+='</div></div>';
+
+  // Misfit bar
+  sec+='<div style="padding:12px 14px;background:var(--bg3);border-radius:10px;border-left:3px solid var(--red)">';
+  sec+='<div style="display:flex;justify-content:space-between;margin-bottom:6px"><span style="font-size:12px;font-weight:600;color:var(--text)">\ud83d\udd34 Specialty Misfit</span><span style="font-size:12px;font-weight:700;color:var(--red)">'+mPct+'%</span></div>';
+  sec+='<div style="height:6px;background:var(--bg2);border-radius:3px"><div style="height:100%;width:'+mPct+'%;background:var(--red);border-radius:3px;transition:width .5s"></div></div>';
+  sec+='<div style="font-size:10px;color:var(--text3);margin-top:6px;line-height:1.5">';
+  if(mPct>=50)sec+='This is structural. You do not enjoy the core clinical work of this specialty, and no environment change will fix that. This requires honest evaluation of what you actually want to do with your career.';
+  else if(mPct>=25)sec+='Some misalignment between your identity and this specialty. Worth exploring whether this is a temporary phase or a real signal.';
+  else sec+='The specialty itself is not the problem. You are not in the wrong field.';
+  sec+='</div></div>';
+
+  // Practice Model bar
+  sec+='<div style="padding:12px 14px;background:var(--bg3);border-radius:10px;border-left:3px solid var(--blue,#8badc4)">';
+  sec+='<div style="display:flex;justify-content:space-between;margin-bottom:6px"><span style="font-size:12px;font-weight:600;color:var(--text)">\ud83d\udfe0 Practice Model Mismatch</span><span style="font-size:12px;font-weight:700;color:var(--blue,#8badc4)">'+pPct+'%</span></div>';
+  sec+='<div style="height:6px;background:var(--bg2);border-radius:3px"><div style="height:100%;width:'+pPct+'%;background:var(--blue,#8badc4);border-radius:3px;transition:width .5s"></div></div>';
+  sec+='<div style="font-size:10px;color:var(--text3);margin-top:6px;line-height:1.5">';
+  if(pPct>=50)sec+='You like what you do but hate how you are doing it. Academic vs. private, employed vs. independent, urban vs. rural, compensation model, call structure. The fix is a job change, not a career change.';
+  else if(pPct>=25)sec+='Some friction with your practice structure. Could be addressed with a job change or contract renegotiation.';
+  else sec+='Your practice model is not a significant factor. The issue is elsewhere.';
+  sec+='</div></div>';
+
+  sec+='</div>';
+  h+=hwSection('Diagnostic Breakdown','Burnout '+bPct+'% \u00b7 Misfit '+mPct+'% \u00b7 Model '+pPct+'%',sec,true);
+
+  // ───── SECTION: What This Actually Means ─────
+  sec='';
+  if(primary==='burnout'){
+    sec+='<div style="font-size:12px;color:var(--text2);line-height:1.7">';
+    sec+='<p style="margin-bottom:12px">Here is what I see: you are experiencing a <strong>program and environment problem</strong>, not a career crisis. The clinical work of your specialty is either satisfying or at least tolerable. What is destroying you is the culture, the hours, the administration, or the lack of autonomy around it.</p>';
+    sec+='<p style="margin-bottom:12px">This is important because <strong>50% of physicians report burnout</strong>, and the majority of it comes from systemic factors, not specialty choice. You are not broken. Your environment might be.</p>';
+    sec+='<p style="margin-bottom:12px">The most common mistake physicians make at this point is assuming they chose the wrong specialty and starting over, when the real answer is changing jobs, renegotiating terms, or finding a practice that values you differently.</p>';
+    sec+='<p><strong>What typically fixes this:</strong> A new practice environment, better contract terms, schedule restructuring, or leaving a toxic program. Not retraining.</p>';
+    sec+='</div>';
+  }else if(primary==='misfit'){
+    sec+='<div style="font-size:12px;color:var(--text2);line-height:1.7">';
+    sec+='<p style="margin-bottom:12px">Here is the hard truth: your answers suggest that the <strong>core clinical work of your specialty does not align with who you are</strong>. You are not just tired of where you work. You are tired of what you do.</p>';
+    sec+='<p style="margin-bottom:12px">That is a fundamentally different problem than burnout, and it requires a fundamentally different solution. No amount of vacation, schedule changes, or practice model switches will fix a specialty misfit. The work itself needs to change.</p>';
+    sec+='<p style="margin-bottom:12px">This does not mean your training was wasted. Physicians pivot successfully at every career stage. The question is: <strong>what do you actually want to do every day?</strong> Not what sounds prestigious or what pays well. What makes you feel like a physician.</p>';
+    sec+='<p><strong>What typically fixes this:</strong> A structured career transition, additional fellowship in a different direction, or a non-clinical pivot that leverages your training.</p>';
+    sec+='</div>';
+  }else{
+    sec+='<div style="font-size:12px;color:var(--text2);line-height:1.7">';
+    sec+='<p style="margin-bottom:12px">Here is the good news: <strong>you chose the right specialty</strong>. The clinical work resonates with you. What does not work is the structure around it: the practice model, the compensation arrangement, the call schedule, or the type of employer.</p>';
+    sec+='<p style="margin-bottom:12px">This is the most fixable of the three diagnoses. You do not need to retrain. You do not need to question your career. You need a <strong>different job in the same field</strong>.</p>';
+    sec+='<p style="margin-bottom:12px">Academic vs. private. Employed vs. independent. Large group vs. small group. Urban vs. suburban. Fee-for-service vs. salary. Each of these variables changes the daily experience of the same specialty dramatically.</p>';
+    sec+='<p><strong>What typically fixes this:</strong> Exploring different practice models, renegotiating your current contract, or finding a position that matches your lifestyle and compensation expectations.</p>';
+    sec+='</div>';
+  }
+  h+=hwSection('What This Actually Means',primary==='burnout'?'Environment problem, not career crisis':primary==='misfit'?'Structural mismatch with your specialty':'Right specialty, wrong practice structure',sec,true);
+
+  // ───── SECTION: Recommended Tools ─────
+  sec='';
+  sec+='<div style="font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:14px">Based on your diagnosis, these are the tools that will actually help:</div>';
+
+  var recs=[];
+  if(primary==='burnout'){
+    recs=[
+      {id:'v12',icon:'\ud83d\udcdd',name:'Contract Review Tool',why:'Review your current contract for exit terms, non-compete radius, and renegotiation leverage. Know your options before making moves.'},
+      {id:'v3',icon:'\u2696\ufe0f',name:'Job Offer Comparison',why:'If you are considering other positions, compare them systematically. Do not jump from one bad environment to another.'},
+      {id:'v10',icon:'\u26a1',name:'Career Transition Planner',why:'Model the financial and career cost of changing practice environments. Sometimes staying is worse than the short-term hit of leaving.'}
+    ];
+  }else if(primary==='misfit'){
+    recs=[
+      {id:'v13',icon:'\ud83e\uddec',name:'Specialty Fit Assessment',why:'Use the Specialty Fit mode to discover which specialties actually match your personality, values, and work style.'},
+      {id:'v14',icon:'\ud83c\udfc6',name:'Match Competitiveness Calculator',why:'Once you identify a new direction, check how competitive you are. Experience physicians often have advantages they do not realize.'},
+      {id:'v10',icon:'\u26a1',name:'Career Transition Planner',why:'Model the full cost-benefit of a career pivot: income gap, retraining time, and long-term trajectory.'}
+    ];
+  }else{
+    recs=[
+      {id:'v3',icon:'\u2696\ufe0f',name:'Job Offer Comparison',why:'Compare different practice models side by side. Academic vs. private, employed vs. independent. Same specialty, completely different experience.'},
+      {id:'v4',icon:'\ud83d\udcb0',name:'RVU Compensation Modeler',why:'Model what your compensation looks like in different practice settings. Sometimes the "pay cut" of switching is smaller than you think.'},
+      {id:'v12',icon:'\ud83d\udcdd',name:'Contract Review Tool',why:'Before signing anything new, run it through a full risk and negotiation analysis. Protect yourself this time.'}
+    ];
+  }
+
+  recs.forEach(function(r,i){
+    sec+='<div onclick="openFramework(\''+r.id+'\')" style="display:flex;gap:14px;padding:14px 16px;background:var(--bg3);border:1px solid var(--border);border-radius:10px;margin-bottom:8px;cursor:pointer;transition:all .2s" onmouseenter="this.style.borderColor=\'rgba(198,168,94,.3)\'" onmouseleave="this.style.borderColor=\'var(--border)\'">';
+    sec+='<div style="flex-shrink:0;width:36px;height:36px;border-radius:10px;background:var(--accent-dim);display:flex;align-items:center;justify-content:center;font-size:18px">'+r.icon+'</div>';
+    sec+='<div><div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:3px">'+r.name+'</div>';
+    sec+='<div style="font-size:11px;color:var(--text3);line-height:1.5">'+r.why+'</div></div>';
+    sec+='</div>';
+  });
+
+  h+=hwSection('Your Recommended Next Steps',recs.length+' tools for your situation',sec,true);
+
+  // ───── SECTION: The Data Behind This ─────
+  sec='';
+  sec+='<div style="font-size:11px;color:var(--text3);line-height:1.7">';
+  sec+='<p style="margin-bottom:8px"><strong style="color:var(--text2)">Why this matters:</strong> A 2024 Medscape survey found 49% of physicians report burnout. But buried in that number are three very different populations: those burned out by environment (recoverable), those in the wrong specialty (requires change), and those in the wrong practice model (fixable with a job switch).</p>';
+  sec+='<p style="margin-bottom:8px"><strong style="color:var(--text2)">The cost of misdiagnosis:</strong> A physician who treats a specialty misfit like burnout will spend years trying mindfulness, schedule changes, and sabbaticals while the core problem persists. A physician who treats burnout like a misfit will retrain for 2-4 years unnecessarily.</p>';
+  sec+='<p><strong style="color:var(--text2)">Getting it right the first time</strong> saves years and hundreds of thousands of dollars. That is what this diagnostic is for.</p>';
+  sec+='</div>';
+  h+=hwSection('The Data Behind This','Medscape 2024: 49% burnout rate',sec,false);
+
+  // ───── PATHWAY ─────
+  var pathActions,pathNxt;
+  if(primary==='burnout'){
+    pathActions=[
+      {text:'Pull up your current contract and check the non-compete, termination notice, and tail coverage terms. Know your exit before you need it.',when:'this week'},
+      {text:'List three specific things about your current environment that drive the most distress. Be precise. "Everything" is not actionable.',when:'this week'},
+      {text:'Talk to one physician who recently left a similar situation. Not for advice. For permission to take it seriously.',when:'this month'}
+    ];
+    pathNxt={id:'v12',icon:'\ud83d\udcdd',title:'Contract Review Tool',why:'Know your exit terms before making any decisions.'};
+  }else if(primary==='misfit'){
+    pathActions=[
+      {text:'Take the Specialty Fit Assessment in the other mode of this tool. See what actually matches who you are now, not who you were when you chose.',when:'today'},
+      {text:'Shadow in 1-2 specialties that interest you. Even one day of real exposure beats months of theorizing.',when:'this month'},
+      {text:'Talk to an attending 5-10 years into the specialty you are considering. Ask them what they wish they had known.',when:'this month'}
+    ];
+    pathNxt={id:'v10',icon:'\u26a1',title:'Career Transition Planner',why:'Model the full financial and career impact before making a decision.'};
+  }else{
+    pathActions=[
+      {text:'List what you love about the clinical work and what you hate about the structure. Be specific about each.',when:'this week'},
+      {text:'Research 2-3 different practice models in your specialty. Talk to physicians in each. The daily experience is completely different.',when:'this month'},
+      {text:'Run your numbers through the compensation modeler for each practice type. Sometimes the "lifestyle" choice pays better than you think.',when:'this month'}
+    ];
+    pathNxt={id:'v3',icon:'\u2696\ufe0f',title:'Job Offer Comparison',why:'Compare different practice models systematically before deciding.'};
+  }
+
+  h+=hwGatePathway(hwPathway(
+    primary==='burnout'
+      ?'This is not a career crisis. This is an environment crisis. <strong>Do not make a permanent decision based on a temporary situation.</strong> Most physicians who feel this way recover fully when they change their environment, not their career.'
+      :primary==='misfit'
+      ?'I know this is hard to hear, but the data is clear: <strong>your specialty is not the right fit.</strong> The good news is that physician career transitions happen at every stage and are more successful than most people think. The key is data, not panic.'
+      :'You are in the <strong>right specialty in the wrong structure.</strong> This is the most common and most fixable career dissatisfaction pattern in medicine. You do not need to retrain. You need to restructure.',
+    pathActions,pathNxt
+  ));
+
+  document.getElementById('bmd-results').innerHTML=h;
+  applyBlurGate(document.getElementById('bmd-results'));
+
+  // Record tool use
+  var bmdInputs={
+    'Clinical Enjoyment':qs[0],'Dread Source':qs[1],'Post-Work Energy':qs[2],
+    'Environment Change':qs[3],'Autonomy & Culture':qs[4],'Schedule':qs[5],
+    'Compensation':qs[6],'Identity Alignment':qs[7]
+  };
+  recordToolUse('Burnout vs Misfit Diagnostic',null,primaryLabel+' ('+severity+')',{inputs:bmdInputs,highlights:[primaryLabel+': '+Math.max(bPct,mPct,pPct)+'%','Burnout: '+bPct+'%','Misfit: '+mPct+'%','Model: '+pPct+'%']});
 }
 
 // ===== MATCH COMPETITIVENESS CALCULATOR (v14) =====

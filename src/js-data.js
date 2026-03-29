@@ -312,7 +312,7 @@ const VAULT_ITEMS=[
 {id:'v6',title:'Fellowship Application Planner',desc:'Follow a month-by-month strategy from PGY-2 through match cycle',icon:'🗺️',tier:'core'},
 {id:'v7',title:'Research Impact Calculator',desc:'Assess the strength and relevance of your research portfolio',icon:'⚖️',tier:'core'},
 {id:'v8',title:'Debt & Income Strategy Tool',desc:'Compare loan repayment strategies including PSLF, refinancing, and tax impact',icon:'💵',tier:'core'},
-{id:'v13',title:'Specialty Fit Assessment',desc:'Identify which medical specialties align with your personality, goals, and lifestyle',icon:'🔬',tier:'core'},
+{id:'v13',title:'Specialty Fit Assessment',desc:'Find your ideal specialty or diagnose whether you are experiencing burnout, misfit, or practice model mismatch',icon:'🔬',tier:'core'},
 {id:'v14',title:'Match Competitiveness Calculator',desc:'Score your competitiveness, see your match probability, and find what moves the needle',icon:'🏆',tier:'core'},
 {id:'v15',title:'Career Roadmap Tool',desc:'Create a step-by-step plan to reach your desired specialty or career outcome',icon:'🗂️',tier:'core'},
 {id:'v16',title:'Interview Practice Tool',desc:'Practice specialty-specific interview questions with actionable feedback',icon:'🎙️',tier:'core'},

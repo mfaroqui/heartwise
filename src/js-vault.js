@@ -1336,6 +1336,15 @@ v13:`<h3 class="serif">Specialty Fit Assessment</h3>
 <p style="color:var(--text3);font-size:12px;margin-bottom:20px">Answer honestly — this tool helps you identify which specialties align with your personality, goals, and lifestyle preferences.</p>
 <div id="sfa-tool" style="font-size:13px">
 
+<!-- Mode Toggle: Specialty Fit vs Burnout Diagnostic -->
+<div style="display:flex;gap:0;margin-bottom:20px;border:1px solid rgba(200,168,124,.25);border-radius:10px;overflow:hidden">
+<button id="sfa-btn-fit" onclick="sfaToggleMode('fit')" style="flex:1;padding:12px;font-size:13px;font-weight:600;border:none;cursor:pointer;background:var(--accent);color:var(--bg);transition:all .2s">🧬 Find Your Specialty</button>
+<button id="sfa-btn-burn" onclick="sfaToggleMode('burn')" style="flex:1;padding:12px;font-size:13px;font-weight:600;border:none;cursor:pointer;background:none;color:var(--accent);transition:all .2s">🔥 Burnout vs. Misfit</button>
+</div>
+
+<!-- ===== PANEL 1: Specialty Fit (existing) ===== -->
+<div id="sfa-fit-panel">
+
 <div style="padding:14px 0;border-bottom:1px solid var(--border)">
 <div style="margin-bottom:6px"><strong>1. Patient Interaction Style</strong></div>
 <span style="color:var(--text3);font-size:11px;display:block;margin-bottom:10px">What type of patient relationships do you prefer?</span>
@@ -1409,6 +1418,115 @@ v13:`<h3 class="serif">Specialty Fit Assessment</h3>
 
 <div id="sfa-results" style="margin-top:20px"></div>
 <div style="text-align:center;margin-top:8px"><button onclick="showSavedScenarios('Specialty Fit Assessment')" style="background:none;border:none;color:var(--accent);font-size:11px;cursor:pointer;padding:6px 12px;opacity:.7;transition:opacity .15s" onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='.7'">📊 View Saved Scenarios</button></div>
+
+</div><!-- end sfa-fit-panel -->
+
+<!-- ===== PANEL 2: Burnout vs Misfit Diagnostic ===== -->
+<div id="sfa-burn-panel" style="display:none">
+
+<div style="padding:10px 14px;background:rgba(200,168,124,.06);border:1px solid rgba(200,168,124,.12);border-radius:10px;margin-bottom:18px">
+<div style="font-size:11px;color:var(--accent);font-weight:600;margin-bottom:4px">WHAT THIS DOES</div>
+<div style="font-size:12px;color:var(--text2);line-height:1.6">50% of physicians report burnout. But burnout, specialty misfit, and practice model mismatch require completely different solutions. This 5-minute assessment tells you which one you are actually experiencing.</div>
+</div>
+
+<div style="padding:14px 0;border-bottom:1px solid var(--border)">
+<div style="margin-bottom:6px"><strong>1. How do you feel about the core clinical work of your specialty?</strong></div>
+<span style="color:var(--text3);font-size:11px;display:block;margin-bottom:10px">Not your schedule, not your colleagues, not the paperwork. The actual medicine.</span>
+<select id="bmd-q1" onchange="bmdUpdate()" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
+<option value="">Select...</option>
+<option value="love">I still love the clinical work itself</option>
+<option value="neutral">It is fine — neither energizing nor draining</option>
+<option value="dread_parts">I dread significant parts of the daily work</option>
+<option value="dread_all">I dread most of what this specialty requires day-to-day</option>
+</select>
+</div>
+
+<div style="padding:14px 0;border-bottom:1px solid var(--border)">
+<div style="margin-bottom:6px"><strong>2. What do you dread most about going to work?</strong></div>
+<span style="color:var(--text3);font-size:11px;display:block;margin-bottom:10px">Pick the one that resonates most strongly.</span>
+<select id="bmd-q2" onchange="bmdUpdate()" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
+<option value="">Select...</option>
+<option value="clinical">The clinical work itself — patients, procedures, diagnoses</option>
+<option value="admin">The administration — charting, prior auths, bureaucracy</option>
+<option value="culture">The people and culture — toxic colleagues, poor leadership</option>
+<option value="hours">The hours and call schedule</option>
+<option value="comp">The compensation relative to what I sacrifice</option>
+</select>
+</div>
+
+<div style="padding:14px 0;border-bottom:1px solid var(--border)">
+<div style="margin-bottom:6px"><strong>3. After a day of mostly clinical work (not admin), how do you feel?</strong></div>
+<span style="color:var(--text3);font-size:11px;display:block;margin-bottom:10px">Think about a day where you spent most of your time with patients or doing procedures.</span>
+<select id="bmd-q3" onchange="bmdUpdate()" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
+<option value="">Select...</option>
+<option value="energized">Tired but satisfied — I did meaningful work</option>
+<option value="neutral">Neutral — it was fine</option>
+<option value="drained">Drained — even good clinical days leave me depleted</option>
+<option value="empty">Empty — I feel nothing or resentment</option>
+</select>
+</div>
+
+<div style="padding:14px 0;border-bottom:1px solid var(--border)">
+<div style="margin-bottom:6px"><strong>4. If you could do the same specialty at a completely different practice — new city, new employer, new team, better schedule — would you be excited?</strong></div>
+<span style="color:var(--text3);font-size:11px;display:block;margin-bottom:10px">This is the key differentiator between environment and specialty problems.</span>
+<select id="bmd-q4" onchange="bmdUpdate()" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
+<option value="">Select...</option>
+<option value="yes_excited">Yes — I would be genuinely excited to start fresh</option>
+<option value="maybe">Maybe — it might help but I am not sure</option>
+<option value="no_same">No — I think I would feel the same anywhere in this field</option>
+<option value="no_done">No — I am done with this type of work entirely</option>
+</select>
+</div>
+
+<div style="padding:14px 0;border-bottom:1px solid var(--border)">
+<div style="margin-bottom:6px"><strong>5. How would you describe your current workplace autonomy and culture?</strong></div>
+<select id="bmd-q5" onchange="bmdUpdate()" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
+<option value="">Select...</option>
+<option value="great">Supportive environment with good autonomy</option>
+<option value="ok">Acceptable — not great, not terrible</option>
+<option value="poor">Poor — micromanaged, unsupportive, or disorganized</option>
+<option value="toxic">Toxic — actively harmful to my wellbeing</option>
+</select>
+</div>
+
+<div style="padding:14px 0;border-bottom:1px solid var(--border)">
+<div style="margin-bottom:6px"><strong>6. How sustainable is your current schedule and workload?</strong></div>
+<select id="bmd-q6" onchange="bmdUpdate()" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
+<option value="">Select...</option>
+<option value="sustainable">Sustainable — I can maintain this long-term</option>
+<option value="heavy">Heavy but manageable for now</option>
+<option value="unsustainable">Unsustainable — I am running on fumes</option>
+<option value="destroying">Destroying my health and relationships</option>
+</select>
+</div>
+
+<div style="padding:14px 0;border-bottom:1px solid var(--border)">
+<div style="margin-bottom:6px"><strong>7. How fairly compensated do you feel for what you sacrifice?</strong></div>
+<select id="bmd-q7" onchange="bmdUpdate()" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
+<option value="">Select...</option>
+<option value="fair">Fairly compensated for my work</option>
+<option value="low">Somewhat underpaid but acceptable</option>
+<option value="unfair">Significantly underpaid for what I do</option>
+<option value="insulting">The compensation feels insulting relative to my sacrifice</option>
+</select>
+</div>
+
+<div style="padding:14px 0;border-bottom:1px solid var(--border)">
+<div style="margin-bottom:6px"><strong>8. When someone asks "what do you do?", do you feel pride in your specialty?</strong></div>
+<span style="color:var(--text3);font-size:11px;display:block;margin-bottom:10px">Not pride in being a doctor. Pride in your specific field.</span>
+<select id="bmd-q8" onchange="bmdUpdate()" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
+<option value="">Select...</option>
+<option value="yes">Yes — I am proud to do what I do</option>
+<option value="sometimes">Sometimes — it depends on the day</option>
+<option value="rarely">Rarely — I feel disconnected from the identity</option>
+<option value="no">No — I do not identify with this specialty anymore</option>
+</select>
+</div>
+
+<div id="bmd-results" style="margin-top:20px"></div>
+<div style="text-align:center;margin-top:8px"><button onclick="showSavedScenarios('Burnout vs Misfit Diagnostic')" style="background:none;border:none;color:var(--accent);font-size:11px;cursor:pointer;padding:6px 12px;opacity:.7;transition:opacity .15s" onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='.7'">📊 View Saved Scenarios</button></div>
+
+</div><!-- end sfa-burn-panel -->
 
 </div>`,
 

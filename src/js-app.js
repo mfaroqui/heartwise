@@ -1824,10 +1824,38 @@ function renderProgressGraph(history){
 
 function toggleMilestone(idx){
   if(!U||!U.milestones||!U.milestones[idx])return;
+  var wasUndone=!U.milestones[idx].done;
   U.milestones[idx].done=!U.milestones[idx].done;
   U.milestones[idx].date=U.milestones[idx].done?new Date().toISOString():null;
   saveUser();
   renderDashboard();
+  // Celebrate + prompt outcome capture when marking done
+  if(wasUndone&&U.milestones[idx].done){
+    var label=U.milestones[idx].label||'';
+    var doneCount=(U.milestones||[]).filter(function(m){return m.done}).length;
+    var total=(U.milestones||[]).length;
+    // Celebration notification
+    notify('🎉 Milestone completed: '+label+' ('+doneCount+'/'+total+')');
+    // Prompt to document as outcome after a short delay
+    setTimeout(function(){
+      if(typeof showOutcomeCapture!=='function')return;
+      var promptEl=document.getElementById('milestone-outcome-prompt');
+      if(promptEl)promptEl.remove();
+      var d=document.createElement('div');
+      d.id='milestone-outcome-prompt';
+      d.style.cssText='position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:9999;padding:14px 20px;background:var(--bg2);border:1px solid var(--accent);border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,.3);max-width:360px;width:90%;text-align:center';
+      d.innerHTML='<div style="font-size:28px;margin-bottom:6px">🏆</div>'+
+        '<div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:4px">Congrats on: '+label+'</div>'+
+        '<div style="font-size:11px;color:var(--text3);margin-bottom:10px">Want to document the details? Your future self will thank you.</div>'+
+        '<div style="display:flex;gap:8px;justify-content:center">'+
+        '<button onclick="this.parentElement.parentElement.remove();showOutcomeCapture()" style="padding:8px 16px;font-size:12px;background:var(--accent);color:#1C1A17;border:none;border-radius:8px;cursor:pointer;font-weight:600">Document This Win</button>'+
+        '<button onclick="this.parentElement.parentElement.remove()" style="padding:8px 16px;font-size:12px;background:var(--bg3);color:var(--text3);border:1px solid var(--border);border-radius:8px;cursor:pointer">Maybe Later</button>'+
+        '</div>';
+      document.body.appendChild(d);
+      // Auto-dismiss after 15s
+      setTimeout(function(){var p=document.getElementById('milestone-outcome-prompt');if(p)p.remove()},15000);
+    },800);
+  }
 }
 
 function showUpdateProfile(){

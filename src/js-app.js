@@ -9063,8 +9063,16 @@ async function admLoadData(){
 function admGetUsers(){return (_sbProfiles&&_sbProfiles.length)?_sbProfiles:(DB.users||[])}
 function admGetQuestions(){
   var all=[],seen={};
-  if(_sbQuestions&&_sbQuestions.length){_sbQuestions.forEach(function(q){var k=(q.question||'').substring(0,50).toLowerCase();if(!seen[k]){seen[k]=1;all.push(q)}})}
-  (DB.questions||[]).forEach(function(q){var k=(q.q||'').substring(0,50).toLowerCase();if(!seen[k]){seen[k]=1;all.push(q)}});
+  // Supabase is source of truth — build seen set from it first
+  if(_sbQuestions&&_sbQuestions.length){_sbQuestions.forEach(function(q){
+    var k=(q.question||q.q||'').substring(0,50).toLowerCase();
+    if(!seen[k]){seen[k]=1;all.push(q)}
+  })}
+  // Local DB: only add questions NOT already in Supabase (match on both field names)
+  (DB.questions||[]).forEach(function(q){
+    var k=(q.q||q.question||'').substring(0,50).toLowerCase();
+    if(!seen[k]){seen[k]=1;all.push(q)}
+  });
   return all;
 }
 function admGetMessages(){
@@ -9618,8 +9626,8 @@ function admRenderQueue(c){
   if(reviewed.length){h+='<div style="font-size:12px;font-weight:600;color:var(--text);margin:20px 0 10px">Recently Reviewed</div>';reviewed.slice(0,10).forEach(function(q){var rn=q.review_note||q.reviewNote||'';h+='<div class="adm-card" style="padding:12px 14px"><div style="font-size:13px;color:var(--text2);margin-bottom:4px">'+(q.question||q.q||'').substring(0,100)+'</div>';if(rn)h+='<div style="font-size:12px;color:var(--green);border-left:2px solid var(--green);padding-left:10px;margin-top:6px">'+rn.substring(0,150)+'</div>';h+='<span style="font-size:10px;color:var(--text3)">'+(q.date?q.date.split('T')[0]:'')+' \u00b7 '+(q.author||'')+'</span></div>'})}
   c.innerHTML=h;
 }
-async function admPublishReview(qId){var ta=document.getElementById('adm-rev-'+qId);if(!ta||!ta.value.trim()){notify('Write review first',1);return}var t=ta.value.trim();if(_supaClient){var{error}=await _supaClient.from('questions').update({review_note:t,status:'reviewed'}).eq('id',qId);if(error){notify('Failed',1);return}if(_sbQuestions){var q=_sbQuestions.find(function(x){return x.id==qId});if(q){q.review_note=t;q.status='reviewed'}}}else{var q=(DB.questions||[]).find(function(x){return x.id==qId});if(q){q.reviewNote=t;q.status='reviewed';saveDB()}}notify('Published \u2728');admRender()}
-async function admMarkComplete(qId){if(_supaClient){await _supaClient.from('questions').update({status:'reviewed'}).eq('id',qId);if(_sbQuestions){var q=_sbQuestions.find(function(x){return x.id==qId});if(q)q.status='reviewed'}}else{var q=(DB.questions||[]).find(function(x){return x.id==qId});if(q){q.status='reviewed';saveDB()}}notify('Complete');admRender()}
+async function admPublishReview(qId){var ta=document.getElementById('adm-rev-'+qId);if(!ta||!ta.value.trim()){notify('Write review first',1);return}var t=ta.value.trim();if(_supaClient){var{error}=await _supaClient.from('questions').update({review_note:t,status:'reviewed'}).eq('id',qId);if(error){notify('Failed: '+error.message,1);return}if(_sbQuestions){var q=_sbQuestions.find(function(x){return x.id==qId||String(x.id)===String(qId)});if(q){q.review_note=t;q.status='reviewed'}}}var lq=(DB.questions||[]).find(function(x){return x.id==qId||String(x.id)===String(qId)});if(lq){lq.reviewNote=t;lq.status='reviewed';saveDB()}notify('Published \u2728');admRender()}
+async function admMarkComplete(qId){if(_supaClient){var{error}=await _supaClient.from('questions').update({status:'reviewed'}).eq('id',qId);if(error)console.error('admMarkComplete supabase error:',error);if(_sbQuestions){var q=_sbQuestions.find(function(x){return x.id==qId||String(x.id)===String(qId)});if(q)q.status='reviewed'}}var lq=(DB.questions||[]).find(function(x){return x.id==qId||String(x.id)===String(qId)});if(lq){lq.status='reviewed';saveDB()}notify('Complete');admRender()}
 
 function admRenderFeedback(c){
   var msgs=admGetMessages();var isSB=_sbMessages&&_sbMessages.length;

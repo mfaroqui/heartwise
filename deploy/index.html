@@ -12979,7 +12979,7 @@ function autoFillToolFromProfile(toolId){
   // Contract Review Tool (v12) — specialty and comp
   if(toolId==='v12'){
     setSelect('ci-spec',cp.specialty);
-    if(cp.comp){var compNum=cp.comp.replace(/[^0-9]/g,'');setVal('ci-base',compNum)}
+    if(cp.comp){var compNum=String(cp.comp).replace(/[^0-9]/g,'');var compK=Math.round(parseInt(compNum)/1000);if(compK>10)setVal('ci-salary',compK)}
   }
 
   // RVU Compensation Modeler (v4) — specialty

@@ -989,6 +989,8 @@ window.addEventListener('popstate',function(e){
 // ===== AUTH =====
 async function doLogin(e){
   e.preventDefault();
+  var loginBtn=e.target.querySelector('button[type="submit"]')||e.target.querySelector('button');
+  if(loginBtn){loginBtn.disabled=true;loginBtn.dataset.orig=loginBtn.textContent;loginBtn.textContent='Signing in...'}
   const email=document.getElementById('l-email').value.trim().toLowerCase();
   const pass=document.getElementById('l-pass').value;
   // Try Supabase auth first
@@ -1042,14 +1044,14 @@ async function doLogin(e){
             renderHome(); // Re-render with restored data
           }
         });
-        if(!localStorage.getItem('hw_disc_'+U.id)){enterApp();showDisc()}else{enterApp()}
+        if(!localStorage.getItem('hw_disc_'+U.id)){if(loginBtn){loginBtn.disabled=false;loginBtn.textContent=loginBtn.dataset.orig||'Sign In'}enterApp();showDisc()}else{if(loginBtn){loginBtn.disabled=false;loginBtn.textContent=loginBtn.dataset.orig||'Sign In'}enterApp()}
         return;
       }
     }catch(ex){}
   }
   // Fallback: check local DB
   const user=DB.users.find(u=>u.email.toLowerCase()===email&&u.pass===pass);
-  if(!user){notify('Invalid email or password',1);return}
+  if(!user){notify('Invalid email or password',1);if(loginBtn){loginBtn.disabled=false;loginBtn.textContent=loginBtn.dataset.orig||'Sign In'}return}
   if(_supaClient){_supaClient.auth.signUp({email,password:pass,options:{data:{name:user.name}}}).catch(()=>{})}
   // Ensure admin tier
   if(email===AE.toLowerCase()&&user.tier!=='admin'){user.tier='admin';user.role='admin';saveDB()}
@@ -1069,7 +1071,7 @@ async function doLogin(e){
       renderHome();
     }
   });
-  if(!localStorage.getItem('hw_disc_'+U.id)){enterApp();showDisc()}else{enterApp()}
+  if(!localStorage.getItem('hw_disc_'+U.id)){if(loginBtn){loginBtn.disabled=false;loginBtn.textContent=loginBtn.dataset.orig||'Sign In'}enterApp();showDisc()}else{if(loginBtn){loginBtn.disabled=false;loginBtn.textContent=loginBtn.dataset.orig||'Sign In'}enterApp()}
 }
 
 function doSignup(e){
@@ -1095,7 +1097,7 @@ function doSignup(e){
     }).catch(function(){});
   }
   U=user;localStorage.setItem('hw_session',JSON.stringify(U));
-  enterApp();showDisc();
+  if(loginBtn){loginBtn.disabled=false;loginBtn.textContent=loginBtn.dataset.orig||'Sign In'}enterApp();showDisc();
   // Show verification reminder
   if(!user.emailVerified){
     setTimeout(function(){notify('Check your email to verify your account',0)},2000);
@@ -1105,6 +1107,46 @@ function doSignup(e){
 function doLogout(){
   if(_supaClient){_supaClient.auth.signOut().catch(()=>{})}
   U=null;localStorage.removeItem('hw_session');go('pg-landing');
+}
+
+function confirmDeleteAccount(){
+  if(!U)return;
+  var h='<div style="padding:24px;max-width:400px;margin:0 auto;text-align:center">';
+  h+='<div style="font-size:36px;margin-bottom:12px">⚠️</div>';
+  h+='<div style="font-size:18px;font-weight:600;color:var(--text);font-family:var(--font-serif);margin-bottom:8px">Delete Your Account?</div>';
+  h+='<div style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:20px">This will permanently delete your account and all associated data: career profile, tool history, saved scenarios, progress tracking, and decisions. This action cannot be undone.</div>';
+  h+='<div style="font-size:11px;color:var(--text3);margin-bottom:20px">Type <strong>DELETE</strong> to confirm:</div>';
+  h+='<input type="text" id="delete-confirm-input" placeholder="Type DELETE" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-size:13px;text-align:center;margin-bottom:16px">';
+  h+='<div style="display:flex;gap:8px">';
+  h+='<button onclick="closeModal(\'modal-q\')" style="flex:1;padding:12px;background:var(--bg2);color:var(--text);border:1px solid var(--border);border-radius:8px;font-size:13px;font-weight:600;cursor:pointer">Cancel</button>';
+  h+='<button onclick="executeDeleteAccount()" style="flex:1;padding:12px;background:var(--red);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer">Delete Forever</button>';
+  h+='</div></div>';
+  document.getElementById('modal-q-content').innerHTML=h;
+  document.getElementById('modal-q').classList.remove('hidden');
+}
+
+async function executeDeleteAccount(){
+  var input=document.getElementById('delete-confirm-input');
+  if(!input||input.value.trim()!=='DELETE'){notify('Type DELETE to confirm.',1);return}
+  try{
+    // Delete from Supabase profiles
+    if(_supaClient&&U.email){
+      await _supaClient.from('profiles').delete().eq('email',U.email);
+      await _supaClient.from('questions').delete().eq('user_email',U.email);
+      await _supaClient.from('messages').delete().eq('user_email',U.email);
+    }
+    // Clear local storage
+    localStorage.clear();
+    // Sign out
+    if(_supaClient){await _supaClient.auth.signOut().catch(function(){})}
+    U=null;
+    closeModal('modal-q');
+    notify('Account deleted. We are sorry to see you go.');
+    setTimeout(function(){go('pg-landing')},1500);
+  }catch(e){
+    console.error('Delete account error:',e);
+    notify('Error deleting account. Please contact support.',1);
+  }
 }
 
 async function doForgotPassword(e){
@@ -8895,6 +8937,20 @@ function toggleCoreBilling(force){
 }
 
 // Landing page plan signup: if logged in → Stripe, if not → onboard with plan intent
+async function captureLeadEmail(){
+  var input=document.getElementById('lead-capture-email');
+  var msg=document.getElementById('lead-capture-msg');
+  if(!input||!input.value.trim()||!input.value.includes('@')){if(msg){msg.textContent='Please enter a valid email.';msg.style.color='var(--red)';msg.style.display=''}return}
+  var email=input.value.trim().toLowerCase();
+  try{
+    if(_supaClient){
+      await _supaClient.from('leads').upsert({email:email,source:'landing-checklist',created_at:new Date().toISOString()},{onConflict:'email'});
+    }
+  }catch(e){console.error('Lead capture:',e)}
+  if(msg){msg.textContent='Check your inbox! (If you don\u2019t see it, check spam.)';msg.style.color='var(--green)';msg.style.display=''}
+  input.value='';input.disabled=true;
+}
+
 function planSignup(plan){
   if(U){
     subPlan(plan);
@@ -10200,7 +10256,7 @@ async function obComplete(){
     U=user;localStorage.setItem('hw_session',JSON.stringify(U));
     trialHistory.push({email:p.email.toLowerCase(),date:new Date().toISOString(),blocked:true});
     localStorage.setItem('hw_trial_history',JSON.stringify(trialHistory));
-    enterApp();showDisc();
+    if(loginBtn){loginBtn.disabled=false;loginBtn.textContent=loginBtn.dataset.orig||'Sign In'}enterApp();showDisc();
     notify('Welcome! Guided access was previously used on this device. You\'ve been signed up on the free Explorer plan. Subscribe to unlock all tools.',1);
     return;
   }
@@ -10236,7 +10292,7 @@ async function obComplete(){
   var trialHistory=JSON.parse(localStorage.getItem('hw_trial_history')||'[]');
   trialHistory.push({email:p.email.toLowerCase(),date:new Date().toISOString()});
   localStorage.setItem('hw_trial_history',JSON.stringify(trialHistory));
-  enterApp();showDisc();
+  if(loginBtn){loginBtn.disabled=false;loginBtn.textContent=loginBtn.dataset.orig||'Sign In'}enterApp();showDisc();
   notify('Welcome! Your 48-hour Core access is now active. Start with the tools selected for you. ✦');
 }
 
@@ -15745,11 +15801,8 @@ function renderCostOfInaction(){
   var stage=cp.stage||'student';
   var now=new Date();
 
-  // Admin preview: always show new-user stakes card (TEMP — remove after testing)
-  var _adminPreview=U.tier==='admin';
-
   // ───── NEW USER: "What's at stake" card (0 tools run) ─────
-  if(th.length===0||_adminPreview){
+  if(th.length===0){
     var stakes={
       student:{
         icon:'\ud83c\udfaf',

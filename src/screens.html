@@ -26,7 +26,7 @@ Sign Out</button>
 </nav>
 
 <!-- HOME SCREEN -->
-<div id="scr-home" class="scr on">
+<div id="scr-home" class="scr on" role="main" aria-label="Dashboard">
 <div class="hdr hdr-home">
 <div class="hdr-t serif">HeartWise</div>
 <span id="user-badge" class="badge b-free">FREE</span>
@@ -744,6 +744,12 @@ Sign Out</button>
 <div style="margin-bottom:24px">
 <div class="card" style="cursor:pointer;padding:16px 20px" onclick="doLogout()">
 <div style="color:var(--red);font-size:14px">Sign Out</div>
+</div>
+</div>
+
+<div style="margin-bottom:24px">
+<div class="card" style="cursor:pointer;padding:16px 20px" onclick="confirmDeleteAccount()">
+<div style="color:var(--text3);font-size:12px">Delete My Account</div>
 </div>
 </div>
 

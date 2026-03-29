@@ -1615,8 +1615,8 @@ function renderDashboard(){
   // initCareerProfile auto-seeds lastUpdated for everyone, so we check for actual content
   var hasRealProfile=cp&&cp.lastUpdated&&(cp.specialty||cp.step2||parseInt(cp.pubs)>0||parseInt(cp.comp)>5000);
   if(!hasRealProfile){
-    // FIRST-TIME USER — show welcome quickstart instead of empty scores
-    renderWelcomeQuickstart();
+    // FIRST-TIME USER — hero card handles the quickstart
+    renderHeroCard();
     return;
   }
   document.getElementById('career-dashboard').style.display='';

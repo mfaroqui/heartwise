@@ -750,18 +750,18 @@ body.has-upgrade-bar #main-app{padding-bottom:70px}
 /* ===== ONBOARDING TOUR ===== */
 .tour-backdrop{position:fixed;top:0;left:0;right:0;bottom:0;z-index:9997;pointer-events:auto}
 .tour-highlight{position:fixed;z-index:9999;border-radius:14px;box-shadow:0 0 0 4000px rgba(0,0,0,.6),0 0 0 3px var(--accent),0 0 24px rgba(198,168,94,.4);pointer-events:none;transition:top .35s ease,left .35s ease,width .35s ease,height .35s ease}
-.tour-tooltip{position:fixed;z-index:10000;background:linear-gradient(160deg,#1e1a28,#252030);border:1px solid rgba(198,168,94,.25);border-radius:14px;padding:20px;max-width:320px;width:calc(100vw - 48px);pointer-events:auto;box-shadow:0 12px 40px rgba(0,0,0,.5);animation:tourFadeIn .3s ease}
+.tour-tooltip{position:fixed;z-index:10000;background:#FFFDF8;border:1px solid rgba(198,168,94,.35);border-radius:14px;padding:20px;max-width:320px;width:calc(100vw - 48px);pointer-events:auto;box-shadow:0 12px 40px rgba(0,0,0,.25),0 0 0 1px rgba(198,168,94,.1);animation:tourFadeIn .3s ease}
 @keyframes tourFadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-.tour-tooltip-title{font-size:15px;font-weight:700;color:var(--text);margin-bottom:6px;font-family:var(--font-serif)}
-.tour-tooltip-body{font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:16px}
+.tour-tooltip-title{font-size:15px;font-weight:700;color:#1C1A17;margin-bottom:6px;font-family:var(--font-serif)}
+.tour-tooltip-body{font-size:12px;color:#6B6560;line-height:1.6;margin-bottom:16px}
 .tour-tooltip-footer{display:flex;align-items:center;justify-content:space-between}
 .tour-dots{display:flex;gap:6px}
-.tour-dot{width:7px;height:7px;border-radius:50%;background:rgba(198,168,94,.25);transition:all .2s}
+.tour-dot{width:7px;height:7px;border-radius:50%;background:rgba(198,168,94,.2);transition:all .2s}
 .tour-dot.active{background:var(--accent);transform:scale(1.2)}
 .tour-btn{padding:10px 22px;font-size:12px;font-weight:700;border:none;border-radius:8px;cursor:pointer;letter-spacing:.3px;transition:all .15s}
 .tour-btn-next{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#1C1A17}
 .tour-btn-next:hover{transform:scale(1.03)}
-.tour-btn-skip{background:none;border:none;color:var(--text3);font-size:11px;cursor:pointer;padding:6px 10px}
+.tour-btn-skip{background:none;border:none;color:#8A8278;font-size:11px;cursor:pointer;padding:6px 10px}
 .tour-btn-skip:hover{color:var(--accent)}
 .tour-step-num{font-size:10px;color:var(--accent);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px}
 </style>

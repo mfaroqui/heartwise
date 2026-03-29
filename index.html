@@ -23384,37 +23384,47 @@ function printReport(){window.print()}
 var _tourStep=0;
 var _tourSteps=[
   {
+    target:function(){return document.getElementById('home-hero-card')},
+    fallback:function(){return document.getElementById('home-score-card')},
+    title:'Welcome to HeartWise',
+    body:'This is your dashboard — your career command center. It shows your scores, progress, and personalized recommendations based on your profile and career stage.'
+  },
+  {
     target:function(){return document.getElementById('home-score-card')},
     fallback:function(){return document.getElementById('career-dashboard')},
-    title:'Set Up Your Career Profile',
-    body:'Start here. Answer a few questions about your training stage, specialty, and goals — and we\'ll generate personalized career scores across 4 dimensions.'
-  },
-  {
-    target:function(){return document.getElementById('career-dashboard')},
     title:'Your Career Scores',
-    body:'These four scores — Competitiveness, Research, Readiness, and Financial — track your progress over time. They update every time you recalculate your profile.'
+    body:'Four scores track your competitive position: Competitiveness, Research, Readiness, and Financial. They update every time you run a tool or recalculate your profile. Watch them improve over time.'
   },
   {
-    target:function(){return document.querySelector('[onclick="navTo(\'scr-vault\',this)"]')},
-    fallback:function(){return document.querySelector('[onclick="navTo(\'scr-vault\')"]')},
-    title:'16 Career Tools',
-    body:'Career Tools is where the real work happens. Contract analysis, match calculators, financial simulators, interview prep — every tool built specifically for physician career decisions.'
+    target:function(){return document.querySelector('[data-scr="scr-vault"]')},
+    title:'15 Career Decision Tools',
+    body:'This is where the real work happens. Match calculators, contract analysis, financial simulators, specialty fit assessment, interview prep — every tool built specifically for physician career decisions.'
   },
   {
-    target:function(){return document.querySelector('[onclick="navTo(\'scr-ask\',this)"]')},
-    fallback:function(){return document.querySelector('[onclick="navTo(\'scr-ask\')"]')},
-    title:'Ask Anything',
-    body:'Have a career question? Type it here and get AI-powered strategic guidance tailored to your profile and specialty. Your first few analyses are free.'
+    target:function(){return document.querySelector('[data-scr="scr-ask"]')},
+    title:'Ask a Career Question',
+    body:'Have a specific question? Type it here and get strategic guidance tailored to your profile, specialty, and career stage. Think of it as having an attending on call.'
+  },
+  {
+    target:function(){return document.querySelector('[data-scr="scr-archive"]')},
+    title:'Career Insights Library',
+    body:'Every question you ask and every tool you run builds your personal career intelligence library. Come back here to review past analyses and track how your thinking has evolved.'
+  },
+  {
+    target:function(){return document.querySelector('[data-scr="scr-profile"]')},
+    title:'Your Profile & Progress',
+    body:'Update your career profile, track achievements, view your decision timeline, and manage your subscription. The more complete your profile, the more personalized your results.'
   }
 ];
 
 function shouldShowTour(){
   if(!U)return false;
-  // Don't show to admin
+  // Only show for trial users or paid subscribers (not free, not admin)
   if(U.tier==='admin')return false;
+  if(U.tier==='free'&&!U.isTrial)return false;
   // Check if already completed
   if(localStorage.getItem('hw_tour_done'))return false;
-  // Check if user has used tools or has score history (not a new user)
+  // Don't show if user has already explored significantly
   if(U.toolHistory&&U.toolHistory.length>3)return false;
   if(U.scoreHistory&&U.scoreHistory.length>1)return false;
   return true;

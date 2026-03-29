@@ -8168,6 +8168,7 @@ function admRender(){
   else if(curAdminTab==='cancellations')admRenderCancellations(c);
   else if(curAdminTab==='toolactivity')admRenderToolActivity(c);
   else if(curAdminTab==='outcomes')admRenderOutcomes(c);
+  else if(curAdminTab==='cases')admRenderCaseLibrary(c);
 }
 
 // ---- DASHBOARD ----
@@ -12695,6 +12696,399 @@ function admRenderCompIntel(u){
 
   h+='</div>';
   return h;
+}
+
+// ===== CASE LIBRARY — CURATED ANONYMIZED CASE STUDIES =====
+// Admin-only for now. Mouzam creates cases, stores in localStorage admin key.
+// Each case: real scenario, anonymized, with what happened, what they did right/wrong,
+// what HeartWise would have recommended, and the outcome.
+// Future: surface relevant cases to users based on stage/specialty/situation.
+
+// Data stored in localStorage: HW_CASE_LIBRARY = [{...}]
+
+function getCaseLibrary(){
+  try{var d=localStorage.getItem('HW_CASE_LIBRARY');return d?JSON.parse(d):[];}catch(e){return[]}
+}
+function saveCaseLibrary(cases){
+  try{localStorage.setItem('HW_CASE_LIBRARY',JSON.stringify(cases))}catch(e){console.error('saveCaseLibrary:',e)}
+}
+
+var CASE_CATEGORIES=[
+  {v:'match',l:'Match / Application',icon:'🎯',stages:['student','resident']},
+  {v:'fellowship',l:'Fellowship Decision',icon:'🏥',stages:['resident','fellow']},
+  {v:'contract',l:'Contract Negotiation',icon:'📋',stages:['fellow','attending']},
+  {v:'salary',l:'Salary / Compensation',icon:'💰',stages:['fellow','attending']},
+  {v:'career-pivot',l:'Career Pivot / Transition',icon:'🔄',stages:['resident','fellow','attending']},
+  {v:'specialty',l:'Specialty Choice',icon:'🧬',stages:['student','resident']},
+  {v:'financial',l:'Financial Decision',icon:'📊',stages:['resident','fellow','attending']},
+  {v:'burnout',l:'Burnout / Work-Life',icon:'⚖️',stages:['resident','fellow','attending']},
+  {v:'research',l:'Research Strategy',icon:'🔬',stages:['student','resident','fellow']},
+  {v:'img',l:'IMG-Specific Challenge',icon:'🌍',stages:['student','resident','fellow']},
+  {v:'non-compete',l:'Non-Compete / Restrictive Covenant',icon:'⚠️',stages:['fellow','attending']},
+  {v:'partnership',l:'Partnership / Practice Ownership',icon:'🤝',stages:['attending']},
+  {v:'debt',l:'Debt Strategy / PSLF',icon:'📉',stages:['resident','fellow','attending']}
+];
+
+var CASE_OUTCOMES=['positive','mixed','negative','pending'];
+
+// ===== ADMIN: CASE LIBRARY TAB =====
+
+function admRenderCaseLibrary(c){
+  var cases=getCaseLibrary();
+
+  var h='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">';
+  h+='<div><div style="font-size:16px;font-weight:600;color:var(--text);font-family:var(--font-serif)">📚 Case Library</div>';
+  h+='<div style="font-size:12px;color:var(--text3)">'+cases.length+' case'+(cases.length!==1?'s':'')+' · Admin-only for now</div></div>';
+  h+='<button onclick="showCaseEditor()" style="padding:8px 16px;font-size:12px;background:var(--accent);color:#1C1A17;border:none;border-radius:8px;cursor:pointer;font-weight:600">+ New Case</button>';
+  h+='</div>';
+
+  // Stats
+  if(cases.length){
+    var catCount={};var stageCount={};var outcomeCount={};
+    cases.forEach(function(cs){
+      catCount[cs.category]=(catCount[cs.category]||0)+1;
+      (cs.stages||[]).forEach(function(s){stageCount[s]=(stageCount[s]||0)+1});
+      outcomeCount[cs.outcome]=(outcomeCount[cs.outcome]||0)+1;
+    });
+    h+='<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px">';
+    h+='<div style="text-align:center;padding:10px;background:var(--bg2);border-radius:10px"><div style="font-size:20px;font-weight:700;color:var(--accent)">'+cases.length+'</div><div style="font-size:10px;color:var(--text3)">Total Cases</div></div>';
+    h+='<div style="text-align:center;padding:10px;background:var(--bg2);border-radius:10px"><div style="font-size:20px;font-weight:700;color:var(--green)">'+(outcomeCount.positive||0)+'</div><div style="font-size:10px;color:var(--text3)">Positive</div></div>';
+    h+='<div style="text-align:center;padding:10px;background:var(--bg2);border-radius:10px"><div style="font-size:20px;font-weight:700;color:var(--text)">'+(outcomeCount.mixed||0)+'</div><div style="font-size:10px;color:var(--text3)">Mixed</div></div>';
+    h+='<div style="text-align:center;padding:10px;background:var(--bg2);border-radius:10px"><div style="font-size:20px;font-weight:700;color:#c44d56">'+(outcomeCount.negative||0)+'</div><div style="font-size:10px;color:var(--text3)">Cautionary</div></div>';
+    h+='</div>';
+
+    // Filter bar
+    h+='<div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:12px">';
+    h+='<button onclick="clFilterCases(\'all\')" class="cl-filter active" data-f="all" style="padding:4px 10px;font-size:10px;border:1px solid var(--accent);border-radius:14px;background:rgba(198,168,94,.15);color:var(--accent);cursor:pointer">All</button>';
+    CASE_CATEGORIES.forEach(function(cat){
+      if(catCount[cat.v])h+='<button onclick="clFilterCases(\''+cat.v+'\')" class="cl-filter" data-f="'+cat.v+'" style="padding:4px 10px;font-size:10px;border:1px solid var(--border);border-radius:14px;background:var(--bg3);color:var(--text3);cursor:pointer">'+cat.icon+' '+cat.l+' ('+catCount[cat.v]+')</button>';
+    });
+    h+='</div>';
+
+    // Cases list
+    h+='<div id="cl-cases-list">';
+    h+=renderCaseCards(cases);
+    h+='</div>';
+  } else {
+    h+='<div style="text-align:center;padding:40px 0">';
+    h+='<div style="font-size:40px;margin-bottom:12px">📚</div>';
+    h+='<div style="font-size:14px;color:var(--text2)">No cases yet.</div>';
+    h+='<div style="font-size:12px;color:var(--text3);margin-top:4px">Create anonymized case studies from real patient/physician scenarios. These will be the foundation for "Ask Someone Who Did It."</div>';
+    h+='</div>';
+  }
+
+  c.innerHTML=h;
+}
+
+function renderCaseCards(cases){
+  var h='';
+  var catMap={};CASE_CATEGORIES.forEach(function(cat){catMap[cat.v]=cat});
+  var outcomeColors={positive:'var(--green)',mixed:'var(--accent)',negative:'#c44d56',pending:'var(--text3)'};
+  var outcomeLabels={positive:'✅ Positive Outcome',mixed:'⚖️ Mixed Outcome',negative:'⚠️ Cautionary Tale',pending:'⏳ Pending'};
+
+  cases.slice().reverse().forEach(function(cs){
+    var cat=catMap[cs.category]||{icon:'📋',l:cs.category};
+    var oc=outcomeColors[cs.outcome]||'var(--text3)';
+    var ol=outcomeLabels[cs.outcome]||cs.outcome;
+
+    h+='<div class="adm-card cl-case-card" data-cat="'+cs.category+'" style="border-left:3px solid '+oc+';margin-bottom:8px">';
+    h+='<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">';
+    h+='<div>';
+    h+='<div style="font-size:14px;font-weight:600;color:var(--text)">'+cat.icon+' '+(cs.title||'Untitled Case')+'</div>';
+    h+='<div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:3px">';
+    h+='<span style="font-size:9px;padding:2px 6px;background:rgba(198,168,94,.08);color:var(--accent);border-radius:8px">'+cat.l+'</span>';
+    (cs.stages||[]).forEach(function(s){h+='<span style="font-size:9px;padding:2px 6px;background:var(--bg3);color:var(--text3);border-radius:8px">'+s+'</span>'});
+    if(cs.specialty)h+='<span style="font-size:9px;padding:2px 6px;background:var(--bg3);color:var(--text3);border-radius:8px">'+cs.specialty+'</span>';
+    h+='</div></div>';
+    h+='<div style="text-align:right;flex-shrink:0">';
+    h+='<div style="font-size:10px;font-weight:600;color:'+oc+'">'+ol+'</div>';
+    h+='<div style="font-size:9px;color:var(--text3)">'+(cs.createdAt?new Date(cs.createdAt).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}):'')+'</div>';
+    h+='</div></div>';
+
+    // The Situation
+    h+='<div style="margin-bottom:8px"><div style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px">The Situation</div>';
+    h+='<div style="font-size:12px;color:var(--text2);line-height:1.6">'+cs.situation+'</div></div>';
+
+    // What They Did
+    if(cs.whatTheyDid){
+      h+='<div style="margin-bottom:8px"><div style="font-size:10px;font-weight:600;color:var(--text);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px">What They Did</div>';
+      h+='<div style="font-size:12px;color:var(--text2);line-height:1.6">'+cs.whatTheyDid+'</div></div>';
+    }
+
+    // What Went Right / Wrong
+    if(cs.whatWentRight||cs.whatWentWrong){
+      h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">';
+      if(cs.whatWentRight){
+        h+='<div style="padding:8px;background:rgba(88,166,92,.06);border-radius:6px">';
+        h+='<div style="font-size:10px;font-weight:600;color:var(--green);margin-bottom:2px">✅ What Went Right</div>';
+        h+='<div style="font-size:11px;color:var(--text2);line-height:1.5">'+cs.whatWentRight+'</div></div>';
+      }
+      if(cs.whatWentWrong){
+        h+='<div style="padding:8px;background:rgba(196,77,86,.06);border-radius:6px">';
+        h+='<div style="font-size:10px;font-weight:600;color:#c44d56;margin-bottom:2px">⚠️ What Went Wrong</div>';
+        h+='<div style="font-size:11px;color:var(--text2);line-height:1.5">'+cs.whatWentWrong+'</div></div>';
+      }
+      h+='</div>';
+    }
+
+    // HeartWise Take
+    if(cs.heartwiseTake){
+      h+='<div style="margin-bottom:8px;padding:10px;background:rgba(198,168,94,.06);border:1px solid rgba(198,168,94,.1);border-radius:8px">';
+      h+='<div style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px">HeartWise Analysis</div>';
+      h+='<div style="font-size:12px;color:var(--text2);line-height:1.6">'+cs.heartwiseTake+'</div></div>';
+    }
+
+    // Key Numbers
+    if(cs.keyNumbers){
+      h+='<div style="margin-bottom:8px"><div style="font-size:10px;font-weight:600;color:var(--text);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Key Numbers</div>';
+      h+='<div style="display:flex;flex-wrap:wrap;gap:6px">';
+      cs.keyNumbers.forEach(function(kn){
+        h+='<div style="padding:6px 10px;background:var(--bg3);border-radius:6px;text-align:center">';
+        h+='<div style="font-size:14px;font-weight:700;color:var(--accent)">'+kn.value+'</div>';
+        h+='<div style="font-size:9px;color:var(--text3)">'+kn.label+'</div></div>';
+      });
+      h+='</div></div>';
+    }
+
+    // Related tools
+    if(cs.relatedTools&&cs.relatedTools.length){
+      h+='<div style="display:flex;flex-wrap:wrap;gap:3px;margin-bottom:6px">';
+      cs.relatedTools.forEach(function(t){
+        h+='<span style="font-size:9px;padding:2px 8px;background:rgba(198,168,94,.08);color:var(--accent);border-radius:10px">'+t+'</span>';
+      });
+      h+='</div>';
+    }
+
+    // Takeaway
+    if(cs.takeaway){
+      h+='<div style="padding:8px 10px;background:var(--bg2);border-radius:6px;font-size:12px;font-weight:600;color:var(--text);font-style:italic">"'+cs.takeaway+'"</div>';
+    }
+
+    // Admin controls
+    h+='<div style="display:flex;gap:6px;margin-top:8px;padding-top:8px;border-top:1px solid var(--border)">';
+    h+='<button onclick="showCaseEditor(\''+cs.id+'\')" style="font-size:10px;padding:4px 10px;border:1px solid var(--border);border-radius:4px;background:var(--bg3);color:var(--text3);cursor:pointer">Edit</button>';
+    h+='<button onclick="duplicateCase(\''+cs.id+'\')" style="font-size:10px;padding:4px 10px;border:1px solid var(--border);border-radius:4px;background:var(--bg3);color:var(--text3);cursor:pointer">Duplicate</button>';
+    h+='<button onclick="toggleCasePublish(\''+cs.id+'\')" style="font-size:10px;padding:4px 10px;border:1px solid '+(cs.published?'var(--green)':'var(--border)')+';border-radius:4px;background:'+(cs.published?'rgba(88,166,92,.08)':'var(--bg3)')+';color:'+(cs.published?'var(--green)':'var(--text3)')+';cursor:pointer">'+(cs.published?'✅ Published':'Unpublished')+'</button>';
+    h+='<button onclick="deleteCase(\''+cs.id+'\')" style="font-size:10px;padding:4px 10px;border:1px solid #c44d56;border-radius:4px;background:rgba(196,77,86,.06);color:#c44d56;cursor:pointer">Delete</button>';
+    h+='</div>';
+
+    h+='</div>';
+  });
+  return h;
+}
+
+function clFilterCases(cat){
+  document.querySelectorAll('.cl-filter').forEach(function(b){
+    var isActive=b.dataset.f===cat;
+    b.style.background=isActive?'rgba(198,168,94,.15)':'var(--bg3)';
+    b.style.borderColor=isActive?'var(--accent)':'var(--border)';
+    b.style.color=isActive?'var(--accent)':'var(--text3)';
+  });
+  document.querySelectorAll('.cl-case-card').forEach(function(card){
+    card.style.display=(cat==='all'||card.dataset.cat===cat)?'':'none';
+  });
+}
+
+// ===== CASE EDITOR MODAL =====
+
+function showCaseEditor(editId){
+  var cases=getCaseLibrary();
+  var existing=editId?cases.find(function(c){return c.id===editId}):null;
+
+  var h='<div style="padding:20px;max-width:560px;margin:0 auto;max-height:80vh;overflow-y:auto">';
+  h+='<div style="text-align:center;margin-bottom:16px"><div style="font-size:18px;font-weight:600;color:var(--text);font-family:var(--font-serif)">'+(existing?'Edit Case':'New Case Study')+'</div>';
+  h+='<div style="font-size:11px;color:var(--text3)">Anonymized real scenarios. No identifying details.</div></div>';
+
+  // Title
+  h+='<div style="margin-bottom:12px"><label style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px">Case Title</label>';
+  h+='<input type="text" id="ce-title" value="'+(existing?existing.title.replace(/"/g,'&quot;'):'')+'" placeholder="e.g., PGY-3 Who Turned Down Top Fellowship for Location" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-size:13px;margin-top:4px"></div>';
+
+  // Category
+  h+='<div style="margin-bottom:12px"><label style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px">Category</label>';
+  h+='<select id="ce-category" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-size:13px;margin-top:4px">';
+  h+='<option value="">Select category</option>';
+  CASE_CATEGORIES.forEach(function(cat){h+='<option value="'+cat.v+'"'+(existing&&existing.category===cat.v?' selected':'')+'>'+cat.icon+' '+cat.l+'</option>'});
+  h+='</select></div>';
+
+  // Stages
+  h+='<div style="margin-bottom:12px"><label style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px">Relevant Stages</label>';
+  h+='<div style="display:flex;gap:6px;margin-top:4px">';
+  ['student','resident','fellow','attending'].forEach(function(s){
+    var sel=existing&&existing.stages&&existing.stages.indexOf(s)>=0;
+    h+='<button onclick="this.classList.toggle(\'ce-stage-on\');this.style.background=this.classList.contains(\'ce-stage-on\')?\'rgba(198,168,94,.15)\':\'var(--bg3)\';this.style.borderColor=this.classList.contains(\'ce-stage-on\')?\'var(--accent)\':\'var(--border)\';this.style.color=this.classList.contains(\'ce-stage-on\')?\'var(--accent)\':\'var(--text3)\'" data-stage="'+s+'" class="'+(sel?'ce-stage-on':'')+'" style="padding:6px 14px;font-size:11px;border:1px solid '+(sel?'var(--accent)':'var(--border)')+';border-radius:16px;background:'+(sel?'rgba(198,168,94,.15)':'var(--bg3)')+';color:'+(sel?'var(--accent)':'var(--text3)')+';cursor:pointer">'+s.charAt(0).toUpperCase()+s.slice(1)+'</button>';
+  });
+  h+='</div></div>';
+
+  // Specialty
+  h+='<div style="margin-bottom:12px"><label style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px">Specialty (optional)</label>';
+  h+='<input type="text" id="ce-specialty" value="'+(existing?existing.specialty||'':'')+'" placeholder="e.g., Cardiology, IM, Surgery" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-size:13px;margin-top:4px"></div>';
+
+  // Outcome
+  h+='<div style="margin-bottom:12px"><label style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px">Outcome</label>';
+  h+='<div style="display:flex;gap:6px;margin-top:4px">';
+  [{v:'positive',l:'✅ Positive',c:'var(--green)'},{v:'mixed',l:'⚖️ Mixed',c:'var(--accent)'},{v:'negative',l:'⚠️ Cautionary',c:'#c44d56'},{v:'pending',l:'⏳ Pending',c:'var(--text3)'}].forEach(function(o){
+    var sel=existing&&existing.outcome===o.v;
+    h+='<button onclick="document.querySelectorAll(\'.ce-outcome-btn\').forEach(function(b){b.style.background=\'var(--bg3)\';b.style.borderColor=\'var(--border)\';b.style.color=\'var(--text3)\'});this.style.background=\'rgba(198,168,94,.15)\';this.style.borderColor=\'var(--accent)\';this.style.color=\'var(--accent)\';this.dataset.selected=\'true\'" data-outcome="'+o.v+'" class="ce-outcome-btn" '+(sel?'data-selected="true"':'')+' style="flex:1;padding:8px;font-size:11px;border:1px solid '+(sel?'var(--accent)':'var(--border)')+';border-radius:8px;background:'+(sel?'rgba(198,168,94,.15)':'var(--bg3)')+';color:'+(sel?'var(--accent)':'var(--text3)')+';cursor:pointer;text-align:center">'+o.l+'</button>';
+  });
+  h+='</div></div>';
+
+  // The Situation
+  h+='<div style="margin-bottom:12px"><label style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px">The Situation</label>';
+  h+='<textarea id="ce-situation" rows="3" placeholder="Who is this person? What are they facing? What are the stakes? (anonymized)" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-size:12px;resize:vertical;margin-top:4px">'+(existing?existing.situation||'':'')+'</textarea></div>';
+
+  // What They Did
+  h+='<div style="margin-bottom:12px"><label style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px">What They Did</label>';
+  h+='<textarea id="ce-whattheydid" rows="3" placeholder="The decision they made and the steps they took." style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-size:12px;resize:vertical;margin-top:4px">'+(existing?existing.whatTheyDid||'':'')+'</textarea></div>';
+
+  // What Went Right
+  h+='<div style="margin-bottom:12px"><label style="font-size:11px;font-weight:600;color:var(--green);text-transform:uppercase;letter-spacing:1px">What Went Right</label>';
+  h+='<textarea id="ce-right" rows="2" placeholder="Smart moves, good instincts, things worth replicating." style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-size:12px;resize:vertical;margin-top:4px">'+(existing?existing.whatWentRight||'':'')+'</textarea></div>';
+
+  // What Went Wrong
+  h+='<div style="margin-bottom:12px"><label style="font-size:11px;font-weight:600;color:#c44d56;text-transform:uppercase;letter-spacing:1px">What Went Wrong</label>';
+  h+='<textarea id="ce-wrong" rows="2" placeholder="Mistakes, blind spots, things to avoid." style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-size:12px;resize:vertical;margin-top:4px">'+(existing?existing.whatWentWrong||'':'')+'</textarea></div>';
+
+  // HeartWise Analysis
+  h+='<div style="margin-bottom:12px"><label style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px">HeartWise Analysis</label>';
+  h+='<textarea id="ce-take" rows="3" placeholder="What would HeartWise have recommended? What tools would have helped? Your expert take." style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-size:12px;resize:vertical;margin-top:4px">'+(existing?existing.heartwiseTake||'':'')+'</textarea></div>';
+
+  // Key Numbers
+  h+='<div style="margin-bottom:12px"><label style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px">Key Numbers (optional, up to 4)</label>';
+  h+='<div id="ce-numbers" style="margin-top:4px">';
+  var nums=existing&&existing.keyNumbers?existing.keyNumbers:[];
+  for(var i=0;i<4;i++){
+    var n=nums[i]||{value:'',label:''};
+    h+='<div style="display:flex;gap:6px;margin-bottom:4px">';
+    h+='<input type="text" class="ce-num-val" value="'+n.value.replace(/"/g,'&quot;')+'" placeholder="e.g., $120K" style="width:100px;padding:6px;border:1px solid var(--border);border-radius:6px;background:var(--bg);color:var(--text);font-size:12px">';
+    h+='<input type="text" class="ce-num-lbl" value="'+n.label.replace(/"/g,'&quot;')+'" placeholder="e.g., Salary gap" style="flex:1;padding:6px;border:1px solid var(--border);border-radius:6px;background:var(--bg);color:var(--text);font-size:12px">';
+    h+='</div>';
+  }
+  h+='</div></div>';
+
+  // Related Tools
+  h+='<div style="margin-bottom:12px"><label style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px">Related HeartWise Tools</label>';
+  h+='<div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:4px">';
+  var toolNames=['Fellowship Readiness Calculator','Contract Review Tool','RVU Compensation Calculator','Job Offer Comparison','3-Year Financial Planner','Debt & Income Strategy','Specialty Fit Assessment','Match Competitiveness Calculator','Career Strategy Builder','Career Transition Planner','Mock Interview Simulator','Financial Projection Tool','Application Review Tool','Research Impact Calculator'];
+  var selTools=existing&&existing.relatedTools?existing.relatedTools:[];
+  toolNames.forEach(function(t){
+    var sel=selTools.indexOf(t)>=0;
+    h+='<button onclick="this.classList.toggle(\'ce-tool-on\');this.style.background=this.classList.contains(\'ce-tool-on\')?\'rgba(198,168,94,.15)\':\'var(--bg3)\';this.style.borderColor=this.classList.contains(\'ce-tool-on\')?\'var(--accent)\':\'var(--border)\';this.style.color=this.classList.contains(\'ce-tool-on\')?\'var(--accent)\':\'var(--text3)\'" data-tool="'+t+'" class="'+(sel?'ce-tool-on':'')+'" style="padding:4px 8px;font-size:10px;border:1px solid '+(sel?'var(--accent)':'var(--border)')+';border-radius:12px;background:'+(sel?'rgba(198,168,94,.15)':'var(--bg3)')+';color:'+(sel?'var(--accent)':'var(--text3)')+';cursor:pointer">'+t+'</button>';
+  });
+  h+='</div></div>';
+
+  // Takeaway
+  h+='<div style="margin-bottom:16px"><label style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px">One-Line Takeaway</label>';
+  h+='<input type="text" id="ce-takeaway" value="'+(existing?existing.takeaway||'':'')+'" placeholder="The single most important lesson from this case." style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-size:13px;margin-top:4px"></div>';
+
+  // Save
+  h+='<div style="display:flex;gap:8px">';
+  h+='<button onclick="saveCase('+(existing?"'"+existing.id+"'":"''")+');closeModal(\'modal-q\')" style="flex:1;padding:14px;background:var(--accent);color:#1C1A17;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer">'+(existing?'Update Case':'Create Case')+'</button>';
+  h+='<button onclick="closeModal(\'modal-q\')" style="padding:14px 20px;background:var(--bg3);color:var(--text3);border:1px solid var(--border);border-radius:10px;font-size:14px;cursor:pointer">Cancel</button>';
+  h+='</div></div>';
+
+  document.getElementById('modal-q-content').innerHTML=h;
+  document.getElementById('modal-q').classList.remove('hidden');
+}
+
+function saveCase(editId){
+  var title=(document.getElementById('ce-title')||{}).value||'';
+  var category=(document.getElementById('ce-category')||{}).value||'';
+  var situation=(document.getElementById('ce-situation')||{}).value||'';
+
+  if(!title.trim()){notify('Add a case title',1);return}
+  if(!category){notify('Select a category',1);return}
+  if(!situation.trim()){notify('Describe the situation',1);return}
+
+  // Gather stages
+  var stages=[];
+  document.querySelectorAll('.ce-stage-on').forEach(function(b){stages.push(b.dataset.stage)});
+
+  // Outcome
+  var outcomeBtn=document.querySelector('.ce-outcome-btn[data-selected="true"]');
+  var outcome=outcomeBtn?outcomeBtn.dataset.outcome:'pending';
+
+  // Key numbers
+  var keyNumbers=[];
+  var vals=document.querySelectorAll('.ce-num-val');
+  var lbls=document.querySelectorAll('.ce-num-lbl');
+  for(var i=0;i<vals.length;i++){
+    if(vals[i].value.trim()&&lbls[i].value.trim()){
+      keyNumbers.push({value:vals[i].value.trim(),label:lbls[i].value.trim()});
+    }
+  }
+
+  // Related tools
+  var relatedTools=[];
+  document.querySelectorAll('.ce-tool-on').forEach(function(b){relatedTools.push(b.dataset.tool)});
+
+  var caseObj={
+    id:editId||('case-'+Date.now()),
+    title:title.trim(),
+    category:category,
+    stages:stages,
+    specialty:(document.getElementById('ce-specialty')||{}).value||'',
+    outcome:outcome,
+    situation:situation.trim(),
+    whatTheyDid:(document.getElementById('ce-whattheydid')||{}).value||'',
+    whatWentRight:(document.getElementById('ce-right')||{}).value||'',
+    whatWentWrong:(document.getElementById('ce-wrong')||{}).value||'',
+    heartwiseTake:(document.getElementById('ce-take')||{}).value||'',
+    keyNumbers:keyNumbers,
+    relatedTools:relatedTools,
+    takeaway:(document.getElementById('ce-takeaway')||{}).value||'',
+    published:false,
+    createdAt:null,
+    updatedAt:new Date().toISOString()
+  };
+
+  var cases=getCaseLibrary();
+  var idx=cases.findIndex(function(c){return c.id===editId});
+  if(idx>=0){
+    caseObj.createdAt=cases[idx].createdAt;
+    caseObj.published=cases[idx].published;
+    cases[idx]=caseObj;
+  } else {
+    caseObj.createdAt=new Date().toISOString();
+    cases.push(caseObj);
+  }
+  saveCaseLibrary(cases);
+  notify((idx>=0?'Case updated':'Case created')+' — '+title);
+  admRender();
+}
+
+function duplicateCase(id){
+  var cases=getCaseLibrary();
+  var orig=cases.find(function(c){return c.id===id});
+  if(!orig)return;
+  var dup=JSON.parse(JSON.stringify(orig));
+  dup.id='case-'+Date.now();
+  dup.title='(Copy) '+dup.title;
+  dup.published=false;
+  dup.createdAt=new Date().toISOString();
+  dup.updatedAt=new Date().toISOString();
+  cases.push(dup);
+  saveCaseLibrary(cases);
+  notify('Case duplicated');
+  admRender();
+}
+
+function toggleCasePublish(id){
+  var cases=getCaseLibrary();
+  var cs=cases.find(function(c){return c.id===id});
+  if(!cs)return;
+  cs.published=!cs.published;
+  cs.updatedAt=new Date().toISOString();
+  saveCaseLibrary(cases);
+  notify(cs.published?'Case marked as published':'Case unpublished');
+  admRender();
+}
+
+function deleteCase(id){
+  if(!confirm('Delete this case? This cannot be undone.'))return;
+  var cases=getCaseLibrary().filter(function(c){return c.id!==id});
+  saveCaseLibrary(cases);
+  notify('Case deleted');
+  admRender();
 }
 // ===== OUTCOME TRACKER — GOAL ACHIEVEMENT DOCUMENTATION =====
 // Users document when they reach career goals. Data stored in U.outcomes.

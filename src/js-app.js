@@ -9629,18 +9629,31 @@ function admExitSimulation(){
 }
 async function admRunExpireTrials(silent){
   try{
-    var resp=await fetch(SUPABASE_URL+'/functions/v1/expire-trials',{
-      method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+SUPABASE_KEY}
+    // Client-side: check all profiles for expired trials and downgrade them
+    var expired=0;
+    var now=new Date();
+    if(_supaClient){
+      var resp=await _supaClient.from('profiles').select('id,email,tier,is_trial,trial_end').eq('is_trial',true);
+      if(!resp.error&&resp.data){
+        for(var i=0;i<resp.data.length;i++){
+          var p=resp.data[i];
+          if(p.trial_end&&new Date(p.trial_end)<=now){
+            await _supaClient.from('profiles').update({tier:'free',is_trial:false}).eq('id',p.id);
+            if(_sbProfiles){var u=_sbProfiles.find(function(x){return x.email===p.email});if(u){u.tier='free';u.is_trial=false}}
+            expired++;
+          }
+        }
+      }
+    }
+    // Also check local DB
+    (DB.users||[]).forEach(function(u){
+      if(u.isTrial&&u.trialEnd&&new Date(u.trialEnd)<=now){
+        u.tier='free';u.isTrial=false;expired++;
+      }
     });
-    if(resp.ok){
-      var data=await resp.json();
-      if(data.expired>0){
-        // Update local cache
-        if(_sbProfiles){data.profiles.forEach(function(p){var u=_sbProfiles.find(function(x){return x.email===p.email});if(u){u.tier='free';u.is_trial=false}})}
-        if(!silent){notify(data.expired+' expired trial(s) downgraded to free');admRenderMetrics();admRender()}
-        else{console.log('Auto-expired '+data.expired+' trials')}
-      }else if(!silent){notify('No expired trials found')}
-    }else if(!silent){notify('Expire trials call failed',1)}
+    if(expired>0)saveDB();
+    if(!silent){notify(expired>0?expired+' expired trial(s) downgraded to free':'No expired trials found');admRenderMetrics();admRender()}
+    else if(expired>0){console.log('Auto-expired '+expired+' trials')}
   }catch(e){if(!silent)notify('Error: '+e.message,1);console.warn('Expire trials:',e)}
 }
 async function admDisableUser(uid){

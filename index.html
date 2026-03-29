@@ -12848,11 +12848,13 @@ function autoFillToolFromProfile(toolId){
     }
   }
 
-  // MCC — Match Probability Calculator (v3)
-  if(toolId==='v3'){
+  // Match Competitiveness Calculator (v14) — residency + fellowship fields
+  if(toolId==='v14'){
     setSelect('mcc-spec',cp.specialty);
     setVal('mcc-step2',cp.step2);
     setVal('mcc-programs',cp.programs);
+    if(cp.step1)setVal('mcc-step2',cp.step2); // step2 is the key score
+    if(cp.step3)setSelect('mcc-step3',cp.step3);
     // Publications mapping
     var pubs=parseInt(cp.pubs)||0;
     if(pubs===0)setSelect('mcc-pubs','0');
@@ -12880,6 +12882,22 @@ function autoFillToolFromProfile(toolId){
     else if(cp.honors==='ghhs')setSelect('mcc-aoa','ghhs');
     else if(cp.honors==='both')setSelect('mcc-aoa','both');
     else if(cp.honors==='none')setSelect('mcc-aoa','none');
+    // School type (IMG detection)
+    if(ti.img)setSelect('mcc-school',ti.img);
+    // Fellowship-specific fields
+    setSelect('mcc-fel-spec',cp.specialty||cp.fellowship);
+    if(cp.firstauthor)setVal('mcc-fel-firstauthor',cp.firstauthor);
+    if(cp.pgy){
+      var resYearMap={PGY1:'1',PGY2:'2',PGY3:'3',PGY4:'4',PGY5:'5'};
+      if(resYearMap[cp.pgy])setSelect('mcc-fel-resyear',resYearMap[cp.pgy]);
+    }
+  }
+
+  // Contract Risk Scanner (v2) — comp model, non-compete, practice
+  if(toolId==='v2'){
+    if(cp.comp){var compNum=String(cp.comp).replace(/[^0-9]/g,'');if(parseInt(compNum)>10000)setVal('crs-comp-base',compNum)}
+    if(cp.noncompete==='yes'){setSelect('crs-nc-term','yes')}
+    if(cp.practice)setSelect('crs-scope',cp.practice);
   }
 
   // Fellowship Readiness Calculator (v1) — sliders from profile data
@@ -12975,9 +12993,11 @@ function autoFillToolFromProfile(toolId){
     if(ti.disability)setSelect('ilp-disability',ti.disability);
   }
 
-  // Job Offer Comparison (v3 — the comparison tool, not match calc)
+  // Job Offer Comparison (v3) — salary, specialty
   if(toolId==='v3'){
     if(ti.specialty||cp.specialty)setSelect('ocm-spec',ti.specialty||cp.specialty);
+    // Pre-fill first offer salary from profile comp
+    if(cp.comp){var compNum=parseInt(String(cp.comp).replace(/[^0-9]/g,''))||0;if(compNum>10000)setVal('ocm-a-salary',compNum)}
   }
 
   // Fellowship Application Planner (v6) — specialty
@@ -12988,6 +13008,13 @@ function autoFillToolFromProfile(toolId){
   // Interview Practice (v16) — specialty
   if(toolId==='v16'){
     if(ti.specialty||cp.specialty)setSelect('mis-spec',ti.specialty||cp.specialty);
+  }
+
+  // Career Transition Planner (v10) — stage, practice, satisfaction
+  if(toolId==='v10'){
+    if(cp.satisfaction)setVal('ctp-satisfaction',cp.satisfaction);
+    if(cp.practice)setSelect('ctp-setting',cp.practice);
+    if(cp.comp){var compNum=parseInt(String(cp.comp).replace(/[^0-9]/g,''))||0;if(compNum>10000)setVal('ctp-salary',compNum)}
   }
 }
 

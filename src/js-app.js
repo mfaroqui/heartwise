@@ -4697,56 +4697,71 @@ function _sfaRun(q1,q2,q3,q4,q5,q6){
   var bottom=specs.slice(-3).reverse();
   var maxFit=top[0].fit||1;
 
-  // Header: clear recommendation
-  var h='<div style="text-align:center;padding:20px;background:linear-gradient(160deg,rgba(200,168,124,.1),rgba(200,168,124,.03));border:1px solid rgba(198,168,94,.15);border-radius:14px;margin-bottom:20px">';
+  // ===== BUILD OUTPUT (Progressive Disclosure) =====
+  hwSecCounter=0;
+  var sec='';
+
+  // ───── HERO (always visible) ─────
+  var h='<div style="text-align:center;padding:20px;background:linear-gradient(160deg,rgba(200,168,124,.1),rgba(200,168,124,.03));border:1px solid rgba(198,168,94,.15);border-radius:14px;margin-bottom:12px">';
   h+='<div style="font-size:11px;color:var(--accent);font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px">My Recommendation</div>';
   h+='<div style="font-size:20px;font-weight:600;color:var(--text);font-family:var(--font-serif);margin-bottom:6px">Pursue '+top[0].icon+' '+top[0].name+'</div>';
-  h+='<div style="font-size:12px;color:var(--text3);line-height:1.6;max-width:400px;margin:0 auto">Your answers describe someone who values '+(q2==='heavy'||q2==='mix'?'procedural work':'cognitive medicine')+', '+(q3==='lifestyle'?'work-life balance':q3==='income'?'strong compensation':q3==='mission'?'mission-driven practice':'a balanced lifestyle')+', and '+(q1==='long'?'long-term patient relationships':q1==='acute'?'high-acuity acute care':'episodic patient interactions')+'. I\u2019ve seen that combination map to '+top[0].name+' consistently.</div>';
+  h+='<div style="font-size:12px;color:var(--text3);line-height:1.6;max-width:400px;margin:0 auto">Your answers describe someone who values '+(q2==='heavy'||q2==='mix'?'procedural work':'cognitive medicine')+', '+(q3==='lifestyle'?'work-life balance':q3==='income'?'strong compensation':q3==='mission'?'mission-driven practice':'a balanced lifestyle')+', and '+(q1==='long'?'long-term patient relationships':q1==='acute'?'high-acuity acute care':'episodic patient interactions')+'.</div>';
+  h+='<div style="display:flex;justify-content:center;gap:8px;margin-top:10px;font-size:11px">';
+  h+='<span style="padding:4px 10px;background:var(--bg2);border-radius:6px;color:var(--text2)">'+top[0].comp+'</span>';
+  h+='<span style="padding:4px 10px;background:var(--bg2);border-radius:6px;color:var(--text2)">'+top[0].hours+'</span>';
+  h+='</div>';
   h+='</div>';
 
-  // Ranked top 3 with reasoning
-  h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:14px">Your Top 3 \u2014 Ranked</div>';
+  // Expand/Collapse toggle
+  h+='<div style="display:flex;justify-content:flex-end;gap:12px;margin-bottom:6px;padding:0 2px">';
+  h+='<span onclick="hwExpandAll(this.closest(\'#sfa-results\'))" style="font-size:10px;color:var(--accent);cursor:pointer;opacity:.7">Expand all</span>';
+  h+='<span onclick="hwCollapseAll(this.closest(\'#sfa-results\'))" style="font-size:10px;color:var(--text3);cursor:pointer;opacity:.7">Collapse all</span>';
+  h+='</div>';
+
+  // Build fit reasons lookup
   var fitReasons={};
   specs.forEach(function(s){
     var r=[];
     if(q1==='long'&&(s.name.includes('Cardiology')||s.name.includes('Psychiatry')||s.name.includes('Outpatient')))r.push('Matches your preference for long-term patient relationships');
     if(q1==='episode'&&(s.name.includes('Gastro')||s.name.includes('Hospitalist')||s.name.includes('Pulm')))r.push('Fits your episodic care style');
-    if(q1==='acute'&&(s.name.includes('Emergency')||s.name.includes('Surgery')||s.name.includes('Interventional')))r.push('High-acuity acute care — exactly what you want');
+    if(q1==='acute'&&(s.name.includes('Emergency')||s.name.includes('Surgery')||s.name.includes('Interventional')))r.push('High-acuity acute care \u2014 exactly what you want');
     if(q1==='minimal'&&(s.name.includes('Radiology')))r.push('Minimal direct patient interaction suits you');
-    if(q2==='heavy'&&(s.name.includes('Interventional')||s.name.includes('Surgery')))r.push('Heavily procedural — satisfies your hands-on preference');
+    if(q2==='heavy'&&(s.name.includes('Interventional')||s.name.includes('Surgery')))r.push('Heavily procedural \u2014 satisfies your hands-on preference');
     if(q2==='mix'&&(s.name.includes('General Cardiology')||s.name.includes('Gastro')||s.name.includes('Pulm')))r.push('Balanced mix of procedures and thinking');
-    if(q2==='cognitive'&&(s.name.includes('Psychiatry')||s.name.includes('Hospitalist')||s.name.includes('Outpatient')))r.push('Primarily cognitive — fits your non-procedural preference');
+    if(q2==='cognitive'&&(s.name.includes('Psychiatry')||s.name.includes('Hospitalist')||s.name.includes('Outpatient')))r.push('Primarily cognitive \u2014 fits your non-procedural preference');
     if(q3==='lifestyle'&&(s.name.includes('Dermatology')||s.name.includes('Psychiatry')||s.name.includes('Emergency')||s.name.includes('Radiology')||s.name.includes('Outpatient')))r.push('Strong work-life balance');
     if(q3==='income'&&(s.name.includes('Interventional')||s.name.includes('Surgery')||s.name.includes('Gastro')))r.push('Top-tier compensation potential');
     if(q3==='mission'&&(s.name.includes('Psychiatry')||s.name.includes('Emergency')||s.name.includes('Pulm')||s.name.includes('Outpatient')))r.push('Mission-driven practice with real impact');
-    if(q6==='high'&&(s.name.includes('Emergency')||s.name.includes('Surgery')||s.name.includes('Interventional')||s.name.includes('Pulm')))r.push('Thrives in uncertainty — matches your tolerance');
+    if(q6==='high'&&(s.name.includes('Emergency')||s.name.includes('Surgery')||s.name.includes('Interventional')||s.name.includes('Pulm')))r.push('Thrives in uncertainty \u2014 matches your tolerance');
     if(q6==='low'&&(s.name.includes('Dermatology')||s.name.includes('Radiology')||s.name.includes('Psychiatry')))r.push('Predictable workflow suits your low-uncertainty preference');
     fitReasons[s.name]=r;
   });
+
+  // ───── SECTION: Top 3 Ranked (DEFAULT OPEN) ─────
+  sec='';
   top.forEach(function(s,i){
     var pct=Math.round((s.fit/maxFit)*100);
     var border=i===0?'rgba(198,168,94,.20)':'var(--border)';
     var reasons=fitReasons[s.name]||[];
-    h+='<div style="padding:16px;background:var(--bg2);border:1px solid '+border+';border-radius:10px;margin-bottom:10px'+(i===0?';box-shadow:0 0 20px rgba(198,168,94,.06)':'')+'">';
-    h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">';
-    h+='<span style="font-size:14px;font-weight:600;color:var(--text)">#'+(i+1)+' '+s.icon+' '+s.name+'</span>';
-    if(i===0)h+='<span style="font-size:9px;padding:3px 8px;border-radius:100px;background:var(--accent-dim);color:var(--accent);font-weight:600">BEST FIT</span>';
-    h+='</div>';
-    h+='<div style="height:4px;background:var(--bg3);border-radius:2px;margin-bottom:10px"><div style="height:100%;width:'+pct+'%;background:linear-gradient(90deg,var(--accent),var(--green));border-radius:2px"></div></div>';
-    // Why it fits
-    if(reasons.length){h+='<div style="margin-bottom:10px">';reasons.forEach(function(r){h+='<div style="font-size:11px;color:var(--green);line-height:1.6;padding:2px 0">'+r+'</div>'});h+='</div>'}
-    h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:11px;color:var(--text2)">';
-    h+='<div>'+s.comp+'</div>';
-    h+='<div>'+s.hours+'</div>';
-    h+='<div>\ud83c\udf93 '+s.train+'</div>';
-    h+='</div>';
-    h+='</div>';
+    sec+='<div style="padding:16px;background:var(--bg3);border:1px solid '+border+';border-radius:10px;margin-bottom:10px'+(i===0?';box-shadow:0 0 20px rgba(198,168,94,.06)':'')+'">';
+    sec+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">';
+    sec+='<span style="font-size:14px;font-weight:600;color:var(--text)">#'+(i+1)+' '+s.icon+' '+s.name+'</span>';
+    if(i===0)sec+='<span style="font-size:9px;padding:3px 8px;border-radius:100px;background:var(--accent-dim);color:var(--accent);font-weight:600">BEST FIT</span>';
+    sec+='</div>';
+    sec+='<div style="height:4px;background:var(--bg2);border-radius:2px;margin-bottom:10px"><div style="height:100%;width:'+pct+'%;background:linear-gradient(90deg,var(--accent),var(--green));border-radius:2px"></div></div>';
+    if(reasons.length){sec+='<div style="margin-bottom:10px">';reasons.forEach(function(r){sec+='<div style="font-size:11px;color:var(--green);line-height:1.6;padding:2px 0">'+r+'</div>'});sec+='</div>'}
+    sec+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:11px;color:var(--text2)">';
+    sec+='<div>'+s.comp+'</div>';
+    sec+='<div>'+s.hours+'</div>';
+    sec+='<div>\ud83c\udf93 '+s.train+'</div>';
+    sec+='</div>';
+    sec+='</div>';
   });
+  h+=hwSection('Your Top 3 \u2014 Ranked','#1 '+top[0].name,sec,true);
 
-  // Why NOT the others — personality & lifestyle mismatches
-  h+='<div style="margin-top:20px;margin-bottom:20px;padding:16px;background:rgba(239,68,68,.03);border:1px solid rgba(239,68,68,.10);border-radius:12px">';
-  h+='<div style="font-size:11px;font-weight:600;color:var(--red);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">Why these would be wrong for you</div>';
-  h+='<div style="font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:10px">I\u2019ve seen people force themselves into specialties that don\u2019t match who they are. Based on what you told me, avoid these:</div>';
+  // ───── SECTION: Why NOT Others ─────
+  sec='';
+  sec+='<div style="font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:10px">Based on what you told me, avoid these:</div>';
   bottom.forEach(function(s){
     var mismatches=[];
     if(q1==='long'&&(s.name.includes('Emergency')||s.name.includes('Radiology')))mismatches.push('You want long-term patient relationships \u2014 '+s.name+' is episodic or no direct contact');
@@ -4760,13 +4775,13 @@ function _sfaRun(q1,q2,q3,q4,q5,q6){
     if(q6==='low'&&(s.name.includes('Emergency')||s.name.includes('Interventional')))mismatches.push('You prefer predictability \u2014 '+s.name+' is defined by uncertainty');
     if(q6==='high'&&(s.name.includes('Dermatology')||s.name.includes('Radiology')))mismatches.push('You thrive on uncertainty \u2014 '+s.name+' is highly predictable');
     if(!mismatches.length)mismatches.push('Low overall alignment with your stated preferences');
-    h+='<div style="padding:8px 10px;background:var(--bg2);border-radius:6px;margin-bottom:6px;border-left:3px solid var(--red)">';
-    h+='<div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:2px">'+s.icon+' '+s.name+'</div>';
-    mismatches.forEach(function(m){h+='<div style="font-size:11px;color:var(--red);line-height:1.5">'+m+'</div>'});
-    h+='</div>';
+    sec+='<div style="padding:8px 10px;background:var(--bg2);border-radius:6px;margin-bottom:6px;border-left:3px solid var(--red)">';
+    sec+='<div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:2px">'+s.icon+' '+s.name+'</div>';
+    mismatches.forEach(function(m){sec+='<div style="font-size:11px;color:var(--red);line-height:1.5">'+m+'</div>'});
+    sec+='</div>';
   });
-  h+='<div style="font-size:10px;color:var(--text3);margin-top:8px;font-style:italic">This doesn\u2019t mean these specialties are bad. They\u2019re bad for you based on what you told me. If any of these surprise you, reconsider whether your answers reflect what you actually want.</div>';
-  h+='</div>';
+  sec+='<div style="font-size:10px;color:var(--text3);margin-top:8px;font-style:italic">This doesn\u2019t mean these specialties are bad. They\u2019re bad for you based on what you told me. If any surprise you, reconsider whether your answers reflect what you actually want.</div>';
+  h+=hwSection('Why These Would Be Wrong For You',bottom.length+' mismatches',sec,false);
 
   // Pathway
   h+=hwPathway('I\u2019d tell you to pursue <strong>'+top[0].name+'</strong>. '+top[1].name+' is a reasonable backup, but your answers clearly favor the first. Stop browsing specialties and start testing this one in real life.',[{text:'Shadow or rotate in '+top[0].name+'. Two or three days of real exposure beats months of theorizing.',when:'this week'},{text:'Talk to a current PGY-3 or fellow. Not an attending. Trainees give you the unfiltered version.',when:'this month'},{text:'Check whether you\u2019re actually competitive before committing emotionally.',when:'this month'}],{id:'v14',icon:'\ud83c\udfaf',title:'Match Probability Calculator',why:'Find out if you\u2019re competitive for '+top[0].name+'. Passion without competitiveness is a dead end.'});
@@ -6044,28 +6059,44 @@ function _csbRun(){
     ]});
   }
 
-  // ===== BUILD OUTPUT =====
+  // ===== BUILD OUTPUT (Progressive Disclosure) =====
   var h='';
+  hwSecCounter=0;
+  var sec='';
   var nowLabels={ms1:'MS-1/2',ms2:'MS-1/2',ms3:'MS-3/4',intern:'PGY-1',resident:'PGY-2/3',senior:'PGY-4+',fellow:'Fellow',attending:'Attending'};
 
-  // Header
-  h+='<div style="text-align:center;padding:20px;background:linear-gradient(160deg,rgba(200,168,124,.1),rgba(200,168,124,.03));border:1px solid rgba(198,168,94,.15);border-radius:14px;margin-bottom:20px">';
+  // ───── HERO HEADER (always visible) ─────
+  h+='<div style="text-align:center;padding:20px;background:linear-gradient(160deg,rgba(200,168,124,.1),rgba(200,168,124,.03));border:1px solid rgba(198,168,94,.15);border-radius:14px;margin-bottom:12px">';
   h+='<div style="font-size:11px;color:var(--accent);font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px">Your Career Roadmap</div>';
   h+='<div style="font-size:20px;font-weight:600;color:var(--text);font-family:var(--font-serif);margin-bottom:4px">\ud83d\udccd '+tName+'</div>';
-  h+='<div style="font-size:12px;color:var(--text3)">From '+(nowLabels[now]||now)+' \u2022 '+(urgency==='1'?'Applying this cycle':'Timeline: '+urgency+' year(s)')+(isDO?' \u2022 DO':'')+'</div>';
+  h+='<div style="font-size:12px;color:var(--text3);margin-bottom:8px">From '+(nowLabels[now]||now)+' \u2022 '+(urgency==='1'?'Applying this cycle':'Timeline: '+urgency+' year(s)')+(isDO?' \u2022 DO':'')+'</div>';
+  // Quick stats
+  h+='<div style="display:flex;justify-content:center;gap:16px">';
+  if(warnings.length)h+='<div><div style="font-size:18px;font-weight:700;color:var(--red)">'+warnings.length+'</div><div style="font-size:9px;color:var(--text3)">\u26a0\ufe0f Warnings</div></div>';
+  if(gaps.length)h+='<div><div style="font-size:18px;font-weight:700;color:var(--accent)">'+gaps.length+'</div><div style="font-size:9px;color:var(--text3)">Gaps</div></div>';
+  if(strengths.length)h+='<div><div style="font-size:18px;font-weight:700;color:var(--green)">'+strengths.length+'</div><div style="font-size:9px;color:var(--text3)">\u2713 Strengths</div></div>';
+  h+='<div><div style="font-size:18px;font-weight:700;color:var(--accent)">'+phases.length+'</div><div style="font-size:9px;color:var(--text3)">Phases</div></div>';
+  h+='</div>';
   h+='</div>';
 
-  // Assessment card
+  // Expand/Collapse toggle
+  h+='<div style="display:flex;justify-content:flex-end;gap:12px;margin-bottom:6px;padding:0 2px">';
+  h+='<span onclick="hwExpandAll(this.closest(\'#csb-results\'))" style="font-size:10px;color:var(--accent);cursor:pointer;opacity:.7">Expand all</span>';
+  h+='<span onclick="hwCollapseAll(this.closest(\'#csb-results\'))" style="font-size:10px;color:var(--text3);cursor:pointer;opacity:.7">Collapse all</span>';
+  h+='</div>';
+
+  // ───── SECTION: Assessment ─────
   if(strengths.length||gaps.length||warnings.length){
-    h+='<div style="margin-bottom:20px;padding:16px;background:var(--bg2);border:1px solid var(--border);border-radius:12px">';
-    h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">Application Assessment</div>';
-    if(strengths.length){h+='<div style="margin-bottom:10px">';strengths.forEach(function(s){h+='<div style="font-size:12px;color:var(--green);line-height:1.6;padding:3px 0">'+s+'</div>'});h+='</div>'}
-    if(gaps.length){h+='<div style="margin-bottom:10px">';gaps.forEach(function(g){h+='<div style="font-size:12px;color:var(--accent);line-height:1.6;padding:3px 0">'+g+'</div>'});h+='</div>'}
-    if(warnings.length){h+='<div style="padding:10px;background:rgba(239,68,68,.05);border:1px solid rgba(239,68,68,.12);border-radius:8px">';warnings.forEach(function(w){h+='<div style="font-size:12px;color:var(--red);line-height:1.6;padding:3px 0">'+w+'</div>'});h+='</div>'}
-    h+='</div>';
+    sec='';
+    if(strengths.length){sec+='<div style="margin-bottom:10px">';strengths.forEach(function(s){sec+='<div style="font-size:12px;color:var(--green);line-height:1.6;padding:3px 0">'+s+'</div>'});sec+='</div>'}
+    if(gaps.length){sec+='<div style="margin-bottom:10px">';gaps.forEach(function(g){sec+='<div style="font-size:12px;color:var(--accent);line-height:1.6;padding:3px 0">'+g+'</div>'});sec+='</div>'}
+    if(warnings.length){sec+='<div style="padding:10px;background:rgba(239,68,68,.05);border:1px solid rgba(239,68,68,.12);border-radius:8px">';warnings.forEach(function(w){sec+='<div style="font-size:12px;color:var(--red);line-height:1.6;padding:3px 0">'+w+'</div>'});sec+='</div>'}
+    var assessSum=(warnings.length?warnings.length+' warnings':'')+(warnings.length&&gaps.length?', ':'')+
+      (gaps.length?gaps.length+' gaps':'')+(strengths.length?(warnings.length||gaps.length?', ':'')+strengths.length+' strengths':'');
+    h+=hwSection('Application Assessment',assessSum,sec,true);
   }
 
-  // Concern coaching
+  // ───── SECTION: Concern Coaching ─────
   var concernLabels={research:'Not Enough Research',scores:'Board Score Concerns',letters:'Weak Letters',clinical:'Clinical Performance',time:'Running Out of Time',direction:'Specialty Uncertainty',networking:'Networking Gap',finance:'Financial Concerns',confidence:'Imposter Syndrome'};
   var concernAdvice={
     research:'Focus on high-ROI research: case reports (2-4 months), retrospective studies (4-6 months), conference abstracts (fastest CV lines). One first-author paper outweighs five middle-author papers.',
@@ -6079,25 +6110,25 @@ function _csbRun(){
     confidence:'Every physician feels this. You\'re here building a strategy \u2014 that\'s evidence of competence. Focus on objective metrics. Track progress. Celebrate wins.'
   };
   if(concern&&concern!=='none'&&concernAdvice[concern]){
-    h+='<div style="margin-bottom:20px;padding:16px;background:linear-gradient(160deg,rgba(198,168,94,.06),rgba(200,168,124,.02));border:1px solid rgba(198,168,94,.15);border-radius:12px">';
-    h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">\ud83d\udca1 Addressing: '+concernLabels[concern]+'</div>';
-    h+='<div style="font-size:12px;color:var(--text2);line-height:1.7">'+concernAdvice[concern]+'</div></div>';
+    sec='<div style="font-size:12px;color:var(--text2);line-height:1.7">'+concernAdvice[concern]+'</div>';
+    h+=hwSection('\ud83d\udca1 '+concernLabels[concern],'',sec,true);
   }
 
-  // Timeline
-  h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:14px">\ud83d\udcc5 Your Timeline</div>';
+  // ───── SECTION: Timeline (DEFAULT OPEN) ─────
+  sec='';
   phases.forEach(function(phase,i){
-    h+='<div style="position:relative;padding-left:28px;padding-bottom:'+(i<phases.length-1?'20px':'0')+'">';
-    if(i<phases.length-1)h+='<div style="position:absolute;left:8px;top:20px;bottom:0;width:2px;background:var(--border)"></div>';
-    h+='<div style="position:absolute;left:0;top:2px;width:18px;height:18px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:10px;color:#1C1A17;font-weight:700">'+(i+1)+'</div>';
-    h+='<div style="font-size:10px;color:var(--accent);font-weight:600;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">'+phase.time+'</div>';
-    h+='<div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:8px">'+phase.title+'</div>';
-    h+='<ul style="font-size:12px;color:var(--text2);line-height:1.8;padding-left:16px;margin:0">';
-    phase.items.forEach(function(item){h+='<li>'+item+'</li>'});
-    h+='</ul></div>';
+    sec+='<div style="position:relative;padding-left:28px;padding-bottom:'+(i<phases.length-1?'20px':'0')+'">';
+    if(i<phases.length-1)sec+='<div style="position:absolute;left:8px;top:20px;bottom:0;width:2px;background:var(--border)"></div>';
+    sec+='<div style="position:absolute;left:0;top:2px;width:18px;height:18px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:10px;color:#1C1A17;font-weight:700">'+(i+1)+'</div>';
+    sec+='<div style="font-size:10px;color:var(--accent);font-weight:600;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">'+phase.time+'</div>';
+    sec+='<div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:8px">'+phase.title+'</div>';
+    sec+='<ul style="font-size:12px;color:var(--text2);line-height:1.8;padding-left:16px;margin:0">';
+    phase.items.forEach(function(item){sec+='<li>'+item+'</li>'});
+    sec+='</ul></div>';
   });
+  h+=hwSection('\ud83d\udcc5 Your Timeline',phases.length+' phases',sec,true);
 
-  // Dependencies — "You cannot do X until Y is done"
+  // ───── SECTION: Dependencies ─────
   var deps=[];
   if(now==='ms3'||now==='intern'||now==='resident'||now==='senior'){
     if(lors==='none'||lors==='generic')deps.push({blocked:'Submit ERAS application',requires:'Secure 3+ specialty-specific letter writers',why:'Generic letters are a red flag. PDs can tell instantly. Get the right writers first.'});
@@ -6112,16 +6143,15 @@ function _csbRun(){
   if(!deps.length){
     deps.push({blocked:'Application submission',requires:'Complete Phase 1 items above',why:'Everything in your application builds on the foundation. Rushing to submit without the groundwork = wasted opportunity.'});
   }
-  h+='<div style="margin-top:20px;padding:16px;background:rgba(239,68,68,.03);border:1px solid rgba(239,68,68,.08);border-radius:12px;margin-bottom:14px">';
-  h+='<div style="font-size:11px;font-weight:600;color:var(--red);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Dependencies \u2014 Order Matters</div>';
+  sec='';
   deps.forEach(function(d){
-    h+='<div style="padding:10px;background:var(--bg2);border-radius:8px;margin-bottom:8px;border-left:3px solid var(--red)">';
-    h+='<div style="font-size:12px;color:var(--text);margin-bottom:4px"><strong>You cannot:</strong> '+d.blocked+'</div>';
-    h+='<div style="font-size:12px;color:var(--green);margin-bottom:4px"><strong>Until:</strong> '+d.requires+'</div>';
-    h+='<div style="font-size:11px;color:var(--text3);line-height:1.5">'+d.why+'</div>';
-    h+='</div>';
+    sec+='<div style="padding:10px;background:var(--bg2);border-radius:8px;margin-bottom:8px;border-left:3px solid var(--red)">';
+    sec+='<div style="font-size:12px;color:var(--text);margin-bottom:4px"><strong>You cannot:</strong> '+d.blocked+'</div>';
+    sec+='<div style="font-size:12px;color:var(--green);margin-bottom:4px"><strong>Until:</strong> '+d.requires+'</div>';
+    sec+='<div style="font-size:11px;color:var(--text3);line-height:1.5">'+d.why+'</div>';
+    sec+='</div>';
   });
-  h+='</div>';
+  h+=hwSection('\u26a0\ufe0f Dependencies \u2014 Order Matters',deps.length+' blockers',sec,false);
 
   // Pathway: position + prioritized actions + connect forward
   var csbPos=warnings.length>=2?'Based on your profile, you have significant gaps to close for '+tName+'. But here\u2019s the good news: you have a roadmap now. Most applicants are guessing \u2014 you\u2019re not.'

@@ -2211,15 +2211,9 @@ Sign Out</button>
 <span id="user-badge" class="badge b-free">FREE</span>
 </div>
 
-<!-- ===== HERO — Welcome + Personalized Next Step ===== -->
+<!-- ===== ZONE 1: HERO — Welcome + Score + Direction ===== -->
 <div style="padding:18px 24px 0">
-<div style="background:#fff;border:1px solid #E8E1D8;border-radius:18px;padding:24px 22px 20px;position:relative;overflow:hidden;box-shadow:0 2px 6px rgba(0,0,0,.04)">
-<div style="position:absolute;top:-40%;right:-18%;width:220px;height:220px;background:radial-gradient(circle,rgba(198,168,94,.08),transparent 60%);border-radius:50%"></div>
-<div style="position:relative">
-<h2 id="welcome-msg" style="font-family:var(--font-serif);font-size:17px;font-weight:400;color:#1C1A17;margin:0 0 10px;line-height:1.3;letter-spacing:.2px">Welcome back</h2>
-<div id="home-next-step"></div>
-</div>
-</div>
+<div id="home-hero-card"></div>
 </div>
 
 <!-- Trial Countdown Banner -->
@@ -2237,13 +2231,11 @@ Sign Out</button>
 </div>
 </div>
 
-<!-- ===== CAREER SCORE — Single Prominent Number + Trend ===== -->
-<div id="career-dashboard" style="padding:14px 24px 0">
-<div id="home-score-card"></div>
-<div id="dash-score-refresh" style="display:none;margin-top:8px"></div>
-</div>
+<!-- Hidden holders for backward compat -->
+<div id="career-dashboard" style="display:none"><div id="home-score-card"></div><div id="dash-score-refresh" style="display:none"></div></div>
 
-<!-- ===== ASK A QUESTION — Always Visible ===== -->
+<!-- ===== ZONE 2: YOUR TWO ACTIONS ===== -->
+<!-- Ask a Question — prominent -->
 <div style="padding:14px 24px 0">
 <div onclick="navTo('scr-ask')" style="display:flex;align-items:center;gap:12px;padding:14px 18px;background:#fff;border:1px solid #E8E1D8;border-radius:14px;cursor:pointer;transition:all .2s;box-shadow:0 2px 6px rgba(0,0,0,.04)" onmouseenter="this.style.borderColor='#C6A85E';this.style.boxShadow='0 6px 16px rgba(0,0,0,.08)'" onmouseleave="this.style.borderColor='#E8E1D8';this.style.boxShadow='0 2px 6px rgba(0,0,0,.04)'">
 <span style="font-size:18px">🧠</span>
@@ -2252,82 +2244,34 @@ Sign Out</button>
 </div>
 </div>
 
-<!-- ===== RECOMMENDED TOOLS — Personalized ===== -->
+<!-- Primary Tool Recommendation -->
 <div id="home-recommended-tools" style="padding:14px 24px 0;display:none"></div>
 
-<!-- ===== WEEKLY FOCUS + CHECK-IN ===== -->
-<div style="padding:14px 24px 0">
-<div id="weekly-focus" style="display:none"></div>
-</div>
-
-<!-- ===== LOGIN STREAK + TOOL OF THE WEEK ===== -->
+<!-- ===== ZONE 3: ACTIVE ALERTS (only when actionable) ===== -->
 <div style="padding:0 24px">
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
-<div id="login-streak" style="display:none"></div>
-<div id="tool-of-week" style="display:none"></div>
-</div>
-</div>
-
-<!-- ===== UPCOMING DEADLINES ===== -->
-<div style="padding:0 24px">
+<div id="comp-intel-card" style="display:none;margin:12px 0"></div>
+<div id="tripwire-alerts" style="display:none;margin-bottom:12px"></div>
+<div id="revisit-prompts" style="display:none;margin-bottom:12px"></div>
 <div id="upcoming-deadlines" style="display:none;margin-bottom:12px"></div>
 </div>
 
-<!-- ===== WHAT'S CHANGED FEED ===== -->
+<!-- ===== ZONE 4: YOUR PROGRESS ===== -->
 <div style="padding:0 24px">
-<div id="whats-changed" style="display:none;margin-bottom:12px"></div>
-</div>
-
-<!-- ===== WEEKLY CHECK-IN TRIGGER ===== -->
-<div style="padding:0 24px">
-<div id="checkin-trigger" style="display:none;margin-bottom:12px"></div>
-</div>
-
-<!-- ===== PROGRESS / HISTORY ===== -->
-<div style="padding:0 24px">
+<!-- Score breakdown with labels -->
+<div id="home-score-breakdown" style="display:none;margin-bottom:12px"></div>
+<!-- Tool progress / history -->
 <div id="tool-progress" style="margin-bottom:12px;display:none"></div>
-</div>
-
-<!-- ===== TRIPWIRE ALERTS ===== -->
-<div style="padding:0 24px">
-<div id="tripwire-alerts" style="display:none;margin-bottom:12px"></div>
-</div>
-
-<!-- ===== REVISIT PROMPTS ===== -->
-<div style="padding:0 24px">
-<div id="revisit-prompts" style="display:none;margin-bottom:12px"></div>
-</div>
-
-<!-- ===== DECISION JOURNAL HOME CARD ===== -->
-<div style="padding:0 24px">
+<!-- Decision journal -->
 <div id="decision-journal-home" style="display:none;margin-bottom:12px"></div>
 </div>
 
-<!-- ===== TOOL RE-RUN REMINDERS ===== -->
+<!-- ===== ZONE 5: PLAN & EXPLORE ===== -->
 <div style="padding:0 24px">
-<div id="rerun-reminders" style="display:none;margin-bottom:12px"></div>
-</div>
-
-<!-- ===== MONTHLY CHECK-IN ===== -->
-<div style="padding:0 24px">
+<div id="weekly-focus" style="display:none;margin-bottom:12px"></div>
 <div id="monthly-checkin-trigger" style="display:none;margin-bottom:12px"></div>
-</div>
-
-<!-- ===== SEASONAL CALENDAR ===== -->
-<div style="padding:0 24px">
 <div id="seasonal-calendar" style="display:none;margin-bottom:12px"></div>
-</div>
-
-<!-- ===== PEER BENCHMARKING CARD ===== -->
-<div style="padding:0 24px">
-<div id="peer-benchmark-card" style="display:none;margin-bottom:12px"></div>
-</div>
-
-<!-- ===== QUARTERLY STRATEGY SNAPSHOT BUTTON ===== -->
-<div style="padding:0 24px">
 <div id="quarterly-snapshot-btn" style="display:none;margin-bottom:12px"></div>
-
-<div id="comp-intel-card" style="display:none;margin-bottom:12px"></div>
+<div id="peer-benchmark-card" style="display:none;margin-bottom:12px"></div>
 </div>
 
 <!-- ===== DEEPER ANALYTICS (collapsible) ===== -->
@@ -2369,21 +2313,6 @@ Sign Out</button>
 <!-- ===== SINGLE UPGRADE NUDGE (contextual) ===== -->
 <div id="home-upgrade-nudge" style="padding:0 24px 16px;display:none"></div>
 
-<!-- ===== USAGE STATS (compact) ===== -->
-<div style="padding:0 24px 16px">
-<div style="background:#fff;border:1px solid #E8E1D8;border-radius:14px;padding:16px 18px;box-shadow:0 2px 6px rgba(0,0,0,.04)">
-<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-<span style="font-size:11px;font-weight:600;color:#8A8278;text-transform:uppercase;letter-spacing:1px">Career Intelligence Analyses</span>
-<span id="usage-ai" style="font-size:11px;color:#C6A85E;font-weight:600">0 / 1</span>
-</div>
-<div style="background:#EAE6E0;border-radius:999px;height:6px;overflow:hidden"><div id="usage-bar" style="height:100%;background:linear-gradient(90deg,#C6A85E,#B89543);border-radius:999px;width:0%;transition:width .6s ease"></div></div>
-<div style="display:flex;justify-content:space-between;margin-top:10px">
-<div><span style="font-size:10px;color:#8A8278">Review Credits: </span><span id="usage-credits" style="font-size:12px;font-weight:600;color:#C6A85E">0</span></div>
-<span id="usage-tier" style="font-size:10px;color:#8A8278">Free plan</span>
-</div>
-</div>
-</div>
-
 <!-- Recent Analyses -->
 <div id="home-feed-section" style="display:none">
 <div style="font-size:11px;font-weight:600;color:#8A8278;text-transform:uppercase;letter-spacing:2px;padding:28px 24px 14px">Recent Analyses</div>
@@ -2406,11 +2335,13 @@ Sign Out</button>
 <button onclick="document.getElementById('modal-update-profile').classList.add('hidden')" style="background:none;border:none;color:#8A8278;font-size:20px;cursor:pointer;padding:4px">✕</button>
 </div>
 <div id="update-profile-fields"></div>
-<button onclick="saveUpdatedProfile()" style="width:100%;margin-top:16px;background:#C6A85E;color:#1C1A17;border:none;border-radius:999px;padding:16px;font-size:14px;font-weight:600;cursor:pointer;letter-spacing:.5px;transition:background .2s" onmouseenter="this.style.background='#B89543'" onmouseleave="this.style.background='#C6A85E'">Recalculate My Scores →</button>
+<div style="margin-top:16px">
+<button onclick="saveProfileUpdate()" style="width:100%;padding:14px;background:#C6A85E;color:#1C1A17;border:none;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer">Save & Recalculate</button>
 </div>
 </div>
 </div>
 
+</div>
 <!-- ASK SCREEN (Structured Intake) -->
 <div id="scr-ask" class="scr">
 <div class="hdr"><div class="hdr-t serif" style="font-size:20px">Ask HeartWise</div></div>
@@ -7647,7 +7578,8 @@ function enterApp(){
   const bc={free:'b-free',core:'b-core',elite:'b-pro',admin:'b-admin'};
   b.className='badge '+(bc[U.tier]||'b-free');
   b.textContent=U.tier==='admin'?'MENTOR':TIERS[U.tier]?.name?.toUpperCase()||'FREE';
-  document.getElementById('welcome-msg').textContent='Welcome, Dr. '+U.name.split(' ').pop();
+  var welcomeEl=document.getElementById('welcome-msg');
+  if(welcomeEl)welcomeEl.textContent='Welcome, Dr. '+U.name.split(' ').pop();
   document.getElementById('nav-admin').style.display=(U.tier==='admin'||window._adminBackup)?'':'none';
   var topUpgrade=document.getElementById('topbar-upgrade');
   if(topUpgrade){
@@ -8905,57 +8837,49 @@ function renderToolHistory(){
 
 function renderHome(){
   if(!U)return;
-  renderDashboard();
-  // Usage stats
-  const t=TIERS[U.tier]||TIERS.free;
-  const used=U.usage?.ai||0;const max=t.ai;
-  const pct=max===999?0:Math.min(100,Math.round(used/max*100));
-  document.getElementById('usage-ai').textContent=max===999?used+' / \u221e':used+' / '+max;
-  document.getElementById('usage-bar').style.width=max===999?'0%':pct+'%';
-  document.getElementById('usage-credits').textContent=U.usage?.credits||0;
-  document.getElementById('usage-tier').textContent=t.name+(U.isTrial?' (guided access)':' plan');
-  // Trial banner (single upgrade nudge for trial users)
+  // Render unified hero card (welcome + score + direction)
+  renderHeroCard();
+  // Trial banner
   var trialBanner=document.getElementById('trial-countdown-banner');
   if(trialBanner)trialBanner.style.display=U.isTrial&&U.trialEnd?'':'none';
   if(U.isTrial&&U.trialEnd)updateTrialBanner();
   // Score change detection
   try{renderScoreChange()}catch(e){console.error('ScoreChange:',e)}
-  // Personalized next step in hero
-  renderNextStep();
-  // Personalized tool recommendations
+  // Personalized tool recommendation
   renderRecommendedTools();
   // Engagement sections (paid users only)
   var _hasPlan=U.tier==='core'||U.tier==='elite'||U.tier==='admin'||U.isTrial;
   if(_hasPlan){
-    try{renderWeeklyFocus()}catch(e){console.error('WeeklyFocus:',e)}
-    try{renderLoginStreak()}catch(e){console.error('LoginStreak:',e)}
-    try{renderToolOfWeek()}catch(e){console.error('ToolOfWeek:',e)}
-    try{renderUpcomingDeadlines()}catch(e){console.error('Deadlines:',e)}
-    try{renderWhatsChanged()}catch(e){console.error('WhatsChanged:',e)}
-    try{renderCheckinTrigger()}catch(e){console.error('CheckinTrigger:',e)}
-    try{renderToolProgress()}catch(e){console.error('ToolProgress:',e)}
+    // Zone 3: Active alerts
+    try{renderCompIntelCard()}catch(e){console.error('CompIntelCard:',e)}
     try{renderTripwireAlerts()}catch(e){console.error('TripwireAlerts:',e)}
     try{renderRevisitPrompts()}catch(e){console.error('RevisitPrompts:',e)}
+    try{renderUpcomingDeadlines()}catch(e){console.error('Deadlines:',e)}
+    // Zone 4: Progress
+    try{renderScoreBreakdown()}catch(e){console.error('ScoreBreakdown:',e)}
+    try{renderToolProgress()}catch(e){console.error('ToolProgress:',e)}
     try{renderDecisionJournalHome()}catch(e){console.error('DecisionJournal:',e)}
-    try{renderRerunReminders()}catch(e){console.error('RerunReminders:',e)}
+    // Zone 5: Plan & explore
+    try{renderWeeklyFocus()}catch(e){console.error('WeeklyFocus:',e)}
     try{renderMonthlyCheckinTrigger()}catch(e){console.error('MonthlyCheckin:',e)}
     try{renderSeasonalCalendar()}catch(e){console.error('SeasonalCal:',e)}
-    try{renderPeerBenchmarkCard()}catch(e){console.error('PeerBenchmark:',e)}
-    try{renderCompIntelCard()}catch(e){console.error('CompIntelCard:',e)}
     try{renderQuarterlySnapshotBtn()}catch(e){console.error('QuarterlySnapshot:',e)}
+    try{renderPeerBenchmarkCard()}catch(e){console.error('PeerBenchmark:',e)}
   }else{
-    ['weekly-focus','login-streak','tool-of-week','upcoming-deadlines','whats-changed','checkin-trigger','tool-progress','tripwire-alerts','revisit-prompts','decision-journal-home','rerun-reminders','monthly-checkin-trigger','seasonal-calendar','peer-benchmark-card','quarterly-snapshot-btn'].forEach(function(id){var el=document.getElementById(id);if(el)el.style.display='none'});
+    ['comp-intel-card','tripwire-alerts','revisit-prompts','upcoming-deadlines','home-score-breakdown','tool-progress','decision-journal-home','weekly-focus','monthly-checkin-trigger','seasonal-calendar','quarterly-snapshot-btn','peer-benchmark-card'].forEach(function(id){var el=document.getElementById(id);if(el)el.style.display='none'});
   }
-  // Single contextual upgrade nudge (not for trial — they have the banner)
+  // Render the old dashboard sections (graph, benchmarks, milestones, history) inside collapsed area
+  renderDashboard();
+  // Upgrade nudge
   renderUpgradeNudge();
   // Nav badges
   try{renderNavBadges()}catch(e){console.error('NavBadges:',e)}
-  // Recent analyses — only show if there's data
+  // Recent analyses
   var feedSection=document.getElementById('home-feed-section');
-  const now=new Date();const weekAgo=new Date(now);weekAgo.setDate(weekAgo.getDate()-7);const weekStr=weekAgo.toISOString().split('T')[0];
-  let reviewed=DB.questions.filter(q=>q.status==='reviewed'&&q.reviewNote).sort((a,b)=>b.date.localeCompare(a.date));
-  const thisWeek=reviewed.filter(q=>(q.reviewDate||q.date)>=weekStr);
-  const featured=thisWeek.length>=3?thisWeek.slice(0,5):reviewed.slice(0,5);
+  var now=new Date();var weekAgo=new Date(now);weekAgo.setDate(weekAgo.getDate()-7);var weekStr=weekAgo.toISOString().split('T')[0];
+  var reviewed=DB.questions.filter(function(q){return q.status==='reviewed'&&q.reviewNote}).sort(function(a,b){return b.date.localeCompare(a.date)});
+  var thisWeek=reviewed.filter(function(q){return(q.reviewDate||q.date)>=weekStr});
+  var featured=thisWeek.length>=3?thisWeek.slice(0,5):reviewed.slice(0,5);
   if(featured.length){
     if(feedSection)feedSection.style.display='';
     document.getElementById('home-feed').innerHTML=featured.map(renderQCard).join('');
@@ -8965,6 +8889,200 @@ function renderHome(){
 }
 
 
+
+// ===== UNIFIED HERO CARD =====
+// Combines welcome greeting, career score, and personalized direction into one card.
+// For new users without a profile, shows the quickstart onboarding.
+
+function renderHeroCard(){
+  var el=document.getElementById('home-hero-card');
+  if(!el||!U)return;
+  initCareerProfile();
+  var cp=U.careerProfile||{};
+  var hasRealProfile=cp.lastUpdated&&(cp.specialty||cp.step2||parseInt(cp.pubs)>0||parseInt(cp.comp)>5000);
+  var name=U.name?'Dr. '+U.name.split(' ').pop():'';
+  var hasPlan=U.tier==='core'||U.tier==='elite'||U.tier==='admin'||U.isTrial;
+
+  // Time-based greeting
+  var hour=new Date().getHours();
+  var greeting=hour<12?'Good morning':hour<18?'Good afternoon':'Good evening';
+
+  // ===== NEW USER — no real profile =====
+  if(!hasRealProfile){
+    var toolCount=(U.toolHistory||[]).length;
+    var h='<div style="background:#111318;border-radius:18px;padding:28px 24px;color:#EDEBE7;position:relative;overflow:hidden">';
+    h+='<div style="position:absolute;top:-30%;right:-10%;width:200px;height:200px;background:radial-gradient(circle,rgba(198,168,94,.12),transparent 60%);border-radius:50%"></div>';
+    h+='<div style="position:relative">';
+
+    h+='<div style="font-family:var(--font-serif);font-size:20px;font-weight:600;color:#EDEBE7;line-height:1.3;margin-bottom:6px">';
+    h+=name?greeting+', '+name+'.':greeting+'. Welcome to HeartWise.';
+    h+='</div>';
+    h+='<div style="font-size:13px;color:rgba(237,235,231,.65);line-height:1.6;margin-bottom:20px">Every career decision you make in the next few years will compound for decades. Let\'s make sure you\'re making them with the best data available.</div>';
+
+    if(hasPlan){
+      // 3-step quickstart
+      h+='<div style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:12px">Get Started</div>';
+
+      // Step 1: Profile
+      h+='<div onclick="showUpdateProfile()" style="display:flex;align-items:center;gap:14px;padding:14px 16px;background:rgba(198,168,94,.08);border:1px solid rgba(198,168,94,.2);border-radius:12px;cursor:pointer;margin-bottom:8px;transition:all .15s" onmouseenter="this.style.background=\'rgba(198,168,94,.12)\'" onmouseleave="this.style.background=\'rgba(198,168,94,.08)\'">';
+      h+='<div style="width:32px;height:32px;border-radius:10px;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#1C1A17;flex-shrink:0">1</div>';
+      h+='<div style="flex:1"><div style="font-size:13px;font-weight:600;color:#EDEBE7">Set Up Your Career Profile</div>';
+      h+='<div style="font-size:11px;color:rgba(237,235,231,.5)">2 minutes — unlocks personalized scores and recommendations</div></div>';
+      h+='<span style="font-size:12px;color:var(--accent);font-weight:600">Start →</span></div>';
+
+      // Step 2: First tool
+      h+='<div onclick="navTo(\'scr-vault\')" style="display:flex;align-items:center;gap:14px;padding:12px 16px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:12px;cursor:pointer;margin-bottom:8px">';
+      h+='<div style="width:32px;height:32px;border-radius:10px;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:rgba(237,235,231,.5);flex-shrink:0">2</div>';
+      h+='<div style="flex:1"><div style="font-size:13px;font-weight:600;color:rgba(237,235,231,.6)">Run Your First Career Tool</div>';
+      h+='<div style="font-size:11px;color:rgba(237,235,231,.35)">17 tools for match strategy, contracts, compensation, and financial planning</div></div></div>';
+
+      // Step 3: Track
+      h+='<div style="display:flex;align-items:center;gap:14px;padding:12px 16px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:12px">';
+      h+='<div style="width:32px;height:32px;border-radius:10px;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:rgba(237,235,231,.5);flex-shrink:0">3</div>';
+      h+='<div style="flex:1"><div style="font-size:13px;font-weight:600;color:rgba(237,235,231,.6)">Track Your Progress</div>';
+      h+='<div style="font-size:11px;color:rgba(237,235,231,.35)">Market benchmarks, compensation tracking, and milestone celebrations</div></div></div>';
+    } else {
+      h+='<p style="font-family:var(--font-serif);font-size:14px;color:rgba(237,235,231,.7);margin:0">Your career is too important for guesswork.</p>';
+    }
+
+    h+='</div></div>';
+    el.innerHTML=h;
+    return;
+  }
+
+  // ===== RETURNING USER WITH PROFILE =====
+  var scores=calcDashScores(cp);
+  var stage=cp.stage||'student';
+  var overall=Math.round((scores.competitiveness+scores.research+scores.readiness+scores.financial)/4);
+  var prev=U.scoreHistory&&U.scoreHistory.length>1?U.scoreHistory[U.scoreHistory.length-2].scores:null;
+  var prevOverall=prev?Math.round((prev.competitiveness+prev.research+prev.readiness+prev.financial)/4):null;
+  var delta=prevOverall!==null?overall-prevOverall:0;
+
+  var ringColor=overall>=75?'#5E8B6F':overall>=55?'#C6A85E':'#B85C5C';
+  var r=30,circ=2*Math.PI*r,offset=circ-(overall/100)*circ;
+
+  // Get the next-step message
+  var toolsUsed=(U.toolHistory||[]).map(function(t){return t.tool});
+  var toolCount=(U.toolHistory||[]).length;
+  var recTool=getNextBestTool(cp,scores,toolsUsed);
+
+  // Stage labels
+  var stageLabels={student:'Medical Student',resident:'Resident',fellow:'Fellow',attending:'Attending Physician'};
+
+  var h='<div style="background:#111318;border-radius:18px;padding:24px 22px;color:#EDEBE7;position:relative;overflow:hidden">';
+  h+='<div style="position:absolute;top:-30%;right:-10%;width:180px;height:180px;background:radial-gradient(circle,rgba(198,168,94,.08),transparent 60%);border-radius:50%"></div>';
+  h+='<div style="position:relative">';
+
+  // Row 1: Greeting + Score ring
+  h+='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">';
+
+  // Left: greeting + stage
+  h+='<div>';
+  h+='<div style="font-family:var(--font-serif);font-size:17px;font-weight:600;color:#EDEBE7;line-height:1.3">'+(name?greeting+', '+name:greeting)+'</div>';
+  h+='<div style="font-size:11px;color:rgba(237,235,231,.45);margin-top:2px">'+(stageLabels[stage]||stage)+(cp.specialty?' · '+cp.specialty.charAt(0).toUpperCase()+cp.specialty.slice(1):'')+'</div>';
+  h+='</div>';
+
+  // Right: Score ring
+  h+='<div style="display:flex;align-items:center;gap:10px">';
+  h+='<div style="position:relative;width:56px;height:56px;flex-shrink:0">';
+  h+='<svg viewBox="0 0 64 64" style="width:56px;height:56px;transform:rotate(-90deg)">';
+  h+='<circle cx="32" cy="32" r="'+r+'" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="4"/>';
+  h+='<circle cx="32" cy="32" r="'+r+'" fill="none" stroke="'+ringColor+'" stroke-width="4" stroke-linecap="round" stroke-dasharray="'+circ.toFixed(1)+'" stroke-dashoffset="'+offset.toFixed(1)+'" style="transition:stroke-dashoffset .8s ease"/>';
+  h+='</svg>';
+  h+='<div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:18px;font-weight:700;color:'+ringColor+';font-family:var(--font-serif)">'+overall+'</div>';
+  h+='</div>';
+  h+='<div style="text-align:right">';
+  h+='<div style="font-size:10px;color:rgba(237,235,231,.5)">Career Score</div>';
+  if(delta!==0)h+='<div style="font-size:10px;color:'+(delta>0?'#5E8B6F':'#B85C5C')+';font-weight:600">'+(delta>0?'↑ +':'↓ ')+delta+'</div>';
+  h+='</div>';
+  h+='</div>';
+  h+='</div>';
+
+  // Row 2: Next step direction
+  h+='<div style="margin-bottom:14px">';
+  if(!toolCount){
+    var stageMsg={
+      student:'The decisions you make in the next 12 months will shape the next 30 years of your career.',
+      resident:'You have a narrow window to position yourself for fellowship. Use it wisely.',
+      fellow:'Your first attending contract will set the financial trajectory for your entire career.',
+      attending:'Most physicians never negotiate after their first contract. Do not be most physicians.'
+    };
+    h+='<div style="font-size:13px;color:rgba(237,235,231,.7);line-height:1.6">'+(stageMsg[stage]||stageMsg.student)+'</div>';
+    h+='<div onclick="navTo(\'scr-vault\')" style="margin-top:8px;display:inline-flex;align-items:center;gap:4px;font-size:12px;color:var(--accent);font-weight:600;cursor:pointer">Explore Career Tools →</div>';
+  } else if(recTool){
+    h+='<div style="font-size:13px;color:rgba(237,235,231,.7);line-height:1.6">'+recTool.why+'</div>';
+    h+='<div onclick="navTo(\'scr-vault\')" style="margin-top:8px;display:inline-flex;align-items:center;gap:4px;font-size:12px;color:var(--accent);font-weight:600;cursor:pointer">'+recTool.label+' →</div>';
+  } else {
+    var lastUpdate=cp.lastUpdated?new Date(cp.lastUpdated):null;
+    var daysSince=lastUpdate?Math.floor((new Date()-lastUpdate)/86400000):0;
+    if(daysSince>=30){
+      h+='<div style="font-size:13px;color:rgba(237,235,231,.7)">Your profile is '+daysSince+' days old. Update it to see how far you have come.</div>';
+      h+='<div onclick="showUpdateProfile()" style="margin-top:8px;display:inline-flex;align-items:center;gap:4px;font-size:12px;color:var(--accent);font-weight:600;cursor:pointer">Update Profile →</div>';
+    } else {
+      h+='<div style="font-size:13px;color:rgba(237,235,231,.7)">You are making informed decisions. That separates you from physicians who guess.</div>';
+    }
+  }
+  h+='</div>';
+
+  // Row 3: Score profile update link
+  h+='<div onclick="showUpdateProfile()" style="display:flex;align-items:center;gap:6px;padding:8px 0 0;border-top:1px solid rgba(255,255,255,.06);cursor:pointer">';
+  h+='<span style="font-size:11px;color:rgba(237,235,231,.35)">Last updated: '+(cp.lastUpdated?new Date(cp.lastUpdated).toLocaleDateString('en-US',{month:'short',day:'numeric'}):'never')+'</span>';
+  h+='<span style="margin-left:auto;font-size:11px;color:var(--accent);font-weight:600">Update Profile →</span>';
+  h+='</div>';
+
+  h+='</div></div>';
+  el.innerHTML=h;
+}
+
+// ===== SCORE BREAKDOWN — labeled scores with context =====
+function renderScoreBreakdown(){
+  var el=document.getElementById('home-score-breakdown');
+  if(!el||!U)return;
+  var cp=U.careerProfile||{};
+  var hasRealProfile=cp.lastUpdated&&(cp.specialty||cp.step2||parseInt(cp.pubs)>0||parseInt(cp.comp)>5000);
+  if(!hasRealProfile){el.style.display='none';return}
+
+  var hasPlan=U.tier==='core'||U.tier==='elite'||U.tier==='admin'||U.isTrial;
+  if(!hasPlan){el.style.display='none';return}
+
+  var scores=calcDashScores(cp);
+  var prev=U.scoreHistory&&U.scoreHistory.length>1?U.scoreHistory[U.scoreHistory.length-2].scores:null;
+
+  el.style.display='';
+  var h='<div style="background:#fff;border:1px solid #E8E1D8;border-radius:14px;padding:16px 18px;box-shadow:0 2px 6px rgba(0,0,0,.04)">';
+  h+='<div style="font-size:10px;font-weight:600;color:#C6A85E;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:12px">Career Profile Breakdown</div>';
+
+  var dims=[
+    {key:'competitiveness',label:'Competitiveness',desc:'How you stack up against peers',icon:'🏆'},
+    {key:'research',label:'Research',desc:'Publication and research impact',icon:'🔬'},
+    {key:'readiness',label:'Readiness',desc:'Preparation for next career stage',icon:'🎯'},
+    {key:'financial',label:'Financial',desc:'Financial positioning and strategy',icon:'💰'}
+  ];
+
+  dims.forEach(function(d){
+    var val=scores[d.key]||0;
+    var prevVal=prev?prev[d.key]||0:null;
+    var delta=prevVal!==null?val-prevVal:0;
+    var barColor=val>=70?'#5E8B6F':val>=45?'#C6A85E':'#B85C5C';
+
+    h+='<div style="margin-bottom:12px">';
+    h+='<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px">';
+    h+='<div style="display:flex;align-items:center;gap:6px"><span style="font-size:12px">'+d.icon+'</span><span style="font-size:12px;font-weight:600;color:#1C1A17">'+d.label+'</span></div>';
+    h+='<div style="display:flex;align-items:center;gap:6px">';
+    if(delta!==0)h+='<span style="font-size:10px;color:'+(delta>0?'#5E8B6F':'#B85C5C')+';font-weight:600">'+(delta>0?'+':'')+delta+'</span>';
+    h+='<span style="font-size:14px;font-weight:700;color:'+barColor+'">'+val+'</span>';
+    h+='</div></div>';
+    // Progress bar
+    h+='<div style="background:#EAE6E0;border-radius:4px;height:6px;overflow:hidden">';
+    h+='<div style="height:100%;width:'+Math.min(100,val)+'%;background:'+barColor+';border-radius:4px;transition:width .6s ease"></div>';
+    h+='</div>';
+    h+='<div style="font-size:10px;color:#8A8278;margin-top:2px">'+d.desc+'</div>';
+    h+='</div>';
+  });
+
+  h+='</div>';
+  el.innerHTML=h;
+}
 // ===== FIRST-TIME USER WELCOME QUICKSTART =====
 // Replaces empty dashboard for users who haven't set up their profile yet.
 // Shows a premium, stage-aware onboarding experience instead of empty scores.

@@ -32,9 +32,15 @@ Sign Out</button>
 <span id="user-badge" class="badge b-free">FREE</span>
 </div>
 
-<!-- ===== ZONE 1: HERO — Welcome + Score + Direction ===== -->
+<!-- ===== HERO — Welcome + Personalized Next Step ===== -->
 <div style="padding:18px 24px 0">
-<div id="home-hero-card"></div>
+<div style="background:#fff;border:1px solid #E8E1D8;border-radius:18px;padding:24px 22px 20px;position:relative;overflow:hidden;box-shadow:0 2px 6px rgba(0,0,0,.04)">
+<div style="position:absolute;top:-40%;right:-18%;width:220px;height:220px;background:radial-gradient(circle,rgba(198,168,94,.08),transparent 60%);border-radius:50%"></div>
+<div style="position:relative">
+<h2 id="welcome-msg" style="font-family:var(--font-serif);font-size:17px;font-weight:400;color:#1C1A17;margin:0 0 10px;line-height:1.3;letter-spacing:.2px">Welcome back</h2>
+<div id="home-next-step"></div>
+</div>
+</div>
 </div>
 
 <!-- Trial Countdown Banner -->
@@ -52,11 +58,13 @@ Sign Out</button>
 </div>
 </div>
 
-<!-- Hidden holders for backward compat -->
-<div id="career-dashboard" style="display:none"><div id="home-score-card"></div><div id="dash-score-refresh" style="display:none"></div></div>
+<!-- ===== CAREER SCORE — Single Prominent Number + Trend ===== -->
+<div id="career-dashboard" style="padding:14px 24px 0">
+<div id="home-score-card"></div>
+<div id="dash-score-refresh" style="display:none;margin-top:8px"></div>
+</div>
 
-<!-- ===== ZONE 2: YOUR TWO ACTIONS ===== -->
-<!-- Ask a Question — prominent -->
+<!-- ===== ASK A QUESTION — Always Visible ===== -->
 <div style="padding:14px 24px 0">
 <div onclick="navTo('scr-ask')" style="display:flex;align-items:center;gap:12px;padding:14px 18px;background:#fff;border:1px solid #E8E1D8;border-radius:14px;cursor:pointer;transition:all .2s;box-shadow:0 2px 6px rgba(0,0,0,.04)" onmouseenter="this.style.borderColor='#C6A85E';this.style.boxShadow='0 6px 16px rgba(0,0,0,.08)'" onmouseleave="this.style.borderColor='#E8E1D8';this.style.boxShadow='0 2px 6px rgba(0,0,0,.04)'">
 <span style="font-size:18px">🧠</span>
@@ -65,34 +73,82 @@ Sign Out</button>
 </div>
 </div>
 
-<!-- Primary Tool Recommendation -->
+<!-- ===== RECOMMENDED TOOLS — Personalized ===== -->
 <div id="home-recommended-tools" style="padding:14px 24px 0;display:none"></div>
 
-<!-- ===== ZONE 3: ACTIVE ALERTS (only when actionable) ===== -->
+<!-- ===== WEEKLY FOCUS + CHECK-IN ===== -->
+<div style="padding:14px 24px 0">
+<div id="weekly-focus" style="display:none"></div>
+</div>
+
+<!-- ===== LOGIN STREAK + TOOL OF THE WEEK ===== -->
 <div style="padding:0 24px">
-<div id="comp-intel-card" style="display:none;margin:12px 0"></div>
-<div id="tripwire-alerts" style="display:none;margin-bottom:12px"></div>
-<div id="revisit-prompts" style="display:none;margin-bottom:12px"></div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
+<div id="login-streak" style="display:none"></div>
+<div id="tool-of-week" style="display:none"></div>
+</div>
+</div>
+
+<!-- ===== UPCOMING DEADLINES ===== -->
+<div style="padding:0 24px">
 <div id="upcoming-deadlines" style="display:none;margin-bottom:12px"></div>
 </div>
 
-<!-- ===== ZONE 4: YOUR PROGRESS ===== -->
+<!-- ===== WHAT'S CHANGED FEED ===== -->
 <div style="padding:0 24px">
-<!-- Score breakdown with labels -->
-<div id="home-score-breakdown" style="display:none;margin-bottom:12px"></div>
-<!-- Tool progress / history -->
+<div id="whats-changed" style="display:none;margin-bottom:12px"></div>
+</div>
+
+<!-- ===== WEEKLY CHECK-IN TRIGGER ===== -->
+<div style="padding:0 24px">
+<div id="checkin-trigger" style="display:none;margin-bottom:12px"></div>
+</div>
+
+<!-- ===== PROGRESS / HISTORY ===== -->
+<div style="padding:0 24px">
 <div id="tool-progress" style="margin-bottom:12px;display:none"></div>
-<!-- Decision journal -->
+</div>
+
+<!-- ===== TRIPWIRE ALERTS ===== -->
+<div style="padding:0 24px">
+<div id="tripwire-alerts" style="display:none;margin-bottom:12px"></div>
+</div>
+
+<!-- ===== REVISIT PROMPTS ===== -->
+<div style="padding:0 24px">
+<div id="revisit-prompts" style="display:none;margin-bottom:12px"></div>
+</div>
+
+<!-- ===== DECISION JOURNAL HOME CARD ===== -->
+<div style="padding:0 24px">
 <div id="decision-journal-home" style="display:none;margin-bottom:12px"></div>
 </div>
 
-<!-- ===== ZONE 5: PLAN & EXPLORE ===== -->
+<!-- ===== TOOL RE-RUN REMINDERS ===== -->
 <div style="padding:0 24px">
-<div id="weekly-focus" style="display:none;margin-bottom:12px"></div>
+<div id="rerun-reminders" style="display:none;margin-bottom:12px"></div>
+</div>
+
+<!-- ===== MONTHLY CHECK-IN ===== -->
+<div style="padding:0 24px">
 <div id="monthly-checkin-trigger" style="display:none;margin-bottom:12px"></div>
+</div>
+
+<!-- ===== SEASONAL CALENDAR ===== -->
+<div style="padding:0 24px">
 <div id="seasonal-calendar" style="display:none;margin-bottom:12px"></div>
-<div id="quarterly-snapshot-btn" style="display:none;margin-bottom:12px"></div>
+</div>
+
+<!-- ===== PEER BENCHMARKING CARD ===== -->
+<div style="padding:0 24px">
 <div id="peer-benchmark-card" style="display:none;margin-bottom:12px"></div>
+</div>
+
+<!-- ===== QUARTERLY STRATEGY SNAPSHOT BUTTON ===== -->
+<div style="padding:0 24px">
+<div id="quarterly-snapshot-btn" style="display:none;margin-bottom:12px"></div>
+
+<div id="comp-intel-card" style="display:none;margin-bottom:12px"></div>
 </div>
 
 <!-- ===== DEEPER ANALYTICS (collapsible) ===== -->
@@ -134,6 +190,21 @@ Sign Out</button>
 <!-- ===== SINGLE UPGRADE NUDGE (contextual) ===== -->
 <div id="home-upgrade-nudge" style="padding:0 24px 16px;display:none"></div>
 
+<!-- ===== USAGE STATS (compact) ===== -->
+<div style="padding:0 24px 16px">
+<div style="background:#fff;border:1px solid #E8E1D8;border-radius:14px;padding:16px 18px;box-shadow:0 2px 6px rgba(0,0,0,.04)">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+<span style="font-size:11px;font-weight:600;color:#8A8278;text-transform:uppercase;letter-spacing:1px">Career Intelligence Analyses</span>
+<span id="usage-ai" style="font-size:11px;color:#C6A85E;font-weight:600">0 / 1</span>
+</div>
+<div style="background:#EAE6E0;border-radius:999px;height:6px;overflow:hidden"><div id="usage-bar" style="height:100%;background:linear-gradient(90deg,#C6A85E,#B89543);border-radius:999px;width:0%;transition:width .6s ease"></div></div>
+<div style="display:flex;justify-content:space-between;margin-top:10px">
+<div><span style="font-size:10px;color:#8A8278">Review Credits: </span><span id="usage-credits" style="font-size:12px;font-weight:600;color:#C6A85E">0</span></div>
+<span id="usage-tier" style="font-size:10px;color:#8A8278">Free plan</span>
+</div>
+</div>
+</div>
+
 <!-- Recent Analyses -->
 <div id="home-feed-section" style="display:none">
 <div style="font-size:11px;font-weight:600;color:#8A8278;text-transform:uppercase;letter-spacing:2px;padding:28px 24px 14px">Recent Analyses</div>
@@ -156,13 +227,11 @@ Sign Out</button>
 <button onclick="document.getElementById('modal-update-profile').classList.add('hidden')" style="background:none;border:none;color:#8A8278;font-size:20px;cursor:pointer;padding:4px">✕</button>
 </div>
 <div id="update-profile-fields"></div>
-<div style="margin-top:16px">
-<button onclick="saveProfileUpdate()" style="width:100%;padding:14px;background:#C6A85E;color:#1C1A17;border:none;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer">Save & Recalculate</button>
+<button onclick="saveUpdatedProfile()" style="width:100%;margin-top:16px;background:#C6A85E;color:#1C1A17;border:none;border-radius:999px;padding:16px;font-size:14px;font-weight:600;cursor:pointer;letter-spacing:.5px;transition:background .2s" onmouseenter="this.style.background='#B89543'" onmouseleave="this.style.background='#C6A85E'">Recalculate My Scores →</button>
 </div>
 </div>
 </div>
 
-</div>
 <!-- ASK SCREEN (Structured Intake) -->
 <div id="scr-ask" class="scr">
 <div class="hdr"><div class="hdr-t serif" style="font-size:20px">Ask HeartWise</div></div>

@@ -6508,6 +6508,20 @@ function _csbRun(){
   else if(now!=='fellow'&&now!=='attending')csbNxt={id:'v14',icon:'\ud83c\udfc6',title:'Match Probability Calculator',why:'Get a real match probability with your current stats \u2014 see where you stand.'};
   else if(now==='attending')csbNxt={id:'v12',icon:'\ud83d\udcdd',title:'Contract Review Tool',why:'Score any contract offer before you respond. Don\u2019t sign anything unreviewed.'};
   else csbNxt={id:'v14',icon:'\ud83c\udfc6',title:'Match Competitiveness Calculator',why:'See where you stand with a real competitiveness score and match probability.'};
+
+  // ───── What Moves the Needle (Cross-link to v14) ─────
+  if(now!=='attending'){
+    h+='<div onclick="openFramework(\'v14\')" style="padding:16px;background:linear-gradient(160deg,rgba(200,168,124,.08),rgba(139,184,160,.06));border:1px solid rgba(198,168,94,.15);border-radius:12px;margin-bottom:14px;cursor:pointer;transition:all .2s" onmouseenter="this.style.borderColor=\'rgba(198,168,94,.3)\'" onmouseleave="this.style.borderColor=\'rgba(198,168,94,.15)\'">';
+    h+='<div style="display:flex;align-items:center;gap:12px">';
+    h+='<div style="flex-shrink:0;width:40px;height:40px;border-radius:10px;background:var(--accent-dim);display:flex;align-items:center;justify-content:center;font-size:20px">\ud83c\udfaf</div>';
+    h+='<div style="flex:1">';
+    h+='<div style="font-size:13px;font-weight:600;color:var(--accent);margin-bottom:2px">Which of these steps moves the needle most?</div>';
+    h+='<div style="font-size:11px;color:var(--text3);line-height:1.5">Your roadmap has '+phases.length+' phases. The Match Competitiveness Calculator simulates each improvement and ranks them by ROI, so you know exactly where to focus first.</div>';
+    h+='</div>';
+    h+='<div style="flex-shrink:0;font-size:12px;color:var(--accent);font-weight:600">\u2192</div>';
+    h+='</div></div>';
+  }
+
   h+=hwGatePathway(hwPathway(csbPos,csbActs,csbNxt));
 
   h+='<div style="margin-top:14px;padding:14px;background:var(--accent-dim);border:1px solid rgba(198,168,94,.15);border-radius:10px;text-align:center">';
@@ -11064,6 +11078,90 @@ function roiUpdate(){
   }
   var movesEl=document.getElementById('roi-next-moves');
   if(movesEl)movesEl.innerHTML=movesHtml;
+
+  // ───── WHAT MOVES THE NEEDLE (Research Simulation) ─────
+  var needleHtml='';
+  if(totalItems>0&&optimalScore>0){
+    var sims=[
+      {name:'Add 1 First-Author Paper',addPts:pts.first,minMo:6,maxMo:12,avgMo:9,tag:'HIGHEST IMPACT'},
+      {name:'Add 1 Case Report',addPts:pts.cases,minMo:2,maxMo:4,avgMo:3,tag:'QUICK WIN'},
+      {name:'Add 2 Conference Abstracts',addPts:pts.abstracts*2,minMo:2,maxMo:4,avgMo:3,tag:'FAST VISIBILITY'},
+      {name:'Add 1 Review Article',addPts:pts.reviews,minMo:3,maxMo:6,avgMo:4,tag:null},
+      {name:'Add 2 Middle-Author Papers',addPts:pts.middle*2,minMo:3,maxMo:6,avgMo:4,tag:null},
+      {name:'Add 1 QI Project',addPts:pts.qi,minMo:2,maxMo:3,avgMo:2.5,tag:null}
+    ];
+    // Calculate ROI and new scores
+    sims.forEach(function(s){
+      s.newScore=userScore+s.addPts;
+      s.newPct=Math.min(100,Math.round((s.newScore/optimalScore)*100));
+      s.deltaPct=s.newPct-pct;
+      s.roi=s.addPts/s.avgMo;
+    });
+    // Sort by ROI
+    sims.sort(function(a,b){return b.roi-a.roi});
+    // Best ROI tag
+    if(sims[0])sims[0].tag='BEST ROI';
+
+    // Filter to achievable if months specified
+    var filteredSims=sims;
+    if(months>0){
+      filteredSims=sims.filter(function(s){return s.minMo<=months});
+      if(filteredSims.length<3)filteredSims=sims.slice(0,4); // fallback
+    }
+    filteredSims=filteredSims.slice(0,5); // max 5
+
+    needleHtml+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">\ud83c\udfaf What Moves the Needle</div>';
+    needleHtml+='<div style="font-size:11px;color:var(--text3);margin-bottom:14px">Each simulation shows the impact of one realistic action on your research portfolio score.</div>';
+
+    filteredSims.forEach(function(s,i){
+      var barWidth=Math.max(5,Math.min(100,s.deltaPct*5)); // visual scale
+      needleHtml+='<div style="padding:12px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;margin-bottom:8px">';
+      needleHtml+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">';
+      needleHtml+='<div style="display:flex;align-items:center;gap:8px">';
+      needleHtml+='<span style="font-size:12px;font-weight:600;color:var(--text)">'+(i+1)+'. '+s.name+'</span>';
+      if(s.tag)needleHtml+='<span style="font-size:8px;padding:2px 6px;border-radius:100px;background:'+(s.tag==='BEST ROI'?'var(--accent-dim)':s.tag==='QUICK WIN'?'rgba(139,184,160,.12)':'rgba(139,173,196,.12)')+';color:'+(s.tag==='BEST ROI'?'var(--accent)':s.tag==='QUICK WIN'?'var(--green)':'var(--blue,#8badc4)')+';font-weight:600;letter-spacing:.3px">'+s.tag+'</span>';
+      needleHtml+='</div>';
+      needleHtml+='<span style="font-size:13px;font-weight:700;color:var(--green)">+'+s.deltaPct+'%</span>';
+      needleHtml+='</div>';
+      // Progress bar showing current → new
+      needleHtml+='<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">';
+      needleHtml+='<span style="font-size:10px;color:var(--text3);min-width:28px">'+pct+'%</span>';
+      needleHtml+='<div style="flex:1;height:6px;background:var(--bg3);border-radius:3px;overflow:hidden;position:relative">';
+      needleHtml+='<div style="position:absolute;height:100%;width:'+pct+'%;background:var(--accent);border-radius:3px;opacity:.4"></div>';
+      needleHtml+='<div style="position:absolute;height:100%;width:'+s.newPct+'%;background:var(--green);border-radius:3px"></div>';
+      needleHtml+='</div>';
+      needleHtml+='<span style="font-size:10px;font-weight:600;color:var(--green);min-width:28px">'+s.newPct+'%</span>';
+      needleHtml+='</div>';
+      needleHtml+='<div style="display:flex;gap:16px;font-size:10px;color:var(--text3)">';
+      needleHtml+='<span>\u23f1 '+s.minMo+'-'+s.maxMo+' months</span>';
+      needleHtml+='<span>'+s.roi.toFixed(1)+' pts/mo ROI</span>';
+      needleHtml+='<span>+'+s.addPts+' pts \u2192 '+s.newScore+' total</span>';
+      needleHtml+='</div>';
+      needleHtml+='</div>';
+    });
+
+    // Combined projection: top 3
+    var top3=filteredSims.slice(0,3);
+    var combinedAdd=0;top3.forEach(function(s){combinedAdd+=s.addPts});
+    var combinedScore=userScore+combinedAdd;
+    var combinedPct=Math.min(100,Math.round((combinedScore/optimalScore)*100));
+    var combinedMaxMo=0;top3.forEach(function(s){if(s.maxMo>combinedMaxMo)combinedMaxMo=s.maxMo});
+
+    needleHtml+='<div style="padding:14px;background:linear-gradient(160deg,rgba(200,168,124,.08),rgba(139,184,160,.06));border:1px solid rgba(198,168,94,.15);border-radius:10px;margin-top:10px">';
+    needleHtml+='<div style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">COMBINED PROJECTION \u2014 Do All Top 3</div>';
+    needleHtml+='<div style="display:flex;align-items:baseline;gap:8px;margin-bottom:4px">';
+    needleHtml+='<span style="font-size:20px;font-weight:700;color:var(--text);font-family:var(--font-serif)">'+combinedPct+'%</span>';
+    needleHtml+='<span style="font-size:12px;color:var(--green);font-weight:600">of optimal</span>';
+    needleHtml+='<span style="font-size:11px;color:var(--text3)">(from '+pct+'%)</span>';
+    needleHtml+='</div>';
+    needleHtml+='<div style="font-size:11px;color:var(--text2);line-height:1.5">'+combinedAdd+' additional points in ~'+combinedMaxMo+' months. ';
+    if(combinedPct>=90)needleHtml+='This would put you at excellent and above most applicants.';
+    else if(combinedPct>=70)needleHtml+='This puts you in competitive range for '+(spec?specNames[spec]:'your target')+'.';
+    else needleHtml+='Significant improvement, but you would still need more to be fully competitive.';
+    needleHtml+='</div></div>';
+  }
+  var needleEl=document.getElementById('roi-needle');
+  if(needleEl)needleEl.innerHTML=needleHtml;
 
   // Update benchmark text with specialty context
   var benchEl=document.getElementById('roi-benchmark-text');

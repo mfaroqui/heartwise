@@ -752,6 +752,8 @@ v7:`<h3>Research Impact Calculator</h3>
 
 <div id="roi-efficiency" style="margin-top:14px"></div>
 
+<div id="roi-needle" style="margin-top:14px;padding:14px;background:var(--bg2);border-radius:10px;border:1px solid var(--border)"></div>
+
 </div>
 
 <div style="margin-top:14px;padding:14px;background:var(--bg2);border-radius:8px">

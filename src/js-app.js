@@ -16674,15 +16674,14 @@ var _tourStep=0;
 var _tourSteps=[
   {
     target:function(){return document.getElementById('home-hero-card')},
-    fallback:function(){return document.getElementById('home-score-card')},
     title:'Welcome to HeartWise',
     body:'This is your dashboard — your career command center. It shows your scores, progress, and personalized recommendations based on your profile and career stage.'
   },
   {
-    target:function(){return document.getElementById('home-score-card')},
-    fallback:function(){return document.getElementById('career-dashboard')},
-    title:'Your Career Scores',
-    body:'Four scores track your competitive position: Competitiveness, Research, Readiness, and Financial. They update every time you run a tool or recalculate your profile. Watch them improve over time.'
+    target:function(){return document.getElementById('cost-of-inaction')},
+    fallback:function(){return document.getElementById('trial-countdown-banner')},
+    title:'Why Timing Matters',
+    body:'Career decisions compound over time. This section shows what is at stake right now based on your career stage — and which tools will have the biggest impact if you act today.'
   },
   {
     target:function(){return document.querySelector('[data-scr="scr-vault"]')},

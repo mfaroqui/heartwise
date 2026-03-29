@@ -4885,7 +4885,8 @@ function _bmdRun(qs){
   else if(qs[2]==='empty'){burnout+=15;misfit+=10}
 
   // Q4: Same specialty, different environment thought experiment
-  if(qs[3]==='yes_excited'){modelMismatch+=20;misfit-=10}
+  // Only adds model mismatch if there's corroborating distress elsewhere
+  if(qs[3]==='yes_excited'){modelMismatch+=15;misfit-=10}
   else if(qs[3]==='maybe')modelMismatch+=10;
   else if(qs[3]==='no_same'){misfit+=20;modelMismatch-=5}
   else if(qs[3]==='no_done')misfit+=25;
@@ -4922,6 +4923,22 @@ function _bmdRun(qs){
   var bPct=Math.round(burnout/total*100);
   var mPct=Math.round(misfit/total*100);
   var pPct=Math.round(modelMismatch/total*100);
+
+  // If total distress is very low, show a "you're fine" result
+  var maxScore=Math.max(burnout,misfit,modelMismatch);
+  if(maxScore<=20){
+    hwSecCounter=0;
+    var hOk='<div style="text-align:center;padding:28px 20px;background:linear-gradient(160deg,rgba(139,184,160,.1),rgba(139,184,160,.03));border:1px solid rgba(139,184,160,.15);border-radius:14px;margin-bottom:12px">';
+    hOk+='<div style="font-size:11px;color:var(--green);font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Assessment Complete</div>';
+    hOk+='<div style="font-size:22px;font-weight:600;color:var(--text);font-family:var(--font-serif);margin-bottom:8px">\u2705 No Significant Issues Detected</div>';
+    hOk+='<div style="font-size:12px;color:var(--text3);line-height:1.6;max-width:420px;margin:0 auto">Your answers do not indicate significant burnout, specialty misfit, or practice model mismatch. That is genuinely good news. If something still feels off, it may be worth revisiting in 3-6 months when you have more data points.</div>';
+    hOk+='</div>';
+    hOk+=hwGatePathway(hwPathway('Your situation looks stable. If you are here because something feels slightly off, pay attention to that instinct but do not overreact to it. Come back in a few months and retake this. Trends matter more than snapshots.',[{text:'Write down specifically what prompted you to take this assessment. If you cannot name it precisely, the feeling may pass.',when:'today'},{text:'Revisit this diagnostic in 3 months. If the same concerns persist, they deserve attention.',when:'3 months'}],{id:'v13',icon:'\ud83e\uddec',title:'Specialty Fit Assessment',why:'While you are here, confirm your specialty is still the right one. Preferences evolve.'}));
+    document.getElementById('bmd-results').innerHTML=hOk;
+    applyBlurGate(document.getElementById('bmd-results'));
+    recordToolUse('Burnout vs Misfit Diagnostic',null,'No Significant Issues',{inputs:{'Clinical Enjoyment':qs[0],'Dread Source':qs[1],'Post-Work Energy':qs[2],'Environment Change':qs[3],'Autonomy & Culture':qs[4],'Schedule':qs[5],'Compensation':qs[6],'Identity Alignment':qs[7]},highlights:['No significant issues detected']});
+    return;
+  }
 
   // Determine primary diagnosis
   var primary,primaryLabel,primaryColor,primaryIcon;

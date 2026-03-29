@@ -1610,8 +1610,11 @@ function renderDashboard(){
   if(!U)return;
   initCareerProfile();
   var cp=U.careerProfile;
-  if(!cp||!cp.lastUpdated){
-    // FIRST-TIME USER — show welcome quickstart instead of hiding dashboard
+  // Check if user has a REAL profile (specialty set + at least one meaningful data point)
+  // initCareerProfile auto-seeds lastUpdated for everyone, so we check for actual content
+  var hasRealProfile=cp&&cp.lastUpdated&&(cp.specialty||cp.step2||parseInt(cp.pubs)>0||parseInt(cp.comp)>5000);
+  if(!hasRealProfile){
+    // FIRST-TIME USER — show welcome quickstart instead of empty scores
     renderWelcomeQuickstart();
     return;
   }
@@ -2515,8 +2518,9 @@ function renderNextStep(){
   var toolCount=(U.toolHistory||[]).length;
   var h='';
 
-  // No profile yet — the quickstart handles it, keep hero clean
-  if(!cp.lastUpdated){
+  // No real profile yet — the quickstart handles it, keep hero clean
+  var hasRealProfile=cp.lastUpdated&&(cp.specialty||cp.step2||parseInt(cp.pubs)>0||parseInt(cp.comp)>5000);
+  if(!hasRealProfile){
     var _hasPlan2=U.tier==='core'||U.tier==='elite'||U.tier==='admin'||U.isTrial;
     if(_hasPlan2){
       h='<p style="font-family:var(--font-serif);font-size:16px;color:#1C1A17;line-height:1.4;font-weight:600;margin:0">The career decisions you make now will compound for decades.</p>';

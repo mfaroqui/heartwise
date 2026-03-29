@@ -1033,11 +1033,29 @@ async function doLogin(e){
         loadFromSupabase(email,function(profile){
           if(profile&&profile.session_data){
             var sd=typeof profile.session_data==='string'?JSON.parse(profile.session_data):profile.session_data;
-            if(sd.careerProfile&&(!U.careerProfile||!U.careerProfile.lastUpdated)){U.careerProfile=sd.careerProfile}
-            if(sd.scoreHistory&&sd.scoreHistory.length>0&&(!U.scoreHistory||U.scoreHistory.length===0)){U.scoreHistory=sd.scoreHistory}
-            if(sd.toolHistory&&sd.toolHistory.length>0&&(!U.toolHistory||U.toolHistory.length===0)){U.toolHistory=sd.toolHistory}
-            if(sd.milestones&&sd.milestones.length>0){U.milestones=sd.milestones}
+            // Supabase is source of truth — prefer its data if it has content
+            if(sd.careerProfile&&sd.careerProfile.lastUpdated){
+              var localDate=U.careerProfile&&U.careerProfile.lastUpdated?new Date(U.careerProfile.lastUpdated):new Date(0);
+              var remoteDate=new Date(sd.careerProfile.lastUpdated);
+              if(remoteDate>=localDate)U.careerProfile=sd.careerProfile;
+            }
+            if(sd.toolHistory&&sd.toolHistory.length>0){
+              var localLen=(U.toolHistory||[]).length;
+              if(sd.toolHistory.length>=localLen)U.toolHistory=sd.toolHistory;
+            }
+            if(sd.scoreHistory&&sd.scoreHistory.length>0){
+              var localSLen=(U.scoreHistory||[]).length;
+              if(sd.scoreHistory.length>=localSLen)U.scoreHistory=sd.scoreHistory;
+            }
+            if(sd.milestones&&sd.milestones.length>0&&(!U.milestones||sd.milestones.length>=U.milestones.length)){U.milestones=sd.milestones}
             if(sd.loginDays&&sd.loginDays.length>0){U.loginDays=sd.loginDays}
+            if(sd.toolInputs){U.toolInputs=Object.assign(U.toolInputs||{},sd.toolInputs)}
+            if(sd.weeklyGoals&&sd.weeklyGoals.length>0){U.weeklyGoals=sd.weeklyGoals}
+            if(sd.checkins&&sd.checkins.length>0){U.checkins=sd.checkins}
+            if(sd.achievements&&sd.achievements.length>0){U.achievements=sd.achievements}
+            if(sd.lastCheckin){U.lastCheckin=sd.lastCheckin}
+            if(sd.compIntel){U.compIntel=sd.compIntel}
+            if(sd.outcomes&&sd.outcomes.length>0){U.outcomes=sd.outcomes}
             localStorage.setItem('hw_session',JSON.stringify(U));
             var udb=DB.users.find(function(u){return u.id===U.id});
             if(udb){udb.careerProfile=U.careerProfile;udb.scoreHistory=U.scoreHistory;udb.toolHistory=U.toolHistory;udb.milestones=U.milestones;saveDB()}
@@ -1061,10 +1079,28 @@ async function doLogin(e){
   loadFromSupabase(email,function(profile){
     if(profile&&profile.session_data){
       var sd=typeof profile.session_data==='string'?JSON.parse(profile.session_data):profile.session_data;
-      if(sd.careerProfile&&(!U.careerProfile||!U.careerProfile.lastUpdated)){U.careerProfile=sd.careerProfile}
-      if(sd.scoreHistory&&sd.scoreHistory.length>0&&(!U.scoreHistory||U.scoreHistory.length===0)){U.scoreHistory=sd.scoreHistory}
-      if(sd.toolHistory&&sd.toolHistory.length>0&&(!U.toolHistory||U.toolHistory.length===0)){U.toolHistory=sd.toolHistory}
-      if(sd.milestones&&sd.milestones.length>0){U.milestones=sd.milestones}
+      if(sd.careerProfile&&sd.careerProfile.lastUpdated){
+        var localDate=U.careerProfile&&U.careerProfile.lastUpdated?new Date(U.careerProfile.lastUpdated):new Date(0);
+        var remoteDate=new Date(sd.careerProfile.lastUpdated);
+        if(remoteDate>=localDate)U.careerProfile=sd.careerProfile;
+      }
+      if(sd.toolHistory&&sd.toolHistory.length>0){
+        var localLen=(U.toolHistory||[]).length;
+        if(sd.toolHistory.length>=localLen)U.toolHistory=sd.toolHistory;
+      }
+      if(sd.scoreHistory&&sd.scoreHistory.length>0){
+        var localSLen=(U.scoreHistory||[]).length;
+        if(sd.scoreHistory.length>=localSLen)U.scoreHistory=sd.scoreHistory;
+      }
+      if(sd.milestones&&sd.milestones.length>0&&(!U.milestones||sd.milestones.length>=U.milestones.length)){U.milestones=sd.milestones}
+      if(sd.loginDays&&sd.loginDays.length>0){U.loginDays=sd.loginDays}
+      if(sd.toolInputs){U.toolInputs=Object.assign(U.toolInputs||{},sd.toolInputs)}
+      if(sd.weeklyGoals&&sd.weeklyGoals.length>0){U.weeklyGoals=sd.weeklyGoals}
+      if(sd.checkins&&sd.checkins.length>0){U.checkins=sd.checkins}
+      if(sd.achievements&&sd.achievements.length>0){U.achievements=sd.achievements}
+      if(sd.lastCheckin){U.lastCheckin=sd.lastCheckin}
+      if(sd.compIntel){U.compIntel=sd.compIntel}
+      if(sd.outcomes&&sd.outcomes.length>0){U.outcomes=sd.outcomes}
       localStorage.setItem('hw_session',JSON.stringify(U));
       var udb=DB.users.find(function(u){return u.id===U.id});
       if(udb){udb.careerProfile=U.careerProfile;udb.scoreHistory=U.scoreHistory;udb.toolHistory=U.toolHistory;udb.milestones=U.milestones;saveDB()}
@@ -2185,25 +2221,35 @@ function syncToSupabase(){
     careerProfile:U.careerProfile||null,
     scoreHistory:U.scoreHistory||[],
     toolHistory:U.toolHistory||[],
+    toolInputs:U.toolInputs||{},
     milestones:U.milestones||[],
     loginDays:U.loginDays||[],
     weeklyGoals:U.weeklyGoals||[],
     checkins:U.checkins||[],
     achievements:U.achievements||[],
     lastCheckin:U.lastCheckin||null,
+    compIntel:U.compIntel||null,
+    outcomes:U.outcomes||[],
     usage:U.usage||{},
     tier:U.tier,
     isTrial:U.isTrial||false,
-    trialEnd:U.trialEnd||null
+    trialEnd:U.trialEnd||null,
+    _syncedAt:new Date().toISOString()
   };
-  // Try sync-session edge function (uses service role, no column issues)
+  // Try sync-session edge function first
   fetch('https://kqyvfykbnboesskxovtw.supabase.co/functions/v1/sync-session',{
     method:'POST',
     headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY},
     body:JSON.stringify({email:U.email,action:'save',session_data:sessionData})
   }).then(function(r){return r.json()}).then(function(d){
-    if(d.error)console.warn('Session sync:',d.error);
-  }).catch(function(e){console.warn('Session sync failed:',e)});
+    if(d.error){
+      // Fallback: direct Supabase update
+      if(_supaClient){_supaClient.from('profiles').update({session_data:sessionData}).eq('email',U.email).then(function(){}).catch(function(e){console.warn('Direct sync fallback failed:',e)})}
+    }
+  }).catch(function(e){
+    console.warn('Session sync failed, trying direct:',e);
+    if(_supaClient){_supaClient.from('profiles').update({session_data:sessionData}).eq('email',U.email).then(function(){}).catch(function(){})}
+  });
 }
 // Load session from Supabase on login (restores data across devices)
 function loadFromSupabase(email,callback){
@@ -2213,8 +2259,24 @@ function loadFromSupabase(email,callback){
     body:JSON.stringify({email:email,action:'load'})
   }).then(function(r){return r.json()}).then(function(d){
     if(d.found&&d.profile){callback(d.profile)}
-    else{callback(null)}
-  }).catch(function(e){console.warn('Session load failed:',e);callback(null)});
+    else{
+      // Fallback: direct Supabase query
+      if(_supaClient){
+        _supaClient.from('profiles').select('session_data').eq('email',email).limit(1).then(function(res){
+          if(!res.error&&res.data&&res.data.length>0&&res.data[0].session_data){callback({session_data:res.data[0].session_data})}
+          else{callback(null)}
+        }).catch(function(){callback(null)});
+      }else{callback(null)}
+    }
+  }).catch(function(e){
+    console.warn('Session load failed, trying direct:',e);
+    if(_supaClient){
+      _supaClient.from('profiles').select('session_data').eq('email',email).limit(1).then(function(res){
+        if(!res.error&&res.data&&res.data.length>0&&res.data[0].session_data){callback({session_data:res.data[0].session_data})}
+        else{callback(null)}
+      }).catch(function(){callback(null)});
+    }else{callback(null)}
+  });
 }
 
 // Record tool usage for strategy history

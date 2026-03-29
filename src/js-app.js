@@ -2495,15 +2495,6 @@ function renderHome(){
   renderUpgradeNudge();
   // Nav badges
   try{renderNavBadges()}catch(e){console.error('NavBadges:',e)}
-  // Recent analyses — only if there are reviewed questions
-  var feedSection=document.getElementById('home-feed-section');
-  var reviewed=(DB.questions||[]).filter(function(q){return q.status==='reviewed'&&q.reviewNote}).sort(function(a,b){return b.date.localeCompare(a.date)});
-  if(reviewed.length>0){
-    if(feedSection)feedSection.style.display='';
-    document.getElementById('home-feed').innerHTML=reviewed.slice(0,3).map(renderQCard).join('');
-  }else{
-    if(feedSection)feedSection.style.display='none';
-  }
 }
 
 

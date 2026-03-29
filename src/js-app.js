@@ -15737,8 +15737,11 @@ function renderCostOfInaction(){
   var stage=cp.stage||'student';
   var now=new Date();
 
+  // Admin preview: always show new-user stakes card (TEMP — remove after testing)
+  var _adminPreview=U.tier==='admin';
+
   // ───── NEW USER: "What's at stake" card (0 tools run) ─────
-  if(th.length===0){
+  if(th.length===0||_adminPreview){
     var stakes={
       student:{
         icon:'\ud83c\udfaf',

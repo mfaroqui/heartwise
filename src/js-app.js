@@ -6365,12 +6365,61 @@ function autoFillToolFromProfile(toolId){
   var cp=U.careerProfile;
   var ti=U.toolInputs||{}; // Also pull from cross-tool captured inputs
   function setVal(elId,val){var el=document.getElementById(elId);if(el&&!el.value&&val){el.value=val}}
+  // Specialty alias map — profile free-text → possible select values
+  var _specAlias={
+    'cardiology':['cardiology','cards','gc','im','interventional','ic'],
+    'interventional cardiology':['ic','interventional','cardiology','cards'],
+    'electrophysiology':['ep','electrophys','electrophysiology'],
+    'gastroenterology':['gi','gastroenterology'],
+    'pulmonology':['pulm','pulm_crit','pulmonology'],
+    'hematology':['hemonc','hematology'],
+    'oncology':['hemonc','oncology'],
+    'rheumatology':['rheum','rheumatology'],
+    'endocrinology':['endo','endocrinology'],
+    'nephrology':['neph','nephrology'],
+    'infectious disease':['id','infectious'],
+    'dermatology':['derm','dermatology'],
+    'radiology':['rad','rads','radiology'],
+    'anesthesiology':['anes','anesthesiology'],
+    'emergency medicine':['em','er','emergency'],
+    'family medicine':['fm','family'],
+    'internal medicine':['im','internal'],
+    'psychiatry':['psych','psychiatry'],
+    'neurology':['neuro','neurology'],
+    'surgery':['gen_surg','surgery'],
+    'orthopedics':['ortho','orthopedic'],
+    'urology':['uro','urology'],
+    'pediatrics':['peds','pediatrics'],
+    'pathology':['path','pathology'],
+    'ophthalmology':['ophtho','ophthalmology'],
+    'neurosurgery':['nsurg','neurosurgery'],
+    'ob/gyn':['obgyn'],
+    'obgyn':['obgyn'],
+    'pm&r':['pm_r','pmr'],
+    'ent':['ent']
+  };
   function setSelect(elId,val){
-    var el=document.getElementById(elId);if(!el||el.value||!val)return;
+    var el=document.getElementById(elId);if(!el||!val)return;
+    // Skip if user has already manually selected a non-default value
+    if(el.value&&el.value!==''&&el.selectedIndex>0)return;
     var opts=el.options;
-    var valStr=String(val).toLowerCase();
+    var valStr=String(val).toLowerCase().trim();
+    // Pass 1: exact match on value or text
     for(var i=0;i<opts.length;i++){
-      if(opts[i].value===val||opts[i].value===String(val)||opts[i].value===valStr||opts[i].text.toLowerCase()===valStr){el.value=opts[i].value;return}
+      if(opts[i].value===val||opts[i].value===valStr||opts[i].text.toLowerCase()===valStr){el.value=opts[i].value;return}
+    }
+    // Pass 2: check aliases
+    var aliases=_specAlias[valStr]||[];
+    for(var i=0;i<opts.length;i++){
+      if(aliases.indexOf(opts[i].value)>=0){el.value=opts[i].value;return}
+    }
+    // Pass 3: partial text match (e.g. "cardiology" matches "General Cardiology")
+    for(var i=0;i<opts.length;i++){
+      if(opts[i].text.toLowerCase().indexOf(valStr)>=0||valStr.indexOf(opts[i].text.toLowerCase())>=0){el.value=opts[i].value;return}
+    }
+    // Pass 4: partial value match
+    for(var i=0;i<opts.length;i++){
+      if(opts[i].value&&(opts[i].value.indexOf(valStr)>=0||valStr.indexOf(opts[i].value)>=0)){el.value=opts[i].value;return}
     }
   }
   function setRange(elId,mapping){
@@ -6390,33 +6439,32 @@ function autoFillToolFromProfile(toolId){
     setVal('mcc-programs',cp.programs);
     if(cp.step1)setVal('mcc-step2',cp.step2); // step2 is the key score
     if(cp.step3)setSelect('mcc-step3',cp.step3);
-    // Publications mapping
+    // Publications mapping — select values are 0,1,2,3,4 (tiers)
     var pubs=parseInt(cp.pubs)||0;
     if(pubs===0)setSelect('mcc-pubs','0');
-    else if(pubs<=2)setSelect('mcc-pubs','1-2');
-    else if(pubs<=4)setSelect('mcc-pubs','3-4');
-    else if(pubs<=7)setSelect('mcc-pubs','5-7');
-    else setSelect('mcc-pubs','8+');
-    // LORs mapping
+    else if(pubs<=2)setSelect('mcc-pubs','1');
+    else if(pubs<=5)setSelect('mcc-pubs','2');
+    else if(pubs<=10)setSelect('mcc-pubs','3');
+    else setSelect('mcc-pubs','4');
+    // LORs mapping — select values: avg, strong, notable
     if(cp.lorStrength==='strong')setSelect('mcc-lors','strong');
-    else if(cp.lorStrength==='moderate')setSelect('mcc-lors','moderate');
-    else if(cp.lorStrength==='weak')setSelect('mcc-lors','weak');
-    // Leadership
+    else if(cp.lorStrength==='moderate')setSelect('mcc-lors','avg');
+    else if(cp.lorStrength==='weak')setSelect('mcc-lors','avg');
+    // Leadership — select values: none, some, significant
     var lead=parseInt(cp.leadership)||0;
     if(lead===0)setSelect('mcc-leadership','none');
-    else if(lead===1)setSelect('mcc-leadership','minor');
-    else if(lead<=3)setSelect('mcc-leadership','significant');
-    else setSelect('mcc-leadership','major');
-    // Aways
+    else if(lead<=2)setSelect('mcc-leadership','some');
+    else setSelect('mcc-leadership','significant');
+    // Aways — select values are 0,1,2,3
     var aways=parseInt(cp.aways)||0;
     if(aways===0)setSelect('mcc-aways','0');
     else if(aways===1)setSelect('mcc-aways','1');
-    else setSelect('mcc-aways','2+');
-    // AOA/Honors
-    if(cp.honors==='aoa')setSelect('mcc-aoa','aoa');
-    else if(cp.honors==='ghhs')setSelect('mcc-aoa','ghhs');
-    else if(cp.honors==='both')setSelect('mcc-aoa','both');
-    else if(cp.honors==='none')setSelect('mcc-aoa','none');
+    else if(aways===2)setSelect('mcc-aways','2');
+    else setSelect('mcc-aways','3');
+    // AOA/Honors — select values: aoa, honors, pass
+    if(cp.honors==='aoa'||cp.honors==='both')setSelect('mcc-aoa','aoa');
+    else if(cp.honors==='ghhs')setSelect('mcc-aoa','honors');
+    else if(cp.honors==='none')setSelect('mcc-aoa','pass');
     // School type (IMG detection)
     if(ti.img)setSelect('mcc-school',ti.img);
     // Fellowship-specific fields

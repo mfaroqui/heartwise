@@ -15737,13 +15737,87 @@ function renderCostOfInaction(){
   var stage=cp.stage||'student';
   var now=new Date();
 
+  // ───── NEW USER: "What's at stake" card (0 tools run) ─────
+  if(th.length===0){
+    var stakes={
+      student:{
+        icon:'\ud83c\udfaf',
+        stat:'33%',statLabel:'of applicants who fail to match',
+        headline:'had fixable gaps they never identified',
+        detail:'Your application has blind spots right now. Board scores, research output, LOR strength, leadership \u2014 each one is scored by program directors, and most applicants never benchmark themselves until it is too late. The data to find your gaps exists. You just have not looked yet.',
+        source:'NRMP Charting Outcomes in the Match',
+        tools:[
+          {id:'v14',label:'Check My Competitiveness',why:'See your real match probability and what moves the needle most'},
+          {id:'v7',label:'Score My Research',why:'Know if your publications are actually helping you'}
+        ]
+      },
+      resident:{
+        icon:'\ud83d\udcb0',
+        stat:'$40\u2013$80K',statLabel:'left on the table',
+        headline:'by physicians who don\u2019t review their first contract',
+        detail:'Fellowship rejection rates run 60\u201370% in competitive subspecialties. And when you do land a position, your first attending contract is the most consequential financial document of your career. Most physicians sign it without understanding tail coverage, non-compete implications, or RVU benchmarks.',
+        source:'MGMA Physician Compensation Data + NRMP Specialty Match',
+        tools:[
+          {id:'v14',label:'Check My Competitiveness',why:'See where you stand for fellowship and what gaps to close'},
+          {id:'v12',label:'Review a Contract',why:'Find red flags and get word-for-word negotiation scripts'}
+        ]
+      },
+      fellow:{
+        icon:'\ud83d\udcdd',
+        stat:'$40\u2013$80K',statLabel:'in lost negotiation value',
+        headline:'on contracts signed without full risk analysis',
+        detail:'Your first attending contract sets your financial trajectory for the next decade. Tail coverage, non-compete radius, termination terms, RVU thresholds \u2014 each clause has a dollar value. A 2-year delay in financial planning costs $340,000+ in lost compound growth. The decisions you make in the next 6 months will define the next 20 years.',
+        source:'MGMA + AAMC Financial Wellness Study',
+        tools:[
+          {id:'v12',label:'Analyze My Contract',why:'Risk flags + negotiation scripts for every major clause'},
+          {id:'v5',label:'Build Financial Plan',why:'Map your first 3 years: debt, savings, and milestone targets'}
+        ]
+      },
+      attending:{
+        icon:'\ud83d\udd25',
+        stat:'49%',statLabel:'of physicians report burnout',
+        headline:'but burnout, misfit, and practice model mismatch require completely different solutions',
+        detail:'Treating a specialty misfit like burnout wastes years of mindfulness apps and schedule changes while the core problem persists. Treating burnout like a misfit leads to unnecessary retraining. The average physician who changes careers without structured planning takes 2\u20133 years longer and earns 40% less during transition. Getting the diagnosis right the first time saves years and hundreds of thousands of dollars.',
+        source:'Medscape 2024 + AMA Practice Transformation',
+        tools:[
+          {id:'v13',label:'Take the Diagnostic',why:'5-minute assessment: burnout vs. misfit vs. practice model mismatch'},
+          {id:'v12',label:'Review My Contract',why:'Know your exit terms before you need them'}
+        ]
+      }
+    };
+
+    var s=stakes[stage]||stakes.student;
+    el.style.display='';
+    var h='<div style="padding:20px;background:linear-gradient(160deg,rgba(200,168,124,.06),rgba(200,168,124,.02));border:1px solid rgba(198,168,94,.2);border-radius:14px">';
+    h+='<div style="display:flex;align-items:center;gap:14px;margin-bottom:16px">';
+    h+='<div style="flex-shrink:0;width:56px;height:56px;border-radius:14px;background:var(--accent-dim);display:flex;align-items:center;justify-content:center"><span style="font-size:28px">'+s.icon+'</span></div>';
+    h+='<div>';
+    h+='<div style="display:flex;align-items:baseline;gap:6px;margin-bottom:2px">';
+    h+='<span style="font-size:24px;font-weight:700;color:var(--accent);font-family:var(--font-serif)">'+s.stat+'</span>';
+    h+='<span style="font-size:12px;color:var(--text3)">'+s.statLabel+'</span>';
+    h+='</div>';
+    h+='<div style="font-size:14px;font-weight:600;color:var(--text);line-height:1.4">'+s.headline+'</div>';
+    h+='</div></div>';
+    h+='<div style="font-size:12px;color:var(--text2);line-height:1.7;margin-bottom:16px">'+s.detail+'</div>';
+    if(s.source)h+='<div style="font-size:9px;color:var(--text3);margin-bottom:14px;opacity:.7">Source: '+s.source+'</div>';
+    h+='<div style="display:flex;gap:8px">';
+    s.tools.forEach(function(t,i){
+      var bg=i===0?'var(--accent)':'var(--bg2)';
+      var color=i===0?'#1C1A17':'var(--accent)';
+      var border=i===0?'none':'1px solid rgba(198,168,94,.2)';
+      h+='<button onclick="openFramework(\''+t.id+'\')" style="flex:1;padding:12px 8px;background:'+bg+';color:'+color+';border:'+border+';border-radius:10px;font-size:12px;font-weight:600;cursor:pointer;line-height:1.3" title="'+t.why+'">'+t.label+' \u2192</button>';
+    });
+    h+='</div></div>';
+    el.innerHTML=h;
+    return;
+  }
+
+  // ───── RETURNING USER: Cost of inaction for inactive users ─────
+
   // Don't show if user is very active (ran a tool in last 3 days)
   var threeAgo=new Date(now);threeAgo.setDate(threeAgo.getDate()-3);
   var recentRuns=th.filter(function(t){return new Date(t.date)>=threeAgo});
   if(recentRuns.length>=2){el.style.display='none';return}
-
-  // Don't show if no tools run yet (new user)
-  if(th.length===0){el.style.display='none';return}
 
   // Calculate days since last tool use
   var lastRun=th.length?new Date(th[th.length-1].date):null;

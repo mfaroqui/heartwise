@@ -1220,12 +1220,34 @@ function applyBlurGate(resultsEl){
   resultsEl.innerHTML='<div class="hw-blur-gate">'
     +'<div class="hw-blur-content">'+content+'</div>'
     +'<div class="hw-blur-overlay">'
-    +'<div class="hw-blur-icon">🔒</div>'
+    +'<div class="hw-blur-icon">\ud83d\udd12</div>'
     +'<div class="hw-blur-title">Your analysis is ready</div>'
     +'<div class="hw-blur-sub">Upgrade to Core to see your full results, recommendations, and action plan.</div>'
-    +'<button class="hw-blur-cta" onclick="navTo(\'scr-profile\');showUpgrade();closeModal(\'modal-q\')">Unlock Full Results — $39/mo</button>'
+    +'<button class="hw-blur-cta" onclick="navTo(\'scr-profile\');showUpgrade();closeModal(\'modal-q\')">Unlock Full Results \u2014 $39/mo</button>'
     +'</div></div>';
   return true;
+}
+
+// Gate the "What to do next" / Attending Note section for trial users
+// Trial users see results but must subscribe to see the action plan
+function hwGatePathway(pathwayHtml){
+  // Paid users & admins: show everything
+  if(U&&U.tier&&U.tier!=='free'&&!U.isTrial)return pathwayHtml;
+  // Free users: already gated by applyBlurGate, but in case it leaks
+  if(!U||U.tier==='free')return pathwayHtml;
+  // Trial users: gate the pathway
+  if(U.isTrial){
+    return '<div style="position:relative;margin-top:20px">'
+      +'<div style="filter:blur(6px);pointer-events:none;user-select:none;opacity:.5">'+pathwayHtml+'</div>'
+      +'<div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;background:rgba(28,26,23,.85);border-radius:12px;border:1px solid rgba(198,168,94,.2)">'
+      +'<div style="font-size:24px;margin-bottom:8px">\ud83d\udd13</div>'
+      +'<div style="font-size:14px;font-weight:600;color:var(--accent);margin-bottom:6px">Your Action Plan Is Ready</div>'
+      +'<div style="font-size:12px;color:var(--text3);line-height:1.6;margin-bottom:14px;max-width:320px">Subscribe to unlock your personalized next steps, prioritized actions, and specific recommendations.</div>'
+      +'<button onclick="navTo(\'scr-profile\');showUpgrade()" style="font-size:13px;font-weight:600;padding:12px 28px;background:var(--accent);color:#1C1A17;border:none;border-radius:8px;cursor:pointer">Subscribe to Unlock \u2014 $39/mo</button>'
+      +'<div style="font-size:10px;color:var(--text3);margin-top:8px">Cancel anytime</div>'
+      +'</div></div>';
+  }
+  return pathwayHtml;
 }
 
 // ===== RENDER HOME =====
@@ -4220,7 +4242,7 @@ function crsCalc(){
   if(reds.length>1)crsAct.push({text:'Fix '+reds[1].cat+': '+reds[1].text,when:'this week'});
   else if(yellows.length)crsAct.push({text:'Negotiate '+yellows[0].cat+': '+yellows[0].text,when:'before signing'});
   crsAct.push({text:'Run your compensation through the RVU Calculator.',when:'this week'});
-  h+=hwPathway(crsPos,crsAct,{id:'v4',icon:'\ud83d\udcb0',title:'RVU Compensation Calculator',why:'Verify whether this contract\u2019s compensation is actually competitive for your specialty and volume.'});
+  h+=hwGatePathway(hwPathway(crsPos,crsAct,{id:'v4',icon:'\ud83d\udcb0',title:'RVU Compensation Calculator',why:'Verify whether this contract\u2019s compensation is actually competitive for your specialty and volume.'}));
 
   // Completion indicator
   if(answered<total){
@@ -4567,7 +4589,7 @@ function ocmCompare(){
 
   // Pathway
   var ocmDiff2=Math.round(Math.abs(cA.totalWithRetire-cB.totalWithRetire)/1000);
-  document.getElementById('ocm-results').innerHTML+=hwPathway('<strong>'+winner+' wins</strong> by $'+ocmDiff2+'K in true 10-year value. But money alone doesn\u2019t decide \u2014 factor in non-compete, call, and location.',[{text:'Run both contracts through Contract Risk Assessment for hidden clauses.',when:'this week'},{text:'Model both in the Financial Projection Tool for 30-year compounding.',when:'this week'},{text:'Negotiate the weaker offer\u2019s terms up \u2014 you have leverage.',when:'before signing'}],{id:'v11',icon:'\ud83d\udcc8',title:'Financial Projection Tool',why:'See how each offer compounds over 30 years.'});
+  document.getElementById('ocm-results').innerHTML+=hwGatePathway(hwPathway('<strong>'+winner+' wins</strong> by $'+ocmDiff2+'K in true 10-year value. But money alone doesn\u2019t decide \u2014 factor in non-compete, call, and location.',[{text:'Run both contracts through Contract Risk Assessment for hidden clauses.',when:'this week'},{text:'Model both in the Financial Projection Tool for 30-year compounding.',when:'this week'},{text:'Negotiate the weaker offer\u2019s terms up \u2014 you have leverage.',when:'before signing'}],{id:'v11',icon:'\ud83d\udcc8',title:'Financial Projection Tool',why:'See how each offer compounds over 30 years.'}));
 
   // Lifetime Impact — opportunity cost of choosing wrong offer
   if(typeof hwLifetimeImpact==='function'&&totalDiff>5000){
@@ -4784,7 +4806,7 @@ function _sfaRun(q1,q2,q3,q4,q5,q6){
   h+=hwSection('Why These Would Be Wrong For You',bottom.length+' mismatches',sec,false);
 
   // Pathway
-  h+=hwPathway('I\u2019d tell you to pursue <strong>'+top[0].name+'</strong>. '+top[1].name+' is a reasonable backup, but your answers clearly favor the first. Stop browsing specialties and start testing this one in real life.',[{text:'Shadow or rotate in '+top[0].name+'. Two or three days of real exposure beats months of theorizing.',when:'this week'},{text:'Talk to a current PGY-3 or fellow. Not an attending. Trainees give you the unfiltered version.',when:'this month'},{text:'Check whether you\u2019re actually competitive before committing emotionally.',when:'this month'}],{id:'v14',icon:'\ud83c\udfaf',title:'Match Probability Calculator',why:'Find out if you\u2019re competitive for '+top[0].name+'. Passion without competitiveness is a dead end.'});
+  h+=hwGatePathway(hwPathway('I\u2019d tell you to pursue <strong>'+top[0].name+'</strong>. '+top[1].name+' is a reasonable backup, but your answers clearly favor the first. Stop browsing specialties and start testing this one in real life.',[{text:'Shadow or rotate in '+top[0].name+'. Two or three days of real exposure beats months of theorizing.',when:'this week'},{text:'Talk to a current PGY-3 or fellow. Not an attending. Trainees give you the unfiltered version.',when:'this month'},{text:'Check whether you\u2019re actually competitive before committing emotionally.',when:'this month'}],{id:'v14',icon:'\ud83c\udfaf',title:'Match Probability Calculator',why:'Find out if you\u2019re competitive for '+top[0].name+'. Passion without competitiveness is a dead end.'}));
 
   document.getElementById('sfa-results').innerHTML=h;
   applyBlurGate(document.getElementById('sfa-results'));
@@ -5531,7 +5553,7 @@ function _mccRun(){
     mccActs.push({text:'Research each target program specifically \u2014 generic applications waste a strong profile.',when:'this month'});
   }
   mccActs.push({text:'Build your complete application timeline with deadlines and dependencies.',when:'this month'});
-  h+=hwPathway(mccPos,mccActs,mccNxt);
+  h+=hwGatePathway(hwPathway(mccPos,mccActs,mccNxt));
 
   h+='<p style="font-size:10px;color:var(--text3);font-style:italic;margin-top:14px">Based on NRMP Charting Outcomes and specialty match data. Match probabilities are estimates based on aggregate data — individual outcomes depend on interview performance, program fit, geographic preferences, and intangible factors.</p>';
   document.getElementById('mcc-results').innerHTML=h;
@@ -6168,7 +6190,7 @@ function _csbRun(){
   else if(now!=='fellow'&&now!=='attending')csbNxt={id:'v14',icon:'\ud83c\udfc6',title:'Match Probability Calculator',why:'Get a real match probability with your current stats \u2014 see where you stand.'};
   else if(now==='attending')csbNxt={id:'v12',icon:'\ud83d\udcdd',title:'Contract Review Tool',why:'Score any contract offer before you respond. Don\u2019t sign anything unreviewed.'};
   else csbNxt={id:'v1',icon:'\ud83d\udcca',title:'Fellowship Readiness Assessment',why:'Get a detailed score across all 7 dimensions of your application.'};
-  h+=hwPathway(csbPos,csbActs,csbNxt);
+  h+=hwGatePathway(hwPathway(csbPos,csbActs,csbNxt));
 
   h+='<div style="margin-top:14px;padding:14px;background:var(--accent-dim);border:1px solid rgba(198,168,94,.15);border-radius:10px;text-align:center">';
   h+='<div style="font-size:12px;color:var(--accent);font-weight:600;margin-bottom:4px">Want expert review of your roadmap?</div>';
@@ -7185,7 +7207,7 @@ function _frcRun(){
   frcAct.push({text:total>=60?'Practice interview answers \u2014 a strong app means nothing if you can\u2019t sell it.':'Build your research portfolio \u2014 even one first-author paper changes your profile.',when:total>=60?'this month':'next 3 months'});
   var frcNxt=total>=70?{id:'v16',icon:'\ud83c\udf99\ufe0f',title:'Interview Practice Tool',why:'Your app is competitive \u2014 now prepare to sell it.'}:rawScores[0]<=2?{id:'v7',icon:'\u2696\ufe0f',title:'Research Impact Calculator',why:'Research is your biggest gap. See which pubs move the needle most.'}:{id:'v14',icon:'\ud83c\udfaf',title:'Match Probability Calculator',why:'Get a full competitiveness score to see where you stand.'};
   var frcPwEl=document.getElementById('frc-pathway');
-  if(frcPwEl)frcPwEl.innerHTML=hwPathway(frcPos,frcAct,frcNxt);
+  if(frcPwEl)frcPwEl.innerHTML=hwGatePathway(hwPathway(frcPos,frcAct,frcNxt));
 
   // Lifetime Impact — fellowship vs general practice earnings gap
   if(typeof hwLifetimeImpact==='function'&&sData){
@@ -8223,7 +8245,7 @@ function ciCalc(){
   ciActs.push({text:'Model both scenarios in the Financial Projection Tool to see the 30-year compounding impact.',when:'this week'});
   var ciNxt=salPts<22?{id:'v4',icon:'\ud83d\udcb0',title:'RVU Compensation Calculator',why:'Verify whether this RVU rate is actually competitive for your specialty and volume.'}
     :{id:'v11',icon:'\ud83d\udcc8',title:'Financial Projection Tool',why:'See how this contract compounds over 30 years. Small differences now become millions.'};
-  out.innerHTML+=hwPathway(ciPos,ciActs,ciNxt);
+  out.innerHTML+=hwGatePathway(hwPathway(ciPos,ciActs,ciNxt));
 
   // Lifetime Impact — contract risk exposure
   if(typeof hwLifetimeImpact==='function'){
@@ -8481,7 +8503,7 @@ function ftCalc(){
       {text:'If you have competing offers, run them through the Contract Review Tool for hidden financial risks.',when:'this week'},
       {text:'Build a 3-year cash flow plan \u2014 the 30-year view is the destination, but the first 3 years determine if you get there.',when:'this month'}
     ];
-    insEl.innerHTML+=hwPathway(ftPos,ftActs,{id:'v5',icon:'\ud83d\udcc5',title:'3-Year Financial Leverage Planner',why:'Turn this 30-year vision into a concrete month-by-month plan for your first 3 years.'});
+    insEl.innerHTML+=hwGatePathway(hwPathway(ftPos,ftActs,{id:'v5',icon:'\ud83d\udcc5',title:'3-Year Financial Leverage Planner',why:'Turn this 30-year vision into a concrete month-by-month plan for your first 3 years.'}));
   }else{
     insEl.innerHTML=debtSection;
   }
@@ -10108,7 +10130,7 @@ function rvuUpdate(){
       document.getElementById('rvu-scenarios').insertAdjacentHTML('afterend', negotiateHtml);
 
       // Pathway
-      var rvuPw=hwPathway(diffFromMgma<-20000?'You\u2019re significantly underpaid. Negotiate before signing.':diffFromMgma<0?'Below market \u2014 negotiable.':'Compensation is strong. Focus on contract terms.',[{text:diffFromMgma<0?'Counter with a specific per-wRVU rate increase.':'Review non-compete, tail coverage, and call terms.',when:'this week'},{text:'Pull MGMA data for your exact specialty and region.',when:'this week'},{text:'Run the full contract through Contract Review.',when:'before signing'}],diffFromMgma<0?{id:'v3',icon:'\u2696\ufe0f',title:'Job Offer Comparison Tool',why:'Compare against other offers to strengthen your position.'}:{id:'v12',icon:'\ud83d\udcdd',title:'Contract Review Tool',why:'Comp looks good \u2014 make sure the contract terms don\u2019t have hidden costs.'});
+      var rvuPw=hwGatePathway(hwPathway(diffFromMgma<-20000?'You\u2019re significantly underpaid. Negotiate before signing.':diffFromMgma<0?'Below market \u2014 negotiable.':'Compensation is strong. Focus on contract terms.',[{text:diffFromMgma<0?'Counter with a specific per-wRVU rate increase.':'Review non-compete, tail coverage, and call terms.',when:'this week'},{text:'Pull MGMA data for your exact specialty and region.',when:'this week'},{text:'Run the full contract through Contract Review.',when:'before signing'}],diffFromMgma<0?{id:'v3',icon:'\u2696\ufe0f',title:'Job Offer Comparison Tool',why:'Compare against other offers to strengthen your position.'}:{id:'v12',icon:'\ud83d\udcdd',title:'Contract Review Tool',why:'Comp looks good \u2014 make sure the contract terms don\u2019t have hidden costs.'}));
       document.getElementById('rvu-scenarios').insertAdjacentHTML('afterend', rvuPw);
       // Lifetime Impact
       if(diffFromMgma!==0&&typeof hwLifetimeImpact==='function'){
@@ -10271,7 +10293,7 @@ function fypCalculate(){
   h+=criticalDecision;
 
   // Pathway
-  h+=hwPathway(y3.netWealth>=0?'Positive net worth by Year 3 \u2014 ahead of most physicians.':'Still in the red at Year 3 \u2014 normal with $'+Math.round(debt/1000)+'K debt. Hold expenses flat.',[{text:'Set up 401k + backdoor Roth this week.',when:'this week'},{text:(pslf==='yes'?'Certify PSLF employment.':'Refinance your loans.')+' Free money.',when:'this week'},{text:'Automate savings at '+yr1Save+'%'+(yr1Save<20?' (push to 20%)':'')+' before lifestyle creep.',when:'this month'}],{id:'v8',icon:'\ud83d\udcb5',title:'Debt & Income Strategy Tool',why:'Get a full financial health score \u2014 disability, tax strategy, advisor quality.'});
+  h+=hwGatePathway(hwPathway(y3.netWealth>=0?'Positive net worth by Year 3 \u2014 ahead of most physicians.':'Still in the red at Year 3 \u2014 normal with $'+Math.round(debt/1000)+'K debt. Hold expenses flat.',[{text:'Set up 401k + backdoor Roth this week.',when:'this week'},{text:(pslf==='yes'?'Certify PSLF employment.':'Refinance your loans.')+' Free money.',when:'this week'},{text:'Automate savings at '+yr1Save+'%'+(yr1Save<20?' (push to 20%)':'')+' before lifestyle creep.',when:'this month'}],{id:'v8',icon:'\ud83d\udcb5',title:'Debt & Income Strategy Tool',why:'Get a full financial health score \u2014 disability, tax strategy, advisor quality.'}));
 
   document.getElementById('fyp-results').innerHTML=h;
 
@@ -10449,11 +10471,11 @@ function ilpCalculate(){
   h+='</div>';
 
   // hwPathway
-  h+=hwPathway(scorePct>=80?'I\u2019ve seen what separates physicians who build wealth from those who don\u2019t. Your financial fundamentals are strong. Shift focus to optimizing, not just saving.':scorePct>=60?'Solid start but you have gaps. Fix the top action item above before anything else.':'This is one of those situations where acting now versus next quarter makes a real difference. Critical financial gaps. The priority moves above are in order. Do them this month, not next quarter.',
+  h+=hwGatePathway(hwPathway(scorePct>=80?'I\u2019ve seen what separates physicians who build wealth from those who don\u2019t. Your financial fundamentals are strong. Shift focus to optimizing, not just saving.':scorePct>=60?'Solid start but you have gaps. Fix the top action item above before anything else.':'This is one of those situations where acting now versus next quarter makes a real difference. Critical financial gaps. The priority moves above are in order. Do them this month, not next quarter.',
     [{text:topPriority.split('.')[0]+'.',when:'this week'},
      {text:debt>0?'Run a 30-year projection to see how debt payoff timing affects your net worth.':'Run a 30-year projection comparing your current savings rate vs 5% higher.',when:'this month'},
      {text:'Set a calendar reminder for quarterly financial review.',when:'this month'}],
-    {id:'v11',icon:'\ud83d\udcc8',title:'Financial Projection Tool',why:'See how today\u2019s decisions compound over 30 years. Small changes now become millions.'});
+    {id:'v11',icon:'\ud83d\udcc8',title:'Financial Projection Tool',why:'See how today\u2019s decisions compound over 30 years. Small changes now become millions.'}));
   document.getElementById('ilp-results').innerHTML=h;
 
   // Lifetime Impact — financial gaps
@@ -10753,7 +10775,7 @@ function roiUpdate(){
       var roiNxt=pct>=80?{id:'v16',icon:'\ud83c\udf99\ufe0f',title:'Interview Practice Tool',why:'Your research is strong — now practice selling it in interviews.'}
         :pct>=50?{id:'v14',icon:'\ud83c\udfc6',title:'Match Probability Calculator',why:'See how this research score combines with your other stats for a real match probability.'}
         :{id:'v1',icon:'\ud83d\udcca',title:'Fellowship Readiness Assessment',why:'Research is one category. See where you stand across all 7 dimensions.'};
-      linkEl.innerHTML=hwPathway(roiPos,roiActs,roiNxt);
+      linkEl.innerHTML=hwGatePathway(hwPathway(roiPos,roiActs,roiNxt));
     }else{
       linkEl.innerHTML='';
     }
@@ -10943,13 +10965,13 @@ async function submitAudit(){
   prelim+='</div></div>';
 
   // hwPathway
-  prelim+=hwPathway('Your audit is submitted. While waiting for Dr. Faroqui\u2019s full review, use these tools to build more data for your decision.',[
+  prelim+=hwGatePathway(hwPathway('Your audit is submitted. While waiting for Dr. Faroqui\u2019s full review, use these tools to build more data for your decision.',[
     {text:'Run the '+(!cvSnap||cvSnap.match(/pub|research/i)?'Match Probability Calculator':'Fellowship Readiness Assessment')+' to get an objective competitiveness score.',when:'this week'},
     {text:'Model the financial implications of your top 2 options in the Financial Projection Tool.',when:'this week'},
     {text:'When Dr. Faroqui\u2019s review arrives, build your execution plan in the Career Roadmap Tool.',when:'after review'}
   ],decision&&decision.match(/fellowship|match|apply/i)?{id:'v1',icon:'\ud83d\udcca',title:'Fellowship Readiness Assessment',why:'Get an objective score while you wait. Data + expert review = best possible decision.'}
     :decision&&decision.match(/contract|offer|job/i)?{id:'v12',icon:'\ud83d\udcdd',title:'Contract Review Tool',why:'If you have an offer on the table, score it now. Don\u2019t wait for the review to act on time-sensitive terms.'}
-    :{id:'v15',icon:'\ud83d\uddfa\ufe0f',title:'Career Roadmap Tool',why:'Build a preliminary timeline while you wait. Dr. Faroqui\u2019s review will refine it.'});
+    :{id:'v15',icon:'\ud83d\uddfa\ufe0f',title:'Career Roadmap Tool',why:'Build a preliminary timeline while you wait. Dr. Faroqui\u2019s review will refine it.'}));
 
   prelim+='</div>';
   document.getElementById('audit-success').innerHTML='<div style="font-size:48px;margin-bottom:16px">\u2713</div><h3 class="serif" style="font-size:20px;margin-bottom:8px">Audit Submitted</h3><p style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:6px">Your strategic audit has been sent to Dr. Faroqui. Expect a response within 7 business days.</p><p style="font-size:11px;color:var(--text3);margin-bottom:20px">'+filled+'/20 fields completed \u2014 '+(filled>=15?'comprehensive submission':'consider revisiting and adding more detail for a stronger review')+'</p>'+prelim;
@@ -11245,7 +11267,7 @@ async function submitPivot(){
   });
   riskUpside+='</div>';
 
-  document.getElementById('pivot-success').innerHTML='<div style="font-size:48px;margin-bottom:16px">\u2713</div><h3 class="serif" style="font-size:20px;margin-bottom:8px">Report Submitted</h3><p style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:20px">Your Career Transition Planner report has been sent to Dr. Faroqui for review.</p>'+riskUpside+hwPathway(pvPos,pvActs,pvNxt);
+  document.getElementById('pivot-success').innerHTML='<div style="font-size:48px;margin-bottom:16px">\u2713</div><h3 class="serif" style="font-size:20px;margin-bottom:8px">Report Submitted</h3><p style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:20px">Your Career Transition Planner report has been sent to Dr. Faroqui for review.</p>'+riskUpside+hwGatePathway(hwPathway(pvPos,pvActs,pvNxt));
   notify('Decision Engine report submitted!');
   var pivotInputs={'Cause':causeLabel+(causeOther?' — '+causeOther:''),'Burnout':burnout?burnout.value:'—','Training Years':yrs,'Training Cost':'$'+trainCost.toLocaleString()};
   var pivotHL=['Readiness: '+readyLabel+' ('+readiness+'/4)'];
@@ -11779,7 +11801,7 @@ function misGrade(){
   var misNxt=avgScore>=70?{id:'v1',icon:'\ud83d\udcca',title:'Fellowship Readiness Assessment',why:'Interviews are one piece. See where you stand across all 7 dimensions.'}
     :avgScore>=40?{id:'v15',icon:'\ud83d\uddfa\ufe0f',title:'Career Roadmap Tool',why:'Build a complete timeline — interviews are late-stage. Make sure everything else is on track.'}
     :{id:'v14',icon:'\ud83c\udfc6',title:'Match Probability Calculator',why:'Check your overall competitiveness — interview skills matter more when your stats are borderline.'};
-  h+=hwPathway(misPos,misActs,misNxt);
+  h+=hwGatePathway(hwPathway(misPos,misActs,misNxt));
 
   // Retake button
   h+='<div style="display:flex;gap:10px;margin-top:14px">';

@@ -21,6 +21,7 @@ v1:`<h3 class="serif">Fellowship Readiness Assessment</h3>
 <option value="electrophys">Electrophysiology</option>
 <option value="sports">Sports Medicine</option>
 <option value="geri">Geriatrics</option>
+<option value="obesity">Obesity Medicine</option>
 <option value="allergy">Allergy/Immunology</option>
 <option value="other">Other Subspecialty</option>
 </select></div>
@@ -548,6 +549,7 @@ v6:`<h3 class="serif">Fellowship Application Planner</h3>
 <option value="allergy">Allergy / Immunology</option>
 <option value="sports">Sports Medicine</option>
 <option value="geri">Geriatrics</option>
+<option value="obesity">Obesity Medicine</option>
 <option value="pain">Pain Medicine</option>
 <option value="sleep">Sleep Medicine</option>
 <option value="hospice">Hospice & Palliative Medicine</option>
@@ -644,6 +646,7 @@ v7:`<h3>Research Impact Calculator</h3>
 <option value="advendo">Advanced Endoscopy (Fellowship)</option>
 <option value="transphep">Transplant Hepatology (Fellowship)</option>
 <option value="sportsmed">Sports Medicine (Fellowship)</option>
+<option value="obesity">Obesity Medicine (Fellowship)</option>
 <option value="surgcrit">Surgical Critical Care (Fellowship)</option>
 <option value="surgonc">Surgical Oncology (Fellowship)</option>
 <option value="pedsurg">Pediatric Surgery (Fellowship)</option>

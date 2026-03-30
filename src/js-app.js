@@ -4013,7 +4013,7 @@ function fprUpdateBar(){
 
 function fprShowMockInterview(spec){
   var questions=FPR_MOCK_QUESTIONS[spec]||FPR_MOCK_QUESTIONS.other;
-  var specNames={cardiology:'Cardiology',interventional:'Interventional Cardiology',electrophysiology:'Electrophysiology',gi:'Gastroenterology',pulm_crit:'Pulmonology/Critical Care',hemonc:'Hematology/Oncology',rheum:'Rheumatology',endo:'Endocrinology',neph:'Nephrology',id:'Infectious Disease',allergy:'Allergy/Immunology',sports:'Sports Medicine',geri:'Geriatrics',pain:'Pain Medicine',ortho:'Orthopedic Surgery',ctsx:'Cardiothoracic Surgery',vasc:'Vascular Surgery',other:'Your Specialty'};
+  var specNames={cardiology:'Cardiology',interventional:'Interventional Cardiology',electrophysiology:'Electrophysiology',gi:'Gastroenterology',pulm_crit:'Pulmonology/Critical Care',hemonc:'Hematology/Oncology',rheum:'Rheumatology',endo:'Endocrinology',neph:'Nephrology',id:'Infectious Disease',allergy:'Allergy/Immunology',sports:'Sports Medicine',geri:'Geriatrics',obesity:'Obesity Medicine',pain:'Pain Medicine',ortho:'Orthopedic Surgery',ctsx:'Cardiothoracic Surgery',vasc:'Vascular Surgery',other:'Your Specialty'};
   var specName=specNames[spec]||'Your Specialty';
   var shuffled=questions.slice().sort(function(){return 0.5-Math.random()});
   var selected=shuffled.slice(0,4);
@@ -5315,6 +5315,10 @@ var mccFellowshipData={
   sports_med:{name:'Sports Medicine',matchRate:80,avgStep:240,avgPubs:5,compLevel:'moderate',recPrograms:25,positions:300,applicants:450,
     topPrograms:['Hospital for Special Surgery','Andrews Institute','Mayo Clinic','Kerlan-Jobe','UPMC','Steadman Clinic','Duke','Rush','Stanford','Cleveland Clinic'],
     keyFactors:'MSK exam skills, team physician experience, sports-specific research, procedural skill',
+    erasMonth:'July',submitMonth:'August-September',interviewSeason:'October-January',matchDay:'December'},
+  obesity_med:{name:'Obesity Medicine',matchRate:85,avgStep:230,avgPubs:3,compLevel:'low-moderate',recPrograms:20,positions:200,applicants:280,
+    topPrograms:['Massachusetts General Hospital','Cleveland Clinic','Mayo Clinic','Weill Cornell','NYU Langone','UCLA','Duke','Johns Hopkins','Emory','University of Michigan'],
+    keyFactors:'Endocrinology/metabolism knowledge, lifestyle medicine interest, multidisciplinary team experience, bariatric care exposure',
     erasMonth:'July',submitMonth:'August-September',interviewSeason:'October-January',matchDay:'December'},
   critical_care_surg:{name:'Surgical Critical Care',matchRate:88,avgStep:242,avgPubs:5,compLevel:'moderate',recPrograms:15,positions:250,applicants:320,
     topPrograms:['Michigan','Johns Hopkins','Penn','Pittsburgh','Duke','Mass General','Maryland','Stanford','Emory','USC'],
@@ -7069,7 +7073,9 @@ function autoFillToolFromProfile(toolId){
     'ob/gyn':['obgyn'],
     'obgyn':['obgyn'],
     'pm&r':['pm_r','pmr'],
-    'ent':['ent']
+    'ent':['ent'],
+    'obesity medicine':['obesity','obesity_med'],
+    'obesity':['obesity','obesity_med']
   };
   function setSelect(elId,val){
     var el=document.getElementById(elId);if(!el||!val)return;
@@ -7399,6 +7405,7 @@ var FRC_SPECS={
   electrophys:     {name:'Electrophysiology',      comp:'high',      w:[20,20,18,14,8,14,6], benchPubs:3, benchStep:245, note:'EP fellowships are small programs. Device experience, research in EP, and strong connections to EP faculty drive match success.'},
   sports:          {name:'Sports Medicine',         comp:'moderate',  w:[14,20,20,12,14,12,8], benchPubs:1, benchStep:230, note:'Sports medicine values clinical experience in MSK, team coverage, and interest in athlete care over pure research.'},
   geri:            {name:'Geriatrics',              comp:'low',       w:[12,22,22,10,14,10,10], benchPubs:0, benchStep:220, note:'Geriatrics values genuine interest and clinical empathy above all. Research expectations are lower, but passion must be authentic.'},
+  obesity:         {name:'Obesity Medicine',        comp:'low-moderate',w:[14,22,20,12,12,12,8], benchPubs:1, benchStep:225, note:'Obesity medicine is a growing field valuing clinical interest in metabolic disease, lifestyle medicine, and multidisciplinary patient care. Research expectations are moderate but rising.'},
   allergy:         {name:'Allergy/Immunology',      comp:'moderate',  w:[16,20,18,14,12,12,8], benchPubs:1, benchStep:230, note:'Allergy/Immunology values both clinical skill and basic science understanding. Immunology research is a significant plus.'},
   other:           {name:'Other Subspecialty',      comp:'moderate',  w:[16,20,18,14,12,12,8], benchPubs:2, benchStep:235, note:'Competitiveness varies. Use these general weights as a starting framework and adjust expectations based on your specific target.'}
 };
@@ -11973,7 +11980,7 @@ function misStart(){
   var specMap={
     cards:'cards',ic:'ic',ep:'cards',im:'im',im_outpatient:'im',im_hospitalist:'im',fm:'im',
     gi:'other',pulm:'other',hemonc:'other',neph:'other',endo:'other',
-    rheum:'other',id:'other',em:'other',anes:'other',
+    rheum:'other',id:'other',em:'other',anes:'other',obesity:'other',
     ortho:'gensurg',gensurg:'gensurg',uro:'gensurg',
     psych:'other',derm:'other',rads:'other',path:'other',
     peds:'other',obgyn:'other',neuro:'other',other:'other'

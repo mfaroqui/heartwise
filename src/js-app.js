@@ -904,6 +904,8 @@ window.onload=async function(){
 // ===== NAV =====
 var _lastPage='';var _lastScr='';var _skipPush=false;
 function togglePw(id,btn){var i=document.getElementById(id);if(!i)return;if(i.type==='password'){i.type='text';btn.textContent='🙈'}else{i.type='password';btn.textContent='👁'}}
+function isPrivatePractice(p){return p==='private'||p==='pp_owner'||p==='pp_partner'||p==='pp_associate'}
+function ppLabel(p){return p==='pp_owner'?'Practice Owner':p==='pp_partner'?'Partner':p==='pp_associate'?'Associate (Non-Partner)':p==='private'?'Private Practice':'Private Practice'}
 function go(id){
   ['pg-landing','pg-login','pg-signup','pg-onboard','pg-forgot','pg-reset','main-app'].forEach(p=>{
     const el=document.getElementById(p);if(el){el.classList.add('hidden');el.style.display=''}
@@ -1679,7 +1681,7 @@ function getScoreActions(cp,scores){
     if(goal==='contract'){
       actions.push({action:'Score your first offer with the Contract Review Tool',gain:'Risk awareness',priority:'high'});
       actions.push({action:'Practice salary negotiation — fellows who negotiate earn $40-80K more',gain:'+$40K-$80K/yr',priority:'high'});
-      actions.push({action:'Compare academic vs private practice financial trajectories',gain:'Clarity',priority:'high'});
+      actions.push({action:'Compare practice ownership vs partnership vs associate financial trajectories',gain:'Clarity',priority:'high'});
       actions.push({action:'Understand your RVU potential with the Compensation Modeler',gain:'Leverage',priority:'medium'});
       if(cp.boards!=='certified') actions.push({action:'Complete board certification before job negotiations',gain:'Credibility',priority:'medium'});
     }
@@ -2076,7 +2078,7 @@ function updateProfileFields(){
 
     if(goal==='contract'){
       h+='<div class="fg"><label>Offers Currently Evaluating</label><input type="number" id="up-offers" value="'+(cp.offers||0)+'" min="0" placeholder="0"></div>';
-      h+='<div class="fg"><label>Practice Setting Preference</label><select id="up-practice"><option value="">Select</option><option value="academic"'+(cp.practice==='academic'?' selected':'')+'>Academic</option><option value="private"'+(cp.practice==='private'?' selected':'')+'>Private Practice</option><option value="employed"'+(cp.practice==='employed'?' selected':'')+'>Hospital Employed</option><option value="unsure"'+(cp.practice==='unsure'?' selected':'')+'>Exploring Options</option></select></div>';
+      h+='<div class="fg"><label>Practice Setting Preference</label><select id="up-practice"><option value="">Select</option><option value="academic"'+(cp.practice==='academic'?' selected':'')+'>Academic</option><option value="pp_owner"'+(cp.practice==='pp_owner'?' selected':'')+'>Private Practice — Own Practice</option><option value="pp_partner"'+(cp.practice==='pp_partner'?' selected':'')+'>Private Practice — Partner</option><option value="pp_associate"'+(cp.practice==='pp_associate'?' selected':'')+'>Private Practice — Associate (Non-Partner)</option><option value="employed"'+(cp.practice==='employed'?' selected':'')+'>Hospital Employed</option><option value="unsure"'+(cp.practice==='unsure'?' selected':'')+'>Exploring Options</option></select></div>';
     }
   }
 
@@ -2084,7 +2086,7 @@ function updateProfileFields(){
   if(stage==='attending'){
     h+='<div style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin:16px 0 8px;padding-top:12px;border-top:1px solid var(--border)">Current Position</div>';
     h+='<div class="fg"><label>Years in Practice</label><input type="number" id="up-yearsout" value="'+(cp.yearsout||'')+'" min="0" placeholder="e.g., 3"></div>';
-    h+='<div class="fg"><label>Practice Setting</label><select id="up-practice"><option value="">Select</option><option value="academic"'+(cp.practice==='academic'?' selected':'')+'>Academic</option><option value="private"'+(cp.practice==='private'?' selected':'')+'>Private Practice</option><option value="employed"'+(cp.practice==='employed'?' selected':'')+'>Hospital Employed</option><option value="hybrid"'+(cp.practice==='hybrid'?' selected':'')+'>Hybrid / Locums</option></select></div>';
+    h+='<div class="fg"><label>Practice Setting</label><select id="up-practice"><option value="">Select</option><option value="academic"'+(cp.practice==='academic'?' selected':'')+'>Academic</option><option value="pp_owner"'+(cp.practice==='pp_owner'?' selected':'')+'>Private Practice — Own Practice</option><option value="pp_partner"'+(cp.practice==='pp_partner'?' selected':'')+'>Private Practice — Partner</option><option value="pp_associate"'+(cp.practice==='pp_associate'?' selected':'')+'>Private Practice — Associate (Non-Partner)</option><option value="employed"'+(cp.practice==='employed'?' selected':'')+'>Hospital Employed</option><option value="hybrid"'+(cp.practice==='hybrid'?' selected':'')+'>Hybrid / Locums</option></select></div>';
     h+='<div class="fg"><label>Board Certification Status</label><select id="up-boards"><option value="">Select</option><option value="certified"'+(cp.boards==='certified'?' selected':'')+'>Board Certified</option><option value="recert"'+(cp.boards==='recert'?' selected':'')+'>Recertification Due</option><option value="lapsed"'+(cp.boards==='lapsed'?' selected':'')+'>Lapsed</option></select></div>';
 
     h+='<div style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin:16px 0 8px;padding-top:12px;border-top:1px solid var(--border)">Financial Profile</div>';
@@ -4802,7 +4804,7 @@ function _sfaRun(q1,q2,q3,q4,q5,q6){
     if(q4==='breadth'&&(s.name.includes('Emergency')||s.name.includes('Hospitalist')||s.name.includes('Outpatient')))s.fit+=15;
     // Practice setting
     if(q5==='academic'&&(s.name.includes('Cardiology')||s.name.includes('Pulm')||s.name.includes('Surgery')))s.fit+=10;
-    if(q5==='private'&&(s.name.includes('Dermatology')||s.name.includes('Gastro')||s.name.includes('Orthopedic')||s.name.includes('Outpatient')))s.fit+=10;
+    if(isPrivatePractice(q5)&&(s.name.includes('Dermatology')||s.name.includes('Gastro')||s.name.includes('Orthopedic')||s.name.includes('Outpatient')))s.fit+=10;
     if(q5==='community'&&(s.name.includes('Hospitalist')||s.name.includes('Emergency')||s.name.includes('Outpatient')))s.fit+=10;
     if(q5==='flexible')s.fit+=5;
     // Uncertainty tolerance
@@ -6050,12 +6052,16 @@ function csbStageChange(){
     if(isFellow){
       h+='<option value="academic">Academic position — teaching + research</option>';
       h+='<option value="employed">Employed — hospital/health system</option>';
-      h+='<option value="private">Private practice — partnership track</option>';
+      h+='<option value="pp_owner">Private practice — own your practice</option>';
+      h+='<option value="pp_partner">Private practice — partnership track</option>';
+      h+='<option value="pp_associate">Private practice — associate physician</option>';
       h+='<option value="hybrid">Hybrid — part academic, part private</option>';
     }else{
       h+='<option value="newjob">New position — same specialty</option>';
       h+='<option value="academic">Transition to academic medicine</option>';
-      h+='<option value="private">Transition to private practice</option>';
+      h+='<option value="pp_owner">Start own private practice</option>';
+      h+='<option value="pp_partner">Join practice as partner</option>';
+      h+='<option value="pp_associate">Join practice as associate</option>';
       h+='<option value="employed">Transition to employed model</option>';
       h+='<option value="admin">Healthcare administration / leadership</option>';
       h+='<option value="pivot">Specialty change / additional training</option>';
@@ -6205,7 +6211,7 @@ function csbStageChange(){
     h+='<select id="csb-setting" '+sel+'><option value="unsure">Not sure yet</option>';
     h+='<option value="academic">Academic — teaching, research, grants</option>';
     h+='<option value="employed">Employed — hospital system, W2, predictable</option>';
-    h+='<option value="private">Private practice — highest earning potential, business risk</option></select></div>';
+    h+='<option value="pp_owner">Private practice — own practice (highest earning, highest risk)</option><option value="pp_partner">Private practice — partner (high earning, shared risk)</option><option value="pp_associate">Private practice — associate (moderate earning, low risk)</option></select></div>';
 
     h+='<div '+sec+'><div style="margin-bottom:6px"><strong>Have you started your job search?</strong></div>';
     h+='<select id="csb-jobsearch" '+sel+'><option value="no">Not yet</option><option value="early">Browsing but no conversations</option><option value="active">Talking to employers</option><option value="offers">Have offer(s) to evaluate</option></select></div>';
@@ -6232,7 +6238,7 @@ function csbStageChange(){
   if(isAttending){
     h+='<div '+sec+'><div style="margin-bottom:6px"><strong>Current Practice Type</strong></div>';
     h+='<select id="csb-current-setting" '+sel+'><option value="">Select...</option>';
-    h+='<option value="academic">Academic</option><option value="employed">Employed (hospital/health system)</option><option value="private">Private practice</option><option value="locums">Locum tenens</option></select></div>';
+    h+='<option value="academic">Academic</option><option value="employed">Employed (hospital/health system)</option><option value="pp_owner">Private — Own Practice</option><option value="pp_partner">Private — Partner</option><option value="pp_associate">Private — Associate</option><option value="locums">Locum tenens</option></select></div>';
 
     h+='<div '+sec+'><div style="margin-bottom:6px"><strong>Years in Practice</strong></div>';
     h+='<select id="csb-years" '+sel+'><option value="1">0-2 years</option><option value="3">3-5 years</option><option value="6">6-10 years</option><option value="10">10+ years</option></select></div>';
@@ -6250,7 +6256,7 @@ function csbStageChange(){
 
     h+='<div '+sec+'><div style="margin-bottom:6px"><strong>Preferred Practice Setting</strong> <span style="font-size:10px;color:var(--text3)">(target)</span></div>';
     h+='<select id="csb-setting" '+sel+'><option value="unsure">Not sure yet</option>';
-    h+='<option value="academic">Academic</option><option value="employed">Employed</option><option value="private">Private practice</option><option value="locums">Locum tenens</option></select></div>';
+    h+='<option value="academic">Academic</option><option value="employed">Employed</option><option value="pp_owner">Private — Own Practice</option><option value="pp_partner">Private — Partner</option><option value="pp_associate">Private — Associate</option><option value="locums">Locum tenens</option></select></div>';
 
     // Hidden trainee fields
     h+='<input id="csb-step1" type="hidden" value=""><input id="csb-step2" type="hidden" value=""><input id="csb-do" type="hidden" value="no">';
@@ -6455,7 +6461,7 @@ function _csbRun(){
 
   else if(now==='fellow'){
     phases.push({time:'Now \u2013 6 months',title:'Define Your Attending Path',items:[
-      'Clarify: '+(setting==='academic'?'academic medicine \u2014 teaching, research, intellectual freedom':(setting==='private'?'private practice \u2014 higher income, business ownership':'academic vs private vs employed \u2014 each has different lifestyles and compensation')),
+      'Clarify: '+(setting==='academic'?'academic medicine \u2014 teaching, research, intellectual freedom':(isPrivatePractice(setting)?'private practice \u2014 '+ppLabel(setting)+' \u2014 income potential, autonomy, business considerations':'academic vs private vs employed \u2014 each has different lifestyles and compensation')),
       'Research MGMA benchmarks for '+tName+' \u2014 know your market value',
       'Network at conferences \u2014 most jobs come through connections, not job boards',
       'Start conversations with potential employers 6-12 months before fellowship ends',
@@ -8919,7 +8925,7 @@ function ftCalc(){
       '<div style="margin-bottom:10px">2\ufe0f\u20e3 Lifetime earnings difference: <strong>$'+(earnDiff/1000000).toFixed(1)+'M</strong>. '+
       (earnDiff>2000000?'This is a significant career-defining gap.':'The gap narrows when you factor in training length and opportunity cost.')+'</div>'+
       '<div style="margin-bottom:10px">3\ufe0f\u20e3 Increasing savings rate from 10% 20% roughly doubles retirement assets. The savings rate matters almost as much as the specialty choice.</div>'+
-      (scenarios.some(function(s){return s.pracType==='private'})?'<div>4\ufe0f\u20e3 Private practice offers the highest income ceiling but comes with business risk, overhead, and partner dynamics. Factor in your risk tolerance.</div>':'')+
+      (scenarios.some(function(s){return isPrivatePractice(s.pracType)})?'<div>4\ufe0f\u20e3 Private practice offers the highest income ceiling but comes with business risk, overhead, and partner dynamics. Factor in your risk tolerance.</div>':'')+
       '</div>';
 
     // Your Next Move
@@ -10156,7 +10162,7 @@ function obToStep2(){
   }else if(obStage==='attending'){
     h+='<div class="fg"><label>Current Compensation</label><input type="text" id="ob-comp" placeholder="e.g., $350,000"></div>';
     h+='<div class="fg"><label>Student Loan Balance</label><input type="text" id="ob-debt" placeholder="e.g., $280,000"></div>';
-    h+='<div class="fg"><label>Practice Model</label><select id="ob-practice"><option value="">Select</option><option value="academic">Academic</option><option value="private">Private</option><option value="employed">Hospital Employed</option><option value="unsure">Unsure/Exploring</option></select></div>';
+    h+='<div class="fg"><label>Practice Model</label><select id="ob-practice"><option value="">Select</option><option value="academic">Academic</option><option value="pp_owner">Private Practice — Own Practice</option><option value="pp_partner">Private Practice — Partner</option><option value="pp_associate">Private Practice — Associate (Non-Partner)</option><option value="employed">Hospital Employed</option><option value="unsure">Unsure/Exploring</option></select></div>';
   }
   df.innerHTML=h;
 }
@@ -13096,6 +13102,7 @@ var HW_REGION_MULT={
 // Practice model multipliers
 var HW_PRACTICE_MULT={
   'academic':0.78,'employed':0.95,'private':1.15,'hybrid':1.05,
+  'pp_owner':1.30,'pp_partner':1.18,'pp_associate':1.02,
   'locums':1.20,'eat-what-you-kill':1.25,'government':0.82
 };
 
@@ -13344,7 +13351,7 @@ function checkCompAlerts(){
   // ALERT 7: Practice model opportunity
   if((stage==='fellow'||stage==='attending')&&ci.practiceModel&&comp&&spec){
     var currentBench=getCompBenchmark(spec,ci.region,ci.practiceModel);
-    var models=['academic','employed','private','hybrid'];
+    var models=['academic','employed','pp_owner','pp_partner','pp_associate','hybrid'];
     var better=[];
     models.forEach(function(m){
       if(m===ci.practiceModel)return;
@@ -13624,7 +13631,7 @@ function showCompSettings(){
   // Practice model
   h+='<div style="margin-bottom:14px"><label style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px">Practice Model</label>';
   h+='<select id="ci-practice" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-size:13px;margin-top:4px">';
-  var models=[['','Not Set'],['academic','Academic'],['employed','Hospital Employed'],['private','Private Practice'],['hybrid','Hybrid'],['locums','Locums'],['eat-what-you-kill','Eat-What-You-Kill'],['government','Government / VA']];
+  var models=[['','Not Set'],['academic','Academic'],['employed','Hospital Employed'],['pp_owner','Private — Own Practice'],['pp_partner','Private — Partner'],['pp_associate','Private — Associate'],['hybrid','Hybrid'],['locums','Locums'],['eat-what-you-kill','Eat-What-You-Kill'],['government','Government / VA']];
   models.forEach(function(m){h+='<option value="'+m[0]+'"'+(ci.practiceModel===m[0]?' selected':'')+'>'+m[1]+(m[0]&&HW_PRACTICE_MULT[m[0]]!==1&&HW_PRACTICE_MULT[m[0]]?' ('+(HW_PRACTICE_MULT[m[0]]>1?'+':'')+Math.round((HW_PRACTICE_MULT[m[0]]-1)*100)+'% vs employed)':'')+'</option>'});
   h+='</select></div>';
 

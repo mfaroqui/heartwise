@@ -1757,7 +1757,7 @@ function getScoreActions(cp,scores){
     if(goal==='direction'){
       actions.push({action:'Run the Career Transition Planner — model the financial cost',gain:'Data',priority:'high'});
       actions.push({action:'Re-run the Specialty Fit Assessment with updated values',gain:'Clarity',priority:'high'});
-      actions.push({action:'Submit an Application Review to Dr. Faroqui for structured review',gain:'Expert input',priority:'medium'});
+      actions.push({action:'<span onclick="openFramework(\'v9\')" style="color:var(--accent);cursor:pointer;text-decoration:underline">Submit an Application Review</span> to Dr. Faroqui for structured review',gain:'Expert input',priority:'medium'});
     }
     if(!goal){
       actions.push({action:'Set your primary career goal to get personalized actions',gain:'Focus',priority:'high'});
@@ -1789,7 +1789,7 @@ function getScoreActions(cp,scores){
       var satA=parseInt(cp.satisfaction)||0;
       if(satA>0&&satA<6) actions.push({action:'Run the Career Transition Planner — your satisfaction is '+satA+'/10',gain:'Clarity',priority:'high'});
       actions.push({action:'Re-run the Specialty Fit Assessment — priorities change over time',gain:'Self-awareness',priority:'high'});
-      actions.push({action:'Submit an Application Review to Dr. Faroqui',gain:'Expert guidance',priority:'high'});
+      actions.push({action:'<span onclick="openFramework(\'v9\')" style="color:var(--accent);cursor:pointer;text-decoration:underline">Submit an Application Review</span> to Dr. Faroqui',gain:'Expert guidance',priority:'high'});
       actions.push({action:'Compare financial trajectories: stay vs pivot',gain:'Data',priority:'medium'});
       if(cp.considering==='active') actions.push({action:'Build a 12-month financial bridge plan before making a move',gain:'Safety net',priority:'high'});
     }
@@ -6736,9 +6736,11 @@ function _csbRun(){
 
   h+=hwGatePathway(hwPathway(csbPos,csbActs,csbNxt));
 
-  h+='<div style="margin-top:14px;padding:14px;background:var(--accent-dim);border:1px solid rgba(198,168,94,.15);border-radius:10px;text-align:center">';
+  h+='<div onclick="openFramework(\'v9\')" style="margin-top:14px;padding:14px;background:var(--accent-dim);border:1px solid rgba(198,168,94,.15);border-radius:10px;text-align:center;cursor:pointer;transition:all .2s" onmouseenter="this.style.borderColor=\'rgba(198,168,94,.4)\'" onmouseleave="this.style.borderColor=\'rgba(198,168,94,.15)\'">';
   h+='<div style="font-size:12px;color:var(--accent);font-weight:600;margin-bottom:4px">Want expert review of your roadmap?</div>';
-  h+='<div style="font-size:11px;color:var(--text3)">Submit an Application Review for Dr. Faroqui\u2019s personalized assessment.</div></div>';
+  h+='<div style="font-size:11px;color:var(--text3);margin-bottom:10px">Submit an Application Review for Dr. Faroqui\u2019s personalized assessment.</div>';
+  h+='<div style="display:inline-block;padding:8px 20px;background:var(--accent);color:#1C1A17;border-radius:8px;font-size:12px;font-weight:600">Open Application Review \u2192</div>';
+  h+='</div>';
 
   document.getElementById('csb-results').innerHTML=h;
   applyBlurGate(document.getElementById('csb-results'));
@@ -8160,7 +8162,7 @@ var GOAL_TEMPLATES={
     months:[
       {label:'Month 1',goals:['Diagnose your dissatisfaction: specialty, setting, job, or burnout?','Shadow or talk to 2 physicians in a potential new path','Take stock: what energizes you vs what drains you in your current role','Journal for 2 weeks — track daily satisfaction and frustration triggers']},
       {label:'Month 2',goals:['Informational interviews with 3 people who made a similar pivot','Calculate the financial cost of a pivot (use the Career Transition Planner)','Test the new direction: moonlight, volunteer, or take an elective','Discuss your thinking with a trusted mentor — get honest feedback']},
-      {label:'Month 3',goals:['Make a provisional decision and set a 90-day trial period','If staying: identify 2 concrete changes to improve your current situation','If pivoting: map the timeline, training requirements, and financial bridge','Submit an Application Review to Dr. Faroqui for structured guidance']}
+      {label:'Month 3',goals:['Make a provisional decision and set a 90-day trial period','If staying: identify 2 concrete changes to improve your current situation','If pivoting: map the timeline, training requirements, and financial bridge','<span onclick="openFramework(\'v9\')" style="color:var(--accent);cursor:pointer;text-decoration:underline">Submit an Application Review</span> to Dr. Faroqui for structured guidance']}
     ]
   },
   fellow_contract:{

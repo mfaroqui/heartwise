@@ -1084,32 +1084,30 @@ async function doLogin(e){
   // Fallback: check local DB
   const user=DB.users.find(u=>u.email.toLowerCase()===email&&u.pass===pass);
   if(!user){
-    // Final fallback: check if profile exists in Supabase but auth failed (unconfirmed email, etc.)
+    // Final fallback: check if profile exists in Supabase but auth failed
     if(_supaClient){
       try{
-        var profileCheck=await _supaClient.from('profiles').select('id,name,email,tier,is_trial,trial_end,stage,specialty,goal').eq('email',email).limit(1);
+        var profileCheck=await _supaClient.from('profiles').select('id,name,email,tier,is_trial,trial_end,stage,specialty,goal,session_data').eq('email',email).limit(1);
         if(!profileCheck.error&&profileCheck.data&&profileCheck.data.length>0){
           var sp=profileCheck.data[0];
-          // Profile exists but Supabase auth failed — likely unconfirmed email
-          // Re-attempt signUp (acts as re-send confirmation or creates auth if missing)
-          await _supaClient.auth.signUp({email,password:pass,options:{data:{name:sp.name}}}).catch(function(){});
-          // Try sign in again
-          var retry=await _supaClient.auth.signInWithPassword({email,password:pass}).catch(function(){return{error:true}});
-          if(!retry.error&&retry.data&&retry.data.session){
-            // Success on retry — create local user and proceed
-            var retryUser={id:sp.id||'u'+DB.nextUserId++,name:sp.name||email.split('@')[0],email:email,pass:'__supabase__',role:sp.stage||'student',tier:sp.tier||'free',isTrial:sp.is_trial||false,trialEnd:sp.trial_end||null,institution:'',usage:{ai:0,credits:TIERS[sp.tier]?.credits||0,month:new Date().getMonth()}};
-            DB.users.push(retryUser);saveDB();
-            U=retryUser;localStorage.setItem('hw_session',JSON.stringify(U));
-            loadFromSupabase(email,function(profile){if(profile&&profile.session_data){var sd=typeof profile.session_data==='string'?JSON.parse(profile.session_data):profile.session_data;if(sd.careerProfile)U.careerProfile=sd.careerProfile;if(sd.toolHistory)U.toolHistory=sd.toolHistory;if(sd.scoreHistory)U.scoreHistory=sd.scoreHistory;localStorage.setItem('hw_session',JSON.stringify(U));renderHome()}});
-            if(loginBtn){loginBtn.disabled=false;loginBtn.textContent=loginBtn.dataset.orig||'Sign In'}
-            enterApp();
-            notify('Welcome back! If you haven\'t confirmed your email, check your inbox.',0);
-            return;
+          // Profile exists in Supabase but auth failed — signUp likely failed during onboarding
+          // Create the auth account now with whatever password they're entering
+          var signUpFix=await _supaClient.auth.signUp({email:email,password:pass,options:{data:{name:sp.name||email.split('@')[0]}}}).catch(function(e){return{error:e}});
+          if(signUpFix&&signUpFix.data&&!signUpFix.error){
+            // Auth account created (or already existed) — try signing in
+            var signInFix=await _supaClient.auth.signInWithPassword({email:email,password:pass}).catch(function(e){return{error:e}});
+            if(signInFix&&!signInFix.error&&signInFix.data&&signInFix.data.session){
+              var recoverUser={id:sp.id||'u'+DB.nextUserId++,name:sp.name||email.split('@')[0],email:email,pass:'__supabase__',role:sp.stage||'student',tier:sp.tier||'free',isTrial:sp.is_trial||false,trialEnd:sp.trial_end||null,institution:'',usage:{ai:0,credits:TIERS[sp.tier]?.credits||0,month:new Date().getMonth()}};
+              DB.users.push(recoverUser);saveDB();
+              U=recoverUser;localStorage.setItem('hw_session',JSON.stringify(U));
+              if(sp.session_data){var sd=typeof sp.session_data==='string'?JSON.parse(sp.session_data):sp.session_data;if(sd.careerProfile)U.careerProfile=sd.careerProfile;if(sd.toolHistory)U.toolHistory=sd.toolHistory;if(sd.scoreHistory)U.scoreHistory=sd.scoreHistory;if(sd.milestones)U.milestones=sd.milestones;if(sd.toolInputs)U.toolInputs=sd.toolInputs;localStorage.setItem('hw_session',JSON.stringify(U))}
+              if(loginBtn){loginBtn.disabled=false;loginBtn.textContent=loginBtn.dataset.orig||'Sign In'}
+              enterApp();notify('Welcome back! Your account has been recovered.');
+              return;
+            }
           }
-          // Auth still failed but profile exists — tell user to check email
-          notify('Account found but email not verified. Check your inbox (and spam) for a confirmation link, then try again.',1);
-          // Resend confirmation
-          await _supaClient.auth.resend({type:'signup',email:email}).catch(function(){});
+          // Auth account exists with a DIFFERENT password — user forgot or mistyped
+          notify('We found your account but the password doesn\'t match. Try a different password, or use "Forgot your password?" below to reset it.',1);
           if(loginBtn){loginBtn.disabled=false;loginBtn.textContent=loginBtn.dataset.orig||'Sign In'}
           return;
         }

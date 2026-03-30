@@ -6370,12 +6370,14 @@ function _csbRun(){
 
   // ===== ASSESSMENT =====
   var strengths=[];var gaps=[];var warnings=[];
+  var careerTargets=['pp_owner','pp_partner','pp_associate','employed','newjob','admin','retire','academic','hybrid'];
+  var isFellowTransition=now==='fellow'&&careerTargets.indexOf(target)>=0;
   var isAttendingTransition=now==='attending';
-  var attendingCareerTargets=['pp_owner','pp_partner','pp_associate','employed','newjob','admin','retire','academic'];
-  var isCareerTransition=isAttendingTransition&&attendingCareerTargets.indexOf(target)>=0;
+  var isCareerTransition=isAttendingTransition||isFellowTransition;
+  var isStudentOrResident=now==='ms1'||now==='ms2'||now==='ms3'||now==='intern'||now==='resident'||now==='senior';
   var s1=parseInt(step1)||0;var s2=parseInt(step2)||0;
 
-  // Fellowship/training-specific checks — skip for attending career transitions
+  // Fellowship/training-specific checks — only for students, residents, and those targeting additional training
   if(!isCareerTransition){
   if(s2>=250){strengths.push('Step 2 CK is competitive ('+s2+')')}
   else if(s2>=240&&isCompetitive){gaps.push('Step 2 of '+s2+' is acceptable but below competitive median for '+tName+'. Some programs screen at 240-250.')}
@@ -6387,18 +6389,18 @@ function _csbRun(){
   if(firstAuth>=3){strengths.push('Strong first-author research ('+firstAuth+' publications)')}
   else if(firstAuth>=1&&isCompetitive){gaps.push('You have '+firstAuth+' first-author pub(s). Competitive '+tName+' applicants typically have 3+.')}
   if(firstAuth===0&&isCompetitive){warnings.push('No first-author publications is a significant gap for '+tName+'. This should be your #1 priority.')}
-  else if(firstAuth===0&&totalResearch===0){gaps.push('No research output yet. Even less competitive specialties value 1-2 publications.')}
+  else if(firstAuth===0&&totalResearch===0&&isStudentOrResident){gaps.push('No research output yet. Even less competitive specialties value 1-2 publications.')}
   if(totalResearch>=6){strengths.push('Extensive research portfolio ('+totalResearch+'+ items)')}
 
   if(lors==='strong'){strengths.push('Strong specialty-specific letters secured')}
   else if(lors==='partial'){gaps.push('Need more specialty-specific writers. Aim for 3-4 total with at least one prominent name in '+tName+'.')}
   else if(lors==='generic'){warnings.push('Generic letters won\'t cut it for '+tName+'. You need specialty-specific writers who know your clinical work.')}
-  else if(lors==='none'){warnings.push('No letter writers identified yet. This needs to be an immediate priority.')}
+  else if(lors==='none'&&isStudentOrResident){warnings.push('No letter writers identified yet. This needs to be an immediate priority.')}
 
   if(clinical==='top'){strengths.push('Exceptional clinical evaluations')}
   else if(clinical==='good'){strengths.push('Strong clinical performance')}
-  else if(clinical==='avg'){gaps.push('Average clinical evals won\'t differentiate you. Seek specific feedback from attendings.')}
-  else if(clinical==='below'){warnings.push('Below-average clinical evaluations are a red flag. Address this immediately.')}
+  else if(clinical==='avg'&&isStudentOrResident){gaps.push('Average clinical evals won\'t differentiate you. Seek specific feedback from attendings.')}
+  else if(clinical==='below'&&isStudentOrResident){warnings.push('Below-average clinical evaluations are a red flag. Address this immediately.')}
 
   if(aways==='2'){strengths.push('Multiple away rotations completed')}
   else if(aways==='1'){strengths.push('One away rotation completed')}
@@ -6406,17 +6408,40 @@ function _csbRun(){
 
   if(leadership==='strong'){strengths.push('Significant leadership experience')}
   else if(leadership==='moderate'){strengths.push('Meaningful leadership roles')}
-  else if(leadership==='none'){gaps.push('No leadership roles. Even one QI project or committee chair strengthens your application.')}
+  else if(leadership==='none'&&isStudentOrResident){gaps.push('No leadership roles. Even one QI project or committee chair strengthens your application.')}
 
   if(ps==='done'){strengths.push('Personal statement finalized')}
-  else if(ps==='none'&&urgency==='1'){warnings.push('Applying this cycle with no personal statement draft. Start this week.')}
-  else if(ps==='draft1'&&urgency==='1'){gaps.push('First draft only — plan for 5+ revisions before submitting.')}
+  else if(ps==='none'&&urgency==='1'&&isStudentOrResident){warnings.push('Applying this cycle with no personal statement draft. Start this week.')}
+  else if(ps==='draft1'&&urgency==='1'&&isStudentOrResident){gaps.push('First draft only — plan for 5+ revisions before submitting.')}
 
-  if(programs==='0'){gaps.push('No program list built. Research programs: match data, faculty interests, geography.')}
+  if(programs==='0'&&isStudentOrResident){gaps.push('No program list built. Research programs: match data, faculty interests, geography.')}
   } // end !isCareerTransition
 
+  // Fellow career transition checks (graduating into practice)
+  if(isFellowTransition){
+    if(leadership==='strong'){strengths.push('Strong leadership experience — differentiator for job offers')}
+    else if(leadership==='moderate'){strengths.push('Meaningful leadership roles — transferable to practice')}
+    if(totalResearch>=3){strengths.push('Research portfolio ('+totalResearch+' publications) — asset for academic or hybrid positions')}
+    if(setting==='academic'||target==='academic'){
+      if(totalResearch<3){gaps.push('Academic positions expect an active research pipeline. With '+totalResearch+' publications, you\'ll need a clear plan for future productivity.')}
+      if(leadership==='none'){gaps.push('Academic roles value teaching and committee leadership. Identify roles you can take before fellowship ends.')}
+    }
+    if(isPrivatePractice(target)){
+      gaps.push('Review your training contract — some fellowship agreements have geographic restrictions or non-compete clauses that affect where you can practice.');
+      if(target==='pp_owner'){gaps.push('Starting a practice out of fellowship requires significant planning: business entity, malpractice insurance, credentialing (3-6 months), referral network, and startup capital.')}
+      if(target==='pp_partner'){gaps.push('Partnership buy-in terms vary dramatically. Have a physician contract attorney review the agreement before signing. Understand the timeline, cost, and governance rights.')}
+    }
+    if(target==='employed'){
+      gaps.push('Hospital-employed contracts have specific terms to negotiate: base salary vs RVU, non-compete radius, tail coverage, termination without cause, and call requirements.');
+    }
+    if(target==='hybrid'){
+      gaps.push('Hybrid positions require careful negotiation of academic time vs clinical time split. Make sure the protected time is contractually guaranteed, not just verbal.');
+    }
+    warnings.push('Start interviewing 6-12 months before fellowship ends. Most attending positions take 3-6 months from interview to start date, plus 2-3 months for credentialing.');
+  }
+
   // Attending career transition checks
-  if(isCareerTransition){
+  if(isAttendingTransition&&careerTargets.indexOf(target)>=0){
     if(leadership==='strong'){strengths.push('Strong leadership experience — valued in any practice setting')}
     else if(leadership==='moderate'){strengths.push('Meaningful leadership roles — transferable to any setting')}
     if(totalResearch>=3){strengths.push('Research track record ('+totalResearch+' publications) — asset for academic or hybrid roles')}
@@ -6438,6 +6463,14 @@ function _csbRun(){
     }
     if(target==='admin'){
       gaps.push('Healthcare administration typically requires additional credentials (MBA, MHA, MPH) or significant committee/leadership experience within your institution.');
+    }
+    if(target==='newjob'){
+      gaps.push('Before accepting a new position, benchmark compensation using MGMA data for your specialty and region.');
+      if(concern==='finance'){gaps.push('Negotiate deliberately — the first contract sets the trajectory. Use specific dollar amounts, not vague requests.')}
+    }
+    if(target==='retire'){
+      gaps.push('Model your financial runway before committing. Account for: reduced income timeline, health insurance costs before Medicare, malpractice tail, and lifestyle expenses.');
+      warnings.push('Part-time transitions are often more successful than abrupt retirement. Consider locums, consulting, or reducing clinical days first.');
     }
   }
   else if(programs==='narrow'&&isCompetitive){warnings.push('Only 1-5 programs is very risky for '+tName+'. Most competitive applicants apply to 15-20+.')}
@@ -6722,7 +6755,7 @@ function _csbRun(){
   else csbNxt={id:'v14',icon:'\ud83c\udfc6',title:'Match Competitiveness Calculator',why:'See where you stand with a real competitiveness score and match probability.'};
 
   // ───── What Moves the Needle (Cross-link to v14) ─────
-  if(now!=='attending'){
+  if(!isCareerTransition){
     h+='<div onclick="openFramework(\'v14\')" style="padding:16px;background:linear-gradient(160deg,rgba(200,168,124,.08),rgba(139,184,160,.06));border:1px solid rgba(198,168,94,.15);border-radius:12px;margin-bottom:14px;cursor:pointer;transition:all .2s" onmouseenter="this.style.borderColor=\'rgba(198,168,94,.3)\'" onmouseleave="this.style.borderColor=\'rgba(198,168,94,.15)\'">';
     h+='<div style="display:flex;align-items:center;gap:12px">';
     h+='<div style="flex-shrink:0;width:40px;height:40px;border-radius:10px;background:var(--accent-dim);display:flex;align-items:center;justify-content:center;font-size:20px">\ud83c\udfaf</div>';

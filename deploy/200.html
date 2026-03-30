@@ -891,7 +891,8 @@ body.has-upgrade-bar #main-app{padding-bottom:70px}
 
 <!-- Question Detail Modal -->
 <div id="modal-q" class="modal-ov hidden">
-<div class="modal" style="max-width:500px">
+<div class="modal" style="max-width:500px;position:relative">
+<button onclick="closeModal('modal-q')" style="position:sticky;top:0;float:right;z-index:10;background:rgba(0,0,0,.5);border:none;color:#fff;width:32px;height:32px;border-radius:50%;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;margin:-12px -12px 0 0;flex-shrink:0" aria-label="Close tool">✕</button>
 <div id="modal-q-content"></div>
 <button class="btn btn-g" onclick="closeModal('modal-q')" style="margin-top:16px">Close</button>
 </div>

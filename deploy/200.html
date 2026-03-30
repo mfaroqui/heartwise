@@ -13123,14 +13123,20 @@ function _csbRun(){
   var concern=document.getElementById('csb-concern')?document.getElementById('csb-concern').value:'';
   var programs=document.getElementById('csb-programs')?document.getElementById('csb-programs').value:'0';
 
-  var targetNames={cards:'Cardiology',ic:'Interventional Cardiology',ep:'Electrophysiology',gi:'Gastroenterology',pulm:'Pulmonary/Critical Care',heme:'Hematology/Oncology',endo:'Endocrinology',rheum:'Rheumatology',neph:'Nephrology',id:'Infectious Disease',ortho:'Orthopedic Surgery',nsurg:'Neurosurgery',derm:'Dermatology',ophtho:'Ophthalmology',rads:'Radiology',gen_surg:'General Surgery',em:'Emergency Medicine',fm:'Family Medicine',psych:'Psychiatry',academic:'Academic Medicine',private:'Private Practice',admin:'Healthcare Administration'};
+  var targetNames={cards:'Cardiology',ic:'Interventional Cardiology',ep:'Electrophysiology',gi:'Gastroenterology',pulm:'Pulmonary/Critical Care',heme:'Hematology/Oncology',endo:'Endocrinology',rheum:'Rheumatology',neph:'Nephrology',id:'Infectious Disease',ortho:'Orthopedic Surgery',nsurg:'Neurosurgery',derm:'Dermatology',ophtho:'Ophthalmology',rads:'Radiology',gen_surg:'General Surgery',em:'Emergency Medicine',fm:'Family Medicine',psych:'Psychiatry',academic:'Academic Medicine',private:'Private Practice',pp_owner:'Private Practice (Own Practice)',pp_partner:'Private Practice (Partner)',pp_associate:'Private Practice (Associate)',employed:'Hospital Employed',newjob:'New Position',admin:'Healthcare Administration',pivot:'Specialty Change',retire:'Early Retirement / Part-Time'};
   var tName=targetNames[target]||target;
   var competitive=['cards','ic','ep','gi','derm','ortho','nsurg','ophtho','rads'];
   var isCompetitive=competitive.indexOf(target)>=0;
 
   // ===== ASSESSMENT =====
   var strengths=[];var gaps=[];var warnings=[];
+  var isAttendingTransition=now==='attending';
+  var attendingCareerTargets=['pp_owner','pp_partner','pp_associate','employed','newjob','admin','retire','academic'];
+  var isCareerTransition=isAttendingTransition&&attendingCareerTargets.indexOf(target)>=0;
   var s1=parseInt(step1)||0;var s2=parseInt(step2)||0;
+
+  // Fellowship/training-specific checks — skip for attending career transitions
+  if(!isCareerTransition){
   if(s2>=250){strengths.push('Step 2 CK is competitive ('+s2+')')}
   else if(s2>=240&&isCompetitive){gaps.push('Step 2 of '+s2+' is acceptable but below competitive median for '+tName+'. Some programs screen at 240-250.')}
   else if(s2>0&&s2<240&&isCompetitive){warnings.push('Step 2 CK of '+s2+' is below the competitive threshold for '+tName+'. This will limit your program list.')}
@@ -13167,6 +13173,33 @@ function _csbRun(){
   else if(ps==='draft1'&&urgency==='1'){gaps.push('First draft only — plan for 5+ revisions before submitting.')}
 
   if(programs==='0'){gaps.push('No program list built. Research programs: match data, faculty interests, geography.')}
+  } // end !isCareerTransition
+
+  // Attending career transition checks
+  if(isCareerTransition){
+    if(leadership==='strong'){strengths.push('Strong leadership experience — valued in any practice setting')}
+    else if(leadership==='moderate'){strengths.push('Meaningful leadership roles — transferable to any setting')}
+    if(totalResearch>=3){strengths.push('Research track record ('+totalResearch+' publications) — asset for academic or hybrid roles')}
+    if(isPrivatePractice(target)){
+      if(!concern){gaps.push('Consider your biggest concern: business ownership, patient volume, overhead management, or partner dynamics.')}
+      if(geo==='limited'){strengths.push('Geographic clarity helps narrow your market and negotiate from a position of knowledge')}
+    }
+    if(target==='pp_owner'){
+      warnings.push('Starting your own practice requires: business plan, startup capital ($100K-$500K depending on specialty), malpractice tail coverage, credentialing lead time (3-6 months), and a referral network.');
+      gaps.push('Build a 12-month financial runway before leaving your current position. Most new practices take 12-18 months to reach full volume.');
+    }
+    if(target==='pp_partner'){
+      gaps.push('Request and review the partnership agreement in detail: buy-in amount, timeline, profit-sharing formula, governance rights, and exit terms.');
+      warnings.push('Have a physician contract attorney review the partnership terms before signing. The buy-in structure and profit distribution are where most disputes originate.');
+    }
+    if(target==='pp_associate'){
+      gaps.push('Clarify the path to partnership: Is it guaranteed? What is the timeline? What are the buy-in terms? If there is no partnership track, understand the ceiling.');
+      warnings.push('Associate positions without a clear partnership track often plateau in compensation. Know your 3-year and 5-year trajectory before accepting.');
+    }
+    if(target==='admin'){
+      gaps.push('Healthcare administration typically requires additional credentials (MBA, MHA, MPH) or significant committee/leadership experience within your institution.');
+    }
+  }
   else if(programs==='narrow'&&isCompetitive){warnings.push('Only 1-5 programs is very risky for '+tName+'. Most competitive applicants apply to 15-20+.')}
   else if(programs==='broad'){strengths.push('Broad program list for strategic coverage')}
 
@@ -13435,7 +13468,15 @@ function _csbRun(){
   else if(phases.length>0&&phases[0].items.length>1)csbActs.push({text:phases[0].items[1].replace(/<[^>]+>/g,''),when:'this month'});
   csbActs.push({text:'Set a weekly 30-minute block to review this roadmap and track progress. Accountability wins.',when:'this week'});
   var csbNxt;
-  if(firstAuth===0||totalResearch<3)csbNxt={id:'v7',icon:'\u2696\ufe0f',title:'Research Impact Calculator',why:'Research is your biggest lever right now. See exactly which activities move the needle most.'};
+  // Next tool recommendation — context-appropriate
+  if(isCareerTransition){
+    if(isPrivatePractice(target)){csbNxt={id:'v12',icon:'\ud83d\udcdd',title:'Contract Review Tool',why:'Before signing anything, run the contract through our analyzer. Partnership agreements and associate contracts have very different red flags.'}}
+    else if(target==='admin'){csbNxt={id:'v10',icon:'\ud83d\udd04',title:'Career Transition Planner',why:'Model the financial and career impact of moving into administration.'}}
+    else if(target==='employed'){csbNxt={id:'v12',icon:'\ud83d\udcdd',title:'Contract Review Tool',why:'Hospital employment contracts have specific terms to watch: non-competes, RVU thresholds, termination clauses.'}}
+    else if(target==='retire'){csbNxt={id:'v11',icon:'\ud83d\udd2e',title:'Financial Projection Tool',why:'Model your runway. Know exactly when you can step back and what it costs.'}}
+    else{csbNxt={id:'v12',icon:'\ud83d\udcdd',title:'Contract Review Tool',why:'Score any contract offer before you respond. Don\u2019t sign anything unreviewed.'}}
+  }
+  else if(firstAuth===0||totalResearch<3){csbNxt={id:'v7',icon:'\u2696\ufe0f',title:'Research Impact Calculator',why:'Research is your biggest lever right now. See exactly which activities move the needle most.'}}
   else if(now!=='fellow'&&now!=='attending')csbNxt={id:'v14',icon:'\ud83c\udfc6',title:'Match Probability Calculator',why:'Get a real match probability with your current stats \u2014 see where you stand.'};
   else if(now==='attending')csbNxt={id:'v12',icon:'\ud83d\udcdd',title:'Contract Review Tool',why:'Score any contract offer before you respond. Don\u2019t sign anything unreviewed.'};
   else csbNxt={id:'v14',icon:'\ud83c\udfc6',title:'Match Competitiveness Calculator',why:'See where you stand with a real competitiveness score and match probability.'};
@@ -13832,6 +13873,7 @@ function injectPartialOverlay(id){
   },80);
 }
 
+var _lastToolId=null;
 function openFramework(id){
   // Merged tool redirects: v1→v14, v2→v12
   if(id==='v1')id='v14';
@@ -13845,6 +13887,15 @@ function openFramework(id){
   if(!content){notify('Framework content loading...',1);return}
   document.getElementById('modal-q-content').innerHTML=content;
   document.getElementById('modal-q').classList.remove('hidden');
+  // Track tool navigation for back button
+  if(_lastToolId&&_lastToolId!==id){
+    var backBtn=document.createElement('div');
+    backBtn.id='tool-back-btn';
+    backBtn.innerHTML='<button onclick="openFramework(\''+_lastToolId+'\')" style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;font-size:12px;color:var(--text2);cursor:pointer;margin-bottom:12px">← Back to previous tool</button>';
+    var contentEl=document.getElementById('modal-q-content');
+    if(contentEl&&contentEl.firstChild)contentEl.insertBefore(backBtn,contentEl.firstChild);
+  }
+  _lastToolId=id;
   // Scroll modal to top
   var modalInner=document.querySelector('#modal-q .modal');
   if(modalInner)modalInner.scrollTop=0;

@@ -906,6 +906,17 @@ var _lastPage='';var _lastScr='';var _skipPush=false;
 function togglePw(id,btn){var i=document.getElementById(id);if(!i)return;if(i.type==='password'){i.type='text';btn.textContent='🙈'}else{i.type='password';btn.textContent='👁'}}
 function isPrivatePractice(p){return p==='private'||p==='pp_owner'||p==='pp_partner'||p==='pp_associate'}
 function ppLabel(p){return p==='pp_owner'?'Practice Owner':p==='pp_partner'?'Partner':p==='pp_associate'?'Associate (Non-Partner)':p==='private'?'Private Practice':'Private Practice'}
+async function resendConfirmation(){
+  var emailEl=document.getElementById('l-email');
+  if(!emailEl||!emailEl.value.trim()||!emailEl.value.includes('@')){notify('Enter your email above first, then click resend.',1);return}
+  var email=emailEl.value.trim().toLowerCase();
+  if(_supaClient){
+    try{
+      await _supaClient.auth.resend({type:'signup',email:email});
+      notify('Confirmation email sent! Check your inbox and spam folder.');
+    }catch(e){notify('Could not resend. Try again in a minute.',1)}
+  }else{notify('Email service unavailable. Contact heartwisementor@gmail.com for help.',1)}
+}
 function go(id){
   ['pg-landing','pg-login','pg-signup','pg-onboard','pg-forgot','pg-reset','main-app'].forEach(p=>{
     const el=document.getElementById(p);if(el){el.classList.add('hidden');el.style.display=''}
@@ -1072,7 +1083,40 @@ async function doLogin(e){
   }
   // Fallback: check local DB
   const user=DB.users.find(u=>u.email.toLowerCase()===email&&u.pass===pass);
-  if(!user){notify('Invalid email or password',1);if(loginBtn){loginBtn.disabled=false;loginBtn.textContent=loginBtn.dataset.orig||'Sign In'}return}
+  if(!user){
+    // Final fallback: check if profile exists in Supabase but auth failed (unconfirmed email, etc.)
+    if(_supaClient){
+      try{
+        var profileCheck=await _supaClient.from('profiles').select('id,name,email,tier,is_trial,trial_end,stage,specialty,goal').eq('email',email).limit(1);
+        if(!profileCheck.error&&profileCheck.data&&profileCheck.data.length>0){
+          var sp=profileCheck.data[0];
+          // Profile exists but Supabase auth failed — likely unconfirmed email
+          // Re-attempt signUp (acts as re-send confirmation or creates auth if missing)
+          await _supaClient.auth.signUp({email,password:pass,options:{data:{name:sp.name}}}).catch(function(){});
+          // Try sign in again
+          var retry=await _supaClient.auth.signInWithPassword({email,password:pass}).catch(function(){return{error:true}});
+          if(!retry.error&&retry.data&&retry.data.session){
+            // Success on retry — create local user and proceed
+            var retryUser={id:sp.id||'u'+DB.nextUserId++,name:sp.name||email.split('@')[0],email:email,pass:'__supabase__',role:sp.stage||'student',tier:sp.tier||'free',isTrial:sp.is_trial||false,trialEnd:sp.trial_end||null,institution:'',usage:{ai:0,credits:TIERS[sp.tier]?.credits||0,month:new Date().getMonth()}};
+            DB.users.push(retryUser);saveDB();
+            U=retryUser;localStorage.setItem('hw_session',JSON.stringify(U));
+            loadFromSupabase(email,function(profile){if(profile&&profile.session_data){var sd=typeof profile.session_data==='string'?JSON.parse(profile.session_data):profile.session_data;if(sd.careerProfile)U.careerProfile=sd.careerProfile;if(sd.toolHistory)U.toolHistory=sd.toolHistory;if(sd.scoreHistory)U.scoreHistory=sd.scoreHistory;localStorage.setItem('hw_session',JSON.stringify(U));renderHome()}});
+            if(loginBtn){loginBtn.disabled=false;loginBtn.textContent=loginBtn.dataset.orig||'Sign In'}
+            enterApp();
+            notify('Welcome back! If you haven\'t confirmed your email, check your inbox.',0);
+            return;
+          }
+          // Auth still failed but profile exists — tell user to check email
+          notify('Account found but email not verified. Check your inbox (and spam) for a confirmation link, then try again.',1);
+          // Resend confirmation
+          await _supaClient.auth.resend({type:'signup',email:email}).catch(function(){});
+          if(loginBtn){loginBtn.disabled=false;loginBtn.textContent=loginBtn.dataset.orig||'Sign In'}
+          return;
+        }
+      }catch(fbErr){console.warn('Profile fallback:',fbErr)}
+    }
+    notify('Invalid email or password',1);if(loginBtn){loginBtn.disabled=false;loginBtn.textContent=loginBtn.dataset.orig||'Sign In'}return
+  }
   if(_supaClient){_supaClient.auth.signUp({email,password:pass,options:{data:{name:user.name}}}).catch(()=>{})}
   // Ensure admin tier
   if(email===AE.toLowerCase()&&user.tier!=='admin'){user.tier='admin';user.role='admin';saveDB()}

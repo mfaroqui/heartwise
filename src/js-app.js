@@ -3633,7 +3633,7 @@ function showQuestion(id){
   document.getElementById('modal-q-content').innerHTML=h;
   document.getElementById('modal-q').classList.remove('hidden');
 }
-function closeModal(id){document.getElementById(id).classList.add('hidden')}
+function closeModal(id){document.getElementById(id).classList.add('hidden');if(id==='modal-q'){_toolStateCache={};_lastToolId=null}}
 
 // ===== ASK =====
 function toggleFinance(){document.getElementById('q-finance-box').style.display=document.getElementById('q-cat').value==='finance'?'':'none'}
@@ -6755,6 +6755,19 @@ function _csbRun(){
   if(warnings.length)csbHL.push(warnings.length+' warnings');
   phases.forEach(function(p){csbHL.push(p.time+': '+p.title)});
   recordToolUse('Career Roadmap Tool',null,tName+' roadmap ('+phases.length+' phases)',{inputs:csbInputs,highlights:csbHL});
+  // Capture raw form values for cross-tool auto-populate
+  if(!U.toolInputs)U.toolInputs={};
+  if(setting)U.toolInputs.practice=setting;
+  if(now)U.toolInputs.stage=now;
+  if(geo)U.toolInputs.geo=geo;
+  if(concern)U.toolInputs.concern=concern;
+  if(step1)U.toolInputs.step1=step1;
+  if(step2)U.toolInputs.step2=step2;
+  if(firstAuth)U.toolInputs.firstAuthor=String(firstAuth);
+  if(totalResearch)U.toolInputs.pubs=String(totalResearch);
+  if(lors)U.toolInputs.lors=lors;
+  if(leadership&&leadership!=='none')U.toolInputs.leadership=leadership;
+  saveUser();
 }
 // ===== TOOLKIT QUIZ =====
 var quizAnswers={stage:null,goal:null,urgency:null};
@@ -7114,6 +7127,32 @@ function injectPartialOverlay(id){
 }
 
 var _lastToolId=null;
+var _toolStateCache={};  // Stores {html, scrollTop} per tool id
+
+function _saveToolState(toolId){
+  if(!toolId)return;
+  var contentEl=document.getElementById('modal-q-content');
+  var modalInner=document.querySelector('#modal-q .modal');
+  if(contentEl){
+    // Remove the back button before saving so it doesn't stack
+    var bb=document.getElementById('tool-back-btn');if(bb)bb.remove();
+    _toolStateCache[toolId]={html:contentEl.innerHTML,scrollTop:modalInner?modalInner.scrollTop:0};
+  }
+}
+
+function _restoreToolState(toolId){
+  if(!toolId||!_toolStateCache[toolId])return false;
+  var cached=_toolStateCache[toolId];
+  var contentEl=document.getElementById('modal-q-content');
+  var modalInner=document.querySelector('#modal-q .modal');
+  if(contentEl){
+    contentEl.innerHTML=cached.html;
+    if(modalInner)setTimeout(function(){modalInner.scrollTop=cached.scrollTop},50);
+    return true;
+  }
+  return false;
+}
+
 function openFramework(id){
   // Merged tool redirects: v1→v14, v2→v12
   if(id==='v1')id='v14';
@@ -7125,13 +7164,26 @@ function openFramework(id){
   }
   const content=VAULT_CONTENT[id];
   if(!content){notify('Framework content loading...',1);return}
-  document.getElementById('modal-q-content').innerHTML=content;
+  // Save current tool state before switching
+  if(_lastToolId&&_lastToolId!==id){
+    _saveToolState(_lastToolId);
+  }
+  // Try to restore cached state if going back to a previously opened tool
+  var restored=false;
+  if(_toolStateCache[id]){
+    restored=_restoreToolState(id);
+    delete _toolStateCache[id]; // Clear after restoring so it's fresh next time
+  }
+  if(!restored){
+    document.getElementById('modal-q-content').innerHTML=content;
+  }
   document.getElementById('modal-q').classList.remove('hidden');
   // Track tool navigation for back button
   if(_lastToolId&&_lastToolId!==id){
+    var prevId=_lastToolId;
     var backBtn=document.createElement('div');
     backBtn.id='tool-back-btn';
-    backBtn.innerHTML='<button onclick="openFramework(\''+_lastToolId+'\')" style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;font-size:12px;color:var(--text2);cursor:pointer;margin-bottom:12px">← Back to previous tool</button>';
+    backBtn.innerHTML='<button onclick="openFramework(\''+prevId+'\')" style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;font-size:12px;color:var(--text2);cursor:pointer;margin-bottom:12px">← Back to previous tool</button>';
     var contentEl=document.getElementById('modal-q-content');
     if(contentEl&&contentEl.firstChild)contentEl.insertBefore(backBtn,contentEl.firstChild);
   }

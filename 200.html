@@ -2151,8 +2151,9 @@ body.has-upgrade-bar #main-app{padding-bottom:70px}
 <button type="submit" class="btn btn-a">Send Reset Link</button>
 </form>
 <div id="reset-sent" class="hidden" style="margin-top:24px;padding:20px;border-radius:12px;background:var(--green-dim);border:1px solid rgba(92,184,154,.2);text-align:center;max-width:340px;width:100%">
-<div style="font-size:14px;color:var(--green);font-weight:500;margin-bottom:6px">✓ Check your email</div>
+<div style="font-size:14px;color:var(--green);font-weight:500;margin-bottom:6px">✓ Reset link sent!</div>
 <div style="font-size:13px;color:var(--text2);font-weight:300;line-height:1.6">We've sent a password reset link to your email. Click the link to set a new password.</div>
+<div style="font-size:11px;color:var(--text3);margin-top:10px;line-height:1.6;padding:10px;background:rgba(0,0,0,.03);border-radius:8px">⚠️ <strong>Don't see it?</strong> Check your <strong>spam or junk folder</strong>. The email comes from <strong>noreply@mail.app.supabase.io</strong> on behalf of HeartWise.</div>
 </div>
 <div style="margin-top:28px;color:var(--text3);font-size:13px;font-weight:300">Remember it? <a href="#" onclick="go('pg-login');return false" style="font-weight:500">Sign in</a></div>
 </div>
@@ -7690,7 +7691,7 @@ async function resendConfirmation(){
   if(_supaClient){
     try{
       await _supaClient.auth.resend({type:'signup',email:email});
-      notify('Confirmation email sent! Check your inbox and spam folder.');
+      notify('Confirmation email sent! Check your inbox and spam/junk folder. It comes from noreply@mail.app.supabase.io on behalf of HeartWise.');
     }catch(e){notify('Could not resend. Try again in a minute.',1)}
   }else{notify('Email service unavailable. Contact heartwisementor@gmail.com for help.',1)}
 }
@@ -8015,7 +8016,7 @@ async function doForgotPassword(e){
   const{error}=await _supaClient.auth.resetPasswordForEmail(email,{redirectTo:siteUrl});
   if(error){notify('Error sending reset email. Please try again.',1);return}
   document.getElementById('reset-sent').classList.remove('hidden');
-  notify('Reset link sent! Check your email.');
+  notify('Reset link sent! Check your inbox and spam/junk folder. The email comes from Supabase (noreply@mail.app.supabase.io) on behalf of HeartWise.');
 }
 
 async function doNewPassword(e){

@@ -932,7 +932,7 @@ async function resendConfirmation(){
   if(_supaClient){
     try{
       await _supaClient.auth.resend({type:'signup',email:email});
-      notify('Confirmation email sent! Check your inbox and spam folder.');
+      notify('Confirmation email sent! Check your inbox and spam/junk folder. It comes from noreply@mail.app.supabase.io on behalf of HeartWise.');
     }catch(e){notify('Could not resend. Try again in a minute.',1)}
   }else{notify('Email service unavailable. Contact heartwisementor@gmail.com for help.',1)}
 }
@@ -1257,7 +1257,7 @@ async function doForgotPassword(e){
   const{error}=await _supaClient.auth.resetPasswordForEmail(email,{redirectTo:siteUrl});
   if(error){notify('Error sending reset email. Please try again.',1);return}
   document.getElementById('reset-sent').classList.remove('hidden');
-  notify('Reset link sent! Check your email.');
+  notify('Reset link sent! Check your inbox and spam/junk folder. The email comes from Supabase (noreply@mail.app.supabase.io) on behalf of HeartWise.');
 }
 
 async function doNewPassword(e){

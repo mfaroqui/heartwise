@@ -877,19 +877,38 @@ window.onload=async function(){
   });
   // Handle Supabase password reset redirect
   const hash=window.location.hash;
-  if(hash.includes('type=recovery')||hash.includes('reset-password')){
-    // Supabase recovery flow — parse tokens from hash
+  const searchParams=new URLSearchParams(window.location.search);
+  var isRecovery=hash.includes('type=recovery')||hash.includes('reset-password')||searchParams.get('type')==='recovery';
+  // Also check for Supabase v2 PKCE recovery (token_hash + type=recovery in query params)
+  if(searchParams.get('token_hash')&&searchParams.get('type')==='recovery')isRecovery=true;
+  if(isRecovery){
+    // Supabase recovery flow — try to parse tokens from hash first
     const params=new URLSearchParams(hash.replace('#',''));
     const accessToken=params.get('access_token');
     const refreshToken=params.get('refresh_token');
     if(accessToken&&_supaClient){
       await _supaClient.auth.setSession({access_token:accessToken,refresh_token:refreshToken});
     }
+    // Supabase v2 PKCE: verify OTP from query params
+    if(!accessToken&&searchParams.get('token_hash')&&_supaClient){
+      try{
+        await _supaClient.auth.verifyOtp({token_hash:searchParams.get('token_hash'),type:'recovery'});
+      }catch(otpErr){console.warn('OTP verify:',otpErr)}
+    }
     // Clean up URL
     history.replaceState(null,'',window.location.pathname);
     document.getElementById('splash').classList.add('out');
     setTimeout(()=>{document.getElementById('splash').style.display='none';go('pg-reset')},500);
     return;
+  }
+  // Also listen for auth state change in case Supabase handles it internally
+  if(_supaClient){
+    _supaClient.auth.onAuthStateChange(function(event,session){
+      if(event==='PASSWORD_RECOVERY'){
+        history.replaceState(null,'',window.location.pathname);
+        go('pg-reset');
+      }
+    });
   }
   setTimeout(()=>{
     document.getElementById('splash').classList.add('out');
@@ -1235,7 +1254,7 @@ async function doForgotPassword(e){
   const email=document.getElementById('r-email').value.trim().toLowerCase();
   if(!_supaClient){notify('Password reset is temporarily unavailable.',1);return}
   const siteUrl=window.location.origin+window.location.pathname;
-  const{error}=await _supaClient.auth.resetPasswordForEmail(email,{redirectTo:siteUrl+'#reset-password'});
+  const{error}=await _supaClient.auth.resetPasswordForEmail(email,{redirectTo:siteUrl});
   if(error){notify('Error sending reset email. Please try again.',1);return}
   document.getElementById('reset-sent').classList.remove('hidden');
   notify('Reset link sent! Check your email.');

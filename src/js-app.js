@@ -903,6 +903,7 @@ window.onload=async function(){
 
 // ===== NAV =====
 var _lastPage='';var _lastScr='';var _skipPush=false;
+function togglePw(id,btn){var i=document.getElementById(id);if(!i)return;if(i.type==='password'){i.type='text';btn.textContent='🙈'}else{i.type='password';btn.textContent='👁'}}
 function go(id){
   ['pg-landing','pg-login','pg-signup','pg-onboard','pg-forgot','pg-reset','main-app'].forEach(p=>{
     const el=document.getElementById(p);if(el){el.classList.add('hidden');el.style.display=''}

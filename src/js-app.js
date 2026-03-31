@@ -494,7 +494,162 @@ function hookRetake(){
   document.getElementById('hook-q3').style.display='none';
   document.getElementById('hook-results').style.display='none';
   var tp=document.getElementById('hook-tool-preview');if(tp)tp.style.display='none';
+  var tlp=document.getElementById('hook-timeline-preview');if(tlp){tlp.style.display='none';tlp.innerHTML=''}
   document.getElementById('hook-q1').scrollIntoView({behavior:'smooth',block:'center'});
+}
+
+// Timeline preview for landing page quiz — shows after Q1 stage selection
+function hookTimelinePreview(stage){
+  var el=document.getElementById('hook-timeline-preview');
+  if(!el)return;
+  var now=new Date();
+  var m=now.getMonth();
+  var monthName=now.toLocaleDateString('en-US',{month:'long'});
+
+  // Stage-specific nudges (same data as hwGetMonthlyNudge but standalone for landing page)
+  var nudges={
+    student:{
+      0:{icon:'\uD83D\uDCDA',text:'Boards prep should be part of your daily routine. Even 20 questions a day compounds to thousands by exam time.'},
+      1:{icon:'\uD83D\uDD2C',text:'Start exploring specialties through shadowing and interest groups. Early exposure helps you narrow before clerkships.'},
+      2:{icon:'\u2708\uFE0F',text:'Away rotation applications are opening now. Apply early for competitive specialties \u2014 popular slots fill fast.'},
+      3:{icon:'\u26A0\uFE0F',text:'Away rotation season is in full swing. If you haven\u2019t applied to your target programs, you\u2019re falling behind.'},
+      4:{icon:'\uD83D\uDCDD',text:'Identify your LOR writers now. Faculty need 3-4 months of lead time for strong letters. Ask in person, not email.'},
+      5:{icon:'\u270D\uFE0F',text:'Start your personal statement draft this month. Plan for 5+ revision cycles before September.'},
+      6:{icon:'\uD83D\uDD04',text:'Personal statement should be in active revision. Step 2 CK should be scheduled. LOR writers should be confirmed.'},
+      7:{icon:'\u23F0',text:'One month until ERAS opens. Your application should be nearly complete. Polish your personal statement now.'},
+      8:{icon:'\uD83D\uDE80',text:'ERAS is open. Submit Day 1 for competitive specialties \u2014 late submissions are screened last.'},
+      9:{icon:'\uD83D\uDCE7',text:'Interview invitations are arriving. Respond within hours, be flexible with dates, and prepare questions for each program.'},
+      10:{icon:'\uD83C\uDF99\uFE0F',text:'Interview season is here. Research each program before your interview day. First impressions are everything.'},
+      11:{icon:'\uD83E\uDDD0',text:'Late interview season. Start drafting your rank list. Gather honest opinions from residents at programs you visited.'}
+    },
+    resident:{
+      0:{icon:'\uD83D\uDD2C',text:'New year \u2014 strengthen your fellowship application. What can you publish by September?'},
+      1:{icon:'\u23F0',text:'If applying to fellowship this fall, your research portfolio is being evaluated in 7 months. Every month counts.'},
+      2:{icon:'\uD83C\uDFE5',text:'March conferences are happening. Submit abstracts to upcoming specialty meetings if you haven\u2019t already.'},
+      3:{icon:'\uD83D\uDCB0',text:'Tax deadline this month. Deduct student loan interest and max out any employer 401k match.'},
+      4:{icon:'\u270D\uFE0F',text:'Fellowship LOR requests should be in. Start outlining your personal statement. What is your academic narrative?'},
+      5:{icon:'\uD83D\uDCDD',text:'Summer is personal statement and application polishing season. Have your research mentor review your CV.'},
+      6:{icon:'\uD83D\uDE80',text:'Fellowship ERAS typically opens this month. Finalize your application materials NOW.'},
+      7:{icon:'\u23F0',text:'Applications should be submitted or nearly ready. Last chance to add a publication before review.'},
+      8:{icon:'\uD83C\uDF99\uFE0F',text:'Fellowship applications are being reviewed. Prepare for interviews: research each program.'},
+      9:{icon:'\uD83C\uDF99\uFE0F',text:'Fellowship interview season is starting. Prepare thoughtful questions and send thank-you emails.'},
+      10:{icon:'\uD83D\uDCCB',text:'Interviews continue. Start thinking about your rank list. Talk to current fellows at programs you liked.'},
+      11:{icon:'\uD83C\uDFAF',text:'Fellowship interview season winding down. Finalize your rank list. Trust your instincts after all the data.'}
+    },
+    fellow:{
+      0:{icon:'\uD83D\uDD2C',text:'New year \u2014 set your publication target. Fellows who publish aggressively get hired first.'},
+      1:{icon:'\uD83D\uDCBC',text:'Start scanning job postings now. Understanding the market helps you negotiate later.'},
+      2:{icon:'\uD83E\uDD1D',text:'Spring conferences are networking goldmines. Introduce yourself to division chiefs at programs you admire.'},
+      3:{icon:'\uD83D\uDCB0',text:'Tax deadline. Student loan interest deduction, retirement contributions, and moonlighting income all need attention.'},
+      4:{icon:'\u26A0\uFE0F',text:'If graduating this year, you should have multiple job offers by now. If not, widen your search.'},
+      5:{icon:'\uD83D\uDCDA',text:'Board exam registration windows are open for most specialties. Register early for your preferred test date.'},
+      6:{icon:'\uD83D\uDCDD',text:'If starting a new job: review your contract one last time, confirm malpractice coverage, and secure disability insurance.'},
+      7:{icon:'\uD83D\uDD04',text:'Mid-fellowship check: are you on track for publications? Boards prep should be a daily habit by now.'},
+      8:{icon:'\uD83D\uDCBC',text:'Job search should be active. Hiring committees make decisions in fall and winter.'},
+      9:{icon:'\u23F0',text:'Peak hiring season for academic positions. Apply now \u2014 these positions close by December.'},
+      10:{icon:'\uD83D\uDCB0',text:'Interview season for attending positions. Compare total compensation packages, not just base salary.'},
+      11:{icon:'\uD83D\uDCB0',text:'Year-end: verify PSLF payment count. Negotiate your start date and sign-on bonus before the new year.'}
+    },
+    attending:{
+      0:{icon:'\uD83D\uDCC8',text:'New year \u2014 review your financial goals. Are you on track for retirement savings, loan payoff, and net worth targets?'},
+      1:{icon:'\uD83D\uDCB0',text:'Compensation data from MGMA updates in Q1. Compare your total comp to the latest benchmarks.'},
+      2:{icon:'\uD83D\uDD04',text:'Q1 RVU check. If behind pace, identify the highest-impact procedures you can add this quarter.'},
+      3:{icon:'\uD83D\uDCB0',text:'Tax deadline. Maximize retirement contributions, verify quarterly estimated payments if moonlighting.'},
+      4:{icon:'\uD83D\uDCDD',text:'Spring is contract renewal season. Review your terms against current market data before signing.'},
+      5:{icon:'\uD83D\uDCC8',text:'Mid-year financial review. Are you on track for your savings rate target? Rebalance investments if needed.'},
+      6:{icon:'\uD83D\uDCBC',text:'New fiscal year for many hospitals. Review benefits enrollment, CME allowance, and retirement plan options.'},
+      7:{icon:'\uD83E\uDD1D',text:'If considering a career change, fall is peak hiring season. Update your CV and start networking now.'},
+      8:{icon:'\uD83D\uDCDA',text:'Check your CME credit status. Most state licenses renew on a calendar or biennial cycle.'},
+      9:{icon:'\u26A0\uFE0F',text:'Q3 RVU check \u2014 last quarter to make up ground on annual targets. Review with your practice manager.'},
+      10:{icon:'\uD83D\uDCCB',text:'Open enrollment season. Review health insurance, disability coverage, and umbrella policy limits.'},
+      11:{icon:'\uD83D\uDCB0',text:'Year-end tax planning: max out 401k/403b, harvest tax losses, verify PSLF count, consider backdoor Roth.'}
+    }
+  };
+
+  // Stage-specific upcoming deadlines (abbreviated for preview)
+  var deadlines={
+    student:[
+      {m:2,text:'Away rotation applications open',icon:'\u2708\uFE0F'},
+      {m:3,text:'Tax filing deadline (Apr 15)',icon:'\uD83D\uDCB0'},
+      {m:4,text:'Lock in LOR writers',icon:'\uD83D\uDCDD'},
+      {m:5,text:'Start personal statement',icon:'\u270D\uFE0F'},
+      {m:6,text:'Schedule Step 2 CK',icon:'\uD83D\uDCDA'},
+      {m:7,text:'Finalize ERAS application',icon:'\u23F0'},
+      {m:8,text:'ERAS opens \u2014 submit Day 1',icon:'\uD83D\uDE80'},
+      {m:9,text:'Interview season begins',icon:'\uD83C\uDF99\uFE0F'},
+      {m:1,text:'Rank list certification',icon:'\u2705'},
+      {m:2,text:'Match Week',icon:'\uD83C\uDF89'}
+    ],
+    resident:[
+      {m:3,text:'Tax filing + PSLF certification',icon:'\uD83D\uDCB0'},
+      {m:3,text:'Request fellowship LORs',icon:'\uD83D\uDCDD'},
+      {m:6,text:'Fellowship ERAS opens',icon:'\uD83D\uDE80'},
+      {m:8,text:'Fellowship interview season',icon:'\uD83C\uDF99\uFE0F'},
+      {m:9,text:'ITE exam (Oct/Nov)',icon:'\uD83D\uDCDA'},
+      {m:0,text:'Job search for graduating',icon:'\uD83D\uDCBC'}
+    ],
+    fellow:[
+      {m:3,text:'Tax deadline + loan review',icon:'\uD83D\uDCB0'},
+      {m:4,text:'Contract should be signed',icon:'\uD83D\uDCDD'},
+      {m:5,text:'Board exam registration',icon:'\uD83D\uDCDA'},
+      {m:8,text:'Job search active',icon:'\uD83D\uDCBC'},
+      {m:11,text:'PSLF annual certification',icon:'\uD83D\uDCB0'}
+    ],
+    attending:[
+      {m:0,text:'Q1 RVU / productivity review',icon:'\uD83D\uDD04'},
+      {m:3,text:'Tax deadline + retirement max',icon:'\uD83D\uDCB0'},
+      {m:4,text:'Contract renewal season',icon:'\uD83D\uDCDD'},
+      {m:9,text:'Q3 RVU check \u2014 last chance',icon:'\u26A0\uFE0F'},
+      {m:10,text:'Open enrollment for benefits',icon:'\uD83D\uDCCB'},
+      {m:11,text:'Year-end tax planning',icon:'\uD83D\uDCB0'}
+    ]
+  };
+
+  var nudge=nudges[stage]?nudges[stage][m]:null;
+  var dls=deadlines[stage]||[];
+  // Get 2-3 upcoming deadlines relative to current month
+  var upcoming=[];
+  for(var i=0;i<dls.length&&upcoming.length<3;i++){
+    var dm=dls[i].m;
+    // Show deadlines from current month forward (wrapping around year)
+    if(dm>=m||(dm<m&&dm+12-m<=6)){upcoming.push(dls[i])}
+  }
+  if(upcoming.length<2){
+    // Fill from beginning
+    for(var j=0;j<dls.length&&upcoming.length<3;j++){
+      if(upcoming.indexOf(dls[j])===-1)upcoming.push(dls[j]);
+    }
+  }
+
+  var h='';
+  h+='<div style="background:var(--bg2);border:1px solid rgba(198,168,94,.2);border-radius:14px;padding:16px 18px;opacity:0;animation:hookFadeUp .4s ease both">';
+  // Inject animation if not present
+  if(!document.getElementById('hook-anim')){var sty=document.createElement('style');sty.id='hook-anim';sty.textContent='@keyframes hookFadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}';document.head.appendChild(sty)}
+  h+='<div style="font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);margin-bottom:10px">\u2726 Your '+monthName+' Roadmap</div>';
+
+  // Nudge
+  if(nudge){
+    h+='<div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--border)">';
+    h+='<span style="font-size:14px;flex-shrink:0;line-height:1.3">'+nudge.icon+'</span>';
+    h+='<span style="font-size:11px;color:var(--text2);line-height:1.5">'+nudge.text+'</span>';
+    h+='</div>';
+  }
+
+  // Upcoming deadlines
+  upcoming.slice(0,3).forEach(function(d){
+    var months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    h+='<div style="display:flex;align-items:center;gap:8px;padding:3px 0">';
+    h+='<span style="font-size:12px;flex-shrink:0">'+d.icon+'</span>';
+    h+='<span style="font-size:11px;color:var(--text);flex:1">'+d.text+'</span>';
+    h+='<span style="font-size:9px;color:var(--text3)">'+months[d.m]+'</span>';
+    h+='</div>';
+  });
+
+  h+='<div style="margin-top:12px;font-size:10px;color:var(--text3);line-height:1.5;font-style:italic">Your full personalized roadmap updates every month inside HeartWise.</div>';
+  h+='</div>';
+
+  el.innerHTML=h;
+  el.style.display='';
 }
 
 function hookQ(q,val,btn){
@@ -504,11 +659,12 @@ function hookQ(q,val,btn){
   btn.style.borderColor='var(--accent)';btn.style.background='rgba(198,168,94,.08)';
   if(q===1){
     hookA.stage=val;hookA.goal=null;hookA.urgency=null;
+    hookTimelinePreview(val);
     document.getElementById('hook-q2').style.display='';
     document.getElementById('hook-q3').style.display='none';
     document.getElementById('hook-results').style.display='none';
     document.querySelectorAll('.hook-opt2,.hook-opt3').forEach(function(b){b.style.borderColor='var(--border)';b.style.background='var(--bg2)'});
-    setTimeout(function(){document.getElementById('hook-q2').scrollIntoView({behavior:'smooth',block:'nearest'})},100);
+    setTimeout(function(){document.getElementById('hook-timeline-preview').scrollIntoView({behavior:'smooth',block:'nearest'})},100);
   }else if(q===2){
     hookA.goal=val;hookA.urgency=null;
     document.getElementById('hook-q3').style.display='';

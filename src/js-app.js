@@ -2568,21 +2568,31 @@ function renderHome(){
   if(!U)return;
   // Zone 1: Hero card (welcome + score ring + direction OR quickstart for new users)
   renderHeroCard();
+  // Check if Career Map is active (it handles most content itself)
+  var cp=U.careerProfile||{};
+  var _hasPlan=U.tier==='core'||U.tier==='elite'||U.tier==='admin'||U.isTrial;
+  var _hasRealProfile=cp.lastUpdated&&(cp.specialty||cp.step2||parseInt(cp.pubs)>0||parseInt(cp.comp)>5000);
+  var _careerMapActive=_hasPlan&&_hasRealProfile&&typeof renderCareerMap==='function';
   // Trial banner
   var trialBanner=document.getElementById('trial-countdown-banner');
   if(trialBanner)trialBanner.style.display=U.isTrial&&U.trialEnd?'':'none';
   if(U.isTrial&&U.trialEnd)updateTrialBanner();
   // Score change notification (only shows when there IS a change)
   try{renderScoreChange()}catch(e){console.error('ScoreChange:',e)}
-  // Zone 2: Recommended tool (single card, not a list)
-  renderRecommendedTools();
-  // Check if paid user
-  var _hasPlan=U.tier==='core'||U.tier==='elite'||U.tier==='admin'||U.isTrial;
+  // Zone 2: Recommended tool (skip if Career Map is active — it has its own recommendations)
+  if(!_careerMapActive)renderRecommendedTools();
+  else{var _recEl=document.getElementById('home-recommended-tools');if(_recEl)_recEl.style.display='none'}
+  // Hide Ask card if Career Map is active (it has Quick Actions)
+  var _askCard=document.getElementById('home-ask-card');
+  if(_askCard)_askCard.style.display=_careerMapActive?'none':'';
   // Hide all engagement sections by default — only show ones with actual content
   var _engIds=['comp-intel-card','tripwire-alerts','revisit-prompts','upcoming-deadlines','home-score-breakdown','tool-progress','decision-journal-home','weekly-focus','monthly-checkin-trigger','seasonal-calendar','quarterly-snapshot-btn','peer-benchmark-card','monthly-progress-report','cost-of-inaction'];
   _engIds.forEach(function(id){var el=document.getElementById(id);if(el)el.style.display='none'});
-  // Zone 0b: Cost of Inaction / Day 1 Stakes — shows for ALL users (free, trial, paid)
-  try{renderCostOfInaction()}catch(e){console.error('CostInaction:',e)}
+  // When Career Map is active, skip redundant sections (score breakdown, seasonal calendar, peer benchmarks)
+  if(!_careerMapActive){
+    // Zone 0b: Cost of Inaction / Day 1 Stakes — shows for ALL users (free, trial, paid)
+    try{renderCostOfInaction()}catch(e){console.error('CostInaction:',e)}
+  }
   if(_hasPlan){
     // Zone 0: Monthly Progress Report (auto-triggers on first visit of the month)
     try{renderMonthlyProgressReport()}catch(e){console.error('MonthlyReport:',e)}
@@ -2590,9 +2600,9 @@ function renderHome(){
     var _hasCompData=(U.compIntel&&(U.compIntel.snapshots&&U.compIntel.snapshots.length||U.compIntel.alerts&&U.compIntel.alerts.length||U.compIntel.contractDate||U.compIntel.region));
     if(_hasCompData)try{renderCompIntelCard()}catch(e){console.error('CompIntelCard:',e)}
     try{renderTripwireAlerts()}catch(e){console.error('TripwireAlerts:',e)}
-    // Zone 4: Score breakdown (the labeled bars — core value prop)
-    try{renderScoreBreakdown()}catch(e){console.error('ScoreBreakdown:',e)}
-    // Zone 5: Active items only — decision journal & monthly check-in (skip if no content)
+    // Zone 4: Score breakdown (skip if Career Map is handling it)
+    if(!_careerMapActive){try{renderScoreBreakdown()}catch(e){console.error('ScoreBreakdown:',e)}}
+    // Zone 5: Active items only — decision journal & monthly check-in (keep even with Career Map)
     var _hasDecisions=U.decisions&&U.decisions.length>0;
     if(_hasDecisions)try{renderDecisionJournalHome()}catch(e){console.error('DecisionJournal:',e)}
     var _hasCheckins=U.monthlyCheckins&&U.monthlyCheckins.length>0;
@@ -2644,6 +2654,11 @@ function renderHeroCard(){
 
   // ===== NEW USER — no real profile =====
   if(!hasRealProfile){
+    // Try the Career Map onboarding flow first (for paid users)
+    if(hasPlan&&typeof hwShowOnboarding==='function'){
+      hwShowOnboarding();
+      return;
+    }
     var toolCount=(U.toolHistory||[]).length;
     var h='<div style="background:#111318;border-radius:18px;padding:28px 24px;color:#EDEBE7;position:relative;overflow:hidden">';
     h+='<div style="position:absolute;top:-30%;right:-10%;width:200px;height:200px;background:radial-gradient(circle,rgba(198,168,94,.12),transparent 60%);border-radius:50%"></div>';
@@ -2686,6 +2701,12 @@ function renderHeroCard(){
   }
 
   // ===== RETURNING USER WITH PROFILE =====
+  // Use Career Map dashboard if available (for paid users)
+  if(hasPlan&&typeof renderCareerMap==='function'){
+    var mapRendered=renderCareerMap();
+    if(mapRendered)return;
+  }
+  // Fallback to original hero card
   var scores=calcDashScores(cp);
   var stage=cp.stage||'student';
   var overall=Math.round((scores.competitiveness+scores.research+scores.readiness+scores.financial)/4);

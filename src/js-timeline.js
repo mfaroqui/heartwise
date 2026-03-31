@@ -1221,385 +1221,489 @@ function renderCareerMap() {
   var specName = cp.specialty ? cp.specialty.charAt(0).toUpperCase() + cp.specialty.slice(1) : '';
   var overall = Math.round((scores.competitiveness + scores.research + scores.readiness + scores.financial) / 4);
   var whatChanged = hwGetWhatChanged(cp, scores);
-  var whatIf = hwGetWhatIfScenarios(cp, scores);
-  var conferences = hwGetConferenceDeadlines(cp);
-  var costWait = hwGetCostOfWaiting(cp);
-  var smartRecs = hwGetSmartToolRecs(cp, scores, progress);
   var peerPct = hwGetPeerPercentile(overall);
 
   var stageLabels = { student: 'Medical Student', resident: 'Resident', fellow: 'Fellow', attending: 'Attending Physician' };
-  var stageIcons = { student: '\uD83C\uDF93', resident: '\uD83C\uDFE5', fellow: '\uD83D\uDD2C', attending: '\uD83D\uDC68\u200D\u2695\uFE0F' };
   var goalLabels = { match: stage === 'student' ? 'Match into Residency' : 'Secure Fellowship', specialty: 'Choose Specialty', contract: stage === 'attending' ? 'Optimize Position' : 'Land Attending Job', finance: 'Financial Optimization', direction: 'Career Direction' };
-
   var name = U.name ? 'Dr. ' + U.name.split(' ').pop() : '';
   var hour = new Date().getHours();
   var greeting = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
   var el = document.getElementById('home-hero-card');
   if (!el) return false;
+
+  // CSS animation keyframes (inject once)
+  if (!document.getElementById('cm-animations')) {
+    var style = document.createElement('style');
+    style.id = 'cm-animations';
+    style.textContent = '@keyframes cmFadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}@keyframes cmSlideDown{from{opacity:0;max-height:0;padding-top:0;padding-bottom:0;margin-top:0}to{opacity:1;max-height:60px;padding-top:8px;padding-bottom:8px;margin-top:8px}}@keyframes cmBarGrow{from{width:0}to{width:var(--bar-w)}}@keyframes cmSheetUp{from{transform:translateY(100%)}to{transform:translateY(0)}}.cm-card{background:#fff;border-radius:16px;padding:16px 18px;margin-bottom:14px;box-shadow:0 1px 4px rgba(0,0,0,.06);animation:cmFadeUp .4s ease both}.cm-card:nth-child(2){animation-delay:.08s}.cm-card:nth-child(3){animation-delay:.16s}.cm-card:nth-child(4){animation-delay:.24s}.cm-card:nth-child(5){animation-delay:.32s}.cm-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:#A89F91;margin-bottom:10px}.cm-action{font-size:11px;color:#C6A85E;font-weight:600;cursor:pointer}.cm-action:active{opacity:.6}.cm-sheet{position:fixed;top:0;left:0;right:0;bottom:0;z-index:400;display:flex;flex-direction:column;justify-content:flex-end}.cm-sheet-bg{position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.4)}.cm-sheet-body{position:relative;background:#F5F1EB;border-radius:20px 20px 0 0;max-height:85vh;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:20px 18px 40px;animation:cmSheetUp .3s ease both}.cm-sheet-handle{width:36px;height:4px;background:#D4C9A8;border-radius:2px;margin:0 auto 16px}';
+    document.head.appendChild(style);
+  }
+
   var h = '';
 
   // ========================================
-  // CARD 1: HEADER (always visible)
+  // HEADER — Dark card, greeting + score + change
   // ========================================
-  h += '<div style="background:#111318;border-radius:18px;padding:20px 18px 16px;color:#EDEBE7;position:relative;overflow:hidden;margin-bottom:10px">';
-  h += '<div style="position:absolute;top:-30%;right:-10%;width:180px;height:180px;background:radial-gradient(circle,rgba(198,168,94,.08),transparent 60%);border-radius:50%"></div>';
-  h += '<div style="position:relative">';
-  // Row 1: Greeting + Score
-  h += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">';
-  h += '<div>';
-  h += '<div style="font-family:var(--font-serif);font-size:17px;font-weight:600;line-height:1.3">' + (name ? greeting + ', ' + name : greeting) + '</div>';
-  h += '<div style="font-size:11px;color:rgba(237,235,231,.45);margin-top:2px">' + (stageLabels[stage] || stage) + (specName ? ' \u00B7 ' + specName : '') + '</div>';
-  h += '</div>';
-  // Score ring with percentile
-  var ringColor = overall >= 75 ? '#5E8B6F' : overall >= 55 ? '#C6A85E' : '#B85C5C';
-  var r = 26, circ = 2 * Math.PI * r, offset = circ - (overall / 100) * circ;
-  h += '<div style="display:flex;align-items:center;gap:8px">';
-  h += '<div style="text-align:right"><div style="font-size:9px;color:rgba(237,235,231,.4)">Career Score</div>';
-  h += '<div style="font-size:9px;color:' + ringColor + ';font-weight:600">' + peerPct.pct + '</div></div>';
-  h += '<div style="position:relative;width:48px;height:48px;flex-shrink:0">';
-  h += '<svg viewBox="0 0 56 56" style="width:48px;height:48px;transform:rotate(-90deg)">';
-  h += '<circle cx="28" cy="28" r="' + r + '" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="3"/>';
-  h += '<circle cx="28" cy="28" r="' + r + '" fill="none" stroke="' + ringColor + '" stroke-width="3" stroke-linecap="round" stroke-dasharray="' + circ.toFixed(1) + '" stroke-dashoffset="' + offset.toFixed(1) + '" style="transition:stroke-dashoffset .8s ease"/>';
-  h += '</svg>';
-  h += '<div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:15px;font-weight:700;color:' + ringColor + ';font-family:var(--font-serif)">' + overall + '</div>';
-  h += '</div></div></div>';
+  h += '<div style="background:#111318;border-radius:16px;padding:20px 18px 16px;color:#EDEBE7;margin-bottom:14px;animation:cmFadeUp .4s ease both">';
 
-  // What Changed banner (if score changed since last update)
+  // Row 1: Greeting + Score ring
+  h += '<div style="display:flex;align-items:center;justify-content:space-between">';
+  h += '<div>';
+  h += '<div style="font-family:var(--font-serif);font-size:18px;font-weight:600;line-height:1.3">' + (name ? greeting + ', ' + name + '.' : greeting + '.') + '</div>';
+  h += '<div style="font-size:11px;color:rgba(237,235,231,.4);margin-top:3px">' + (stageLabels[stage] || stage) + (specName ? ' \u00B7 ' + specName : '') + '</div>';
+  h += '</div>';
+
+  // Score ring — quiet, not screaming
+  var ringColor = overall >= 75 ? '#5E8B6F' : overall >= 55 ? '#C6A85E' : '#B85C5C';
+  var r = 24, circ = 2 * Math.PI * r, offset = circ - (overall / 100) * circ;
+  h += '<div style="display:flex;align-items:center;gap:8px">';
+  h += '<div style="text-align:right"><div style="font-size:9px;color:rgba(237,235,231,.35)">' + peerPct.pct + '</div></div>';
+  h += '<div style="position:relative;width:46px;height:46px;flex-shrink:0">';
+  h += '<svg viewBox="0 0 52 52" style="width:46px;height:46px;transform:rotate(-90deg)">';
+  h += '<circle cx="26" cy="26" r="' + r + '" fill="none" stroke="rgba(255,255,255,.05)" stroke-width="3"/>';
+  h += '<circle cx="26" cy="26" r="' + r + '" fill="none" stroke="' + ringColor + '" stroke-width="3" stroke-linecap="round" stroke-dasharray="' + circ.toFixed(1) + '" stroke-dashoffset="' + offset.toFixed(1) + '" style="transition:stroke-dashoffset .8s ease"/>';
+  h += '</svg>';
+  h += '<div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:14px;font-weight:700;color:' + ringColor + ';font-family:var(--font-serif)">' + overall + '</div>';
+  h += '</div></div>';
+  h += '</div>';
+
+  // What Changed banner — slides in
   if (whatChanged && whatChanged.overallDelta !== 0) {
-    var wcColor = whatChanged.overallDelta > 0 ? '#5E8B6F' : '#B85C5C';
-    var wcArrow = whatChanged.overallDelta > 0 ? '\u25B2' : '\u25BC';
-    var wcDetails = whatChanged.changes.map(function(c) { return c.label + ' ' + (c.delta > 0 ? '+' : '') + c.delta; }).join(' \u00B7 ');
-    h += '<div style="margin-top:8px;padding:8px 12px;background:' + wcColor + '15;border:1px solid ' + wcColor + '30;border-radius:8px">';
-    h += '<div style="font-size:11px;color:' + wcColor + ';font-weight:600">' + wcArrow + ' Score ' + (whatChanged.overallDelta > 0 ? 'up' : 'down') + ' ' + Math.abs(whatChanged.overallDelta) + ' since last update</div>';
-    h += '<div style="font-size:10px;color:rgba(237,235,231,.5);margin-top:2px">' + wcDetails + '</div>';
+    var wcCol = whatChanged.overallDelta > 0 ? '#5E8B6F' : '#B85C5C';
+    var wcArr = whatChanged.overallDelta > 0 ? '\u25B2' : '\u25BC';
+    h += '<div style="margin-top:8px;padding:8px 12px;background:' + wcCol + '18;border-radius:10px;animation:cmSlideDown .5s ease both">';
+    h += '<div style="font-size:11px;color:' + wcCol + ';font-weight:600">' + wcArr + ' Score ' + (whatChanged.overallDelta > 0 ? 'up' : 'down') + ' ' + Math.abs(whatChanged.overallDelta) + ' since last update</div>';
+    var wcParts = whatChanged.changes.slice(0, 3).map(function(c) { return c.label + ' ' + (c.delta > 0 ? '+' : '') + c.delta; });
+    h += '<div style="font-size:9px;color:rgba(237,235,231,.4);margin-top:2px">' + wcParts.join(' \u00B7 ') + '</div>';
     h += '</div>';
   }
 
-  // Goal row
-  var goalLabel = goalLabels[cp.goal] || 'Build your career';
-  h += '<div style="display:flex;align-items:center;gap:6px;margin-top:8px">';
-  h += '<span style="font-size:11px;color:rgba(237,235,231,.5)">\uD83C\uDFAF ' + goalLabel + '</span>';
-  h += '<span onclick="showUpdateProfile()" style="margin-left:auto;font-size:10px;color:var(--accent);cursor:pointer">Edit \u2192</span>';
+  // Goal — subtle
+  h += '<div style="display:flex;align-items:center;margin-top:10px">';
+  h += '<span style="font-size:10px;color:rgba(237,235,231,.35)">\uD83C\uDFAF ' + (goalLabels[cp.goal] || 'Build your career') + '</span>';
+  h += '<span onclick="showUpdateProfile()" style="margin-left:auto;font-size:10px;color:rgba(198,168,94,.7);cursor:pointer">Edit</span>';
   h += '</div>';
-  h += '</div></div>';
+
+  h += '</div>';
 
   // ========================================
-  // CARD 2: NEXT DEADLINE COUNTDOWN (always visible)
+  // COUNTDOWN — The visual star
   // ========================================
-  var nextCritical = deadlines.find(function(d) { return !d.isPast && (d.urgency === 'critical' || d.urgency === 'high'); });
-  if (nextCritical) {
-    var daysColor = nextCritical.daysAway <= 14 ? 'var(--red)' : nextCritical.daysAway <= 30 ? '#C6A85E' : '#5E8B6F';
-    h += '<div style="background:#fff;border:1px solid #E8E1D8;border-radius:14px;padding:14px 16px;margin-bottom:10px;box-shadow:0 2px 6px rgba(0,0,0,.04)">';
-    h += '<div style="display:flex;align-items:center;gap:12px">';
-    h += '<div style="text-align:center;min-width:50px">';
-    h += '<div style="font-size:26px;font-weight:800;color:' + daysColor + ';font-family:var(--font-serif);line-height:1">' + Math.max(0, nextCritical.daysAway) + '</div>';
-    h += '<div style="font-size:8px;font-weight:600;color:' + daysColor + ';text-transform:uppercase;letter-spacing:.5px">days</div></div>';
-    h += '<div style="flex:1;border-left:2px solid #E8E1D8;padding-left:12px">';
-    h += '<div style="font-size:12px;font-weight:600;color:#1C1A17;line-height:1.3">' + nextCritical.title + '</div>';
-    h += '<div style="font-size:10px;color:#8A8278;margin-top:2px;line-height:1.4">' + nextCritical.desc + '</div>';
-    if (nextCritical.tool) h += '<div onclick="openFramework(\'' + nextCritical.tool + '\')" style="margin-top:4px;font-size:10px;color:#C6A85E;font-weight:600;cursor:pointer">Prepare \u2192</div>';
+  var nextCrit = deadlines.find(function(d) { return !d.isPast && (d.urgency === 'critical' || d.urgency === 'high'); });
+  if (nextCrit) {
+    var dCol = nextCrit.daysAway <= 14 ? '#B85C5C' : nextCrit.daysAway <= 30 ? '#C6A85E' : '#5E8B6F';
+    h += '<div class="cm-card">';
+    h += '<div style="display:flex;align-items:center;gap:16px">';
+    h += '<div style="text-align:center;min-width:60px">';
+    h += '<div style="font-size:32px;font-weight:800;color:' + dCol + ';font-family:var(--font-serif);line-height:1">' + Math.max(0, nextCrit.daysAway) + '</div>';
+    h += '<div style="font-size:9px;font-weight:700;color:' + dCol + ';text-transform:uppercase;letter-spacing:.5px;margin-top:1px">days</div>';
+    h += '</div>';
+    h += '<div style="flex:1;border-left:2px solid #E8E1D8;padding-left:14px">';
+    h += '<div style="font-size:13px;font-weight:600;color:#1C1A17;line-height:1.3">' + nextCrit.title + '</div>';
+    h += '<div style="font-size:11px;color:#8A8278;margin-top:3px;line-height:1.4">' + nextCrit.desc + '</div>';
+    if (nextCrit.tool) h += '<div onclick="openFramework(\'' + nextCrit.tool + '\');event.stopPropagation()" style="margin-top:6px" class="cm-action">Prepare \u2192</div>';
     h += '</div></div></div>';
   }
 
   // ========================================
-  // CARD 3: #1 PRIORITY (always visible, just the top one)
+  // CARD 1: DO THIS NOW
   // ========================================
   if (priorities.length) {
-    var p1 = priorities[0];
-    h += '<div style="background:#fff;border:1px solid #E8E1D8;border-radius:14px;padding:14px 16px;margin-bottom:10px;box-shadow:0 2px 6px rgba(0,0,0,.04);cursor:' + (p1.tool ? 'pointer' : 'default') + '"' + (p1.tool ? ' onclick="openFramework(\'' + p1.tool + '\')"' : '') + '>';
-    h += '<div style="font-size:9px;font-weight:600;color:#C6A85E;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">\u2757 Top Priority This Month</div>';
-    h += '<div style="font-size:13px;font-weight:600;color:#1C1A17;line-height:1.3">' + p1.title + '</div>';
-    h += '<div style="font-size:11px;color:#8A8278;margin-top:3px;line-height:1.4">' + p1.desc + '</div>';
-    if (p1.tool) h += '<div style="margin-top:6px;font-size:11px;color:#C6A85E;font-weight:600">Take action \u2192</div>';
-    h += '</div>';
-  }
-
-  // ========================================
-  // EXPANDABLE SECTION: "See Your Full Career Map"
-  // Everything below is inside a collapsible container
-  // ========================================
-  var hasMore = priorities.length > 1 || progress.length || financial.hasData || whatIf.length;
-  if (hasMore) {
-    h += '<div id="cm-expand-btn" onclick="var s=document.getElementById(\'cm-expand-content\');var b=document.getElementById(\'cm-expand-btn\');s.style.display=s.style.display===\'none\'?\'\':\'none\';b.style.display=\'none\'" style="text-align:center;padding:10px;margin-bottom:10px;cursor:pointer;background:#fff;border:1px solid #E8E1D8;border-radius:14px;box-shadow:0 2px 6px rgba(0,0,0,.04);transition:border-color .15s" onmouseenter="this.style.borderColor=\'#C6A85E\'" onmouseleave="this.style.borderColor=\'#E8E1D8\'">';
-    h += '<div style="font-size:12px;font-weight:600;color:#1C1A17">\u25BC See Your Full Career Map</div>';
-    h += '<div style="font-size:10px;color:#8A8278;margin-top:2px">Priorities \u00B7 Progress \u00B7 Finances \u00B7 Deadlines \u00B7 Tools</div>';
-    h += '</div>';
-    h += '<div id="cm-expand-content" style="display:none">';
-  }
-  // --- EXPANDED CONTENT STARTS ---
-
-  // ========================================
-  // SECTION A: ALL PRIORITIES (2-5)
-  // ========================================
-  if (priorities.length > 1) {
-    h += '<div style="background:#fff;border:1px solid #E8E1D8;border-radius:14px;padding:14px 16px;margin-bottom:10px;box-shadow:0 2px 6px rgba(0,0,0,.04)">';
-    h += '<div style="font-size:9px;font-weight:600;color:#C6A85E;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">\uD83D\uDCCB More Priorities</div>';
-    priorities.slice(1, 5).forEach(function(p, i) {
-      var barCol = i === 0 ? '#8BB4A0' : '#8A8278';
-      h += '<div style="display:flex;gap:8px;padding:8px 10px;background:#F8F5F0;border-radius:8px;margin-bottom:4px;border-left:3px solid ' + barCol + ';cursor:' + (p.tool ? 'pointer' : 'default') + '"' + (p.tool ? ' onclick="openFramework(\'' + p.tool + '\')"' : '') + '>';
-      h += '<div style="font-size:12px;font-weight:700;color:#C6A85E;flex-shrink:0;width:16px;text-align:center">' + (i + 2) + '</div>';
-      h += '<div style="flex:1"><div style="font-size:11px;font-weight:600;color:#1C1A17;line-height:1.3">' + p.title + '</div>';
-      h += '<div style="font-size:10px;color:#8A8278;margin-top:1px;line-height:1.3">' + p.desc + '</div></div>';
-      if (p.urgency === 'critical') h += '<span style="font-size:7px;padding:1px 4px;background:rgba(192,96,96,.1);color:var(--red);border-radius:4px;font-weight:600;flex-shrink:0;align-self:flex-start">URGENT</span>';
+    h += '<div class="cm-card">';
+    h += '<div class="cm-label">Do This Now</div>';
+    priorities.slice(0, 3).forEach(function(p, i) {
+      var isUrgent = p.urgency === 'critical';
+      h += '<div style="display:flex;gap:10px;padding:10px 12px;background:' + (i === 0 ? '#F8F5F0' : 'transparent') + ';border-radius:10px;margin-bottom:' + (i < 2 ? '6' : '0') + 'px;cursor:' + (p.tool ? 'pointer' : 'default') + '"' + (p.tool ? ' onclick="openFramework(\'' + p.tool + '\')"' : '') + '>';
+      h += '<div style="font-size:14px;font-weight:700;color:' + (i === 0 ? '#C6A85E' : '#A89F91') + ';flex-shrink:0;width:18px;text-align:center;line-height:1.4">' + (i + 1) + '</div>';
+      h += '<div style="flex:1"><div style="font-size:12px;font-weight:600;color:#1C1A17;line-height:1.35">' + p.title + '</div>';
+      h += '<div style="font-size:10px;color:#8A8278;margin-top:2px;line-height:1.35">' + p.desc + '</div></div>';
+      if (isUrgent) h += '<span style="font-size:7px;padding:2px 5px;background:#B85C5C18;color:#B85C5C;border-radius:4px;font-weight:700;flex-shrink:0;align-self:flex-start;margin-top:3px">URGENT</span>';
       h += '</div>';
     });
+    if (priorities.length > 3 || true) {
+      h += '<div style="text-align:right;margin-top:8px"><span onclick="hwOpenSheet(\'priorities\')" class="cm-action">See all priorities \u2192</span></div>';
+    }
     h += '</div>';
   }
 
   // ========================================
-  // SECTION B: WHERE YOU STAND (with sparklines)
+  // CARD 2: YOUR PROGRESS
   // ========================================
-  if (progress.length) {
-    h += '<div style="background:#fff;border:1px solid #E8E1D8;border-radius:14px;padding:14px 16px;margin-bottom:10px;box-shadow:0 2px 6px rgba(0,0,0,.04)">';
-    h += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">';
-    h += '<div style="font-size:9px;font-weight:600;color:#C6A85E;text-transform:uppercase;letter-spacing:1px">' + (stage === 'attending' ? '\uD83D\uDCB0 Financial Health' : '\uD83D\uDCCA Where You Stand') + '</div>';
-    h += '<span onclick="showUpdateProfile()" style="font-size:9px;color:#C6A85E;cursor:pointer;font-weight:600">Update \u2192</span>';
+  if (progress.length || scores.competitiveness) {
+    var statusCounts = { 'ahead': 0, 'on-track': 0, 'gap': 0, 'behind': 0 };
+    progress.forEach(function(p) { if (statusCounts[p.status] !== undefined) statusCounts[p.status]++; });
+    var summaryParts = [];
+    var good = statusCounts['ahead'] + statusCounts['on-track'];
+    if (good) summaryParts.push(good + ' on track');
+    if (statusCounts['gap']) summaryParts.push(statusCounts['gap'] + ' gap' + (statusCounts['gap'] > 1 ? 's' : ''));
+    if (statusCounts['behind']) summaryParts.push(statusCounts['behind'] + ' behind');
+
+    h += '<div class="cm-card">';
+    h += '<div style="display:flex;align-items:center;justify-content:space-between">';
+    h += '<div class="cm-label" style="margin-bottom:0">Your Progress</div>';
+    if (summaryParts.length) h += '<div style="font-size:9px;color:#8A8278">' + summaryParts.join(' \u00B7 ') + '</div>';
     h += '</div>';
-    progress.forEach(function(p) {
-      var statusColors = { ahead: '#5E8B6F', 'on-track': '#5E8B6F', gap: '#C6A85E', behind: '#B85C5C' };
-      var statusLabels = { ahead: 'Ahead', 'on-track': 'On Track', gap: 'Gap', behind: 'Behind' };
-      var col = statusColors[p.status] || '#8A8278';
-      h += '<div style="padding:6px 0;border-bottom:1px solid #F0ECE4">';
-      h += '<div style="display:flex;align-items:center;justify-content:space-between">';
-      h += '<span style="font-size:11px;font-weight:600;color:#1C1A17">' + p.label + '</span>';
-      h += '<div style="display:flex;align-items:center;gap:4px">';
-      h += '<span style="font-size:11px;font-weight:700;color:' + col + '">' + p.you + '</span>';
-      h += '<span style="font-size:9px;color:#8A8278">/ ' + p.target + '</span>';
-      h += '<span style="font-size:7px;padding:1px 4px;background:' + col + '15;color:' + col + ';border-radius:3px;font-weight:600">' + (statusLabels[p.status] || '') + '</span>';
+    h += '<div style="margin-top:10px">';
+
+    // Score dimension bars with sparklines
+    var dims = [
+      { k: 'competitiveness', l: stage === 'attending' ? 'Market Position' : 'Competitiveness' },
+      { k: 'research', l: 'Research' },
+      { k: 'readiness', l: stage === 'attending' ? 'Career' : 'Readiness' },
+      { k: 'financial', l: 'Financial' }
+    ];
+    dims.forEach(function(dim) {
+      var val = scores[dim.k] || 0;
+      var barCol = val >= 75 ? '#5E8B6F' : val >= 55 ? '#C6A85E' : '#B85C5C';
+      var spark = (U.scoreHistory && U.scoreHistory.length > 1) ? hwRenderSparkline(U.scoreHistory, dim.k, 44, 14) : '';
+      h += '<div style="margin-bottom:8px">';
+      h += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px">';
+      h += '<span style="font-size:10px;color:#5A5549">' + dim.l + '</span>';
+      h += '<div style="display:flex;align-items:center;gap:5px">';
+      if (spark) h += spark;
+      h += '<span style="font-size:11px;font-weight:700;color:' + barCol + ';min-width:20px;text-align:right">' + val + '</span>';
       h += '</div></div>';
-      if (p.detail) h += '<div style="font-size:9px;color:#8A8278;margin-top:1px">' + p.detail + '</div>';
-      h += '</div>';
+      h += '<div style="height:5px;background:#EDEAE4;border-radius:3px;overflow:hidden">';
+      h += '<div style="height:100%;width:' + val + '%;background:' + barCol + ';border-radius:3px;--bar-w:' + val + '%;animation:cmBarGrow .6s ease both"></div>';
+      h += '</div></div>';
     });
+    h += '</div>';
+    h += '<div style="text-align:right;margin-top:4px"><span onclick="hwOpenSheet(\'progress\')" class="cm-action">See details \u2192</span></div>';
     h += '</div>';
   }
 
   // ========================================
-  // SECTION C: WHAT-IF SIMULATOR
+  // CARD 3: COMING UP
   // ========================================
-  if (whatIf.length) {
-    h += '<div style="background:#fff;border:1px solid #E8E1D8;border-radius:14px;padding:14px 16px;margin-bottom:10px;box-shadow:0 2px 6px rgba(0,0,0,.04)">';
-    h += '<div style="font-size:9px;font-weight:600;color:#C6A85E;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">\uD83D\uDD2E What If You...</div>';
-    whatIf.forEach(function(w) {
-      h += '<div style="display:flex;align-items:center;justify-content:space-between;padding:5px 0;border-bottom:1px solid #F0ECE4">';
-      h += '<span style="font-size:11px;color:#1C1A17">' + w.label + '</span>';
-      h += '<span style="font-size:11px;font-weight:700;color:#5E8B6F">Score: ' + overall + ' \u2192 ' + w.newScore + ' <span style="font-size:9px">(+' + w.delta + ')</span></span>';
-      h += '</div>';
-    });
-    h += '<div style="font-size:9px;color:#8A8278;margin-top:6px;text-align:center">Update your profile after making changes to see your score move</div>';
-    h += '</div>';
+  var upcoming = deadlines.filter(function(d) { return !d.isPast && d.daysAway <= 180; }).slice(0, 3);
+  var conferences = hwGetConferenceDeadlines(cp);
+  var costWait = hwGetCostOfWaiting(cp);
+  // Mix in nearest conference if not already in deadlines
+  if (conferences.length && upcoming.length < 3) {
+    var nearConf = conferences.find(function(c) { return c.daysToAbstract && c.daysToAbstract > 0 && c.daysToAbstract <= 120; });
+    if (nearConf) upcoming.push({ title: nearConf.name + ' Abstract', daysAway: nearConf.daysToAbstract, category: 'application', isPast: false, urgency: nearConf.daysToAbstract <= 30 ? 'high' : 'normal', date: nearConf.abstractDeadline });
+    upcoming.sort(function(a, b) { return a.daysAway - b.daysAway; });
+    upcoming = upcoming.slice(0, 3);
   }
 
-  // ========================================
-  // SECTION D: FINANCIAL SNAPSHOT + COST OF WAITING
-  // ========================================
-  if (financial.hasData || costWait.length) {
-    h += '<div style="background:#fff;border:1px solid #E8E1D8;border-radius:14px;padding:14px 16px;margin-bottom:10px;box-shadow:0 2px 6px rgba(0,0,0,.04)">';
-    h += '<div style="font-size:9px;font-weight:600;color:#C6A85E;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">\uD83D\uDCB5 Financial Snapshot</div>';
-    if (financial.hasData) {
-      financial.lines.forEach(function(l) {
-        h += '<div style="display:flex;align-items:center;justify-content:space-between;padding:' + (l.sub ? '1px 0 1px 14px' : '4px 0') + '">';
-        h += '<span style="font-size:' + (l.sub ? '10' : '11') + 'px;color:' + (l.sub ? '#8A8278' : '#1C1A17') + '">' + l.label + '</span>';
-        h += '<span style="font-size:' + (l.sub ? '10' : '12') + 'px;font-weight:' + (l.sub ? '500' : '700') + ';color:' + l.color + '">' + l.value + '</span>';
-        h += '</div>';
-      });
-    }
-    // Cost of Waiting
+  if (upcoming.length || costWait.length) {
+    h += '<div class="cm-card">';
+    h += '<div class="cm-label">Coming Up</div>';
+    var catIcons = { application: '\uD83D\uDCDD', exam: '\uD83D\uDCDA', career: '\uD83D\uDCBC', financial: '\uD83D\uDCB0' };
+    upcoming.forEach(function(d, i) {
+      var dayCol = d.daysAway <= 14 ? '#B85C5C' : d.daysAway <= 30 ? '#C6A85E' : '#5E8B6F';
+      h += '<div style="display:flex;align-items:center;gap:10px;padding:6px 0;' + (i < upcoming.length - 1 || costWait.length ? 'border-bottom:1px solid #EDEAE4;' : '') + '">';
+      h += '<span style="font-size:11px;font-weight:700;color:' + dayCol + ';min-width:34px;text-align:center">' + d.daysAway + 'd</span>';
+      h += '<span style="font-size:11px;color:#1C1A17;flex:1">' + d.title + '</span>';
+      h += '<span style="font-size:11px">' + (catIcons[d.category] || '\uD83D\uDCCC') + '</span>';
+      h += '</div>';
+    });
+    // One cost-of-waiting line (the most impactful)
     if (costWait.length) {
-      h += '<div style="margin-top:8px;padding-top:8px;border-top:1px solid #F0ECE4">';
-      h += '<div style="font-size:9px;font-weight:600;color:#B85C5C;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">\u23F0 Cost of Waiting</div>';
-      costWait.forEach(function(c) {
-        h += '<div style="display:flex;align-items:center;justify-content:space-between;padding:3px 0;cursor:' + (c.tool ? 'pointer' : 'default') + '"' + (c.tool ? ' onclick="openFramework(\'' + c.tool + '\')"' : '') + '>';
-        h += '<span style="font-size:10px;color:#1C1A17">' + c.label + '</span>';
-        h += '<span style="font-size:10px;font-weight:600;color:#B85C5C">' + c.cost + '</span>';
-        h += '</div>';
-      });
+      var topCost = costWait[0];
+      h += '<div style="display:flex;align-items:center;gap:10px;padding:8px 0 0;cursor:' + (topCost.tool ? 'pointer' : 'default') + '"' + (topCost.tool ? ' onclick="openFramework(\'' + topCost.tool + '\')"' : '') + '>';
+      h += '<span style="font-size:11px;min-width:34px;text-align:center">\u23F0</span>';
+      h += '<span style="font-size:10px;color:#5A5549;flex:1">' + topCost.label + '</span>';
+      h += '<span style="font-size:10px;font-weight:600;color:#B85C5C">' + topCost.cost + '</span>';
       h += '</div>';
     }
-    h += '<div onclick="openFramework(\'v11\')" style="margin-top:6px;text-align:center;font-size:10px;color:#C6A85E;cursor:pointer;font-weight:600">Run Full Financial Projection \u2192</div>';
+    h += '<div style="text-align:right;margin-top:8px"><span onclick="hwOpenSheet(\'timeline\')" class="cm-action">See timeline \u2192</span></div>';
     h += '</div>';
   }
 
   // ========================================
-  // SECTION E: SCORE BREAKDOWN (with sparklines)
+  // QUICK ACTIONS
   // ========================================
-  var dims = [
-    { k: 'competitiveness', l: 'Competitiveness', desc: stage === 'attending' ? 'Market position' : 'Match readiness' },
-    { k: 'research', l: 'Research', desc: 'Publications & scholarly work' },
-    { k: 'readiness', l: 'Readiness', desc: stage === 'attending' ? 'Career optimization' : 'Application strength' },
-    { k: 'financial', l: 'Financial', desc: 'Financial health' }
-  ];
-  h += '<div style="background:#fff;border:1px solid #E8E1D8;border-radius:14px;padding:14px 16px;margin-bottom:10px;box-shadow:0 2px 6px rgba(0,0,0,.04)">';
-  h += '<div style="font-size:9px;font-weight:600;color:#C6A85E;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">\uD83D\uDCC8 Career Score Breakdown</div>';
-  dims.forEach(function(dim) {
-    var val = scores[dim.k] || 0;
-    var barColor = val >= 75 ? '#5E8B6F' : val >= 55 ? '#C6A85E' : '#B85C5C';
-    var spark = (U.scoreHistory && U.scoreHistory.length > 1) ? hwRenderSparkline(U.scoreHistory, dim.k, 50, 16) : '';
-    h += '<div style="margin-bottom:8px">';
-    h += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px">';
-    h += '<span style="font-size:10px;color:#1C1A17">' + dim.l + '</span>';
-    h += '<div style="display:flex;align-items:center;gap:6px">';
-    if (spark) h += spark;
-    h += '<span style="font-size:11px;font-weight:700;color:' + barColor + '">' + val + '</span>';
-    h += '</div></div>';
-    h += '<div style="height:5px;background:#F0ECE4;border-radius:3px;overflow:hidden">';
-    h += '<div style="height:100%;width:' + val + '%;background:' + barColor + ';border-radius:3px;transition:width .6s ease"></div>';
-    h += '</div>';
-    h += '</div>';
-  });
+  h += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;animation:cmFadeUp .4s ease .36s both">';
+  h += '<div onclick="navTo(\'scr-ask\')" style="background:#fff;border-radius:16px;padding:14px;text-align:center;cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,.06);transition:box-shadow .15s" ontouchstart="this.style.boxShadow=\'0 0 0 2px #C6A85E40\'" ontouchend="this.style.boxShadow=\'0 1px 4px rgba(0,0,0,.06)\'" onmousedown="this.style.boxShadow=\'0 0 0 2px #C6A85E40\'" onmouseup="this.style.boxShadow=\'0 1px 4px rgba(0,0,0,.06)\'">';
+  h += '<div style="font-size:18px;margin-bottom:3px">\uD83E\uDDE0</div>';
+  h += '<div style="font-size:11px;font-weight:600;color:#1C1A17">Ask</div></div>';
+  h += '<div onclick="navTo(\'scr-vault\')" style="background:#fff;border-radius:16px;padding:14px;text-align:center;cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,.06);transition:box-shadow .15s" ontouchstart="this.style.boxShadow=\'0 0 0 2px #C6A85E40\'" ontouchend="this.style.boxShadow=\'0 1px 4px rgba(0,0,0,.06)\'" onmousedown="this.style.boxShadow=\'0 0 0 2px #C6A85E40\'" onmouseup="this.style.boxShadow=\'0 1px 4px rgba(0,0,0,.06)\'">';
+  h += '<div style="font-size:18px;margin-bottom:3px">\uD83D\uDD27</div>';
+  h += '<div style="font-size:11px;font-weight:600;color:#1C1A17">Career Tools</div></div>';
   h += '</div>';
 
-  // ========================================
-  // SECTION F: DEADLINES + CONFERENCES
-  // ========================================
-  var upcoming = deadlines.filter(function(d) { return !d.isPast && d.daysAway <= 180; }).slice(0, 6);
-  if (upcoming.length || conferences.length) {
-    h += '<div style="background:#fff;border:1px solid #E8E1D8;border-radius:14px;padding:14px 16px;margin-bottom:10px;box-shadow:0 2px 6px rgba(0,0,0,.04)">';
-    h += '<div style="font-size:9px;font-weight:600;color:#C6A85E;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">\uD83D\uDCC5 Upcoming Deadlines</div>';
-    upcoming.forEach(function(d) {
-      var dateStr = d.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-      var dayColor = d.daysAway <= 14 ? 'var(--red)' : d.daysAway <= 30 ? '#C6A85E' : '#5E8B6F';
-      var catIcons = { application: '\uD83D\uDCDD', exam: '\uD83D\uDCDA', career: '\uD83D\uDCBC', financial: '\uD83D\uDCB0' };
-      h += '<div style="display:flex;align-items:center;gap:8px;padding:4px 0;border-bottom:1px solid #F0ECE4;cursor:' + (d.tool ? 'pointer' : 'default') + '"' + (d.tool ? ' onclick="openFramework(\'' + d.tool + '\')"' : '') + '>';
-      h += '<span style="font-size:10px;font-weight:700;color:' + dayColor + ';min-width:32px;text-align:center">' + d.daysAway + 'd</span>';
-      h += '<div style="flex:1"><span style="font-size:10px;font-weight:600;color:#1C1A17">' + d.title + '</span>';
-      h += '<span style="font-size:9px;color:#8A8278"> \u00B7 ' + dateStr + '</span></div>';
-      h += '<span style="font-size:10px">' + (catIcons[d.category] || '\uD83D\uDCCC') + '</span>';
-      h += '</div>';
-    });
-    // Conferences
-    if (conferences.length) {
-      h += '<div style="margin-top:8px;padding-top:6px;border-top:1px solid #E8E1D8">';
-      h += '<div style="font-size:8px;font-weight:600;color:#8A8278;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">\uD83C\uDFE5 Specialty Conferences</div>';
-      conferences.slice(0, 4).forEach(function(c) {
-        var confDate = c.date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
-        h += '<div style="display:flex;align-items:center;justify-content:space-between;padding:3px 0">';
-        h += '<div style="flex:1"><span style="font-size:10px;font-weight:600;color:#1C1A17">' + c.name + '</span>';
-        h += '<span style="font-size:9px;color:#8A8278"> \u00B7 ' + confDate + '</span></div>';
-        if (c.daysToAbstract !== null && c.daysToAbstract > 0) {
-          var abColor = c.daysToAbstract <= 30 ? 'var(--red)' : c.daysToAbstract <= 60 ? '#C6A85E' : '#8A8278';
-          h += '<span style="font-size:9px;color:' + abColor + ';font-weight:600">Abstract: ' + c.daysToAbstract + 'd</span>';
-        } else if (c.daysToConf > 0 && c.daysToConf <= 60) {
-          h += '<span style="font-size:9px;color:#5E8B6F;font-weight:600">In ' + c.daysToConf + ' days</span>';
-        }
-        h += '</div>';
-      });
-      h += '</div>';
-    }
-    // View all toggle
-    var allDls = deadlines.filter(function(d) { return !d.isPast; });
-    if (allDls.length > 6) {
-      h += '<div id="cm-all-dl" style="display:none;margin-top:6px">';
-      allDls.slice(6).forEach(function(d) {
-        var ds = d.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-        h += '<div style="display:flex;align-items:center;gap:8px;padding:3px 0;border-bottom:1px solid #F0ECE4">';
-        h += '<span style="font-size:10px;font-weight:700;color:#8A8278;min-width:32px;text-align:center">' + d.daysAway + 'd</span>';
-        h += '<span style="font-size:10px;color:#1C1A17;flex:1">' + d.title + ' \u00B7 ' + ds + '</span></div>';
-      });
-      h += '</div>';
-      h += '<div onclick="var m=document.getElementById(\'cm-all-dl\');m.style.display=m.style.display===\'none\'?\'\':\'none\';this.textContent=m.style.display===\'none\'?\'View all ' + allDls.length + ' deadlines \u2192\':\'Show less\'" style="text-align:center;font-size:10px;color:#C6A85E;cursor:pointer;font-weight:600;padding-top:4px">View all ' + allDls.length + ' deadlines \u2192</div>';
-    }
-    h += '</div>';
-  }
-
-  // ========================================
-  // SECTION G: SMART TOOL RECOMMENDATIONS
-  // ========================================
-  if (smartRecs.length) {
-    h += '<div style="background:#fff;border:1px solid #E8E1D8;border-radius:14px;padding:14px 16px;margin-bottom:10px;box-shadow:0 2px 6px rgba(0,0,0,.04)">';
-    h += '<div style="font-size:9px;font-weight:600;color:#C6A85E;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">\uD83D\uDEE0\uFE0F Recommended For You</div>';
-    smartRecs.forEach(function(rec) {
-      h += '<div onclick="openFramework(\'' + rec.tool + '\')" style="padding:10px;background:#F8F5F0;border-radius:8px;margin-bottom:6px;cursor:pointer;border-left:3px solid #C6A85E;transition:background .15s" onmouseenter="this.style.background=\'#F0ECE4\'" onmouseleave="this.style.background=\'#F8F5F0\'">';
-      h += '<div style="font-size:11px;font-weight:600;color:#1C1A17">' + rec.title + '</div>';
-      h += '<div style="font-size:10px;color:#8A8278;margin-top:2px;line-height:1.3">' + rec.reason + '</div>';
-      h += '<div style="font-size:10px;color:#C6A85E;font-weight:600;margin-top:4px">Run tool \u2192</div>';
-      h += '</div>';
-    });
-    h += '</div>';
-  }
-
-  // ========================================
-  // SECTION H: RE-RUN REMINDERS
-  // ========================================
-  var th2 = U.toolHistory || [];
-  if (th2.length > 0) {
-    var lastRuns2 = {};
-    th2.forEach(function(t) { lastRuns2[t.tool] = new Date(t.date); });
-    var retoolDays2 = { 'Match Competitiveness Calculator': 30, 'RVU Compensation Calculator': 60, 'Contract Review Tool': 90, 'Financial Projection Tool': 90, 'Specialty Fit Assessment': 60, 'Research Impact Calculator': 45 };
-    var staleTools2 = [];
-    Object.keys(lastRuns2).forEach(function(tool) {
-      var rec2 = retoolDays2[tool];
-      if (rec2) {
-        var ds = Math.floor((new Date() - lastRuns2[tool]) / 86400000);
-        if (ds >= rec2) staleTools2.push({ tool: tool, daysSince: ds, recommended: rec2 });
-      }
-    });
-    if (staleTools2.length) {
-      staleTools2.sort(function(a, b) { return b.daysSince - a.daysSince; });
-      h += '<div style="background:#fff;border:1px solid #E8E1D8;border-radius:14px;padding:14px 16px;margin-bottom:10px;box-shadow:0 2px 6px rgba(0,0,0,.04)">';
-      h += '<div style="font-size:9px;font-weight:600;color:#C6A85E;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">\uD83D\uDD04 Time to Re-run</div>';
-      staleTools2.slice(0, 2).forEach(function(s) {
-        var tid = null;
-        if (typeof VAULT_ITEMS !== 'undefined') { var vi2 = VAULT_ITEMS.find(function(v) { return v.title === s.tool; }); if (vi2) tid = vi2.id; }
-        h += '<div' + (tid ? ' onclick="openFramework(\'' + tid + '\')"' : '') + ' style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid #F0ECE4;cursor:pointer">';
-        h += '<div style="flex:1"><div style="font-size:10px;font-weight:600;color:#1C1A17">' + s.tool + '</div>';
-        h += '<div style="font-size:9px;color:#8A8278">Last run ' + s.daysSince + 'd ago</div></div>';
-        h += '<span style="font-size:10px;color:#C6A85E;font-weight:600">Re-run \u2192</span></div>';
-      });
-      h += '</div>';
-    }
-  }
-
-  // ========================================
-  // SECTION I: KEY INSIGHT
-  // ========================================
-  var insight = hwGetKeyInsight(cp, scores, spec, deadlines);
-  if (insight) {
-    h += '<div style="background:#111318;border-radius:14px;padding:14px 16px;margin-bottom:10px;position:relative;overflow:hidden">';
-    h += '<div style="position:absolute;bottom:-20px;right:-20px;width:80px;height:80px;background:radial-gradient(circle,rgba(198,168,94,.08),transparent 60%);border-radius:50%"></div>';
-    h += '<div style="position:relative">';
-    h += '<div style="font-size:9px;font-weight:600;color:#C6A85E;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">\uD83D\uDCA1 Key Insight</div>';
-    h += '<div style="font-size:12px;color:rgba(237,235,231,.85);line-height:1.5">' + insight + '</div>';
-    h += '</div></div>';
-  }
-
-  // ========================================
-  // QUICK ACTIONS + MILESTONES
-  // ========================================
-  h += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">';
-  h += '<div onclick="navTo(\'scr-ask\')" style="background:#fff;border:1px solid #E8E1D8;border-radius:12px;padding:12px;text-align:center;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.04);transition:border-color .15s" onmouseenter="this.style.borderColor=\'#C6A85E\'" onmouseleave="this.style.borderColor=\'#E8E1D8\'">';
-  h += '<div style="font-size:16px;margin-bottom:2px">\uD83E\uDDE0</div>';
-  h += '<div style="font-size:10px;font-weight:600;color:#1C1A17">Ask a Question</div></div>';
-  h += '<div onclick="navTo(\'scr-vault\')" style="background:#fff;border:1px solid #E8E1D8;border-radius:12px;padding:12px;text-align:center;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.04);transition:border-color .15s" onmouseenter="this.style.borderColor=\'#C6A85E\'" onmouseleave="this.style.borderColor=\'#E8E1D8\'">';
-  h += '<div style="font-size:16px;margin-bottom:2px">\uD83D\uDD27</div>';
-  h += '<div style="font-size:10px;font-weight:600;color:#1C1A17">Career Tools</div></div>';
-  h += '</div>';
-
-  // Milestone progress mini-bar
-  if (U.milestones && U.milestones.length) {
-    var done = U.milestones.filter(function(m) { return m.done; }).length;
-    var total = U.milestones.length;
-    var pct = Math.round((done / total) * 100);
-    h += '<div onclick="var dt=document.getElementById(\'dash-detail-toggle\');if(dt){dt.scrollIntoView({behavior:\'smooth\'});setTimeout(function(){toggleDashDetails()},300)}" style="background:#fff;border:1px solid #E8E1D8;border-radius:12px;padding:12px 16px;margin-bottom:10px;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.04)">';
-    h += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">';
-    h += '<span style="font-size:10px;font-weight:600;color:#1C1A17">\u2705 Milestones</span>';
-    h += '<span style="font-size:10px;font-weight:600;color:#C6A85E">' + done + '/' + total + '</span></div>';
-    h += '<div style="height:4px;background:#F0ECE4;border-radius:2px;overflow:hidden">';
-    h += '<div style="height:100%;width:' + pct + '%;background:#5E8B6F;border-radius:2px;transition:width .6s"></div></div>';
-    h += '</div>';
-  }
-
-  // Close expandable section
-  if (hasMore) {
-    h += '</div>'; // end cm-expand-content
-  }
-
-  // LAST UPDATED
-  h += '<div onclick="showUpdateProfile()" style="text-align:center;padding:4px 0;cursor:pointer">';
-  h += '<span style="font-size:9px;color:#8A8278">Updated: ' + (cp.lastUpdated ? new Date(cp.lastUpdated).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : 'never') + '</span>';
-  h += ' <span style="font-size:9px;color:#C6A85E;font-weight:600">Update \u2192</span></div>';
+  // Last updated
+  h += '<div onclick="showUpdateProfile()" style="text-align:center;padding:2px 0;cursor:pointer;animation:cmFadeUp .4s ease .44s both">';
+  h += '<span style="font-size:9px;color:#A89F91">Updated ' + (cp.lastUpdated ? new Date(cp.lastUpdated).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : 'never') + '</span>';
+  h += ' <span style="font-size:9px;color:#C6A85E;font-weight:600">Update</span></div>';
 
   el.innerHTML = h;
   return true;
+}
+
+
+// ===== DETAIL SHEETS =====
+// Bottom-sheet modals for each section's deep dive
+
+function hwOpenSheet(type) {
+  // Remove existing sheet
+  var existing = document.getElementById('cm-sheet');
+  if (existing) existing.remove();
+
+  var cp = U.careerProfile || {};
+  var scores = calcDashScores(cp);
+  var stage = cp.stage || 'student';
+  var spec = hwFindSpecialty(cp.specialty);
+
+  var sheet = document.createElement('div');
+  sheet.id = 'cm-sheet';
+  sheet.className = 'cm-sheet';
+  sheet.innerHTML = '<div class="cm-sheet-bg" onclick="hwCloseSheet()"></div><div class="cm-sheet-body"><div class="cm-sheet-handle"></div><div id="cm-sheet-content"></div></div>';
+  document.body.appendChild(sheet);
+
+  var content = document.getElementById('cm-sheet-content');
+  var h = '';
+
+  if (type === 'priorities') {
+    h += hwSheetPriorities(cp, scores, spec);
+  } else if (type === 'progress') {
+    h += hwSheetProgress(cp, scores, spec);
+  } else if (type === 'timeline') {
+    h += hwSheetTimeline(cp, scores, spec);
+  }
+
+  // Close button
+  h += '<div style="text-align:center;padding:16px 0 0"><div onclick="hwCloseSheet()" style="display:inline-block;padding:10px 32px;border:1px solid #D4C9A8;border-radius:12px;font-size:12px;font-weight:600;color:#8A8278;cursor:pointer">Close</div></div>';
+
+  content.innerHTML = h;
+}
+
+function hwCloseSheet() {
+  var sheet = document.getElementById('cm-sheet');
+  if (sheet) sheet.remove();
+}
+
+// ===== PRIORITIES SHEET =====
+function hwSheetPriorities(cp, scores, spec) {
+  var deadlines = hwGetDeadlines(cp);
+  var priorities = hwGetMonthlyPriorities(cp, scores, deadlines);
+  var progress = hwGetProgressStatus(cp, scores);
+  var smartRecs = hwGetSmartToolRecs(cp, scores, progress);
+  var insight = hwGetKeyInsight(cp, scores, spec, deadlines);
+  var h = '';
+
+  h += '<div style="font-family:var(--font-serif);font-size:18px;font-weight:600;color:#1C1A17;margin-bottom:16px">Your Priorities</div>';
+
+  // All priorities
+  priorities.forEach(function(p, i) {
+    var barCol = i === 0 ? '#C6A85E' : i === 1 ? '#8BB4A0' : '#A89F91';
+    h += '<div style="display:flex;gap:10px;padding:12px;background:#fff;border-radius:12px;margin-bottom:8px;border-left:3px solid ' + barCol + ';box-shadow:0 1px 3px rgba(0,0,0,.04);cursor:' + (p.tool ? 'pointer' : 'default') + '"' + (p.tool ? ' onclick="openFramework(\'' + p.tool + '\');hwCloseSheet()"' : '') + '>';
+    h += '<div style="font-size:14px;font-weight:700;color:' + barCol + ';flex-shrink:0;width:18px;text-align:center">' + (i + 1) + '</div>';
+    h += '<div style="flex:1"><div style="font-size:12px;font-weight:600;color:#1C1A17;line-height:1.35">' + p.title + '</div>';
+    h += '<div style="font-size:11px;color:#8A8278;margin-top:2px;line-height:1.4">' + p.desc + '</div>';
+    if (p.tool) h += '<div style="font-size:10px;color:#C6A85E;font-weight:600;margin-top:4px">Open tool \u2192</div>';
+    h += '</div>';
+    if (p.urgency === 'critical') h += '<span style="font-size:7px;padding:2px 5px;background:#B85C5C18;color:#B85C5C;border-radius:4px;font-weight:700;flex-shrink:0;align-self:flex-start;margin-top:3px">URGENT</span>';
+    h += '</div>';
+  });
+
+  // Smart tool recommendations
+  if (smartRecs.length) {
+    h += '<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#A89F91;margin:20px 0 10px">Recommended For You</div>';
+    smartRecs.forEach(function(rec) {
+      h += '<div onclick="openFramework(\'' + rec.tool + '\');hwCloseSheet()" style="padding:12px;background:#fff;border-radius:12px;margin-bottom:8px;box-shadow:0 1px 3px rgba(0,0,0,.04);cursor:pointer;border-left:3px solid #C6A85E">';
+      h += '<div style="font-size:12px;font-weight:600;color:#1C1A17">' + rec.title + '</div>';
+      h += '<div style="font-size:11px;color:#8A8278;margin-top:2px;line-height:1.4">' + rec.reason + '</div>';
+      h += '<div style="font-size:10px;color:#C6A85E;font-weight:600;margin-top:4px">Run tool \u2192</div>';
+      h += '</div>';
+    });
+  }
+
+  // Key insight
+  if (insight) {
+    h += '<div style="margin-top:20px;padding:16px;background:#111318;border-radius:14px">';
+    h += '<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#C6A85E;margin-bottom:8px">\uD83D\uDCA1 Key Insight</div>';
+    h += '<div style="font-size:12px;color:rgba(237,235,231,.85);line-height:1.55">' + insight + '</div>';
+    h += '</div>';
+  }
+
+  return h;
+}
+
+// ===== PROGRESS SHEET =====
+function hwSheetProgress(cp, scores, spec) {
+  var progress = hwGetProgressStatus(cp, scores);
+  var whatIf = hwGetWhatIfScenarios(cp, scores);
+  var overall = Math.round((scores.competitiveness + scores.research + scores.readiness + scores.financial) / 4);
+  var h = '';
+
+  h += '<div style="font-family:var(--font-serif);font-size:18px;font-weight:600;color:#1C1A17;margin-bottom:16px">Your Progress</div>';
+
+  // Detailed progress table
+  if (progress.length) {
+    h += '<div style="background:#fff;border-radius:14px;padding:16px;box-shadow:0 1px 3px rgba(0,0,0,.04);margin-bottom:16px">';
+    progress.forEach(function(p, i) {
+      var statusColors = { ahead: '#5E8B6F', 'on-track': '#5E8B6F', gap: '#C6A85E', behind: '#B85C5C' };
+      var statusLabels = { ahead: 'Ahead', 'on-track': 'On Track', gap: 'Gap', behind: 'Behind' };
+      var col = statusColors[p.status] || '#8A8278';
+      h += '<div style="padding:10px 0;' + (i < progress.length - 1 ? 'border-bottom:1px solid #EDEAE4;' : '') + '">';
+      h += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px">';
+      h += '<span style="font-size:12px;font-weight:600;color:#1C1A17">' + p.label + '</span>';
+      h += '<div style="display:flex;align-items:center;gap:5px">';
+      h += '<span style="font-size:12px;font-weight:700;color:' + col + '">' + p.you + '</span>';
+      h += '<span style="font-size:10px;color:#8A8278">/ ' + p.target + '</span>';
+      h += '<span style="font-size:8px;padding:2px 6px;background:' + col + '15;color:' + col + ';border-radius:4px;font-weight:600">' + (statusLabels[p.status] || '') + '</span>';
+      h += '</div></div>';
+      if (p.detail) h += '<div style="font-size:10px;color:#8A8278;line-height:1.4">' + p.detail + '</div>';
+      h += '</div>';
+    });
+    h += '</div>';
+  }
+
+  // What-If Simulator
+  if (whatIf.length) {
+    h += '<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#A89F91;margin-bottom:10px">\uD83D\uDD2E What If You...</div>';
+    h += '<div style="background:#fff;border-radius:14px;padding:14px 16px;box-shadow:0 1px 3px rgba(0,0,0,.04);margin-bottom:16px">';
+    whatIf.forEach(function(w, i) {
+      h += '<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;' + (i < whatIf.length - 1 ? 'border-bottom:1px solid #EDEAE4;' : '') + '">';
+      h += '<span style="font-size:12px;color:#1C1A17">' + w.label + '</span>';
+      h += '<span style="font-size:12px;font-weight:700;color:#5E8B6F">' + overall + ' \u2192 ' + w.newScore + ' <span style="font-size:10px">(+' + w.delta + ')</span></span>';
+      h += '</div>';
+    });
+    h += '<div style="font-size:10px;color:#8A8278;margin-top:8px;text-align:center;line-height:1.4">Update your profile after making progress to watch your score move</div>';
+    h += '</div>';
+  }
+
+  // Score history (sparkline graph)
+  if (U.scoreHistory && U.scoreHistory.length > 1) {
+    h += '<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#A89F91;margin-bottom:10px">\uD83D\uDCC8 Score History</div>';
+    h += '<div style="background:#fff;border-radius:14px;padding:14px 16px;box-shadow:0 1px 3px rgba(0,0,0,.04);margin-bottom:16px">';
+    U.scoreHistory.forEach(function(sh, i) {
+      var ov = Math.round((sh.scores.competitiveness + sh.scores.research + sh.scores.readiness + sh.scores.financial) / 4);
+      var dt = new Date(sh.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: '2-digit' });
+      var prevOv = i > 0 ? Math.round((U.scoreHistory[i - 1].scores.competitiveness + U.scoreHistory[i - 1].scores.research + U.scoreHistory[i - 1].scores.readiness + U.scoreHistory[i - 1].scores.financial) / 4) : null;
+      var delta = prevOv !== null ? ov - prevOv : 0;
+      h += '<div style="display:flex;align-items:center;justify-content:space-between;padding:4px 0">';
+      h += '<span style="font-size:11px;color:#8A8278">' + dt + '</span>';
+      h += '<div style="display:flex;align-items:center;gap:6px">';
+      h += '<span style="font-size:12px;font-weight:700;color:#1C1A17">' + ov + '</span>';
+      if (delta !== 0) h += '<span style="font-size:10px;color:' + (delta > 0 ? '#5E8B6F' : '#B85C5C') + '">' + (delta > 0 ? '+' : '') + delta + '</span>';
+      h += '</div></div>';
+    });
+    h += '</div>';
+  }
+
+  // Milestones
+  if (U.milestones && U.milestones.length) {
+    var done = U.milestones.filter(function(m) { return m.done; }).length;
+    h += '<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#A89F91;margin-bottom:10px">\u2705 Milestones (' + done + '/' + U.milestones.length + ')</div>';
+    h += '<div style="background:#fff;border-radius:14px;padding:14px 16px;box-shadow:0 1px 3px rgba(0,0,0,.04)">';
+    U.milestones.forEach(function(m, i) {
+      h += '<div style="display:flex;align-items:center;gap:10px;padding:6px 0;' + (i < U.milestones.length - 1 ? 'border-bottom:1px solid #EDEAE4;' : '') + 'cursor:pointer" onclick="toggleMilestone(' + i + ');hwCloseSheet();setTimeout(function(){hwOpenSheet(\'progress\')},100)">';
+      h += '<div style="width:20px;height:20px;border-radius:6px;border:2px solid ' + (m.done ? '#5E8B6F' : '#D4C9A8') + ';display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;background:' + (m.done ? '#5E8B6F18' : 'transparent') + '">' + (m.done ? '\u2713' : '') + '</div>';
+      h += '<span style="font-size:12px;color:' + (m.done ? '#8A8278' : '#1C1A17') + ';' + (m.done ? 'text-decoration:line-through' : '') + '">' + m.label + '</span>';
+      if (m.done && m.date) h += '<span style="font-size:9px;color:#A89F91;margin-left:auto">' + new Date(m.date).toLocaleDateString('en-US', { month: 'short' }) + '</span>';
+      h += '</div>';
+    });
+    h += '</div>';
+  }
+
+  return h;
+}
+
+// ===== TIMELINE SHEET =====
+function hwSheetTimeline(cp, scores, spec) {
+  var deadlines = hwGetDeadlines(cp);
+  var conferences = hwGetConferenceDeadlines(cp);
+  var financial = hwGetFinancialSnapshot(cp);
+  var costWait = hwGetCostOfWaiting(cp);
+  var progress = hwGetProgressStatus(cp, scores);
+  var h = '';
+
+  h += '<div style="font-family:var(--font-serif);font-size:18px;font-weight:600;color:#1C1A17;margin-bottom:16px">Your Timeline</div>';
+
+  // All deadlines
+  var allDl = deadlines.filter(function(d) { return !d.isPast; });
+  if (allDl.length) {
+    h += '<div style="background:#fff;border-radius:14px;padding:14px 16px;box-shadow:0 1px 3px rgba(0,0,0,.04);margin-bottom:16px">';
+    h += '<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#A89F91;margin-bottom:8px">Deadlines</div>';
+    var catIcons = { application: '\uD83D\uDCDD', exam: '\uD83D\uDCDA', career: '\uD83D\uDCBC', financial: '\uD83D\uDCB0' };
+    allDl.forEach(function(d, i) {
+      var dayCol = d.daysAway <= 14 ? '#B85C5C' : d.daysAway <= 30 ? '#C6A85E' : d.daysAway <= 90 ? '#5E8B6F' : '#8A8278';
+      var dateStr = d.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      h += '<div style="display:flex;align-items:center;gap:10px;padding:7px 0;' + (i < allDl.length - 1 ? 'border-bottom:1px solid #EDEAE4;' : '') + 'cursor:' + (d.tool ? 'pointer' : 'default') + '"' + (d.tool ? ' onclick="openFramework(\'' + d.tool + '\');hwCloseSheet()"' : '') + '>';
+      h += '<span style="font-size:11px;font-weight:700;color:' + dayCol + ';min-width:36px;text-align:center">' + d.daysAway + 'd</span>';
+      h += '<div style="flex:1"><div style="font-size:11px;font-weight:600;color:#1C1A17">' + d.title + '</div>';
+      h += '<div style="font-size:9px;color:#8A8278">' + dateStr + (d.desc ? ' \u00B7 ' + d.desc.substring(0, 60) : '') + '</div></div>';
+      h += '<span style="font-size:11px">' + (catIcons[d.category] || '\uD83D\uDCCC') + '</span>';
+      h += '</div>';
+    });
+    h += '</div>';
+  }
+
+  // Conferences
+  if (conferences.length) {
+    h += '<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#A89F91;margin-bottom:10px">\uD83C\uDFE5 Specialty Conferences</div>';
+    h += '<div style="background:#fff;border-radius:14px;padding:14px 16px;box-shadow:0 1px 3px rgba(0,0,0,.04);margin-bottom:16px">';
+    conferences.forEach(function(c, i) {
+      var confDate = c.date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+      h += '<div style="display:flex;align-items:center;justify-content:space-between;padding:7px 0;' + (i < conferences.length - 1 ? 'border-bottom:1px solid #EDEAE4;' : '') + '">';
+      h += '<div><div style="font-size:11px;font-weight:600;color:#1C1A17">' + c.name + '</div>';
+      h += '<div style="font-size:9px;color:#8A8278">' + confDate + ' \u00B7 ' + c.type + '</div></div>';
+      if (c.daysToAbstract !== null && c.daysToAbstract > 0) {
+        var abCol = c.daysToAbstract <= 30 ? '#B85C5C' : c.daysToAbstract <= 60 ? '#C6A85E' : '#5E8B6F';
+        h += '<div style="text-align:right"><div style="font-size:11px;font-weight:700;color:' + abCol + '">' + c.daysToAbstract + 'd</div>';
+        h += '<div style="font-size:8px;color:#8A8278">abstract</div></div>';
+      } else if (c.daysToConf > 0) {
+        h += '<div style="text-align:right"><div style="font-size:11px;font-weight:600;color:#8A8278">In ' + c.daysToConf + 'd</div></div>';
+      }
+      h += '</div>';
+    });
+    h += '</div>';
+  }
+
+  // Financial + Cost of Waiting
+  if (financial.hasData || costWait.length) {
+    h += '<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#A89F91;margin-bottom:10px">\uD83D\uDCB5 Financial</div>';
+    h += '<div style="background:#fff;border-radius:14px;padding:14px 16px;box-shadow:0 1px 3px rgba(0,0,0,.04);margin-bottom:16px">';
+    if (financial.hasData) {
+      financial.lines.forEach(function(l) {
+        h += '<div style="display:flex;align-items:center;justify-content:space-between;padding:' + (l.sub ? '2px 0 2px 14px' : '5px 0') + '">';
+        h += '<span style="font-size:' + (l.sub ? '10' : '12') + 'px;color:' + (l.sub ? '#8A8278' : '#1C1A17') + '">' + l.label + '</span>';
+        h += '<span style="font-size:' + (l.sub ? '10' : '13') + 'px;font-weight:' + (l.sub ? '500' : '700') + ';color:' + l.color + '">' + l.value + '</span>';
+        h += '</div>';
+      });
+    }
+    if (costWait.length) {
+      h += '<div style="margin-top:10px;padding-top:10px;border-top:1px solid #EDEAE4">';
+      h += '<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#B85C5C;margin-bottom:6px">\u23F0 Cost of Waiting</div>';
+      costWait.forEach(function(c) {
+        h += '<div style="display:flex;align-items:center;justify-content:space-between;padding:4px 0;cursor:' + (c.tool ? 'pointer' : 'default') + '"' + (c.tool ? ' onclick="openFramework(\'' + c.tool + '\');hwCloseSheet()"' : '') + '>';
+        h += '<span style="font-size:11px;color:#1C1A17">' + c.label + '</span>';
+        h += '<span style="font-size:11px;font-weight:600;color:#B85C5C">' + c.cost + '</span>';
+        h += '</div>';
+      });
+      h += '</div>';
+    }
+    h += '</div>';
+  }
+
+  // Re-run reminders
+  var th3 = U.toolHistory || [];
+  if (th3.length) {
+    var lastR = {};
+    th3.forEach(function(t) { lastR[t.tool] = new Date(t.date); });
+    var retool3 = { 'Match Competitiveness Calculator': 30, 'RVU Compensation Calculator': 60, 'Contract Review Tool': 90, 'Financial Projection Tool': 90, 'Specialty Fit Assessment': 60, 'Research Impact Calculator': 45 };
+    var stale3 = [];
+    Object.keys(lastR).forEach(function(tool) { var rc = retool3[tool]; if (rc) { var ds3 = Math.floor((new Date() - lastR[tool]) / 86400000); if (ds3 >= rc) stale3.push({ tool: tool, daysSince: ds3, recommended: rc }); } });
+    if (stale3.length) {
+      stale3.sort(function(a, b) { return b.daysSince - a.daysSince; });
+      h += '<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#A89F91;margin-bottom:10px">\uD83D\uDD04 Time to Re-run</div>';
+      h += '<div style="background:#fff;border-radius:14px;padding:14px 16px;box-shadow:0 1px 3px rgba(0,0,0,.04)">';
+      stale3.forEach(function(s, i) {
+        var tid3 = null;
+        if (typeof VAULT_ITEMS !== 'undefined') { var vi3 = VAULT_ITEMS.find(function(v) { return v.title === s.tool; }); if (vi3) tid3 = vi3.id; }
+        h += '<div' + (tid3 ? ' onclick="openFramework(\'' + tid3 + '\');hwCloseSheet()"' : '') + ' style="display:flex;align-items:center;gap:10px;padding:7px 0;' + (i < stale3.length - 1 ? 'border-bottom:1px solid #EDEAE4;' : '') + 'cursor:pointer">';
+        h += '<div style="flex:1"><div style="font-size:11px;font-weight:600;color:#1C1A17">' + s.tool + '</div>';
+        h += '<div style="font-size:9px;color:#8A8278">Last run ' + s.daysSince + ' days ago \u00B7 Re-run every ' + s.recommended + ' days</div></div>';
+        h += '<span style="font-size:10px;color:#C6A85E;font-weight:600">Run \u2192</span></div>';
+      });
+      h += '</div>';
+    }
+  }
+
+  return h;
 }
 
 

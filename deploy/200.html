@@ -25669,12 +25669,88 @@ function renderCareerMap() {
 
   // ===== LAST UPDATED =====
   h += '<div onclick="showUpdateProfile()" style="text-align:center;padding:4px 0;cursor:pointer">';
+  // ===== KEY INSIGHT =====
+  var insight = hwGetKeyInsight(cp, scores, spec, deadlines);
+  if (insight) {
+    h += '<div style="background:#111318;border-radius:14px;padding:16px 18px;margin-bottom:12px;position:relative;overflow:hidden">';
+    h += '<div style="position:absolute;bottom:-20px;right:-20px;width:100px;height:100px;background:radial-gradient(circle,rgba(198,168,94,.08),transparent 60%);border-radius:50%"></div>';
+    h += '<div style="position:relative">';
+    h += '<div style="font-size:10px;font-weight:600;color:#C6A85E;text-transform:uppercase;letter-spacing:1.2px;margin-bottom:8px">💡 Key Insight</div>';
+    h += '<div style="font-size:13px;color:rgba(237,235,231,.85);line-height:1.6">' + insight + '</div>';
+    h += '</div></div>';
+  }
+
+  // ===== LAST UPDATED =====
+  h += '<div onclick="showUpdateProfile()" style="text-align:center;padding:4px 0;cursor:pointer">';
   h += '<span style="font-size:10px;color:#8A8278">Profile last updated: ' + (cp.lastUpdated ? new Date(cp.lastUpdated).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'never') + '</span>';
   h += ' <span style="font-size:10px;color:#C6A85E;font-weight:600">Update →</span>';
   h += '</div>';
 
   el.innerHTML = h;
   return true; // Signal that we rendered the map
+}
+
+// Generate a single high-impact insight based on the user's most critical gap or opportunity
+function hwGetKeyInsight(cp, scores, spec, deadlines) {
+  var stage = cp.stage || 'student';
+  var specData = spec ? spec.data : null;
+  var pubs = parseInt(cp.pubs) || 0;
+  var s2 = parseInt(cp.step2) || 0;
+  var debt = parseInt(String(cp.debt || '0').replace(/[^0-9]/g, '')) || 0;
+  var comp = parseInt(String(cp.comp || '0').replace(/[^0-9]/g, '')) || 0;
+  var overall = Math.round((scores.competitiveness + scores.research + scores.readiness + scores.financial) / 4);
+
+  if (stage === 'student') {
+    if (specData && specData.competitiveness === 'high' && pubs < 2) {
+      return 'You\'re targeting a competitive specialty with ' + pubs + ' publications. The average matched applicant in ' + (spec ? spec.key : 'your specialty') + ' has ' + specData.avgPubs + '. <strong style="color:#C6A85E">Research is where you gain the most ground right now.</strong> Even one case report shows initiative — start this week, not next month.';
+    }
+    if (s2 && specData && s2 < specData.avgStep2 - 10) {
+      return 'Your Step 2 CK is ' + (specData.avgStep2 - s2) + ' points below the average for matched ' + (spec ? spec.key : 'applicants') + '. This is a real gap, but not fatal. <strong style="color:#C6A85E">Strong research, compelling LORs, and sub-I performance can compensate</strong> — but only if you build them NOW, not at application time.';
+    }
+    if (overall >= 75) {
+      return 'Your Career Score of ' + overall + ' puts you in a strong position. But competitive applicants plateau when they stop pushing. <strong style="color:#C6A85E">The gap between "competitive" and "guaranteed" is filled by the applicants who keep building.</strong> Don\'t coast — refine your personal statement and lock in your strongest LORs.';
+    }
+    return 'The decisions you make in the next 12 months will shape the next 30 years of your career. Every publication, every rotation, every relationship is compounding right now. <strong style="color:#C6A85E">The applicants who match their top choice are the ones who started preparing earliest.</strong>';
+  }
+
+  if (stage === 'resident') {
+    if (cp.goal === 'match' && specData && specData.competitiveness === 'high' && pubs < Math.ceil(specData.avgPubs)) {
+      return 'Fellowship in ' + (spec ? spec.key : 'your target') + ' is one of the most competitive matches in medicine. You have ' + pubs + ' publications against an average of ' + specData.avgPubs + '. <strong style="color:#C6A85E">Every month you delay starting a research project is a month you can\'t get back.</strong> Talk to your PD about protected research time this week.';
+    }
+    if (cp.goal === 'contract' && !comp) {
+      return 'You\'re approaching the job market without compensation data. <strong style="color:#C6A85E">Physicians who negotiate earn $40K-$80K more per year</strong> than those who accept first offers. Over a 30-year career, that\'s $1.2M-$2.4M. Run the RVU Calculator and Contract Review Tool before your first interview.';
+    }
+    if (debt > 200000) {
+      return 'With $' + Math.round(debt / 1000) + 'K in student loans, your repayment strategy is a six-figure decision. <strong style="color:#C6A85E">The wrong choice between PSLF and refinancing can cost you $100K-$200K.</strong> If you\'re at a qualifying employer, every payment you make during residency counts toward the 120 needed for forgiveness.';
+    }
+    return 'Residency is the narrowest window for career positioning. Fellowships, job offers, and financial foundations are all being set right now. <strong style="color:#C6A85E">What you do in the next 6 months has more impact than the next 6 years after training.</strong>';
+  }
+
+  if (stage === 'fellow') {
+    if (cp.goal === 'contract') {
+      return 'Your first attending contract is the single most important financial document you\'ll sign. <strong style="color:#C6A85E">The average physician leaves $50K-$100K on the table by not negotiating.</strong> Non-competes, tail coverage, productivity thresholds — every clause has dollar signs behind it. Don\'t sign anything without running it through the Contract Review Tool.';
+    }
+    if (debt > 0 && comp > 0) {
+      var ratio = (debt / comp * 100).toFixed(0);
+      return 'Your debt-to-expected-income ratio is ' + ratio + '%. When your attending salary starts, <strong style="color:#C6A85E">the temptation to lifestyle-inflate will be enormous.</strong> If you live like a fellow for 2-3 years after graduating, you can eliminate your debt and start building wealth from a position of strength. The physicians who do this are millionaires by 40.';
+    }
+    return 'The transition from fellow to attending is the highest-leverage financial moment of your career. <strong style="color:#C6A85E">Every major financial decision — PSLF, debt refinancing, disability insurance, contract terms — has a deadline attached to it.</strong> Missing them costs real money.';
+  }
+
+  if (stage === 'attending') {
+    if (cp.savingsrate === '<10%' || cp.savingsrate === '10-20%') {
+      return 'Your savings rate is the single strongest predictor of long-term wealth — stronger than income, investment returns, or specialty choice. <strong style="color:#C6A85E">Physicians who save 20%+ of gross income reach financial independence 10-15 years earlier</strong> than those who save less. At your income level, every 5% increase is worth $' + Math.round(comp * 0.05 / 1000) + 'K/year in saved capital.';
+    }
+    if (cp.considering === 'active' || (parseInt(cp.satisfaction) > 0 && parseInt(cp.satisfaction) <= 5)) {
+      return 'You\'re signaling that your current position isn\'t sustainable. <strong style="color:#C6A85E">Burnout doesn\'t fix itself — it compounds.</strong> The physicians who make successful transitions do it with a plan, not in a crisis. Use the Career Transition Planner to model the financial and professional impact of a change while you still have leverage.';
+    }
+    if (debt === 0 && comp > 300000) {
+      return 'Debt-free with a strong income — you\'re in the position most physicians dream about. <strong style="color:#C6A85E">Now is when the wealth-building accelerates.</strong> Max your tax-advantaged accounts, ensure your investment allocation matches your timeline, and make sure your estate plan is current. The next decade of compounding is worth millions.';
+    }
+    return 'As an attending, the biggest financial risk isn\'t market volatility — it\'s complacency. <strong style="color:#C6A85E">Most physicians never benchmark their compensation, review their contracts, or optimize their tax strategy.</strong> An hour of planning per quarter is worth more than any financial advisor fee.';
+  }
+
+  return null;
 }
 
 

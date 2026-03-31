@@ -24835,7 +24835,7 @@ function hwGetMonthlyPriorities(cp, scores, deadlines) {
     // Job search priorities
     if (goal === 'contract' || !goal) {
       pri('Benchmark Attending Compensation', 'Understand RVU models, salary ranges, and total comp packages for your specialty and region.', 'high', 'v4', 'career');
-      if (!(U && U.toolHistory && U.toolHistory.some(function(t) { return t.tool === 'Contract Review Tool'; }))) {
+      if (!(typeof U !== 'undefined' && U && U.toolHistory && U.toolHistory.some(function(t) { return t.tool === 'Contract Review Tool'; }))) {
         pri('Learn Contract Red Flags', 'Non-competes, tail coverage, RVU thresholds — most fellows sign their first contract blind. Do not be one of them.', 'critical', 'v12', 'career');
       }
     }

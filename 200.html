@@ -25661,6 +25661,105 @@ function hwSaveOnboarding() {
 }
 
 
+// ===== SECTION 5b: HOW-TO GUIDANCE =====
+// Actionable step-by-step guidance for every deadline and priority
+// Matched by partial title — first match wins
+
+var HW_HOW_TO = [
+  // AWAY ROTATIONS
+  { match: 'away rotation', steps: ['Search VSLO (Visiting Student Learning Opportunities) at aamc.org/vslo for open positions', 'Contact the coordinator at your top 3 target programs by email — introduce yourself and express interest', 'Ask your home clerkship director for a departmental letter of good standing', 'Apply 4-6 months before your preferred dates — popular programs fill by March/April', 'Treat it as a month-long interview — arrive early, stay late, and get to know the attendings'], tool: null },
+  // ERAS
+  { match: 'eras application', steps: ['Complete your ERAS profile: personal info, education, experiences, publications, and personal statement', 'Upload your USMLE/COMLEX transcript — request early as processing takes 1-2 weeks', 'Assign letters of recommendation to programs — confirm writers have uploaded by August', 'Finalize your personal statement — have 3 people review it, including someone in your target specialty', 'Submit applications on Day 1 (September 6) for competitive specialties — late submissions are screened last'], tool: 'v9' },
+  // NRMP
+  { match: 'nrmp registration', steps: ['Go to nrmp.org and create your account', 'Pay the registration fee ($85 for students, additional per program after 20)', 'Link your ERAS and NRMP accounts — this is separate from ERAS submission', 'Verify your medical school is participating in the Main Residency Match'], tool: null },
+  // INTERVIEW
+  { match: 'interview', steps: ['Research each program: read their website, recent publications by faculty, and GME outcomes', 'Prepare answers for: Why this specialty? Why this program? Tell me about yourself. Biggest weakness?', 'Practice with a mock interview partner or use the HeartWise Mock Interview Tool', 'Prepare 3-5 thoughtful questions for each program — avoid anything easily found online', 'Send a brief thank-you email within 24 hours to your interviewer and program coordinator'], tool: 'v16' },
+  // RANK LIST
+  { match: 'rank list', steps: ['Rank programs in YOUR true preference order — the algorithm rewards honesty', 'Do NOT rank a program you would not attend under any circumstances', 'Consider: geography, culture, call schedule, fellowship match rate, moonlighting policy', 'Discuss with trusted mentors but make the final decision yourself', 'Certify your list before the deadline — uncertified lists are not submitted'], tool: null },
+  // MATCH DAY
+  { match: 'match day', steps: ['Results release at noon ET on Match Day — check NRMP website', 'If matched: celebrate, then start planning your move and onboarding paperwork', 'If unmatched: SOAP begins Monday of Match Week — have your application ready to resubmit immediately', 'Contact your dean of students immediately if unmatched — they can advocate on your behalf during SOAP'], tool: null },
+  // STEP 2 CK
+  { match: 'step 2', steps: ['Register at NBME.org — choose your preferred testing window (slots fill fast in summer)', 'Use UWorld Step 2 CK as your primary question bank — do all questions at least once', 'Take NBME self-assessment exams (Forms 9-12) to predict your score 2-3 weeks before the real exam', 'Score typically correlates: if NBME practice is 245+, you are likely ready', 'Schedule 6-8 weeks of dedicated study — residents may need to negotiate time off'], tool: 'v14' },
+  // STEP 3
+  { match: 'step 3', steps: ['Register through FSMB.org — you need a medical license or training permit', 'Most residents complete during PGY-1 intern year — schedule during a lighter rotation', 'Use UWorld Step 3 and the NBME practice exams — CCS cases are unique to Step 3', 'The two-day exam includes MCQs and computer-based case simulations (CCS)', 'A passing score is required for medical licensure in all states and for some fellowship applications'], tool: null },
+  // LOR
+  { match: 'letter', steps: ['Identify faculty who know you well AND are known in the field — both matter', 'Ask in person, not by email: "Would you be able to write me a strong letter of recommendation?"', 'If they hesitate or say "I can write you a letter," that is a red flag — find someone else', 'Provide a CV, personal statement draft, and specific anecdotes you want highlighted', 'Follow up 1 month before the deadline with a polite reminder — faculty are busy'], tool: null },
+  { match: 'requesting lor', steps: ['Identify faculty who know you well AND are known in the field — both matter', 'Ask in person, not by email: "Would you be able to write me a strong letter of recommendation?"', 'If they hesitate or say "I can write you a letter," that is a red flag — find someone else', 'Provide a CV, personal statement draft, and specific anecdotes you want highlighted', 'Follow up 1 month before the deadline with a polite reminder — faculty are busy'], tool: null },
+  // PERSONAL STATEMENT
+  { match: 'personal statement', steps: ['Start with a specific clinical moment or experience that sparked your interest — avoid cliches', 'Structure: opening hook → why this specialty → what you bring → where you are going', 'DO NOT summarize your CV — the statement should reveal who you are, not what you have done', 'Get feedback from 3+ readers: a specialty mentor, a writing-strong friend, and your advisor', 'Plan 5-7 revision cycles over 2-3 months — first drafts are never final drafts'], tool: null },
+  // FELLOWSHIP APP
+  { match: 'fellowship', steps: ['Check your specialty\u2019s fellowship match timeline — some use NRMP, others use specialty-specific matches', 'Secure 3 strong letters from attending faculty, ideally including your program director', 'Your research portfolio matters more for fellowship than residency — prioritize publications', 'Network at national conferences 12+ months before applications open', 'Apply broadly — fellowship matches are unpredictable and program-specific'], tool: 'v6' },
+  // JOB SEARCH
+  { match: 'job search', steps: ['Start 12-18 months before your target start date — the best positions fill early', 'Use multiple channels: PracticeLink, AAFP/ACP/specialty job boards, personal networks, recruiters', 'Before interviews, research the group\u2019s finances, call schedule, and physician turnover rate', 'Get at least 2-3 offers before negotiating — leverage requires alternatives', 'Never accept the first offer verbally — say "I\u2019m very interested and want to review the full terms"'], tool: 'v3' },
+  // CONTRACT
+  { match: 'contract', steps: ['Have a healthcare attorney review your contract — this costs $500-1500 and saves you tens of thousands', 'Key terms to scrutinize: base salary, RVU thresholds, non-compete radius/duration, tail coverage, termination clause', 'Compare your offer against MGMA and Doximity salary data for your specialty and region', 'Negotiate in writing after your verbal discussion — always get counter-offers documented', 'Everything is negotiable: sign-on bonus, relocation, CME funds, call frequency, partnership timeline'], tool: 'v12' },
+  // DISABILITY INSURANCE
+  { match: 'disability insurance', steps: ['Get "own-occupation" coverage — this pays if you can\u2019t practice YOUR specialty, not just any job', 'Buy during training when rates are 30-40% cheaper — the discount is permanent', 'Get quotes from at least 3 companies: Guardian, MassMutual, Principal, Northwestern Mutual', 'Typical coverage: 60-65% of gross income, with cost-of-living and future-increase riders', 'Do NOT rely on employer group disability alone — it is usually inadequate and not portable'], tool: 'v8' },
+  // PSLF
+  { match: 'pslf', steps: ['Verify you are on an income-driven repayment plan (PAYE, REPAYE, IBR, or ICR)', 'Confirm your employer qualifies — must be 501(c)(3) or government', 'Submit the Employment Certification Form (ECF) annually at studentaid.gov', 'Track your qualifying payment count — do NOT refinance with a private lender, it resets your count', 'After 120 qualifying payments (10 years), submit the forgiveness application — the remaining balance is tax-free'], tool: 'v8' },
+  // TAX
+  { match: 'tax filing', steps: ['Gather W-2s, 1099s, and student loan interest statements (Form 1098-E)', 'Deduct student loan interest (up to $2,500) even if you take the standard deduction', 'If moonlighting or doing 1099 work, set aside 30% for self-employment tax', 'Max out pre-tax retirement contributions (401k/403b) to reduce taxable income', 'Consider a CPA who specializes in physicians — they often save more than their fee'], tool: 'v8' },
+  // ROTH IRA
+  { match: 'roth ira', steps: ['Open a Roth IRA at Vanguard, Fidelity, or Schwab if you don\u2019t have one', 'If your income exceeds the direct contribution limit, use the backdoor Roth method', 'Backdoor: contribute to a traditional IRA (non-deductible), then convert to Roth immediately', 'Max contribution: $7,000/year ($8,000 if age 50+) — deadline is April 15', 'Invest in low-cost index funds (total stock market or target date) — do not try to pick stocks'], tool: 'v11' },
+  // BOARD CERTIFICATION / RECERTIFICATION
+  { match: 'board', steps: ['Check your specialty board\u2019s website for exam dates and registration windows', 'Most boards require completing residency/fellowship and a certain number of practice months', 'Use board review courses and question banks specific to your specialty', 'MOC (Maintenance of Certification) requires ongoing CME credits and periodic knowledge assessments', 'Board certification is increasingly required by hospitals, insurers, and for medical staff privileges'], tool: null },
+  // CME
+  { match: 'cme', steps: ['Track your CME credits using an app or your specialty society\u2019s portal', 'Most states require 50 CME credits every 2 years — check your specific state requirements', 'Conferences count, but so do online modules, podcasts, and journal-based CME', 'Your employer likely provides a CME allowance ($2,000-5,000/yr) — use all of it', 'Keep records of all certificates — you will need them for license renewal and hospital credentialing'], tool: null },
+  // RVU / PRODUCTIVITY
+  { match: 'rvu', steps: ['Request your current RVU report from your practice manager or billing department', 'Compare your RVUs against MGMA benchmarks for your specialty (50th, 75th, 90th percentile)', 'Identify high-RVU procedures you are credentialed for but underperforming — even small changes compound', 'Track monthly, not quarterly — catching a downtrend early prevents year-end surprises', 'If your RVU pace is below target, discuss with your department chair before performance review'], tool: 'v4' },
+  // SAVINGS RATE
+  { match: 'savings rate', steps: ['Calculate your current rate: (total saved per month) \u00F7 (gross monthly income) \u00D7 100', 'Target 20% minimum — the difference between 10% and 20% over 30 years is over $2 million', 'Automate it: set up direct deposit splits so savings happen before you see the money', 'Priority order: employer 401k match \u2192 backdoor Roth IRA \u2192 max 401k \u2192 taxable brokerage', 'If below 20%, increase by 2-3% every 3 months — gradual increases are sustainable'], tool: 'v11' },
+  // LOAN PAYOFF / DEBT
+  { match: 'loan', steps: ['List all loans: balance, interest rate, servicer, and repayment plan for each', 'If at a qualifying employer, strongly consider PSLF over refinancing — run the numbers first', 'If NOT pursuing PSLF, refinance to the lowest rate possible (compare SoFi, Laurel Road, Earnest)', 'Avalanche method: pay minimums on all, put extra toward the highest interest rate loan', 'Every $1,000 extra per month toward a $300K loan at 6% saves ~$45K in total interest'], tool: 'v8' },
+  // NET WORTH / EMERGENCY FUND
+  { match: 'emergency fund', steps: ['Target 3-6 months of essential expenses (rent, food, insurance, minimums on debt)', 'Keep it in a high-yield savings account (4-5% APY) — not invested in the market', 'Build this BEFORE aggressive debt payoff — unexpected expenses without a buffer create new debt', 'For dual-physician households, 3 months may be sufficient; single income, aim for 6'], tool: 'v5' },
+  // RESEARCH / PUBLISH
+  { match: 'publish', steps: ['Start with a case report or retrospective chart review — these can be completed in 2-4 months', 'Approach faculty who are actively publishing and ask to join an existing project', 'Aim for journals in your target specialty — specialty-specific publications matter more than impact factor', 'Use a reference manager (Zotero, Mendeley) from day one — you will thank yourself later', 'Submit to 2-3 journals simultaneously if allowed, or have your backup journal ready before submitting'], tool: 'v7' },
+  // LEADERSHIP
+  { match: 'leadership', steps: ['Apply for chief resident, committee chair, or QI project lead positions', 'Start or lead a student/resident interest group in your specialty', 'Volunteer for hospital committees (patient safety, curriculum, wellness)', 'Document your leadership in ERAS/CV with specific outcomes, not just titles', 'Even small roles count: organizing a lecture series, mentoring junior residents, leading a journal club'], tool: null },
+  // CONFERENCE
+  { match: 'conference', steps: ['Submit abstracts 4-6 months before the conference deadline — check specialty society websites', 'Poster presentations are easier to get accepted than oral presentations — start there', 'Apply for travel grants through your school, department, or the conference itself', 'At the conference: attend sessions, introduce yourself to 3-5 faculty in your field, exchange contact info', 'Follow up within 1 week with anyone you connected with — this is where mentorship relationships start'], tool: 'v7' },
+  // COMPENSATION BENCHMARK
+  { match: 'compensation', steps: ['Access MGMA data through your hospital library or medical society membership', 'Cross-reference with Doximity salary data and Medscape physician compensation reports', 'Compare your total compensation (base + bonus + benefits) not just base salary', 'Factor in regional cost-of-living — $400K in Manhattan is different from $400K in Mississippi', 'If you are more than 10% below median, prepare a data-backed case for renegotiation'], tool: 'v4' },
+  // PARTNERSHIP
+  { match: 'partnership', steps: ['Request the partnership agreement and buy-in terms in writing — review with an attorney', 'Understand the buy-in structure: lump sum, payroll deduction over years, or sweat equity', 'Ask for 3 years of the practice\u2019s financial statements — revenue trends matter', 'Clarify what happens if you leave after buying in — look for forced sale provisions', 'Talk to junior partners who recently went through the process — get their honest assessment'], tool: 'v12' },
+  // CAREER CHANGE / SATISFACTION
+  { match: 'satisfaction', steps: ['Identify whether the issue is burnout, practice model mismatch, or specialty mismatch', 'Talk to physicians who made similar transitions — their experience is your best data', 'Run the financial model before making a move — know the cost of the transition', 'Consider locums as a low-risk way to test a new practice environment', 'Do not make a major change during acute burnout — stabilize first, then plan'], tool: 'v10' }
+];
+
+// Find how-to guide matching a title
+function hwFindHowTo(title) {
+  if (!title) return null;
+  var t = title.toLowerCase();
+  for (var i = 0; i < HW_HOW_TO.length; i++) {
+    if (t.indexOf(HW_HOW_TO[i].match) >= 0) return HW_HOW_TO[i];
+  }
+  return null;
+}
+
+// Render a how-to expandable section (returns HTML string)
+function hwRenderHowTo(title, itemId) {
+  var guide = hwFindHowTo(title);
+  if (!guide) return '';
+  var hid = 'cm-howto-' + itemId;
+  var h = '';
+  h += '<div id="' + hid + '" style="display:none;margin-top:8px;padding:10px 12px;background:#F8F5F0;border-radius:8px">';
+  h += '<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#A89F91;margin-bottom:6px">How to do this</div>';
+  guide.steps.forEach(function(step, i) {
+    h += '<div style="display:flex;gap:8px;padding:4px 0;' + (i < guide.steps.length - 1 ? 'border-bottom:1px solid #EDEAE420;' : '') + '">';
+    h += '<span style="font-size:10px;font-weight:700;color:#C6A85E;flex-shrink:0;min-width:14px">' + (i + 1) + '</span>';
+    h += '<span style="font-size:10px;color:#5A5549;line-height:1.4">' + step + '</span>';
+    h += '</div>';
+  });
+  if (guide.tool) {
+    h += '<div onclick="openFramework(\'' + guide.tool + '\');event.stopPropagation()" style="margin-top:6px;font-size:10px;color:#C6A85E;font-weight:600;cursor:pointer">Use the tool for this \u2192</div>';
+  }
+  h += '</div>';
+  // Toggle button
+  var btn = '<div onclick="var e=document.getElementById(\'' + hid + '\');e.style.display=e.style.display===\'none\'?\'\':\'none\';this.textContent=e.style.display===\'none\'?\'How to do this \u2192\':\'Hide steps\';event.stopPropagation()" style="margin-top:4px;font-size:10px;color:#C6A85E;font-weight:600;cursor:pointer">How to do this \u2192</div>';
+  return btn + h;
+}
+
 // ===== SECTION 6: CAREER MAP DASHBOARD RENDERER =====
 // The main Career Map UI — replaces generic hero card for users with profiles
 
@@ -25761,7 +25860,13 @@ function renderCareerMap() {
     h += '<div style="flex:1;border-left:2px solid #E8E1D8;padding-left:14px">';
     h += '<div style="font-size:13px;font-weight:600;color:#1C1A17;line-height:1.3">' + nextCrit.title + '</div>';
     h += '<div style="font-size:11px;color:#8A8278;margin-top:3px;line-height:1.4">' + nextCrit.desc + '</div>';
-    if (nextCrit.tool) h += '<div onclick="openFramework(\'' + nextCrit.tool + '\');event.stopPropagation()" style="margin-top:6px" class="cm-action">Prepare \u2192</div>';
+    // How-to guide or tool link
+    var countdownHowTo = hwFindHowTo(nextCrit.title);
+    if (countdownHowTo) {
+      h += hwRenderHowTo(nextCrit.title, 'countdown');
+    } else if (nextCrit.tool) {
+      h += '<div onclick="openFramework(\'' + nextCrit.tool + '\');event.stopPropagation()" style="margin-top:6px" class="cm-action">Prepare \u2192</div>';
+    }
     h += '</div></div></div>';
   }
 
@@ -25773,12 +25878,20 @@ function renderCareerMap() {
     h += '<div class="cm-label">Do This Now</div>';
     priorities.slice(0, 3).forEach(function(p, i) {
       var isUrgent = p.urgency === 'critical';
-      h += '<div style="display:flex;gap:10px;padding:10px 12px;background:' + (i === 0 ? '#F8F5F0' : 'transparent') + ';border-radius:10px;margin-bottom:' + (i < 2 ? '6' : '0') + 'px;cursor:' + (p.tool ? 'pointer' : 'default') + '"' + (p.tool ? ' onclick="openFramework(\'' + p.tool + '\')"' : '') + '>';
+      var hasHowTo = !!hwFindHowTo(p.title);
+      h += '<div style="padding:10px 12px;background:' + (i === 0 ? '#F8F5F0' : 'transparent') + ';border-radius:10px;margin-bottom:' + (i < 2 ? '6' : '0') + 'px">';
+      h += '<div style="display:flex;gap:10px">';
       h += '<div style="font-size:14px;font-weight:700;color:' + (i === 0 ? '#C6A85E' : '#A89F91') + ';flex-shrink:0;width:18px;text-align:center;line-height:1.4">' + (i + 1) + '</div>';
       h += '<div style="flex:1"><div style="font-size:12px;font-weight:600;color:#1C1A17;line-height:1.35">' + p.title + '</div>';
-      h += '<div style="font-size:10px;color:#8A8278;margin-top:2px;line-height:1.35">' + p.desc + '</div></div>';
-      if (isUrgent) h += '<span style="font-size:7px;padding:2px 5px;background:#B85C5C18;color:#B85C5C;border-radius:4px;font-weight:700;flex-shrink:0;align-self:flex-start;margin-top:3px">URGENT</span>';
+      h += '<div style="font-size:10px;color:#8A8278;margin-top:2px;line-height:1.35">' + p.desc + '</div>';
+      // How-to toggle + tool link row
+      h += '<div style="display:flex;align-items:center;gap:12px;margin-top:4px">';
+      if (hasHowTo) h += hwRenderHowTo(p.title, 'pri' + i);
+      else if (p.tool) h += '<div onclick="openFramework(\'' + p.tool + '\');event.stopPropagation()" style="font-size:10px;color:#C6A85E;font-weight:600;cursor:pointer">Use tool \u2192</div>';
       h += '</div>';
+      h += '</div>';
+      if (isUrgent) h += '<span style="font-size:7px;padding:2px 5px;background:#B85C5C18;color:#B85C5C;border-radius:4px;font-weight:700;flex-shrink:0;align-self:flex-start;margin-top:3px">URGENT</span>';
+      h += '</div></div>';
     });
     if (priorities.length > 3 || true) {
       h += '<div style="text-align:right;margin-top:8px"><span onclick="hwOpenSheet(\'priorities\')" class="cm-action">See all priorities \u2192</span></div>';
@@ -25948,14 +26061,18 @@ function hwSheetPriorities(cp, scores, spec) {
   // All priorities
   priorities.forEach(function(p, i) {
     var barCol = i === 0 ? '#C6A85E' : i === 1 ? '#8BB4A0' : '#A89F91';
-    h += '<div style="display:flex;gap:10px;padding:12px;background:#fff;border-radius:12px;margin-bottom:8px;border-left:3px solid ' + barCol + ';box-shadow:0 1px 3px rgba(0,0,0,.04);cursor:' + (p.tool ? 'pointer' : 'default') + '"' + (p.tool ? ' onclick="openFramework(\'' + p.tool + '\');hwCloseSheet()"' : '') + '>';
+    var hasHowTo = !!hwFindHowTo(p.title);
+    h += '<div style="padding:12px;background:#fff;border-radius:12px;margin-bottom:8px;border-left:3px solid ' + barCol + ';box-shadow:0 1px 3px rgba(0,0,0,.04)">';
+    h += '<div style="display:flex;gap:10px">';
     h += '<div style="font-size:14px;font-weight:700;color:' + barCol + ';flex-shrink:0;width:18px;text-align:center">' + (i + 1) + '</div>';
     h += '<div style="flex:1"><div style="font-size:12px;font-weight:600;color:#1C1A17;line-height:1.35">' + p.title + '</div>';
     h += '<div style="font-size:11px;color:#8A8278;margin-top:2px;line-height:1.4">' + p.desc + '</div>';
-    if (p.tool) h += '<div style="font-size:10px;color:#C6A85E;font-weight:600;margin-top:4px">Open tool \u2192</div>';
+    // Action row: how-to guide + tool link
+    if (hasHowTo) h += hwRenderHowTo(p.title, 'sheet-pri' + i);
+    if (p.tool) h += '<div onclick="openFramework(\'' + p.tool + '\');hwCloseSheet()" style="margin-top:4px;font-size:10px;color:#C6A85E;font-weight:600;cursor:pointer">Open tool \u2192</div>';
     h += '</div>';
     if (p.urgency === 'critical') h += '<span style="font-size:7px;padding:2px 5px;background:#B85C5C18;color:#B85C5C;border-radius:4px;font-weight:700;flex-shrink:0;align-self:flex-start;margin-top:3px">URGENT</span>';
-    h += '</div>';
+    h += '</div></div>';
   });
 
   // Smart tool recommendations
@@ -26082,11 +26199,16 @@ function hwSheetTimeline(cp, scores, spec) {
     allDl.forEach(function(d, i) {
       var dayCol = d.daysAway <= 14 ? '#B85C5C' : d.daysAway <= 30 ? '#C6A85E' : d.daysAway <= 90 ? '#5E8B6F' : '#8A8278';
       var dateStr = d.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-      h += '<div style="display:flex;align-items:center;gap:10px;padding:7px 0;' + (i < allDl.length - 1 ? 'border-bottom:1px solid #EDEAE4;' : '') + 'cursor:' + (d.tool ? 'pointer' : 'default') + '"' + (d.tool ? ' onclick="openFramework(\'' + d.tool + '\');hwCloseSheet()"' : '') + '>';
+      var dlHowTo = hwFindHowTo(d.title);
+      h += '<div style="padding:7px 0;' + (i < allDl.length - 1 ? 'border-bottom:1px solid #EDEAE4;' : '') + '">';
+      h += '<div style="display:flex;align-items:center;gap:10px">';
       h += '<span style="font-size:11px;font-weight:700;color:' + dayCol + ';min-width:36px;text-align:center">' + d.daysAway + 'd</span>';
       h += '<div style="flex:1"><div style="font-size:11px;font-weight:600;color:#1C1A17">' + d.title + '</div>';
       h += '<div style="font-size:9px;color:#8A8278">' + dateStr + (d.desc ? ' \u00B7 ' + d.desc.substring(0, 60) : '') + '</div></div>';
       h += '<span style="font-size:11px">' + (catIcons[d.category] || '\uD83D\uDCCC') + '</span>';
+      h += '</div>';
+      if (dlHowTo) h += '<div style="margin-left:46px">' + hwRenderHowTo(d.title, 'tl-dl' + i) + '</div>';
+      else if (d.tool) h += '<div onclick="openFramework(\'' + d.tool + '\');hwCloseSheet()" style="margin-left:46px;margin-top:2px;font-size:10px;color:#C6A85E;font-weight:600;cursor:pointer">Use tool \u2192</div>';
       h += '</div>';
     });
     h += '</div>';

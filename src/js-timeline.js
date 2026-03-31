@@ -648,7 +648,294 @@ function hwGetFinancialSnapshot(cp) {
 }
 
 
-// ===== SECTION 5: ONBOARDING FLOW =====
+// ===== SECTION 4b: CONFERENCE DEADLINES =====
+// Major specialty conferences with abstract submission deadlines
+function hwGetConferenceDeadlines(cp) {
+  var now = new Date();
+  var year = now.getFullYear();
+  var spec = (cp.specialty || '').toLowerCase();
+  var dls = [];
+
+  function cdl(date, name, type, deadlineDate) {
+    var conf = new Date(date);
+    var daysToConf = Math.ceil((conf - now) / 86400000);
+    if (daysToConf < -14 || daysToConf > 400) return;
+    var dl = deadlineDate ? new Date(deadlineDate) : null;
+    var daysToDeadline = dl ? Math.ceil((dl - now) / 86400000) : null;
+    dls.push({ name: name, date: conf, daysToConf: daysToConf, type: type, abstractDeadline: dl, daysToAbstract: daysToDeadline });
+  }
+
+  // Cardiology
+  if (spec.indexOf('cardio') >= 0 || spec.indexOf('heart') >= 0 || spec.indexOf('interventional') >= 0 || spec.indexOf('electro') >= 0) {
+    cdl(year + '-03-29', 'ACC Scientific Sessions', 'National', year + '-10-15');
+    cdl(year + '-11-15', 'AHA Scientific Sessions', 'National', year + '-06-01');
+    cdl(year + '-10-27', 'TCT (Interventional)', 'Subspecialty', year + '-05-15');
+    cdl(year + '-05-10', 'Heart Rhythm (HRS)', 'Subspecialty', year + '-01-15');
+    cdl((year + 1) + '-03-29', 'ACC Scientific Sessions', 'National', year + '-10-15');
+  }
+  // GI
+  if (spec.indexOf('gastro') >= 0 || spec.indexOf('gi') >= 0 || spec === 'gi') {
+    cdl(year + '-05-17', 'DDW (Digestive Disease Week)', 'National', year + '-01-10');
+    cdl(year + '-10-25', 'ACG Annual Meeting', 'National', year + '-05-01');
+    cdl((year + 1) + '-05-17', 'DDW', 'National', (year + 1) + '-01-10');
+  }
+  // Surgery
+  if (spec.indexOf('surg') >= 0 || spec.indexOf('ortho') >= 0) {
+    cdl(year + '-10-22', 'ACS Clinical Congress', 'National', year + '-03-01');
+    cdl(year + '-03-11', 'AAOS Annual Meeting', 'National', (year - 1) + '-09-01');
+    cdl((year + 1) + '-03-11', 'AAOS Annual Meeting', 'National', year + '-09-01');
+  }
+  // EM
+  if (spec.indexOf('emergency') >= 0 || spec === 'em') {
+    cdl(year + '-10-14', 'ACEP Scientific Assembly', 'National', year + '-04-01');
+    cdl(year + '-05-19', 'SAEM Annual Meeting', 'National', year + '-01-15');
+  }
+  // Dermatology
+  if (spec.indexOf('derm') >= 0) {
+    cdl(year + '-03-14', 'AAD Annual Meeting', 'National', (year - 1) + '-10-01');
+    cdl(year + '-07-26', 'AAD Innovation Academy', 'National', year + '-02-01');
+    cdl((year + 1) + '-03-14', 'AAD Annual Meeting', 'National', year + '-10-01');
+  }
+  // Pulm/Critical Care
+  if (spec.indexOf('pulm') >= 0 || spec.indexOf('critical') >= 0) {
+    cdl(year + '-05-16', 'ATS International Conference', 'National', year + '-11-01');
+    cdl(year + '-10-06', 'CHEST Annual Meeting', 'National', year + '-04-15');
+  }
+  // Oncology
+  if (spec.indexOf('oncol') >= 0 || spec.indexOf('hematol') >= 0) {
+    cdl(year + '-06-02', 'ASCO Annual Meeting', 'National', year + '-02-01');
+    cdl(year + '-12-07', 'ASH Annual Meeting', 'National', year + '-06-01');
+  }
+  // Neurology
+  if (spec.indexOf('neuro') >= 0 && spec.indexOf('surg') < 0) {
+    cdl(year + '-04-05', 'AAN Annual Meeting', 'National', (year - 1) + '-10-01');
+    cdl((year + 1) + '-04-05', 'AAN Annual Meeting', 'National', year + '-10-01');
+  }
+  // Psychiatry
+  if (spec.indexOf('psych') >= 0) {
+    cdl(year + '-05-03', 'APA Annual Meeting', 'National', (year - 1) + '-11-01');
+    cdl((year + 1) + '-05-03', 'APA Annual Meeting', 'National', year + '-11-01');
+  }
+  // Radiology
+  if (spec.indexOf('radio') >= 0 && spec.indexOf('oncol') < 0) {
+    cdl(year + '-11-26', 'RSNA Annual Meeting', 'National', year + '-04-15');
+  }
+  // Peds
+  if (spec.indexOf('pedi') >= 0) {
+    cdl(year + '-10-24', 'AAP National Conference', 'National', year + '-04-01');
+  }
+  // Internal Medicine (general)
+  if (spec.indexOf('internal') >= 0 || spec === 'im' || spec.indexOf('hospitalist') >= 0) {
+    cdl(year + '-04-10', 'ACP Internal Medicine Meeting', 'National', (year - 1) + '-10-01');
+    cdl(year + '-05-05', 'SHM Converge (Hospitalist)', 'National', year + '-01-01');
+  }
+  // Family Medicine
+  if (spec.indexOf('family') >= 0 || spec === 'fm') {
+    cdl(year + '-10-10', 'AAFP FMX Conference', 'National', year + '-03-01');
+  }
+  // Universal
+  cdl(year + '-04-15', 'Tax Filing Deadline', 'Financial', null);
+
+  dls.sort(function(a, b) { return a.daysToConf - b.daysToConf; });
+  return dls.filter(function(d) { return d.daysToConf >= -7; });
+}
+
+
+// ===== SECTION 4c: WHAT-IF SIMULATOR =====
+// Shows the impact of hypothetical changes on career score
+function hwGetWhatIfScenarios(cp, scores) {
+  var stage = cp.stage || 'student';
+  var scenarios = [];
+  var specData = (hwFindSpecialty(cp.specialty) || {}).data;
+  var pubs = parseInt(cp.pubs) || 0;
+  var s2 = parseInt(cp.step2) || 0;
+
+  function sim(label, changes) {
+    var newCp = {};
+    for (var k in cp) newCp[k] = cp[k];
+    for (var c in changes) newCp[c] = changes[c];
+    var newScores = calcDashScores(newCp);
+    var newOverall = Math.round((newScores.competitiveness + newScores.research + newScores.readiness + newScores.financial) / 4);
+    var oldOverall = Math.round((scores.competitiveness + scores.research + scores.readiness + scores.financial) / 4);
+    var delta = newOverall - oldOverall;
+    if (delta > 0) scenarios.push({ label: label, delta: delta, newScore: newOverall });
+  }
+
+  if (stage === 'student' || stage === 'resident') {
+    sim('Publish 1 more paper', { pubs: pubs + 1 });
+    sim('Publish 2 more papers', { pubs: pubs + 2 });
+    if (s2 > 0 && s2 < 260) sim('Improve Step 2 by 10 pts', { step2: String(s2 + 10) });
+    sim('Secure strong LORs', { lorStrength: 'strong' });
+    sim('Add a leadership role', { leadership: (parseInt(cp.leadership) || 0) + 1 });
+    sim('Present at a conference', { conferences: (parseInt(cp.conferences) || 0) + 1 });
+    if (!s2) sim('Complete Step 2 CK (250)', { step2: '250' });
+  }
+  if (stage === 'fellow') {
+    sim('Publish 2 more papers', { pubs: pubs + 2 });
+    sim('Get board certified', { boards: 'certified' });
+    sim('Add a first-author pub', { firstauthor: (parseInt(cp.firstauthor) || 0) + 1, pubs: pubs + 1 });
+  }
+  if (stage === 'attending') {
+    var comp = parseInt(String(cp.comp || '0').replace(/[^0-9]/g, '')) || 0;
+    if (comp > 0) sim('Negotiate $50K raise', { comp: String(comp + 50000) });
+    var debt = parseInt(String(cp.debt || '0').replace(/[^0-9]/g, '')) || 0;
+    if (debt > 50000) sim('Pay off $50K in debt', { debt: String(debt - 50000) });
+    sim('Increase savings to 20%+', { savingsrate: '20-30%' });
+    sim('Increase savings to 30%+', { savingsrate: '>30%' });
+  }
+
+  scenarios.sort(function(a, b) { return b.delta - a.delta; });
+  return scenarios.slice(0, 4);
+}
+
+
+// ===== SECTION 4d: WHAT CHANGED DETECTION =====
+// Compares current scores to previous scores and generates change summary
+function hwGetWhatChanged(cp, scores) {
+  if (!U || !U.scoreHistory || U.scoreHistory.length < 2) return null;
+  var prev = U.scoreHistory[U.scoreHistory.length - 2].scores;
+  var prevDate = new Date(U.scoreHistory[U.scoreHistory.length - 2].date);
+  var daysSince = Math.floor((new Date() - prevDate) / 86400000);
+  var dims = ['competitiveness', 'research', 'readiness', 'financial'];
+  var dimLabels = { competitiveness: 'Competitiveness', research: 'Research', readiness: 'Readiness', financial: 'Financial' };
+  var changes = [];
+  var totalDelta = 0;
+
+  dims.forEach(function(d) {
+    var delta = (scores[d] || 0) - (prev[d] || 0);
+    if (delta !== 0) {
+      changes.push({ dim: d, label: dimLabels[d], delta: delta, from: prev[d] || 0, to: scores[d] || 0 });
+      totalDelta += delta;
+    }
+  });
+
+  if (changes.length === 0) return null;
+  var overallDelta = Math.round(totalDelta / 4);
+  return { changes: changes, overallDelta: overallDelta, daysSince: daysSince, prevDate: prevDate };
+}
+
+
+// ===== SECTION 4e: COST OF WAITING =====
+// Financial cost of delaying key actions
+function hwGetCostOfWaiting(cp) {
+  var costs = [];
+  var stage = cp.stage || 'student';
+  var debt = parseInt(String(cp.debt || '0').replace(/[^0-9]/g, '')) || 0;
+  var comp = parseInt(String(cp.comp || '0').replace(/[^0-9]/g, '')) || 0;
+
+  // Disability insurance
+  if (stage === 'fellow' || stage === 'resident') {
+    costs.push({ label: 'Delaying disability insurance', cost: '$800–$1,500/yr more as attending', urgency: 'high', tool: 'v8' });
+  }
+  // PSLF
+  if (debt > 100000 && (stage === 'resident' || stage === 'fellow')) {
+    var monthlyPayment = Math.round(debt * 0.001);
+    costs.push({ label: 'Missing 1 PSLF payment', cost: '$' + monthlyPayment.toLocaleString() + ' lost toward forgiveness', urgency: 'high', tool: 'v8' });
+  }
+  // Contract negotiation
+  if (stage === 'fellow' || (stage === 'resident' && cp.goal === 'contract')) {
+    costs.push({ label: 'Not negotiating first contract', cost: '$40K–$80K/yr left on table', urgency: 'critical', tool: 'v12' });
+  }
+  // Savings rate
+  if (stage === 'attending' && (cp.savingsrate === '<10%' || cp.savingsrate === '10-20%')) {
+    var annualLoss = Math.round(comp * 0.05 / 1000);
+    costs.push({ label: 'Each month at low savings rate', cost: '$' + annualLoss + 'K/yr not compounding', urgency: 'high', tool: 'v11' });
+  }
+  // Debt interest
+  if (debt > 100000 && stage === 'attending') {
+    var dailyInterest = Math.round(debt * 0.06 / 365);
+    costs.push({ label: 'Your debt accrues daily', cost: '$' + dailyInterest + '/day in interest', urgency: 'medium', tool: 'v8' });
+  }
+  // Roth IRA
+  if (stage === 'resident' || stage === 'fellow' || stage === 'attending') {
+    costs.push({ label: 'Missing Roth IRA contribution', cost: '$7,000 in tax-free growth lost per year', urgency: 'medium', tool: 'v11' });
+  }
+
+  return costs.slice(0, 3);
+}
+
+
+// ===== SECTION 4f: SMART TOOL RECOMMENDATIONS =====
+// Context-aware tool suggestions based on biggest gaps
+function hwGetSmartToolRecs(cp, scores, progress) {
+  var recs = [];
+  var stage = cp.stage || 'student';
+  var behindItems = progress.filter(function(p) { return p.status === 'behind'; });
+  var gapItems = progress.filter(function(p) { return p.status === 'gap'; });
+  var weakest = null;
+  var dims = ['competitiveness', 'research', 'readiness', 'financial'];
+  var weakVal = 999;
+  dims.forEach(function(d) { if ((scores[d] || 0) < weakVal) { weakVal = scores[d] || 0; weakest = d; } });
+
+  // Based on weakest dimension
+  if (weakest === 'research' || (behindItems.length && behindItems[0].label === 'Publications')) {
+    recs.push({ tool: 'v7', title: 'Research Impact Calculator', reason: 'Your research is your biggest gap. See exactly what type of publication helps most.', urgency: 'high' });
+  }
+  if (weakest === 'competitiveness' && (stage === 'student' || stage === 'resident')) {
+    recs.push({ tool: 'v14', title: 'Match Competitiveness Calculator', reason: 'Your competitiveness score is ' + (scores.competitiveness || 0) + '. Use the ROI Simulator to find what moves your needle most.', urgency: 'high' });
+  }
+  if (weakest === 'financial') {
+    recs.push({ tool: 'v11', title: 'Financial Projection Tool', reason: 'Your financial score is the weakest. Model your 30-year trajectory and find the highest-impact changes.', urgency: 'high' });
+  }
+  if (weakest === 'readiness' && stage !== 'attending') {
+    recs.push({ tool: 'v15', title: 'Career Roadmap Tool', reason: 'Your readiness score needs work. Build a step-by-step plan with dependencies and timelines.', urgency: 'high' });
+  }
+
+  // Stage-specific
+  if (stage === 'fellow' || (stage === 'resident' && cp.goal === 'contract')) {
+    var hasContract = (U.toolHistory || []).some(function(t) { return t.tool === 'Contract Review Tool'; });
+    if (!hasContract) {
+      recs.push({ tool: 'v12', title: 'Contract Review Tool', reason: 'You haven\'t reviewed a contract yet. Most physicians leave $50K+ on the table by not preparing.', urgency: 'critical' });
+    }
+  }
+  if (stage === 'student' && cp.goal === 'specialty') {
+    recs.push({ tool: 'v13', title: 'Specialty Fit Assessment', reason: 'Choosing the right specialty is the most important decision of medical school. Match your values to data.', urgency: 'high' });
+  }
+
+  // Don't recommend tools they ran recently
+  var recentTools = {};
+  (U.toolHistory || []).forEach(function(t) {
+    var d = new Date(t.date);
+    if (new Date() - d < 30 * 86400000) recentTools[t.tool] = true;
+  });
+  recs = recs.filter(function(r) {
+    var item = (typeof VAULT_ITEMS !== 'undefined') ? VAULT_ITEMS.find(function(v) { return v.id === r.tool; }) : null;
+    return !item || !recentTools[item.title];
+  });
+
+  return recs.slice(0, 2);
+}
+
+
+// ===== SECTION 4g: PEER PERCENTILE =====
+function hwGetPeerPercentile(overall) {
+  // Approximate percentile from overall score (based on normal distribution around 50)
+  if (overall >= 85) return { pct: 'top 5%', label: 'Exceptional' };
+  if (overall >= 75) return { pct: 'top 15%', label: 'Strong' };
+  if (overall >= 65) return { pct: 'top 30%', label: 'Competitive' };
+  if (overall >= 55) return { pct: 'top 50%', label: 'Building' };
+  if (overall >= 45) return { pct: 'top 65%', label: 'Developing' };
+  return { pct: 'building', label: 'Early Stage' };
+}
+
+
+// ===== SECTION 4h: PROGRESS SPARKLINES =====
+function hwRenderSparkline(history, key, width, height) {
+  if (!history || history.length < 2) return '';
+  var vals = history.map(function(h) { return h.scores[key] || 0; });
+  var min = Math.min.apply(null, vals);
+  var max = Math.max.apply(null, vals);
+  var range = max - min || 1;
+  var w = width || 60;
+  var ht = height || 20;
+  var pts = vals.map(function(v, i) {
+    return Math.round((i / (vals.length - 1)) * w) + ',' + Math.round(ht - ((v - min) / range) * (ht - 4) - 2);
+  }).join(' ');
+  var lastVal = vals[vals.length - 1];
+  var firstVal = vals[0];
+  var trendColor = lastVal > firstVal ? '#5E8B6F' : lastVal < firstVal ? '#B85C5C' : '#C6A85E';
+  return '<svg width="' + w + '" height="' + ht + '" style="display:inline-block;vertical-align:middle"><polyline points="' + pts + '" fill="none" stroke="' + trendColor + '" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+}
 // Stage-specific onboarding that captures exactly what's needed
 
 function hwShowOnboarding() {
@@ -922,12 +1209,7 @@ function renderCareerMap() {
   initCareerProfile();
   var cp = U.careerProfile || {};
   var hasRealProfile = cp.lastUpdated && (cp.specialty || cp.step2 || parseInt(cp.pubs) > 0 || parseInt(cp.comp) > 5000);
-
-  // If no profile, show onboarding
-  if (!hasRealProfile) {
-    hwShowOnboarding();
-    return false; // Signal that we showed onboarding, not the map
-  }
+  if (!hasRealProfile) { hwShowOnboarding(); return false; }
 
   var scores = calcDashScores(cp);
   var stage = cp.stage || 'student';
@@ -938,297 +1220,388 @@ function renderCareerMap() {
   var spec = hwFindSpecialty(cp.specialty);
   var specName = cp.specialty ? cp.specialty.charAt(0).toUpperCase() + cp.specialty.slice(1) : '';
   var overall = Math.round((scores.competitiveness + scores.research + scores.readiness + scores.financial) / 4);
+  var whatChanged = hwGetWhatChanged(cp, scores);
+  var whatIf = hwGetWhatIfScenarios(cp, scores);
+  var conferences = hwGetConferenceDeadlines(cp);
+  var costWait = hwGetCostOfWaiting(cp);
+  var smartRecs = hwGetSmartToolRecs(cp, scores, progress);
+  var peerPct = hwGetPeerPercentile(overall);
 
   var stageLabels = { student: 'Medical Student', resident: 'Resident', fellow: 'Fellow', attending: 'Attending Physician' };
-  var stageIcons = { student: '🎓', resident: '🏥', fellow: '🔬', attending: '👨‍⚕️' };
-  var goalLabels = {
-    match: stage === 'student' ? 'Match into Residency' : 'Secure Fellowship',
-    specialty: 'Choose Specialty',
-    contract: stage === 'attending' ? 'Optimize Position' : 'Land Attending Job',
-    finance: 'Financial Optimization',
-    direction: 'Career Direction'
-  };
+  var stageIcons = { student: '\uD83C\uDF93', resident: '\uD83C\uDFE5', fellow: '\uD83D\uDD2C', attending: '\uD83D\uDC68\u200D\u2695\uFE0F' };
+  var goalLabels = { match: stage === 'student' ? 'Match into Residency' : 'Secure Fellowship', specialty: 'Choose Specialty', contract: stage === 'attending' ? 'Optimize Position' : 'Land Attending Job', finance: 'Financial Optimization', direction: 'Career Direction' };
 
   var name = U.name ? 'Dr. ' + U.name.split(' ').pop() : '';
   var hour = new Date().getHours();
   var greeting = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
-
   var el = document.getElementById('home-hero-card');
   if (!el) return false;
-
   var h = '';
 
-  // ===== HEADER: Greeting + Score Ring =====
-  h += '<div style="background:#111318;border-radius:18px;padding:22px 20px 18px;color:#EDEBE7;position:relative;overflow:hidden;margin-bottom:12px">';
+  // ========================================
+  // CARD 1: HEADER (always visible)
+  // ========================================
+  h += '<div style="background:#111318;border-radius:18px;padding:20px 18px 16px;color:#EDEBE7;position:relative;overflow:hidden;margin-bottom:10px">';
   h += '<div style="position:absolute;top:-30%;right:-10%;width:180px;height:180px;background:radial-gradient(circle,rgba(198,168,94,.08),transparent 60%);border-radius:50%"></div>';
   h += '<div style="position:relative">';
-
-  // Row 1: Greeting + Score ring
-  h += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">';
+  // Row 1: Greeting + Score
+  h += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">';
   h += '<div>';
-  h += '<div style="font-family:var(--font-serif);font-size:17px;font-weight:600;color:#EDEBE7;line-height:1.3">' + (name ? greeting + ', ' + name : greeting) + '</div>';
-  h += '<div style="font-size:11px;color:rgba(237,235,231,.45);margin-top:2px">' + stageIcons[stage] + ' ' + (stageLabels[stage] || stage) + (specName ? ' · ' + specName : '') + '</div>';
+  h += '<div style="font-family:var(--font-serif);font-size:17px;font-weight:600;line-height:1.3">' + (name ? greeting + ', ' + name : greeting) + '</div>';
+  h += '<div style="font-size:11px;color:rgba(237,235,231,.45);margin-top:2px">' + (stageLabels[stage] || stage) + (specName ? ' \u00B7 ' + specName : '') + '</div>';
   h += '</div>';
-
-  // Score ring
+  // Score ring with percentile
   var ringColor = overall >= 75 ? '#5E8B6F' : overall >= 55 ? '#C6A85E' : '#B85C5C';
-  var r = 28, circ = 2 * Math.PI * r, offset = circ - (overall / 100) * circ;
-  h += '<div style="position:relative;width:52px;height:52px;flex-shrink:0">';
-  h += '<svg viewBox="0 0 60 60" style="width:52px;height:52px;transform:rotate(-90deg)">';
-  h += '<circle cx="30" cy="30" r="' + r + '" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="3.5"/>';
-  h += '<circle cx="30" cy="30" r="' + r + '" fill="none" stroke="' + ringColor + '" stroke-width="3.5" stroke-linecap="round" stroke-dasharray="' + circ.toFixed(1) + '" stroke-dashoffset="' + offset.toFixed(1) + '" style="transition:stroke-dashoffset .8s ease"/>';
+  var r = 26, circ = 2 * Math.PI * r, offset = circ - (overall / 100) * circ;
+  h += '<div style="display:flex;align-items:center;gap:8px">';
+  h += '<div style="text-align:right"><div style="font-size:9px;color:rgba(237,235,231,.4)">Career Score</div>';
+  h += '<div style="font-size:9px;color:' + ringColor + ';font-weight:600">' + peerPct.pct + '</div></div>';
+  h += '<div style="position:relative;width:48px;height:48px;flex-shrink:0">';
+  h += '<svg viewBox="0 0 56 56" style="width:48px;height:48px;transform:rotate(-90deg)">';
+  h += '<circle cx="28" cy="28" r="' + r + '" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="3"/>';
+  h += '<circle cx="28" cy="28" r="' + r + '" fill="none" stroke="' + ringColor + '" stroke-width="3" stroke-linecap="round" stroke-dasharray="' + circ.toFixed(1) + '" stroke-dashoffset="' + offset.toFixed(1) + '" style="transition:stroke-dashoffset .8s ease"/>';
   h += '</svg>';
-  h += '<div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:16px;font-weight:700;color:' + ringColor + ';font-family:var(--font-serif)">' + overall + '</div>';
-  h += '</div>';
-  h += '</div>';
+  h += '<div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:15px;font-weight:700;color:' + ringColor + ';font-family:var(--font-serif)">' + overall + '</div>';
+  h += '</div></div></div>';
 
-  // Row 2: Goal banner
+  // What Changed banner (if score changed since last update)
+  if (whatChanged && whatChanged.overallDelta !== 0) {
+    var wcColor = whatChanged.overallDelta > 0 ? '#5E8B6F' : '#B85C5C';
+    var wcArrow = whatChanged.overallDelta > 0 ? '\u25B2' : '\u25BC';
+    var wcDetails = whatChanged.changes.map(function(c) { return c.label + ' ' + (c.delta > 0 ? '+' : '') + c.delta; }).join(' \u00B7 ');
+    h += '<div style="margin-top:8px;padding:8px 12px;background:' + wcColor + '15;border:1px solid ' + wcColor + '30;border-radius:8px">';
+    h += '<div style="font-size:11px;color:' + wcColor + ';font-weight:600">' + wcArrow + ' Score ' + (whatChanged.overallDelta > 0 ? 'up' : 'down') + ' ' + Math.abs(whatChanged.overallDelta) + ' since last update</div>';
+    h += '<div style="font-size:10px;color:rgba(237,235,231,.5);margin-top:2px">' + wcDetails + '</div>';
+    h += '</div>';
+  }
+
+  // Goal row
   var goalLabel = goalLabels[cp.goal] || 'Build your career';
-  h += '<div style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:rgba(198,168,94,.08);border:1px solid rgba(198,168,94,.15);border-radius:10px">';
-  h += '<div style="font-size:14px">🎯</div>';
-  h += '<div style="flex:1;font-size:12px;color:rgba(237,235,231,.7)">Goal: <strong style="color:#EDEBE7">' + goalLabel + '</strong></div>';
-  h += '<span onclick="showUpdateProfile()" style="font-size:10px;color:var(--accent);cursor:pointer;font-weight:600">Edit →</span>';
+  h += '<div style="display:flex;align-items:center;gap:6px;margin-top:8px">';
+  h += '<span style="font-size:11px;color:rgba(237,235,231,.5)">\uD83C\uDFAF ' + goalLabel + '</span>';
+  h += '<span onclick="showUpdateProfile()" style="margin-left:auto;font-size:10px;color:var(--accent);cursor:pointer">Edit \u2192</span>';
   h += '</div>';
-
   h += '</div></div>';
 
-  // ===== COUNTDOWN: Next Critical Deadline =====
+  // ========================================
+  // CARD 2: NEXT DEADLINE COUNTDOWN (always visible)
+  // ========================================
   var nextCritical = deadlines.find(function(d) { return !d.isPast && (d.urgency === 'critical' || d.urgency === 'high'); });
   if (nextCritical) {
-    var daysColor = nextCritical.daysAway <= 14 ? 'var(--red)' : nextCritical.daysAway <= 30 ? '#C6A85E' : 'var(--green)';
-    h += '<div style="background:#fff;border:1px solid #E8E1D8;border-radius:14px;padding:16px 18px;margin-bottom:12px;box-shadow:0 2px 6px rgba(0,0,0,.04)">';
-    h += '<div style="display:flex;align-items:center;gap:14px">';
-    h += '<div style="text-align:center;min-width:56px">';
-    h += '<div style="font-size:28px;font-weight:800;color:' + daysColor + ';font-family:var(--font-serif);line-height:1">' + Math.max(0, nextCritical.daysAway) + '</div>';
-    h += '<div style="font-size:9px;font-weight:600;color:' + daysColor + ';text-transform:uppercase;letter-spacing:.5px">days</div>';
-    h += '</div>';
-    h += '<div style="flex:1;border-left:2px solid #E8E1D8;padding-left:14px">';
-    h += '<div style="font-size:13px;font-weight:600;color:#1C1A17;line-height:1.3">' + nextCritical.title + '</div>';
-    h += '<div style="font-size:11px;color:#8A8278;margin-top:2px;line-height:1.4">' + nextCritical.desc + '</div>';
-    if (nextCritical.tool) {
-      h += '<div onclick="openFramework(\'' + nextCritical.tool + '\')" style="margin-top:6px;font-size:11px;color:#C6A85E;font-weight:600;cursor:pointer">Prepare with tool →</div>';
-    }
+    var daysColor = nextCritical.daysAway <= 14 ? 'var(--red)' : nextCritical.daysAway <= 30 ? '#C6A85E' : '#5E8B6F';
+    h += '<div style="background:#fff;border:1px solid #E8E1D8;border-radius:14px;padding:14px 16px;margin-bottom:10px;box-shadow:0 2px 6px rgba(0,0,0,.04)">';
+    h += '<div style="display:flex;align-items:center;gap:12px">';
+    h += '<div style="text-align:center;min-width:50px">';
+    h += '<div style="font-size:26px;font-weight:800;color:' + daysColor + ';font-family:var(--font-serif);line-height:1">' + Math.max(0, nextCritical.daysAway) + '</div>';
+    h += '<div style="font-size:8px;font-weight:600;color:' + daysColor + ';text-transform:uppercase;letter-spacing:.5px">days</div></div>';
+    h += '<div style="flex:1;border-left:2px solid #E8E1D8;padding-left:12px">';
+    h += '<div style="font-size:12px;font-weight:600;color:#1C1A17;line-height:1.3">' + nextCritical.title + '</div>';
+    h += '<div style="font-size:10px;color:#8A8278;margin-top:2px;line-height:1.4">' + nextCritical.desc + '</div>';
+    if (nextCritical.tool) h += '<div onclick="openFramework(\'' + nextCritical.tool + '\')" style="margin-top:4px;font-size:10px;color:#C6A85E;font-weight:600;cursor:pointer">Prepare \u2192</div>';
     h += '</div></div></div>';
   }
 
-  // ===== THIS MONTH'S PRIORITIES =====
+  // ========================================
+  // CARD 3: #1 PRIORITY (always visible, just the top one)
+  // ========================================
   if (priorities.length) {
-    h += '<div style="background:#fff;border:1px solid #E8E1D8;border-radius:14px;padding:16px 18px;margin-bottom:12px;box-shadow:0 2px 6px rgba(0,0,0,.04)">';
-    h += '<div style="font-size:10px;font-weight:600;color:#C6A85E;text-transform:uppercase;letter-spacing:1.2px;margin-bottom:12px">📋 This Month\'s Priorities</div>';
-    priorities.slice(0, 3).forEach(function(p, i) {
-      var urgColor = p.urgency === 'critical' ? 'var(--red)' : p.urgency === 'high' ? '#C6A85E' : '#8A8278';
-      var barColor = i === 0 ? '#C6A85E' : i === 1 ? '#8BB4A0' : '#8A8278';
-      h += '<div style="display:flex;gap:10px;padding:10px 12px;background:#F8F5F0;border-radius:10px;margin-bottom:6px;border-left:3px solid ' + barColor + ';cursor:' + (p.tool ? 'pointer' : 'default') + '"' + (p.tool ? ' onclick="openFramework(\'' + p.tool + '\')"' : '') + '>';
-      h += '<div style="font-size:14px;font-weight:700;color:#C6A85E;flex-shrink:0;width:20px;text-align:center">' + (i + 1) + '</div>';
-      h += '<div style="flex:1">';
-      h += '<div style="font-size:12px;font-weight:600;color:#1C1A17;line-height:1.3">' + p.title + '</div>';
-      h += '<div style="font-size:11px;color:#8A8278;margin-top:2px;line-height:1.4">' + p.desc + '</div>';
-      h += '</div>';
-      if (p.urgency === 'critical') {
-        h += '<span style="font-size:8px;padding:2px 6px;background:rgba(192,96,96,.1);color:var(--red);border-radius:6px;font-weight:600;flex-shrink:0;align-self:flex-start;margin-top:2px">URGENT</span>';
-      }
-      h += '</div>';
-    });
-    // Show more priorities if available
-    if (priorities.length > 3) {
-      h += '<div id="cm-more-pri" style="display:none">';
-      priorities.slice(3).forEach(function(p, i) {
-        h += '<div style="display:flex;gap:10px;padding:10px 12px;background:#F8F5F0;border-radius:10px;margin-bottom:6px;border-left:3px solid #8A8278;cursor:' + (p.tool ? 'pointer' : 'default') + '"' + (p.tool ? ' onclick="openFramework(\'' + p.tool + '\')"' : '') + '>';
-        h += '<div style="font-size:14px;font-weight:700;color:#8A8278;flex-shrink:0;width:20px;text-align:center">' + (i + 4) + '</div>';
-        h += '<div style="flex:1"><div style="font-size:12px;font-weight:600;color:#1C1A17;line-height:1.3">' + p.title + '</div>';
-        h += '<div style="font-size:11px;color:#8A8278;margin-top:2px;line-height:1.4">' + p.desc + '</div></div></div>';
-      });
-      h += '</div>';
-      h += '<div onclick="var m=document.getElementById(\'cm-more-pri\');m.style.display=m.style.display===\'none\'?\'\':\'none\';this.textContent=m.style.display===\'none\'?\'Show ' + (priorities.length - 3) + ' more →\':\'Show less\'" style="text-align:center;font-size:11px;color:#C6A85E;cursor:pointer;font-weight:600;padding-top:4px">Show ' + (priorities.length - 3) + ' more →</div>';
-    }
+    var p1 = priorities[0];
+    h += '<div style="background:#fff;border:1px solid #E8E1D8;border-radius:14px;padding:14px 16px;margin-bottom:10px;box-shadow:0 2px 6px rgba(0,0,0,.04);cursor:' + (p1.tool ? 'pointer' : 'default') + '"' + (p1.tool ? ' onclick="openFramework(\'' + p1.tool + '\')"' : '') + '>';
+    h += '<div style="font-size:9px;font-weight:600;color:#C6A85E;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">\u2757 Top Priority This Month</div>';
+    h += '<div style="font-size:13px;font-weight:600;color:#1C1A17;line-height:1.3">' + p1.title + '</div>';
+    h += '<div style="font-size:11px;color:#8A8278;margin-top:3px;line-height:1.4">' + p1.desc + '</div>';
+    if (p1.tool) h += '<div style="margin-top:6px;font-size:11px;color:#C6A85E;font-weight:600">Take action \u2192</div>';
     h += '</div>';
   }
 
-  // ===== PROGRESS TRACKER =====
+  // ========================================
+  // EXPANDABLE SECTION: "See Your Full Career Map"
+  // Everything below is inside a collapsible container
+  // ========================================
+  var hasMore = priorities.length > 1 || progress.length || financial.hasData || whatIf.length;
+  if (hasMore) {
+    h += '<div id="cm-expand-btn" onclick="var s=document.getElementById(\'cm-expand-content\');var b=document.getElementById(\'cm-expand-btn\');s.style.display=s.style.display===\'none\'?\'\':\'none\';b.style.display=\'none\'" style="text-align:center;padding:10px;margin-bottom:10px;cursor:pointer;background:#fff;border:1px solid #E8E1D8;border-radius:14px;box-shadow:0 2px 6px rgba(0,0,0,.04);transition:border-color .15s" onmouseenter="this.style.borderColor=\'#C6A85E\'" onmouseleave="this.style.borderColor=\'#E8E1D8\'">';
+    h += '<div style="font-size:12px;font-weight:600;color:#1C1A17">\u25BC See Your Full Career Map</div>';
+    h += '<div style="font-size:10px;color:#8A8278;margin-top:2px">Priorities \u00B7 Progress \u00B7 Finances \u00B7 Deadlines \u00B7 Tools</div>';
+    h += '</div>';
+    h += '<div id="cm-expand-content" style="display:none">';
+  }
+  // --- EXPANDED CONTENT STARTS ---
+
+  // ========================================
+  // SECTION A: ALL PRIORITIES (2-5)
+  // ========================================
+  if (priorities.length > 1) {
+    h += '<div style="background:#fff;border:1px solid #E8E1D8;border-radius:14px;padding:14px 16px;margin-bottom:10px;box-shadow:0 2px 6px rgba(0,0,0,.04)">';
+    h += '<div style="font-size:9px;font-weight:600;color:#C6A85E;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">\uD83D\uDCCB More Priorities</div>';
+    priorities.slice(1, 5).forEach(function(p, i) {
+      var barCol = i === 0 ? '#8BB4A0' : '#8A8278';
+      h += '<div style="display:flex;gap:8px;padding:8px 10px;background:#F8F5F0;border-radius:8px;margin-bottom:4px;border-left:3px solid ' + barCol + ';cursor:' + (p.tool ? 'pointer' : 'default') + '"' + (p.tool ? ' onclick="openFramework(\'' + p.tool + '\')"' : '') + '>';
+      h += '<div style="font-size:12px;font-weight:700;color:#C6A85E;flex-shrink:0;width:16px;text-align:center">' + (i + 2) + '</div>';
+      h += '<div style="flex:1"><div style="font-size:11px;font-weight:600;color:#1C1A17;line-height:1.3">' + p.title + '</div>';
+      h += '<div style="font-size:10px;color:#8A8278;margin-top:1px;line-height:1.3">' + p.desc + '</div></div>';
+      if (p.urgency === 'critical') h += '<span style="font-size:7px;padding:1px 4px;background:rgba(192,96,96,.1);color:var(--red);border-radius:4px;font-weight:600;flex-shrink:0;align-self:flex-start">URGENT</span>';
+      h += '</div>';
+    });
+    h += '</div>';
+  }
+
+  // ========================================
+  // SECTION B: WHERE YOU STAND (with sparklines)
+  // ========================================
   if (progress.length) {
-    h += '<div style="background:#fff;border:1px solid #E8E1D8;border-radius:14px;padding:16px 18px;margin-bottom:12px;box-shadow:0 2px 6px rgba(0,0,0,.04)">';
-    h += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">';
-    h += '<div style="font-size:10px;font-weight:600;color:#C6A85E;text-transform:uppercase;letter-spacing:1.2px">' + (stage === 'attending' ? '💰 Financial Health' : '📊 Where You Stand') + '</div>';
-    h += '<span onclick="showUpdateProfile()" style="font-size:10px;color:#C6A85E;cursor:pointer;font-weight:600">Update →</span>';
+    h += '<div style="background:#fff;border:1px solid #E8E1D8;border-radius:14px;padding:14px 16px;margin-bottom:10px;box-shadow:0 2px 6px rgba(0,0,0,.04)">';
+    h += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">';
+    h += '<div style="font-size:9px;font-weight:600;color:#C6A85E;text-transform:uppercase;letter-spacing:1px">' + (stage === 'attending' ? '\uD83D\uDCB0 Financial Health' : '\uD83D\uDCCA Where You Stand') + '</div>';
+    h += '<span onclick="showUpdateProfile()" style="font-size:9px;color:#C6A85E;cursor:pointer;font-weight:600">Update \u2192</span>';
     h += '</div>';
-
     progress.forEach(function(p) {
-      var statusColors = { 'ahead': '#5E8B6F', 'on-track': '#5E8B6F', 'gap': '#C6A85E', 'behind': '#B85C5C' };
-      var statusIcons = { 'ahead': '🟢', 'on-track': '🟢', 'gap': '🟡', 'behind': '🔴' };
-      var statusLabels = { 'ahead': 'Ahead', 'on-track': 'On Track', 'gap': 'Gap', 'behind': 'Behind' };
+      var statusColors = { ahead: '#5E8B6F', 'on-track': '#5E8B6F', gap: '#C6A85E', behind: '#B85C5C' };
+      var statusLabels = { ahead: 'Ahead', 'on-track': 'On Track', gap: 'Gap', behind: 'Behind' };
       var col = statusColors[p.status] || '#8A8278';
-
-      h += '<div style="padding:8px 0;border-bottom:1px solid #F0ECE4">';
-      h += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px">';
-      h += '<div style="font-size:12px;font-weight:600;color:#1C1A17">' + p.label + '</div>';
-      h += '<div style="display:flex;align-items:center;gap:6px">';
-      h += '<span style="font-size:12px;font-weight:700;color:' + col + '">' + p.you + '</span>';
-      h += '<span style="font-size:10px;color:#8A8278">/ ' + p.target + '</span>';
-      h += '<span style="font-size:8px;padding:1px 5px;background:' + col + '15;color:' + col + ';border-radius:4px;font-weight:600">' + (statusLabels[p.status] || '') + '</span>';
+      h += '<div style="padding:6px 0;border-bottom:1px solid #F0ECE4">';
+      h += '<div style="display:flex;align-items:center;justify-content:space-between">';
+      h += '<span style="font-size:11px;font-weight:600;color:#1C1A17">' + p.label + '</span>';
+      h += '<div style="display:flex;align-items:center;gap:4px">';
+      h += '<span style="font-size:11px;font-weight:700;color:' + col + '">' + p.you + '</span>';
+      h += '<span style="font-size:9px;color:#8A8278">/ ' + p.target + '</span>';
+      h += '<span style="font-size:7px;padding:1px 4px;background:' + col + '15;color:' + col + ';border-radius:3px;font-weight:600">' + (statusLabels[p.status] || '') + '</span>';
       h += '</div></div>';
-      if (p.detail) {
-        h += '<div style="font-size:10px;color:#8A8278;line-height:1.4">' + p.detail + '</div>';
-      }
+      if (p.detail) h += '<div style="font-size:9px;color:#8A8278;margin-top:1px">' + p.detail + '</div>';
       h += '</div>';
     });
     h += '</div>';
   }
 
-  // ===== FINANCIAL SNAPSHOT =====
-  if (financial.hasData) {
-    h += '<div style="background:#fff;border:1px solid #E8E1D8;border-radius:14px;padding:16px 18px;margin-bottom:12px;box-shadow:0 2px 6px rgba(0,0,0,.04)">';
-    h += '<div style="font-size:10px;font-weight:600;color:#C6A85E;text-transform:uppercase;letter-spacing:1.2px;margin-bottom:10px">💵 Financial Snapshot</div>';
-    financial.lines.forEach(function(l) {
-      h += '<div style="display:flex;align-items:center;justify-content:space-between;padding:' + (l.sub ? '2px 0 2px 16px' : '6px 0') + '">';
-      h += '<span style="font-size:' + (l.sub ? '10' : '12') + 'px;color:' + (l.sub ? '#8A8278' : '#1C1A17') + '">' + l.label + '</span>';
-      h += '<span style="font-size:' + (l.sub ? '10' : '13') + 'px;font-weight:' + (l.sub ? '500' : '700') + ';color:' + l.color + '">' + l.value + '</span>';
+  // ========================================
+  // SECTION C: WHAT-IF SIMULATOR
+  // ========================================
+  if (whatIf.length) {
+    h += '<div style="background:#fff;border:1px solid #E8E1D8;border-radius:14px;padding:14px 16px;margin-bottom:10px;box-shadow:0 2px 6px rgba(0,0,0,.04)">';
+    h += '<div style="font-size:9px;font-weight:600;color:#C6A85E;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">\uD83D\uDD2E What If You...</div>';
+    whatIf.forEach(function(w) {
+      h += '<div style="display:flex;align-items:center;justify-content:space-between;padding:5px 0;border-bottom:1px solid #F0ECE4">';
+      h += '<span style="font-size:11px;color:#1C1A17">' + w.label + '</span>';
+      h += '<span style="font-size:11px;font-weight:700;color:#5E8B6F">Score: ' + overall + ' \u2192 ' + w.newScore + ' <span style="font-size:9px">(+' + w.delta + ')</span></span>';
       h += '</div>';
     });
-    // Link to financial tools
-    h += '<div onclick="openFramework(\'v11\')" style="margin-top:8px;text-align:center;font-size:11px;color:#C6A85E;cursor:pointer;font-weight:600">Run Full Financial Projection →</div>';
+    h += '<div style="font-size:9px;color:#8A8278;margin-top:6px;text-align:center">Update your profile after making changes to see your score move</div>';
     h += '</div>';
   }
 
-  // ===== UPCOMING DEADLINES (next 90 days) =====
-  var upcoming = deadlines.filter(function(d) { return !d.isPast && d.daysAway <= 90; }).slice(0, 5);
-  if (upcoming.length) {
-    h += '<div style="background:#fff;border:1px solid #E8E1D8;border-radius:14px;padding:16px 18px;margin-bottom:12px;box-shadow:0 2px 6px rgba(0,0,0,.04)">';
-    h += '<div style="font-size:10px;font-weight:600;color:#C6A85E;text-transform:uppercase;letter-spacing:1.2px;margin-bottom:10px">📅 Upcoming Deadlines</div>';
-    upcoming.forEach(function(d) {
-      var dateStr = d.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-      var urgColor = d.urgency === 'critical' ? 'var(--red)' : d.urgency === 'high' ? '#C6A85E' : '#8A8278';
-      var dayColor = d.daysAway <= 14 ? 'var(--red)' : d.daysAway <= 30 ? '#C6A85E' : '#5E8B6F';
-      h += '<div style="display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid #F0ECE4;cursor:' + (d.tool ? 'pointer' : 'default') + '"' + (d.tool ? ' onclick="openFramework(\'' + d.tool + '\')"' : '') + '>';
-      h += '<div style="min-width:42px;text-align:center"><span style="font-size:11px;font-weight:700;color:' + dayColor + '">' + d.daysAway + 'd</span></div>';
-      h += '<div style="flex:1"><div style="font-size:11px;font-weight:600;color:#1C1A17">' + d.title + '</div>';
-      h += '<div style="font-size:10px;color:#8A8278">' + dateStr + '</div></div>';
-      var catIcons = { application: '📝', exam: '📚', career: '💼', financial: '💰' };
-      h += '<span style="font-size:12px">' + (catIcons[d.category] || '📌') + '</span>';
-      h += '</div>';
-    });
-
-    // Show all deadlines toggle
-    var allDeadlines = deadlines.filter(function(d) { return !d.isPast; });
-    if (allDeadlines.length > 5) {
-      h += '<div id="cm-all-deadlines" style="display:none">';
-      allDeadlines.slice(5).forEach(function(d) {
-        var dateStr2 = d.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-        var dayColor2 = d.daysAway <= 30 ? '#C6A85E' : '#8A8278';
-        h += '<div style="display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid #F0ECE4">';
-        h += '<div style="min-width:42px;text-align:center"><span style="font-size:11px;font-weight:700;color:' + dayColor2 + '">' + d.daysAway + 'd</span></div>';
-        h += '<div style="flex:1"><div style="font-size:11px;font-weight:600;color:#1C1A17">' + d.title + '</div>';
-        h += '<div style="font-size:10px;color:#8A8278">' + dateStr2 + '</div></div></div>';
+  // ========================================
+  // SECTION D: FINANCIAL SNAPSHOT + COST OF WAITING
+  // ========================================
+  if (financial.hasData || costWait.length) {
+    h += '<div style="background:#fff;border:1px solid #E8E1D8;border-radius:14px;padding:14px 16px;margin-bottom:10px;box-shadow:0 2px 6px rgba(0,0,0,.04)">';
+    h += '<div style="font-size:9px;font-weight:600;color:#C6A85E;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">\uD83D\uDCB5 Financial Snapshot</div>';
+    if (financial.hasData) {
+      financial.lines.forEach(function(l) {
+        h += '<div style="display:flex;align-items:center;justify-content:space-between;padding:' + (l.sub ? '1px 0 1px 14px' : '4px 0') + '">';
+        h += '<span style="font-size:' + (l.sub ? '10' : '11') + 'px;color:' + (l.sub ? '#8A8278' : '#1C1A17') + '">' + l.label + '</span>';
+        h += '<span style="font-size:' + (l.sub ? '10' : '12') + 'px;font-weight:' + (l.sub ? '500' : '700') + ';color:' + l.color + '">' + l.value + '</span>';
+        h += '</div>';
       });
-      h += '</div>';
-      h += '<div onclick="var m=document.getElementById(\'cm-all-deadlines\');m.style.display=m.style.display===\'none\'?\'\':\'none\';this.textContent=m.style.display===\'none\'?\'View all ' + allDeadlines.length + ' deadlines →\':\'Show less\'" style="text-align:center;font-size:11px;color:#C6A85E;cursor:pointer;font-weight:600;padding-top:6px">View all ' + allDeadlines.length + ' deadlines →</div>';
     }
-    h += '</div>';
-  }
-
-  // ===== RERUN REMINDERS =====
-  var th = U.toolHistory || [];
-  if (th.length > 0) {
-    var lastRuns = {};
-    th.forEach(function(t) { lastRuns[t.tool] = new Date(t.date); });
-    var retoolDays = {
-      'Match Competitiveness Calculator': 30,
-      'Fellowship Readiness Assessment': 45,
-      'RVU Compensation Calculator': 60,
-      'Contract Review Tool': 90,
-      'Financial Projection Tool': 90,
-      'Specialty Fit Assessment': 60,
-      'Research Impact Calculator': 45
-    };
-    var staleTools = [];
-    Object.keys(lastRuns).forEach(function(tool) {
-      var rec = retoolDays[tool];
-      if (rec) {
-        var daysSince = Math.floor((new Date() - lastRuns[tool]) / 86400000);
-        if (daysSince >= rec) {
-          staleTools.push({ tool: tool, daysSince: daysSince, recommended: rec });
-        }
-      }
-    });
-
-    if (staleTools.length) {
-      staleTools.sort(function(a, b) { return b.daysSince - a.daysSince; });
-      h += '<div style="background:#fff;border:1px solid #E8E1D8;border-radius:14px;padding:16px 18px;margin-bottom:12px;box-shadow:0 2px 6px rgba(0,0,0,.04)">';
-      h += '<div style="font-size:10px;font-weight:600;color:#C6A85E;text-transform:uppercase;letter-spacing:1.2px;margin-bottom:10px">🔄 Time to Re-run</div>';
-      staleTools.slice(0, 3).forEach(function(s) {
-        var toolId = null;
-        if (typeof VAULT_ITEMS !== 'undefined') {
-          var vi = VAULT_ITEMS.find(function(v) { return v.title === s.tool; });
-          if (vi) toolId = vi.id;
-        }
-        h += '<div' + (toolId ? ' onclick="openFramework(\'' + toolId + '\')"' : '') + ' style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #F0ECE4;cursor:pointer">';
-        h += '<div style="flex:1"><div style="font-size:12px;font-weight:600;color:#1C1A17">' + s.tool + '</div>';
-        h += '<div style="font-size:10px;color:#8A8278">Last run ' + s.daysSince + ' days ago · recommended every ' + s.recommended + ' days</div></div>';
-        h += '<span style="font-size:11px;color:#C6A85E;font-weight:600">Re-run →</span>';
+    // Cost of Waiting
+    if (costWait.length) {
+      h += '<div style="margin-top:8px;padding-top:8px;border-top:1px solid #F0ECE4">';
+      h += '<div style="font-size:9px;font-weight:600;color:#B85C5C;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">\u23F0 Cost of Waiting</div>';
+      costWait.forEach(function(c) {
+        h += '<div style="display:flex;align-items:center;justify-content:space-between;padding:3px 0;cursor:' + (c.tool ? 'pointer' : 'default') + '"' + (c.tool ? ' onclick="openFramework(\'' + c.tool + '\')"' : '') + '>';
+        h += '<span style="font-size:10px;color:#1C1A17">' + c.label + '</span>';
+        h += '<span style="font-size:10px;font-weight:600;color:#B85C5C">' + c.cost + '</span>';
         h += '</div>';
       });
       h += '</div>';
     }
+    h += '<div onclick="openFramework(\'v11\')" style="margin-top:6px;text-align:center;font-size:10px;color:#C6A85E;cursor:pointer;font-weight:600">Run Full Financial Projection \u2192</div>';
+    h += '</div>';
   }
 
-  // ===== SCORE BREAKDOWN BARS =====
+  // ========================================
+  // SECTION E: SCORE BREAKDOWN (with sparklines)
+  // ========================================
   var dims = [
-    { k: 'competitiveness', l: 'Competitiveness', icon: '🏆', desc: stage === 'attending' ? 'Market position' : 'Match/fellowship readiness' },
-    { k: 'research', l: 'Research', icon: '🔬', desc: 'Publications & scholarly activity' },
-    { k: 'readiness', l: 'Readiness', icon: '🎯', desc: stage === 'attending' ? 'Career optimization' : 'Application strength' },
-    { k: 'financial', l: 'Financial', icon: '💰', desc: 'Financial health & planning' }
+    { k: 'competitiveness', l: 'Competitiveness', desc: stage === 'attending' ? 'Market position' : 'Match readiness' },
+    { k: 'research', l: 'Research', desc: 'Publications & scholarly work' },
+    { k: 'readiness', l: 'Readiness', desc: stage === 'attending' ? 'Career optimization' : 'Application strength' },
+    { k: 'financial', l: 'Financial', desc: 'Financial health' }
   ];
-  h += '<div style="background:#fff;border:1px solid #E8E1D8;border-radius:14px;padding:16px 18px;margin-bottom:12px;box-shadow:0 2px 6px rgba(0,0,0,.04)">';
-  h += '<div style="font-size:10px;font-weight:600;color:#C6A85E;text-transform:uppercase;letter-spacing:1.2px;margin-bottom:12px">📈 Career Score Breakdown</div>';
+  h += '<div style="background:#fff;border:1px solid #E8E1D8;border-radius:14px;padding:14px 16px;margin-bottom:10px;box-shadow:0 2px 6px rgba(0,0,0,.04)">';
+  h += '<div style="font-size:9px;font-weight:600;color:#C6A85E;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">\uD83D\uDCC8 Career Score Breakdown</div>';
   dims.forEach(function(dim) {
     var val = scores[dim.k] || 0;
     var barColor = val >= 75 ? '#5E8B6F' : val >= 55 ? '#C6A85E' : '#B85C5C';
-    h += '<div style="margin-bottom:10px">';
-    h += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px">';
-    h += '<span style="font-size:11px;color:#1C1A17">' + dim.icon + ' ' + dim.l + '</span>';
-    h += '<span style="font-size:12px;font-weight:700;color:' + barColor + '">' + val + '</span>';
-    h += '</div>';
-    h += '<div style="height:6px;background:#F0ECE4;border-radius:3px;overflow:hidden">';
+    var spark = (U.scoreHistory && U.scoreHistory.length > 1) ? hwRenderSparkline(U.scoreHistory, dim.k, 50, 16) : '';
+    h += '<div style="margin-bottom:8px">';
+    h += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px">';
+    h += '<span style="font-size:10px;color:#1C1A17">' + dim.l + '</span>';
+    h += '<div style="display:flex;align-items:center;gap:6px">';
+    if (spark) h += spark;
+    h += '<span style="font-size:11px;font-weight:700;color:' + barColor + '">' + val + '</span>';
+    h += '</div></div>';
+    h += '<div style="height:5px;background:#F0ECE4;border-radius:3px;overflow:hidden">';
     h += '<div style="height:100%;width:' + val + '%;background:' + barColor + ';border-radius:3px;transition:width .6s ease"></div>';
     h += '</div>';
-    h += '<div style="font-size:9px;color:#8A8278;margin-top:1px">' + dim.desc + '</div>';
     h += '</div>';
   });
   h += '</div>';
 
-  // ===== QUICK ACTIONS =====
-  h += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">';
-  h += '<div onclick="navTo(\'scr-ask\')" style="background:#fff;border:1px solid #E8E1D8;border-radius:14px;padding:14px;text-align:center;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.04);transition:border-color .15s" onmouseenter="this.style.borderColor=\'#C6A85E\'" onmouseleave="this.style.borderColor=\'#E8E1D8\'">';
-  h += '<div style="font-size:20px;margin-bottom:4px">🧠</div>';
-  h += '<div style="font-size:11px;font-weight:600;color:#1C1A17">Ask a Question</div>';
-  h += '</div>';
-  h += '<div onclick="navTo(\'scr-vault\')" style="background:#fff;border:1px solid #E8E1D8;border-radius:14px;padding:14px;text-align:center;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.04);transition:border-color .15s" onmouseenter="this.style.borderColor=\'#C6A85E\'" onmouseleave="this.style.borderColor=\'#E8E1D8\'">';
-  h += '<div style="font-size:20px;margin-bottom:4px">🔧</div>';
-  h += '<div style="font-size:11px;font-weight:600;color:#1C1A17">Career Tools</div>';
-  h += '</div>';
-  h += '</div>';
+  // ========================================
+  // SECTION F: DEADLINES + CONFERENCES
+  // ========================================
+  var upcoming = deadlines.filter(function(d) { return !d.isPast && d.daysAway <= 180; }).slice(0, 6);
+  if (upcoming.length || conferences.length) {
+    h += '<div style="background:#fff;border:1px solid #E8E1D8;border-radius:14px;padding:14px 16px;margin-bottom:10px;box-shadow:0 2px 6px rgba(0,0,0,.04)">';
+    h += '<div style="font-size:9px;font-weight:600;color:#C6A85E;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">\uD83D\uDCC5 Upcoming Deadlines</div>';
+    upcoming.forEach(function(d) {
+      var dateStr = d.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      var dayColor = d.daysAway <= 14 ? 'var(--red)' : d.daysAway <= 30 ? '#C6A85E' : '#5E8B6F';
+      var catIcons = { application: '\uD83D\uDCDD', exam: '\uD83D\uDCDA', career: '\uD83D\uDCBC', financial: '\uD83D\uDCB0' };
+      h += '<div style="display:flex;align-items:center;gap:8px;padding:4px 0;border-bottom:1px solid #F0ECE4;cursor:' + (d.tool ? 'pointer' : 'default') + '"' + (d.tool ? ' onclick="openFramework(\'' + d.tool + '\')"' : '') + '>';
+      h += '<span style="font-size:10px;font-weight:700;color:' + dayColor + ';min-width:32px;text-align:center">' + d.daysAway + 'd</span>';
+      h += '<div style="flex:1"><span style="font-size:10px;font-weight:600;color:#1C1A17">' + d.title + '</span>';
+      h += '<span style="font-size:9px;color:#8A8278"> \u00B7 ' + dateStr + '</span></div>';
+      h += '<span style="font-size:10px">' + (catIcons[d.category] || '\uD83D\uDCCC') + '</span>';
+      h += '</div>';
+    });
+    // Conferences
+    if (conferences.length) {
+      h += '<div style="margin-top:8px;padding-top:6px;border-top:1px solid #E8E1D8">';
+      h += '<div style="font-size:8px;font-weight:600;color:#8A8278;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">\uD83C\uDFE5 Specialty Conferences</div>';
+      conferences.slice(0, 4).forEach(function(c) {
+        var confDate = c.date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+        h += '<div style="display:flex;align-items:center;justify-content:space-between;padding:3px 0">';
+        h += '<div style="flex:1"><span style="font-size:10px;font-weight:600;color:#1C1A17">' + c.name + '</span>';
+        h += '<span style="font-size:9px;color:#8A8278"> \u00B7 ' + confDate + '</span></div>';
+        if (c.daysToAbstract !== null && c.daysToAbstract > 0) {
+          var abColor = c.daysToAbstract <= 30 ? 'var(--red)' : c.daysToAbstract <= 60 ? '#C6A85E' : '#8A8278';
+          h += '<span style="font-size:9px;color:' + abColor + ';font-weight:600">Abstract: ' + c.daysToAbstract + 'd</span>';
+        } else if (c.daysToConf > 0 && c.daysToConf <= 60) {
+          h += '<span style="font-size:9px;color:#5E8B6F;font-weight:600">In ' + c.daysToConf + ' days</span>';
+        }
+        h += '</div>';
+      });
+      h += '</div>';
+    }
+    // View all toggle
+    var allDls = deadlines.filter(function(d) { return !d.isPast; });
+    if (allDls.length > 6) {
+      h += '<div id="cm-all-dl" style="display:none;margin-top:6px">';
+      allDls.slice(6).forEach(function(d) {
+        var ds = d.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        h += '<div style="display:flex;align-items:center;gap:8px;padding:3px 0;border-bottom:1px solid #F0ECE4">';
+        h += '<span style="font-size:10px;font-weight:700;color:#8A8278;min-width:32px;text-align:center">' + d.daysAway + 'd</span>';
+        h += '<span style="font-size:10px;color:#1C1A17;flex:1">' + d.title + ' \u00B7 ' + ds + '</span></div>';
+      });
+      h += '</div>';
+      h += '<div onclick="var m=document.getElementById(\'cm-all-dl\');m.style.display=m.style.display===\'none\'?\'\':\'none\';this.textContent=m.style.display===\'none\'?\'View all ' + allDls.length + ' deadlines \u2192\':\'Show less\'" style="text-align:center;font-size:10px;color:#C6A85E;cursor:pointer;font-weight:600;padding-top:4px">View all ' + allDls.length + ' deadlines \u2192</div>';
+    }
+    h += '</div>';
+  }
 
-  // ===== LAST UPDATED =====
-  h += '<div onclick="showUpdateProfile()" style="text-align:center;padding:4px 0;cursor:pointer">';
-  // ===== KEY INSIGHT =====
+  // ========================================
+  // SECTION G: SMART TOOL RECOMMENDATIONS
+  // ========================================
+  if (smartRecs.length) {
+    h += '<div style="background:#fff;border:1px solid #E8E1D8;border-radius:14px;padding:14px 16px;margin-bottom:10px;box-shadow:0 2px 6px rgba(0,0,0,.04)">';
+    h += '<div style="font-size:9px;font-weight:600;color:#C6A85E;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">\uD83D\uDEE0\uFE0F Recommended For You</div>';
+    smartRecs.forEach(function(rec) {
+      h += '<div onclick="openFramework(\'' + rec.tool + '\')" style="padding:10px;background:#F8F5F0;border-radius:8px;margin-bottom:6px;cursor:pointer;border-left:3px solid #C6A85E;transition:background .15s" onmouseenter="this.style.background=\'#F0ECE4\'" onmouseleave="this.style.background=\'#F8F5F0\'">';
+      h += '<div style="font-size:11px;font-weight:600;color:#1C1A17">' + rec.title + '</div>';
+      h += '<div style="font-size:10px;color:#8A8278;margin-top:2px;line-height:1.3">' + rec.reason + '</div>';
+      h += '<div style="font-size:10px;color:#C6A85E;font-weight:600;margin-top:4px">Run tool \u2192</div>';
+      h += '</div>';
+    });
+    h += '</div>';
+  }
+
+  // ========================================
+  // SECTION H: RE-RUN REMINDERS
+  // ========================================
+  var th2 = U.toolHistory || [];
+  if (th2.length > 0) {
+    var lastRuns2 = {};
+    th2.forEach(function(t) { lastRuns2[t.tool] = new Date(t.date); });
+    var retoolDays2 = { 'Match Competitiveness Calculator': 30, 'RVU Compensation Calculator': 60, 'Contract Review Tool': 90, 'Financial Projection Tool': 90, 'Specialty Fit Assessment': 60, 'Research Impact Calculator': 45 };
+    var staleTools2 = [];
+    Object.keys(lastRuns2).forEach(function(tool) {
+      var rec2 = retoolDays2[tool];
+      if (rec2) {
+        var ds = Math.floor((new Date() - lastRuns2[tool]) / 86400000);
+        if (ds >= rec2) staleTools2.push({ tool: tool, daysSince: ds, recommended: rec2 });
+      }
+    });
+    if (staleTools2.length) {
+      staleTools2.sort(function(a, b) { return b.daysSince - a.daysSince; });
+      h += '<div style="background:#fff;border:1px solid #E8E1D8;border-radius:14px;padding:14px 16px;margin-bottom:10px;box-shadow:0 2px 6px rgba(0,0,0,.04)">';
+      h += '<div style="font-size:9px;font-weight:600;color:#C6A85E;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">\uD83D\uDD04 Time to Re-run</div>';
+      staleTools2.slice(0, 2).forEach(function(s) {
+        var tid = null;
+        if (typeof VAULT_ITEMS !== 'undefined') { var vi2 = VAULT_ITEMS.find(function(v) { return v.title === s.tool; }); if (vi2) tid = vi2.id; }
+        h += '<div' + (tid ? ' onclick="openFramework(\'' + tid + '\')"' : '') + ' style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid #F0ECE4;cursor:pointer">';
+        h += '<div style="flex:1"><div style="font-size:10px;font-weight:600;color:#1C1A17">' + s.tool + '</div>';
+        h += '<div style="font-size:9px;color:#8A8278">Last run ' + s.daysSince + 'd ago</div></div>';
+        h += '<span style="font-size:10px;color:#C6A85E;font-weight:600">Re-run \u2192</span></div>';
+      });
+      h += '</div>';
+    }
+  }
+
+  // ========================================
+  // SECTION I: KEY INSIGHT
+  // ========================================
   var insight = hwGetKeyInsight(cp, scores, spec, deadlines);
   if (insight) {
-    h += '<div style="background:#111318;border-radius:14px;padding:16px 18px;margin-bottom:12px;position:relative;overflow:hidden">';
-    h += '<div style="position:absolute;bottom:-20px;right:-20px;width:100px;height:100px;background:radial-gradient(circle,rgba(198,168,94,.08),transparent 60%);border-radius:50%"></div>';
+    h += '<div style="background:#111318;border-radius:14px;padding:14px 16px;margin-bottom:10px;position:relative;overflow:hidden">';
+    h += '<div style="position:absolute;bottom:-20px;right:-20px;width:80px;height:80px;background:radial-gradient(circle,rgba(198,168,94,.08),transparent 60%);border-radius:50%"></div>';
     h += '<div style="position:relative">';
-    h += '<div style="font-size:10px;font-weight:600;color:#C6A85E;text-transform:uppercase;letter-spacing:1.2px;margin-bottom:8px">💡 Key Insight</div>';
-    h += '<div style="font-size:13px;color:rgba(237,235,231,.85);line-height:1.6">' + insight + '</div>';
+    h += '<div style="font-size:9px;font-weight:600;color:#C6A85E;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">\uD83D\uDCA1 Key Insight</div>';
+    h += '<div style="font-size:12px;color:rgba(237,235,231,.85);line-height:1.5">' + insight + '</div>';
     h += '</div></div>';
   }
 
-  // ===== LAST UPDATED =====
-  h += '<div onclick="showUpdateProfile()" style="text-align:center;padding:4px 0;cursor:pointer">';
-  h += '<span style="font-size:10px;color:#8A8278">Profile last updated: ' + (cp.lastUpdated ? new Date(cp.lastUpdated).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'never') + '</span>';
-  h += ' <span style="font-size:10px;color:#C6A85E;font-weight:600">Update →</span>';
+  // ========================================
+  // QUICK ACTIONS + MILESTONES
+  // ========================================
+  h += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">';
+  h += '<div onclick="navTo(\'scr-ask\')" style="background:#fff;border:1px solid #E8E1D8;border-radius:12px;padding:12px;text-align:center;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.04);transition:border-color .15s" onmouseenter="this.style.borderColor=\'#C6A85E\'" onmouseleave="this.style.borderColor=\'#E8E1D8\'">';
+  h += '<div style="font-size:16px;margin-bottom:2px">\uD83E\uDDE0</div>';
+  h += '<div style="font-size:10px;font-weight:600;color:#1C1A17">Ask a Question</div></div>';
+  h += '<div onclick="navTo(\'scr-vault\')" style="background:#fff;border:1px solid #E8E1D8;border-radius:12px;padding:12px;text-align:center;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.04);transition:border-color .15s" onmouseenter="this.style.borderColor=\'#C6A85E\'" onmouseleave="this.style.borderColor=\'#E8E1D8\'">';
+  h += '<div style="font-size:16px;margin-bottom:2px">\uD83D\uDD27</div>';
+  h += '<div style="font-size:10px;font-weight:600;color:#1C1A17">Career Tools</div></div>';
   h += '</div>';
 
+  // Milestone progress mini-bar
+  if (U.milestones && U.milestones.length) {
+    var done = U.milestones.filter(function(m) { return m.done; }).length;
+    var total = U.milestones.length;
+    var pct = Math.round((done / total) * 100);
+    h += '<div onclick="var dt=document.getElementById(\'dash-detail-toggle\');if(dt){dt.scrollIntoView({behavior:\'smooth\'});setTimeout(function(){toggleDashDetails()},300)}" style="background:#fff;border:1px solid #E8E1D8;border-radius:12px;padding:12px 16px;margin-bottom:10px;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.04)">';
+    h += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">';
+    h += '<span style="font-size:10px;font-weight:600;color:#1C1A17">\u2705 Milestones</span>';
+    h += '<span style="font-size:10px;font-weight:600;color:#C6A85E">' + done + '/' + total + '</span></div>';
+    h += '<div style="height:4px;background:#F0ECE4;border-radius:2px;overflow:hidden">';
+    h += '<div style="height:100%;width:' + pct + '%;background:#5E8B6F;border-radius:2px;transition:width .6s"></div></div>';
+    h += '</div>';
+  }
+
+  // Close expandable section
+  if (hasMore) {
+    h += '</div>'; // end cm-expand-content
+  }
+
+  // LAST UPDATED
+  h += '<div onclick="showUpdateProfile()" style="text-align:center;padding:4px 0;cursor:pointer">';
+  h += '<span style="font-size:9px;color:#8A8278">Updated: ' + (cp.lastUpdated ? new Date(cp.lastUpdated).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : 'never') + '</span>';
+  h += ' <span style="font-size:9px;color:#C6A85E;font-weight:600">Update \u2192</span></div>';
+
   el.innerHTML = h;
-  return true; // Signal that we rendered the map
+  return true;
 }
+
 
 // Generate a single high-impact insight based on the user's most critical gap or opportunity
 function hwGetKeyInsight(cp, scores, spec, deadlines) {

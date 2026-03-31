@@ -483,6 +483,26 @@ function toggleLPPreview(idx){
 }
 if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',function(){buildLPToolGrid();hwSyncCounts()})}else{buildLPToolGrid();hwSyncCounts()}
 function hwSyncCounts(){document.querySelectorAll('.hw-physician-count').forEach(function(el){el.textContent=HW_PHYSICIAN_COUNT})}
+function toolsQToggle(card){
+  var body=card.querySelector('.tools-q-body');
+  var arrow=card.querySelector('.tools-q-arrow');
+  if(!body)return;
+  var isOpen=body.style.display!=='none';
+  // Close all others
+  document.querySelectorAll('.tools-q-card').forEach(function(c){
+    var b=c.querySelector('.tools-q-body');
+    var a=c.querySelector('.tools-q-arrow');
+    if(b){b.style.display='none'}
+    if(a){a.style.transform=''}
+    c.style.borderColor='var(--border)';
+  });
+  if(!isOpen){
+    body.style.display='';
+    if(arrow)arrow.style.transform='rotate(90deg)';
+    card.style.borderColor='var(--border2)';
+    setTimeout(function(){card.scrollIntoView({behavior:'smooth',block:'nearest'})},100);
+  }
+}
 
 // Landing page hook — 3-question quiz with demo previews
 var hookA={stage:null,goal:null,urgency:null};

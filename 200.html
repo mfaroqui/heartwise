@@ -1294,20 +1294,166 @@ body.has-upgrade-bar #main-app{padding-bottom:70px}
 <!-- ===== TAB: TOOLS ===== -->
 <div class="lp-tab" data-lptab="tools">
 
-<!-- ALL TOOLS GRID -->
+<!-- QUESTION-BASED TOOLS PAGE -->
 <div class="lp-sec" id="tools-sec" style="background:var(--bg);position:relative;overflow:hidden">
-<div style="position:relative;z-index:1">
+<div style="position:relative;z-index:1;max-width:680px;margin:0 auto">
+
 <div style="text-align:center;margin-bottom:16px">
 <div style="font-size:11px;font-weight:500;letter-spacing:3px;text-transform:uppercase;color:var(--accent);font-family:var(--font-ui)">Platform</div>
 </div>
-<h2 class="serif" style="text-align:center">15 Physician-Built Career Tools</h2>
+<h2 class="serif" style="text-align:center">The decisions that define your career come down to a few questions.</h2>
 <div class="lp-divider"></div>
-<p class="sub" style="text-align:center;margin-left:auto;margin-right:auto">Every tool designed for a specific decision. Not generic advice — structured, data-driven career intelligence.</p>
+<p class="sub" style="text-align:center;margin-left:auto;margin-right:auto">Built by a physician to help you answer them with clarity, strategy, and real data.</p>
 
-<div class="reveal" style="max-width:680px;margin:0 auto">
-<div style="font-size:10px;color:var(--text3);text-align:center;margin-bottom:14px">Tap any tool to see a sample output ↓</div>
-<div id="lp-tools-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:14px"></div>
+<div class="reveal" style="display:flex;flex-direction:column;gap:14px" id="tools-questions">
+
+<!-- Q1: Matching -->
+<div class="tools-q-card" onclick="toolsQToggle(this)" style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;cursor:pointer;overflow:hidden;transition:all .3s">
+<div style="padding:20px 22px;display:flex;align-items:flex-start;gap:14px">
+<span style="font-size:10px;font-weight:700;color:var(--accent);background:var(--accent-dim);border-radius:6px;padding:4px 8px;flex-shrink:0;margin-top:2px">Q1</span>
+<div style="flex:1">
+<div style="font-size:15px;font-weight:600;color:var(--text);line-height:1.4;margin-bottom:4px">What are my chances of matching?</div>
+<div style="font-size:12px;color:var(--text3);line-height:1.5">Know exactly where you stand and what actually moves the needle.</div>
 </div>
+<span class="tools-q-arrow" style="font-size:14px;color:var(--text3);flex-shrink:0;transition:transform .3s;margin-top:4px">▸</span>
+</div>
+<div class="tools-q-body" style="display:none;padding:0 22px 22px">
+<div style="background:var(--accent-dim);border:1px solid var(--border2);border-radius:10px;padding:16px 18px;margin-bottom:16px">
+<div style="font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);margin-bottom:8px">✦ Sample Insight</div>
+<div style="font-size:13px;color:var(--text);line-height:1.7;font-style:italic">"You have a 62% probability of matching into Internal Medicine based on current metrics. Your biggest limiting factor is lack of U.S. clinical experience. Improving this alone could increase your odds by ~15–20%."</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:8px">
+<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--bg);border-radius:8px;border:1px solid var(--border)"><span style="font-size:16px;flex-shrink:0">🎯</span><div><div style="font-size:12px;font-weight:600;color:var(--text)">Match Probability Calculator</div></div></div>
+<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--bg);border-radius:8px;border:1px solid var(--border)"><span style="font-size:16px;flex-shrink:0">📊</span><div><div style="font-size:12px;font-weight:600;color:var(--text)">Research Impact Calculator</div></div></div>
+<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--bg);border-radius:8px;border:1px solid var(--border)"><span style="font-size:16px;flex-shrink:0">📋</span><div><div style="font-size:12px;font-weight:600;color:var(--text)">Strategic Application Review</div></div></div>
+<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--bg);border-radius:8px;border:1px solid var(--border)"><span style="font-size:16px;flex-shrink:0">📅</span><div><div style="font-size:12px;font-weight:600;color:var(--text)">Fellowship Application Planner</div></div></div>
+</div>
+</div>
+</div>
+
+<!-- Q2: Career path -->
+<div class="tools-q-card" onclick="toolsQToggle(this)" style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;cursor:pointer;overflow:hidden;transition:all .3s">
+<div style="padding:20px 22px;display:flex;align-items:flex-start;gap:14px">
+<span style="font-size:10px;font-weight:700;color:var(--accent);background:var(--accent-dim);border-radius:6px;padding:4px 8px;flex-shrink:0;margin-top:2px">Q2</span>
+<div style="flex:1">
+<div style="font-size:15px;font-weight:600;color:var(--text);line-height:1.4;margin-bottom:4px">What should I do with my career?</div>
+<div style="font-size:12px;color:var(--text3);line-height:1.5">Figure out if you're on the right path, or if it's time to pivot.</div>
+</div>
+<span class="tools-q-arrow" style="font-size:14px;color:var(--text3);flex-shrink:0;transition:transform .3s;margin-top:4px">▸</span>
+</div>
+<div class="tools-q-body" style="display:none;padding:0 22px 22px">
+<div style="background:var(--accent-dim);border:1px solid var(--border2);border-radius:10px;padding:16px 18px;margin-bottom:16px">
+<div style="font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);margin-bottom:8px">✦ Sample Insight</div>
+<div style="font-size:13px;color:var(--text);line-height:1.7;font-style:italic">"Based on your priorities — lifestyle, income ceiling, and procedural interest — Gastroenterology and Interventional Cardiology are your strongest fits. Nephrology scored lowest due to salary-to-training mismatch."</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:8px">
+<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--bg);border-radius:8px;border:1px solid var(--border)"><span style="font-size:16px;flex-shrink:0">🧬</span><div><div style="font-size:12px;font-weight:600;color:var(--text)">Specialty Fit Assessment</div></div></div>
+<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--bg);border-radius:8px;border:1px solid var(--border)"><span style="font-size:16px;flex-shrink:0">🔄</span><div><div style="font-size:12px;font-weight:600;color:var(--text)">Career Pivot Analysis</div></div></div>
+<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--bg);border-radius:8px;border:1px solid var(--border)"><span style="font-size:16px;flex-shrink:0">🚀</span><div><div style="font-size:12px;font-weight:600;color:var(--text)">Career Roadmap Tool</div></div></div>
+</div>
+</div>
+</div>
+
+<!-- Q3: Where do I stand -->
+<div class="tools-q-card" onclick="toolsQToggle(this)" style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;cursor:pointer;overflow:hidden;transition:all .3s">
+<div style="padding:20px 22px;display:flex;align-items:flex-start;gap:14px">
+<span style="font-size:10px;font-weight:700;color:var(--accent);background:var(--accent-dim);border-radius:6px;padding:4px 8px;flex-shrink:0;margin-top:2px">Q3</span>
+<div style="flex:1">
+<div style="font-size:15px;font-weight:600;color:var(--text);line-height:1.4;margin-bottom:4px">Where do I stand right now — and what do I need to fix?</div>
+<div style="font-size:12px;color:var(--text3);line-height:1.5">Get an honest breakdown of your profile and gaps.</div>
+</div>
+<span class="tools-q-arrow" style="font-size:14px;color:var(--text3);flex-shrink:0;transition:transform .3s;margin-top:4px">▸</span>
+</div>
+<div class="tools-q-body" style="display:none;padding:0 22px 22px">
+<div style="background:var(--accent-dim);border:1px solid var(--border2);border-radius:10px;padding:16px 18px;margin-bottom:16px">
+<div style="font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);margin-bottom:8px">✦ Sample Insight</div>
+<div style="font-size:13px;color:var(--text);line-height:1.7;font-style:italic">"Your board scores are above average, but your research portfolio is your weakest dimension — 2 publications vs. a benchmark of 5+ for your target specialty. This is the single biggest gap to close before application season."</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:8px">
+<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--bg);border-radius:8px;border:1px solid var(--border)"><span style="font-size:16px;flex-shrink:0">🎯</span><div><div style="font-size:12px;font-weight:600;color:var(--text)">Match Probability Calculator</div></div></div>
+<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--bg);border-radius:8px;border:1px solid var(--border)"><span style="font-size:16px;flex-shrink:0">📊</span><div><div style="font-size:12px;font-weight:600;color:var(--text)">Research Impact Calculator</div></div></div>
+<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--bg);border-radius:8px;border:1px solid var(--border)"><span style="font-size:16px;flex-shrink:0">📋</span><div><div style="font-size:12px;font-weight:600;color:var(--text)">Strategic Application Review</div></div></div>
+</div>
+</div>
+</div>
+
+<!-- Q4: Financial future -->
+<div class="tools-q-card" onclick="toolsQToggle(this)" style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;cursor:pointer;overflow:hidden;transition:all .3s">
+<div style="padding:20px 22px;display:flex;align-items:flex-start;gap:14px">
+<span style="font-size:10px;font-weight:700;color:var(--accent);background:var(--accent-dim);border-radius:6px;padding:4px 8px;flex-shrink:0;margin-top:2px">Q4</span>
+<div style="flex:1">
+<div style="font-size:15px;font-weight:600;color:var(--text);line-height:1.4;margin-bottom:4px">What will my financial future actually look like?</div>
+<div style="font-size:12px;color:var(--text3);line-height:1.5">Understand income, debt, and long-term wealth before you commit.</div>
+</div>
+<span class="tools-q-arrow" style="font-size:14px;color:var(--text3);flex-shrink:0;transition:transform .3s;margin-top:4px">▸</span>
+</div>
+<div class="tools-q-body" style="display:none;padding:0 22px 22px">
+<div style="background:var(--accent-dim);border:1px solid var(--border2);border-radius:10px;padding:16px 18px;margin-bottom:16px">
+<div style="font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);margin-bottom:8px">✦ Sample Insight</div>
+<div style="font-size:13px;color:var(--text);line-height:1.7;font-style:italic">"At your current trajectory — $62K resident salary, $280K in loans, and no PSLF enrollment — you'll reach positive net worth at age 41. Enrolling in PSLF today and maintaining income-driven repayment could accelerate that by 4 years."</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:8px">
+<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--bg);border-radius:8px;border:1px solid var(--border)"><span style="font-size:16px;flex-shrink:0">📈</span><div><div style="font-size:12px;font-weight:600;color:var(--text)">Long-Term Financial Projection</div></div></div>
+<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--bg);border-radius:8px;border:1px solid var(--border)"><span style="font-size:16px;flex-shrink:0">📊</span><div><div style="font-size:12px;font-weight:600;color:var(--text)">3-Year Financial Planner</div></div></div>
+<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--bg);border-radius:8px;border:1px solid var(--border)"><span style="font-size:16px;flex-shrink:0">💳</span><div><div style="font-size:12px;font-weight:600;color:var(--text)">Debt & Income Strategy</div></div></div>
+</div>
+</div>
+</div>
+
+<!-- Q5: High-stakes decisions -->
+<div class="tools-q-card" onclick="toolsQToggle(this)" style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;cursor:pointer;overflow:hidden;transition:all .3s">
+<div style="padding:20px 22px;display:flex;align-items:flex-start;gap:14px">
+<span style="font-size:10px;font-weight:700;color:var(--accent);background:var(--accent-dim);border-radius:6px;padding:4px 8px;flex-shrink:0;margin-top:2px">Q5</span>
+<div style="flex:1">
+<div style="font-size:15px;font-weight:600;color:var(--text);line-height:1.4;margin-bottom:4px">How do I make the right high-stakes decisions?</div>
+<div style="font-size:12px;color:var(--text3);line-height:1.5">Avoid costly mistakes in contracts, jobs, and career moves.</div>
+</div>
+<span class="tools-q-arrow" style="font-size:14px;color:var(--text3);flex-shrink:0;transition:transform .3s;margin-top:4px">▸</span>
+</div>
+<div class="tools-q-body" style="display:none;padding:0 22px 22px">
+<div style="background:var(--accent-dim);border:1px solid var(--border2);border-radius:10px;padding:16px 18px;margin-bottom:16px">
+<div style="font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);margin-bottom:8px">✦ Sample Insight</div>
+<div style="font-size:13px;color:var(--text);line-height:1.7;font-style:italic">"Your contract has a 25-mile non-compete and no tail coverage provision. If you leave within 3 years, you'd owe an estimated $38K in malpractice tail and be locked out of every hospital within 25 miles. These are negotiable — most candidates don't ask."</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:8px">
+<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--bg);border-radius:8px;border:1px solid var(--border)"><span style="font-size:16px;flex-shrink:0">📄</span><div><div style="font-size:12px;font-weight:600;color:var(--text)">Contract Review Tool</div></div></div>
+<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--bg);border-radius:8px;border:1px solid var(--border)"><span style="font-size:16px;flex-shrink:0">💰</span><div><div style="font-size:12px;font-weight:600;color:var(--text)">RVU Compensation & Offer Comparison</div></div></div>
+<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--bg);border-radius:8px;border:1px solid var(--border)"><span style="font-size:16px;flex-shrink:0">⚖️</span><div><div style="font-size:12px;font-weight:600;color:var(--text)">Job Offer Comparison</div></div></div>
+</div>
+</div>
+</div>
+
+<!-- Q6: Getting opportunities -->
+<div class="tools-q-card" onclick="toolsQToggle(this)" style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;cursor:pointer;overflow:hidden;transition:all .3s">
+<div style="padding:20px 22px;display:flex;align-items:flex-start;gap:14px">
+<span style="font-size:10px;font-weight:700;color:var(--accent);background:var(--accent-dim);border-radius:6px;padding:4px 8px;flex-shrink:0;margin-top:2px">Q6</span>
+<div style="flex:1">
+<div style="font-size:15px;font-weight:600;color:var(--text);line-height:1.4;margin-bottom:4px">How do I actually get opportunities?</div>
+<div style="font-size:12px;color:var(--text3);line-height:1.5">Turn effort into interviews, observerships, and real traction.</div>
+</div>
+<span class="tools-q-arrow" style="font-size:14px;color:var(--text3);flex-shrink:0;transition:transform .3s;margin-top:4px">▸</span>
+</div>
+<div class="tools-q-body" style="display:none;padding:0 22px 22px">
+<div style="background:var(--accent-dim);border:1px solid var(--border2);border-radius:10px;padding:16px 18px;margin-bottom:16px">
+<div style="font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);margin-bottom:8px">✦ Sample Insight</div>
+<div style="font-size:13px;color:var(--text);line-height:1.7;font-style:italic">"You mentioned wanting cardiology — but you have zero U.S. clinical experience. We found 12 observership programs accepting IMG applicants in your target region, 3 with visa sponsorship. Start with these before application season."</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:8px">
+<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--bg);border-radius:8px;border:1px solid var(--border)"><span style="font-size:16px;flex-shrink:0">🔍</span><div><div style="font-size:12px;font-weight:600;color:var(--text)">Observership Finder</div></div></div>
+<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--bg);border-radius:8px;border:1px solid var(--border)"><span style="font-size:16px;flex-shrink:0">🎙️</span><div><div style="font-size:12px;font-weight:600;color:var(--text)">Interview Practice Tool</div></div></div>
+</div>
+</div>
+</div>
+
+</div>
+
+<!-- CTA -->
+<div style="text-align:center;margin-top:36px">
+<div style="font-family:var(--font-serif);font-size:20px;color:var(--text);font-weight:600;line-height:1.4;margin-bottom:6px">You don't need more advice. You need better decisions.</div>
+<div style="font-size:13px;color:var(--text3);margin-bottom:20px">Start with the question that matters most.</div>
+<button class="btn btn-a" onclick="go('pg-onboard')" style="max-width:320px;margin:0 auto">Get a Personalized Career Strategy →</button>
+</div>
+
 </div>
 </div>
 </div>
@@ -7247,6 +7393,26 @@ function toggleLPPreview(idx){
 }
 if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',function(){buildLPToolGrid();hwSyncCounts()})}else{buildLPToolGrid();hwSyncCounts()}
 function hwSyncCounts(){document.querySelectorAll('.hw-physician-count').forEach(function(el){el.textContent=HW_PHYSICIAN_COUNT})}
+function toolsQToggle(card){
+  var body=card.querySelector('.tools-q-body');
+  var arrow=card.querySelector('.tools-q-arrow');
+  if(!body)return;
+  var isOpen=body.style.display!=='none';
+  // Close all others
+  document.querySelectorAll('.tools-q-card').forEach(function(c){
+    var b=c.querySelector('.tools-q-body');
+    var a=c.querySelector('.tools-q-arrow');
+    if(b){b.style.display='none'}
+    if(a){a.style.transform=''}
+    c.style.borderColor='var(--border)';
+  });
+  if(!isOpen){
+    body.style.display='';
+    if(arrow)arrow.style.transform='rotate(90deg)';
+    card.style.borderColor='var(--border2)';
+    setTimeout(function(){card.scrollIntoView({behavior:'smooth',block:'nearest'})},100);
+  }
+}
 
 // Landing page hook — 3-question quiz with demo previews
 var hookA={stage:null,goal:null,urgency:null};

@@ -976,8 +976,11 @@ function hwShowOnboarding() {
 
   // Submit
   h += '<div id="ob-submit" style="display:none;margin-top:16px">';
-  h += '<button onclick="hwSaveOnboarding()" style="width:100%;padding:14px;background:var(--accent);color:#1C1A17;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;letter-spacing:.3px">Build My Career Map →</button>';
+  h += '<button onclick="hwSaveOnboarding()" style="width:100%;padding:14px;background:var(--accent);color:#1C1A17;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;letter-spacing:.3px">Build My Career Map \u2192</button>';
   h += '</div>';
+
+  // Skip / close option
+  h += '<div onclick="document.getElementById(\'home-hero-card\').innerHTML=\'\';if(typeof renderHeroCard===\'function\')renderHeroCard()" style="text-align:center;margin-top:14px;font-size:11px;color:rgba(237,235,231,.35);cursor:pointer">Skip for now</div>';
 
   h += '</div></div>';
 
@@ -1284,7 +1287,7 @@ function hwRenderHowTo(title, itemId) {
   var hid = 'cm-howto-' + itemId;
   var h = '';
   h += '<div id="' + hid + '" style="display:none;margin-top:8px;padding:10px 12px;background:#F8F5F0;border-radius:8px">';
-  h += '<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#A89F91;margin-bottom:6px">How to do this</div>';
+  h += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px"><div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#A89F91">Step-by-step guide</div><div onclick="var e=document.getElementById(\'' + hid + '\');e.style.display=\'none\';document.getElementById(\'' + hid + '-btn\').style.display=\'\';event.stopPropagation()" style="width:20px;height:20px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:rgba(0,0,0,.06);cursor:pointer;font-size:12px;color:#8A8278;line-height:1">\u00D7</div></div>';
   guide.steps.forEach(function(step, i) {
     h += '<div style="display:flex;gap:8px;padding:4px 0;' + (i < guide.steps.length - 1 ? 'border-bottom:1px solid #EDEAE420;' : '') + '">';
     h += '<span style="font-size:10px;font-weight:700;color:#C6A85E;flex-shrink:0;min-width:14px">' + (i + 1) + '</span>';
@@ -1296,7 +1299,7 @@ function hwRenderHowTo(title, itemId) {
   }
   h += '</div>';
   // Toggle button
-  var btn = '<div onclick="var e=document.getElementById(\'' + hid + '\');e.style.display=e.style.display===\'none\'?\'\':\'none\';this.textContent=e.style.display===\'none\'?\'How to do this \u2192\':\'Hide steps\';event.stopPropagation()" style="margin-top:4px;font-size:10px;color:#C6A85E;font-weight:600;cursor:pointer">How to do this \u2192</div>';
+  var btn = '<div id="' + hid + '-btn" onclick="document.getElementById(\'' + hid + '\').style.display=\'\';this.style.display=\'none\';event.stopPropagation()" style="margin-top:4px;font-size:10px;color:#C6A85E;font-weight:600;cursor:pointer">How to do this \u2192</div>';
   return btn + h;
 }
 
@@ -1562,7 +1565,7 @@ function hwOpenSheet(type) {
   var sheet = document.createElement('div');
   sheet.id = 'cm-sheet';
   sheet.className = 'cm-sheet';
-  sheet.innerHTML = '<div class="cm-sheet-bg" onclick="hwCloseSheet()"></div><div class="cm-sheet-body"><div class="cm-sheet-handle"></div><div id="cm-sheet-content"></div></div>';
+  sheet.innerHTML = '<div class="cm-sheet-bg" onclick="hwCloseSheet()"></div><div class="cm-sheet-body"><div class="cm-sheet-handle"></div><div onclick="hwCloseSheet()" style="position:absolute;top:14px;right:16px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:rgba(0,0,0,.06);cursor:pointer;font-size:15px;color:#8A8278;line-height:1">\u00D7</div><div id="cm-sheet-content"></div></div>';
   document.body.appendChild(sheet);
 
   var content = document.getElementById('cm-sheet-content');

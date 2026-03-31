@@ -1303,6 +1303,157 @@ function hwRenderHowTo(title, itemId) {
   return btn + h;
 }
 
+// ===== SECTION 5c: CALENDAR-AWARE MONTHLY NUDGES =====
+// "Here's what matters for you this month" — changes every month based on stage, specialty, and time of year
+
+function hwGetMonthlyNudge(cp) {
+  var now = new Date();
+  var m = now.getMonth(); // 0=Jan
+  var stage = cp.stage || 'student';
+  var pgy = cp.pgy || '';
+  var goal = cp.goal || '';
+  var spec = hwFindSpecialty(cp.specialty);
+  var specName = cp.specialty ? cp.specialty.charAt(0).toUpperCase() + cp.specialty.slice(1) : 'your specialty';
+  var competitive = spec && spec.data.competitiveness === 'high';
+  var isMS4 = pgy === 'MS4';
+  var isMS3 = pgy === 'MS3';
+  var isMS2 = pgy === 'MS2';
+  var isMS1 = pgy === 'MS1';
+  var isGrad = pgy === 'PGY-3' || pgy === 'PGY-4' || pgy === 'PGY-5' || pgy === 'PGY-6' || pgy === 'PGY-7';
+
+  // STUDENT nudges
+  if (stage === 'student') {
+    if (isMS4) {
+      var ms4 = {
+        0: { text: 'Rank list season. Finalize your list based on where you truly want to train — the algorithm rewards honesty.', icon: '\uD83C\uDFAF', tool: null },
+        1: { text: 'Rank lists certify this month. Do not overthink — go with your gut after all the data. Certify early.', icon: '\u2705', tool: null },
+        2: { text: 'Match Week is here. Prepare emotionally for any outcome. Have a SOAP plan ready just in case.', icon: '\uD83C\uDF89', tool: null },
+        3: { text: 'Congratulations on matching. Start onboarding paperwork, secure housing, and get disability insurance before residency starts.', icon: '\uD83C\uDF1F', tool: 'v8' },
+        4: { text: 'Wrap up med school strong. Enjoy the last rotation and start reading about your specialty before intern year hits.', icon: '\uD83D\uDCDA', tool: null },
+        5: { text: 'Graduation month. Take a real break. Intern year starts in weeks — you will not get this downtime again for years.', icon: '\uD83C\uDF93', tool: null },
+        6: { text: 'Intern year just started or is about to. Focus on surviving, learning the EMR, and being reliable. Everything else comes later.', icon: '\uD83C\uDFE5', tool: null },
+        7: { text: 'First month of residency. Build rapport with nurses and senior residents — they will teach you more than textbooks.', icon: '\uD83E\uDD1D', tool: null },
+        8: { text: 'ERAS opened earlier this month. Your application should already be submitted if you are reapplying.', icon: '\uD83D\uDCDD', tool: 'v9' },
+        9: { text: 'Interview invitations are rolling in. Check email constantly, respond within hours, and do not decline anything yet.', icon: '\uD83D\uDCE7', tool: 'v16' },
+        10: { text: 'Peak interview season. Prep for each program individually. Ask smart questions — they notice.', icon: '\uD83C\uDF99\uFE0F', tool: 'v16' },
+        11: { text: 'Interviews are winding down. Start thinking seriously about your rank list. Talk to mentors, not just peers.', icon: '\uD83E\uDDD0', tool: null }
+      };
+      return ms4[m] || null;
+    }
+    if (isMS3) {
+      var ms3 = {
+        0: { text: 'Core clerkships are your audition. Show up early, know your patients cold, and ask for feedback every week.', icon: '\uD83C\uDFE5', tool: null },
+        1: { text: 'Start thinking about Step 2 CK timing. Most students perform best when they study during or right after core rotations.', icon: '\uD83D\uDCDA', tool: 'v14' },
+        2: { text: 'Away rotation applications open this month and next. Apply now for competitive specialties — popular slots fill fast.', icon: '\u2708\uFE0F', tool: null },
+        3: { text: 'Away rotation application season is in full swing. If you have not applied to your target programs, you are falling behind.', icon: '\u26A0\uFE0F', tool: null },
+        4: { text: 'Identify your LOR writers now. Faculty need 3-4 months of lead time for strong letters. Ask in person, not email.', icon: '\uD83D\uDCDD', tool: null },
+        5: { text: 'Start your personal statement draft this month. Plan for 5+ revision cycles before September. First drafts are never final.', icon: '\u270D\uFE0F', tool: null },
+        6: { text: 'Personal statement should be in active revision. Step 2 CK should be scheduled. LOR writers should be confirmed.', icon: '\uD83D\uDD04', tool: 'v14' },
+        7: { text: 'One month until ERAS opens. Your application should be nearly complete. Polish your personal statement — final revisions now.', icon: '\u23F0', tool: 'v9' },
+        8: { text: 'ERAS is open. ' + (competitive ? 'Submit Day 1 for ' + specName + ' — late submissions are screened last.' : 'Submit your application this month. Earlier is always better.'), icon: '\uD83D\uDE80', tool: 'v9' },
+        9: { text: 'Interview invitations are arriving. Respond within hours, be flexible with dates, and prepare specific questions for each program.', icon: '\uD83D\uDCE7', tool: 'v16' },
+        10: { text: 'Interview season is here. Research each program before your interview day. First impressions are everything.', icon: '\uD83C\uDF99\uFE0F', tool: 'v16' },
+        11: { text: 'Late interview season. Start drafting your rank list. Gather honest opinions from residents at programs you visited.', icon: '\uD83D\uDCCB', tool: null }
+      };
+      return ms3[m] || null;
+    }
+    if (isMS2) {
+      var ms2 = {
+        0: { text: 'Boards prep should be part of your daily routine now. Even 20 questions a day compounds to thousands by exam time.', icon: '\uD83D\uDCDA', tool: null },
+        1: { text: 'Start exploring specialties through shadowing and student interest groups. Early exposure helps you narrow before clerkships.', icon: '\uD83D\uDD2C', tool: 'v13' },
+        2: { text: 'Clinical skills practice becomes critical now. Step 2 CS prep and OSCEs are better prepared for months in advance.', icon: '\uD83E\uDE7A', tool: null },
+        3: { text: 'Spring is research season. Approach faculty about summer projects now — the best mentors fill their spots early.', icon: '\uD83D\uDD2C', tool: 'v7' },
+        4: { text: 'Lock in a summer research project if you have not already. Even a case report published by fall adds to your application.', icon: '\uD83D\uDCDD', tool: 'v7' },
+        5: { text: 'Summer between MS2 and MS3 is prime research time. Dedicated study for Step prep often starts now too.', icon: '\u2600\uFE0F', tool: null },
+        6: { text: 'If taking Step 1 this summer, this is crunch time. If pass/fail, focus on understanding concepts for clerkships ahead.', icon: '\uD83D\uDCDA', tool: null },
+        7: { text: 'Clerkships are about to start or just started. Show up 10 minutes early, carry a pocket reference, and volunteer for everything.', icon: '\uD83C\uDFE5', tool: null },
+        8: { text: 'Early clerkship months. Focus on clinical skills and building relationships with attendings who could write LORs next year.', icon: '\uD83E\uDD1D', tool: null },
+        9: { text: 'Settle into your clerkship rhythm. Start a running list of interesting cases — they become personal statement material.', icon: '\uD83D\uDCD3', tool: null },
+        10: { text: 'If you are leaning toward a specialty, join the specialty interest group and attend their events. Networking starts now.', icon: '\uD83E\uDDD1\u200D\u2695\uFE0F', tool: 'v13' },
+        11: { text: 'End of year reflection: what specialties excited you most in clerkships? Start narrowing. Run the Specialty Fit tool.', icon: '\uD83E\uDDD0', tool: 'v13' }
+      };
+      return ms2[m] || null;
+    }
+    // MS1 or generic student
+    var ms1 = {
+      0: { text: 'Focus on building strong study habits now. The foundation you set this year determines everything that follows.', icon: '\uD83D\uDCDA', tool: null },
+      1: { text: 'Explore student organizations and interest groups. Leadership roles in MS1 become application gold by MS3.', icon: '\uD83C\uDFAF', tool: null },
+      2: { text: 'Spring break is a great time to shadow physicians in specialties you are curious about. Even one day gives you data.', icon: '\uD83D\uDD2C', tool: 'v13' },
+      3: { text: 'Start thinking about summer plans. Research, volunteering, or clinical experiences all build your profile.', icon: '\u2600\uFE0F', tool: 'v7' },
+      4: { text: 'Finals approaching. Strong preclinical grades still matter for competitive specialties, even if Step 1 is pass/fail.', icon: '\uD83D\uDCDA', tool: null },
+      5: { text: 'Summer is here. The best MS1 summer activities: research project, clinical volunteering, or global health experience.', icon: '\u2600\uFE0F', tool: null },
+      6: { text: 'If you started a research project, keep momentum through the summer. Consistency now leads to publications later.', icon: '\uD83D\uDD2C', tool: 'v7' },
+      7: { text: 'Second year starts soon. Set up your Anki decks and study systems now — do not wait until you are drowning.', icon: '\uD83D\uDCDA', tool: null },
+      8: { text: 'New academic year. If you have not connected with a research mentor, this month is the time. Walk into office hours.', icon: '\uD83E\uDD1D', tool: null },
+      9: { text: 'Settle into your rhythm. The students who succeed long-term are the ones who build systems, not the ones who cram.', icon: '\uD83D\uDCC8', tool: null },
+      10: { text: 'Midterms season. Stay consistent with your study schedule. Check in with upperclassmen about specialty questions.', icon: '\uD83D\uDCDA', tool: null },
+      11: { text: 'Year-end is a natural reflection point. What has excited you? What has not? Start a specialty list — it will evolve.', icon: '\uD83E\uDDD0', tool: 'v13' }
+    };
+    return ms1[m] || null;
+  }
+
+  // RESIDENT nudges
+  if (stage === 'resident') {
+    var resFell = goal === 'match' || goal === 'specialty'; // pursuing fellowship
+    var resGrad = isGrad; // graduating soon
+    var res = {
+      0: { text: resFell ? 'New year, same mission: strengthen your fellowship application. What can you publish by September?' : (resGrad ? 'Job offers for July start dates are actively being made now. If you do not have 2-3 leads, start this week.' : 'New year — good time to review your ITE score and set a research target for the next 6 months.'), icon: resFell ? '\uD83D\uDD2C' : '\uD83C\uDFAF', tool: resFell ? 'v7' : (resGrad ? 'v3' : null) },
+      1: { text: resFell ? 'If applying to fellowship this fall, your research portfolio is being evaluated in 7 months. Every month counts.' : (resGrad ? 'Contract negotiation time. Do not accept the first offer. Run your offer through the Contract Review tool.' : 'Check your ITE results against last year. Any improvement is a positive signal for boards.'), icon: resFell ? '\u23F0' : '\uD83D\uDCDD', tool: resFell ? 'v7' : (resGrad ? 'v12' : null) },
+      2: { text: resGrad ? 'If you have not signed a contract for July, you are running late. Accelerate your search and negotiate aggressively.' : 'March conferences are happening (ACC, AAMC). Submit abstracts to upcoming specialty meetings if you have not already.', icon: resGrad ? '\u26A0\uFE0F' : '\uD83C\uDFE5', tool: resGrad ? 'v12' : 'v7' },
+      3: { text: resFell ? 'Start approaching potential LOR writers now. Faculty need months of lead time for fellowship letters.' : 'Tax deadline this month. Residents: deduct student loan interest and max out any employer 401k match.', icon: resFell ? '\uD83D\uDCDD' : '\uD83D\uDCB0', tool: resFell ? null : 'v8' },
+      4: { text: resFell ? 'Fellowship LOR requests should be in. Start outlining your personal statement. What is your academic narrative?' : 'Spring is a good time to assess your financial position. Run the 3-Year Financial Planner with updated numbers.', icon: resFell ? '\u270D\uFE0F' : '\uD83D\uDCC8', tool: resFell ? null : 'v5' },
+      5: { text: resFell ? 'Summer is personal statement and application polishing season. Have your research mentor review your CV.' : 'Halfway through the year. Check your procedure logs, case numbers, and any milestones you need for promotion.', icon: resFell ? '\uD83D\uDCDD' : '\uD83D\uDD04', tool: resFell ? 'v9' : null },
+      6: { text: resFell ? 'Fellowship ERAS typically opens this month. Finalize your application materials NOW.' : 'July turnover: new interns arrive, responsibilities shift. A good month to take on a leadership or QI project.', icon: resFell ? '\uD83D\uDE80' : '\uD83E\uDD1D', tool: resFell ? 'v9' : null },
+      7: { text: resFell ? 'Applications should be submitted or nearly ready. Last chance to add a publication or presentation before review.' : 'Mid-year assessment coming. Reflect on feedback from the first half and set goals for the rest of the year.', icon: resFell ? '\u23F0' : '\uD83C\uDFAF', tool: resFell ? 'v7' : null },
+      8: { text: resFell ? 'Fellowship applications are being reviewed. Prepare for interviews: research each program and practice your narrative.' : 'New academic year. If you have not submitted Step 3 registration, do it during a lighter rotation block.', icon: resFell ? '\uD83C\uDF99\uFE0F' : '\uD83D\uDCDA', tool: resFell ? 'v16' : null },
+      9: { text: resFell ? 'Fellowship interview season is starting. Prepare thoughtful questions and send thank-you emails within 24 hours.' : 'October ITE is coming. Even 2 weeks of focused review makes a measurable difference.', icon: resFell ? '\uD83C\uDF99\uFE0F' : '\uD83D\uDCDA', tool: resFell ? 'v16' : null },
+      10: { text: resFell ? 'Interviews continue. Start thinking about your rank list. Talk to current fellows at programs you liked.' : 'End of year planning: review your goals from July. What did you accomplish? What needs attention before June?', icon: resFell ? '\uD83D\uDCCB' : '\uD83D\uDD04', tool: null },
+      11: { text: resFell ? 'Fellowship interview season winding down. Finalize your rank list. Trust your instincts after all the data.' : 'Holiday season. Verify your PSLF payment count, review your loan servicer, and check your employer certification.', icon: resFell ? '\uD83C\uDFAF' : '\uD83D\uDCB0', tool: resFell ? null : 'v8' }
+    };
+    return res[m] || null;
+  }
+
+  // FELLOW nudges
+  if (stage === 'fellow') {
+    var fell = {
+      0: { text: 'New year — set your publication target for the next 12 months. Fellows who publish aggressively get hired first.', icon: '\uD83D\uDD2C', tool: 'v7' },
+      1: { text: 'Start scanning job postings now, even if you graduate next year. Understanding the market helps you negotiate later.', icon: '\uD83D\uDCBC', tool: 'v3' },
+      2: { text: 'Spring conferences (ACC, AHA regional) are networking goldmines. Introduce yourself to division chiefs at programs you admire.', icon: '\uD83E\uDD1D', tool: null },
+      3: { text: 'Tax deadline: student loan interest deduction, retirement contributions, and moonlighting income all need attention this month.', icon: '\uD83D\uDCB0', tool: 'v8' },
+      4: { text: 'If graduating this year, you should have multiple job offers by now. If not, widen your search and leverage your program director.', icon: '\u26A0\uFE0F', tool: 'v3' },
+      5: { text: 'Board exam registration windows are open for most specialties. Register early for your preferred test date.', icon: '\uD83D\uDCDA', tool: null },
+      6: { text: 'If starting a new job this month: review your contract one last time, confirm malpractice coverage, and secure disability insurance.', icon: '\uD83D\uDCDD', tool: 'v12' },
+      7: { text: 'Mid-fellowship check: are you on track for your target number of publications? Boards prep should be a daily habit by now.', icon: '\uD83D\uDD04', tool: 'v7' },
+      8: { text: 'Job search for next-year graduates should be active. Hiring committees make decisions in fall and winter.', icon: '\uD83D\uDCBC', tool: 'v3' },
+      9: { text: 'Peak hiring season for academic positions. If you want an academic career, apply now — these positions close by December.', icon: '\u23F0', tool: 'v3' },
+      10: { text: 'Interview season for attending positions. Compare total compensation packages, not just base salary. Include call, RVUs, and benefits.', icon: '\uD83D\uDCB0', tool: 'v4' },
+      11: { text: 'Year-end: verify PSLF payment count if applicable. Negotiate your start date and sign-on bonus before the new year.', icon: '\uD83D\uDCB0', tool: 'v8' }
+    };
+    return fell[m] || null;
+  }
+
+  // ATTENDING nudges
+  if (stage === 'attending') {
+    var att = {
+      0: { text: 'New year — review your financial goals. Are you on track for retirement savings, loan payoff, and net worth targets?', icon: '\uD83D\uDCC8', tool: 'v11' },
+      1: { text: 'Compensation data from MGMA and Doximity updates in Q1. Compare your total comp to the latest benchmarks for ' + specName + '.', icon: '\uD83D\uDCB0', tool: 'v4' },
+      2: { text: 'Q1 RVU check. If you are behind pace, identify the highest-impact procedures you can add to your schedule this quarter.', icon: '\uD83D\uDD04', tool: 'v4' },
+      3: { text: 'Tax deadline. Maximize retirement contributions, verify quarterly estimated payments if moonlighting, and deduct CME expenses.', icon: '\uD83D\uDCB0', tool: 'v8' },
+      4: { text: 'Spring is contract renewal season for many groups. Review your terms against current market data before signing.', icon: '\uD83D\uDCDD', tool: 'v12' },
+      5: { text: 'Mid-year financial review. Are you on track for your savings rate target? Rebalance investments if needed.', icon: '\uD83D\uDCC8', tool: 'v11' },
+      6: { text: 'New fiscal year for many hospitals. Review your benefits enrollment, CME allowance, and retirement plan options.', icon: '\uD83D\uDCBC', tool: null },
+      7: { text: 'If considering a career change, fall is peak hiring season. Update your CV and start networking now.', icon: '\uD83E\uDD1D', tool: 'v10' },
+      8: { text: 'Check your CME credit status. Most state licenses renew on a calendar or biennial cycle — do not let credits lapse.', icon: '\uD83D\uDCDA', tool: null },
+      9: { text: 'Q3 RVU check — last quarter to make up ground on annual targets. Review with your practice manager.', icon: '\u26A0\uFE0F', tool: 'v4' },
+      10: { text: 'Open enrollment season for benefits. Review health insurance, disability coverage, and umbrella policy limits.', icon: '\uD83D\uDCCB', tool: null },
+      11: { text: 'Year-end tax planning: max out 401k/403b, harvest tax losses, verify PSLF count, and consider backdoor Roth before Dec 31.', icon: '\uD83D\uDCB0', tool: 'v8' }
+    };
+    return att[m] || null;
+  }
+
+  return null;
+}
+
 // ===== SECTION 6: CAREER MAP DASHBOARD RENDERER =====
 // The main Career Map UI — replaces generic hero card for users with profiles
 
@@ -1387,6 +1538,19 @@ function renderCareerMap() {
   h += '</div>';
 
   h += '</div>';
+
+  // ========================================
+  // MONTHLY NUDGE — Calendar-aware coaching
+  // ========================================
+  var nudge = hwGetMonthlyNudge(cp);
+  if (nudge) {
+    h += '<div style="display:flex;gap:10px;align-items:flex-start;padding:12px 14px;background:#fff;border-radius:12px;margin-bottom:14px;border-left:3px solid #C6A85E;box-shadow:0 1px 4px rgba(0,0,0,.04);animation:cmFadeUp .4s ease .06s both">';
+    h += '<span style="font-size:16px;flex-shrink:0;line-height:1.3">' + nudge.icon + '</span>';
+    h += '<div style="flex:1"><div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#A89F91;margin-bottom:3px">' + new Date().toLocaleDateString('en-US', { month: 'long' }) + ' Focus</div>';
+    h += '<div style="font-size:11px;color:#3A3832;line-height:1.45">' + nudge.text + '</div>';
+    if (nudge.tool) h += '<div onclick="openFramework(\'' + nudge.tool + '\')" style="margin-top:5px;font-size:10px;color:#C6A85E;font-weight:600;cursor:pointer">Use the tool for this \u2192</div>';
+    h += '</div></div>';
+  }
 
   // ========================================
   // COUNTDOWN — The visual star

@@ -1619,6 +1619,8 @@ function enterApp(){
   checkNotifBadge();
   // Check achievements on app entry
   try{checkAchievements()}catch(e){console.error('Achievements:',e)}
+  // Check weekly coaching reminders
+  try{checkWeeklyCoaching()}catch(e){console.error('WeeklyCoaching:',e)}
   // Request notification permission (non-blocking)
   try{requestNotifPermission()}catch(e){}
   // Show upgrade elements based on tier
@@ -2635,6 +2637,157 @@ function loadFromSupabase(email,callback){
 }
 
 // Record tool usage for strategy history
+// ===== WEEKLY COACHING =====
+function enableWeeklyCoaching(){
+  if(!U)return;
+  // Build coaching plan from current gaps
+  var gaps=[];
+  var catLabels=['Research','Letters','Clinical','Boards','Leadership','Networking','Personal Statement'];
+  for(var i=1;i<=7;i++){
+    var el=document.getElementById('frc-r'+i);
+    if(el&&parseInt(el.value)<=2){
+      gaps.push(catLabels[i-1]);
+    }
+  }
+  // Include graduation gap if present
+  var gradGapEl=document.getElementById('frc-gradgap');
+  if(gradGapEl&&parseInt(gradGapEl.value)>=2) gaps.push('Graduation Gap');
+
+  var specEl=document.getElementById('frc-specialty');
+  var spec=specEl?specEl.value:'';
+  var sData=FRC_SPECS[spec]||null;
+
+  if(!U.coaching) U.coaching={};
+  U.coaching.matchCalc={
+    enabled:true,
+    startDate:new Date().toISOString(),
+    gaps:gaps,
+    specialty:sData?sData.name:'',
+    currentWeek:0,
+    totalWeeks:Math.max(gaps.length*3,8),
+    lastSent:null
+  };
+  saveUser();
+
+  // Update UI
+  var btn=document.getElementById('frc-coaching-btn');
+  var active=document.getElementById('frc-coaching-active');
+  if(btn)btn.style.display='none';
+  if(active)active.style.display='';
+
+  // Send first coaching message immediately
+  sendCoachingMessage(0);
+  notify('Weekly coaching activated! Check your messages for your first step.');
+}
+
+function sendCoachingMessage(weekNum){
+  if(!U||!U.coaching||!U.coaching.matchCalc)return;
+  var plan=U.coaching.matchCalc;
+  var gaps=plan.gaps||[];
+  if(!gaps.length)return;
+
+  // Cycle through gaps, 3 weeks per gap (week 1: prep, week 2: action, week 3: follow-up)
+  var gapIndex=Math.floor(weekNum/3)%gaps.length;
+  var phaseInGap=weekNum%3;
+  var gap=gaps[gapIndex];
+  var spec=plan.specialty||'your target specialty';
+
+  var messages=getCoachingMessages(gap,phaseInGap,spec,weekNum);
+  if(!messages)return;
+
+  // Store as in-app message
+  if(!U.coachingMessages) U.coachingMessages=[];
+  U.coachingMessages.push({
+    date:new Date().toISOString(),
+    week:weekNum+1,
+    gap:gap,
+    subject:messages.subject,
+    body:messages.body,
+    read:false
+  });
+
+  plan.currentWeek=weekNum+1;
+  plan.lastSent=new Date().toISOString();
+  saveUser();
+
+  // Also send to Supabase messages table for persistence
+  if(typeof _supaClient!=='undefined'&&_supaClient&&U.email){
+    _supaClient.from('messages').insert([{
+      user_name:'HeartWise Coach',
+      user_email:'coaching@heartwisementor.com',
+      type:'coaching',
+      message:'**Week '+(weekNum+1)+': '+messages.subject+'**\n\n'+messages.body,
+      date:new Date().toISOString(),
+      read:false,
+      to_email:U.email,
+      from_admin:true,
+      user_read:false
+    }]).then(function(){}).catch(function(){});
+  }
+}
+
+function getCoachingMessages(gap,phase,spec,weekNum){
+  // Phase 0: Prep, Phase 1: Execute, Phase 2: Review
+  var m={
+    'Research':[
+      {subject:'Research — Get Started',body:'This week\'s focus: Find one case worth writing up.\n\nLook through your last 10 patients. Anything unusual? Unexpected outcome? Rare diagnosis? That\'s your case report.\n\nAction: Email one attending by Friday asking if they\'d co-author a case report with you.\n\nThis is not optional — research is your biggest gap and the single highest-ROI fix for your application.'},
+      {subject:'Research — Write It',body:'Last week you identified a case and an attending. This week: write the draft.\n\nUse the Cureus or BMJ Case Reports template. Keep it under 1,500 words. Don\'t aim for perfect — aim for done.\n\nAction: Complete first draft by Sunday. Send it to your co-author for review.\n\nReminder: One first-author case report is worth more than three co-authored abstracts for fellowship applications.'},
+      {subject:'Research — Submit & Plan Next',body:'Your case report draft should be with your co-author. Follow up if you haven\'t heard back.\n\nAction 1: Finalize and submit this week.\nAction 2: Identify your NEXT research project — aim for an abstract submission to '+(spec?spec+' conferences':'a national conference')+'.\n\nYou went from zero research activity to a submission pipeline. That\'s momentum. Keep it going.'}
+    ],
+    'Letters':[
+      {subject:'Letters — Identify Your Writers',body:'This week\'s focus: Make your list.\n\nWrite down every attending in '+spec+' you\'ve worked with. Rank them by:\n1. How well they know your clinical work\n2. Their name recognition / connections\n3. How likely they are to say yes enthusiastically\n\nAction: Pick your top 3. Don\'t ask for letters yet — that comes later. This week, just identify them.'},
+      {subject:'Letters — Build the Relationships',body:'You have your top 3 letter writers identified. This week: deepen the relationship with at least one of them.\n\nAction: Ask one writer if you can join their clinic, research project, or procedures next month. Frame it as learning, not letter-seeking.\n\nThe best letters come from attendings who have specific stories about you. Give them those stories over the next few weeks.'},
+      {subject:'Letters — Prepare Your Packet',body:'Before you formally ask for letters, prepare a writer packet:\n\n- Your updated CV\n- Personal statement draft\n- 3 specific clinical stories you want them to mention\n- List of programs you\'re applying to\n\nAction: Create this packet this week. When you ask for letters, hand it to them. Writers who receive this write dramatically stronger letters.'}
+    ],
+    'Clinical':[
+      {subject:'Clinical — Get Honest Feedback',body:'This week\'s focus: Find out where you actually stand.\n\nAction: At the end of your next shift, ask your attending: "What\'s one specific thing I could do better clinically?"\n\nMost residents never ask this. The ones who do get remembered — and they get better faster. Write down what they say.'},
+      {subject:'Clinical — Be Visible',body:'Feedback received — now act on it.\n\nAction this week: Volunteer for the most complex admission on your next call night. Present that patient at morning report.\n\nThis is how you become known as "the strong resident." Attendings notice who takes the hard patients and who avoids them.'},
+      {subject:'Clinical — Build Your Reputation',body:'Two weeks of intentional clinical improvement. How does it feel?\n\nAction: Read about your patients\' conditions the night before rounds this week. Show up with a plan, not just a presentation.\n\nReminder: Clinical performance directly affects your letters. Every attending interaction is an audition. Keep this energy going — it compounds.'}
+    ],
+    'Boards':[
+      {subject:'Boards — Build Your Study Plan',body:'This week\'s focus: Create a sustainable study routine.\n\nAction: Commit to 40 UWorld questions per day (2 blocks of 20). Schedule it like a meeting — same time every day.\n\nIf you haven\'t started, start tomorrow morning. If you\'ve been studying inconsistently, this week is about building the habit.'},
+      {subject:'Boards — Track Your Progress',body:'One week of consistent studying. Check your UWorld percentage correct — that\'s your baseline.\n\nAction: Review every wrong answer this week. Don\'t just read the explanation — understand WHY you got it wrong.\n\nTarget: 65%+ on UWorld predicts a strong Step 2 / ITE score. If you\'re below that, focus on your weakest subjects first.'},
+      {subject:'Boards — Practice Under Pressure',body:'Two weeks in. Your scores should be improving.\n\nAction: Take a full-length practice exam this weekend under real conditions. Timed. No breaks. No phone.\n\nYour score on this practice exam tells you where you\'ll land. If it\'s below your target, you have time to adjust — but you need to know the truth.'}
+    ],
+    'Leadership':[
+      {subject:'Leadership — Find Your Opportunity',body:'This week\'s focus: Identify one leadership opportunity you can start this month.\n\nAction: Ask your program coordinator about QI projects, resident committees, or teaching opportunities. What\'s available right now that nobody has claimed?\n\nLeadership on your CV isn\'t about titles — it\'s about evidence of initiative.'},
+      {subject:'Leadership — Take the Lead',body:'You identified an opportunity last week. This week: commit to it.\n\nAction: If it\'s a QI project, draft a one-page proposal. If it\'s a committee, attend the next meeting and volunteer for a task. If it\'s a teaching role, prepare your first session.\n\nDon\'t wait to be asked. Lead.'},
+      {subject:'Leadership — Document Everything',body:'You\'re leading something now. Make sure it counts.\n\nAction: Update your CV with your new role this week. Write a 2-sentence description of what you\'re doing and the impact you expect.\n\nProgram directors scan CVs for leadership because it predicts who will be a leader as an attending. This is not a checkbox — it\'s a signal.'}
+    ],
+    'Networking':[
+      {subject:'Networking — Make Your List',body:'This week\'s focus: Identify 3 target programs and the key people there.\n\nAction: For each program, find the fellowship PD\'s name and email on their website. Write a 3-sentence draft email introducing yourself.\n\nDon\'t send it yet — we\'ll refine it next week.'},
+      {subject:'Networking — Make Contact',body:'You have 3 emails drafted. This week: send them.\n\nTemplate: "Dear Dr. [Name], I\'m a [PGY-X] at [program] with an interest in '+spec+'. [One sentence about your research/clinical interest]. I\'d welcome the opportunity to learn more about your program. Would you be open to a brief call or visit?"\n\nAction: Send all 3 this week. Follow up in 10 days if no response. Most faculty respond to genuine, specific emails.'},
+      {subject:'Networking — Go Deeper',body:'Hopefully you\'ve heard back from at least one PD.\n\nAction: If you got a response — schedule the call or visit. Prepare 3 specific questions about the program.\n\nIf no responses yet — that\'s normal. Apply for an away rotation at your top choice program this week. Away rotations are the #1 networking tool in medicine.'}
+    ],
+    'Personal Statement':[
+      {subject:'Personal Statement — Start Writing',body:'This week\'s focus: Get words on paper.\n\nAnswer these 3 questions in writing (2 paragraphs each):\n1. Why '+spec+'?\n2. What moment confirmed it for you?\n3. What do you bring that others don\'t?\n\nAction: Write your answers by Thursday. Don\'t edit. Don\'t polish. Just write.'},
+      {subject:'Personal Statement — First Draft',body:'You have your raw material. This week: turn it into a draft.\n\nCombine your answers into a single narrative. Target 700-800 words. Start with a specific moment, not "I have always been interested in..."\n\nAction: Complete your first draft by Sunday. It will feel imperfect. That\'s exactly right — we\'re building, not perfecting.'},
+      {subject:'Personal Statement — Get Feedback',body:'First draft done. Now it needs outside eyes.\n\nAction: Send your draft to 3 people this week:\n1. An attending in '+spec+' (for content accuracy)\n2. A non-medical friend (for clarity and readability)\n3. A recent applicant who matched (for strategy)\n\nAsk each: "What\'s unclear? What\'s boring? What makes you want to meet me?" Their answers will shape your next 3 revisions.'}
+    ],
+    'Graduation Gap':[
+      {subject:'Graduation Gap — Build Your Narrative',body:'This week\'s focus: Prepare your explanation.\n\nPrograms will ask about your gap. You need a confident, clear answer.\n\nAction: Write a 3-sentence explanation of what you\'ve done since graduation. Focus on: clinical work, exam preparation, and professional development. Practice saying it out loud until it sounds natural, not defensive.'},
+      {subject:'Graduation Gap — Get US Experience',body:'The #1 thing that offsets a graduation gap: US clinical experience.\n\nAction: Apply to 5 observership or externship programs this week. Check our Observership Database for verified programs with contact info.\n\nEven 4-8 weeks of US clinical experience changes how programs view your application. It shows you understand the US healthcare system.'},
+      {subject:'Graduation Gap — Stay Current',body:'US experience applications are in progress. While you wait:\n\nAction 1: Start or continue active research — even a retrospective study shows you\'re engaged.\nAction 2: Update all certifications (ECFMG, ACLS, BLS).\nAction 3: Join a journal club or online medical education community.\n\nEverything you do should signal: "I\'m clinically current and professionally active." That\'s what overcomes the gap.'}
+    ]
+  };
+
+  var msgs=m[gap];
+  if(!msgs||!msgs[phase])return null;
+  return msgs[phase];
+}
+
+// Check and send weekly coaching messages (called from heartbeat or app load)
+function checkWeeklyCoaching(){
+  if(!U||!U.coaching||!U.coaching.matchCalc||!U.coaching.matchCalc.enabled)return;
+  var plan=U.coaching.matchCalc;
+  var lastSent=plan.lastSent?new Date(plan.lastSent):null;
+  var now=new Date();
+  // Send one message per week (7 days minimum between messages)
+  if(lastSent&&(now-lastSent)<6.5*24*60*60*1000)return;
+  if(plan.currentWeek>=plan.totalWeeks)return;
+  sendCoachingMessage(plan.currentWeek);
+}
+
 function recordToolUse(toolName,score,summary,resultData){
   if(!U)return;
   if(!U.toolHistory) U.toolHistory=[];
@@ -7592,7 +7745,7 @@ function openFramework(id){
   // Scroll modal to top
   var modalInner=document.querySelector('#modal-q .modal');
   if(modalInner)modalInner.scrollTop=0;
-  if(id==='v1')setTimeout(frcUpdate,50);
+  if(id==='v1')setTimeout(function(){frcUpdate();_frcRestoreCoachingState()},50);
   if(id==='v4')setTimeout(function(){rvuModelChange();rvuUpdate()},50);
   if(id==='v7')setTimeout(roiUpdate,50);
   if(id==='v11')setTimeout(ftInit,50);
@@ -7990,6 +8143,19 @@ function frcUpdate(){
   }
   _frcRun();
 }
+function _frcRestoreCoachingState(){
+  if(U&&U.coaching&&U.coaching.matchCalc&&U.coaching.matchCalc.enabled){
+    var btn=document.getElementById('frc-coaching-btn');
+    var active=document.getElementById('frc-coaching-active');
+    if(btn)btn.style.display='none';
+    if(active){
+      active.style.display='';
+      var plan=U.coaching.matchCalc;
+      active.innerHTML='✓ Weekly coaching active — Week '+plan.currentWeek+' of '+plan.totalWeeks;
+    }
+  }
+}
+
 function _getFrcJournals(spec){
   var j={
     cardiology:'JACC, Circulation, Heart, or JAMA Cardiology',

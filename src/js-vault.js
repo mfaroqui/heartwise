@@ -154,6 +154,14 @@ v1:`<h3 class="serif">Fellowship Readiness Assessment</h3>
 <div id="frc-actions" style="display:none;margin-top:16px;padding:16px;background:var(--bg);border:1px solid var(--border2);border-radius:10px">
 <div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">🎯 Recommended Next Steps</div>
 <div id="frc-action-list" style="display:flex;flex-direction:column;gap:8px;font-size:12px;color:var(--text2);line-height:1.6"></div>
+<!-- Weekly Coaching Opt-in -->
+<div id="frc-coaching-optin" style="margin-top:16px;padding:16px;background:linear-gradient(135deg,rgba(198,168,94,.06),rgba(139,184,160,.04));border:1px solid rgba(198,168,94,.2);border-radius:12px;text-align:center">
+<div style="font-size:15px;margin-bottom:6px">📬</div>
+<div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:4px">Want to actually follow through?</div>
+<div style="font-size:11px;color:var(--text3);line-height:1.5;margin-bottom:12px">HeartWise will send you one focused step each week based on your gaps — so you're not trying to do everything at once.</div>
+<button id="frc-coaching-btn" onclick="enableWeeklyCoaching()" style="padding:12px 28px;font-size:12px;font-weight:600;background:var(--accent);color:#1C1A17;border:none;border-radius:8px;cursor:pointer;transition:all .2s">Turn on weekly coaching →</button>
+<div id="frc-coaching-active" style="display:none;padding:10px;font-size:12px;color:var(--green);font-weight:600">✓ Weekly coaching is active — check your messages each week</div>
+</div>
 </div>
 
 <!-- Timeline Warning -->

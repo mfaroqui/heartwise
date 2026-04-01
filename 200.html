@@ -2356,7 +2356,7 @@ Sign Out</button>
 <button class="chip" onclick="setFilter('clinical',this)">Clinical</button>
 <button class="chip" onclick="setFilter('wellness',this)">Wellness</button>
 </div>
-<div class="sec">Reviewed This Week</div>
+<div class="sec">This Week's Insights</div>
 <div id="archive-featured" class="pad"></div>
 <div class="sec">All Reviewed Questions</div>
 <div id="archive-list" class="pad"></div>
@@ -10499,8 +10499,11 @@ function renderArchive(){
   let filtered=reviewed;
   if(search)filtered=filtered.filter(q=>q.q.toLowerCase().includes(search));
   if(curFilter!=='all')filtered=filtered.filter(q=>q.cat===curFilter);
-  const featured=reviewed.filter(q=>q.reviewNote).slice(0,3);
-  document.getElementById('archive-featured').innerHTML=featured.length?featured.map(renderQCard).join(''):'<div style="text-align:center;padding:20px;color:var(--text3);font-size:13px">No featured reviews this week.</div>';
+  // Weekly rotation: pick 6 questions based on week number for fresh content
+  var now=new Date();var weekNum=Math.floor((now-new Date(now.getFullYear(),0,1))/604800000);
+  var withReview=reviewed.filter(q=>q.reviewNote);
+  var weeklySet=[];if(withReview.length){for(var wi=0;wi<6&&wi<withReview.length;wi++){weeklySet.push(withReview[(weekNum*6+wi)%withReview.length])}}
+  document.getElementById('archive-featured').innerHTML=weeklySet.length?weeklySet.map(renderQCard).join(''):'<div style="text-align:center;padding:20px;color:var(--text3);font-size:13px">New insights coming soon.</div>';
   document.getElementById('archive-list').innerHTML=filtered.length?filtered.map(renderQCard).join(''):'<div style="text-align:center;padding:40px;color:var(--text3)">No questions found.</div>';
 }
 function filterArchive(){renderArchive()}

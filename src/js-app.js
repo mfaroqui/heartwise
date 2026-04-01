@@ -9419,11 +9419,10 @@ function ftCalc(){
 // ===== STRIPE CONFIG =====
 const STRIPE_PK='pk_test_51T5mX3PXNQA0ks87KmMtyTYTQZKBLJ6dE5U15eSBf97sK2ecqdU1DYjcJYpevRpdJnE1Xyi0Uow6PG2J8b4A8UCq004h8agh3H';
 const STRIPE_PRICES={
-  core:'price_1T5rG5PXNQA0ks87NtjJVnYi',
-  core_annual:'price_ANNUAL_PLACEHOLDER',
-  elite:'price_1T5rGQPXNQA0ks87WdzaewtE',
-  audit:'price_1T5rGtPXNQA0ks8758d20r97',
-  intensive:'price_1T5rHJPXNQA0ks87dGsOMuWM'
+  core:'price_1THHBxFnqN9jbLiUL7VqoQgw',
+  core_annual:'price_1THHElFnqN9jbLiUhoxpf5dq',
+  elite:'price_1THHFaFnqN9jbLiUPKJhkKyL',
+  intensive:'price_1THHH8FnqN9jbLiUySfLWAen'
 };
 
 var _coreBillingAnnual=false;
@@ -9511,9 +9510,7 @@ function subPlan(plan){
     startCheckout(STRIPE_PRICES.core_annual,'subscription');
   }else if(plan==='elite'){
     startCheckout(STRIPE_PRICES.elite,'subscription');
-  }else if(plan==='audit'){
-    startCheckout(STRIPE_PRICES.audit,'payment');
-  }else if(plan==='intensive'){
+  }else if(plan==='audit'||plan==='intensive'){
     startCheckout(STRIPE_PRICES.intensive,'payment');
   }else{
     // Free plan or fallback
@@ -9525,14 +9522,11 @@ function subPlan(plan){
 }
 
 function showPrivateStrategyModal(){
-  const html='<h2 class="serif" style="font-size:20px;margin-bottom:16px">Private Strategy</h2>'+
-    '<p style="font-size:13px;color:var(--text2);margin-bottom:20px;line-height:1.6">High-stakes, structured intervention during major career decisions. Select your engagement:</p>'+
-    '<div class="card" style="cursor:pointer;margin-bottom:12px;padding:20px" onclick="closeModal(\'modal-q\');startCheckout(STRIPE_PRICES.audit,\'payment\')">'+
-    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><span style="font-size:14px;font-weight:600;color:var(--accent)">Strategic Audit</span><span style="font-size:16px;font-weight:700">$1,250\u2013$1,750</span></div>'+
-    '<p style="font-size:12px;color:var(--text3);line-height:1.5">Structured intake, CV/offer review, 20-30 min recorded strategic breakdown, written execution roadmap. Delivered within 7 days. No live call.</p></div>'+
+  const html='<h2 class="serif" style="font-size:20px;margin-bottom:16px">Strategic Intensive</h2>'+
+    '<p style="font-size:13px;color:var(--text2);margin-bottom:20px;line-height:1.6">High-stakes, structured intervention during major career decisions.</p>'+
     '<div class="card" style="cursor:pointer;margin-bottom:12px;padding:20px" onclick="closeModal(\'modal-q\');startCheckout(STRIPE_PRICES.intensive,\'payment\')">'+
-    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><span style="font-size:14px;font-weight:600;color:var(--accent2)">Strategic Intensive</span><span style="font-size:16px;font-weight:700">$2,500</span></div>'+
-    '<p style="font-size:12px;color:var(--text3);line-height:1.5">Structured intake, 30-60 min focused strategy session, written roadmap, 14-day limited follow-up window. Capped monthly.</p></div>'+
+    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><span style="font-size:14px;font-weight:600;color:var(--accent)">Strategic Intensive</span><span style="font-size:16px;font-weight:700">$1,500</span></div>'+
+    '<p style="font-size:12px;color:var(--text3);line-height:1.5">Structured intake, CV/offer review, 30\u201360 min strategy session with Dr. Faroqui, written execution roadmap, and 14-day follow-up window.</p></div>'+
     '<p style="font-size:10px;color:var(--text3);margin-top:12px;font-style:italic">Not ongoing mentorship, contract legal markup, tax planning, or unlimited messaging. Defined strategic intervention.</p>';
   document.getElementById('modal-q-content').innerHTML=html;
   document.getElementById('modal-q').classList.remove('hidden');
@@ -11889,7 +11883,7 @@ async function submitAudit(){
   if(filled<3){notify('Please fill out at least a few sections before submitting.',1);return}
 
   var h='<div style="font-family:system-ui,sans-serif">';
-  h+='<div style="font-size:16px;font-weight:700;margin-bottom:16px;color:#C6A85E">🎯 Strategic Audit Report</div>';
+  h+='<div style="font-size:16px;font-weight:700;margin-bottom:16px;color:#C6A85E">🎯 Strategic Intensive Report</div>';
   h+='<div style="font-size:11px;color:#7a756e;margin-bottom:16px">'+filled+' of 20 fields completed</div>';
 
   sections.forEach(function(sec){

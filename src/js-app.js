@@ -9759,17 +9759,20 @@ function admRenderUsers(c){
     return true;
   });
   h+='<div style="font-size:11px;color:var(--text3);margin-bottom:8px">'+filtered.length+' user'+(filtered.length!==1?'s':'')+'</div>';
-  h+='<div style="overflow-x:auto"><table class="adm-table"><thead><tr><th>Name</th><th>Email</th><th>Stage</th><th>Plan</th><th>AI</th><th>Joined</th><th></th></tr></thead><tbody>';
+  h+='<div style="overflow-x:auto"><table class="adm-table"><thead><tr><th>Name</th><th>Email</th><th>Stage</th><th>Plan</th><th>AI</th><th>Msgs</th><th>Joined</th><th></th></tr></thead><tbody>';
   filtered.forEach(function(u){
     var stage=u.stage||u.training_stage||(u.profile_data&&u.profile_data.stage)||'—';
     var tierColor=u.tier==='elite'?'var(--green)':u.tier==='core'?'var(--accent)':'var(--text3)';
     var aiUsed=u.ai_used||(u.usage&&u.usage.ai)||0;
     var joined=u.created_at||u.signup_date||'';if(joined)joined=new Date(joined).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'2-digit'});
+    var ue=u.email||'';var admMsgs=(_sbMessages||[]).filter(function(m){return m.from_admin&&(m.to_email===ue||m.to_email==='__all__')});var admUnread=admMsgs.filter(function(m){return !m.user_read}).length;var admTotal=admMsgs.length;
     h+='<tr><td><a href="#" onclick="event.preventDefault();admShowUser(\''+u.id+'\')" style="color:var(--accent);text-decoration:none;font-weight:600">'+(u.name||'Unknown')+'</a></td>';
-    h+='<td style="font-size:11px">'+(u.email||'')+'</td><td>'+stage+'</td>';
+    h+='<td style="font-size:11px">'+ue+'</td><td>'+stage+'</td>';
     var trialBadge='';if(u.is_trial||u.isTrial){var te=u.trial_end||u.trialEnd;if(te&&new Date(te)>new Date())trialBadge=' <span style="font-size:8px;padding:1px 5px;border-radius:4px;background:rgba(198,168,94,.12);color:var(--accent);font-weight:600">TRIAL</span>';else trialBadge=' <span style="font-size:8px;padding:1px 5px;border-radius:4px;background:rgba(196,77,86,.12);color:var(--red);font-weight:600">EXPIRED</span>'}
     h+='<td><span style="color:'+tierColor+';font-weight:600">'+_tierLabel(u.tier)+'</span>'+trialBadge+'</td>';
-    h+='<td>'+aiUsed+'</td><td style="font-size:11px">'+joined+'</td>';
+    h+='<td>'+aiUsed+'</td>';
+    h+='<td style="font-size:11px">'+(admTotal?admUnread>0?'<span style="color:var(--red);font-weight:600">'+admUnread+' unread</span> / '+admTotal:'<span style="color:var(--green)">✓ '+admTotal+'</span>':'—')+'</td>';
+    h+='<td style="font-size:11px">'+joined+'</td>';
     h+='<td><button onclick="admShowUser(\''+u.id+'\')" style="font-size:10px;padding:4px 10px;border:1px solid var(--border);border-radius:4px;background:var(--bg3);color:var(--text3);cursor:pointer">View</button></td></tr>';
   });
   h+='</tbody></table></div>';
@@ -10249,7 +10252,8 @@ function admRenderFeedback(c){
     var tl={career:'Career',finance:'Finance',contract:'\ud83d\udccb Contract',bug:'\ud83d\udc1b Bug',suggestion:'\ud83d\udca1 Suggestion',question:'\u2753 Question',feedback:'Feedback',progress:'Progress',other:'\ud83d\udcce Other'};
     var d=m.date?new Date(m.date).toLocaleDateString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}):'';
     var isUnread=!m.read&&!m.from_admin;
-    h+='<div class="adm-card" style="'+(isUnread?'border-left:3px solid var(--accent);':'')+'"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><div><span style="font-weight:600;font-size:13px">'+(m.user_name||'Unknown')+'</span> <span style="font-size:11px;color:var(--text3)">'+(m.user_email||'')+'</span>'+(m.from_admin?' <span style="font-size:9px;padding:1px 6px;background:var(--accent);color:#1C1A17;border-radius:3px;font-weight:600">SENT</span>':'')+'</div><span style="font-size:10px;color:var(--text3)">'+d+'</span></div>';
+    var readBadge='';if(m.from_admin){var ra=m.user_read_at?new Date(m.user_read_at).toLocaleDateString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}):'';readBadge=m.user_read?' <span style="font-size:9px;padding:1px 6px;background:rgba(91,168,208,.12);color:#5ba8d0;border-radius:3px;font-weight:600" title="'+(ra?'Read '+ra:'Read')+'">✓ READ'+(ra?' · '+ra:'')+'</span>':' <span style="font-size:9px;padding:1px 6px;background:rgba(196,77,86,.1);color:var(--red);border-radius:3px;font-weight:600">UNREAD</span>'}
+    h+='<div class="adm-card" style="'+(isUnread?'border-left:3px solid var(--accent);':'')+'"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><div><span style="font-weight:600;font-size:13px">'+(m.user_name||'Unknown')+'</span> <span style="font-size:11px;color:var(--text3)">'+(m.user_email||'')+'</span>'+(m.from_admin?' <span style="font-size:9px;padding:1px 6px;background:var(--accent);color:#1C1A17;border-radius:3px;font-weight:600">SENT</span>':'')+''+readBadge+'</div><span style="font-size:10px;color:var(--text3)">'+d+'</span></div>';
     h+='<span class="tag t-cat" style="font-size:10px;margin-bottom:8px;display:inline-block">'+(tl[m.type]||m.type||'Msg')+'</span>';
     h+='<p style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:10px;white-space:pre-wrap">'+(m.message||'')+'</p>';
     (m.replies||[]).forEach(function(r){h+='<div style="margin-left:14px;padding:8px 12px;background:var(--bg3);border-radius:6px;margin-bottom:6px;border-left:2px solid var(--green)"><div style="font-size:10px;color:var(--green);font-weight:600;margin-bottom:2px">YOUR REPLY</div><p style="font-size:12px;color:var(--text2);line-height:1.5;margin:0">'+r.text+'</p></div>'});
@@ -10510,7 +10514,7 @@ async function showMyMessages(){
       h+='</div></div></div>';
       // Mark as read
       if(isAdminMsg&&n.user_read===false&&n.id&&_supaClient){
-        _supaClient.from('messages').update({user_read:true}).eq('id',n.id).catch(function(){});
+        _supaClient.from('messages').update({user_read:true,user_read_at:new Date().toISOString()}).eq('id',n.id).catch(function(){});
       }
       if(!isAdminMsg&&!n.read&&n.id&&_supaClient){
         _supaClient.from('messages').update({read:true}).eq('id',n.id).then(function(){}).catch(function(e){logError('messageReadUpdate',e)});

@@ -9251,14 +9251,140 @@ function getCoachingMessages(gap,phase,spec,weekNum){
 
 // Check and send weekly coaching messages (called from heartbeat or app load)
 function checkWeeklyCoaching(){
-  if(!U||!U.coaching||!U.coaching.matchCalc||!U.coaching.matchCalc.enabled)return;
-  var plan=U.coaching.matchCalc;
-  var lastSent=plan.lastSent?new Date(plan.lastSent):null;
+  if(!U||!U.coaching)return;
   var now=new Date();
-  // Send one message per week (7 days minimum between messages)
-  if(lastSent&&(now-lastSent)<6.5*24*60*60*1000)return;
-  if(plan.currentWeek>=plan.totalWeeks)return;
-  sendCoachingMessage(plan.currentWeek);
+  Object.keys(U.coaching).forEach(function(key){
+    var plan=U.coaching[key];
+    if(!plan||!plan.enabled)return;
+    var lastSent=plan.lastSent?new Date(plan.lastSent):null;
+    if(lastSent&&(now-lastSent)<6.5*24*60*60*1000)return;
+    if(plan.currentWeek>=plan.totalWeeks)return;
+    if(key==='matchCalc'){
+      sendCoachingMessage(plan.currentWeek);
+    } else {
+      sendGenericCoachingMessage(key,plan);
+    }
+  });
+}
+
+// Universal coaching opt-in — works for any tool
+var COACHING_TOOLS={
+  'Fellowship Application Planner':{key:'fellowshipApp',icon:'🗺️',
+    messages:[
+      {subject:'Month 1: Lock In Your Foundation',body:'This month\'s priorities:\n\n1. Finalize your target fellowship specialty — no more "considering."\n2. Identify 3 letter writers and request time with them this week.\n3. Start one research project — case report or retrospective study.\n\nDon\'t try to do everything. These 3 things are the foundation. Everything else builds on them.'},
+      {subject:'Month 2: Build Your Research Pipeline',body:'Foundation set. Now accelerate:\n\n1. Your case report or study should have a first draft by end of this month.\n2. Register for the next specialty conference — submit an abstract even if it feels early.\n3. Draft your personal statement — just get words on paper. It will be bad. That\'s fine.\n\nAre your letter writers getting to know your clinical work? Make sure you\'re visible on their service.'},
+      {subject:'Month 3: First Submissions',body:'This is the month things become real:\n\n1. Submit your case report/abstract.\n2. Personal statement: get 3 people to review your draft this week.\n3. Request your letters formally — give each writer your CV + personal statement + 3 specific stories.\n\nThe difference between applicants who match and those who don\'t is often just 3 months of focused work. You\'re doing that work right now.'},
+      {subject:'Month 4: Application Polish',body:'You\'re in the final stretch before ERAS:\n\n1. Personal statement should be on revision 4+ by now.\n2. Confirm all letters are submitted or in progress.\n3. Finalize your program list — reach/target/safety tiers.\n4. Update your CV with everything from the last 3 months.\n\nDo NOT wait until the week before ERAS opens. Everything should be ready to submit on Day 1.'},
+      {subject:'Month 5: Submit & Prepare',body:'ERAS is open (or opening soon):\n\n1. Submit on Day 1. Late submissions get screened last.\n2. Start interview prep NOW — don\'t wait for invites.\n3. Research each program: PD name, recent publications, program culture.\n\nYou\'ve put in the work. Now execute the final steps with precision.'},
+      {subject:'Month 6: Interview Season',body:'Interviews are where competitive applications become matched applications.\n\n1. Practice your "Tell me about yourself" — it should be 90 seconds, specific, and memorable.\n2. Prepare 3 questions for every program (NOT "what\'s your call schedule").\n3. Send thank-you emails within 24 hours of each interview.\n\nThis is the finish line. You\'re ready.'}
+    ]
+  },
+  'Career Roadmap Tool':{key:'careerRoadmap',icon:'🗂️',
+    messages:[
+      {subject:'Week 1: Your First Milestone',body:'You built a career roadmap. Now execute the first phase.\n\nLook at the first 3 action items on your plan. Pick the ONE that has the highest impact and do it this week.\n\nDon\'t try to do everything simultaneously. Sequential focus beats scattered effort every time.'},
+      {subject:'Week 2: Check Your Progress',body:'Did you complete last week\'s action item? Be honest with yourself.\n\nIf yes — move to the next item on your roadmap.\nIf no — what blocked you? Adjust the timeline, not the goal.\n\nConsistency matters more than speed. One completed action per week is 52 career moves per year.'},
+      {subject:'Month 1: Review Your Roadmap',body:'One month in. Time for a checkpoint:\n\n1. How many actions have you completed?\n2. Has anything changed — new information, new opportunities, new constraints?\n3. Does your timeline still feel realistic?\n\nRe-run the Career Roadmap Tool if your situation has changed. Your plan should evolve with you, not collect dust.'},
+      {subject:'Month 2: Momentum Check',body:'Two months of consistent execution. Look back at where you were when you started.\n\nIf you\'ve been following through — you\'re ahead of 90% of physicians who never plan their career moves.\n\nThis month: tackle the hardest remaining item on your roadmap. The one you\'ve been avoiding. That\'s usually the one that matters most.'}
+    ]
+  },
+  'Research Impact Calculator':{key:'researchImpact',icon:'⚖️',
+    messages:[
+      {subject:'Research: Start This Week',body:'Your research score needs work. Here\'s your one action for this week:\n\nIdentify one case from your recent patients that\'s worth writing up. Email your attending today asking if they\'d co-author.\n\nOne case report takes 2-3 weeks to write. One abstract takes a weekend. Start with whichever you can finish fastest.'},
+      {subject:'Research: Writing Phase',body:'You should have a case or topic identified. This week: write.\n\nBlock 2 hours on Saturday or Sunday. Use the Cureus template (highest acceptance rate, fast turnaround). Write the worst first draft you can — just get it done.\n\nFirst-author papers matter 3x more than co-authored work. Make sure your name is first.'},
+      {subject:'Research: Submit and Plan Next',body:'Draft should be done or close. This week:\n\n1. Send to your co-author for review.\n2. Identify your NEXT project — aim for a conference abstract.\n3. Check abstract deadlines for the next major conference in your field.\n\nOne publication becomes two. Two becomes a pipeline. That\'s how competitive applicants build their CV.'}
+    ]
+  },
+  'Contract Review Tool':{key:'contractReview',icon:'📝',
+    messages:[
+      {subject:'Contract: Your Next Steps',body:'You scored your contract. Now act on the red flags:\n\n1. If you haven\'t hired a healthcare attorney — do it this week. It costs $2-3K and saves $50-200K.\n2. Make a list of your top 3 negotiation priorities from the report.\n3. Draft your counter-proposal.\n\nEvery clause is negotiable. The employer expects you to push back.'},
+      {subject:'Contract: Negotiate This Week',body:'Your counter-proposal should be ready. This week: send it.\n\nUse the negotiation scripts from your report. Be specific: "I\'d like to discuss the non-compete radius" not "I have some concerns."\n\nRemember: negotiation is not confrontation. It\'s two professionals finding terms that work for both sides.'},
+      {subject:'Contract: Final Review',body:'Negotiations should be wrapping up. Before you sign:\n\n1. Has your attorney reviewed the FINAL version (not just the first draft)?\n2. Are all verbal promises now in writing?\n3. Do you understand your tail coverage, termination clauses, and non-compete?\n\nOnce you sign, it\'s binding. Take one more day if you need it. No employer will withdraw an offer because you were thorough.'}
+    ]
+  },
+  'Debt & Income Strategy Tool':{key:'debtStrategy',icon:'💵',
+    messages:[
+      {subject:'Financial: Month 1 Actions',body:'Your debt strategy report identified key moves. This month:\n\n1. If PSLF eligible — verify your qualifying payments at studentaid.gov. Do this TODAY.\n2. If refinancing makes sense — get 3 quotes (SoFi, Laurel Road, Splash).\n3. Set up automatic payments — you get a 0.25% rate reduction.\n\nThe difference between starting this month vs. next year can be $10-30K over the life of your loans.'},
+      {subject:'Financial: Month 2 Check-in',body:'One month in. Quick check:\n\n1. Did you verify PSLF / start refinancing? If not, this is your #1 priority this week.\n2. Have you opened a retirement account? Even $100/month during training compounds significantly.\n3. Do you have disability insurance? Trainee discounts disappear after fellowship.\n\nFinancial planning during training feels premature. It\'s not. Every month you delay costs real money.'},
+      {subject:'Financial: Quarterly Review',body:'Three months since your debt strategy assessment. Time to review:\n\n1. Are your loan payments on track with your chosen strategy?\n2. Has your income or employer changed? This might affect PSLF eligibility.\n3. Re-run the Debt & Income Strategy Tool with updated numbers.\n\nYour financial strategy should evolve with your career. What worked as a resident may not be optimal as an attending.'}
+    ]
+  }
+};
+
+function injectCoachingOptin(toolName){
+  var config=COACHING_TOOLS[toolName];
+  if(!config)return;
+  if(!U||U.tier==='free')return;
+  // Check if already opted in for this tool
+  var alreadyActive=U.coaching&&U.coaching[config.key]&&U.coaching[config.key].enabled;
+  // Find the modal content area and append
+  var content=document.getElementById('modal-q-content');
+  if(!content)return;
+  var existing=document.getElementById('coaching-optin-'+config.key);
+  if(existing)existing.remove();
+  var div=document.createElement('div');
+  div.id='coaching-optin-'+config.key;
+  div.style.cssText='margin:16px 20px;padding:16px;background:linear-gradient(135deg,rgba(198,168,94,.06),rgba(139,184,160,.04));border:1px solid rgba(198,168,94,.2);border-radius:12px;text-align:center';
+  if(alreadyActive){
+    var plan=U.coaching[config.key];
+    div.innerHTML='<div style="font-size:12px;color:var(--green);font-weight:600">✓ Coaching active — Step '+(plan.currentWeek||0)+' of '+config.messages.length+'</div>';
+  } else {
+    div.innerHTML='<div style="font-size:15px;margin-bottom:6px">📬</div>'
+      +'<div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:4px">Stay on track with weekly reminders</div>'
+      +'<div style="font-size:11px;color:var(--text3);line-height:1.5;margin-bottom:12px">HeartWise will send you focused action steps based on your results — one at a time, so you actually follow through.</div>'
+      +'<button onclick="enableGenericCoaching(\''+config.key+'\',\''+toolName.replace(/'/g,"\\'")+'\')" style="padding:12px 28px;font-size:12px;font-weight:600;background:var(--accent);color:#1C1A17;border:none;border-radius:8px;cursor:pointer">Turn on coaching →</button>';
+  }
+  content.appendChild(div);
+}
+
+function enableGenericCoaching(key,toolName){
+  if(!U)return;
+  if(!U.coaching)U.coaching={};
+  var config=COACHING_TOOLS[toolName];
+  if(!config)return;
+  U.coaching[key]={
+    enabled:true,
+    toolName:toolName,
+    startDate:new Date().toISOString(),
+    currentWeek:0,
+    totalWeeks:config.messages.length,
+    lastSent:null
+  };
+  saveUser();
+  // Send first message
+  sendGenericCoachingMessage(key,U.coaching[key]);
+  // Update UI
+  var div=document.getElementById('coaching-optin-'+key);
+  if(div)div.innerHTML='<div style="font-size:12px;color:var(--green);font-weight:600">✓ Coaching activated — check your messages for your first step</div>';
+  notify('Coaching activated! Check your messages.');
+}
+
+function sendGenericCoachingMessage(key,plan){
+  if(!plan||!plan.enabled||!plan.toolName)return;
+  var config=COACHING_TOOLS[plan.toolName];
+  if(!config||!config.messages)return;
+  var weekNum=plan.currentWeek||0;
+  if(weekNum>=config.messages.length)return;
+  var msg=config.messages[weekNum];
+  if(!msg)return;
+
+  plan.currentWeek=weekNum+1;
+  plan.lastSent=new Date().toISOString();
+  saveUser();
+
+  // Store in Supabase
+  if(typeof _supaClient!=='undefined'&&_supaClient&&U.email){
+    _supaClient.from('messages').insert([{
+      user_name:'HeartWise Coach',
+      user_email:'coaching@heartwisementor.com',
+      type:'coaching',
+      message:'**'+config.icon+' '+msg.subject+'**\n\n'+msg.body,
+      date:new Date().toISOString(),
+      read:false,
+      to_email:U.email,
+      from_admin:true,
+      user_read:false
+    }]).then(function(){}).catch(function(){});
+  }
 }
 
 function recordToolUse(toolName,score,summary,resultData){
@@ -13778,6 +13904,7 @@ function _csbRun(){
   if(warnings.length)csbHL.push(warnings.length+' warnings');
   phases.forEach(function(p){csbHL.push(p.time+': '+p.title)});
   recordToolUse('Career Roadmap Tool',null,tName+' roadmap ('+phases.length+' phases)',{inputs:csbInputs,highlights:csbHL});
+  setTimeout(function(){injectCoachingOptin('Career Roadmap Tool')},100);
   // Capture raw form values for cross-tool auto-populate
   if(!U.toolInputs)U.toolInputs={};
   if(setting)U.toolInputs.practice=setting;
@@ -16172,6 +16299,7 @@ function ciCalc(){
   details.forEach(function(d){if(d.color==='var(--red)')ciHL.push('🚩 '+d.label+': '+d.note)});
   if(recs.length)ciHL.push(recs.length+' negotiation point'+(recs.length>1?'s':''));
   recordToolUse('Contract Review Tool',score+'/100',scoreLabel,{inputs:ciInputs,highlights:ciHL});
+  setTimeout(function(){injectCoachingOptin('Contract Review Tool')},100);
 }
 
 // ===== FINANCIAL TRAJECTORY SIMULATOR =====
@@ -18483,6 +18611,7 @@ function ilpCalculate(){
 
   applyBlurGate(document.getElementById('ilp-results'));
   recordToolUse('Debt & Income Strategy Tool',score+'/'+maxScore,grade+' ('+scorePct+'%)',{inputs:{Salary:'$'+salary.toLocaleString(),Debt:'$'+debt.toLocaleString(),Employer:employer,Disability:disability,Spending:'$'+spending.toLocaleString(),'Tax-Advantaged':has401k,Advisor:hasAdvisor},highlights:['Score: '+score+'/'+maxScore+' ('+grade+')'].concat(wins).concat(flags)});
+  setTimeout(function(){injectCoachingOptin('Debt & Income Strategy Tool')},100);
 }
 // ===== RESEARCH ROI CALCULATOR =====
 function roiUpdate(){
@@ -18840,6 +18969,7 @@ function roiUpdate(){
     if(months)roiInputs['Months to Deadline']=months;
     var roiHL=[grade,'Portfolio Score: '+userScore+'/'+optimalScore+' pts','Total Items: '+totalItems];
     recordToolUse('Research Impact Calculator',pct+'%',grade,{inputs:roiInputs,highlights:roiHL});
+    setTimeout(function(){injectCoachingOptin('Research Impact Calculator')},100);
   }
 }
 

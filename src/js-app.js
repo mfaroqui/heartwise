@@ -9484,45 +9484,31 @@ function planSignup(plan){
     go('pg-onboard');
   }
 }
-let stripeLoaded=false,stripeObj=null;
+const STRIPE_LINKS={
+  core:'https://buy.stripe.com/aFa3cv0rO3Yx77x3HB4Ni03',
+  core_annual:'https://buy.stripe.com/7sY7sL6Qcdz70J93HB4Ni02',
+  elite:'https://buy.stripe.com/6oU28r3E00MlgI7gun4Ni01',
+  intensive:'https://buy.stripe.com/fZufZhgqM8eN3Vl5PJ4Ni00'
+};
 
-function loadStripe(){
-  if(stripeLoaded)return Promise.resolve(stripeObj);
-  return new Promise((resolve)=>{
-    const s=document.createElement('script');
-    s.src='https://js.stripe.com/v3/';
-    s.onload=()=>{stripeObj=Stripe(STRIPE_PK);stripeLoaded=true;resolve(stripeObj)};
-    s.onerror=()=>{notify('Failed to load payment system. Try again.',1);resolve(null)};
-    document.head.appendChild(s);
-  });
-}
-
-async function startCheckout(priceId,mode){
-  notify('Connecting to payment system...');
-  const stripe=await loadStripe();
-  if(!stripe){notify('Payment system unavailable. Please try again.',1);return}
-  try{
-    const {error}=await stripe.redirectToCheckout({
-      lineItems:[{price:priceId,quantity:1}],
-      mode:mode||'subscription',
-      successUrl:window.location.origin+'?checkout=success&plan='+encodeURIComponent(priceId),
-      cancelUrl:window.location.origin+'?checkout=cancel',
-      customerEmail:U?.email||undefined
-    });
-    if(error){console.error('Stripe checkout error:',error);notify('Payment error: '+error.message,1)}
-  }catch(e){console.error('Stripe checkout exception:',e);notify('Payment system error. Please try again later.',1)}
+function startCheckout(plan){
+  var link=STRIPE_LINKS[plan];
+  if(!link){notify('Payment link not available.',1);return}
+  // Append prefilled email if available
+  var url=link+(link.includes('?')?'&':'?')+'prefilled_email='+encodeURIComponent(U?.email||'');
+  window.open(url,'_blank');
 }
 
 function subPlan(plan){
   if(!U){notify('Please sign in first.',1);return}
   if(plan==='core'){
-    startCheckout(STRIPE_PRICES.core,'subscription');
+    startCheckout('core');
   }else if(plan==='core_annual'){
-    startCheckout(STRIPE_PRICES.core_annual,'subscription');
+    startCheckout('core_annual');
   }else if(plan==='elite'){
-    startCheckout(STRIPE_PRICES.elite,'subscription');
+    startCheckout('elite');
   }else if(plan==='audit'||plan==='intensive'){
-    startCheckout(STRIPE_PRICES.intensive,'payment');
+    startCheckout('intensive');
   }else{
     // Free plan or fallback
     U.tier='free';
@@ -9535,7 +9521,7 @@ function subPlan(plan){
 function showPrivateStrategyModal(){
   const html='<h2 class="serif" style="font-size:20px;margin-bottom:16px">Strategic Intensive</h2>'+
     '<p style="font-size:13px;color:var(--text2);margin-bottom:20px;line-height:1.6">High-stakes, structured intervention during major career decisions.</p>'+
-    '<div class="card" style="cursor:pointer;margin-bottom:12px;padding:20px" onclick="closeModal(\'modal-q\');startCheckout(STRIPE_PRICES.intensive,\'payment\')">'+
+    '<div class="card" style="cursor:pointer;margin-bottom:12px;padding:20px" onclick="closeModal(\'modal-q\');startCheckout(\'intensive\')">'+
     '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><span style="font-size:14px;font-weight:600;color:var(--accent)">Strategic Intensive</span><span style="font-size:16px;font-weight:700">$1,500</span></div>'+
     '<p style="font-size:12px;color:var(--text3);line-height:1.5">Structured intake, CV/offer review, 30\u201360 min strategy session with Dr. Faroqui, written execution roadmap, and 14-day follow-up window.</p></div>'+
     '<p style="font-size:10px;color:var(--text3);margin-top:12px;font-style:italic">Not ongoing mentorship, contract legal markup, tax planning, or unlimited messaging. Defined strategic intervention.</p>';

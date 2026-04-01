@@ -7990,6 +7990,43 @@ function frcUpdate(){
   }
   _frcRun();
 }
+function _getFrcJournals(spec){
+  var j={
+    cardiology:'JACC, Circulation, Heart, or JAMA Cardiology',
+    gi:'Gastroenterology, AJG, GIE, or Clinical Gastroenterology and Hepatology',
+    pulm_crit:'CHEST, AJRCCM, or Critical Care Medicine',
+    heme_onc:'JCO, Blood, or Annals of Oncology',
+    endo:'JCEM, Diabetes Care, or Thyroid',
+    nephro:'JASN, CJASN, or Kidney International',
+    rheum:'Arthritis & Rheumatology or ARD',
+    id:'CID, JID, or Open Forum Infectious Diseases',
+    interventional:'JACC: Cardiovascular Interventions, CCI, or EuroIntervention',
+    electrophys:'Heart Rhythm, JACC: Clinical Electrophysiology, or EP Europace',
+    sports:'BJSM, AJSM, or Clinical Journal of Sport Medicine',
+    geri:'JAGS, Age and Ageing, or Gerontology',
+    allergy:'JACI, Annals of Allergy, or Clinical & Experimental Allergy'
+  };
+  return j[spec]||'specialty-specific journals with peer review';
+}
+function _getFrcConf(spec){
+  var c={
+    cardiology:'ACC (March) or AHA Scientific Sessions (November)',
+    gi:'DDW (May) or ACG Annual Meeting (October)',
+    pulm_crit:'ATS International Conference (May) or CHEST Annual Meeting (October)',
+    heme_onc:'ASH (December) or ASCO Annual Meeting (June)',
+    endo:'ENDO (March) or ADA Scientific Sessions (June)',
+    nephro:'ASN Kidney Week (November)',
+    rheum:'ACR Convergence (November)',
+    id:'IDWeek (October)',
+    interventional:'TCT (October) or CRT (February)',
+    electrophys:'HRS (May)',
+    sports:'AMSSM Annual Meeting (April)',
+    geri:'AGS Annual Meeting (May)',
+    allergy:'AAAAI Annual Meeting (February)'
+  };
+  return c[spec]||'the next major conference in your field';
+}
+
 function _frcRun(){
   var fb={
     1:[
@@ -8195,14 +8232,99 @@ function _frcRun(){
     var actions=[];
     gaps.slice(0,3).forEach(function(g,idx){
       var actionText='';
-      if(g.cat==='Research') actionText='<strong>Priority '+(idx+1)+':</strong> Start a case report or abstract within 2 weeks. Target 1 submission per month. First-author papers carry 3x the weight of co-authored work.';
-      else if(g.cat==='Letters') actionText='<strong>Priority '+(idx+1)+':</strong> Identify 2 specialty-specific attendings this week. Schedule dedicated time with them — clinic days, research meetings, or procedures. Writers need specific stories about you.';
-      else if(g.cat==='Clinical') actionText='<strong>Priority '+(idx+1)+':</strong> Request honest feedback from your attending this week. Volunteer for complex patients. Ask to present at rounds. Small visible improvements compound quickly.';
-      else if(g.cat==='Boards') actionText='<strong>Priority '+(idx+1)+':</strong> If retaking, dedicate structured daily study blocks. If scores are final, focus on making every other category as strong as possible to compensate.';
-      else if(g.cat==='Leadership') actionText='<strong>Priority '+(idx+1)+':</strong> Volunteer for a QI project or committee role this month. Chief resident applications open months in advance — plan ahead if that\'s your target.';
-      else if(g.cat==='Networking') actionText='<strong>Priority '+(idx+1)+':</strong> Register for the next national conference in your field. Apply for away rotations 6-9 months out. Cold-email 2 faculty at target programs — most will respond.';
-      else if(g.cat==='Personal Statement') actionText='<strong>Priority '+(idx+1)+':</strong> Block 2 hours this week to write a first draft. Don\'t edit — just write. Get 3 people to review it within 2 weeks. Great statements take 5+ drafts.';
-      actions.push('<div>'+actionText+'</div>');
+      var howTo='';
+      if(g.cat==='Research'){
+        actionText='<strong>Priority '+(idx+1)+':</strong> Start a case report or abstract within 2 weeks. Target 1 submission per month. First-author papers carry 3x the weight of co-authored work.';
+        howTo='<div style="margin-top:8px;padding:10px 12px;background:var(--bg);border-radius:8px;border-left:3px solid var(--accent)">'
+          +'<div style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">How to do this</div>'
+          +'<div style="font-size:11px;color:var(--text2);line-height:1.6">'
+          +'<strong>Week 1:</strong> Identify an interesting case from your last rotation — unusual presentation, rare diagnosis, or unexpected outcome. Email your attending: "I\'d like to write this up as a case report. Would you co-author?"<br>'
+          +'<strong>Week 2:</strong> Draft the case report using the BMJ Case Reports or Cureus template (both have high acceptance rates for trainees). Keep it under 1,500 words.<br>'
+          +'<strong>Week 3:</strong> Get your attending to review. Submit to your target journal.<br>'
+          +'<strong>Ongoing:</strong> Look for abstracts at every conference in your specialty — ACC, AHA, ASCO, DDW depending on your field. Abstract deadlines are 3-6 months before the conference.'
+          +(sData?'<br><strong>For '+sData.name+':</strong> Target journals like '+_getFrcJournals(spec)+'. Specialty-relevant research matters more than quantity.':'')
+          +'</div></div>';
+      }
+      else if(g.cat==='Letters'){
+        actionText='<strong>Priority '+(idx+1)+':</strong> Identify 2 specialty-specific attendings this week. Schedule dedicated time with them — clinic days, research meetings, or procedures. Writers need specific stories about you.';
+        howTo='<div style="margin-top:8px;padding:10px 12px;background:var(--bg);border-radius:8px;border-left:3px solid var(--accent)">'
+          +'<div style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">How to do this</div>'
+          +'<div style="font-size:11px;color:var(--text2);line-height:1.6">'
+          +'<strong>This week:</strong> Make a list of every attending in your target specialty you\'ve worked with. Rank them by (a) how well they know your clinical work and (b) their reputation/connections.<br>'
+          +'<strong>Next 2 weeks:</strong> Approach your top 3. Don\'t ask for a letter yet — ask to work with them more. "I\'m interested in '+((sData&&sData.name)||'this field')+'. Can I join your clinic/research/procedures next month?"<br>'
+          +'<strong>Month 2-3:</strong> After building the relationship, ask directly: "Would you be able to write me a strong letter?" If they hesitate, they\'re telling you no — move to your next option.<br>'
+          +'<strong>The key:</strong> Give every writer a packet: your CV, personal statement draft, 3 specific stories you want them to mention, and a list of programs you\'re applying to. Writers who receive this write dramatically better letters.'
+          +'</div></div>';
+      }
+      else if(g.cat==='Clinical'){
+        actionText='<strong>Priority '+(idx+1)+':</strong> Request honest feedback from your attending this week. Volunteer for complex patients. Ask to present at rounds. Small visible improvements compound quickly.';
+        howTo='<div style="margin-top:8px;padding:10px 12px;background:var(--bg);border-radius:8px;border-left:3px solid var(--accent)">'
+          +'<div style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">How to do this</div>'
+          +'<div style="font-size:11px;color:var(--text2);line-height:1.6">'
+          +'<strong>Tomorrow:</strong> At the end of your next shift, ask your attending: "What\'s one specific thing I could do better?" Most attendings never get asked this — they\'ll remember you for it.<br>'
+          +'<strong>This month:</strong> Volunteer for the most complex admission on call nights. Present them at morning report. This is how you become known as "the strong resident."<br>'
+          +'<strong>Ongoing:</strong> Read about your patients\' conditions the night before rounds. Show up with a plan, not just a presentation. Attendings notice preparation.<br>'
+          +'<strong>The multiplier:</strong> Clinical performance directly affects your letters. Every attending interaction is a letter-writing opportunity.'
+          +'</div></div>';
+      }
+      else if(g.cat==='Boards'){
+        actionText='<strong>Priority '+(idx+1)+':</strong> If retaking, dedicate structured daily study blocks. If scores are final, focus on making every other category as strong as possible to compensate.';
+        howTo='<div style="margin-top:8px;padding:10px 12px;background:var(--bg);border-radius:8px;border-left:3px solid var(--accent)">'
+          +'<div style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">How to do this</div>'
+          +'<div style="font-size:11px;color:var(--text2);line-height:1.6">'
+          +'<strong>If you haven\'t taken Step 2 yet:</strong> Dedicate 2 months of focused study. UWorld + Amboss. Do 2 blocks daily (80 questions). Target 65%+ on practice exams before scheduling the real thing.<br>'
+          +'<strong>If your score is final and below benchmark:</strong> Don\'t panic. Strong research, letters, and clinical performance can compensate. Some programs have hard cutoffs — identify which ones and adjust your program list.<br>'
+          +'<strong>ITE scores:</strong> If you\'re a resident, your ITE percentile matters for fellowship. Study MKSAP consistently — 10 questions/day adds up.'
+          +(sData?'<br><strong>'+sData.name+' benchmark:</strong> Most competitive applicants have Step 2 ~'+sData.benchStep+'+. If you\'re below this, you need to overperform in research and letters.':'')
+          +'</div></div>';
+      }
+      else if(g.cat==='Leadership'){
+        actionText='<strong>Priority '+(idx+1)+':</strong> Volunteer for a QI project or committee role this month. Chief resident applications open months in advance — plan ahead if that\'s your target.';
+        howTo='<div style="margin-top:8px;padding:10px 12px;background:var(--bg);border-radius:8px;border-left:3px solid var(--accent)">'
+          +'<div style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">How to do this</div>'
+          +'<div style="font-size:11px;color:var(--text2);line-height:1.6">'
+          +'<strong>This week:</strong> Ask your program coordinator about QI projects, resident committees, or curriculum development opportunities. These are often undersubscribed — you can lead one immediately.<br>'
+          +'<strong>This month:</strong> Start a resident-led initiative: journal club, procedure workshop, wellness event, or study group. Document it — this goes on your CV.<br>'
+          +'<strong>Long-term:</strong> Chief resident is the gold standard of leadership for applications. If you\'re interested, tell your PD early and ask what they look for.<br>'
+          +'<strong>Quick win:</strong> Even organizing a single grand rounds presentation or being the "go-to" resident for a specific topic counts. Programs want evidence of initiative, not titles.'
+          +'</div></div>';
+      }
+      else if(g.cat==='Networking'){
+        actionText='<strong>Priority '+(idx+1)+':</strong> Register for the next national conference in your field. Apply for away rotations 6-9 months out. Cold-email 2 faculty at target programs — most will respond.';
+        howTo='<div style="margin-top:8px;padding:10px 12px;background:var(--bg);border-radius:8px;border-left:3px solid var(--accent)">'
+          +'<div style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">How to do this</div>'
+          +'<div style="font-size:11px;color:var(--text2);line-height:1.6">'
+          +'<strong>This week:</strong> Identify 3 target programs. Find the fellowship PD\'s email on their website. Send a brief, specific email: "I\'m a PGY-X at [program], interested in '+((sData&&sData.name)||'your fellowship')+'. I have [1 sentence about your research]. Would you be open to a brief phone call?"<br>'
+          +'<strong>This month:</strong> Apply for away rotations at 1-2 target programs. Away rotations are the single most powerful networking tool — treat every day like a month-long interview.<br>'
+          +'<strong>Next conference:</strong> Register for '+(sData?_getFrcConf(spec):'the next major conference in your field')+'. Bring business cards. Introduce yourself to speakers after talks. Follow up by email within 48 hours.<br>'
+          +'<strong>The truth:</strong> Networking isn\'t schmoozing. It\'s building genuine professional relationships with people who will vouch for you. Start with the faculty who share your research interests.'
+          +'</div></div>';
+      }
+      else if(g.cat==='Personal Statement'){
+        actionText='<strong>Priority '+(idx+1)+':</strong> Block 2 hours this week to write a first draft. Don\'t edit — just write. Get 3 people to review it within 2 weeks. Great statements take 5+ drafts.';
+        howTo='<div style="margin-top:8px;padding:10px 12px;background:var(--bg);border-radius:8px;border-left:3px solid var(--accent)">'
+          +'<div style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">How to do this</div>'
+          +'<div style="font-size:11px;color:var(--text2);line-height:1.6">'
+          +'<strong>Step 1:</strong> Answer these 3 questions in writing (don\'t overthink it): Why this specialty? What moment confirmed it? What do you bring that others don\'t?<br>'
+          +'<strong>Step 2:</strong> Write your first draft in one sitting. It will be bad. That\'s normal. The goal is to get words on paper.<br>'
+          +'<strong>Step 3:</strong> Get 3 people to read it — one attending in your specialty, one non-medical friend (for clarity), and one recent applicant who matched.<br>'
+          +'<strong>Step 4:</strong> Revise 5+ times. Cut every cliché: "ever since I was young," "passion for helping people," "fascinated by the complexity." Be specific and honest.<br>'
+          +'<strong>Common mistake:</strong> Don\'t write about the specialty — write about YOU in the specialty. Programs want to understand your thinking, not read a textbook description of '+((sData&&sData.name)||'medicine')+'.'
+          +'</div></div>';
+      }
+      else if(g.cat==='Graduation Gap'){
+        actionText='<strong>Priority '+(idx+1)+':</strong> Your graduation gap is a factor programs will notice. You need to demonstrate recent clinical activity and ongoing professional development.';
+        howTo='<div style="margin-top:8px;padding:10px 12px;background:var(--bg);border-radius:8px;border-left:3px solid var(--accent)">'
+          +'<div style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">How to overcome this</div>'
+          +'<div style="font-size:11px;color:var(--text2);line-height:1.6">'
+          +'<strong>Most important:</strong> Get US clinical experience — observerships, externships, or hands-on clinical rotations. This is the #1 thing that offsets a graduation gap.<br>'
+          +'<strong>Research:</strong> Active, recent research shows you\'re engaged. Even a retrospective study or case series started in the last 6 months helps.<br>'
+          +'<strong>Your narrative:</strong> Prepare a clear explanation for what you\'ve been doing since graduation. "I was building clinical experience in [country] while preparing for US licensure" is much stronger than a gap with no explanation.<br>'
+          +'<strong>Certifications:</strong> ECFMG certification, additional training, or courses (like ACLS, BLS updates) show continuous professional development.<br>'
+          +'<strong>The reality:</strong> Programs worry that older graduates have lost clinical currency. Everything you do should counter that concern with evidence of recent, relevant activity.'
+          +'</div></div>';
+      }
+      actions.push('<div style="margin-bottom:12px">'+actionText+howTo+'</div>');
     });
     actList.innerHTML=actions.join('');
   } else if(actDiv){

@@ -16932,6 +16932,9 @@ function admRenderDashboard(c){
   }
   var co=users.filter(function(u){return u.tier==='core'}).length;
   var el=users.filter(function(u){return u.tier==='elite'}).length;
+  var paidCore=users.filter(function(u){return u.tier==='core'&&u.paid_at&&!u.is_trial}).length;
+  var paidElite=users.filter(function(u){return u.tier==='elite'&&u.paid_at&&!u.is_trial}).length;
+  var mrr=paidCore*39+paidElite*199;
   h+='<div class="adm-card"><div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:10px">Subscribers</div>';
   h+='<div style="display:flex;gap:20px;font-size:13px;color:var(--text2)">';
   h+='<div>Core: <strong>'+co+'</strong> ($39/mo)</div>';

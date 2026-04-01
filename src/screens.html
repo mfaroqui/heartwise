@@ -772,8 +772,8 @@ Sign Out</button>
 <div style="font-size:12px;color:var(--text3);margin-bottom:4px" id="sub-renew">No billing</div>
 <div style="font-size:12px;color:var(--text3);margin-bottom:12px" id="sub-usage-summary"></div>
 <div style="display:flex;gap:8px">
-<button class="btn btn-g btn-sm" onclick="notify('Subscription management will be available with Stripe integration')">Manage Billing</button>
-<button class="btn btn-sm" style="background:transparent;color:var(--red);border:1px solid var(--red)" onclick="if(confirm('Cancel subscription? You will keep access until the end of your billing period.')){subPlan('free');notify('Subscription cancelled. Access continues through billing period.')}">Cancel</button>
+<button class="btn btn-g btn-sm" onclick="openStripeBilling()">Manage Billing</button>
+<button class="btn btn-sm" style="background:transparent;color:var(--red);border:1px solid var(--red)" onclick="openStripeBilling()">Cancel Subscription</button>
 </div>
 </div>
 </div>

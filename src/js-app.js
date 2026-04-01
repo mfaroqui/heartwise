@@ -8801,6 +8801,21 @@ function reportGoalUpdate(goalId,action,detail){
   }
 }
 
+function openStripeBilling(){
+  // Use Stripe Customer Portal — requires creating a portal session server-side
+  // For now, redirect to a Supabase edge function that creates the portal session
+  if(!U||!U.email){notify('Please sign in first.',1);return}
+  notify('Opening billing portal...');
+  fetch('https://kqyvfykbnboesskxovtw.supabase.co/functions/v1/stripe-billing',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY},
+    body:JSON.stringify({email:U.email})
+  }).then(function(r){return r.json()}).then(function(d){
+    if(d.url){window.open(d.url,'_blank')}
+    else{notify('Unable to open billing portal. Contact support at heartwisementor@gmail.com',1)}
+  }).catch(function(){notify('Unable to open billing portal. Contact support at heartwisementor@gmail.com',1)});
+}
+
 function showUpgrade(){
   var sec=document.getElementById('upgrade-section');
   sec.classList.remove('hidden');

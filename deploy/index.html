@@ -20880,7 +20880,8 @@ function renderCompProfile(){
   var el=document.getElementById('profile-comp-intel');
   if(!el||!U)return;
   var hasPlan=U.tier==='core'||U.tier==='elite'||U.tier==='admin'||U.isTrial;
-  if(!hasPlan){el.style.display='none';return}
+  var stage=(U.careerProfile||{}).stage||'student';
+  if(!hasPlan||!(stage==='attending'||stage==='fellow')){el.style.display='none';return}
 
   var cp=U.careerProfile||{};
   var stage=cp.stage||'student';

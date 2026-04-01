@@ -123,6 +123,8 @@ color:var(--text);background:var(--bg);
   .topbar{padding:16px 20px}
   .topbar-links a.tb-link{display:none}
   .topbar-links .tb-cta{padding:8px 16px;font-size:10px}
+  #lp-mobile-tabs{display:flex!important}
+  .hero-lux{padding-top:180px!important}
 }
 @media(max-width:380px){
   .topbar-links .tb-cta{padding:6px 12px;font-size:9px;letter-spacing:.5px}
@@ -919,6 +921,14 @@ body.has-upgrade-bar #main-app{padding-bottom:70px}
 <a href="#" class="tb-cta" onclick="event.preventDefault();go('pg-login')">Sign In</a>
 </div>
 </nav>
+
+<!-- Mobile tab bar (visible ≤640px only) -->
+<div id="lp-mobile-tabs" style="display:none;position:fixed;top:56px;left:0;right:0;z-index:199;justify-content:center;gap:6px;padding:8px 12px;background:rgba(246,243,238,.97);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid rgba(26,26,26,.06)">
+<button class="lp-mtab lp-mtab-active" onclick="lpTab('home')" data-lptab="home" style="padding:7px 14px;font-size:11px;font-weight:600;border:1px solid rgba(198,168,94,.3);border-radius:20px;background:rgba(198,168,94,.12);color:#B89543;cursor:pointer;white-space:nowrap;transition:all .2s;font-family:var(--font-ui)">Home</button>
+<button class="lp-mtab" onclick="lpTab('tools')" data-lptab="tools" style="padding:7px 14px;font-size:11px;font-weight:500;border:1px solid var(--border);border-radius:20px;background:transparent;color:#4A4A4A;cursor:pointer;white-space:nowrap;transition:all .2s;font-family:var(--font-ui)">Questions</button>
+<button class="lp-mtab" onclick="lpTab('founder')" data-lptab="founder" style="padding:7px 14px;font-size:11px;font-weight:500;border:1px solid var(--border);border-radius:20px;background:transparent;color:#4A4A4A;cursor:pointer;white-space:nowrap;transition:all .2s;font-family:var(--font-ui)">Founder</button>
+<button class="lp-mtab" onclick="lpTab('pricing')" data-lptab="pricing" style="padding:7px 14px;font-size:11px;font-weight:500;border:1px solid var(--border);border-radius:20px;background:transparent;color:#4A4A4A;cursor:pointer;white-space:nowrap;transition:all .2s;font-family:var(--font-ui)">Pricing</button>
+</div>
 
 <!-- ===== LANDING PAGE ===== -->
 <div id="pg-landing" class="lp">
@@ -6943,6 +6953,13 @@ function lpTab(name){
   document.querySelectorAll('.lp-tab-link').forEach(function(a){a.classList.remove('active')});
   var activeLink=document.querySelector('.lp-tab-link[data-lptab="'+name+'"]');
   if(activeLink)activeLink.classList.add('active');
+  // Update mobile tabs
+  document.querySelectorAll('.lp-mtab').forEach(function(b){
+    b.classList.remove('lp-mtab-active');
+    b.style.background='transparent';b.style.color='#4A4A4A';b.style.fontWeight='500';b.style.borderColor='var(--border)';
+  });
+  var activeM=document.querySelector('.lp-mtab[data-lptab="'+name+'"]');
+  if(activeM){activeM.classList.add('lp-mtab-active');activeM.style.background='rgba(198,168,94,.12)';activeM.style.color='#B89543';activeM.style.fontWeight='600';activeM.style.borderColor='rgba(198,168,94,.3)'}
   // Scroll to top of landing page — cover all scroll containers
   var pg=document.getElementById('pg-landing');
   if(pg)pg.scrollTo({top:0,behavior:'instant'});

@@ -356,6 +356,13 @@ function lpTab(name){
   document.querySelectorAll('.lp-tab-link').forEach(function(a){a.classList.remove('active')});
   var activeLink=document.querySelector('.lp-tab-link[data-lptab="'+name+'"]');
   if(activeLink)activeLink.classList.add('active');
+  // Update mobile tabs
+  document.querySelectorAll('.lp-mtab').forEach(function(b){
+    b.classList.remove('lp-mtab-active');
+    b.style.background='transparent';b.style.color='#4A4A4A';b.style.fontWeight='500';b.style.borderColor='var(--border)';
+  });
+  var activeM=document.querySelector('.lp-mtab[data-lptab="'+name+'"]');
+  if(activeM){activeM.classList.add('lp-mtab-active');activeM.style.background='rgba(198,168,94,.12)';activeM.style.color='#B89543';activeM.style.fontWeight='600';activeM.style.borderColor='rgba(198,168,94,.3)'}
   // Scroll to top of landing page — cover all scroll containers
   var pg=document.getElementById('pg-landing');
   if(pg)pg.scrollTo({top:0,behavior:'instant'});

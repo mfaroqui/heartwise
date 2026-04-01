@@ -8179,6 +8179,7 @@ function renderProfile(){
 function adminSwitchTier(tier){
   if(!U||U.email.toLowerCase()!==AE.toLowerCase())return;
   U.tier=tier;
+  var t=TIERS[tier]||TIERS.free;
   var user=DB.users.find(function(u){return u.id===U.id});
   if(user){user.tier=tier;user.usage=U.usage}
   saveDB();localStorage.setItem('hw_session',JSON.stringify(U));

@@ -16120,7 +16120,10 @@ function admRenderMetrics(){
   var trActive=users.filter(function(u){var isTr=u.is_trial||u.isTrial;var te=u.trial_end||u.trialEnd;return isTr&&te&&new Date(te)>new Date()}).length;
   var trExpired=tr-trActive;
   var ca=users.filter(function(u){return u.cancelled||u.status==='cancelled'}).length;
-  var mrr=co*39+el*199; // Core $39/mo + Mentorship $199/mo
+  // MRR: only count users who actually paid (have paid_at), exclude admin/trial/test
+  var paidCore=users.filter(function(u){return u.tier==='core'&&u.paid_at&&!u.is_trial}).length;
+  var paidElite=users.filter(function(u){return u.tier==='elite'&&u.paid_at&&!u.is_trial}).length;
+  var mrr=paidCore*39+paidElite*199;
   var tai=0;users.forEach(function(u){if(u.usage&&u.usage.ai)tai+=u.usage.ai;if(u.ai_used)tai+=u.ai_used});
   var act=users.filter(function(u){var d=u.last_active||u.lastActive;return d&&(Date.now()-new Date(d).getTime())<30*86400000}).length;
   var m=document.getElementById('adm-metrics');

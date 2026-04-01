@@ -9498,16 +9498,19 @@ function loadStripe(){
 }
 
 async function startCheckout(priceId,mode){
+  notify('Connecting to payment system...');
   const stripe=await loadStripe();
-  if(!stripe){notify('Payment system unavailable.',1);return}
-  const {error}=await stripe.redirectToCheckout({
-    lineItems:[{price:priceId,quantity:1}],
-    mode:mode||'subscription',
-    successUrl:window.location.origin+'?checkout=success&plan='+encodeURIComponent(priceId),
-    cancelUrl:window.location.origin+'?checkout=cancel',
-    customerEmail:U?.email||undefined
-  });
-  if(error)notify(error.message,1);
+  if(!stripe){notify('Payment system unavailable. Please try again.',1);return}
+  try{
+    const {error}=await stripe.redirectToCheckout({
+      lineItems:[{price:priceId,quantity:1}],
+      mode:mode||'subscription',
+      successUrl:window.location.origin+'?checkout=success&plan='+encodeURIComponent(priceId),
+      cancelUrl:window.location.origin+'?checkout=cancel',
+      customerEmail:U?.email||undefined
+    });
+    if(error){console.error('Stripe checkout error:',error);notify('Payment error: '+error.message,1)}
+  }catch(e){console.error('Stripe checkout exception:',e);notify('Payment system error. Please try again later.',1)}
 }
 
 function subPlan(plan){

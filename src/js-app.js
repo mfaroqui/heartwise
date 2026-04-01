@@ -1525,7 +1525,7 @@ async function doNewPassword(e){
 function enterApp(){
   go('main-app');
   if(!U.usage)U.usage={ai:0,credits:TIERS[U.tier]?.credits||0,month:new Date().getMonth()};
-  if(U.usage.month!==new Date().getMonth()){U.usage.ai=0;U.usage.credits=TIERS[U.tier]?.credits||0;U.usage.month=new Date().getMonth()}
+  if(U.usage.month!==new Date().getMonth()){U.usage.ai=0;U.usage.month=new Date().getMonth()}
   // Check trial expiration
   if(U.isTrial&&U.trialEnd){
     const now=new Date();const end=new Date(U.trialEnd);
@@ -1584,9 +1584,7 @@ function showUpgradeElements(){
   if(U.tier==='free'){
     stickyBar.classList.remove('hidden');
     document.body.classList.add('has-upgrade-bar');
-    var t=TIERS.free;
-    var remaining=Math.max(0,t.ai-(U.usage?U.usage.ai:0));
-    document.getElementById('upgrade-bar-sub').textContent=remaining+' of '+t.ai+' free analyses remaining — Core $39/mo';
+    document.getElementById('upgrade-bar-sub').textContent='Unlock unlimited career intelligence tools — Core $39/mo';
   } else {
     stickyBar.classList.add('hidden');
     document.body.classList.remove('has-upgrade-bar');
@@ -3337,13 +3335,11 @@ function renderUpgradeNudge(){
   // Don't show for paid users or trial users (they have the trial banner)
   if(U.tier!=='free'||U.isTrial){el.style.display='none';return}
   el.style.display='';
-  var t=TIERS.free;
-  var remaining=Math.max(0,t.ai-(U.usage?.ai||0));
   el.innerHTML='<div style="background:#fff;border:1px solid rgba(198,168,94,.25);border-radius:14px;padding:16px 18px;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.04);transition:all .2s" onclick="navTo(\'scr-profile\');showUpgrade()" onmouseenter="this.style.boxShadow=\'0 6px 16px rgba(0,0,0,.08)\'" onmouseleave="this.style.boxShadow=\'0 2px 6px rgba(0,0,0,.04)\'">'
     +'<div style="display:flex;align-items:center;gap:12px">'
     +'<span style="font-size:20px">⚡</span>'
     +'<div><div style="font-size:13px;font-weight:600;color:#C6A85E">Upgrade to Core</div>'
-    +'<div style="font-size:11px;color:#5C564F">'+remaining+' free analyses remaining — $39/mo unlocks 100+ analyses and all tools</div></div>'
+    +'<div style="font-size:11px;color:#5C564F">Unlimited career intelligence tools — $39/mo</div></div>'
     +'</div></div>';
 }
 
@@ -3902,8 +3898,7 @@ function closeModal(id){document.getElementById(id).classList.add('hidden');if(i
 function toggleFinance(){document.getElementById('q-finance-box').style.display=document.getElementById('q-cat').value==='finance'?'':'none'}
 function togReview(){
   const t=document.getElementById('q-review-tog');
-  if(U.isTrial){notify('Physician reviews are available with paid plans. Explore all tools now — subscribe to unlock direct physician access.',1);return}
-  if(!t.classList.contains('on')&&(U.usage?.credits||0)<=0){notify('No review credits. Upgrade your plan.',1);return}
+  if(U.tier!=='elite'&&U.tier!=='admin'){notify('Direct physician review is available with the Mentorship plan.',1);return}
   t.classList.toggle('on');
 }
 function askFillPrompt(question,cat,subcat){
@@ -3954,15 +3949,14 @@ function submitQ(){
   if(!level){notify('Select your training level',1);return}
   if(!cat){notify('Select a category',1);return}
   if(!core||core.length<10){notify('Enter your core question (min 10 chars)',1);return}
-  const t=TIERS[U.tier]||TIERS.free;
-  if(U.usage.ai>=t.ai&&t.ai!==999){notify('Career intelligence analyses used up this month. Upgrade for more.',1);return}
+  if(U.tier==='free'){notify('Subscribe to access career intelligence tools.',1);return}
   const anon=document.getElementById('q-anon-tog').classList.contains('on');
   const wantsReview=document.getElementById('q-review-tog').classList.contains('on');
   const context=document.getElementById('q-context').value.trim();
   let fullQ=core;if(context)fullQ+=' '+context;
   const aiResp=genAI(cat,core,level);
   const q={id:DB.nextId++,userId:U.id,userEmail:U.email,cat,role:U.role||'student',q:fullQ,author:anon?'Anonymous':U.name,anon,date:new Date().toISOString().split('T')[0],status:wantsReview?'pending':'answered',ai:aiResp,wantsReview};
-  if(wantsReview&&U.usage.credits>0)U.usage.credits--;
+  if(wantsReview&&U.tier!=='elite'&&U.tier!=='admin'){notify('Physician review is available with Mentorship plan.',1);wantsReview=false}
   U.usage.ai++;
   DB.questions.push(q);saveDB();localStorage.setItem('hw_session',JSON.stringify(U));
   // Sync to Supabase
@@ -8166,8 +8160,8 @@ function renderProfile(){
   document.getElementById('prof-role').textContent=rl[U.role]||'Member';
   const t=TIERS[U.tier]||TIERS.free;
   document.getElementById('ps-used').textContent=U.usage?.ai||0;
-  document.getElementById('ps-remain').textContent=t.ai===999?'\u221e':Math.max(0,t.ai-(U.usage?.ai||0));
-  document.getElementById('ps-credits').textContent=U.usage?.credits||0;
+  var remainEl=document.getElementById('ps-remain');if(remainEl)remainEl.textContent=U.tier==='free'?'0':'Unlimited';
+  var credEl=document.getElementById('ps-credits');if(credEl)credEl.parentElement.style.display='none';
   document.getElementById('prof-plan-label').textContent=t.name+(U.tier==='free'?'':' \u2022 Active');
   document.getElementById('prof-plan-label').style.color=U.tier==='free'?'var(--text3)':'var(--accent)';
   renderProgressDashboard();
@@ -8185,8 +8179,6 @@ function renderProfile(){
 function adminSwitchTier(tier){
   if(!U||U.email.toLowerCase()!==AE.toLowerCase())return;
   U.tier=tier;
-  var t=TIERS[tier]||TIERS.free;
-  U.usage.credits=t.credits||0;
   var user=DB.users.find(function(u){return u.id===U.id});
   if(user){user.tier=tier;user.usage=U.usage}
   saveDB();localStorage.setItem('hw_session',JSON.stringify(U));
@@ -8812,7 +8804,7 @@ function showUpgrade(){
     document.getElementById('sub-status').textContent='Active';
     const renew=U.tier==='elite'?'Renews monthly':'Renews monthly';
     document.getElementById('sub-renew').textContent=renew+' \u2022 Auto-renewal on';
-    document.getElementById('sub-usage-summary').textContent=(t.ai===999?'Unlimited':t.ai)+' career intelligence analyses / '+t.credits+' physician-reviewed answers per month';
+    document.getElementById('sub-usage-summary').textContent='Unlimited career intelligence analyses'+(U.tier==='elite'||U.tier==='admin'?' + direct physician access':'');
   }else{document.getElementById('sub-manage').classList.add('hidden')}
   setTimeout(function(){sec.scrollIntoView({behavior:'smooth',block:'start'})},100);
 }
@@ -8867,16 +8859,13 @@ async function sendContactMessage(e){
   var msg=document.getElementById('contact-msg').value.trim();
   if(!msg){notify('Please enter a message',1);return}
 
-  // Career/finance/contract messages require physician review credits
-  var needsCredit=type==='career'||type==='finance'||type==='contract';
-  if(needsCredit){
-    if(!U||!U.usage||(U.usage.credits||0)<=0){
-      notify('You need physician review credits to send career, finance, or contract questions. Upgrade your plan to get credits.',1);
+  // Career/finance/contract messages require Mentorship tier
+  var needsMentorship=type==='career'||type==='finance'||type==='contract';
+  if(needsMentorship){
+    if(!U||U.tier==='free'||(U.tier==='core'&&!U.isTrial)){
+      notify('Direct physician questions on career, finance, and contracts are available with the Mentorship plan.',1);
       return;
     }
-    U.usage.credits--;
-    localStorage.setItem('hw_session',JSON.stringify(U));saveDB();
-    renderHome();
   }
 
   var payload={
@@ -9528,7 +9517,7 @@ function subPlan(plan){
     startCheckout(STRIPE_PRICES.intensive,'payment');
   }else{
     // Free plan or fallback
-    U.tier='free';U.usage.credits=0;
+    U.tier='free';
     const u=DB.users.find(u=>u.id===U.id);if(u)u.tier='free';
     saveDB();localStorage.setItem('hw_session',JSON.stringify(U));
     notify('Switched to Free plan.');enterApp();
@@ -9556,8 +9545,8 @@ function handleCheckoutReturn(){
   if(checkout==='success'){
     const priceId=params.get('plan');
     // Map price back to tier
-    if(priceId===STRIPE_PRICES.core){if(U){U.tier='core';U.usage.credits=TIERS.core.credits}}
-    else if(priceId===STRIPE_PRICES.elite){if(U){U.tier='elite';U.usage.credits=TIERS.elite.credits}}
+    if(priceId===STRIPE_PRICES.core){if(U){U.tier='core'}}
+    else if(priceId===STRIPE_PRICES.elite){if(U){U.tier='elite'}}
     else{if(U)notify('Payment received! We will be in touch within 48 hours to begin your strategic engagement.')}
     if(U){
       const u=DB.users.find(u=>u.id===U.id);if(u)u.tier=U.tier;
@@ -10355,7 +10344,7 @@ async function admSendMessage(){
 function admRenderAnalytics(c){
   var users=admGetUsers(),qs=admGetQuestions();
   var h='<div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:12px">AI Usage by User</div>';
-  var aiUsers=users.map(function(u){return{name:u.name||'Unknown',email:u.email||'',tier:(u.tier||'free'),ai:u.ai_used||(u.usage&&u.usage.ai)||0,limit:u.tier==='elite'?999:u.tier==='core'?50:2}}).filter(function(u){return u.ai>0}).sort(function(a,b){return b.ai-a.ai});
+  var aiUsers=users.map(function(u){return{name:u.name||'Unknown',email:u.email||'',tier:(u.tier||'free'),ai:u.ai_used||(u.usage&&u.usage.ai)||0}}).filter(function(u){return u.ai>0}).sort(function(a,b){return b.ai-a.ai});
   if(aiUsers.length){
     h+='<div style="overflow-x:auto"><table class="adm-table"><thead><tr><th>User</th><th>Plan</th><th>Used</th><th>Limit</th><th>%</th></tr></thead><tbody>';
     aiUsers.slice(0,20).forEach(function(u){var pct=u.limit===999?0:Math.round(u.ai/u.limit*100);var bc=pct>=90?'var(--red)':pct>=60?'var(--accent)':'var(--green)';h+='<tr><td><strong>'+u.name+'</strong><br><span style="font-size:10px;color:var(--text3)">'+u.email+'</span></td><td>'+_tierLabel(u.tier)+'</td><td>'+u.ai+'</td><td>'+(u.limit===999?'\u221e':u.limit)+'</td><td><div style="width:60px;height:6px;background:var(--bg3);border-radius:3px;overflow:hidden"><div style="height:100%;width:'+Math.min(pct,100)+'%;background:'+bc+'"></div></div></td></tr>'});

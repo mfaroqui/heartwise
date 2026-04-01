@@ -1,0 +1,58 @@
+🏥 Monthly Observership Verification — 2026-04-01
+
+✅ 15 programs confirmed active
+⚠️ 23 programs need attention
+💥 7 programs had connection errors
+
+NEEDS ATTENTION:
+  • Mayo Clinic — HTTP 403
+  • Johns Hopkins — HTTP 403
+  • Mount Sinai Health System — HTTP 403
+  • University of Chicago Medicine — Could not confirm observership program is mentioned on page
+  • NYU Langone Health — Page returns 404 — URL may have changed
+  • Montefiore Medical Center / Albert Einstein — Could not confirm observership program is mentioned on page
+  • UCSF Medical Center — HTTP 403
+  • UPMC — Page returns 404 — URL may have changed
+  • UI Health — Page returns 404 — URL may have changed
+  • Baylor College of Medicine — Page returns 404 — URL may have changed
+  • University of Miami — Page returns 404 — URL may have changed
+  • Wayne State University — Page returns 404 — URL may have changed
+  • Duke Health — Timeout
+  • Einstein Healthcare Network — Could not confirm observership program is mentioned on page
+  • Rush University — Could not confirm observership program is mentioned on page
+  • Brookdale Hospital — getaddrinfo ENOTFOUND www.brookdalehospital.org
+  • NYC Health + Hospitals / Lincoln — Invalid URL
+  • Cook County Health / Stroger Hospital — Page returns 404 — URL may have changed
+  • Maimonides Medical Center — Page returns 404 — URL may have changed
+  • University of Buffalo / ECMC — Page returns 404 — URL may have changed
+  • Mercy Catholic / Trinity Health — getaddrinfo ENOTFOUND www.mercyhealth.org
+  • Northwell Health — HTTP 403
+  • Advocate Christ Medical Center — Page returns 404 — URL may have changed
+  • University of Maryland Medical Center — HTTP 300
+  • Henry Ford Hospital — Invalid URL
+  • Temple University — Page returns 404 — URL may have changed
+  • UTMB — Could not confirm observership program is mentioned on page; Fee discrepancy: we have Free, page shows $,
+  • AMITA Health / Saint Joseph — Page returns 404 — URL may have changed
+  • NYC Health + Hospitals / Coney Island — Could not confirm observership program is mentioned on page
+  • Sinai-Grace / DMC — HTTP 403
+  • Cleveland Clinic Florida — Invalid URL
+  • Hospital for Special Surgery — Page returns 404 — URL may have changed
+  • Moffitt Cancer Center — HTTP 403
+  • Memorial Sloan Kettering — Fee discrepancy: we have Free, page shows $9,
+  • Menninger Clinic / Baylor — Page returns 404 — URL may have changed
+  • National Institutes of Health — HTTP 403
+  • Interfaith Medical Center — connect ECONNREFUSED 205.178.189.131:443
+  • NYC Health + Hospitals / Harlem — Could not confirm observership program is mentioned on page
+  • University of Arizona College of Medicine — Page returns 404 — URL may have changed
+  • GW Hospital — Page returns 404 — URL may have changed
+  • RWJBarnabas Health — Page returns 404 — URL may have changed
+  • OHSU — Page returns 404 — URL may have changed
+  • Howard University — HTTP 403
+  • Cedars-Sinai Medical Center — Page returns 404 — URL may have changed
+  • NYC Health + Hospitals / Jacobi — Could not confirm observership program is mentioned on page
+  • Geisinger — Page returns 404 — URL may have changed
+  • Loma Linda University Medical Center — Page returns 404 — URL may have changed
+  • Jefferson Health — Page returns 404 — URL may have changed
+  • Creighton University School of Medicine — Page returns 404 — URL may have changed
+  • NYC Health + Hospitals / Elmhurst — Could not confirm observership program is mentioned on page
+  • UNM Health Sciences — HTTP 406

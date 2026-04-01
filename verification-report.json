@@ -1,0 +1,1365 @@
+{
+  "date": "2026-04-01T06:03:11.392Z",
+  "totalPrograms": 65,
+  "active": 15,
+  "issues": 23,
+  "errors": 7,
+  "results": [
+    {
+      "id": 1,
+      "name": "Mayo Clinic",
+      "url": "https://www.mayo.edu/education",
+      "status": "http-error",
+      "httpStatus": 403,
+      "signals": null,
+      "issues": [
+        "HTTP 403"
+      ],
+      "timestamp": "2026-04-01T06:01:31.657Z"
+    },
+    {
+      "id": 2,
+      "name": "Cleveland Clinic",
+      "url": "https://my.clevelandclinic.org/departments/education",
+      "status": "active",
+      "httpStatus": 200,
+      "signals": {
+        "active": true,
+        "hasApplication": false,
+        "hasFees": false,
+        "hasDeadline": false,
+        "possiblyClosedOrMoved": false,
+        "detectedFee": null,
+        "detectedDeadline": null
+      },
+      "issues": [],
+      "timestamp": "2026-04-01T06:01:32.538Z"
+    },
+    {
+      "id": 3,
+      "name": "Johns Hopkins",
+      "url": "https://www.hopkinsmedicine.org/som/education",
+      "status": "http-error",
+      "httpStatus": 403,
+      "signals": null,
+      "issues": [
+        "HTTP 403"
+      ],
+      "timestamp": "2026-04-01T06:01:33.362Z"
+    },
+    {
+      "id": 4,
+      "name": "Mount Sinai Health System",
+      "url": "https://icahn.mssm.edu/education/international-observer",
+      "status": "http-error",
+      "httpStatus": 403,
+      "signals": null,
+      "issues": [
+        "HTTP 403"
+      ],
+      "timestamp": "2026-04-01T06:01:33.993Z"
+    },
+    {
+      "id": 5,
+      "name": "University of Chicago Medicine",
+      "url": "https://www.uchicagomedicine.org/education",
+      "status": "unclear",
+      "httpStatus": 200,
+      "signals": {
+        "active": false,
+        "hasApplication": true,
+        "hasFees": false,
+        "hasDeadline": false,
+        "possiblyClosedOrMoved": false,
+        "detectedFee": null,
+        "detectedDeadline": null
+      },
+      "issues": [
+        "Could not confirm observership program is mentioned on page"
+      ],
+      "timestamp": "2026-04-01T06:01:34.602Z"
+    },
+    {
+      "id": 6,
+      "name": "NYU Langone Health",
+      "url": "https://med.nyu.edu/education/gme/international",
+      "status": "not-found",
+      "httpStatus": 404,
+      "signals": null,
+      "issues": [
+        "Page returns 404 — URL may have changed"
+      ],
+      "timestamp": "2026-04-01T06:01:35.654Z"
+    },
+    {
+      "id": 7,
+      "name": "Stanford Medicine",
+      "url": "https://med.stanford.edu/education",
+      "status": "active",
+      "httpStatus": 200,
+      "signals": {
+        "active": true,
+        "hasApplication": false,
+        "hasFees": false,
+        "hasDeadline": false,
+        "possiblyClosedOrMoved": false,
+        "detectedFee": null,
+        "detectedDeadline": null
+      },
+      "issues": [],
+      "timestamp": "2026-04-01T06:01:37.038Z"
+    },
+    {
+      "id": 8,
+      "name": "Montefiore Medical Center / Albert Einstein",
+      "url": "https://www.montefiore.org/gme",
+      "status": "unclear",
+      "httpStatus": 200,
+      "signals": {
+        "active": false,
+        "hasApplication": true,
+        "hasFees": false,
+        "hasDeadline": false,
+        "possiblyClosedOrMoved": false,
+        "detectedFee": null,
+        "detectedDeadline": null
+      },
+      "issues": [
+        "Could not confirm observership program is mentioned on page"
+      ],
+      "timestamp": "2026-04-01T06:01:37.751Z"
+    },
+    {
+      "id": 9,
+      "name": "UCSF Medical Center",
+      "url": "https://meded.ucsf.edu/visiting-students",
+      "status": "http-error",
+      "httpStatus": 403,
+      "signals": null,
+      "issues": [
+        "HTTP 403"
+      ],
+      "timestamp": "2026-04-01T06:01:39.012Z"
+    },
+    {
+      "id": 10,
+      "name": "UPMC",
+      "url": "https://www.upmc.com/services/south-central-pa/gme",
+      "status": "not-found",
+      "httpStatus": 404,
+      "signals": null,
+      "issues": [
+        "Page returns 404 — URL may have changed"
+      ],
+      "timestamp": "2026-04-01T06:01:39.597Z"
+    },
+    {
+      "id": 11,
+      "name": "Mass General / Harvard",
+      "url": "https://www.massgeneral.org/education",
+      "status": "active",
+      "httpStatus": 200,
+      "signals": {
+        "active": true,
+        "hasApplication": true,
+        "hasFees": false,
+        "hasDeadline": false,
+        "possiblyClosedOrMoved": false,
+        "detectedFee": null,
+        "detectedDeadline": null
+      },
+      "issues": [],
+      "timestamp": "2026-04-01T06:01:41.084Z"
+    },
+    {
+      "id": 12,
+      "name": "UI Health",
+      "url": "https://hospital.uillinois.edu/education",
+      "status": "not-found",
+      "httpStatus": 404,
+      "signals": null,
+      "issues": [
+        "Page returns 404 — URL may have changed"
+      ],
+      "timestamp": "2026-04-01T06:01:42.569Z"
+    },
+    {
+      "id": 13,
+      "name": "Emory Healthcare",
+      "url": "https://med.emory.edu/education/gme",
+      "status": "active",
+      "httpStatus": 200,
+      "signals": {
+        "active": true,
+        "hasApplication": true,
+        "hasFees": false,
+        "hasDeadline": false,
+        "possiblyClosedOrMoved": false,
+        "detectedFee": null,
+        "detectedDeadline": null
+      },
+      "issues": [],
+      "timestamp": "2026-04-01T06:01:43.264Z"
+    },
+    {
+      "id": 14,
+      "name": "Baylor College of Medicine",
+      "url": "https://www.bcm.edu/education/graduate-medical-education",
+      "status": "not-found",
+      "httpStatus": 404,
+      "signals": null,
+      "issues": [
+        "Page returns 404 — URL may have changed"
+      ],
+      "timestamp": "2026-04-01T06:01:45.032Z"
+    },
+    {
+      "id": 15,
+      "name": "University of Miami",
+      "url": "https://med.miami.edu/gme",
+      "status": "not-found",
+      "httpStatus": 404,
+      "signals": null,
+      "issues": [
+        "Page returns 404 — URL may have changed"
+      ],
+      "timestamp": "2026-04-01T06:01:52.802Z"
+    },
+    {
+      "id": 16,
+      "name": "Penn Medicine",
+      "url": "https://www.med.upenn.edu/gme/",
+      "status": "active",
+      "httpStatus": 200,
+      "signals": {
+        "active": true,
+        "hasApplication": true,
+        "hasFees": false,
+        "hasDeadline": false,
+        "possiblyClosedOrMoved": false,
+        "detectedFee": null,
+        "detectedDeadline": null
+      },
+      "issues": [],
+      "timestamp": "2026-04-01T06:01:53.940Z"
+    },
+    {
+      "id": 17,
+      "name": "Wayne State University",
+      "url": "https://www.wayne.edu/medicine/gme",
+      "status": "not-found",
+      "httpStatus": 404,
+      "signals": null,
+      "issues": [
+        "Page returns 404 — URL may have changed"
+      ],
+      "timestamp": "2026-04-01T06:01:54.988Z"
+    },
+    {
+      "id": 18,
+      "name": "Duke Health",
+      "url": "https://medschool.duke.edu/education/health-professions-education",
+      "status": "error",
+      "httpStatus": null,
+      "signals": null,
+      "issues": [
+        "Timeout"
+      ],
+      "timestamp": "2026-04-01T06:01:56.717Z"
+    },
+    {
+      "id": 19,
+      "name": "Einstein Healthcare Network",
+      "url": "https://www.einstein.edu/education/gme",
+      "status": "unclear",
+      "httpStatus": 200,
+      "signals": {
+        "active": false,
+        "hasApplication": false,
+        "hasFees": false,
+        "hasDeadline": false,
+        "possiblyClosedOrMoved": false,
+        "detectedFee": null,
+        "detectedDeadline": null
+      },
+      "issues": [
+        "Could not confirm observership program is mentioned on page"
+      ],
+      "timestamp": "2026-04-01T06:02:12.802Z"
+    },
+    {
+      "id": 20,
+      "name": "Rush University",
+      "url": "https://www.rushu.rush.edu/education",
+      "status": "unclear",
+      "httpStatus": 200,
+      "signals": {
+        "active": false,
+        "hasApplication": true,
+        "hasFees": false,
+        "hasDeadline": false,
+        "possiblyClosedOrMoved": false,
+        "detectedFee": null,
+        "detectedDeadline": null
+      },
+      "issues": [
+        "Could not confirm observership program is mentioned on page"
+      ],
+      "timestamp": "2026-04-01T06:02:14.025Z"
+    },
+    {
+      "id": 21,
+      "name": "Brookdale Hospital",
+      "url": "https://www.brookdalehospital.org/gme",
+      "status": "error",
+      "httpStatus": null,
+      "signals": null,
+      "issues": [
+        "getaddrinfo ENOTFOUND www.brookdalehospital.org"
+      ],
+      "timestamp": "2026-04-01T06:02:15.883Z"
+    },
+    {
+      "id": 22,
+      "name": "Jamaica Hospital",
+      "url": "https://jamaicahospital.org/education/",
+      "status": "active",
+      "httpStatus": 200,
+      "signals": {
+        "active": true,
+        "hasApplication": true,
+        "hasFees": false,
+        "hasDeadline": false,
+        "possiblyClosedOrMoved": false,
+        "detectedFee": null,
+        "detectedDeadline": null
+      },
+      "issues": [],
+      "timestamp": "2026-04-01T06:02:16.488Z"
+    },
+    {
+      "id": 23,
+      "name": "NYC Health + Hospitals / Lincoln",
+      "url": "https://www.nychealthandhospitals.org/lincoln/",
+      "status": "error",
+      "httpStatus": null,
+      "signals": null,
+      "issues": [
+        "Invalid URL"
+      ],
+      "timestamp": "2026-04-01T06:02:18.822Z"
+    },
+    {
+      "id": 24,
+      "name": "Cook County Health / Stroger Hospital",
+      "url": "https://cookcountyhealth.org/education/",
+      "status": "not-found",
+      "httpStatus": 404,
+      "signals": null,
+      "issues": [
+        "Page returns 404 — URL may have changed"
+      ],
+      "timestamp": "2026-04-01T06:02:19.957Z"
+    },
+    {
+      "id": 25,
+      "name": "Maimonides Medical Center",
+      "url": "https://maimo.org/education",
+      "status": "not-found",
+      "httpStatus": 404,
+      "signals": null,
+      "issues": [
+        "Page returns 404 — URL may have changed"
+      ],
+      "timestamp": "2026-04-01T06:02:21.787Z"
+    },
+    {
+      "id": 26,
+      "name": "University of Buffalo / ECMC",
+      "url": "https://medicine.buffalo.edu/education/gme.html",
+      "status": "not-found",
+      "httpStatus": 404,
+      "signals": null,
+      "issues": [
+        "Page returns 404 — URL may have changed"
+      ],
+      "timestamp": "2026-04-01T06:02:23.966Z"
+    },
+    {
+      "id": 27,
+      "name": "Mercy Catholic / Trinity Health",
+      "url": "https://www.mercyhealth.org/gme",
+      "status": "error",
+      "httpStatus": null,
+      "signals": null,
+      "issues": [
+        "getaddrinfo ENOTFOUND www.mercyhealth.org"
+      ],
+      "timestamp": "2026-04-01T06:02:24.939Z"
+    },
+    {
+      "id": 28,
+      "name": "Northwell Health",
+      "url": "https://www.northwell.edu/education",
+      "status": "http-error",
+      "httpStatus": 403,
+      "signals": null,
+      "issues": [
+        "HTTP 403"
+      ],
+      "timestamp": "2026-04-01T06:02:25.738Z"
+    },
+    {
+      "id": 29,
+      "name": "Advocate Christ Medical Center",
+      "url": "https://www.advocatehealth.com/gme",
+      "status": "not-found",
+      "httpStatus": 404,
+      "signals": null,
+      "issues": [
+        "Page returns 404 — URL may have changed"
+      ],
+      "timestamp": "2026-04-01T06:02:26.339Z"
+    },
+    {
+      "id": 30,
+      "name": "University of Maryland Medical Center",
+      "url": "https://www.medschool.umaryland.edu/gme/",
+      "status": "http-error",
+      "httpStatus": 300,
+      "signals": null,
+      "issues": [
+        "HTTP 300"
+      ],
+      "timestamp": "2026-04-01T06:02:27.188Z"
+    },
+    {
+      "id": 31,
+      "name": "Henry Ford Hospital",
+      "url": "https://www.henryford.com/gme",
+      "status": "error",
+      "httpStatus": null,
+      "signals": null,
+      "issues": [
+        "Invalid URL"
+      ],
+      "timestamp": "2026-04-01T06:02:28.102Z"
+    },
+    {
+      "id": 32,
+      "name": "Temple University",
+      "url": "https://medicine.temple.edu/education/gme",
+      "status": "not-found",
+      "httpStatus": 404,
+      "signals": null,
+      "issues": [
+        "Page returns 404 — URL may have changed"
+      ],
+      "timestamp": "2026-04-01T06:02:29.071Z"
+    },
+    {
+      "id": 33,
+      "name": "UTMB",
+      "url": "https://www.utmb.edu/gme",
+      "status": "unclear",
+      "httpStatus": 200,
+      "signals": {
+        "active": false,
+        "hasApplication": true,
+        "hasFees": true,
+        "hasDeadline": false,
+        "possiblyClosedOrMoved": false,
+        "detectedFee": "$,",
+        "detectedDeadline": null
+      },
+      "issues": [
+        "Could not confirm observership program is mentioned on page",
+        "Fee discrepancy: we have Free, page shows $,"
+      ],
+      "timestamp": "2026-04-01T06:02:30.520Z"
+    },
+    {
+      "id": 34,
+      "name": "AMITA Health / Saint Joseph",
+      "url": "https://presencehealth.org/education",
+      "status": "not-found",
+      "httpStatus": 404,
+      "signals": null,
+      "issues": [
+        "Page returns 404 — URL may have changed"
+      ],
+      "timestamp": "2026-04-01T06:02:32.654Z"
+    },
+    {
+      "id": 35,
+      "name": "UConn Health",
+      "url": "https://health.uconn.edu/graduate-medical-education/",
+      "status": "active",
+      "httpStatus": 200,
+      "signals": {
+        "active": true,
+        "hasApplication": true,
+        "hasFees": false,
+        "hasDeadline": false,
+        "possiblyClosedOrMoved": false,
+        "detectedFee": null,
+        "detectedDeadline": null
+      },
+      "issues": [],
+      "timestamp": "2026-04-01T06:02:33.447Z"
+    },
+    {
+      "id": 36,
+      "name": "NYC Health + Hospitals / Coney Island",
+      "url": "https://www.nychealthandhospitals.org/coneyisland/",
+      "status": "unclear",
+      "httpStatus": 200,
+      "signals": {
+        "active": false,
+        "hasApplication": true,
+        "hasFees": false,
+        "hasDeadline": false,
+        "possiblyClosedOrMoved": false,
+        "detectedFee": null,
+        "detectedDeadline": null
+      },
+      "issues": [
+        "Could not confirm observership program is mentioned on page"
+      ],
+      "timestamp": "2026-04-01T06:02:35.265Z"
+    },
+    {
+      "id": 37,
+      "name": "University of Toledo Medical Center",
+      "url": "https://www.utoledo.edu/med/gme/",
+      "status": "active",
+      "httpStatus": 200,
+      "signals": {
+        "active": true,
+        "hasApplication": true,
+        "hasFees": false,
+        "hasDeadline": false,
+        "possiblyClosedOrMoved": false,
+        "detectedFee": null,
+        "detectedDeadline": null
+      },
+      "issues": [],
+      "timestamp": "2026-04-01T06:02:36.787Z"
+    },
+    {
+      "id": 38,
+      "name": "Rutgers NJMS / University Hospital",
+      "url": "https://njms.rutgers.edu/education/gme/",
+      "status": "active",
+      "httpStatus": 200,
+      "signals": {
+        "active": true,
+        "hasApplication": true,
+        "hasFees": false,
+        "hasDeadline": false,
+        "possiblyClosedOrMoved": false,
+        "detectedFee": null,
+        "detectedDeadline": null
+      },
+      "issues": [],
+      "timestamp": "2026-04-01T06:02:38.038Z"
+    },
+    {
+      "id": 39,
+      "name": "Sinai-Grace / DMC",
+      "url": "https://www.dmc.org/gme",
+      "status": "http-error",
+      "httpStatus": 403,
+      "signals": null,
+      "issues": [
+        "HTTP 403"
+      ],
+      "timestamp": "2026-04-01T06:02:39.092Z"
+    },
+    {
+      "id": 40,
+      "name": "USF Health / Tampa General",
+      "url": "https://health.usf.edu/medicine/gme",
+      "status": "active",
+      "httpStatus": 200,
+      "signals": {
+        "active": true,
+        "hasApplication": true,
+        "hasFees": false,
+        "hasDeadline": false,
+        "possiblyClosedOrMoved": false,
+        "detectedFee": null,
+        "detectedDeadline": null
+      },
+      "issues": [],
+      "timestamp": "2026-04-01T06:02:39.654Z"
+    },
+    {
+      "id": 41,
+      "name": "Cleveland Clinic Florida",
+      "url": "https://my.clevelandclinic.org/florida/education",
+      "status": "error",
+      "httpStatus": null,
+      "signals": null,
+      "issues": [
+        "Invalid URL"
+      ],
+      "timestamp": "2026-04-01T06:02:40.983Z"
+    },
+    {
+      "id": 42,
+      "name": "Hospital for Special Surgery",
+      "url": "https://www.hss.edu/education-overview.asp",
+      "status": "not-found",
+      "httpStatus": 404,
+      "signals": null,
+      "issues": [
+        "Page returns 404 — URL may have changed"
+      ],
+      "timestamp": "2026-04-01T06:02:41.761Z"
+    },
+    {
+      "id": 43,
+      "name": "Moffitt Cancer Center",
+      "url": "https://moffitt.org/education-and-training/",
+      "status": "http-error",
+      "httpStatus": 403,
+      "signals": null,
+      "issues": [
+        "HTTP 403"
+      ],
+      "timestamp": "2026-04-01T06:02:42.971Z"
+    },
+    {
+      "id": 44,
+      "name": "Memorial Sloan Kettering",
+      "url": "https://www.mskcc.org/hcp-education-training",
+      "status": "active",
+      "httpStatus": 200,
+      "signals": {
+        "active": true,
+        "hasApplication": true,
+        "hasFees": true,
+        "hasDeadline": false,
+        "possiblyClosedOrMoved": false,
+        "detectedFee": "$9,",
+        "detectedDeadline": null
+      },
+      "issues": [
+        "Fee discrepancy: we have Free, page shows $9,"
+      ],
+      "timestamp": "2026-04-01T06:02:43.930Z"
+    },
+    {
+      "id": 45,
+      "name": "Menninger Clinic / Baylor",
+      "url": "https://www.menningerclinic.org/education",
+      "status": "not-found",
+      "httpStatus": 404,
+      "signals": null,
+      "issues": [
+        "Page returns 404 — URL may have changed"
+      ],
+      "timestamp": "2026-04-01T06:02:44.656Z"
+    },
+    {
+      "id": 46,
+      "name": "National Institutes of Health",
+      "url": "https://clinicalcenter.nih.gov/training/",
+      "status": "http-error",
+      "httpStatus": 403,
+      "signals": null,
+      "issues": [
+        "HTTP 403"
+      ],
+      "timestamp": "2026-04-01T06:02:45.552Z"
+    },
+    {
+      "id": 47,
+      "name": "MD Anderson Cancer Center",
+      "url": "https://www.mdanderson.org/education-training.html",
+      "status": "active",
+      "httpStatus": 200,
+      "signals": {
+        "active": true,
+        "hasApplication": true,
+        "hasFees": false,
+        "hasDeadline": false,
+        "possiblyClosedOrMoved": false,
+        "detectedFee": null,
+        "detectedDeadline": null
+      },
+      "issues": [],
+      "timestamp": "2026-04-01T06:02:46.333Z"
+    },
+    {
+      "id": 48,
+      "name": "Vanderbilt University Medical Center",
+      "url": "https://www.vumc.org/gme/",
+      "status": "active",
+      "httpStatus": 200,
+      "signals": {
+        "active": true,
+        "hasApplication": true,
+        "hasFees": false,
+        "hasDeadline": false,
+        "possiblyClosedOrMoved": false,
+        "detectedFee": null,
+        "detectedDeadline": null
+      },
+      "issues": [],
+      "timestamp": "2026-04-01T06:02:48.938Z"
+    },
+    {
+      "id": 49,
+      "name": "University of Minnesota Medical Center",
+      "url": "https://med.umn.edu/gme",
+      "status": "active",
+      "httpStatus": 200,
+      "signals": {
+        "active": true,
+        "hasApplication": true,
+        "hasFees": false,
+        "hasDeadline": false,
+        "possiblyClosedOrMoved": false,
+        "detectedFee": null,
+        "detectedDeadline": null
+      },
+      "issues": [],
+      "timestamp": "2026-04-01T06:02:50.386Z"
+    },
+    {
+      "id": 50,
+      "name": "Interfaith Medical Center",
+      "url": "https://www.interfaithmedical.org/",
+      "status": "error",
+      "httpStatus": null,
+      "signals": null,
+      "issues": [
+        "connect ECONNREFUSED 205.178.189.131:443"
+      ],
+      "timestamp": "2026-04-01T06:02:51.131Z"
+    },
+    {
+      "id": 51,
+      "name": "NYC Health + Hospitals / Harlem",
+      "url": "https://www.nychealthandhospitals.org/harlem/",
+      "status": "unclear",
+      "httpStatus": 200,
+      "signals": {
+        "active": false,
+        "hasApplication": true,
+        "hasFees": false,
+        "hasDeadline": false,
+        "possiblyClosedOrMoved": false,
+        "detectedFee": null,
+        "detectedDeadline": null
+      },
+      "issues": [
+        "Could not confirm observership program is mentioned on page"
+      ],
+      "timestamp": "2026-04-01T06:02:51.799Z"
+    },
+    {
+      "id": 52,
+      "name": "University of Arizona College of Medicine",
+      "url": "https://medicine.arizona.edu/education/gme",
+      "status": "not-found",
+      "httpStatus": 404,
+      "signals": null,
+      "issues": [
+        "Page returns 404 — URL may have changed"
+      ],
+      "timestamp": "2026-04-01T06:02:53.284Z"
+    },
+    {
+      "id": 53,
+      "name": "GW Hospital",
+      "url": "https://smhs.gwu.edu/education/gme",
+      "status": "not-found",
+      "httpStatus": 404,
+      "signals": null,
+      "issues": [
+        "Page returns 404 — URL may have changed"
+      ],
+      "timestamp": "2026-04-01T06:02:54.308Z"
+    },
+    {
+      "id": 54,
+      "name": "RWJBarnabas Health",
+      "url": "https://www.rwjbh.org/education/",
+      "status": "not-found",
+      "httpStatus": 404,
+      "signals": null,
+      "issues": [
+        "Page returns 404 — URL may have changed"
+      ],
+      "timestamp": "2026-04-01T06:02:55.652Z"
+    },
+    {
+      "id": 55,
+      "name": "OHSU",
+      "url": "https://www.ohsu.edu/education/gme",
+      "status": "not-found",
+      "httpStatus": 404,
+      "signals": null,
+      "issues": [
+        "Page returns 404 — URL may have changed"
+      ],
+      "timestamp": "2026-04-01T06:02:57.101Z"
+    },
+    {
+      "id": 56,
+      "name": "Howard University",
+      "url": "https://huhealthcare.com/education/gme",
+      "status": "http-error",
+      "httpStatus": 403,
+      "signals": null,
+      "issues": [
+        "HTTP 403"
+      ],
+      "timestamp": "2026-04-01T06:02:58.167Z"
+    },
+    {
+      "id": 57,
+      "name": "Cedars-Sinai Medical Center",
+      "url": "https://www.cedars-sinai.org/education/gme.html",
+      "status": "not-found",
+      "httpStatus": 404,
+      "signals": null,
+      "issues": [
+        "Page returns 404 — URL may have changed"
+      ],
+      "timestamp": "2026-04-01T06:02:59.262Z"
+    },
+    {
+      "id": 58,
+      "name": "NYC Health + Hospitals / Jacobi",
+      "url": "https://www.nychealthandhospitals.org/jacobi/",
+      "status": "unclear",
+      "httpStatus": 200,
+      "signals": {
+        "active": false,
+        "hasApplication": true,
+        "hasFees": false,
+        "hasDeadline": false,
+        "possiblyClosedOrMoved": false,
+        "detectedFee": null,
+        "detectedDeadline": null
+      },
+      "issues": [
+        "Could not confirm observership program is mentioned on page"
+      ],
+      "timestamp": "2026-04-01T06:03:00.387Z"
+    },
+    {
+      "id": 59,
+      "name": "Geisinger",
+      "url": "https://www.geisinger.edu/education/gme",
+      "status": "not-found",
+      "httpStatus": 404,
+      "signals": null,
+      "issues": [
+        "Page returns 404 — URL may have changed"
+      ],
+      "timestamp": "2026-04-01T06:03:01.987Z"
+    },
+    {
+      "id": 60,
+      "name": "Loma Linda University Medical Center",
+      "url": "https://lluh.org/education/gme",
+      "status": "not-found",
+      "httpStatus": 404,
+      "signals": null,
+      "issues": [
+        "Page returns 404 — URL may have changed"
+      ],
+      "timestamp": "2026-04-01T06:03:03.953Z"
+    },
+    {
+      "id": 61,
+      "name": "Jefferson Health",
+      "url": "https://www.jefferson.edu/academics/colleges-schools/skmc/education/gme.html",
+      "status": "not-found",
+      "httpStatus": 404,
+      "signals": null,
+      "issues": [
+        "Page returns 404 — URL may have changed"
+      ],
+      "timestamp": "2026-04-01T06:03:05.210Z"
+    },
+    {
+      "id": 62,
+      "name": "Creighton University School of Medicine",
+      "url": "https://medschool.creighton.edu/gme",
+      "status": "not-found",
+      "httpStatus": 404,
+      "signals": null,
+      "issues": [
+        "Page returns 404 — URL may have changed"
+      ],
+      "timestamp": "2026-04-01T06:03:06.273Z"
+    },
+    {
+      "id": 63,
+      "name": "USA Health",
+      "url": "https://www.southalabama.edu/colleges/com/gme/",
+      "status": "active",
+      "httpStatus": 200,
+      "signals": {
+        "active": true,
+        "hasApplication": true,
+        "hasFees": true,
+        "hasDeadline": false,
+        "possiblyClosedOrMoved": false,
+        "detectedFee": "Free",
+        "detectedDeadline": null
+      },
+      "issues": [],
+      "timestamp": "2026-04-01T06:03:08.072Z"
+    },
+    {
+      "id": 64,
+      "name": "NYC Health + Hospitals / Elmhurst",
+      "url": "https://www.nychealthandhospitals.org/elmhurst/",
+      "status": "unclear",
+      "httpStatus": 200,
+      "signals": {
+        "active": false,
+        "hasApplication": true,
+        "hasFees": false,
+        "hasDeadline": false,
+        "possiblyClosedOrMoved": false,
+        "detectedFee": null,
+        "detectedDeadline": null
+      },
+      "issues": [
+        "Could not confirm observership program is mentioned on page"
+      ],
+      "timestamp": "2026-04-01T06:03:09.323Z"
+    },
+    {
+      "id": 65,
+      "name": "UNM Health Sciences",
+      "url": "https://hsc.unm.edu/medicine/education/gme/",
+      "status": "http-error",
+      "httpStatus": 406,
+      "signals": null,
+      "issues": [
+        "HTTP 406"
+      ],
+      "timestamp": "2026-04-01T06:03:10.547Z"
+    }
+  ],
+  "flagged": [
+    {
+      "id": 1,
+      "name": "Mayo Clinic",
+      "status": "http-error",
+      "issues": [
+        "HTTP 403"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Johns Hopkins",
+      "status": "http-error",
+      "issues": [
+        "HTTP 403"
+      ]
+    },
+    {
+      "id": 4,
+      "name": "Mount Sinai Health System",
+      "status": "http-error",
+      "issues": [
+        "HTTP 403"
+      ]
+    },
+    {
+      "id": 5,
+      "name": "University of Chicago Medicine",
+      "status": "unclear",
+      "issues": [
+        "Could not confirm observership program is mentioned on page"
+      ]
+    },
+    {
+      "id": 6,
+      "name": "NYU Langone Health",
+      "status": "not-found",
+      "issues": [
+        "Page returns 404 — URL may have changed"
+      ]
+    },
+    {
+      "id": 8,
+      "name": "Montefiore Medical Center / Albert Einstein",
+      "status": "unclear",
+      "issues": [
+        "Could not confirm observership program is mentioned on page"
+      ]
+    },
+    {
+      "id": 9,
+      "name": "UCSF Medical Center",
+      "status": "http-error",
+      "issues": [
+        "HTTP 403"
+      ]
+    },
+    {
+      "id": 10,
+      "name": "UPMC",
+      "status": "not-found",
+      "issues": [
+        "Page returns 404 — URL may have changed"
+      ]
+    },
+    {
+      "id": 12,
+      "name": "UI Health",
+      "status": "not-found",
+      "issues": [
+        "Page returns 404 — URL may have changed"
+      ]
+    },
+    {
+      "id": 14,
+      "name": "Baylor College of Medicine",
+      "status": "not-found",
+      "issues": [
+        "Page returns 404 — URL may have changed"
+      ]
+    },
+    {
+      "id": 15,
+      "name": "University of Miami",
+      "status": "not-found",
+      "issues": [
+        "Page returns 404 — URL may have changed"
+      ]
+    },
+    {
+      "id": 17,
+      "name": "Wayne State University",
+      "status": "not-found",
+      "issues": [
+        "Page returns 404 — URL may have changed"
+      ]
+    },
+    {
+      "id": 18,
+      "name": "Duke Health",
+      "status": "error",
+      "issues": [
+        "Timeout"
+      ]
+    },
+    {
+      "id": 19,
+      "name": "Einstein Healthcare Network",
+      "status": "unclear",
+      "issues": [
+        "Could not confirm observership program is mentioned on page"
+      ]
+    },
+    {
+      "id": 20,
+      "name": "Rush University",
+      "status": "unclear",
+      "issues": [
+        "Could not confirm observership program is mentioned on page"
+      ]
+    },
+    {
+      "id": 21,
+      "name": "Brookdale Hospital",
+      "status": "error",
+      "issues": [
+        "getaddrinfo ENOTFOUND www.brookdalehospital.org"
+      ]
+    },
+    {
+      "id": 23,
+      "name": "NYC Health + Hospitals / Lincoln",
+      "status": "error",
+      "issues": [
+        "Invalid URL"
+      ]
+    },
+    {
+      "id": 24,
+      "name": "Cook County Health / Stroger Hospital",
+      "status": "not-found",
+      "issues": [
+        "Page returns 404 — URL may have changed"
+      ]
+    },
+    {
+      "id": 25,
+      "name": "Maimonides Medical Center",
+      "status": "not-found",
+      "issues": [
+        "Page returns 404 — URL may have changed"
+      ]
+    },
+    {
+      "id": 26,
+      "name": "University of Buffalo / ECMC",
+      "status": "not-found",
+      "issues": [
+        "Page returns 404 — URL may have changed"
+      ]
+    },
+    {
+      "id": 27,
+      "name": "Mercy Catholic / Trinity Health",
+      "status": "error",
+      "issues": [
+        "getaddrinfo ENOTFOUND www.mercyhealth.org"
+      ]
+    },
+    {
+      "id": 28,
+      "name": "Northwell Health",
+      "status": "http-error",
+      "issues": [
+        "HTTP 403"
+      ]
+    },
+    {
+      "id": 29,
+      "name": "Advocate Christ Medical Center",
+      "status": "not-found",
+      "issues": [
+        "Page returns 404 — URL may have changed"
+      ]
+    },
+    {
+      "id": 30,
+      "name": "University of Maryland Medical Center",
+      "status": "http-error",
+      "issues": [
+        "HTTP 300"
+      ]
+    },
+    {
+      "id": 31,
+      "name": "Henry Ford Hospital",
+      "status": "error",
+      "issues": [
+        "Invalid URL"
+      ]
+    },
+    {
+      "id": 32,
+      "name": "Temple University",
+      "status": "not-found",
+      "issues": [
+        "Page returns 404 — URL may have changed"
+      ]
+    },
+    {
+      "id": 33,
+      "name": "UTMB",
+      "status": "unclear",
+      "issues": [
+        "Could not confirm observership program is mentioned on page",
+        "Fee discrepancy: we have Free, page shows $,"
+      ]
+    },
+    {
+      "id": 34,
+      "name": "AMITA Health / Saint Joseph",
+      "status": "not-found",
+      "issues": [
+        "Page returns 404 — URL may have changed"
+      ]
+    },
+    {
+      "id": 36,
+      "name": "NYC Health + Hospitals / Coney Island",
+      "status": "unclear",
+      "issues": [
+        "Could not confirm observership program is mentioned on page"
+      ]
+    },
+    {
+      "id": 39,
+      "name": "Sinai-Grace / DMC",
+      "status": "http-error",
+      "issues": [
+        "HTTP 403"
+      ]
+    },
+    {
+      "id": 41,
+      "name": "Cleveland Clinic Florida",
+      "status": "error",
+      "issues": [
+        "Invalid URL"
+      ]
+    },
+    {
+      "id": 42,
+      "name": "Hospital for Special Surgery",
+      "status": "not-found",
+      "issues": [
+        "Page returns 404 — URL may have changed"
+      ]
+    },
+    {
+      "id": 43,
+      "name": "Moffitt Cancer Center",
+      "status": "http-error",
+      "issues": [
+        "HTTP 403"
+      ]
+    },
+    {
+      "id": 44,
+      "name": "Memorial Sloan Kettering",
+      "status": "active",
+      "issues": [
+        "Fee discrepancy: we have Free, page shows $9,"
+      ]
+    },
+    {
+      "id": 45,
+      "name": "Menninger Clinic / Baylor",
+      "status": "not-found",
+      "issues": [
+        "Page returns 404 — URL may have changed"
+      ]
+    },
+    {
+      "id": 46,
+      "name": "National Institutes of Health",
+      "status": "http-error",
+      "issues": [
+        "HTTP 403"
+      ]
+    },
+    {
+      "id": 50,
+      "name": "Interfaith Medical Center",
+      "status": "error",
+      "issues": [
+        "connect ECONNREFUSED 205.178.189.131:443"
+      ]
+    },
+    {
+      "id": 51,
+      "name": "NYC Health + Hospitals / Harlem",
+      "status": "unclear",
+      "issues": [
+        "Could not confirm observership program is mentioned on page"
+      ]
+    },
+    {
+      "id": 52,
+      "name": "University of Arizona College of Medicine",
+      "status": "not-found",
+      "issues": [
+        "Page returns 404 — URL may have changed"
+      ]
+    },
+    {
+      "id": 53,
+      "name": "GW Hospital",
+      "status": "not-found",
+      "issues": [
+        "Page returns 404 — URL may have changed"
+      ]
+    },
+    {
+      "id": 54,
+      "name": "RWJBarnabas Health",
+      "status": "not-found",
+      "issues": [
+        "Page returns 404 — URL may have changed"
+      ]
+    },
+    {
+      "id": 55,
+      "name": "OHSU",
+      "status": "not-found",
+      "issues": [
+        "Page returns 404 — URL may have changed"
+      ]
+    },
+    {
+      "id": 56,
+      "name": "Howard University",
+      "status": "http-error",
+      "issues": [
+        "HTTP 403"
+      ]
+    },
+    {
+      "id": 57,
+      "name": "Cedars-Sinai Medical Center",
+      "status": "not-found",
+      "issues": [
+        "Page returns 404 — URL may have changed"
+      ]
+    },
+    {
+      "id": 58,
+      "name": "NYC Health + Hospitals / Jacobi",
+      "status": "unclear",
+      "issues": [
+        "Could not confirm observership program is mentioned on page"
+      ]
+    },
+    {
+      "id": 59,
+      "name": "Geisinger",
+      "status": "not-found",
+      "issues": [
+        "Page returns 404 — URL may have changed"
+      ]
+    },
+    {
+      "id": 60,
+      "name": "Loma Linda University Medical Center",
+      "status": "not-found",
+      "issues": [
+        "Page returns 404 — URL may have changed"
+      ]
+    },
+    {
+      "id": 61,
+      "name": "Jefferson Health",
+      "status": "not-found",
+      "issues": [
+        "Page returns 404 — URL may have changed"
+      ]
+    },
+    {
+      "id": 62,
+      "name": "Creighton University School of Medicine",
+      "status": "not-found",
+      "issues": [
+        "Page returns 404 — URL may have changed"
+      ]
+    },
+    {
+      "id": 64,
+      "name": "NYC Health + Hospitals / Elmhurst",
+      "status": "unclear",
+      "issues": [
+        "Could not confirm observership program is mentioned on page"
+      ]
+    },
+    {
+      "id": 65,
+      "name": "UNM Health Sciences",
+      "status": "http-error",
+      "issues": [
+        "HTTP 406"
+      ]
+    }
+  ]
+}

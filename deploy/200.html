@@ -15894,7 +15894,7 @@ function ftCalc(){
 }
 
 // ===== STRIPE CONFIG =====
-const STRIPE_PK='pk_live_51THGikFnqN9jbLiUoVHEVkXVRvXVp9HOPslWfGn1J0u9p0P5F6o6kM2o51sqbzr7xO6nmDYo9FDmpmGHdj8sLTOd00ruaQiVQL';
+// Stripe Payment Links (no SDK needed)
 const STRIPE_PRICES={
   core:'price_1THHBxFnqN9jbLiUL7VqoQgw',
   core_annual:'price_1THHElFnqN9jbLiUhoxpf5dq',
@@ -15998,21 +15998,12 @@ function showPrivateStrategyModal(){
   document.getElementById('modal-q').classList.remove('hidden');
 }
 
-// Handle checkout return
+// Handle checkout return (Payment Links — Stripe webhook handles tier sync)
 function handleCheckoutReturn(){
   const params=new URLSearchParams(window.location.search);
   const checkout=params.get('checkout');
   if(checkout==='success'){
-    const priceId=params.get('plan');
-    // Map price back to tier
-    if(priceId===STRIPE_PRICES.core){if(U){U.tier='core'}}
-    else if(priceId===STRIPE_PRICES.elite){if(U){U.tier='elite'}}
-    else{if(U)notify('Payment received! We will be in touch within 48 hours to begin your strategic engagement.')}
-    if(U){
-      const u=DB.users.find(u=>u.id===U.id);if(u)u.tier=U.tier;
-      saveDB();localStorage.setItem('hw_session',JSON.stringify(U));
-    }
-    notify('Payment successful! \u2728');
+    notify('Payment successful! Your access is being activated. ✦');
     window.history.replaceState({},'',window.location.pathname);
   }else if(checkout==='cancel'){
     notify('Checkout cancelled.',1);

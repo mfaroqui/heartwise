@@ -1240,6 +1240,9 @@ function go(id){
   // Show/hide topbar
   const tb=document.getElementById('topbar');
   if(tb)tb.style.display=(id==='pg-landing')?'':'none';
+  // Hide mobile tabs when not on landing
+  var mobTabs=document.getElementById('lp-mobile-tabs');
+  if(mobTabs)mobTabs.style.display=(id==='pg-landing')?'':'none';
   // Hide sticky CTA when leaving landing
   var stk=document.getElementById('sticky-cta');
   if(stk&&id!=='pg-landing'){stk.style.transform='translateY(100%)';stk.style.display='none'}

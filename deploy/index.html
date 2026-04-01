@@ -6803,7 +6803,7 @@ function closeLandingMenu(){
 }
 function landingNav(id){
   closeLandingMenu();
-  if(id==='pg-landing'){var hashTab={home:'home',questions:'tools',founder:'founder',pricing:'pricing'},h=_initialHash;_initialHash='';lpTab(hashTab[h]||'home');return}
+  if(id==='pg-landing'){var hashTab={home:'home',questions:'tools',founder:'founder',pricing:'pricing'};var h=_initialHash;_initialHash='';var fromHash=hashTab[h]||null;var savedTab=null;try{savedTab=localStorage.getItem('hw_lp_tab')}catch(e){}lpTab(fromHash||savedTab||'home');return}
   var tabMap={'tools-sec':'tools','diff-sec':'compare','pricing-sec':'pricing','founder-sec':'founder'};
   if(tabMap[id]){lpTab(tabMap[id]);return}
   const el=document.getElementById(id);
@@ -6826,8 +6826,9 @@ function lpTab(name){
   });
   var activeM=document.querySelector('.lp-mtab[data-lptab="'+name+'"]');
   if(activeM){activeM.classList.add('lp-mtab-active');activeM.style.background='rgba(198,168,94,.12)';activeM.style.color='#B89543';activeM.style.fontWeight='600';activeM.style.borderColor='rgba(198,168,94,.3)'}
-  // Save tab in URL hash
+  // Save tab in URL hash + localStorage
   var hashMap={home:'home',tools:'questions',founder:'founder',pricing:'pricing'};
+  if(hashMap[name]){try{localStorage.setItem('hw_lp_tab',name)}catch(e){}}
   if(hashMap[name])history.replaceState(null,null,'#'+hashMap[name]);
   // Scroll to top of landing page — cover all scroll containers
   var pg=document.getElementById('pg-landing');

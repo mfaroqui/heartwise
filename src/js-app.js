@@ -9660,7 +9660,7 @@ function admRenderMetrics(){
   var trActive=users.filter(function(u){var isTr=u.is_trial||u.isTrial;var te=u.trial_end||u.trialEnd;return isTr&&te&&new Date(te)>new Date()}).length;
   var trExpired=tr-trActive;
   var ca=users.filter(function(u){return u.cancelled||u.status==='cancelled'}).length;
-  var mrr=0; // Revenue tracked via Stripe only
+  var mrr=co*39+el*199; // Core $39/mo + Mentorship $199/mo
   var tai=0;users.forEach(function(u){if(u.usage&&u.usage.ai)tai+=u.usage.ai;if(u.ai_used)tai+=u.ai_used});
   var act=users.filter(function(u){var d=u.last_active||u.lastActive;return d&&(Date.now()-new Date(d).getTime())<30*86400000}).length;
   var m=document.getElementById('adm-metrics');
@@ -9711,7 +9711,7 @@ function admRenderDashboard(c){
   h+='<div style="display:flex;gap:20px;font-size:13px;color:var(--text2)">';
   h+='<div>Core: <strong>'+co+'</strong> ($39/mo)</div>';
   h+='<div>Mentorship: <strong>'+el+'</strong> ($199/mo)</div></div>';
-  h+='<div style="font-size:11px;color:var(--text3);margin-top:8px">Revenue tracked via Stripe — connect Stripe dashboard for actuals</div></div>';
+  h+='<div style="font-size:11px;color:var(--text3);margin-top:8px">MRR: <strong style="color:var(--accent)">$'+mrr.toLocaleString()+'</strong>/mo · ARR: <strong>$'+(mrr*12).toLocaleString()+'</strong>/yr</div></div>';
 
   h+='<div style="font-size:12px;font-weight:600;color:var(--text);margin:16px 0 8px">Recent Signups</div>';
   users.slice(0,5).forEach(function(u){

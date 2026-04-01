@@ -6905,7 +6905,7 @@ function closeLandingMenu(){
 }
 function landingNav(id){
   closeLandingMenu();
-  if(id==='pg-landing'){lpTab('home');return}
+  if(id==='pg-landing'){var hashTab={home:'home',questions:'tools',founder:'founder',pricing:'pricing'},h=(location.hash||'').replace('#','').toLowerCase();lpTab(hashTab[h]||'home');return}
   var tabMap={'tools-sec':'tools','diff-sec':'compare','pricing-sec':'pricing','founder-sec':'founder'};
   if(tabMap[id]){lpTab(tabMap[id]);return}
   const el=document.getElementById(id);
@@ -6928,6 +6928,9 @@ function lpTab(name){
   });
   var activeM=document.querySelector('.lp-mtab[data-lptab="'+name+'"]');
   if(activeM){activeM.classList.add('lp-mtab-active');activeM.style.background='rgba(198,168,94,.12)';activeM.style.color='#B89543';activeM.style.fontWeight='600';activeM.style.borderColor='rgba(198,168,94,.3)'}
+  // Save tab in URL hash
+  var hashMap={home:'home',tools:'questions',founder:'founder',pricing:'pricing'};
+  if(hashMap[name])history.replaceState(null,null,'#'+hashMap[name]);
   // Scroll to top of landing page — cover all scroll containers
   var pg=document.getElementById('pg-landing');
   if(pg)pg.scrollTo({top:0,behavior:'instant'});

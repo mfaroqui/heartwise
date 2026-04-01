@@ -9835,6 +9835,40 @@ function admRenderUserDetail(c){
   }
   h+='</div>';
 
+  // Profile Snapshot from toolInputs
+  var sd=u.session_data||{};if(typeof sd==='string'){try{sd=JSON.parse(sd)}catch(e){sd={}}}
+  var ti=sd.toolInputs||u.toolInputs||{};
+  var cp=sd.careerProfile||u.careerProfile||{};
+  var snapFields=[
+    {k:'salary',l:'💰 Salary',fmt:function(v){return'$'+Number(v).toLocaleString()}},
+    {k:'debt',l:'🏦 Student Debt',fmt:function(v){return'$'+Number(v).toLocaleString()}},
+    {k:'specialty',l:'🩺 Specialty'},
+    {k:'stage',l:'📍 Stage',src:'cp'},
+    {k:'step1',l:'Step 1'},
+    {k:'step2',l:'Step 2'},
+    {k:'pubs',l:'📄 Publications'},
+    {k:'firstAuthor',l:'First-Author Pubs'},
+    {k:'caseReports',l:'Case Reports'},
+    {k:'abstracts',l:'Abstracts'},
+    {k:'lors',l:'Strong LORs'},
+    {k:'img',l:'IMG Status',fmt:function(v){return v===true||v==='true'||v==='yes'?'Yes — IMG':'No'}},
+    {k:'employer',l:'🏥 Employer'},
+    {k:'disability',l:'Disability Insurance',fmt:function(v){return v===true||v==='true'||v==='yes'?'Yes':'No'}}
+  ];
+  var snapHtml='';var snapCount=0;
+  snapFields.forEach(function(f){
+    var v=f.src==='cp'?(cp[f.k]||ti[f.k]):(ti[f.k]||cp[f.k]);
+    if(v!==undefined&&v!==null&&v!==''){
+      snapCount++;
+      var display=f.fmt?f.fmt(v):v;
+      snapHtml+='<div style="padding:4px 0;display:flex;justify-content:space-between;border-bottom:1px solid var(--border)"><span style="color:var(--text3)">'+f.l+'</span><span style="color:var(--text);font-weight:600">'+display+'</span></div>';
+    }
+  });
+  if(snapCount){
+    h+='<div class="adm-card"><div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:10px">📋 Profile Snapshot <span style="font-size:10px;font-weight:400;color:var(--text3)">(auto-collected from tools)</span></div>';
+    h+='<div style="font-size:12px">'+snapHtml+'</div></div>';
+  }
+
   // Admin controls
   h+='<div class="adm-card"><div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:12px">Admin Controls</div>';
   h+='<div style="display:flex;gap:8px;flex-wrap:wrap">';

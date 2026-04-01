@@ -8115,6 +8115,21 @@ function _frcRun(){
   }
 
   var total=Math.round(weightedTotal);
+
+  // Graduation year gap penalty (IMG risk factor)
+  var gradGapEl=document.getElementById('frc-gradgap');
+  var gradGap=gradGapEl?parseInt(gradGapEl.value):NaN;
+  var gradPenalty=0;
+  var gradNote='';
+  if(gradGap===0){gradPenalty=0;gradNote=''}
+  else if(gradGap===1){gradPenalty=3;gradNote='Your graduation gap (1–2 years) is a minor factor. Most programs won\'t flag this, but recent US clinical experience helps offset it.'}
+  else if(gradGap===2){gradPenalty=8;gradNote='A 3–5 year gap since graduation is noticeable on applications. Programs will want to see what you\'ve been doing — US clinical experience, research, or observerships can bridge this gap.'}
+  else if(gradGap===3){gradPenalty=15;gradNote='More than 5 years since graduation is a significant red flag for most programs. You\'ll need strong US clinical experience, recent research activity, and a compelling narrative to overcome this. It\'s doable — but requires intentional positioning.'}
+  if(gradPenalty>0){
+    total=Math.max(5,total-gradPenalty);
+    if(gradNote)gaps.push({cat:'Graduation Gap',score:gradGap===3?0:1,weight:gradPenalty,feedback:gradNote});
+  }
+
   document.getElementById('frc-total').textContent=total;
 
   // Grade
@@ -8257,8 +8272,9 @@ function _frcRun(){
   for(var fi=1;fi<=7;fi++){var fv=parseInt(document.getElementById('frc-r'+fi).value)||0;frcInputs[frcLabels[fi]]=fv+'/5 (weight: '+weights[fi-1]+'%)';if(fv<=2)frcHL.push(frcLabels[fi]+': needs work ('+fv+'/5)')}
   if(spec&&sData)frcInputs['Target Fellowship']=sData.name;
   if(tl)frcInputs['Timeline']=tl;
+  if(!isNaN(gradGap)){var gradLabels=['Less than 1 year','1–2 years','3–5 years','More than 5 years'];frcInputs['Graduation Gap']=gradLabels[gradGap]||'';if(gradPenalty>0)frcHL.push('Graduation gap penalty: -'+gradPenalty+' points')}
   frcHL.unshift(gl+' — '+total+'/100'+(sData?' ('+sData.name+')':''));
-  recordToolUse(total+'/100',gl,{inputs:frcInputs,highlights:frcHL});
+  recordToolUse('Match Competitiveness Calculator',total,gl+(sData?' for '+sData.name:''),{inputs:frcInputs,highlights:frcHL});
 }
 // ===== PROFILE =====
 function renderProfile(){

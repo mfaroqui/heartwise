@@ -33,6 +33,14 @@ v1:`<h3 class="serif">Fellowship Readiness Assessment</h3>
 <option value="2yr">~2 years out</option>
 <option value="3yr">3+ years out</option>
 </select></div>
+<div class="fg"><label style="font-size:11px;color:var(--text3)">Years since medical school graduation</label>
+<select id="frc-gradgap" onchange="frcUpdate()" style="width:100%">
+<option value="">Select...</option>
+<option value="0">Less than 1 year</option>
+<option value="1">1–2 years</option>
+<option value="2">3–5 years</option>
+<option value="3">More than 5 years</option>
+</select></div>
 <div id="frc-spec-note" style="display:none;font-size:11px;color:var(--accent);margin-top:8px;padding:8px;background:var(--bg);border-radius:6px"></div>
 </div>
 

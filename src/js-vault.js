@@ -1662,7 +1662,7 @@ v14:`<h3 class="serif">Match Probability Calculator</h3>
 
 <div style="padding:10px 0;border-bottom:1px solid var(--border)">
 <div style="margin-bottom:4px"><strong>Training Background</strong></div>
-<select id="mcc-background" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
+<select id="mcc-background" onchange="mccToggleImgFields()" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
 <option value="">Select...</option>
 <option value="usmd">US MD</option>
 <option value="usdo">US DO</option>
@@ -1671,7 +1671,51 @@ v14:`<h3 class="serif">Match Probability Calculator</h3>
 </select>
 </div>
 
-<div id="mcc-residency-fields">
+<div style="padding:10px 0;border-bottom:1px solid var(--border)">
+<div style="margin-bottom:4px"><strong>Years Since Medical School Graduation</strong></div>
+<select id="mcc-gradyear" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
+<option value="">Select...</option>
+<option value="0">Less than 1 year</option>
+<option value="1">1–2 years</option>
+<option value="2">3–5 years</option>
+<option value="3">More than 5 years</option>
+</select>
+<div id="mcc-gradyear-note" style="display:none;font-size:10px;margin-top:6px;padding:6px 8px;border-radius:6px"></div>
+</div>
+
+<div id="mcc-img-fields" style="display:none">
+<div style="padding:10px 0;border-bottom:1px solid var(--border)">
+<div style="margin-bottom:4px"><strong>US Clinical Experience</strong></div>
+<select id="mcc-usce" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
+<option value="">Select...</option>
+<option value="hands_on">Hands-on clinical rotation (externship/sub-internship)</option>
+<option value="observership">Observership only</option>
+<option value="research">Research position at US institution</option>
+<option value="none">No US clinical experience</option>
+</select>
+</div>
+
+<div style="padding:10px 0;border-bottom:1px solid var(--border)">
+<div style="margin-bottom:4px"><strong>Visa Status</strong></div>
+<select id="mcc-visa" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
+<option value="">Select...</option>
+<option value="citizen">US Citizen / Green Card</option>
+<option value="j1">J-1 Visa eligible</option>
+<option value="h1b">Needs H-1B sponsorship</option>
+<option value="other">Other / Unsure</option>
+</select>
+</div>
+</div>
+
+<div style="padding:10px 0;border-bottom:1px solid var(--border)">
+<div style="margin-bottom:4px"><strong>Previous Match Attempts</strong></div>
+<select id="mcc-attempts" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
+<option value="0">First time applying</option>
+<option value="1">Applied once before (didn't match)</option>
+<option value="2">Applied 2+ times (didn't match)</option>
+</select>
+</div>
+
 <div style="padding:10px 0">
 <div style="margin-bottom:4px"><strong>AOA / Clerkship Performance</strong></div>
 <select id="mcc-aoa" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">

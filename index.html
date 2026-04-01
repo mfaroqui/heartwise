@@ -6168,7 +6168,7 @@ v14:`<h3 class="serif">Match Probability Calculator</h3>
 
 <div style="padding:10px 0;border-bottom:1px solid var(--border)">
 <div style="margin-bottom:4px"><strong>Training Background</strong></div>
-<select id="mcc-background" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
+<select id="mcc-background" onchange="mccToggleImgFields()" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
 <option value="">Select...</option>
 <option value="usmd">US MD</option>
 <option value="usdo">US DO</option>
@@ -6177,7 +6177,51 @@ v14:`<h3 class="serif">Match Probability Calculator</h3>
 </select>
 </div>
 
-<div id="mcc-residency-fields">
+<div style="padding:10px 0;border-bottom:1px solid var(--border)">
+<div style="margin-bottom:4px"><strong>Years Since Medical School Graduation</strong></div>
+<select id="mcc-gradyear" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
+<option value="">Select...</option>
+<option value="0">Less than 1 year</option>
+<option value="1">1–2 years</option>
+<option value="2">3–5 years</option>
+<option value="3">More than 5 years</option>
+</select>
+<div id="mcc-gradyear-note" style="display:none;font-size:10px;margin-top:6px;padding:6px 8px;border-radius:6px"></div>
+</div>
+
+<div id="mcc-img-fields" style="display:none">
+<div style="padding:10px 0;border-bottom:1px solid var(--border)">
+<div style="margin-bottom:4px"><strong>US Clinical Experience</strong></div>
+<select id="mcc-usce" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
+<option value="">Select...</option>
+<option value="hands_on">Hands-on clinical rotation (externship/sub-internship)</option>
+<option value="observership">Observership only</option>
+<option value="research">Research position at US institution</option>
+<option value="none">No US clinical experience</option>
+</select>
+</div>
+
+<div style="padding:10px 0;border-bottom:1px solid var(--border)">
+<div style="margin-bottom:4px"><strong>Visa Status</strong></div>
+<select id="mcc-visa" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
+<option value="">Select...</option>
+<option value="citizen">US Citizen / Green Card</option>
+<option value="j1">J-1 Visa eligible</option>
+<option value="h1b">Needs H-1B sponsorship</option>
+<option value="other">Other / Unsure</option>
+</select>
+</div>
+</div>
+
+<div style="padding:10px 0;border-bottom:1px solid var(--border)">
+<div style="margin-bottom:4px"><strong>Previous Match Attempts</strong></div>
+<select id="mcc-attempts" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
+<option value="0">First time applying</option>
+<option value="1">Applied once before (didn't match)</option>
+<option value="2">Applied 2+ times (didn't match)</option>
+</select>
+</div>
+
 <div style="padding:10px 0">
 <div style="margin-bottom:4px"><strong>AOA / Clerkship Performance</strong></div>
 <select id="mcc-aoa" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:13px">
@@ -12544,6 +12588,14 @@ var mccFellowshipData={
 };
 
 // Toggle between residency and fellowship mode
+function mccToggleImgFields(){
+  var bg=document.getElementById('mcc-background').value;
+  var imgFields=document.getElementById('mcc-img-fields');
+  if(imgFields){
+    imgFields.style.display=(bg==='usimg'||bg==='nonusimg')?'':'none';
+  }
+}
+
 function mccToggleMode(mode){
   document.getElementById('mcc-mode').value=mode;
   var resBtn=document.getElementById('mcc-btn-residency');
@@ -12687,6 +12739,55 @@ function mccScoreProfile(p){
   stratPts=Math.min(10,stratPts);
   score+=stratPts;
   factors.push({name:'Application Strategy',value:p.programs+' programs, '+p.aways+' aways/rotations',pts:stratPts,max:10,color:stratPts>=7?'#6abf4b':stratPts>=4?'#c8a87c':'#ef4444'});
+
+  // Graduation year gap penalty
+  var gradGapPenalty=0;
+  var gradGapNote='';
+  if(p.gradYear===1){gradGapPenalty=3;gradGapNote='1–2 years since graduation — minor factor, recent clinical activity helps.'}
+  else if(p.gradYear===2){gradGapPenalty=8;gradGapNote='3–5 year gap — programs will notice. US clinical experience and recent research activity are critical to offset this.'}
+  else if(p.gradYear===3){gradGapPenalty=15;gradGapNote='5+ year gap — significant red flag. You need strong US clinical experience, recent publications, and a compelling narrative.'}
+  if(gradGapPenalty>0){
+    score-=gradGapPenalty;
+    var gradLabels=['<1 year','1–2 years','3–5 years','5+ years'];
+    factors.push({name:'Graduation Gap',value:gradLabels[p.gradYear]||'',pts:-gradGapPenalty,max:0,penalty:true,note:gradGapNote,color:gradGapPenalty>=10?'#ef4444':'#c8a87c'});
+  }
+
+  // US Clinical Experience (IMG-specific)
+  if(p.bg==='usimg'||p.bg==='nonusimg'){
+    var uscePts=0;
+    var usceNote='';
+    if(p.usce==='hands_on'){uscePts=5;usceNote='Hands-on clinical experience is the strongest form of USCE. Make sure your letters come from this rotation.'}
+    else if(p.usce==='observership'){uscePts=2;usceNote='Observerships show initiative but carry less weight than hands-on rotations. Programs want to know you can function in the US clinical system.'}
+    else if(p.usce==='research'){uscePts=1;usceNote='Research at a US institution helps but isn\'t a substitute for clinical exposure. Try to add an observership or externship.'}
+    else if(p.usce==='none'){uscePts=-10;usceNote='No US clinical experience is the single biggest red flag for IMG applicants. Many programs will not review your application without it.'}
+    if(uscePts!==0){
+      score+=uscePts;
+      var usceLabels={hands_on:'Hands-on rotation',observership:'Observership',research:'US research',none:'None'};
+      factors.push({name:'US Clinical Experience',value:usceLabels[p.usce]||'',pts:uscePts,max:uscePts>0?5:0,penalty:uscePts<0,note:usceNote,color:uscePts>=3?'#6abf4b':uscePts>0?'#c8a87c':'#ef4444'});
+    }
+
+    // Visa status
+    var visaPenalty=0;
+    var visaNote='';
+    if(p.visa==='h1b'){visaPenalty=8;visaNote='Many programs do not sponsor H-1B visas. This can reduce your effective program list by 30-40%. Apply broadly and verify visa sponsorship before applying.'}
+    else if(p.visa==='other'){visaPenalty=5;visaNote='Uncertain visa status adds risk. Clarify your immigration pathway before applications open — programs need to know you can start on time.'}
+    else if(p.visa==='j1'){visaPenalty=0;visaNote='J-1 is widely accepted. Most programs sponsor J-1 without issue.'}
+    if(visaPenalty>0){
+      score-=visaPenalty;
+      var visaLabels={citizen:'US Citizen/Green Card',j1:'J-1 Visa',h1b:'H-1B',other:'Other/Unsure'};
+      factors.push({name:'Visa Status',value:visaLabels[p.visa]||'',pts:-visaPenalty,max:0,penalty:true,note:visaNote,color:visaPenalty>=8?'#ef4444':'#c8a87c'});
+    }
+  }
+
+  // Previous match attempts
+  if(p.attempts>=1){
+    var attemptPenalty=p.attempts>=2?10:5;
+    var attemptNote=p.attempts>=2?
+      'Multiple unsuccessful attempts is a significant concern. Programs will want to see clear, documented improvement since your last application — higher scores, more research, stronger letters, or a wider program list.':
+      'Re-applicants face scrutiny, but successful re-applicants match every year. The key: demonstrate what changed. Did you add research? Improve scores? Get new clinical experience? Your narrative must show growth, not just persistence.';
+    score-=attemptPenalty;
+    factors.push({name:'Previous Attempts',value:p.attempts>=2?'2+ attempts':'1 previous attempt',pts:-attemptPenalty,max:0,penalty:true,note:attemptNote,color:attemptPenalty>=10?'#ef4444':'#c8a87c'});
+  }
 
   score=Math.max(5,Math.min(100,score));
 
@@ -12835,12 +12936,25 @@ function _mccRun(){
   }
 
   var aoa=isFellowship?'':document.getElementById('mcc-aoa').value;
+  var gradYear=parseInt(document.getElementById('mcc-gradyear').value);
+  if(isNaN(gradYear))gradYear=-1;
+  var usce=document.getElementById('mcc-usce')?document.getElementById('mcc-usce').value:'';
+  var visa=document.getElementById('mcc-visa')?document.getElementById('mcc-visa').value:'';
+  var attempts=parseInt(document.getElementById('mcc-attempts').value)||0;
 
   if(!spec||!step2||!school||!bg){notify('Please complete at least the Academic Profile section',1);return}
   if(!sd)return;
 
+  // Show graduation gap note
+  var gradNoteEl=document.getElementById('mcc-gradyear-note');
+  if(gradNoteEl){
+    if(gradYear>=2){gradNoteEl.style.display='';gradNoteEl.style.background='rgba(239,68,68,.06)';gradNoteEl.style.color='var(--red)';gradNoteEl.textContent=gradYear===3?'5+ years is a significant factor. Programs will need to see recent US clinical activity.':'3–5 year gap. Programs will want to see recent clinical and research activity.'}
+    else if(gradYear===1){gradNoteEl.style.display='';gradNoteEl.style.background='rgba(200,168,124,.06)';gradNoteEl.style.color='var(--accent)';gradNoteEl.textContent='Minor factor — most programs won\'t flag this.'}
+    else{gradNoteEl.style.display='none'}
+  }
+
   // Build params object for pure scoring engine
-  var params={step2:step2,step3:step3,pubs:pubs,school:school,bg:bg,lors:lors,leadership:leadership,programs:programs,aways:aways,aoa:aoa,isFellowship:isFellowship,spec:spec,sd:sd,felResYear:felResYear,felProgramRep:felProgramRep,felProceduralExp:felProceduralExp,felFirstAuthor:felFirstAuthor};
+  var params={step2:step2,step3:step3,pubs:pubs,school:school,bg:bg,lors:lors,leadership:leadership,programs:programs,aways:aways,aoa:aoa,isFellowship:isFellowship,spec:spec,sd:sd,felResYear:felResYear,felProgramRep:felProgramRep,felProceduralExp:felProceduralExp,felFirstAuthor:felFirstAuthor,gradYear:gradYear,usce:usce,visa:visa,attempts:attempts};
 
   // Run scoring engine
   var R=mccScoreProfile(params);
@@ -12912,10 +13026,10 @@ function _mccRun(){
   var probExplain='';
   if(matchProb>=75)probExplain='Your profile exceeds the matched applicant average in most dimensions. You have the stats to match \u2014 the risk is interview performance and rank list strategy, not your application.';
   else if(matchProb>=50){
-    var weakAreas=[];factors.forEach(function(f){if(f.pts<f.max*0.4)weakAreas.push(f.name)});
+    var weakAreas=[];factors.forEach(function(f){if(f.penalty||f.pts<f.max*0.4)weakAreas.push(f.name)});
     probExplain='You\u2019re in range but not safe. '+sd.name+' is '+(sd.compLevel==='very_high'?'extremely':'')+(sd.compLevel==='high'?' highly':'')+' competitive'+(weakAreas.length?' and your weakest areas ('+weakAreas.join(', ')+') are pulling your probability down':'')+'. Fix those gaps and your odds move significantly.';
   }else{
-    var criticalGaps=[];factors.forEach(function(f){if(f.pts<f.max*0.33)criticalGaps.push(f.name)});
+    var criticalGaps=[];factors.forEach(function(f){if(f.penalty||f.pts<f.max*0.33)criticalGaps.push(f.name)});
     probExplain='Honest assessment: you have critical gaps'+(criticalGaps.length?' in '+criticalGaps.join(' and '):'')+' that make matching unlikely without major improvements. This is fixable, but it requires immediate action \u2014 not next month, this week.';
   }
   sec+='<div style="margin-top:10px;padding:12px;background:rgba('+(matchProb>=75?'106,191,75':matchProb>=50?'200,168,124':'239,68,68')+',.06);border-radius:8px;border:1px solid rgba('+(matchProb>=75?'106,191,75':matchProb>=50?'200,168,124':'239,68,68')+',.12)">';
@@ -12949,6 +13063,14 @@ function _mccRun(){
   // ───── SECTION: Factor Breakdown ─────
   sec='';
   factors.forEach(function(f){
+    if(f.penalty){
+      // Graduation gap — show as penalty, not a bar
+      sec+='<div style="margin-bottom:10px;padding:8px 10px;background:rgba(239,68,68,.04);border:1px solid rgba(239,68,68,.12);border-radius:6px">';
+      sec+='<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span style="color:var(--red);font-weight:600">⚠ '+f.name+'</span><span style="color:var(--red);font-weight:600">'+f.pts+' pts</span></div>';
+      sec+='<div style="font-size:10px;color:var(--text3)">'+f.value+(f.note?' — '+f.note:'')+'</div>';
+      sec+='</div>';
+      return;
+    }
     var pct=Math.round(f.pts/f.max*100);
     sec+='<div style="margin-bottom:10px">';
     sec+='<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span style="color:var(--text)">'+f.name+'</span><span style="color:'+f.color+';font-weight:600">'+f.pts+' / '+f.max+'</span></div>';

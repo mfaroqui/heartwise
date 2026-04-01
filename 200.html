@@ -1897,12 +1897,15 @@ body.has-upgrade-bar #main-app{padding-bottom:70px}
 <!-- Step 2: Competitive Profile -->
 <div id="ob-step2" class="ob-step hidden">
 <a href="#" onclick="document.getElementById('ob-step2').classList.add('hidden');document.getElementById('ob-step1').classList.remove('hidden');return false" style="position:absolute;top:24px;left:24px;font-size:13px;color:var(--text3);text-decoration:none;font-weight:400">← Back</a>
-<h2>Build Your Profile</h2>
-<p>This becomes your competitive baseline. Used to generate your strategic report.</p>
+<h2>Create Your Account</h2>
+<p>Takes 60 seconds. Then we'll personalize everything for you.</p>
 <form style="text-align:left;max-width:380px;margin:0 auto" id="ob-profile-form">
 <div class="fg"><label>Full Name *</label><input type="text" id="ob-name" placeholder="Jane Smith" required></div>
 <div class="fg"><label>Email *</label><input type="email" id="ob-email" placeholder="you@example.com" required></div>
 <div class="fg" style="position:relative"><label>Password *</label><input type="password" id="ob-pass" placeholder="Min 8 characters" minlength="8" required><button type="button" onclick="togglePw('ob-pass',this)" style="position:absolute;right:12px;top:38px;background:none;border:none;cursor:pointer;font-size:16px;color:var(--text3);padding:4px" aria-label="Show password">👁</button></div>
+
+<div style="margin:16px 0 8px;padding-top:12px;border-top:1px solid var(--border);font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px">Your Profile — helps us personalize your experience</div>
+
 <div class="fg"><label>Institution</label><input type="text" id="ob-inst" placeholder="Your school, hospital, or program"></div>
 <div class="fg"><label>Intended / Current Specialty</label>
 <select id="ob-spec">

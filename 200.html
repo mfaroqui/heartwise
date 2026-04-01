@@ -2487,10 +2487,10 @@ Sign Out</button>
 <div id="prof-role" style="color:var(--text3);font-size:13px;margin-top:4px">Medical Student</div>
 </div>
 
-<div class="prof-stats">
-<div class="prof-stat"><div class="n" id="ps-used">0</div><div class="l">Used</div></div>
-<div class="prof-stat"><div class="n" id="ps-remain">1</div><div class="l">Remaining</div></div>
-<div class="prof-stat"><div class="n" id="ps-credits">—</div><div class="l">Analyses</div></div>
+<div class="prof-stats" id="prof-stats-bar">
+<div class="prof-stat"><div class="n" id="ps-tools">0</div><div class="l">Tools Run</div></div>
+<div class="prof-stat"><div class="n" id="ps-score">—</div><div class="l">Last Score</div></div>
+<div class="prof-stat"><div class="n" id="ps-streak">0</div><div class="l">Day Streak</div></div>
 </div>
 
 <div style="margin-bottom:12px">
@@ -14613,9 +14613,12 @@ function renderProfile(){
   const rl={premed:'Pre-Medical Student',student:'Medical Student',resident:'Resident',fellow:'Fellow',attending:'Attending Physician',switching:'Career Transition',admin:'Physician · Founder',other:'Member'};
   document.getElementById('prof-role').textContent=rl[U.role]||'Member';
   const t=TIERS[U.tier]||TIERS.free;
-  document.getElementById('ps-used').textContent=U.usage?.ai||0;
-  var remainEl=document.getElementById('ps-remain');if(remainEl)remainEl.textContent=U.tier==='free'?'0':'Unlimited';
-  var credEl=document.getElementById('ps-credits');if(credEl)credEl.parentElement.style.display='none';
+  var toolsRun=(U.toolHistory||[]).length;
+  var toolsEl=document.getElementById('ps-tools');if(toolsEl)toolsEl.textContent=toolsRun;
+  var lastScore='—';if(U.scoreHistory&&U.scoreHistory.length){lastScore=U.scoreHistory[U.scoreHistory.length-1].score||'—'}
+  var scoreEl=document.getElementById('ps-score');if(scoreEl)scoreEl.textContent=lastScore;
+  var streak=0;if(U.loginDays&&U.loginDays.length){var today=new Date().toISOString().split('T')[0];var days=U.loginDays.slice().sort().reverse();for(var si=0;si<days.length;si++){var expected=new Date(Date.now()-si*86400000).toISOString().split('T')[0];if(days[si]===expected)streak++;else break}}
+  var streakEl=document.getElementById('ps-streak');if(streakEl)streakEl.textContent=streak;
   document.getElementById('prof-plan-label').textContent=t.name+(U.tier==='free'?'':' \u2022 Active');
   document.getElementById('prof-plan-label').style.color=U.tier==='free'?'var(--text3)':'var(--accent)';
   renderProgressDashboard();
@@ -19648,7 +19651,7 @@ function levSubmit(wfId,ev){
   h+='<div style="font-size:11px;font-weight:600;color:var(--green);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Do This Now</div>';
   h+='<p style="font-size:14px;color:var(--text2);line-height:1.7;margin:0">'+resp.nextStep+'</p>';
   h+='</div>';
-  h+='<div style="margin-top:10px;font-size:10px;color:var(--text3);font-style:italic;text-align:center">No physician credits used</div>';
+  h+='<div style="margin-top:10px;font-size:10px;color:var(--text3);font-style:italic;text-align:center">Unlimited tool access with your plan</div>';
   h+='</div>';
   respEl.innerHTML=h;
   respEl.style.display='';
@@ -19876,7 +19879,7 @@ function renderLeverage(){
       h+='<button onclick="event.stopPropagation();'+wf.linkAction+'" style="margin-top:14px;padding:10px 20px;background:var(--accent-dim);border:1px solid rgba(198,168,94,.15);border-radius:8px;color:var(--accent);font-size:13px;font-weight:600;cursor:pointer;width:100%;text-align:center">'+wf.linkText+'</button>';
     }
 
-    h+='<div style="margin-top:12px;font-size:11px;color:var(--text3);text-align:center">\u2728 No physician credits used \u2014 use as many times as you want</div>';
+    h+='<div style="margin-top:12px;font-size:11px;color:var(--text3);text-align:center">\u2728 Run as many times as you want</div>';
 
     h+='</div>'; // detail
     h+='</div>'; // card

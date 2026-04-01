@@ -1546,6 +1546,7 @@ function enterApp(){
   var welcomeEl=document.getElementById('welcome-msg');
   if(welcomeEl)welcomeEl.textContent='Welcome, Dr. '+U.name.split(' ').pop();
   document.getElementById('nav-admin').style.display=(U.tier==='admin'||window._adminBackup)?'':'none';
+  var navAsk=document.getElementById('nav-ask');if(navAsk)navAsk.style.display=(U.tier==='elite'||U.tier==='admin')?'':'none';
   var topUpgrade=document.getElementById('topbar-upgrade');
   if(topUpgrade){
     if(U.tier==='free'||U.isTrial){topUpgrade.style.display='';topUpgrade.textContent='Subscribe';topUpgrade.onclick=function(){navTo('scr-profile');showUpgrade()}}
@@ -2824,7 +2825,7 @@ function renderHome(){
   else{var _recEl=document.getElementById('home-recommended-tools');if(_recEl)_recEl.style.display='none'}
   // Hide Ask card if Career Map is active (it has Quick Actions)
   var _askCard=document.getElementById('home-ask-card');
-  if(_askCard)_askCard.style.display=_careerMapActive?'none':'';
+  if(_askCard)_askCard.style.display=(_careerMapActive||(U.tier!=='elite'&&U.tier!=='admin'))?'none':'';
   // Hide all engagement sections by default — only show ones with actual content
   var _engIds=['comp-intel-card','tripwire-alerts','revisit-prompts','upcoming-deadlines','home-score-breakdown','tool-progress','decision-journal-home','weekly-focus','monthly-checkin-trigger','seasonal-calendar','quarterly-snapshot-btn','peer-benchmark-card','monthly-progress-report','cost-of-inaction'];
   _engIds.forEach(function(id){var el=document.getElementById(id);if(el)el.style.display='none'});

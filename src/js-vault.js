@@ -1882,6 +1882,9 @@ v17:`<h3 class="serif">Observership Database</h3>
 <!-- ===== FIND TAB ===== -->
 <div id="obs-find" style="">
 
+<!-- Shortlist Bar -->
+<div id="obs-shortlist-bar" style="display:none;padding:12px;background:rgba(198,168,94,.06);border:1px solid rgba(198,168,94,.15);border-radius:10px;margin-bottom:14px"></div>
+
 <!-- Quick Stats -->
 <div style="display:flex;gap:1px;margin-bottom:16px;border-radius:10px;overflow:hidden">
 <div style="flex:1;background:var(--bg2);padding:10px;text-align:center"><div id="obs-stat-total" style="font-size:20px;font-weight:700;color:var(--accent)">65</div><div style="font-size:9px;color:var(--text3)">Programs</div></div>

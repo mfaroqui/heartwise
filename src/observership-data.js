@@ -16,6 +16,7 @@ requirements:['Medical degree','ECFMG certification or enrollment','Professional
 applicationUrl:'https://www.mayo.edu/education',
 tips:'Apply 6+ months in advance. Name recognition is massive on residency apps but LOR quality varies — some attendings rubber-stamp. Best if you already have a research connection there.',
 matchIntel:'High prestige but low yield for IMGs without US LORs. Best used to supplement an already strong application, not as your only US clinical experience.',
+matchSuccess:'Strong CV addition but low direct match conversion. Best paired with a hands-on program for LORs.',
 lastVerified:'2026-02',tags:['prestigious','no-fee','competitive']},
 
 {id:2,name:'Cleveland Clinic — International Physician Observer Program',inst:'Cleveland Clinic',city:'Cleveland',state:'OH',region:'midwest',
@@ -30,6 +31,7 @@ requirements:['Medical degree','ECFMG certification preferred','Valid visa','TB 
 applicationUrl:'https://my.clevelandclinic.org/departments/education',
 tips:'Cardiology and GI departments are excellent for IMGs. Ask to rotate with attendings who have a track record of writing LORs for international observers. Housing in Cleveland is affordable.',
 matchIntel:'One of the best observership programs for IMGs. The Cleveland Clinic name carries weight, and several attendings actively mentor international graduates. Strong LOR potential if you show initiative.',
+matchSuccess:'High IMG match conversion — multiple observers have matched into IM and cardiology here. Active mentorship culture.',
 lastVerified:'2026-04',tags:['prestigious','img-pipeline','lor-friendly','no-fee']},
 
 {id:3,name:'Johns Hopkins — Visiting Clerkship / Observer Program',inst:'Johns Hopkins',city:'Baltimore',state:'MD',region:'northeast',
@@ -44,6 +46,7 @@ requirements:['Medical degree','Letter from department chair','Two recommendatio
 applicationUrl:'https://www.hopkinsmedicine.org/som/education',
 tips:'Much easier to get in if you have a research collaborator at Hopkins. Cold applications rarely succeed. The name on your CV is golden but LORs are hard to get without existing relationships.',
 matchIntel:'Premium name value but the ROI for an IMG without connections is low. If you can get in, it signals top-tier ambition. But don\'t bank on an LOR from a 2-week observation.',
+matchSuccess:'Low direct match yield for cold applicants. High value if you have a research collaborator writing your LOR.',
 lastVerified:'2026-01',tags:['prestigious','competitive','connection-dependent']},
 
 {id:4,name:'Mount Sinai — International Observer Program',inst:'Mount Sinai Health System',city:'New York',state:'NY',region:'northeast',
@@ -58,6 +61,7 @@ requirements:['Step 1 pass','Medical degree','ECFMG certification or enrollment'
 applicationUrl:'https://icahn.mssm.edu/education/international-observer',
 tips:'One of the best-structured programs for IMGs. The fee is worth it for the LOR potential and networking. Ask for GI or cardiology — those departments have the strongest IMG mentorship culture.',
 matchIntel:'HIGH ROI for IMGs. Mount Sinai has a long history of training international graduates. Many observers from this program match into competitive specialties. The $1,500/month is an investment, not a cost.',
+matchSuccess:'Solid IMG pipeline — Mount Sinai actively recruits from observer pool for IM residency. Good LOR track record.',
 lastVerified:'2026-02',tags:['img-pipeline','visa-sponsor','lor-friendly','structured']},
 
 {id:5,name:'University of Chicago — Clinical Observership',inst:'University of Chicago Medicine',city:'Chicago',state:'IL',region:'midwest',
@@ -72,6 +76,7 @@ requirements:['Medical degree','Step 1 pass','English proficiency','Professional
 applicationUrl:'https://www.uchicagomedicine.org/education',
 tips:'Strong for academic medicine. The Hyde Park campus is walkable and affordable relative to NYC. Try to connect with a research mentor before applying — it dramatically increases acceptance odds.',
 matchIntel:'Good prestige hit on your CV. Works best as part of a multi-program strategy rather than your only observership. Research connection is the key differentiator.',
+matchSuccess:'Research-focused observers have matched well. Clinical-only observers report weaker LOR outcomes.',
 lastVerified:'2026-01',tags:['prestigious','research-oriented','moderate-cost']},
 
 {id:6,name:'NYU Langone — International Observership',inst:'NYU Langone Health',city:'New York',state:'NY',region:'northeast',
@@ -86,6 +91,7 @@ requirements:['Medical degree','Step 1 pass','ECFMG enrollment','Valid US visa',
 applicationUrl:'https://med.nyu.edu/education/gme/international',
 tips:'Strong internal medicine and neurology programs. The structured nature means you\'ll get consistent exposure but less flexibility in choosing attendings.',
 matchIntel:'Solid middle-ground option. Good name, decent LOR potential, reasonable cost. Won\'t be your strongest credential alone but adds up in a portfolio of US clinical experiences.',
+matchSuccess:'Moderate match conversion. NYU name carries weight but LOR quality depends heavily on which attending you rotate with.',
 lastVerified:'2026-01',tags:['structured','moderate-cost','good-lor-potential']},
 
 {id:7,name:'Stanford — Visiting Clinical Observer Program',inst:'Stanford Medicine',city:'Stanford',state:'CA',region:'west',
@@ -100,6 +106,7 @@ requirements:['Medical degree','Faculty sponsor at Stanford','Professional liabi
 applicationUrl:'https://med.stanford.edu/education',
 tips:'Almost impossible without a Stanford connection. If you have one, it\'s incredible for your CV. For most IMGs, there are much better ROI options.',
 matchIntel:'Trophy observership. Amazing on paper but nearly inaccessible for cold-applying IMGs. Pursue only if you have an existing Stanford collaborator. Otherwise, Mount Sinai or Cleveland Clinic will serve you better.',
+matchSuccess:'Very few IMGs match directly from this program. Best used for prestige signaling on CV alongside a pipeline program.',
 lastVerified:'2026-04',tags:['prestigious','connection-required','low-img-access']},
 
 {id:8,name:'Montefiore — Albert Einstein International Observer',inst:'Montefiore Medical Center / Albert Einstein',city:'Bronx',state:'NY',region:'northeast',
@@ -114,6 +121,7 @@ requirements:['Medical degree','Step 1 pass','Valid visa or sponsorship request'
 applicationUrl:'https://www.montefiore.org/gme',
 tips:'THE sleeper pick for IMGs. Lower name recognition than Mount Sinai or NYU but the hands-on experience and LOR quality are often better. Many IMG success stories trace back here. Bronx cost of living is manageable.',
 matchIntel:'BEST ROI for IMGs who need strong LORs and actual clinical participation. The hands-on experience here is genuinely useful for interviews — you\'ll have real clinical anecdotes to share. Highly recommended.',
+matchSuccess:'Strong IMG pipeline — Montefiore/Einstein has one of the highest IMG match rates in the country. Excellent LOR culture.',
 lastVerified:'2026-02',tags:['img-pipeline','visa-sponsor','hands-on','lor-friendly','high-roi']},
 
 {id:9,name:'UCSF — Clinical Observership Program',inst:'UCSF Medical Center',city:'San Francisco',state:'CA',region:'west',
@@ -128,6 +136,7 @@ requirements:['Medical degree','ECFMG certification','English proficiency','Prof
 applicationUrl:'https://meded.ucsf.edu/visiting-students',
 tips:'Great for West Coast residency applicants. SF is expensive — budget $3K+ for housing during your rotation. Best for applicants who plan to rank California programs.',
 matchIntel:'High prestige, moderate IMG accessibility. Good if you\'re targeting West Coast programs. For East Coast targets, your money and time are better spent at Mount Sinai or Montefiore.',
+matchSuccess:'Low IMG match conversion but high prestige value. Competitive observers occasionally match into UCSF prelim spots.',
 lastVerified:'2026-01',tags:['prestigious','west-coast','expensive-city']},
 
 {id:10,name:'University of Pittsburgh Medical Center — Observer Program',inst:'UPMC',city:'Pittsburgh',state:'PA',region:'northeast',
@@ -142,6 +151,7 @@ requirements:['Medical degree','Step 1 pass','Health clearance','Professional li
 applicationUrl:'https://www.upmc.com/services/south-central-pa/gme',
 tips:'UPMC is massive — 40+ hospitals. The transplant and cardiac surgery exposure is world-class. Pittsburgh is dirt cheap to live in compared to NYC or SF. Pro tip: ask for UPMC Presbyterian specifically.',
 matchIntel:'Underrated gem. UPMC is a top-10 hospital system and the free program + strong LOR culture makes this one of the highest ROI observerships available. Especially strong for surgery-interested IMGs.',
+matchSuccess:'Good match conversion for motivated observers. UPMC has matched several IMGs who did observerships followed by research.',
 lastVerified:'2026-02',tags:['no-fee','hands-on','lor-friendly','img-friendly','high-roi']},
 
 {id:11,name:'Massachusetts General Hospital — Clinical Observer',inst:'Mass General / Harvard',city:'Boston',state:'MA',region:'northeast',
@@ -156,6 +166,7 @@ requirements:['Medical degree','Faculty sponsor at MGH','Professional liability'
 applicationUrl:'https://www.massgeneral.org/education',
 tips:'The holy grail on paper but realistically out of reach for most IMGs without connections. If you have a Harvard collaborator, absolutely pursue it. Otherwise, Montefiore or UPMC will serve you better.',
 matchIntel:'Maximum prestige, minimum accessibility for IMGs. The Harvard name is powerful but a 2-week silent observation won\'t get you an LOR. Only worth pursuing if you have a sponsor.',
+matchSuccess:'Extremely competitive — very few observers convert to matches. Prestige value is high but ROI for match purposes is low.',
 lastVerified:'2026-04',tags:['prestigious','connection-required','low-img-access']},
 
 {id:12,name:'University of Illinois Chicago — International Observership',inst:'UI Health',city:'Chicago',state:'IL',region:'midwest',
@@ -170,6 +181,7 @@ requirements:['Medical degree','Step 1 pass','English proficiency','Health clear
 applicationUrl:'https://hospital.uillinois.edu/education',
 tips:'UIC has one of the most diverse residency programs in the country and genuinely values IMG contributions. The clinical exposure is real — you\'ll be discussing cases, not just watching. Chicago is affordable outside downtown.',
 matchIntel:'EXCELLENT ROI for IMGs. UIC\'s residency program actively recruits from their observer pool. This is a pipeline program — treat it as an extended audition. Show up early, stay late, know your patients.',
+matchSuccess:'Strong IMG pipeline — UIC has a large IMG residency population. Observers who build relationships frequently match.',
 lastVerified:'2026-02',tags:['img-pipeline','visa-sponsor','hands-on','lor-friendly','high-roi']},
 
 {id:13,name:'Emory University — Clinical Observership',inst:'Emory Healthcare',city:'Atlanta',state:'GA',region:'south',
@@ -184,6 +196,7 @@ requirements:['Medical degree','Step 1 pass','ECFMG enrollment','Professional li
 applicationUrl:'https://med.emory.edu/education/gme',
 tips:'Strong cardiology program. Atlanta has reasonable cost of living and is a major hub — easy flights. The Grady Memorial connection gives exposure to high-acuity, diverse patient populations.',
 matchIntel:'Good middle-tier option for Southeast-targeting applicants. The Grady connection is genuinely valuable for clinical experience. Works well as a second or third observership alongside a higher-prestige program.',
+matchSuccess:'Moderate match conversion. Emory values diversity and has matched IMGs from their observer pool, especially in IM.',
 lastVerified:'2026-04',tags:['moderate-cost','diverse-patients','southeast']},
 
 {id:14,name:'Baylor College of Medicine — Observer Program',inst:'Baylor College of Medicine',city:'Houston',state:'TX',region:'south',
@@ -198,6 +211,7 @@ requirements:['Medical degree','Step 1 pass','English proficiency','Health clear
 applicationUrl:'https://www.bcm.edu/education/graduate-medical-education',
 tips:'Texas Medical Center is the largest in the world — the exposure is incredible. Baylor plus MD Anderson plus Methodist all in one campus. Houston is affordable. Try to observe at multiple affiliated hospitals.',
 matchIntel:'Solid option, especially for Texas-targeting applicants. The Texas Medical Center ecosystem means you can potentially network across multiple programs in one trip. Good for cardiology and surgery.',
+matchSuccess:'Good pipeline for IMGs in IM and surgery. Baylor attendings are known for writing detailed, personalized LORs.',
 lastVerified:'2026-01',tags:['large-system','texas','moderate-cost']},
 
 {id:15,name:'University of Miami / Jackson Memorial — International Observer',inst:'University of Miami',city:'Miami',state:'FL',region:'south',
@@ -212,6 +226,7 @@ requirements:['Medical degree','Step 1 pass','Valid visa or J1 sponsorship','Hea
 applicationUrl:'https://med.miami.edu/gme',
 tips:'Jackson Memorial is a Level 1 trauma center with incredibly high acuity. You will see more pathology in one month here than many programs offer in three. The hands-on component is real. Miami has a large IMG community — networking is natural.',
 matchIntel:'TOP-TIER ROI for IMGs seeking hands-on clinical experience. Jackson Memorial\'s patient volume and acuity are unmatched. Many IMGs who match competitive specialties point to this experience as pivotal. The LOR quality is excellent.',
+matchSuccess:'Excellent IMG pipeline — Jackson Memorial has one of the largest IMG residency programs. Very high match conversion.',
 lastVerified:'2026-02',tags:['img-pipeline','visa-sponsor','hands-on','lor-friendly','high-volume','high-roi']},
 
 {id:16,name:'University of Pennsylvania — Clinical Observer Program',inst:'Penn Medicine',city:'Philadelphia',state:'PA',region:'northeast',
@@ -226,6 +241,7 @@ requirements:['Medical degree','Faculty sponsor','Professional liability','Backg
 applicationUrl:'https://www.med.upenn.edu/gme/',
 tips:'Like MGH and Stanford — incredible name but requires connections. If you have a Penn collaborator, the prestige is unmatched. Philly is affordable for an Ivy League city.',
 matchIntel:'Top-5 name recognition but low accessibility for IMGs without connections. Not recommended as a primary strategy. Use if you have a contact; otherwise, invest elsewhere.',
+matchSuccess:'Low direct match conversion for IMGs. High prestige value. Research connection significantly improves outcomes.',
 lastVerified:'2026-04',tags:['prestigious','connection-required','no-fee']},
 
 {id:17,name:'Wayne State / Detroit Medical Center — Observership',inst:'Wayne State University',city:'Detroit',state:'MI',region:'midwest',
@@ -240,6 +256,7 @@ requirements:['Medical degree','Step 1 pass','English proficiency','Health clear
 applicationUrl:'https://www.wayne.edu/medicine/gme',
 tips:'Wayne State has one of the longest and strongest IMG training traditions in the country. Detroit is extremely affordable. The clinical experience at DMC is genuine — high-volume, high-acuity. Many residency PDs here know and respect the observer program.',
 matchIntel:'BEST KEPT SECRET for IMGs. Wayne State\'s observer program has an extraordinary track record of observers matching into their residency programs. The hands-on experience + LOR quality + low cost makes this arguably the highest-ROI observership in the country.',
+matchSuccess:'Strong IMG pipeline — Wayne State/DMC actively matches from observer pool. Hands-on participation improves conversion.',
 lastVerified:'2026-02',tags:['img-pipeline','visa-sponsor','hands-on','lor-friendly','affordable','highest-roi']},
 
 {id:18,name:'Duke University — Clinical Observership',inst:'Duke Health',city:'Durham',state:'NC',region:'south',
@@ -254,6 +271,7 @@ requirements:['Medical degree','ECFMG certification','Dean letter','Professional
 applicationUrl:'https://medschool.duke.edu/education/health-professions-education',
 tips:'Duke is excellent for cardiology and cardiac surgery. Durham is affordable and the campus is beautiful. The research environment is collaborative — try to attend grand rounds and case conferences.',
 matchIntel:'Good prestige-to-accessibility ratio for a top-20 program. More IMG-friendly than Harvard/Stanford/Penn tier. Works well as a prestige addition to a portfolio that already includes hands-on experience elsewhere.',
+matchSuccess:'Low IMG match conversion but research observers have transitioned to positions. Strong for academic-track applicants.',
 lastVerified:'2026-01',tags:['prestigious','no-fee','moderate-access']},
 
 {id:19,name:'Einstein Medical Center Philadelphia — Observership',inst:'Einstein Healthcare Network',city:'Philadelphia',state:'PA',region:'northeast',
@@ -268,6 +286,7 @@ requirements:['Medical degree','Step 1 pass','Health clearance','Background chec
 applicationUrl:'https://www.einstein.edu/education/gme',
 tips:'Einstein is an IMG powerhouse — their residency programs have some of the highest IMG percentages in the country. The observership is essentially an audition rotation. Treat it that way. Philly is affordable. Show up knowing your patients.',
 matchIntel:'PIPELINE PROGRAM. Einstein\'s residency actively recruits from their observer pool. If you perform well here, you have a real shot at matching here. This is not a "watch and go home" program — this is career-building.',
+matchSuccess:'Good IMG match pipeline — Einstein Philadelphia has matched multiple observers into IM and FM programs.',
 lastVerified:'2026-02',tags:['img-pipeline','visa-sponsor','hands-on','lor-friendly','pipeline','high-roi']},
 
 {id:20,name:'Rush University Medical Center — Clinical Observer',inst:'Rush University',city:'Chicago',state:'IL',region:'midwest',
@@ -282,6 +301,7 @@ requirements:['Medical degree','Step 1 pass','ECFMG enrollment','Health clearanc
 applicationUrl:'https://www.rushu.rush.edu/education',
 tips:'Good for orthopedics and internal medicine. The Rush campus is excellent and Chicago\'s medical community is large — potential for networking beyond Rush itself.',
 matchIntel:'Decent mid-tier option. Works well in combination with UIC or Wayne State for a Midwest-focused application strategy. The ortho exposure is notably good.',
+matchSuccess:'Moderate match conversion. Rush observers with research connections have better outcomes than clinical-only observers.',
 lastVerified:'2026-01',tags:['midwest','moderate-cost','structured']},
 
 // --- Community / IMG-Focused Programs ---
@@ -297,6 +317,7 @@ requirements:['Medical degree','Step 1 pass','Health clearance'],
 applicationUrl:'https://www.brookdalehospital.org/gme',
 tips:'Not glamorous but incredibly effective. Brookdale observers regularly match. The clinical volume is high, the attendings are invested, and you\'ll build real patient care skills. Brooklyn has affordable pockets.',
 matchIntel:'MAXIMUM HANDS-ON. If you need clinical experience, LORs, and a real shot at matching, this is it. The prestige is low but the outcomes are high. Substance over style.',
+matchSuccess:'High IMG match conversion — Brookdale actively recruits from observer pool. One of the most accessible pipeline programs.',
 lastVerified:'2026-02',tags:['img-pipeline','visa-sponsor','hands-on','lor-friendly','pipeline','affordable']},
 
 {id:22,name:'Jamaica Hospital Medical Center — Observership',inst:'Jamaica Hospital',city:'Queens',state:'NY',region:'northeast',
@@ -311,6 +332,7 @@ requirements:['Medical degree','Step 1 pass','Health clearance','TB test'],
 applicationUrl:'https://jamaicahospital.org/education/',
 tips:'Another NYC gem for IMGs. Queens is affordable by NYC standards and the clinical exposure is excellent. The program has a strong track record of helping observers match.',
 matchIntel:'Strong pipeline program. Lower prestige but high functional value. Many IMGs report this was the experience that actually prepared them for residency, not the prestigious 2-week observation elsewhere.',
+matchSuccess:'Strong IMG pipeline — Jamaica Hospital has a long track record of matching former observers into IM and FM.',
 lastVerified:'2026-04',tags:['img-pipeline','visa-sponsor','hands-on','lor-friendly','pipeline','affordable']},
 
 {id:23,name:'Lincoln Medical Center — Clinical Observership',inst:'NYC Health + Hospitals / Lincoln',city:'Bronx',state:'NY',region:'northeast',
@@ -325,6 +347,7 @@ requirements:['Medical degree','Step 1 pass','Health clearance','ID'],
 applicationUrl:'https://www.nychealthandhospitals.org/lincoln/',
 tips:'FREE observership at a Level 1 trauma center in the Bronx. The acuity is unreal — you will see everything. The NYC H+H system is one of the largest public hospital systems in the world. Budget-friendly for IMGs.',
 matchIntel:'FREE + hands-on + high acuity = incredible value. Don\'t let the lack of a famous name fool you. Program directors care about clinical skills and LOR quality, and Lincoln delivers both.',
+matchSuccess:'Excellent IMG match rate — Lincoln is one of the top IMG pipeline programs in NYC. Multiple annual conversions.',
 lastVerified:'2026-02',tags:['no-fee','hands-on','lor-friendly','img-pipeline','public-hospital','high-roi']},
 
 {id:24,name:'Cook County Health — Stroger Hospital Observer',inst:'Cook County Health / Stroger Hospital',city:'Chicago',state:'IL',region:'midwest',
@@ -339,6 +362,7 @@ requirements:['Medical degree','Step 1 pass','Health clearance','TB test','Backg
 applicationUrl:'https://cookcountyhealth.org/education/',
 tips:'Cook County / Stroger is legendary — it was the inspiration for the TV show ER. Trauma surgery and emergency medicine exposure here is world-class. The patient volume is extraordinary. Free program in an affordable city.',
 matchIntel:'Incredible clinical exposure at zero cost. Stroger\'s EM and surgery departments are phenomenal training grounds. Many PDs view Cook County experience as proof you can handle high-acuity medicine.',
+matchSuccess:'Good IMG pipeline — Cook County has strong diversity commitment. Observers with hands-on experience match at higher rates.',
 lastVerified:'2026-02',tags:['no-fee','hands-on','lor-friendly','img-pipeline','public-hospital','high-roi','trauma']},
 
 {id:25,name:'Maimonides Medical Center — Clinical Observership',inst:'Maimonides Medical Center',city:'Brooklyn',state:'NY',region:'northeast',
@@ -353,6 +377,7 @@ requirements:['Medical degree','Step 1 pass','Health clearance','Professional li
 applicationUrl:'https://maimo.org/education',
 tips:'Maimonides has an excellent cardiology program and a strong tradition of IMG training. Borough Park, Brooklyn is affordable. The hospital has a community feel with academic-quality cases.',
 matchIntel:'Strong IMG pipeline. Particularly good for cardiology-interested IMGs. The observership feeds into their residency programs. LOR quality is consistently high.',
+matchSuccess:'Very high IMG match conversion — Maimonides is one of the most IMG-friendly programs in the country. Active pipeline.',
 lastVerified:'2026-01',tags:['img-pipeline','visa-sponsor','hands-on','lor-friendly','cardiology']},
 
 {id:26,name:'University of Buffalo — ECMC Observer Program',inst:'University of Buffalo / ECMC',city:'Buffalo',state:'NY',region:'northeast',
@@ -367,6 +392,7 @@ requirements:['Medical degree','Step 1 pass','Health clearance','TB test'],
 applicationUrl:'https://medicine.buffalo.edu/education/gme.html',
 tips:'Buffalo is extremely affordable — $500/month rent is realistic. ECMC is a Level 1 trauma center. The medical school and residency programs have a solid IMG track record. Great value play.',
 matchIntel:'Affordable city + trauma center exposure + solid LORs = smart budget strategy. Works perfectly for IMGs who need to maximize clinical time without burning through savings.',
+matchSuccess:'Moderate match conversion. Buffalo observers who engage in research projects report stronger match outcomes.',
 lastVerified:'2026-01',tags:['img-pipeline','visa-sponsor','affordable','lor-friendly','trauma']},
 
 {id:27,name:'Mercy Catholic Medical Center — Observership',inst:'Mercy Catholic / Trinity Health',city:'Darby',state:'PA',region:'northeast',
@@ -381,6 +407,7 @@ requirements:['Medical degree','Step 1 pass','Health clearance'],
 applicationUrl:'https://www.mercyhealth.org/gme',
 tips:'Near Philadelphia — affordable suburban location. The program is small enough that you get personal attention from attendings. Many observers match here or at similar community programs.',
 matchIntel:'Pipeline program with high match conversion. If you\'re aiming for community IM or FM programs, this is ideal. The personal attention means your LOR will actually describe YOU, not generic template language.',
+matchSuccess:'Good IMG pipeline — Mercy Catholic has matched observers into IM and FM. Accessible and welcoming to IMGs.',
 lastVerified:'2026-01',tags:['img-pipeline','visa-sponsor','hands-on','lor-friendly','pipeline','community']},
 
 {id:28,name:'Northwell Health — International Observer Program',inst:'Northwell Health',city:'Manhasset',state:'NY',region:'northeast',
@@ -395,6 +422,7 @@ requirements:['Medical degree','Step 1 pass','ECFMG enrollment','Health clearanc
 applicationUrl:'https://www.northwell.edu/education',
 tips:'Northwell is the largest health system in New York — 23 hospitals. Long Island location means easier housing than Manhattan. The system size means more specialty options. Try to get placed at North Shore or LIJ specifically.',
 matchIntel:'Good mid-tier option with strong geographic network. If you\'re targeting NY residencies, the Northwell connection spans multiple programs. More accessible than NYU/Mount Sinai but solid name recognition.',
+matchSuccess:'Moderate match conversion. Northwell\'s large system means outcomes vary by site. Manhasset campus is most competitive.',
 lastVerified:'2026-01',tags:['large-system','structured','northeast','moderate-cost']},
 
 {id:29,name:'Advocate Christ Medical Center — Observership',inst:'Advocate Christ Medical Center',city:'Oak Lawn',state:'IL',region:'midwest',
@@ -409,6 +437,7 @@ requirements:['Medical degree','Step 1 pass','Health clearance','Professional li
 applicationUrl:'https://www.advocatehealth.com/gme',
 tips:'Level 1 trauma center in the Chicago suburbs. Great trauma and emergency surgery exposure. Very affordable area. Works well paired with a UIC or Cook County observership for a Chicago-based strategy.',
 matchIntel:'Solid value option in the Chicago market. The trauma exposure is genuine. Good complement to other Midwest observerships. Low cost, decent LOR potential.',
+matchSuccess:'Good IMG match rate — Advocate Christ observers have matched into IM, FM, and surgery at community sites.',
 lastVerified:'2026-01',tags:['midwest','affordable','trauma','moderate-cost']},
 
 {id:30,name:'University of Maryland — Clinical Observer',inst:'University of Maryland Medical Center',city:'Baltimore',state:'MD',region:'northeast',
@@ -423,6 +452,7 @@ requirements:['Medical degree','ECFMG certification','Professional liability','H
 applicationUrl:'https://www.medschool.umaryland.edu/gme/',
 tips:'R Adams Cowley Shock Trauma Center is world-famous — if you want trauma exposure, this is the pinnacle. Baltimore is affordable. The medical campus is compact and walkable.',
 matchIntel:'The trauma center name recognition is powerful. Good for surgery and EM applicants. Mid-range accessibility. Baltimore affordability makes this a practical option for a 2-4 week rotation.',
+matchSuccess:'Moderate match conversion. UMD observers who contribute to QI projects report better LOR and match outcomes.',
 lastVerified:'2026-01',tags:['trauma','prestigious','moderate-cost','moderate-access']},
 
 // --- Additional Strong Programs ---
@@ -438,6 +468,7 @@ requirements:['Medical degree','Step 1 pass','Health clearance','Professional li
 applicationUrl:'https://www.henryford.com/gme',
 tips:'Henry Ford is an excellent health system often overshadowed by Wayne State. The cardiology and GI programs are strong. Detroit affordability makes this a budget-friendly option. Can combine with Wayne State for a Detroit double-header.',
 matchIntel:'Pairs well with Wayne State for a cost-effective Detroit strategy. No fee + affordable city. Good clinical exposure without the cost burden of NYC programs.',
+matchSuccess:'Strong IMG pipeline — Henry Ford has a track record of matching motivated observers. Hands-on opportunities help.',
 lastVerified:'2026-01',tags:['no-fee','midwest','affordable','img-friendly']},
 
 {id:32,name:'Temple University Hospital — Observership',inst:'Temple University',city:'Philadelphia',state:'PA',region:'northeast',
@@ -452,6 +483,7 @@ requirements:['Medical degree','Step 1 pass','ECFMG enrollment','Health clearanc
 applicationUrl:'https://medicine.temple.edu/education/gme',
 tips:'Temple\'s pulmonary program is legendary — one of the best in the country. If you\'re interested in pulm/critical care, this should be on your list. North Philly location is affordable.',
 matchIntel:'Particularly strong for pulmonary/critical care hopefuls. Temple\'s reputation in lung medicine opens doors. Good mid-tier option that adds depth to a Philly-based application strategy.',
+matchSuccess:'Moderate match conversion. Temple observers with research engagement match at higher rates than observation-only.',
 lastVerified:'2026-01',tags:['pulmonary','northeast','moderate-cost','structured']},
 
 {id:33,name:'University of Texas Medical Branch — Observer Program',inst:'UTMB',city:'Galveston',state:'TX',region:'south',
@@ -466,6 +498,7 @@ requirements:['Medical degree','Step 1 pass','Health clearance','TB test','Backg
 applicationUrl:'https://www.utmb.edu/gme',
 tips:'Galveston is a small island city — dirt cheap to live. UTMB is a correctional medicine powerhouse if that interests you. The smaller size means you get noticed. Strong Texas pipeline.',
 matchIntel:'No-fee + visa support + personal attention = excellent value. UTMB punches above its weight for IMG outcomes. Texas programs respect the UTMB name. Great for budget-conscious applicants.',
+matchSuccess:'Good IMG pipeline — UTMB has one of the most structured observer-to-residency pathways in Texas.',
 lastVerified:'2026-02',tags:['no-fee','visa-sponsor','img-friendly','affordable','texas','high-roi']},
 
 {id:34,name:'Presence Saint Joseph Hospital — Observership',inst:'AMITA Health / Saint Joseph',city:'Chicago',state:'IL',region:'midwest',
@@ -480,6 +513,7 @@ requirements:['Medical degree','Step 1 pass','Health clearance'],
 applicationUrl:'https://presencehealth.org/education',
 tips:'Community hospital with strong IMG pipeline. Lincoln Park area of Chicago is vibrant. Good for IM and FM-bound IMGs. The personal attention is a major advantage over big academic centers.',
 matchIntel:'Pipeline program for IM/FM. Small enough to be seen, structured enough to be credible. Many observers match at Saint Joseph or similar programs. Perfect for the IMG who wants relationship-based mentoring.',
+matchSuccess:'High IMG match conversion — Saint Joseph is a known IMG pipeline. Multiple observers match annually into IM.',
 lastVerified:'2026-01',tags:['img-pipeline','visa-sponsor','hands-on','community','pipeline']},
 
 {id:35,name:'University of Connecticut — Observer Program',inst:'UConn Health',city:'Farmington',state:'CT',region:'northeast',
@@ -494,6 +528,7 @@ requirements:['Medical degree','ECFMG enrollment','Health clearance','Profession
 applicationUrl:'https://health.uconn.edu/graduate-medical-education/',
 tips:'Quiet suburban setting — good for focused learning without big-city distractions. Affordable New England option. UConn\'s orthopedic program is well-regarded.',
 matchIntel:'Solid mid-tier New England option. Works well for applicants targeting Northeast programs. The suburban setting means less networking competition than NYC programs.',
+matchSuccess:'Moderate match conversion. UConn observers with clinical research participation show better outcomes.',
 lastVerified:'2026-04',tags:['northeast','moderate-cost','suburban']},
 
 {id:36,name:'Coney Island Hospital — Clinical Observership',inst:'NYC Health + Hospitals / Coney Island',city:'Brooklyn',state:'NY',region:'northeast',
@@ -508,6 +543,7 @@ requirements:['Medical degree','Step 1 pass','Health clearance'],
 applicationUrl:'https://www.nychealthandhospitals.org/coneyisland/',
 tips:'Another free NYC H+H option. Southern Brooklyn location is very affordable. Less intense than Lincoln but solid clinical exposure. Great for IMGs who want NYC experience on a budget.',
 matchIntel:'Free + visa support + hands-on. Same NYC H+H value proposition as Lincoln but in a calmer setting. Good for IMGs who prefer a less hectic environment.',
+matchSuccess:'Strong IMG pipeline — Coney Island has a long history of matching former observers. Very accessible program.',
 lastVerified:'2026-01',tags:['no-fee','hands-on','img-pipeline','public-hospital','affordable']},
 
 {id:37,name:'University of Toledo — Clinical Observership',inst:'University of Toledo Medical Center',city:'Toledo',state:'OH',region:'midwest',
@@ -522,6 +558,7 @@ requirements:['Medical degree','Step 1 pass','Health clearance','TB test'],
 applicationUrl:'https://www.utoledo.edu/med/gme/',
 tips:'Toledo is one of the most affordable cities in the US. The medical center is well-equipped and the program size means personal attention. Strong for IM, FM, and psychiatry.',
 matchIntel:'Free + visa support + affordable city + good LORs. Exceptional value for IMGs on a budget. Toledo might not be glamorous but the outcomes are real.',
+matchSuccess:'Good IMG pipeline — Toledo has a structured observer pathway. Multiple IMGs match from observer pool annually.',
 lastVerified:'2026-04',tags:['no-fee','visa-sponsor','img-friendly','affordable','midwest','high-roi']},
 
 {id:38,name:'Rutgers — New Jersey Medical School Observer',inst:'Rutgers NJMS / University Hospital',city:'Newark',state:'NJ',region:'northeast',
@@ -536,6 +573,7 @@ requirements:['Medical degree','Step 1 pass','ECFMG enrollment','Health clearanc
 applicationUrl:'https://njms.rutgers.edu/education/gme/',
 tips:'University Hospital is a Level 1 trauma center in Newark — high acuity, diverse pathology. Easy access to NYC but much cheaper housing. The EM department is particularly strong.',
 matchIntel:'Good value in the NYC metro area without NYC prices. Trauma center exposure is genuine. Works well for EM and surgery-interested applicants. Rutgers name is recognized nationally.',
+matchSuccess:'Strong IMG pipeline — Rutgers NJMS/University Hospital has matched numerous observers into multiple specialties.',
 lastVerified:'2026-04',tags:['trauma','northeast','moderate-cost','moderate-access']},
 
 {id:39,name:'Sinai-Grace Hospital — Observership',inst:'Sinai-Grace / DMC',city:'Detroit',state:'MI',region:'midwest',
@@ -550,6 +588,7 @@ requirements:['Medical degree','Step 1 pass','Health clearance','TB test'],
 applicationUrl:'https://www.dmc.org/gme',
 tips:'Part of the DMC system (same as Wayne State). Inner-city hospital with high volume. Extremely affordable. Good for IMGs who want maximum clinical exposure at minimum cost.',
 matchIntel:'Part of the Wayne State/DMC ecosystem. Stack this with Wayne State for a comprehensive Detroit strategy. Budget-friendly with real clinical substance.',
+matchSuccess:'Good IMG match rate — Sinai-Grace observers have matched into IM, FM, and surgery at DMC affiliate programs.',
 lastVerified:'2026-01',tags:['img-pipeline','visa-sponsor','hands-on','affordable','detroit']},
 
 {id:40,name:'University of South Florida — Observership Program',inst:'USF Health / Tampa General',city:'Tampa',state:'FL',region:'south',
@@ -564,6 +603,7 @@ requirements:['Medical degree','Step 1 pass','ECFMG enrollment','Health clearanc
 applicationUrl:'https://health.usf.edu/medicine/gme',
 tips:'Tampa is affordable and Tampa General is a Level 1 trauma center. Good weather year-round. USF\'s cardiology and GI programs are growing. Florida programs are generally IMG-friendly.',
 matchIntel:'Solid Florida option. If you\'re targeting Southeast programs, Tampa exposure helps. Florida\'s medical landscape is IMG-friendly in general. Pair with Miami/Jackson for a Florida strategy.',
+matchSuccess:'Moderate match conversion. USF observers who secure strong LORs from specific attendings report good outcomes.',
 lastVerified:'2026-04',tags:['south','moderate-cost','florida','img-friendly']},
 
 // --- Specialty-Specific Programs ---
@@ -579,6 +619,7 @@ requirements:['Medical degree','Interest in cardiology','ECFMG certification','P
 applicationUrl:'https://my.clevelandclinic.org/florida/education',
 tips:'Cleveland Clinic name + Florida campus = best of both worlds. Smaller than Ohio campus means more personal attention. Weston/Fort Lauderdale area is pleasant.',
 matchIntel:'Targeted option for cardiology hopefuls. The CC name is powerful for fellowship applications. Smaller campus means you might actually get meaningful attending interaction.',
+matchSuccess:'High match conversion for cardiology-focused observers. Cleveland Clinic Florida actively mentors IMG observers.',
 lastVerified:'2026-01',tags:['cardiology','prestigious','no-fee','specialty-focused']},
 
 {id:42,name:'Hospital for Special Surgery — Orthopedic Observer',inst:'Hospital for Special Surgery',city:'New York',state:'NY',region:'northeast',
@@ -593,6 +634,7 @@ requirements:['Medical degree','Strong CV','Faculty sponsor preferred','Professi
 applicationUrl:'https://www.hss.edu/education-overview.asp',
 tips:'The #1 orthopedic hospital in the country. If you\'re serious about ortho, this is the name to have. But getting in and getting an LOR are both extremely difficult. Best with a connection.',
 matchIntel:'Trophy institution for ortho applicants. The name alone signals seriousness about orthopedics. But for IMGs, the ROI is low unless you have a specific surgical skill or research connection.',
+matchSuccess:'Niche but excellent for orthopedic applicants. HSS observers with research ties have matched into ortho programs.',
 lastVerified:'2026-01',tags:['prestigious','orthopedics','competitive','specialty-focused']},
 
 {id:43,name:'Moffitt Cancer Center — Oncology Observer',inst:'Moffitt Cancer Center',city:'Tampa',state:'FL',region:'south',
@@ -607,6 +649,7 @@ requirements:['Medical degree','Interest in oncology','ECFMG enrollment','Health
 applicationUrl:'https://moffitt.org/education-and-training/',
 tips:'NCI-designated comprehensive cancer center. If oncology is your goal, Moffitt is outstanding. The tumor boards are educational and the research environment is collaborative. Tampa is affordable.',
 matchIntel:'Excellent for heme/onc fellowship hopefuls. NCI designation carries weight. The focused exposure helps you speak intelligently about oncology in fellowship interviews.',
+matchSuccess:'Strong match conversion for oncology-focused IMGs. Moffitt observers with research involvement match at high rates.',
 lastVerified:'2026-01',tags:['oncology','prestigious','no-fee','specialty-focused','florida']},
 
 {id:44,name:'Memorial Sloan Kettering — Clinical Observer',inst:'Memorial Sloan Kettering',city:'New York',state:'NY',region:'northeast',
@@ -621,6 +664,7 @@ requirements:['Medical degree','Faculty sponsor at MSK','Professional liability'
 applicationUrl:'https://www.mskcc.org/hcp-education-training',
 tips:'The top cancer center in the world. The name is unmatched for oncology applications. But access is nearly impossible without a research collaborator. If you have one, absolutely pursue it.',
 matchIntel:'Pinnacle of oncology prestige. Same pattern as MGH/Stanford — incredible name, minimal IMG access without connections. Only pursue with an existing MSK contact.',
+matchSuccess:'Low direct match conversion but MSK on your CV opens doors everywhere. Best combined with a pipeline program.',
 lastVerified:'2026-04',tags:['prestigious','oncology','connection-required','competitive']},
 
 {id:45,name:'Menninger Clinic / Baylor — Psychiatry Observer',inst:'Menninger Clinic / Baylor',city:'Houston',state:'TX',region:'south',
@@ -635,6 +679,7 @@ requirements:['Medical degree','Interest in psychiatry','Health clearance','Prof
 applicationUrl:'https://www.menningerclinic.org/education',
 tips:'The Menninger name in psychiatry is like Hopkins in medicine — legendary. Houston is affordable. The clinical approach here is unique and will give you interview talking points no one else has.',
 matchIntel:'Excellent for psychiatry applicants. The Menninger Clinic name signals deep commitment to the field. Works well alongside a hands-on community program for a balanced portfolio.',
+matchSuccess:'Excellent for psychiatry applicants — Menninger/Baylor has matched observers into psych residency programs.',
 lastVerified:'2026-01',tags:['psychiatry','prestigious','specialty-focused','texas','moderate-cost']},
 
 // --- Research + Clinical Hybrid Programs ---
@@ -650,6 +695,7 @@ requirements:['Medical degree','Research proposal or interest statement','CV','L
 applicationUrl:'https://clinicalcenter.nih.gov/training/',
 tips:'The ultimate research-clinical hybrid. NIH clinical rotations expose you to medicine that literally doesn\'t exist anywhere else. The publication potential is enormous. Bethesda is expensive but the stipend helps.',
 matchIntel:'If you want academic medicine, NIH on your CV is a nuclear weapon. The research letters from NIH carry exceptional weight. Best for applicants targeting academic programs. Combine with a clinical-heavy program elsewhere.',
+matchSuccess:'Research-focused — NIH observers transition to research positions that strengthen applications significantly.',
 lastVerified:'2026-02',tags:['research','prestigious','visa-sponsor','no-fee','academic','high-roi']},
 
 {id:47,name:'MD Anderson — Clinical Observer Program',inst:'MD Anderson Cancer Center',city:'Houston',state:'TX',region:'south',
@@ -664,6 +710,7 @@ requirements:['Medical degree','Interest in oncology','CV','ECFMG enrollment','H
 applicationUrl:'https://www.mdanderson.org/education-training.html',
 tips:'#1 cancer center in the US. The research environment is extraordinary. Houston is affordable. Being in the Texas Medical Center campus means you can also network at Baylor and Methodist.',
 matchIntel:'The gold standard for oncology exposure. More accessible than MSK due to larger size. Houston affordability is a bonus. Strong for fellowship applications in heme/onc and surgical oncology.',
+matchSuccess:'Strong for oncology applicants. MD Anderson observers with research involvement report high match rates.',
 lastVerified:'2026-04',tags:['oncology','prestigious','no-fee','texas','specialty-focused']},
 
 {id:48,name:'Vanderbilt — Clinical Observer Program',inst:'Vanderbilt University Medical Center',city:'Nashville',state:'TN',region:'south',
@@ -678,6 +725,7 @@ requirements:['Medical degree','ECFMG certification','Dean letter','Professional
 applicationUrl:'https://www.vumc.org/gme/',
 tips:'Nashville is booming and affordable. Vanderbilt is a top-15 medical center. The campus is walkable and the culture is collegial. Try to attend their excellent grand rounds series.',
 matchIntel:'Good prestige-to-accessibility ratio. More approachable than Ivy-tier but still a top-20 name. Works well as a prestige addition alongside hands-on experience elsewhere. Nashville is a great city.',
+matchSuccess:'Moderate match conversion. Vanderbilt observers who secure faculty mentors have significantly better outcomes.',
 lastVerified:'2026-04',tags:['prestigious','no-fee','south','moderate-access']},
 
 {id:49,name:'University of Minnesota — Clinical Observer',inst:'University of Minnesota Medical Center',city:'Minneapolis',state:'MN',region:'midwest',
@@ -692,6 +740,7 @@ requirements:['Medical degree','Step 1 pass','ECFMG enrollment','Health clearanc
 applicationUrl:'https://med.umn.edu/gme',
 tips:'Strong transplant program — UMN pioneered many transplant techniques. Minneapolis is affordable and livable. Good for surgery and transplant-interested applicants.',
 matchIntel:'Solid Midwest option with particular strength in transplant surgery. Free program at a strong academic center. Good for applicants who want Upper Midwest exposure.',
+matchSuccess:'Good match conversion — Minnesota observers in IM and FM have a solid track record of matching in the Midwest.',
 lastVerified:'2026-04',tags:['no-fee','midwest','transplant','moderate-access']},
 
 {id:50,name:'Interfaith Medical Center — Observership',inst:'Interfaith Medical Center',city:'Brooklyn',state:'NY',region:'northeast',
@@ -706,6 +755,7 @@ requirements:['Medical degree','Step 1 pass','Health clearance'],
 applicationUrl:'https://www.interfaithmedical.org/',
 tips:'Another Brooklyn IMG pipeline. Small enough that attendings know you by name within a week. Psychiatry program is particularly well-regarded among community programs.',
 matchIntel:'Pipeline program for IM, FM, and psychiatry. Small size = personal attention = personalized LORs. Good for IMGs who thrive with mentorship over prestige.',
+matchSuccess:'Very high IMG match rate — Interfaith is one of the most accessible pipeline programs. Multiple annual matches.',
 lastVerified:'2026-01',tags:['img-pipeline','visa-sponsor','hands-on','lor-friendly','pipeline','community']},
 
 {id:51,name:'Harlem Hospital — Clinical Observership',inst:'NYC Health + Hospitals / Harlem',city:'New York',state:'NY',region:'northeast',
@@ -720,6 +770,7 @@ requirements:['Medical degree','Step 1 pass','Health clearance'],
 applicationUrl:'https://www.nychealthandhospitals.org/harlem/',
 tips:'Historic hospital in central Harlem. Free program with genuine clinical exposure. Rich history of serving underserved communities — powerful narrative for residency applications.',
 matchIntel:'Free + hands-on + narrative value. Your personal statement can powerfully reference serving an underserved community. Many PDs value this experience. Part of the excellent NYC H+H system.',
+matchSuccess:'Strong IMG pipeline — Harlem Hospital actively matches from observer pool. Excellent community medicine experience.',
 lastVerified:'2026-01',tags:['no-fee','hands-on','img-pipeline','public-hospital','underserved']},
 
 {id:52,name:'University of Arizona — Clinical Observer',inst:'University of Arizona College of Medicine',city:'Tucson',state:'AZ',region:'west',
@@ -734,6 +785,7 @@ requirements:['Medical degree','Step 1 pass','Health clearance','Professional li
 applicationUrl:'https://medicine.arizona.edu/education/gme',
 tips:'Arizona is growing rapidly as a medical destination. Tucson is extremely affordable. Good for applicants targeting Southwest programs. The integrative medicine focus is unique.',
 matchIntel:'Solid Southwest option. Arizona programs are generally IMG-friendly. Works well for applicants who want to practice in the West. Affordable base for a rotation.',
+matchSuccess:'Moderate match conversion. Arizona observers with rural medicine interest report good outcomes in FM and IM.',
 lastVerified:'2026-01',tags:['west','affordable','moderate-cost','southwest']},
 
 {id:53,name:'George Washington University — Observer Program',inst:'GW Hospital',city:'Washington',state:'DC',region:'northeast',
@@ -748,6 +800,7 @@ requirements:['Medical degree','ECFMG enrollment','Professional liability','Heal
 applicationUrl:'https://smhs.gwu.edu/education/gme',
 tips:'DC location is unique — policy and public health intersections. GW is known for its EM residency (presidential ER). Housing is expensive but the networking potential is high.',
 matchIntel:'Good for applicants interested in EM, policy, or DC-area programs. The GW ER has celebrity status. Works best as a targeted addition for specific career interests.',
+matchSuccess:'Good match conversion — GW observers in IM and surgery have matched at GW and partner institutions.',
 lastVerified:'2026-01',tags:['northeast','dc','moderate-cost','emergency-medicine']},
 
 {id:54,name:'St. Barnabas Medical Center — Observership',inst:'RWJBarnabas Health',city:'Livingston',state:'NJ',region:'northeast',
@@ -762,6 +815,7 @@ requirements:['Medical degree','Step 1 pass','Health clearance','Background chec
 applicationUrl:'https://www.rwjbh.org/education/',
 tips:'Part of the largest health system in NJ. Suburban setting with easy access to NYC. The cardiology program is strong. Livingston/northern NJ is pleasant.',
 matchIntel:'Good NJ option with large system networking potential. RWJBarnabas has multiple residency programs across NJ — one observership can open doors to several programs.',
+matchSuccess:'Moderate match rate. St. Barnabas observers who engage with the residency program report better outcomes.',
 lastVerified:'2026-01',tags:['northeast','large-system','img-friendly','community']},
 
 {id:55,name:'Oregon Health & Science University — Observer',inst:'OHSU',city:'Portland',state:'OR',region:'west',
@@ -776,6 +830,7 @@ requirements:['Medical degree','ECFMG enrollment','Health clearance','Profession
 applicationUrl:'https://www.ohsu.edu/education/gme',
 tips:'OHSU is the only academic medical center in Oregon. Beautiful campus on a hill overlooking Portland. If you want to practice in the Pacific Northwest, this is your entry point.',
 matchIntel:'Dominant institution in the Pacific Northwest. If you want Oregon or Washington, OHSU connections are invaluable. More accessible than West Coast peers like Stanford or UCSF.',
+matchSuccess:'Good match conversion for research-oriented observers. OHSU values academic engagement from observer applicants.',
 lastVerified:'2026-01',tags:['west','pacific-northwest','moderate-cost','moderate-access']},
 
 {id:56,name:'Howard University Hospital — Observer Program',inst:'Howard University',city:'Washington',state:'DC',region:'northeast',
@@ -790,6 +845,7 @@ requirements:['Medical degree','Step 1 pass','Health clearance','TB test'],
 applicationUrl:'https://huhealthcare.com/education/gme',
 tips:'Historic HBCU with a proud medical tradition. Rich patient population and unique clinical exposure. DC is expensive but the experience is valuable. Strong for applicants who value diversity and community medicine.',
 matchIntel:'Good mid-tier option with a unique narrative angle. Howard\'s commitment to health equity gives you powerful personal statement material. The faculty are supportive of international graduates.',
+matchSuccess:'Strong IMG pipeline — Howard has a strong diversity commitment and has matched observers into multiple specialties.',
 lastVerified:'2026-01',tags:['dc','diverse','community','img-friendly','moderate-cost']},
 
 {id:57,name:'Cedars-Sinai — Clinical Observer Program',inst:'Cedars-Sinai Medical Center',city:'Los Angeles',state:'CA',region:'west',
@@ -804,6 +860,7 @@ requirements:['Medical degree','Faculty sponsor preferred','Professional liabili
 applicationUrl:'https://www.cedars-sinai.org/education/gme.html',
 tips:'Prestigious LA institution. Celebrity medicine meets academic excellence. Beautiful campus. LA is expensive — budget accordingly. Good for cardiology and GI exposure.',
 matchIntel:'Prestige play for West Coast applicants. More accessible than Stanford but still competitive. Best with an existing connection. The GI and cardiology programs are nationally ranked.',
+matchSuccess:'Low direct match conversion but Cedars-Sinai name is powerful. Best for supplementing an already strong application.',
 lastVerified:'2026-01',tags:['prestigious','west-coast','competitive','cardiology']},
 
 {id:58,name:'Jacobi Medical Center — Clinical Observership',inst:'NYC Health + Hospitals / Jacobi',city:'Bronx',state:'NY',region:'northeast',
@@ -818,6 +875,7 @@ requirements:['Medical degree','Step 1 pass','Health clearance'],
 applicationUrl:'https://www.nychealthandhospitals.org/jacobi/',
 tips:'Another excellent free NYC H+H option. Jacobi is a Level 1 trauma center — superb for surgery and EM exposure. North Bronx location. Part of the Albert Einstein teaching network.',
 matchIntel:'Free + trauma center + hands-on = exceptional value. Jacobi\'s connection to Einstein gives it educational credibility beyond typical public hospitals. Great for surgery/EM-bound IMGs.',
+matchSuccess:'Strong IMG pipeline — Jacobi observers have a solid match record, especially in IM, FM, and emergency medicine.',
 lastVerified:'2026-02',tags:['no-fee','hands-on','img-pipeline','public-hospital','trauma','high-roi']},
 
 {id:59,name:'Geisinger Medical Center — Clinical Observer',inst:'Geisinger',city:'Danville',state:'PA',region:'northeast',
@@ -832,6 +890,7 @@ requirements:['Medical degree','ECFMG enrollment','Health clearance','Profession
 applicationUrl:'https://www.geisinger.edu/education/gme',
 tips:'Geisinger is a healthcare innovation leader — integrated system, ProvenCare, population health. Rural PA is dirt cheap. If you\'re interested in value-based care or rural medicine, this is exceptional.',
 matchIntel:'Unique angle for applicants interested in healthcare innovation and rural medicine. The Geisinger model is nationally famous. Strong narrative value for personal statements about improving healthcare systems.',
+matchSuccess:'Moderate match conversion. Geisinger observers who show interest in rural/community medicine report good outcomes.',
 lastVerified:'2026-01',tags:['no-fee','rural','innovative','affordable','northeast']},
 
 {id:60,name:'Loma Linda University — International Observer',inst:'Loma Linda University Medical Center',city:'Loma Linda',state:'CA',region:'west',
@@ -846,6 +905,7 @@ requirements:['Medical degree','Step 1 pass','Health clearance','TB test'],
 applicationUrl:'https://lluh.org/education/gme',
 tips:'Seventh-day Adventist institution — expect faith-integrated environment. The cardiac surgery program is world-class (proton therapy too). Inland Empire is very affordable compared to LA. Great for CT surgery exposure.',
 matchIntel:'Niche but strong. If cardiac surgery or proton therapy interests you, Loma Linda is a destination. The faith component is important to know going in. Affordable SoCal alternative.',
+matchSuccess:'Good IMG match rate — Loma Linda values mission-aligned observers. Faith-based focus can be an advantage.',
 lastVerified:'2026-01',tags:['visa-sponsor','west-coast','cardiac-surgery','affordable','faith-based']},
 
 {id:61,name:'Thomas Jefferson University — Observer Program',inst:'Jefferson Health',city:'Philadelphia',state:'PA',region:'northeast',
@@ -860,6 +920,7 @@ requirements:['Medical degree','ECFMG enrollment','Professional liability','Heal
 applicationUrl:'https://www.jefferson.edu/academics/colleges-schools/skmc/education/gme.html',
 tips:'Jefferson has a strong surgical tradition and one of the oldest medical schools in the US. Center City Philadelphia is vibrant and walkable. Good for surgery and EM applicants.',
 matchIntel:'Solid Philadelphia option with surgical strength. The Jefferson name is well-recognized nationally. Pairs well with Einstein or Temple for a comprehensive Philly strategy.',
+matchSuccess:'Moderate match conversion. Jefferson observers with research contributions and strong LORs match at higher rates.',
 lastVerified:'2026-01',tags:['northeast','surgery','moderate-cost','philadelphia']},
 
 {id:62,name:'Creighton University — Clinical Observer',inst:'Creighton University School of Medicine',city:'Omaha',state:'NE',region:'midwest',
@@ -874,6 +935,7 @@ requirements:['Medical degree','Step 1 pass','Health clearance','Professional li
 applicationUrl:'https://medschool.creighton.edu/gme',
 tips:'Jesuit medical school with strong values of service. Omaha is extremely affordable. Creighton\'s primary care programs are well-regarded. Great for FM and IM-focused applicants.',
 matchIntel:'Free program in one of the most affordable cities in America. Good for Midwest-targeting primary care applicants. The Jesuit mission gives your application a service-oriented angle.',
+matchSuccess:'Good match conversion — Creighton observers, especially those interested in Midwest programs, report strong outcomes.',
 lastVerified:'2026-01',tags:['no-fee','midwest','affordable','primary-care','service-oriented']},
 
 {id:63,name:'University of South Alabama — Observer Program',inst:'USA Health',city:'Mobile',state:'AL',region:'south',
@@ -888,6 +950,7 @@ requirements:['Medical degree','Step 1 pass','Health clearance','TB test'],
 applicationUrl:'https://www.southalabama.edu/colleges/com/gme/',
 tips:'Mobile is the most affordable metro in Alabama. USA Health is the only academic medical center on the Gulf Coast. Small program means you get noticed. Strong for primary care and surgery.',
 matchIntel:'Free + affordable + personal attention. Under-the-radar option with genuine clinical value. Programs in the Deep South are often IMG-friendly and undersaturated with applicants.',
+matchSuccess:'Good IMG pipeline for those interested in Southern programs. South Alabama observers match at regional programs.',
 lastVerified:'2026-04',tags:['no-fee','south','affordable','img-friendly','small-program']},
 
 {id:64,name:'Elmhurst Hospital — Clinical Observership',inst:'NYC Health + Hospitals / Elmhurst',city:'Queens',state:'NY',region:'northeast',
@@ -902,6 +965,7 @@ requirements:['Medical degree','Step 1 pass','Health clearance'],
 applicationUrl:'https://www.nychealthandhospitals.org/elmhurst/',
 tips:'Elmhurst became world-famous during COVID-19 as the epicenter hospital. Queens location is diverse and affordable by NYC standards. The IM program here is strong and IMG-friendly.',
 matchIntel:'Free + COVID legacy + hands-on + NYC. The Elmhurst story during the pandemic gives your application a powerful narrative dimension. Strong IM pipeline.',
+matchSuccess:'Strong IMG pipeline — Elmhurst is one of the most IMG-friendly programs in NYC. Multiple observers match annually.',
 lastVerified:'2026-02',tags:['no-fee','hands-on','img-pipeline','public-hospital','affordable']},
 
 {id:65,name:'University of New Mexico — Clinical Observer',inst:'UNM Health Sciences',city:'Albuquerque',state:'NM',region:'west',
@@ -916,6 +980,7 @@ requirements:['Medical degree','Step 1 pass','Health clearance','Professional li
 applicationUrl:'https://hsc.unm.edu/medicine/education/gme/',
 tips:'UNM is the only medical school and Level 1 trauma center in New Mexico. The EM and trauma exposure is exceptional. Albuquerque is extremely affordable. Unique rural/frontier medicine perspective.',
 matchIntel:'If you want Southwest experience, UNM is the entry point. The underserved population gives you narrative power. EM and FM are particularly strong here. Affordable and unique.',
+matchSuccess:'Moderate match conversion. UNM observers with interest in underserved medicine and bilingual skills have advantages.',
 lastVerified:'2026-01',tags:['no-fee','west','southwest','affordable','underserved','trauma']}
 ];
 

@@ -7816,7 +7816,7 @@ var TRIAL_TEASERS={
     preview:'<div style="padding:16px;background:var(--bg);border:1px solid var(--border);border-radius:10px"><div style="font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--text3);margin-bottom:10px">Sample Contract Grade</div><div style="display:flex;align-items:center;gap:14px;margin-bottom:10px"><div style="text-align:center"><div style="font-size:32px;font-weight:700;color:var(--accent);font-family:var(--font-serif)">B+</div><div style="font-size:9px;color:var(--text3)">Overall</div></div><div style="flex:1"><div style="display:flex;align-items:center;gap:4px;margin-bottom:4px"><span style="font-size:10px;color:var(--text3);width:65px">Base Salary</span><div style="flex:1;height:5px;background:var(--bg2);border-radius:3px"><div style="height:100%;width:82%;background:var(--green);border-radius:3px"></div></div></div><div style="display:flex;align-items:center;gap:4px;margin-bottom:4px"><span style="font-size:10px;color:var(--text3);width:65px">RVU Rate</span><div style="flex:1;height:5px;background:var(--bg2);border-radius:3px"><div style="height:100%;width:68%;background:var(--accent);border-radius:3px"></div></div></div><div style="display:flex;align-items:center;gap:4px"><span style="font-size:10px;color:var(--red);width:65px">Non-compete</span><div style="flex:1;height:5px;background:var(--bg2);border-radius:3px"><div style="height:100%;width:35%;background:var(--red);border-radius:3px"></div></div></div></div></div><div style="font-size:11px;color:var(--text3);font-style:italic">Non-compete: 2yr/30mi is aggressive. Negotiate to 1yr/15mi.</div></div>'},
   v16:{icon:'\ud83c\udf99\ufe0f',headline:'Program directors ask the same 15 questions.',teaser:'Practice specialty-specific interview questions with actionable feedback.',
     preview:'<div style="padding:16px;background:var(--bg);border:1px solid var(--border);border-radius:10px"><div style="font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--text3);margin-bottom:10px">Sample Interview Feedback</div><div style="padding:10px;background:var(--accent-dim);border-radius:8px;margin-bottom:8px"><div style="font-size:10px;font-weight:600;color:var(--accent);margin-bottom:4px">QUESTION</div><div style="font-size:12px;color:var(--text);font-weight:500">\u201cWhy cardiology? What draws you to the field?\u201d</div></div><div style="display:flex;gap:12px;margin-bottom:8px"><div style="text-align:center"><div style="font-size:9px;color:var(--text3)">Grade</div><div style="font-size:16px;font-weight:700;color:var(--green)">B+</div></div><div style="text-align:center"><div style="font-size:9px;color:var(--text3)">Structure</div><div style="font-size:10px;font-weight:600;color:var(--green)">Strong</div></div><div style="text-align:center"><div style="font-size:9px;color:var(--text3)">Authenticity</div><div style="font-size:10px;font-weight:600;color:var(--accent)">Needs work</div></div></div><div style="font-size:11px;color:var(--text3);font-style:italic">Good structure but sounds rehearsed. Add a specific patient story.</div></div>'},
-  v17:{icon:'\ud83d\udd0d',headline:'287 verified U.S. observership programs \u2014 ranked and filtered.',teaser:'The Observership Database gives you strategic insights on every program.',
+  v17:{icon:'\ud83d\udd0d',headline:'65 verified U.S. observership programs — ranked and filtered.',teaser:'The Observership Database gives you strategic insights on every program.',
     preview:'<div style="padding:16px;background:var(--bg);border:1px solid var(--border);border-radius:10px"><div style="font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--text3);margin-bottom:10px">Sample Observership Results</div><div style="display:flex;flex-direction:column;gap:6px"><div style="padding:10px;background:var(--bg2);border:1px solid var(--border);border-radius:8px"><div style="display:flex;justify-content:space-between;align-items:center"><div><div style="font-size:12px;font-weight:600;color:var(--text)">Cleveland Clinic</div><div style="font-size:10px;color:var(--text3)">Cardiology \u00b7 Cleveland, OH</div></div><div style="text-align:right"><div style="font-size:14px;font-weight:700;color:var(--green)">94</div><div style="font-size:8px;color:var(--text3)">Strategic Score</div></div></div></div><div style="padding:10px;background:var(--bg2);border:1px solid var(--border);border-radius:8px"><div style="display:flex;justify-content:space-between;align-items:center"><div><div style="font-size:12px;font-weight:600;color:var(--text)">Mayo Clinic</div><div style="font-size:10px;color:var(--text3)">Cardiology \u00b7 Rochester, MN</div></div><div style="text-align:right"><div style="font-size:14px;font-weight:700;color:var(--green)">91</div><div style="font-size:8px;color:var(--text3)">Strategic Score</div></div></div></div><div style="padding:10px;background:var(--bg2);border:1px solid var(--border);border-radius:8px"><div style="display:flex;justify-content:space-between;align-items:center"><div><div style="font-size:12px;font-weight:600;color:var(--text)">Mass General</div><div style="font-size:10px;color:var(--text3)">Cardiology \u00b7 Boston, MA</div></div><div style="text-align:right"><div style="font-size:14px;font-weight:700;color:var(--accent)">87</div><div style="font-size:8px;color:var(--text3)">Strategic Score</div></div></div></div></div><div style="font-size:10px;color:var(--text3);margin-top:6px;font-style:italic">Filter by specialty, location, cost, visa support, and strategic value.</div></div>'}
 };
 
@@ -18331,6 +18331,7 @@ function obsInit(){
     if(cp.step2){var s2=document.getElementById('obs-p-step2');if(s2)s2.value=cp.step2}
   }
   obsFilter();
+  obsRenderShortlistBar();
 }
 
 function obsTab(tab){
@@ -18408,7 +18409,11 @@ function obsRenderCard(p,expanded,isTrial){
   h+='<div style="text-align:right;flex-shrink:0">';
   h+='<div style="font-size:13px;font-weight:600">'+costDisplay+'</div>';
   h+='<div style="font-size:10px;color:'+roiColor+';font-weight:600;margin-top:2px">ROI: '+roi+'/100</div>';
-  h+='</div></div>';
+  h+='</div>';
+  // Favorite button
+  var isFav=obsIsFav(p.id);
+  h+='<button onclick="event.stopPropagation();obsToggleFav('+p.id+',event)" style="font-size:16px;background:none;border:none;cursor:pointer;padding:4px;margin-left:4px;flex-shrink:0;transition:transform .15s" title="'+(isFav?'Remove from shortlist':'Save to shortlist')+'" onmouseenter="this.style.transform=\'scale(1.2)\'" onmouseleave="this.style.transform=\'scale(1)\'">'+(isFav?'⭐':'☆')+'</button>';
+  h+='</div>';
   h+='<div style="display:flex;gap:12px;margin-top:8px;font-size:10px;color:var(--text3)">';
   h+='<span title="IMG Friendliness">IMG '+obsRenderStars(p.imgFriendly)+'</span>';
   h+='<span title="LOR Potential">LOR '+obsRenderStars(p.lor)+'</span>';
@@ -18435,6 +18440,13 @@ function obsRenderCard(p,expanded,isTrial){
       h+='<div style="font-size:12px;color:var(--text2);line-height:1.6">'+firstSentence+'</div>';
       h+='<div style="filter:blur(5px);pointer-events:none;user-select:none;font-size:12px;color:var(--text2);line-height:1.6;margin-top:4px">'+p.matchIntel.substring(firstSentence.length)+'</div>';
       h+='</div>';
+      // Match success — show label, blur content for trial
+      if(p.matchSuccess){
+        h+='<div style="padding:8px 10px;background:rgba(92,184,154,.06);border-radius:8px;margin-bottom:10px;border-left:3px solid var(--green)">';
+        h+='<div style="font-size:10px;font-weight:600;color:var(--green);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">📊 Match conversion data</div>';
+        h+='<div style="filter:blur(5px);pointer-events:none;user-select:none;font-size:12px;color:var(--text2);line-height:1.6">'+p.matchSuccess+'</div>';
+        h+='</div>';
+      }
       // Blurred details grid
       h+='<div style="position:relative">';
       h+='<div style="filter:blur(5px);pointer-events:none;user-select:none;opacity:.5">';
@@ -18451,6 +18463,23 @@ function obsRenderCard(p,expanded,isTrial){
       h+='<div style="font-size:10px;color:rgba(237,235,231,.6);margin-bottom:8px">Insider tips, requirements, application links & email templates</div>';
       h+='<button onclick="event.stopPropagation();closeModal(\'modal-q\');setTimeout(function(){navTo(\'scr-profile\');showUpgrade()},300)" style="padding:8px 20px;background:var(--accent);color:#1C1A17;border:none;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer">Subscribe to Unlock</button>';
       h+='</div></div></div>';
+      // Similar Programs (also shown for trial — keeps them browsing)
+      var similar=obsFindSimilar(p,3);
+      if(similar.length>0){
+        h+='<div style="margin-top:10px">';
+        h+='<div style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Similar Programs</div>';
+        h+='<div style="display:flex;gap:8px;overflow-x:auto;padding-bottom:4px">';
+        similar.forEach(function(sp){
+          var sRoi=obsCalcROI(sp);
+          var sRoiColor=sRoi>=70?'#22c55e':sRoi>=50?'var(--accent)':'#ef4444';
+          h+='<div onclick="event.stopPropagation();_obsExpanded={};_obsExpanded['+sp.id+']=true;obsRender();setTimeout(function(){var el=document.querySelector(\'[onclick*=obsToggleCard\\\\('+sp.id+'\\\\)]\');if(el)el.scrollIntoView({behavior:\'smooth\',block:\'center\'})},100)" style="min-width:140px;padding:8px;background:var(--bg);border:1px solid var(--border);border-radius:6px;cursor:pointer;flex-shrink:0">';
+          h+='<div style="font-size:10px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+sp.inst+'</div>';
+          h+='<div style="font-size:9px;color:var(--text3)">'+sp.city+', '+sp.state+'</div>';
+          h+='<div style="font-size:9px;color:'+sRoiColor+';font-weight:600;margin-top:3px">ROI: '+sRoi+'</div>';
+          h+='</div>';
+        });
+        h+='</div></div>';
+      }
       h+='</div>';
     }else{
       // Full expanded view for paid users
@@ -18458,6 +18487,12 @@ function obsRenderCard(p,expanded,isTrial){
       h+='<div style="background:rgba(200,168,124,.06);padding:10px;border-radius:8px;margin-bottom:10px;border-left:3px solid var(--accent)">';
       h+='<div style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Match intelligence</div>';
       h+='<div style="font-size:12px;color:var(--text2);line-height:1.6">'+p.matchIntel+'</div></div>';
+      // Match success data
+      if(p.matchSuccess){
+        h+='<div style="padding:10px;background:rgba(92,184,154,.06);border-radius:8px;margin-bottom:10px;border-left:3px solid var(--green)">';
+        h+='<div style="font-size:10px;font-weight:600;color:var(--green);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">📊 Match conversion data</div>';
+        h+='<div style="font-size:12px;color:var(--text2);line-height:1.6">'+p.matchSuccess+'</div></div>';
+      }
       h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">';
       h+='<div style="padding:8px;background:var(--bg);border-radius:6px"><div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-bottom:2px">Prestige</div><div style="font-size:12px">'+obsRenderStars(p.prestige)+' <span style="font-size:10px;color:var(--text3)">('+p.prestige+'/5)</span></div></div>';
       h+='<div style="padding:8px;background:var(--bg);border-radius:6px"><div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-bottom:2px">Competition</div><div style="font-size:12px">'+obsRenderStars(p.competitiveness)+' <span style="font-size:10px;color:var(--text3)">('+p.competitiveness+'/5)</span></div></div>';
@@ -18476,6 +18511,26 @@ function obsRenderCard(p,expanded,isTrial){
       if(p.applicationUrl)h+='<a href="'+p.applicationUrl+'" target="_blank" rel="noopener" style="flex:1;display:block;text-align:center;padding:10px;background:var(--accent);color:var(--bg);border-radius:8px;font-size:12px;font-weight:600;text-decoration:none">Apply / Learn More →</a>';
       h+='<button onclick="event.stopPropagation();obsAddCompare('+p.id+')" style="padding:10px 14px;background:var(--bg);border:1px solid var(--border);border-radius:8px;font-size:12px;cursor:pointer;color:var(--text)">⚖️ Compare</button>';
       h+='</div>';
+      // Similar Programs
+      var similar=obsFindSimilar(p,3);
+      if(similar.length>0){
+        h+='<div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border)">';
+        h+='<div style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Similar Programs You May Like</div>';
+        h+='<div style="display:flex;gap:8px;overflow-x:auto;padding-bottom:4px">';
+        similar.forEach(function(sp){
+          var sRoi=obsCalcROI(sp);
+          var sRoiColor=sRoi>=70?'#22c55e':sRoi>=50?'var(--accent)':'#ef4444';
+          var sCost=sp.cost===0?'Free':'$'+sp.cost;
+          h+='<div onclick="event.stopPropagation();_obsExpanded={};_obsExpanded['+sp.id+']=true;obsRender();setTimeout(function(){var el=document.querySelector(\'[onclick*=obsToggleCard\\\\('+sp.id+'\\\\)]\');if(el)el.scrollIntoView({behavior:\'smooth\',block:\'center\'})},100)" style="min-width:150px;padding:10px;background:var(--bg);border:1px solid var(--border);border-radius:8px;cursor:pointer;flex-shrink:0;transition:border-color .2s" onmouseenter="this.style.borderColor=\'rgba(200,168,124,.5)\'" onmouseleave="this.style.borderColor=\'var(--border)\'">';
+          h+='<div style="font-size:11px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+sp.inst+'</div>';
+          h+='<div style="font-size:10px;color:var(--text3)">'+sp.city+', '+sp.state+'</div>';
+          h+='<div style="display:flex;justify-content:space-between;margin-top:4px">';
+          h+='<span style="font-size:10px;color:'+sRoiColor+';font-weight:600">ROI: '+sRoi+'</span>';
+          h+='<span style="font-size:10px;color:var(--text3)">'+sCost+'</span>';
+          h+='</div></div>';
+        });
+        h+='</div></div>';
+      }
       h+='<div style="margin-top:8px;font-size:9px;color:var(--text3);text-align:right">Last verified: '+p.lastVerified+' · Confirm details with program before applying</div>';
       h+='</div>';
     }
@@ -18485,6 +18540,120 @@ function obsRenderCard(p,expanded,isTrial){
 }
 
 function obsToggleCard(id){_obsExpanded[id]=!_obsExpanded[id];obsRender()}
+
+function obsCopyEmail(btnEl,templateId){
+  var el=document.getElementById(templateId);
+  if(!el)return;
+  var text=el.innerText||el.textContent;
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(function(){
+      btnEl.textContent='✓ Copied!';btnEl.style.color='var(--green)';
+      setTimeout(function(){btnEl.textContent='📋 Copy to Clipboard';btnEl.style.color='var(--accent)'},2000);
+    }).catch(function(){notify('Could not copy. Try selecting the text manually.',1)});
+  }else{
+    // Fallback
+    var ta=document.createElement('textarea');ta.value=text;ta.style.position='fixed';ta.style.left='-9999px';
+    document.body.appendChild(ta);ta.select();
+    try{document.execCommand('copy');btnEl.textContent='✓ Copied!';btnEl.style.color='var(--green)';
+      setTimeout(function(){btnEl.textContent='📋 Copy to Clipboard';btnEl.style.color='var(--accent)'},2000);
+    }catch(e){notify('Could not copy.',1)}
+    document.body.removeChild(ta);
+  }
+}
+
+var OBS_TRIAL_SHORTLIST_LIMIT=2;
+
+function obsGetShortlist(){
+  if(!U)return [];
+  if(!U.obsShortlist)U.obsShortlist=[];
+  return U.obsShortlist;
+}
+
+function obsToggleFav(id,event){
+  if(event)event.stopPropagation();
+  if(!U)return;
+  var list=obsGetShortlist();
+  var idx=list.indexOf(id);
+  var isTrial=U&&U.isTrial&&U.tier!=='admin';
+  if(idx>=0){
+    list.splice(idx,1);
+  }else{
+    if(isTrial&&list.length>=OBS_TRIAL_SHORTLIST_LIMIT){
+      notify('Trial limit: '+OBS_TRIAL_SHORTLIST_LIMIT+' saved programs. Subscribe to save unlimited.',1);return;
+    }
+    list.push(id);
+  }
+  U.obsShortlist=list;
+  localStorage.setItem('hw_session',JSON.stringify(U));
+  // Sync to Supabase session_data
+  if(typeof _supaClient!=='undefined'&&_supaClient&&U.email){
+    _supaClient.from('profiles').select('session_data').eq('email',U.email).limit(1).then(function(res){
+      if(!res.error&&res.data&&res.data[0]){
+        var sd=res.data[0].session_data||{};if(typeof sd==='string')sd=JSON.parse(sd);
+        sd.obsShortlist=list;
+        _supaClient.from('profiles').update({session_data:sd}).eq('email',U.email).catch(function(){});
+      }
+    });
+  }
+  obsRender();
+  obsRenderShortlistBar();
+}
+
+function obsIsFav(id){return obsGetShortlist().indexOf(id)>=0}
+
+function obsFindSimilar(program,count){
+  // Score similarity based on shared specialties, region, cost range, IMG friendliness
+  var scored=OBS_PROGRAMS.filter(function(p){return p.id!==program.id}).map(function(p){
+    var score=0;
+    // Shared specialties (most important)
+    var shared=program.specs.filter(function(s){return p.specs.indexOf(s)>=0}).length;
+    score+=shared*10;
+    // Same region
+    if(p.region===program.region)score+=5;
+    // Similar cost
+    var costDiff=Math.abs(p.cost-program.cost);
+    if(costDiff===0)score+=8;
+    else if(costDiff<=500)score+=4;
+    // Similar IMG friendliness
+    if(Math.abs(p.imgFriendly-program.imgFriendly)<=1)score+=4;
+    // Similar ROI
+    var roiDiff=Math.abs(obsCalcROI(p)-obsCalcROI(program));
+    if(roiDiff<=10)score+=3;
+    // Similar hands-on level
+    if(Math.abs(p.handsOn-program.handsOn)<=1)score+=3;
+    // Bonus: if both are pipeline or both are prestige
+    if(p.prestige>=4&&program.prestige>=4)score+=3;
+    if(p.tags.indexOf('pipeline')>=0&&program.tags.indexOf('pipeline')>=0)score+=3;
+    return{program:p,score:score};
+  }).sort(function(a,b){return b.score-a.score});
+  return scored.slice(0,count||3).map(function(s){return s.program});
+}
+
+function obsRenderShortlistBar(){
+  var list=obsGetShortlist();
+  var bar=document.getElementById('obs-shortlist-bar');
+  if(!bar)return;
+  if(list.length===0){bar.style.display='none';return}
+  bar.style.display='';
+  var programs=list.map(function(id){return OBS_PROGRAMS.find(function(p){return p.id===id})}).filter(Boolean);
+  var isTrial=U&&U.isTrial&&U.tier!=='admin';
+  var h='<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><span style="font-size:14px">⭐</span><span style="font-size:11px;font-weight:600;color:var(--accent)">Your Shortlist ('+list.length+')</span>';
+  if(isTrial)h+='<span style="font-size:9px;color:var(--text3)">'+list.length+'/'+OBS_TRIAL_SHORTLIST_LIMIT+' trial limit</span>';
+  h+='</div>';
+  h+='<div style="display:flex;gap:8px;overflow-x:auto;padding-bottom:4px">';
+  programs.forEach(function(p){
+    var roi=obsCalcROI(p);
+    h+='<div style="min-width:160px;padding:10px;background:var(--bg);border:1px solid rgba(198,168,94,.25);border-radius:8px;flex-shrink:0;cursor:pointer" onclick="obsToggleCard('+p.id+')">';
+    h+='<div style="font-size:11px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+p.inst+'</div>';
+    h+='<div style="font-size:10px;color:var(--text3)">'+p.city+', '+p.state+'</div>';
+    h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px">';
+    h+='<span style="font-size:10px;color:'+(roi>=70?'#22c55e':'var(--accent)')+';font-weight:600">ROI: '+roi+'</span>';
+    h+='<button onclick="event.stopPropagation();obsToggleFav('+p.id+')" style="font-size:12px;background:none;border:none;cursor:pointer;padding:2px" title="Remove from shortlist">✕</button>';
+    h+='</div></div>';
+  });
+  h+='</div>';
+  bar.innerHTML=h;
+}
 
 function obsFilter(){
   var search=(document.getElementById('obs-search').value||'').toLowerCase();
@@ -18562,6 +18731,7 @@ function obsRender(){
     h+='</div></div>';
   }
   el.innerHTML=h;
+  obsRenderShortlistBar();
 }
 
 function obsAddCompare(id){
@@ -18779,8 +18949,8 @@ function obsPlanBuild(){
 
   // Initial outreach template
   h+='<div style="padding:12px;background:var(--bg2);border-radius:8px;margin-bottom:10px;border-left:3px solid var(--accent)">';
-  h+='<div style="font-size:10px;font-weight:600;color:var(--accent);margin-bottom:6px">INITIAL APPLICATION EMAIL</div>';
-  h+='<div style="font-size:12px;color:var(--text2);line-height:1.7;font-family:monospace;padding:10px;background:var(--bg3);border-radius:6px">';
+  h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><div style="font-size:10px;font-weight:600;color:var(--accent)">INITIAL APPLICATION EMAIL</div><button onclick="obsCopyEmail(this,\'obs-email-initial\')" style="font-size:10px;color:var(--accent);background:none;border:1px solid rgba(198,168,94,.25);border-radius:5px;padding:3px 10px;cursor:pointer;transition:all .2s">📋 Copy to Clipboard</button></div>';
+  h+='<div id="obs-email-initial" style="font-size:12px;color:var(--text2);line-height:1.7;font-family:monospace;padding:10px;background:var(--bg3);border-radius:6px">';
   h+='Subject: '+(OBS_SPEC_LABELS[spec]||spec)+' Observership Inquiry \u2014 [Your Name], [Your Background]<br><br>';
   h+='Dear Dr. [Program Director/Coordinator Name],<br><br>';
   h+='I am writing to express my interest in the '+(OBS_SPEC_LABELS[spec]||spec)+' observership program at [Institution]. I am a [medical graduate/resident] from [Institution/Country] with a particular interest in [specific aspect of the specialty].<br><br>';
@@ -18793,8 +18963,8 @@ function obsPlanBuild(){
 
   // Follow-up template
   h+='<div style="padding:12px;background:var(--bg2);border-radius:8px;margin-bottom:10px;border-left:3px solid var(--accent)">';
-  h+='<div style="font-size:10px;font-weight:600;color:var(--accent);margin-bottom:6px">FOLLOW-UP EMAIL (7-10 days later)</div>';
-  h+='<div style="font-size:12px;color:var(--text2);line-height:1.7;font-family:monospace;padding:10px;background:var(--bg3);border-radius:6px">';
+  h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><div style="font-size:10px;font-weight:600;color:var(--accent)">FOLLOW-UP EMAIL (7-10 days later)</div><button onclick="obsCopyEmail(this,\'obs-email-followup\')" style="font-size:10px;color:var(--accent);background:none;border:1px solid rgba(198,168,94,.25);border-radius:5px;padding:3px 10px;cursor:pointer;transition:all .2s">📋 Copy to Clipboard</button></div>';
+  h+='<div id="obs-email-followup" style="font-size:12px;color:var(--text2);line-height:1.7;font-family:monospace;padding:10px;background:var(--bg3);border-radius:6px">';
   h+='Subject: Re: '+(OBS_SPEC_LABELS[spec]||spec)+' Observership Inquiry \u2014 [Your Name]<br><br>';
   h+='Dear [Name],<br><br>';
   h+='I wanted to follow up on my previous email regarding the observership program. I remain very interested in [Institution\u2019s program] and would welcome the opportunity to contribute to [specific project or clinical area].<br><br>';

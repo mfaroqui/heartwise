@@ -7787,7 +7787,7 @@ function renderVault(){
 var TRIAL_TOOLS={
   full:['v3','v6','v14','v13'],
   partial:['v1','v15','v11'],
-  locked:['v4','v5','v7','v8','v9','v10','v12','v16','v17']
+  locked:['v4','v5','v7','v8','v9','v10','v12','v16']
 };
 function getTrialAccess(id){
   if(!U||!U.isTrial)return 'full';
@@ -18270,6 +18270,27 @@ function obsInit(){
   var specSel=document.getElementById('obs-f-spec');
   var planSpec=document.getElementById('obs-p-spec');
   if(!specSel)return;
+  // Trial banner
+  var isTrial=U&&U.isTrial&&U.tier!=='admin';
+  var existingBanner=document.getElementById('obs-trial-banner');
+  if(existingBanner)existingBanner.remove();
+  if(isTrial){
+    var bannerEl=document.createElement('div');
+    bannerEl.id='obs-trial-banner';
+    bannerEl.style.cssText='padding:12px 16px;background:linear-gradient(135deg,rgba(198,168,94,.1),rgba(198,168,94,.05));border:1px solid rgba(198,168,94,.2);border-radius:10px;margin-bottom:14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap';
+    bannerEl.innerHTML='<span style="font-size:16px">✦</span><div style="flex:1;min-width:200px"><div style="font-size:12px;font-weight:600;color:var(--accent)">Trial Preview — Showing Top 5 Results</div><div style="font-size:11px;color:var(--text3);margin-top:2px">Subscribe to unlock all '+OBS_PROGRAMS.length+' programs, comparison tools, strategy planner, and email templates.</div></div><button onclick="closeModal(\'modal-q\');setTimeout(function(){navTo(\'scr-profile\');showUpgrade()},300)" style="padding:8px 18px;background:var(--accent);color:#1C1A17;border:none;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;flex-shrink:0">Unlock Full Access</button>';
+    var container=specSel.closest('.modal')||specSel.parentElement.parentElement.parentElement;
+    var tabBar=document.getElementById('obs-tab-find');
+    if(tabBar&&tabBar.parentElement){tabBar.parentElement.parentElement.insertBefore(bannerEl,tabBar.parentElement)}
+    else if(container&&container.firstChild){container.insertBefore(bannerEl,container.firstChild)}
+  }
+  // Add trial lock indicators to Compare and Plan tabs
+  if(isTrial){
+    var cmpTab=document.getElementById('obs-tab-compare');
+    var planTab=document.getElementById('obs-tab-plan');
+    if(cmpTab&&cmpTab.textContent.indexOf('🔒')<0)cmpTab.innerHTML='🔒 '+cmpTab.textContent;
+    if(planTab&&planTab.textContent.indexOf('🔒')<0)planTab.innerHTML='🔒 '+planTab.textContent;
+  }
   var allSpecs={};
   OBS_PROGRAMS.forEach(function(p){p.specs.forEach(function(s){allSpecs[s]=OBS_SPEC_LABELS[s]||s})});
   var sorted=Object.keys(allSpecs).sort(function(a,b){return allSpecs[a].localeCompare(allSpecs[b])});
@@ -18313,6 +18334,31 @@ function obsInit(){
 }
 
 function obsTab(tab){
+  var isTrial=U&&U.isTrial&&U.tier!=='admin';
+  if(isTrial&&(tab==='plan'||tab==='compare')){
+    var lockEl=document.getElementById('obs-results');
+    if(lockEl){
+      var lockMsg='<div style="text-align:center;padding:50px 24px">';
+      lockMsg+='<div style="font-size:36px;margin-bottom:12px">'+(tab==='compare'?'⚖️':'🎯')+'</div>';
+      lockMsg+='<div style="font-size:16px;font-weight:600;color:var(--text);font-family:var(--font-serif);margin-bottom:8px">'+(tab==='compare'?'Compare Programs Side-by-Side':'Personalized Strategy Plan')+'</div>';
+      lockMsg+='<div style="font-size:12px;color:var(--text3);line-height:1.6;max-width:320px;margin:0 auto 16px">'+(tab==='compare'?'Stack up to 3 programs across 10 metrics — ROI, cost, IMG friendliness, LOR potential, visa support, and more.':'Get a custom observership strategy with ranked programs, email templates, timeline, and budget — built for your profile.')+'</div>';
+      lockMsg+='<button onclick="closeModal(\'modal-q\');setTimeout(function(){navTo(\'scr-profile\');showUpgrade()},300)" style="padding:12px 28px;background:var(--accent);color:#1C1A17;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer">Subscribe to Unlock — $39/mo</button>';
+      lockMsg+='<div style="font-size:10px;color:var(--text3);margin-top:8px">Available with Core or Mentorship access</div>';
+      lockMsg+='</div>';
+      // Show lock in the appropriate panel
+      var panel=document.getElementById('obs-'+tab);
+      if(panel){
+        ['find','plan','compare'].forEach(function(t){
+          var el=document.getElementById('obs-'+t);
+          var btn=document.getElementById('obs-tab-'+t);
+          if(el)el.style.display=t===tab?'':'none';
+          if(btn){btn.style.background=t===tab?'var(--accent)':'none';btn.style.color=t===tab?'var(--bg)':'var(--accent)'}
+        });
+        panel.innerHTML=lockMsg;
+      }
+    }
+    return;
+  }
   ['find','plan','compare'].forEach(function(t){
     var el=document.getElementById('obs-'+t);
     var btn=document.getElementById('obs-tab-'+t);
@@ -18349,7 +18395,7 @@ function obsRenderTag(text,color){
   return '<span style="display:inline-block;font-size:9px;padding:2px 8px;border-radius:12px;background:'+bg+';color:'+tc+';font-weight:600;margin:2px;white-space:nowrap">'+text+'</span>';
 }
 
-function obsRenderCard(p,expanded){
+function obsRenderCard(p,expanded,isTrial){
   var roi=obsCalcROI(p);
   var roiColor=roi>=70?'#22c55e':roi>=50?'var(--accent)':'#ef4444';
   var costDisplay=p.cost===0?'<span style="color:#22c55e;font-weight:700">FREE</span>':'$'+p.cost.toLocaleString()+(p.duration.indexOf('month')>=0?'/mo':'');
@@ -18379,30 +18425,60 @@ function obsRenderCard(p,expanded){
   h+='</div>';
 
   if(expanded){
-    h+='<div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border)" onclick="event.stopPropagation()">';
-    h+='<div style="background:rgba(200,168,124,.06);padding:10px;border-radius:8px;margin-bottom:10px;border-left:3px solid var(--accent)">';
-    h+='<div style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Match intelligence</div>';
-    h+='<div style="font-size:12px;color:var(--text2);line-height:1.6">'+p.matchIntel+'</div></div>';
-    h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">';
-    h+='<div style="padding:8px;background:var(--bg);border-radius:6px"><div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-bottom:2px">Prestige</div><div style="font-size:12px">'+obsRenderStars(p.prestige)+' <span style="font-size:10px;color:var(--text3)">('+p.prestige+'/5)</span></div></div>';
-    h+='<div style="padding:8px;background:var(--bg);border-radius:6px"><div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-bottom:2px">Competition</div><div style="font-size:12px">'+obsRenderStars(p.competitiveness)+' <span style="font-size:10px;color:var(--text3)">('+p.competitiveness+'/5)</span></div></div>';
-    h+='<div style="padding:8px;background:var(--bg);border-radius:6px"><div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-bottom:2px">Hands-On</div><div style="font-size:12px;color:var(--text2)">'+p.handsOnNote+'</div></div>';
-    h+='<div style="padding:8px;background:var(--bg);border-radius:6px"><div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-bottom:2px">LOR Potential</div><div style="font-size:12px;color:var(--text2)">'+p.lorNote+'</div></div></div>';
-    h+='<div style="padding:8px;background:var(--bg);border-radius:6px;margin-bottom:10px"><div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-bottom:2px">Visa</div><div style="font-size:12px;color:var(--text2)">'+(p.visaHelp?'✅ ':'')+p.visaNote+'</div></div>';
-    h+='<div style="padding:8px;background:var(--bg);border-radius:6px;margin-bottom:10px"><div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-bottom:2px">Insider tips</div><div style="font-size:12px;color:var(--text2);line-height:1.5">'+p.tips+'</div></div>';
-    h+='<div style="margin-bottom:10px"><div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-bottom:4px">Specialties</div>';
-    p.specs.forEach(function(s){h+='<span style="display:inline-block;font-size:10px;padding:2px 8px;border-radius:12px;background:var(--bg);color:var(--text2);margin:2px;border:1px solid var(--border)">'+(OBS_SPEC_LABELS[s]||s)+'</span>'});
-    h+='</div>';
-    h+='<div style="margin-bottom:10px"><div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-bottom:4px">Requirements</div>';
-    h+='<ul style="margin:0;padding-left:16px;font-size:11px;color:var(--text2);line-height:1.6">';
-    p.requirements.forEach(function(r){h+='<li>'+r+'</li>'});
-    h+='</ul></div>';
-    h+='<div style="display:flex;gap:8px;margin-top:10px">';
-    if(p.applicationUrl)h+='<a href="'+p.applicationUrl+'" target="_blank" rel="noopener" style="flex:1;display:block;text-align:center;padding:10px;background:var(--accent);color:var(--bg);border-radius:8px;font-size:12px;font-weight:600;text-decoration:none">Apply / Learn More →</a>';
-    h+='<button onclick="event.stopPropagation();obsAddCompare('+p.id+')" style="padding:10px 14px;background:var(--bg);border:1px solid var(--border);border-radius:8px;font-size:12px;cursor:pointer;color:var(--text)">⚖️ Compare</button>';
-    h+='</div>';
-    h+='<div style="margin-top:8px;font-size:9px;color:var(--text3);text-align:right">Last verified: '+p.lastVerified+' · Confirm details with program before applying</div>';
-    h+='</div>';
+    if(isTrial){
+      // Trial users: show teaser of expanded content, blur the valuable parts
+      h+='<div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border)" onclick="event.stopPropagation()">';
+      // Match intel — show first line, blur rest
+      h+='<div style="background:rgba(200,168,124,.06);padding:10px;border-radius:8px;margin-bottom:10px;border-left:3px solid var(--accent)">';
+      h+='<div style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Match intelligence</div>';
+      var firstSentence=p.matchIntel.split('.')[0]+'.';
+      h+='<div style="font-size:12px;color:var(--text2);line-height:1.6">'+firstSentence+'</div>';
+      h+='<div style="filter:blur(5px);pointer-events:none;user-select:none;font-size:12px;color:var(--text2);line-height:1.6;margin-top:4px">'+p.matchIntel.substring(firstSentence.length)+'</div>';
+      h+='</div>';
+      // Blurred details grid
+      h+='<div style="position:relative">';
+      h+='<div style="filter:blur(5px);pointer-events:none;user-select:none;opacity:.5">';
+      h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">';
+      h+='<div style="padding:8px;background:var(--bg);border-radius:6px"><div style="font-size:9px;color:var(--text3)">Prestige</div><div style="font-size:12px">'+obsRenderStars(p.prestige)+'</div></div>';
+      h+='<div style="padding:8px;background:var(--bg);border-radius:6px"><div style="font-size:9px;color:var(--text3)">Competition</div><div style="font-size:12px">'+obsRenderStars(p.competitiveness)+'</div></div>';
+      h+='<div style="padding:8px;background:var(--bg);border-radius:6px"><div style="font-size:9px;color:var(--text3)">Insider tips</div><div style="font-size:12px;color:var(--text2)">'+p.tips.substring(0,80)+'...</div></div>';
+      h+='<div style="padding:8px;background:var(--bg);border-radius:6px"><div style="font-size:9px;color:var(--text3)">Requirements</div><div style="font-size:12px;color:var(--text2)">'+p.requirements[0]+'</div></div>';
+      h+='</div></div>';
+      // Unlock overlay
+      h+='<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(28,26,23,.7);border-radius:8px">';
+      h+='<div style="text-align:center;padding:12px">';
+      h+='<div style="font-size:11px;font-weight:600;color:var(--accent);margin-bottom:4px">🔒 Full Details Locked</div>';
+      h+='<div style="font-size:10px;color:rgba(237,235,231,.6);margin-bottom:8px">Insider tips, requirements, application links & email templates</div>';
+      h+='<button onclick="event.stopPropagation();closeModal(\'modal-q\');setTimeout(function(){navTo(\'scr-profile\');showUpgrade()},300)" style="padding:8px 20px;background:var(--accent);color:#1C1A17;border:none;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer">Subscribe to Unlock</button>';
+      h+='</div></div></div>';
+      h+='</div>';
+    }else{
+      // Full expanded view for paid users
+      h+='<div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border)" onclick="event.stopPropagation()">';
+      h+='<div style="background:rgba(200,168,124,.06);padding:10px;border-radius:8px;margin-bottom:10px;border-left:3px solid var(--accent)">';
+      h+='<div style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Match intelligence</div>';
+      h+='<div style="font-size:12px;color:var(--text2);line-height:1.6">'+p.matchIntel+'</div></div>';
+      h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">';
+      h+='<div style="padding:8px;background:var(--bg);border-radius:6px"><div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-bottom:2px">Prestige</div><div style="font-size:12px">'+obsRenderStars(p.prestige)+' <span style="font-size:10px;color:var(--text3)">('+p.prestige+'/5)</span></div></div>';
+      h+='<div style="padding:8px;background:var(--bg);border-radius:6px"><div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-bottom:2px">Competition</div><div style="font-size:12px">'+obsRenderStars(p.competitiveness)+' <span style="font-size:10px;color:var(--text3)">('+p.competitiveness+'/5)</span></div></div>';
+      h+='<div style="padding:8px;background:var(--bg);border-radius:6px"><div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-bottom:2px">Hands-On</div><div style="font-size:12px;color:var(--text2)">'+p.handsOnNote+'</div></div>';
+      h+='<div style="padding:8px;background:var(--bg);border-radius:6px"><div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-bottom:2px">LOR Potential</div><div style="font-size:12px;color:var(--text2)">'+p.lorNote+'</div></div></div>';
+      h+='<div style="padding:8px;background:var(--bg);border-radius:6px;margin-bottom:10px"><div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-bottom:2px">Visa</div><div style="font-size:12px;color:var(--text2)">'+(p.visaHelp?'✅ ':'')+p.visaNote+'</div></div>';
+      h+='<div style="padding:8px;background:var(--bg);border-radius:6px;margin-bottom:10px"><div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-bottom:2px">Insider tips</div><div style="font-size:12px;color:var(--text2);line-height:1.5">'+p.tips+'</div></div>';
+      h+='<div style="margin-bottom:10px"><div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-bottom:4px">Specialties</div>';
+      p.specs.forEach(function(s){h+='<span style="display:inline-block;font-size:10px;padding:2px 8px;border-radius:12px;background:var(--bg);color:var(--text2);margin:2px;border:1px solid var(--border)">'+(OBS_SPEC_LABELS[s]||s)+'</span>'});
+      h+='</div>';
+      h+='<div style="margin-bottom:10px"><div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-bottom:4px">Requirements</div>';
+      h+='<ul style="margin:0;padding-left:16px;font-size:11px;color:var(--text2);line-height:1.6">';
+      p.requirements.forEach(function(r){h+='<li>'+r+'</li>'});
+      h+='</ul></div>';
+      h+='<div style="display:flex;gap:8px;margin-top:10px">';
+      if(p.applicationUrl)h+='<a href="'+p.applicationUrl+'" target="_blank" rel="noopener" style="flex:1;display:block;text-align:center;padding:10px;background:var(--accent);color:var(--bg);border-radius:8px;font-size:12px;font-weight:600;text-decoration:none">Apply / Learn More →</a>';
+      h+='<button onclick="event.stopPropagation();obsAddCompare('+p.id+')" style="padding:10px 14px;background:var(--bg);border:1px solid var(--border);border-radius:8px;font-size:12px;cursor:pointer;color:var(--text)">⚖️ Compare</button>';
+      h+='</div>';
+      h+='<div style="margin-top:8px;font-size:9px;color:var(--text3);text-align:right">Last verified: '+p.lastVerified+' · Confirm details with program before applying</div>';
+      h+='</div>';
+    }
   }
   h+='</div>';
   return h;
@@ -18456,13 +18532,35 @@ function obsRender(){
   var el=document.getElementById('obs-results');
   var countEl=document.getElementById('obs-results-count');
   if(!el)return;
-  countEl.textContent='Showing '+filtered.length+' of '+OBS_PROGRAMS.length+' programs';
-  if(filtered.length===0){
+  var isTrial=U&&U.isTrial&&U.tier!=='admin';
+  var OBS_TRIAL_LIMIT=5;
+  var totalMatches=filtered.length;
+  var hiddenCount=isTrial?Math.max(0,totalMatches-OBS_TRIAL_LIMIT):0;
+  var visiblePrograms=isTrial?filtered.slice(0,OBS_TRIAL_LIMIT):filtered;
+  countEl.textContent=isTrial?'Showing '+visiblePrograms.length+' of '+totalMatches+' matches (trial preview)':'Showing '+totalMatches+' of '+OBS_PROGRAMS.length+' programs';
+  if(totalMatches===0){
     el.innerHTML='<div style="text-align:center;padding:40px 20px;color:var(--text3)"><div style="font-size:32px;margin-bottom:12px"></div><div style="font-size:13px">No programs match your filters. Try broadening your search.</div></div>';
     return;
   }
   var h='';
-  filtered.forEach(function(p){h+=obsRenderCard(p,_obsExpanded[p.id])});
+  visiblePrograms.forEach(function(p){h+=obsRenderCard(p,_obsExpanded[p.id],isTrial)});
+  // Trial wall after visible cards
+  if(isTrial&&hiddenCount>0){
+    h+='<div style="position:relative;margin-top:4px">';
+    // Blurred fake cards teaser
+    h+='<div style="filter:blur(6px);pointer-events:none;user-select:none;opacity:.45">';
+    var peekPrograms=filtered.slice(OBS_TRIAL_LIMIT,OBS_TRIAL_LIMIT+3);
+    peekPrograms.forEach(function(p){h+=obsRenderCard(p,false,false)});
+    h+='</div>';
+    // Overlay CTA
+    h+='<div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:30px 20px;background:linear-gradient(180deg,rgba(28,26,23,.6),rgba(28,26,23,.95));border-radius:12px">';
+    h+='<div style="font-size:28px;margin-bottom:10px">🔍</div>';
+    h+='<div style="font-size:16px;font-weight:600;color:var(--accent);font-family:var(--font-serif);margin-bottom:6px">'+hiddenCount+' More Program'+(hiddenCount!==1?'s':'')+' Match Your Filters</div>';
+    h+='<div style="font-size:12px;color:rgba(237,235,231,.7);line-height:1.6;max-width:340px;margin-bottom:16px">Subscribe to unlock the full database — all '+OBS_PROGRAMS.length+' programs with match intelligence, email templates, comparison tools, and personalized strategy plans.</div>';
+    h+='<button onclick="closeModal(\'modal-q\');setTimeout(function(){navTo(\'scr-profile\');showUpgrade()},300)" style="padding:12px 32px;background:var(--accent);color:#1C1A17;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer">Unlock Full Database — $39/mo</button>';
+    h+='<div style="font-size:10px;color:rgba(237,235,231,.4);margin-top:8px">Cancel anytime</div>';
+    h+='</div></div>';
+  }
   el.innerHTML=h;
 }
 

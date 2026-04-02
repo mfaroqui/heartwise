@@ -16936,23 +16936,35 @@ function admRenderDashboard(c){
     if(unread.length)h+='<div onclick="curAdminTab=\'feedback\';admRender()" style="font-size:13px;color:#5ba8d0;cursor:pointer">💬 '+unread.length+' unread message'+(unread.length>1?'s':'')+' →</div>';
     h+='</div>';
   }
-  var co=users.filter(function(u){return u.tier==='core'}).length;
+  var trActive=users.filter(function(u){var isTr=u.is_trial||u.isTrial;var te=u.trial_end||u.trialEnd;return isTr&&te&&new Date(te)>new Date()}).length;
+  var trExpired=users.filter(function(u){var isTr=u.is_trial||u.isTrial;var te=u.trial_end||u.trialEnd;return (isTr&&te&&new Date(te)<=new Date())||(!isTr&&te&&(u.tier||'free')==='free')}).length;
+  var paidCore=users.filter(function(u){return u.tier==='core'&&!u.is_trial&&!u.isTrial}).length;
   var el=users.filter(function(u){return u.tier==='elite'}).length;
-  var paidCore=users.filter(function(u){return u.tier==='core'&&u.paid_at&&!u.is_trial}).length;
-  var paidElite=users.filter(function(u){return u.tier==='elite'&&u.paid_at&&!u.is_trial}).length;
-  var mrr=paidCore*39+paidElite*199;
-  h+='<div class="adm-card"><div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:10px">Subscribers</div>';
-  h+='<div style="display:flex;gap:20px;font-size:13px;color:var(--text2)">';
-  h+='<div>Core: <strong>'+co+'</strong> ($39/mo)</div>';
-  h+='<div>Mentorship: <strong>'+el+'</strong> ($199/mo)</div></div>';
+  var freeOnly=users.filter(function(u){var isTr=u.is_trial||u.isTrial;var te=u.trial_end||u.trialEnd;return (u.tier||'free')==='free'&&!te}).length;
+  var mrr=paidCore*39+el*199;
+  h+='<div class="adm-card"><div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:10px">User Breakdown</div>';
+  h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px 20px;font-size:13px;color:var(--text2)">';
+  h+='<div>🟡 Trial (Active): <strong>'+trActive+'</strong></div>';
+  h+='<div>🔴 Trial (Expired): <strong>'+trExpired+'</strong></div>';
+  h+='<div>🟢 Core (Paid): <strong>'+paidCore+'</strong></div>';
+  h+='<div>🟢 Mentorship: <strong>'+el+'</strong></div>';
+  h+='<div>⚪ Free: <strong>'+freeOnly+'</strong></div>';
+  h+='<div><strong>Total: '+users.length+'</strong></div></div>';
   h+='<div style="font-size:11px;color:var(--text3);margin-top:8px">MRR: <strong style="color:var(--accent)">$'+mrr.toLocaleString()+'</strong>/mo · ARR: <strong>$'+(mrr*12).toLocaleString()+'</strong>/yr</div></div>';
 
   h+='<div style="font-size:12px;font-weight:600;color:var(--text);margin:16px 0 8px">Recent Signups</div>';
   users.slice(0,5).forEach(function(u){
     var d=u.created_at||u.signup_date||'';if(d)d=new Date(d).toLocaleDateString('en-US',{month:'short',day:'numeric'});
+    var isTr=u.is_trial||u.isTrial;var te=u.trial_end||u.trialEnd;var trialActive=isTr&&te&&new Date(te)>new Date();var trialExpired=(isTr&&te&&new Date(te)<=new Date())||(!isTr&&te&&(u.tier||'free')==='free');
+    var tagLabel,tagBg,tagColor;
+    if(trialActive){tagLabel='TRIAL';tagBg='rgba(198,168,94,.12)';tagColor='var(--accent)'}
+    else if(trialExpired){tagLabel='TRIAL EXPIRED';tagBg='rgba(196,77,86,.1)';tagColor='var(--red)'}
+    else if(u.tier==='core'&&!isTr){tagLabel='CORE';tagBg='rgba(92,184,154,.12)';tagColor='var(--green)'}
+    else if(u.tier==='elite'){tagLabel='MENTORSHIP';tagBg='rgba(92,184,154,.12)';tagColor='var(--green)'}
+    else{tagLabel='FREE';tagBg='var(--bg3)';tagColor='var(--text3)'}
     h+='<div class="adm-card" style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;cursor:pointer" onclick="admShowUser(\''+u.id+'\')">';
     h+='<div><span style="font-size:13px;font-weight:600;color:var(--text)">'+(u.name||'Unknown')+'</span> <span style="font-size:11px;color:var(--text3)">'+(u.email||'')+'</span></div>';
-    h+='<div style="display:flex;align-items:center;gap:8px"><span class="tag" style="font-size:10px">'+_tierLabel(u.tier)+'</span><span style="font-size:10px;color:var(--text3)">'+d+'</span></div></div>';
+    h+='<div style="display:flex;align-items:center;gap:8px"><span style="font-size:10px;padding:2px 8px;border-radius:4px;background:'+tagBg+';color:'+tagColor+';font-weight:600">'+tagLabel+'</span><span style="font-size:10px;color:var(--text3)">'+d+'</span></div></div>';
   });
   c.innerHTML=h;
 }
@@ -16962,12 +16974,21 @@ function admRenderUsers(c){
   if(_admSelectedUser)return admRenderUserDetail(c);
   var users=admGetUsers();
   var h='<div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">';
-  h+='<select class="adm-filter" onchange="_admUserFilter.plan=this.value;admRender()"><option value="">All Plans</option><option value="free">Free</option><option value="core">Core</option><option value="elite">Mentorship</option></select>';
+  h+='<select class="adm-filter" onchange="_admUserFilter.plan=this.value;admRender()"><option value="">All Plans</option><option value="free">Free</option><option value="trial_active">Trial (Active)</option><option value="trial_expired">Trial (Expired)</option><option value="core">Core (Paid)</option><option value="elite">Mentorship</option><option value="disabled">Disabled</option></select>';
   h+='<select class="adm-filter" onchange="_admUserFilter.stage=this.value;admRender()"><option value="">All Stages</option><option value="student">Student</option><option value="resident">Resident</option><option value="fellow">Fellow</option><option value="attending">Attending</option></select>';
   h+='<input class="adm-filter" type="text" placeholder="Search name/email..." oninput="_admUserFilter.search=this.value;admRender()" style="flex:1;min-width:150px" value="'+(_admUserFilter.search||'')+'">';
   h+='</div>';
   var filtered=users.filter(function(u){
-    if(_admUserFilter.plan&&(u.tier||'free')!==_admUserFilter.plan)return false;
+    if(_admUserFilter.plan){
+      var fp=_admUserFilter.plan;
+      var isTr=u.is_trial||u.isTrial;var te=u.trial_end||u.trialEnd;var trialActive=isTr&&te&&new Date(te)>new Date();var trialExpired=(isTr&&te&&new Date(te)<=new Date())||(!isTr&&te&&(u.tier||'free')==='free');
+      if(fp==='trial_active'&&!trialActive)return false;
+      else if(fp==='trial_expired'&&!trialExpired)return false;
+      else if(fp==='core'&&(u.tier!=='core'||isTr))return false;
+      else if(fp==='elite'&&u.tier!=='elite')return false;
+      else if(fp==='free'&&((u.tier||'free')!=='free'||trialExpired))return false;
+      else if(fp==='disabled'&&u.tier!=='disabled')return false;
+    }
     if(_admUserFilter.stage){var s=(u.stage||u.training_stage||(u.profile_data&&u.profile_data.stage)||'').toLowerCase();if(s!==_admUserFilter.stage)return false}
     if(_admUserFilter.search){var q=_admUserFilter.search.toLowerCase();if(!(u.name||'').toLowerCase().includes(q)&&!(u.email||'').toLowerCase().includes(q))return false}
     return true;
@@ -16976,14 +16997,22 @@ function admRenderUsers(c){
   h+='<div style="overflow-x:auto"><table class="adm-table"><thead><tr><th>Name</th><th>Email</th><th>Stage</th><th>Plan</th><th>AI</th><th>Msgs</th><th>Joined</th><th></th></tr></thead><tbody>';
   filtered.forEach(function(u){
     var stage=u.stage||u.training_stage||(u.profile_data&&u.profile_data.stage)||'—';
-    var tierColor=u.tier==='elite'?'var(--green)':u.tier==='core'?'var(--accent)':'var(--text3)';
     var aiUsed=u.ai_used||(u.usage&&u.usage.ai)||0;
     var joined=u.created_at||u.signup_date||'';if(joined)joined=new Date(joined).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'2-digit'});
     var ue=u.email||'';var admMsgs=(_sbMessages||[]).filter(function(m){return m.from_admin&&(m.to_email===ue||m.to_email==='__all__')});var admUnread=admMsgs.filter(function(m){return !m.user_read}).length;var admTotal=admMsgs.length;
     h+='<tr><td><a href="#" onclick="event.preventDefault();admShowUser(\''+u.id+'\')" style="color:var(--accent);text-decoration:none;font-weight:600">'+(u.name||'Unknown')+'</a></td>';
     h+='<td style="font-size:11px">'+ue+'</td><td>'+stage+'</td>';
-    var trialBadge='';if(u.is_trial||u.isTrial){var te=u.trial_end||u.trialEnd;if(te&&new Date(te)>new Date())trialBadge=' <span style="font-size:8px;padding:1px 5px;border-radius:4px;background:rgba(198,168,94,.12);color:var(--accent);font-weight:600">TRIAL</span>';else trialBadge=' <span style="font-size:8px;padding:1px 5px;border-radius:4px;background:rgba(196,77,86,.12);color:var(--red);font-weight:600">EXPIRED</span>'}
-    h+='<td><span style="color:'+tierColor+';font-weight:600">'+_tierLabel(u.tier)+'</span>'+trialBadge+'</td>';
+    // Smart plan label: distinguish trial active, trial expired, paid, free
+    var isTr=u.is_trial||u.isTrial;var te=u.trial_end||u.trialEnd;var trialActive=isTr&&te&&new Date(te)>new Date();var trialExpired=(isTr&&te&&new Date(te)<=new Date())||(!isTr&&te&&(u.tier||'free')==='free');
+    var planLabel,planColor,planBadge='';
+    if(u.tier==='admin'){planLabel='ADMIN';planColor='var(--accent)'}
+    else if(u.tier==='disabled'){planLabel='DISABLED';planColor='var(--red)'}
+    else if(trialActive){var tRem=new Date(te)-new Date();var tHrs=Math.floor(tRem/3600000);planLabel='TRIAL';planColor='var(--accent)';planBadge=' <span style="font-size:8px;padding:1px 5px;border-radius:4px;background:rgba(198,168,94,.12);color:var(--accent);font-weight:600">'+tHrs+'h left</span>'}
+    else if(trialExpired){planLabel='TRIAL EXPIRED';planColor='var(--red)';planBadge=' <span style="font-size:8px;padding:1px 5px;border-radius:4px;background:rgba(196,77,86,.12);color:var(--red);font-weight:600">EXPIRED</span>'}
+    else if(u.tier==='elite'){planLabel='MENTORSHIP';planColor='var(--green)'}
+    else if(u.tier==='core'&&!isTr){planLabel='CORE';planColor='var(--accent)';planBadge=' <span style="font-size:8px;padding:1px 5px;border-radius:4px;background:rgba(92,184,154,.12);color:var(--green);font-weight:600">PAID</span>'}
+    else{planLabel='FREE';planColor='var(--text3)'}
+    h+='<td><span style="color:'+planColor+';font-weight:600">'+planLabel+'</span>'+planBadge+'</td>';
     h+='<td>'+aiUsed+'</td>';
     h+='<td style="font-size:11px">'+(admTotal?admUnread>0?'<span style="color:var(--red);font-weight:600">'+admUnread+' unread</span> / '+admTotal:'<span style="color:var(--green)">✓ '+admTotal+'</span>':'—')+'</td>';
     h+='<td style="font-size:11px">'+joined+'</td>';

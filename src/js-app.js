@@ -18400,7 +18400,7 @@ function obsRenderCard(p,expanded,isTrial){
   var roi=obsCalcROI(p);
   var roiColor=roi>=70?'#22c55e':roi>=50?'var(--accent)':'#ef4444';
   var costDisplay=p.cost===0?'<span style="color:#22c55e;font-weight:700">FREE</span>':'$'+p.cost.toLocaleString()+(p.duration.indexOf('month')>=0?'/mo':'');
-  var h='<div style="padding:14px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;margin-bottom:10px;cursor:pointer;transition:border-color .2s" onclick="obsToggleCard('+p.id+')" onmouseenter="this.style.borderColor=\'rgba(200,168,124,.5)\'" onmouseleave="this.style.borderColor=\'var(--border)\'">';
+  var h='<div data-obs-id="'+p.id+'" style="padding:14px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;margin-bottom:10px;cursor:pointer;transition:border-color .2s" onclick="obsToggleCard('+p.id+')" onmouseenter="this.style.borderColor=\'rgba(200,168,124,.5)\'" onmouseleave="this.style.borderColor=\'var(--border)\'">';
   h+='<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">';
   h+='<div style="flex:1;min-width:0">';
   h+='<div style="font-size:13px;font-weight:600;color:var(--text);line-height:1.3">'+p.inst+'</div>';
@@ -18472,7 +18472,7 @@ function obsRenderCard(p,expanded,isTrial){
         similar.forEach(function(sp){
           var sRoi=obsCalcROI(sp);
           var sRoiColor=sRoi>=70?'#22c55e':sRoi>=50?'var(--accent)':'#ef4444';
-          h+='<div onclick="event.stopPropagation();_obsExpanded={};_obsExpanded['+sp.id+']=true;obsRender();setTimeout(function(){var el=document.querySelector(\'[onclick*=obsToggleCard\\\\('+sp.id+'\\\\)]\');if(el)el.scrollIntoView({behavior:\'smooth\',block:\'center\'})},100)" style="min-width:140px;padding:8px;background:var(--bg);border:1px solid var(--border);border-radius:6px;cursor:pointer;flex-shrink:0">';
+          h+='<div onclick="event.stopPropagation();obsGoToProgram('+sp.id+')" style="min-width:140px;padding:8px;background:var(--bg);border:1px solid var(--border);border-radius:6px;cursor:pointer;flex-shrink:0">';
           h+='<div style="font-size:10px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+sp.inst+'</div>';
           h+='<div style="font-size:9px;color:var(--text3)">'+sp.city+', '+sp.state+'</div>';
           h+='<div style="font-size:9px;color:'+sRoiColor+';font-weight:600;margin-top:3px">ROI: '+sRoi+'</div>';
@@ -18521,7 +18521,7 @@ function obsRenderCard(p,expanded,isTrial){
           var sRoi=obsCalcROI(sp);
           var sRoiColor=sRoi>=70?'#22c55e':sRoi>=50?'var(--accent)':'#ef4444';
           var sCost=sp.cost===0?'Free':'$'+sp.cost;
-          h+='<div onclick="event.stopPropagation();_obsExpanded={};_obsExpanded['+sp.id+']=true;obsRender();setTimeout(function(){var el=document.querySelector(\'[onclick*=obsToggleCard\\\\('+sp.id+'\\\\)]\');if(el)el.scrollIntoView({behavior:\'smooth\',block:\'center\'})},100)" style="min-width:150px;padding:10px;background:var(--bg);border:1px solid var(--border);border-radius:8px;cursor:pointer;flex-shrink:0;transition:border-color .2s" onmouseenter="this.style.borderColor=\'rgba(200,168,124,.5)\'" onmouseleave="this.style.borderColor=\'var(--border)\'">';
+          h+='<div onclick="event.stopPropagation();obsGoToProgram('+sp.id+')" style="min-width:150px;padding:10px;background:var(--bg);border:1px solid var(--border);border-radius:8px;cursor:pointer;flex-shrink:0;transition:border-color .2s" onmouseenter="this.style.borderColor=\'rgba(200,168,124,.5)\'" onmouseleave="this.style.borderColor=\'var(--border)\'">';
           h+='<div style="font-size:11px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+sp.inst+'</div>';
           h+='<div style="font-size:10px;color:var(--text3)">'+sp.city+', '+sp.state+'</div>';
           h+='<div style="display:flex;justify-content:space-between;margin-top:4px">';
@@ -18540,6 +18540,18 @@ function obsRenderCard(p,expanded,isTrial){
 }
 
 function obsToggleCard(id){_obsExpanded[id]=!_obsExpanded[id];obsRender()}
+
+function obsGoToProgram(id){
+  _obsExpanded={};_obsExpanded[id]=true;obsRender();
+  setTimeout(function(){
+    var cards=document.querySelectorAll('#obs-results > div');
+    for(var i=0;i<cards.length;i++){
+      if(cards[i].getAttribute('data-obs-id')==String(id)){
+        cards[i].scrollIntoView({behavior:'smooth',block:'center'});break;
+      }
+    }
+  },100);
+}
 
 function obsCopyEmail(btnEl,templateId){
   var el=document.getElementById(templateId);

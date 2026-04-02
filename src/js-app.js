@@ -7785,7 +7785,7 @@ function renderVault(){
 }
 // ===== 48-HOUR GUIDED ACCESS CONFIG =====
 var TRIAL_TOOLS={
-  full:['v3','v6','v14','v13'],
+  full:['v3','v6','v14','v13','v17'],
   partial:['v1','v15','v11'],
   locked:['v4','v5','v7','v8','v9','v10','v12','v16']
 };

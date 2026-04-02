@@ -10576,6 +10576,7 @@ function admRenderUserDetail(c){
   h+='<button onclick="admExtendTrial(\''+u.id+'\')" style="font-size:12px;padding:8px 14px;border:1px solid var(--border);border-radius:6px;background:var(--bg3);color:var(--text);cursor:pointer">+48h Trial</button>';
   h+='<button onclick="admExpireTrial(\''+u.id+'\')" style="font-size:12px;padding:8px 14px;border:1px solid var(--accent);border-radius:6px;background:rgba(198,168,94,.08);color:var(--accent);cursor:pointer">Expire Trial</button>';
   h+='<button onclick="admDisableUser(\''+u.id+'\')" style="font-size:12px;padding:8px 14px;border:1px solid #c44d56;border-radius:6px;background:rgba(196,77,86,.1);color:#c44d56;cursor:pointer">Disable</button>';
+  h+='<button onclick="admDeleteUser(\''+u.id+'\',\''+((u.email||'').replace(/'/g,"\\'"))+'\')" style="font-size:12px;padding:8px 14px;border:1px solid #c44d56;border-radius:6px;background:#c44d56;color:#fff;cursor:pointer;font-weight:600">🗑 Delete User</button>';
   h+='</div></div>';
 
   // Notes
@@ -10925,6 +10926,32 @@ async function admDisableUser(uid){
   }else{var u=(DB.users||[]).find(function(x){return x.id===uid});if(u){u.tier='disabled';saveDB()}}
   notify('User disabled');admRender();
 }
+async function admDeleteUser(uid,email){
+  if(!confirm('⚠️ PERMANENTLY DELETE this user?\n\nThis will remove their profile, questions, and messages from the database. This cannot be undone.\n\nUser: '+(email||uid)))return;
+  if(!confirm('Are you absolutely sure? Type OK to confirm.'))return;
+  try{
+    if(typeof _supaClient!=='undefined'&&_supaClient&&email){
+      await _supaClient.from('questions').delete().eq('user_email',email);
+      await _supaClient.from('messages').delete().eq('user_email',email);
+      await _supaClient.from('messages').delete().eq('to_email',email);
+      await _supaClient.from('profiles').delete().eq('id',uid);
+      if(_sbProfiles)_sbProfiles=_sbProfiles.filter(function(p){return p.id!==uid});
+      if(_sbQuestions)_sbQuestions=_sbQuestions.filter(function(q){return q.user_email!==email});
+      if(_sbMessages)_sbMessages=_sbMessages.filter(function(m){return m.user_email!==email&&m.to_email!==email});
+    }else{
+      DB.users=(DB.users||[]).filter(function(x){return x.id!==uid});
+      DB.questions=(DB.questions||[]).filter(function(q){return q.userId!==uid&&q.user_id!==uid});
+      saveDB();
+    }
+    _admSelectedUser=null;
+    notify('User deleted permanently');
+    admRender();
+  }catch(e){
+    console.error('admDeleteUser error:',e);
+    notify('Error deleting user: '+e.message,1);
+  }
+}
+
 async function admAddNote(uid){
   var input=document.getElementById('adm-note-'+uid);if(!input||!input.value.trim())return;
   var note={text:input.value.trim(),date:new Date().toISOString()};

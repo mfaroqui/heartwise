@@ -17704,10 +17704,6 @@ function admRenderAnalytics(c){
   var CL={career:'Career',study:'Study',clinical:'Clinical',research:'Research',finance:'Financial',fellowship:'Fellowship',contract:'Contract',productivity:'Productivity'};
   var sorted=Object.entries(cats).sort(function(a,b){return b[1]-a[1]});
   if(sorted.length){var mx=sorted[0][1];sorted.forEach(function(kv){var pct=Math.round(kv[1]/mx*100);h+='<div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--border)"><div style="width:100px;font-size:12px;color:var(--text2)">'+(CL[kv[0]]||kv[0])+'</div><div style="flex:1;height:8px;background:var(--bg3);border-radius:4px;overflow:hidden"><div style="height:100%;width:'+pct+'%;background:var(--accent);border-radius:4px"></div></div><div style="font-size:12px;font-weight:600;color:var(--text);width:30px;text-align:right">'+kv[1]+'</div></div>'})}
-  if(typeof LEV_WORKFLOWS!=='undefined'){
-    h+='<div style="font-size:14px;font-weight:600;color:var(--text);margin:24px 0 12px">Leverage Tools</div>';
-    var lc={};users.forEach(function(u){(u.leverageTried||u.leverage_tried||[]).forEach(function(id){lc[id]=(lc[id]||0)+1})});
-    LEV_WORKFLOWS.forEach(function(wf){var cnt=lc[wf.id]||0;var pct=Math.round(cnt/(users.length||1)*100);h+='<div style="display:flex;align-items:center;gap:12px;padding:6px 0;border-bottom:1px solid var(--border)"><div style="width:20px;font-size:14px">'+wf.icon+'</div><div style="width:130px;font-size:12px;color:var(--text2)">'+wf.title+'</div><div style="flex:1;height:6px;background:var(--bg3);border-radius:3px;overflow:hidden"><div style="height:100%;width:'+pct+'%;background:var(--green)"></div></div><div style="font-size:12px;font-weight:600;width:25px;text-align:right">'+cnt+'</div></div>'})}
   c.innerHTML=h;
 }
 

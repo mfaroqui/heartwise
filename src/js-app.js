@@ -183,10 +183,11 @@ function hwCollapseAll(container){
 
 // ===== HERO SHOWCASE CAROUSEL =====
 (function(){
-  var currentSlide=0, totalSlides=6, timer=null, animated=[];
+  var currentSlide=0, totalSlides=7, timer=null, animated=[];
   var SLIDE_INTERVAL=6000;
   var taglines=[
     '72% of applicants overestimate their competitiveness',
+    'Stop cold-emailing 200 programs. Target the right ones.',
     'The average physician loses $43K on their first contract',
     '68% of physicians say they\'d choose a different specialty',
     'A 2-year delay in financial planning costs $340K+',
@@ -244,6 +245,10 @@ function hwCollapseAll(container){
       });
       setTimeout(function(){document.querySelectorAll('.showcase-slide[data-slide="0"] .sc-tag').forEach(function(t){t.style.opacity='1'})},1200);
     }else if(idx===1){
+      // Observership Database
+      setTimeout(function(){document.querySelectorAll('.obs-row').forEach(function(r){r.style.opacity='1';r.style.transform='translateX(0)'})},100);
+      setTimeout(function(){document.querySelectorAll('.obs-tag').forEach(function(t){t.style.opacity='1'})},600);
+    }else if(idx===2){
       // Contract Review Tool
       var valEl=document.querySelector('.contract-val'),rvuEl=document.querySelector('.contract-rvu');
       var tv=685000,cv=0;
@@ -251,11 +256,11 @@ function hwCollapseAll(container){
       var tr=55,cr=0;
       var ri=setInterval(function(){cr+=1;if(cr>=tr){cr=tr;clearInterval(ri)}if(rvuEl)rvuEl.innerHTML='$'+cr+'<span style="font-size:11px;font-weight:300;color:var(--text3)">/wRVU</span>'},30);
       setTimeout(function(){document.querySelectorAll('.contract-flag').forEach(function(f){f.style.opacity='1';f.style.transform='translateX(0)'})},400);
-    }else if(idx===2){
+    }else if(idx===3){
       // Specialty Fit Assessment
       setTimeout(function(){document.querySelectorAll('.sfa-row').forEach(function(r){r.style.opacity='1';r.style.transform='translateX(0)'})},100);
       setTimeout(function(){document.querySelectorAll('.sfa-tag').forEach(function(t){t.style.opacity='1'})},600);
-    }else if(idx===3){
+    }else if(idx===4){
       // Financial Projection Tool
       var amtEl=document.querySelector('.fin-amount'), diffEl=document.querySelector('.fin-diff');
       var t1=14.2,c1=0;
@@ -266,11 +271,11 @@ function hwCollapseAll(container){
         document.querySelectorAll('.fin-line-base,.fin-line-strat').forEach(function(l){l.style.strokeDashoffset='0'});
         var dot=document.querySelector('.fin-dot');if(dot)dot.style.opacity='1';
       },100);
-    }else if(idx===4){
+    }else if(idx===5){
       // Fellowship Application Planner
       setTimeout(function(){document.querySelectorAll('.fap-step').forEach(function(s){s.style.opacity='1';s.style.transform='translateX(0)'})},100);
       setTimeout(function(){document.querySelectorAll('.fap-tag').forEach(function(t){t.style.opacity='1'})},700);
-    }else if(idx===5){
+    }else if(idx===6){
       // All 15 Tools
       var numEl=document.querySelector('.all17-number');
       if(numEl){numEl.style.opacity='1';numEl.style.transform='scale(1)'}

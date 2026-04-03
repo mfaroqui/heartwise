@@ -11252,6 +11252,7 @@ async function showMyMessages(){
 }
 
 function renderMyMessages(notifs){
+  window._lastNotifs=notifs;
   var typeLabels={feedback_request:'\ud83d\ude4f Feedback Request',announcement:'\ud83d\udce2 Announcement',tip:'\ud83d\udca1 Tip',welcome:'\ud83d\udc4b Welcome',followup:'\ud83d\udd04 Follow-up',notification:'\ud83d\udce9 Notification'};
   var h='<div style="margin-bottom:20px"><span class="serif" style="font-size:18px;font-weight:600">My Messages</span></div>';
 
@@ -11306,8 +11307,8 @@ function renderMyMessages(notifs){
 
 window._inboxNotifs=[];
 async function sendInboxReply(idx){
-  var notifs=await loadMyNotifications();var m=notifs[idx];if(!m)return;
-  var input=document.getElementById('inbox-reply-'+idx);if(!input||!input.value.trim())return;
+  var notifs=window._lastNotifs||[];var m=notifs[idx];if(!m){notify('Could not find message',1);return}
+  var input=document.getElementById('inbox-reply-'+idx);if(!input||!input.value.trim()){notify('Type a reply first',1);return}
   var text=input.value.trim();
   var payload={
     user_name:U?U.name:'Unknown',
@@ -11318,13 +11319,16 @@ async function sendInboxReply(idx){
     reply_to:m.id||null,
     read:false
   };
-  if(_supaClient){
-    await _supaClient.from('messages').insert([payload]).catch(function(e){console.warn('Reply insert failed',e)});
-  }
+  try{
+    if(_supaClient){
+      var res=await _supaClient.from('messages').insert([payload]);
+      if(res.error)console.warn('Reply insert error:',res.error);
+    }
+  }catch(e){console.warn('Reply insert failed',e)}
   if(!DB.messages)DB.messages=[];
   DB.messages.push(payload);saveDB();
-  input.value='';
-  notify('Reply sent!');
+  input.value='';input.disabled=true;
+  notify('Reply sent! ✓');
 }
 
 // Check for unread notifications and show badge + popup

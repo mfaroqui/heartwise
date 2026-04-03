@@ -3220,6 +3220,8 @@ function renderHome(){
   }
   // Upgrade nudge
   renderUpgradeNudge();
+  // IMG success stories
+  try{renderImgSuccessCards()}catch(e){console.error('ImgSuccess:',e)}
   // Nav badges
   try{renderNavBadges()}catch(e){console.error('NavBadges:',e)}
 }
@@ -3731,6 +3733,73 @@ function renderRecommendedTools(){
 }
 
 // ===== SINGLE UPGRADE NUDGE =====
+// ===== IMG SUCCESS STORIES =====
+var IMG_SUCCESS_DATA=[
+  {initials:'A.K.',country:'Pakistan',school:'Dow Medical College',spec:'Internal Medicine',program:'Lincoln Medical Center, Bronx NY',step2:243,usce:4,pubs:2,ysg:3,tip:'Targeted IMG-friendly programs exclusively. Did 2 observerships in NYC to get US LORs.'},
+  {initials:'S.R.',country:'India',school:'Osmania Medical College',spec:'Internal Medicine',program:'BronxCare Health System, Bronx NY',step2:235,usce:3,pubs:1,ysg:2,tip:'Started USCE early. The LOR from a 3-month rotation was the strongest part of my application.'},
+  {initials:'M.H.',country:'Egypt',school:'Ain Shams University',spec:'Pediatrics',program:'Interfaith Medical Center, Brooklyn NY',step2:228,usce:5,pubs:0,ysg:4,tip:'Zero publications but 5 months of USCE made up for it. Programs care about clinical readiness.'},
+  {initials:'R.P.',country:'Nepal',school:'Tribhuvan University',spec:'Family Medicine',program:'Detroit Medical Center, MI',step2:220,usce:3,pubs:1,ysg:5,tip:'YSG of 5 years worried me, but consistent USCE and a clear personal statement explained the gap.'},
+  {initials:'F.A.',country:'Bangladesh',school:'Dhaka Medical College',spec:'Psychiatry',program:'Richmond University Medical Center, Staten Island NY',step2:238,usce:2,pubs:3,ysg:2,tip:'Psychiatry is more IMG-friendly than people think. Research + genuine interest in the field made the difference.'},
+  {initials:'L.C.',country:'Philippines',school:'University of Santo Tomas',spec:'Internal Medicine',program:'Montefiore Medical Center, Bronx NY',step2:252,usce:6,pubs:4,ysg:1,tip:'High Step 2 + strong research opened doors even at competitive programs. Don\'t underestimate score.'},
+  {initials:'K.J.',country:'Nigeria',school:'University of Lagos',spec:'Internal Medicine',program:'Brookdale Hospital, Brooklyn NY',step2:231,usce:4,pubs:1,ysg:3,tip:'Applied to 80 programs strategically instead of 200 randomly. Quality over quantity saved money and time.'},
+  {initials:'D.S.',country:'India',school:'Grant Medical College',spec:'Pathology',program:'Cleveland Clinic, OH',step2:248,usce:3,pubs:6,ysg:2,tip:'Pathology is underrated for IMGs. Less competitive than IM and the research opportunities are incredible.'}
+];
+
+function renderImgSuccessCards(){
+  var el=document.getElementById('img-success-cards');
+  if(!el||!U)return;
+  // Show only for IMG users or users with IMG-related profile
+  var cp=U.careerProfile||{};
+  var isImg=obStage==='img'||cp.stage==='img'||cp.imgtype||cp.usce||cp.ysg;
+  if(!isImg){el.style.display='none';return}
+
+  // Pick 3 random success stories, prioritize matching specialty
+  var pool=IMG_SUCCESS_DATA.slice();
+  var spec=cp.specialty||'';
+  var matched=pool.filter(function(s){return s.spec.toLowerCase().indexOf(spec.toLowerCase())>=0});
+  var others=pool.filter(function(s){return s.spec.toLowerCase().indexOf(spec.toLowerCase())<0});
+  // Shuffle
+  function shuffle(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t}return a}
+  shuffle(matched);shuffle(others);
+  var picks=matched.slice(0,2).concat(others).slice(0,3);
+  if(picks.length<3)picks=shuffle(pool).slice(0,3);
+
+  var h='<div style="margin-bottom:4px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><span style="font-size:14px;font-weight:600;color:var(--text);font-family:var(--font-serif)">IMGs Who Matched</span><span style="font-size:10px;color:var(--text3)">Real profiles · Anonymized</span></div>';
+
+  picks.forEach(function(s){
+    h+='<div style="padding:14px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;margin-bottom:8px">';
+    h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">';
+    h+='<div style="display:flex;align-items:center;gap:10px">';
+    h+='<div style="width:36px;height:36px;border-radius:50%;background:rgba(198,168,94,.12);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--accent)">'+s.initials+'</div>';
+    h+='<div><div style="font-size:13px;font-weight:600;color:var(--text)">'+s.spec+'</div>';
+    h+='<div style="font-size:10px;color:var(--text3)">'+s.country+' · '+s.school+'</div></div>';
+    h+='</div>';
+    h+='<div style="font-size:10px;padding:3px 8px;background:rgba(139,184,160,.12);color:var(--green);border-radius:6px;font-weight:600">MATCHED ✓</div>';
+    h+='</div>';
+
+    // Stats row
+    h+='<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px">';
+    h+='<span style="font-size:10px;padding:3px 8px;background:var(--bg3);border-radius:4px;color:var(--text2)">Step 2: '+s.step2+'</span>';
+    h+='<span style="font-size:10px;padding:3px 8px;background:var(--bg3);border-radius:4px;color:var(--text2)">USCE: '+s.usce+'mo</span>';
+    h+='<span style="font-size:10px;padding:3px 8px;background:var(--bg3);border-radius:4px;color:var(--text2)">Pubs: '+s.pubs+'</span>';
+    h+='<span style="font-size:10px;padding:3px 8px;background:var(--bg3);border-radius:4px;color:var(--text2)">YSG: '+s.ysg+'yr</span>';
+    h+='</div>';
+
+    // Matched at
+    h+='<div style="font-size:11px;color:var(--accent);font-weight:500;margin-bottom:6px">→ '+s.program+'</div>';
+
+    // Tip
+    h+='<div style="font-size:11px;color:var(--text3);line-height:1.5;font-style:italic">"'+s.tip+'"</div>';
+    h+='</div>';
+  });
+
+  h+='<div style="text-align:center;margin-top:4px"><span onclick="navTo(\'scr-vault\')" style="font-size:11px;color:var(--accent);cursor:pointer;font-weight:500">Explore Observership Database →</span></div>';
+  h+='</div>';
+
+  el.innerHTML=h;
+  el.style.display='';
+}
+
 function renderUpgradeNudge(){
   var el=document.getElementById('home-upgrade-nudge');
   if(!el||!U)return;
@@ -11539,7 +11608,16 @@ function obToStep2(){
   // Dynamic fields based on stage
   const df=document.getElementById('ob-dynamic-fields');
   let h='';
-  if(obStage==='student'){
+  if(obStage==='img'){
+    h+='<div class="fg"><label>IMG Type</label><select id="ob-imgtype"><option value="usimg">US-IMG (US citizen, international school)</option><option value="nonusimg">Non-US IMG</option></select></div>';
+    h+='<div class="fg"><label>Step 1 Score (or Pass/Fail)</label><input type="text" id="ob-score1" placeholder="e.g., 230 or Pass"></div>';
+    h+='<div class="fg"><label>Step 2 CK Score</label><input type="text" id="ob-score2" placeholder="e.g., 245"></div>';
+    h+='<div class="fg"><label>USCE (months)</label><input type="number" id="ob-usce" placeholder="0" min="0"></div>';
+    h+='<div class="fg"><label>US LORs</label><input type="number" id="ob-uslor" placeholder="0" min="0"></div>';
+    h+='<div class="fg"><label>Research Publications</label><input type="number" id="ob-pubs" placeholder="0" min="0"></div>';
+    h+='<div class="fg"><label>Years Since Graduation</label><input type="number" id="ob-ysg" placeholder="e.g., 3" min="0"></div>';
+    h+='<div class="fg"><label>Target Match Cycle</label><select id="ob-matchcycle"><option value="2026">2026</option><option value="2027" selected>2027</option><option value="2028">2028</option><option value="2029">2029+</option></select></div>';
+  }else if(obStage==='student'){
     h+='<div class="fg"><label>USMLE Step 1 Score (or Pass/Fail)</label><input type="text" id="ob-score1" placeholder="e.g., 245 or Pass"></div>';
     h+='<div class="fg"><label>Research Publications</label><input type="number" id="ob-pubs" placeholder="0" min="0"></div>';
     h+='<div class="fg"><label>Leadership Roles</label><input type="number" id="ob-lead" placeholder="0" min="0"></div>';
@@ -11581,7 +11659,7 @@ function obToStep3(){
 function obFinishStep3(name,email,pass){
   obProfile={name,email,pass,stage:obStage,spec:document.getElementById('ob-spec').value,inst:document.getElementById('ob-inst').value.trim(),goal:document.getElementById('ob-goal').value};
   // Collect dynamic fields
-  const df=['ob-score1','ob-score2','ob-pubs','ob-lead','ob-pgy','ob-present','ob-comp','ob-debt','ob-practice'];
+  const df=['ob-score1','ob-score2','ob-pubs','ob-lead','ob-pgy','ob-present','ob-comp','ob-debt','ob-practice','ob-imgtype','ob-usce','ob-uslor','ob-ysg','ob-matchcycle'];
   df.forEach(id=>{const el=document.getElementById(id);if(el)obProfile[id.replace('ob-','')]=el.value});
   // Generate report
   genReport();

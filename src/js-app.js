@@ -11225,18 +11225,37 @@ async function loadMyNotifications(){
 }
 
 async function showMyMessages(){
-  // Show modal immediately with loading state
   document.getElementById('modal-q-content').innerHTML='<div style="text-align:center;padding:40px"><div style="font-size:24px;margin-bottom:12px">💬</div><div style="color:var(--text3);font-size:13px">Loading messages...</div></div>';
   document.getElementById('modal-q').classList.remove('hidden');
   
   var notifs=[];
-  try{notifs=await loadMyNotifications()}catch(ex){console.error('loadMyNotifications error:',ex)}
-  var contactReplies=[];
+  try{
+    var controller=new AbortController();
+    var timeoutId=setTimeout(function(){controller.abort()},5000);
+    var res=await fetch('https://kqyvfykbnboesskxovtw.supabase.co/functions/v1/user-messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY},
+      body:JSON.stringify({email:U.email}),
+      signal:controller.signal
+    });
+    clearTimeout(timeoutId);
+    var data=await res.json();
+    if(data.messages)notifs=data.messages;
+  }catch(ex){console.warn('Messages load error:',ex)}
+  // Fallback: local
+  if(!notifs.length&&DB.messages){
+    notifs=DB.messages.filter(function(n){
+      return n.from_admin&&(n.to_email===U.email||n.to_email==='__all__');
+    }).reverse();
+  }
+  renderMyMessages(notifs);
+}
 
+function renderMyMessages(notifs){
   var typeLabels={feedback_request:'\ud83d\ude4f Feedback Request',announcement:'\ud83d\udce2 Announcement',tip:'\ud83d\udca1 Tip',welcome:'\ud83d\udc4b Welcome',followup:'\ud83d\udd04 Follow-up',notification:'\ud83d\udce9 Notification'};
   var h='<div style="margin-bottom:20px"><span class="serif" style="font-size:18px;font-weight:600">My Messages</span></div>';
 
-  if(!notifs.length&&!contactReplies.length){
+  if(!notifs.length){
     h+='<div style="text-align:center;padding:40px 0;color:var(--text3)"><p style="font-size:36px;margin-bottom:12px">\ud83d\udcec</p><p style="font-size:14px">No messages yet.</p><p style="font-size:12px;margin-top:6px;color:var(--text3)">When Dr. Faroqui reviews your questions or sends you a message, it\u2019ll show up here.</p></div>';
   }else{
     // Show all notifications and admin messages
@@ -11277,24 +11296,9 @@ async function showMyMessages(){
         _supaClient.from('messages').update({read:true}).eq('id',n.id).then(function(){}).catch(function(e){logError('messageReadUpdate',e)});
       }
     });
-
-    // Show contact message replies
-    contactReplies.forEach(function(m){
-      h+='<div class="card" style="margin-bottom:10px">';
-      h+='<div style="font-size:11px;color:var(--text3);margin-bottom:6px">Your message: "'+m.message.substring(0,80)+(m.message.length>80?'...':'')+'"</div>';
-      m.replies.forEach(function(r){
-        h+='<div style="padding:10px 14px;background:var(--bg2);border-radius:8px;margin-bottom:6px;border-left:2px solid var(--green)">';
-        h+='<div style="font-size:10px;color:var(--green);font-weight:600;margin-bottom:4px">DR. FAROQUI</div>';
-        h+='<p style="font-size:12px;color:var(--text2);line-height:1.6;margin:0">'+r.text+'</p>';
-        var d=r.date?new Date(r.date).toLocaleDateString('en-US',{month:'short',day:'numeric'}):' ';
-        h+='<span style="font-size:10px;color:var(--text3)">'+d+'</span></div>';
-      });
-      h+='</div>';
-    });
   }
 
   document.getElementById('modal-q-content').innerHTML=h;
-  document.getElementById('modal-q').classList.remove('hidden');
   // Clear notification badge
   var badge=document.getElementById('notif-badge');
   if(badge)badge.style.display='none';

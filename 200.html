@@ -17925,14 +17925,20 @@ function renderMyMessages(notifs){
         h+='</div>';
       }
             h+='</div></div></div>';
-      // Mark as read (fire and forget, wrapped to prevent crashes)
-      if(isAdminMsg&&n.user_read===false&&n.id&&_supaClient){
-        try{_supaClient.from('messages').update({user_read:true,user_read_at:new Date().toISOString()}).eq('id',n.id).then(function(){})}catch(e){}
-      }
-      if(!isAdminMsg&&!n.read&&n.id&&_supaClient){
-        try{_supaClient.from('messages').update({read:true}).eq('id',n.id).then(function(){})}catch(e){}
-      }
     });
+  }
+
+  // Mark all unread messages as read via edge function (fire and forget)
+  var unreadIds=notifs.filter(function(n){return n.from_admin&&n.user_read===false&&n.id}).map(function(n){return n.id});
+  if(unreadIds.length){
+    // Mark locally immediately so they don't show as new on re-render
+    notifs.forEach(function(n){if(n.from_admin&&n.user_read===false){n.user_read=true;n.user_read_at=new Date().toISOString()}});
+    // Send to edge function
+    try{fetch('https://kqyvfykbnboesskxovtw.supabase.co/functions/v1/user-messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY},
+      body:JSON.stringify({action:'mark_read',messageIds:unreadIds})
+    }).catch(function(){})}catch(e){}
   }
 
   document.getElementById('modal-q-content').innerHTML=h;

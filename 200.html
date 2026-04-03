@@ -17876,13 +17876,13 @@ function renderMyMessages(notifs){
         h+='<button onclick="sendInboxReply('+idx+')" class="btn btn-a btn-sm" style="padding:6px 14px">Send</button>';
         h+='</div>';
       }
-      h+='</div></div></div>';
-      // Mark as read
+            h+='</div></div></div>';
+      // Mark as read (fire and forget, wrapped to prevent crashes)
       if(isAdminMsg&&n.user_read===false&&n.id&&_supaClient){
-        _supaClient.from('messages').update({user_read:true,user_read_at:new Date().toISOString()}).eq('id',n.id).catch(function(){});
+        try{_supaClient.from('messages').update({user_read:true,user_read_at:new Date().toISOString()}).eq('id',n.id).then(function(){})}catch(e){}
       }
       if(!isAdminMsg&&!n.read&&n.id&&_supaClient){
-        _supaClient.from('messages').update({read:true}).eq('id',n.id).then(function(){}).catch(function(e){logError('messageReadUpdate',e)});
+        try{_supaClient.from('messages').update({read:true}).eq('id',n.id).then(function(){})}catch(e){}
       }
     });
   }

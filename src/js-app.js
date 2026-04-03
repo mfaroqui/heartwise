@@ -1255,6 +1255,10 @@ function navTo(scr,btn){
   var target=document.getElementById(scr);
   if(target){target.style.display='block'}
   else{console.error('navTo: screen not found:',scr);return}
+  // Hide landing topbar and mobile tabs
+  var tb=document.getElementById('topbar');if(tb)tb.style.display='none';
+  var mobTabs=document.getElementById('lp-mobile-tabs');if(mobTabs)mobTabs.style.display='none';
+  var stk=document.getElementById('sticky-cta');if(stk){stk.style.transform='translateY(100%)';stk.style.display='none'}
   if(btn){document.querySelectorAll('.ni').forEach(function(n){n.classList.remove('on')});btn.classList.add('on')}
   else{
     document.querySelectorAll('.ni').forEach(function(n){

@@ -1594,7 +1594,15 @@ function enterApp(){
       if(typeof _supaClient!=='undefined'&&_supaClient){
         _supaClient.from('profiles').update({tier:'free',is_trial:false}).eq('email',U.email).then(function(){});
       }
-      notify('Your guided access has ended. Subscribe to unlock all 15 tools.',1);
+      setTimeout(function(){showTrialExpiredTeaser()},800);
+    }
+  }
+  // Also show teaser for previously expired trial users returning
+  if(!U.isTrial&&U.trialEnd&&U.tier==='free'){
+    var shownKey='hw_teaser_'+U.id+'_'+new Date().toDateString();
+    if(!sessionStorage.getItem(shownKey)){
+      sessionStorage.setItem(shownKey,'1');
+      setTimeout(function(){showTrialExpiredTeaser()},800);
     }
   }
   const b=document.getElementById('user-badge');
@@ -7830,6 +7838,73 @@ var TRIAL_PARTIAL_MSG={
   v15:{label:'Career Roadmap Tool',shown:'Phase 1 of your roadmap',locked:'Phases 2–5: timeline, milestones, decision points, and contingency paths'},
   v11:{label:'Financial Projection Tool',shown:'Your 20-year net worth projection',locked:'Side-by-side path comparison, optimization levers, and detailed year-by-year breakdown'}
 };
+
+function showTrialExpiredTeaser(){
+  if(!U)return;
+  // Build personalized stats
+  var toolsUsed=(U.toolHistory||[]).length;
+  var uniqueTools=[];
+  (U.toolHistory||[]).forEach(function(t){
+    var name=t.toolName||t.tool||'';
+    if(name&&uniqueTools.indexOf(name)<0)uniqueTools.push(name);
+  });
+  var questionsAsked=0;
+  try{questionsAsked=(DB.questions||[]).filter(function(q){return q.userId===U.id}).length}catch(e){}
+  var hasProfile=U.careerProfile&&U.careerProfile.stage;
+  var stage=hasProfile?U.careerProfile.stage:'';
+  var stageLabels={ms3:'Medical Student',ms4:'Medical Student',img:'IMG',resident:'Resident',fellow:'Fellow',attending:'Attending'};
+  var stageLabel=stageLabels[stage]||'Physician';
+
+  // Pick 2-3 locked tools they'd benefit from based on stage
+  var recommendations=[];
+  if(stage==='img'||stage==='ms4'){
+    recommendations=['Observership Database — Find programs accepting your background','Match Probability Calculator — See your realistic match chances','Interview Strategy Kit — Prepare for the questions they actually ask'];
+  }else if(stage==='resident'||stage==='fellow'){
+    recommendations=['Compensation Intel — Know your market value before negotiating','Contract Analyzer — Catch red flags before you sign','Financial Runway Planner — Model your post-training finances'];
+  }else if(stage==='attending'){
+    recommendations=['Compensation Intel — Benchmark against 2024 MGMA data','Contract Analyzer — Review non-compete and termination clauses','Burnout & Career Pivot Assessment — Evaluate your options'];
+  }else{
+    recommendations=['Observership Database — 65 verified programs with contact info','Compensation Intel — Real salary data for your specialty','Match Probability Calculator — Data-driven match predictions'];
+  }
+
+  var h='<div style="padding:28px 24px;max-width:440px;margin:0 auto;text-align:center">';
+  
+  // Header
+  h+='<div style="font-size:40px;margin-bottom:16px">✦</div>';
+  h+='<div style="font-family:var(--font-serif);font-size:20px;font-weight:600;color:var(--text);margin-bottom:6px">Your 48-Hour Access Has Ended</div>';
+  h+='<div style="font-size:13px;color:var(--text2);margin-bottom:24px;line-height:1.6">But everything you built is still here.</div>';
+
+  // What they accomplished
+  if(toolsUsed>0||questionsAsked>0||hasProfile){
+    h+='<div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:20px;text-align:left">';
+    h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">What You Explored</div>';
+    if(hasProfile)h+='<div style="font-size:13px;color:var(--text2);margin-bottom:6px;display:flex;align-items:center;gap:8px"><span>✓</span> Career profile built ('+stageLabel+')</div>';
+    if(uniqueTools.length>0)h+='<div style="font-size:13px;color:var(--text2);margin-bottom:6px;display:flex;align-items:center;gap:8px"><span>✓</span> '+uniqueTools.length+' tool'+(uniqueTools.length>1?'s':'')+' explored</div>';
+    if(questionsAsked>0)h+='<div style="font-size:13px;color:var(--text2);margin-bottom:6px;display:flex;align-items:center;gap:8px"><span>✓</span> '+questionsAsked+' question'+(questionsAsked>1?'s':'')+' analyzed</div>';
+    h+='</div>';
+  }
+
+  // What they're missing
+  h+='<div style="background:rgba(198,168,94,.05);border:1px solid rgba(198,168,94,.15);border-radius:12px;padding:16px;margin-bottom:24px;text-align:left">';
+  h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">Now Locked</div>';
+  recommendations.forEach(function(r){
+    var parts=r.split(' — ');
+    h+='<div style="font-size:13px;color:var(--text2);margin-bottom:8px;display:flex;align-items:flex-start;gap:8px"><span style="color:var(--accent)">🔒</span><div><strong style="color:var(--text)">'+parts[0]+'</strong>'+(parts[1]?' — '+parts[1]:'')+'</div></div>';
+  });
+  h+='</div>';
+
+  // CTA
+  h+='<div style="margin-bottom:16px">';
+  h+='<button onclick="closeModal(\'modal-q\');navTo(\'scr-profile\');showUpgrade()" class="btn btn-a" style="width:100%;padding:14px 24px;font-size:14px;font-weight:600">Unlock All 15 Tools — $39/mo</button>';
+  h+='</div>';
+  h+='<div style="font-size:11px;color:var(--text3);margin-bottom:8px">Cancel anytime · Used by physicians at top programs</div>';
+  h+='<button onclick="closeModal(\'modal-q\')" style="background:none;border:none;color:var(--text3);font-size:12px;cursor:pointer;padding:8px;text-decoration:underline">Continue with free access</button>';
+
+  h+='</div>';
+
+  document.getElementById('modal-q-content').innerHTML=h;
+  document.getElementById('modal-q').classList.remove('hidden');
+}
 
 function showTrialLockedOverlay(id){
   var t=TRIAL_TEASERS[id];

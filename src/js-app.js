@@ -11017,65 +11017,79 @@ async function admMarkComplete(qId){if(_supaClient){var{error}=await _supaClient
 
 function admRenderFeedback(c){
   var msgs=admGetMessages();var isSB=_sbMessages&&_sbMessages.length;
-  // Send message to user card
   var users=admGetUsers();
-  var h='<div class="adm-card" style="margin-bottom:16px"><div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:12px">\u2709\ufe0f Send Message to User</div>';
-  h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">';
-  h+='<div><select id="adm-msg-to" style="width:100%;font-size:12px;padding:8px 12px;border:1px solid var(--border);border-radius:6px;background:var(--bg3);color:var(--text)"><option value="">Select user...</option><option value="__all__">📢 All Users (Broadcast)</option>';
-  users.forEach(function(u){h+='<option value="'+u.email+'">'+((u.name||u.email)||'Unknown')+' ('+(u.email||'')+')</option>'});
-  h+='</select></div>';
-  h+='<div><select id="adm-msg-type" style="width:100%;font-size:12px;padding:8px 12px;border:1px solid var(--border);border-radius:6px;background:var(--bg3);color:var(--text)"><option value="feedback_request">🙏 Feedback Request</option><option value="announcement">📢 Announcement</option><option value="tip">💡 Tip / Suggestion</option><option value="welcome">👋 Welcome</option><option value="followup"> Follow-up</option></select></div>';
-  h+='</div>';
-  h+='<textarea id="adm-msg-text" rows="3" placeholder="Write your message..." style="width:100%;font-size:12px;padding:10px 12px;border:1px solid var(--border);border-radius:8px;background:var(--bg3);color:var(--text);resize:vertical;margin-bottom:10px;box-sizing:border-box"></textarea>';
-  h+='<button onclick="admSendMessage()" class="btn btn-a" style="padding:10px 20px">Send Message</button>';
-  h+='</div>';
-
-  // Split messages into received (from users) and sent (from admin)
   var received=msgs.filter(function(m){return !m.from_admin});
   var sent=msgs.filter(function(m){return m.from_admin});
   var unreadCount=received.filter(function(m){return !m.read}).length;
 
-  // === RECEIVED MESSAGES ===
-  h+='<div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:10px;display:flex;align-items:center;gap:8px">📥 Received from Users';
-  if(unreadCount>0)h+='<span style="font-size:10px;padding:2px 8px;background:var(--accent);color:#1C1A17;border-radius:10px;font-weight:600">'+unreadCount+' new</span>';
-  h+='</div>';
-  if(!received.length){
-    h+='<div class="adm-card" style="text-align:center;padding:24px;color:var(--text3);margin-bottom:20px">No messages received from users yet.</div>';
-  }else{
-    h+='<div style="margin-bottom:20px">';
-    received.forEach(function(m){
-      var tl={reply:'↩️ Reply',career:'Career',finance:'Finance',contract:'📋 Contract',bug:'🐛 Bug',suggestion:'💡 Suggestion',question:'❓ Question',feedback:'Feedback',progress:'Progress',other:'📎 Other'};
-      var d=m.date?new Date(m.date).toLocaleDateString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}):'';
-      var isUnread=!m.read;
-      h+='<div class="adm-card" style="margin-bottom:8px;'+(isUnread?'border-left:3px solid var(--accent);background:rgba(200,168,124,.03);':'')+'"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><div><span style="font-weight:600;font-size:13px">'+(m.user_name||'Unknown')+'</span> <span style="font-size:11px;color:var(--text3)">'+(m.user_email||'')+'</span>';
-      if(isUnread)h+=' <span style="font-size:9px;padding:1px 6px;background:var(--accent);color:#1C1A17;border-radius:3px;font-weight:600">NEW</span>';
-      h+='</div><span style="font-size:10px;color:var(--text3)">'+d+'</span></div>';
-      h+='<span class="tag t-cat" style="font-size:10px;margin-bottom:8px;display:inline-block">'+(tl[m.type]||m.type||'Message')+'</span>';
-      if(m.reply_to)h+='<div style="font-size:10px;color:var(--text3);margin-bottom:4px">↩️ In reply to message #'+m.reply_to+'</div>';
-      h+='<p style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:10px;white-space:pre-wrap">'+(m.message||'')+'</p>';
-      h+='<div style="display:flex;gap:8px;align-items:center">';
-      if(!m.read)h+='<button onclick="admMarkRead(\''+m.id+'\','+(isSB?'true':'false')+')" style="font-size:11px;padding:6px 12px;border:1px solid var(--border);border-radius:6px;background:var(--bg3);color:var(--text3);cursor:pointer">✓ Mark Read</button>';
-      h+='</div></div>';
-    });
+  // Track collapsed state
+  if(!window._admMsgState)window._admMsgState={compose:true,received:true,sent:false};
+
+  var h='';
+
+  // === COMPOSE (collapsible) ===
+  h+='<div class="adm-card" style="margin-bottom:12px;cursor:pointer" onclick="window._admMsgState.compose=!window._admMsgState.compose;admRender()">';
+  h+='<div style="display:flex;justify-content:space-between;align-items:center"><div style="font-size:14px;font-weight:700;color:var(--text)">✉️ Compose Message</div>';
+  h+='<span style="font-size:16px;color:var(--text3)">'+(window._admMsgState.compose?'▾':'▸')+'</span></div></div>';
+  if(window._admMsgState.compose){
+    h+='<div class="adm-card" style="margin-bottom:16px">';
+    h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">';
+    h+='<div><select id="adm-msg-to" style="width:100%;font-size:12px;padding:8px 12px;border:1px solid var(--border);border-radius:6px;background:var(--bg3);color:var(--text)"><option value="">Select user...</option><option value="__all__">📢 All Users (Broadcast)</option>';
+    users.forEach(function(u){h+='<option value="'+u.email+'">'+((u.name||u.email)||'Unknown')+' ('+(u.email||'')+')</option>'});
+    h+='</select></div>';
+    h+='<div><select id="adm-msg-type" style="width:100%;font-size:12px;padding:8px 12px;border:1px solid var(--border);border-radius:6px;background:var(--bg3);color:var(--text)"><option value="feedback_request">🙏 Feedback Request</option><option value="announcement">📢 Announcement</option><option value="tip">💡 Tip / Suggestion</option><option value="welcome">👋 Welcome</option><option value="followup"> Follow-up</option></select></div>';
+    h+='</div>';
+    h+='<textarea id="adm-msg-text" rows="3" placeholder="Write your message..." style="width:100%;font-size:12px;padding:10px 12px;border:1px solid var(--border);border-radius:8px;background:var(--bg3);color:var(--text);resize:vertical;margin-bottom:10px;box-sizing:border-box"></textarea>';
+    h+='<button onclick="event.stopPropagation();admSendMessage()" class="btn btn-a" style="padding:10px 20px">Send Message</button>';
     h+='</div>';
   }
 
-  // === SENT MESSAGES ===
-  h+='<div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:10px">📤 Sent by You</div>';
-  if(!sent.length){
-    h+='<div class="adm-card" style="text-align:center;padding:24px;color:var(--text3)">No messages sent yet.</div>';
-  }else{
-    sent.forEach(function(m){
-      var tl={feedback_request:'🙏 Feedback Request',announcement:'📢 Announcement',tip:'💡 Tip',welcome:'👋 Welcome',followup:'🔄 Follow-up'};
-      var d=m.date?new Date(m.date).toLocaleDateString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}):'';
-      var to=m.to_email==='__all__'?'📢 All Users':m.to_email;
-      var ra=m.user_read_at?new Date(m.user_read_at).toLocaleDateString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}):'';
-      var readBadge=m.user_read?' <span style="font-size:9px;padding:1px 6px;background:rgba(91,168,208,.12);color:#5ba8d0;border-radius:3px;font-weight:600">✓ READ'+(ra?' · '+ra:'')+'</span>':' <span style="font-size:9px;padding:1px 6px;background:rgba(196,77,86,.1);color:var(--red);border-radius:3px;font-weight:600">UNREAD</span>';
-      h+='<div class="adm-card" style="margin-bottom:8px;"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><div><span style="font-weight:600;font-size:13px">To: '+to+'</span>'+readBadge+'</div><span style="font-size:10px;color:var(--text3)">'+d+'</span></div>';
-      h+='<span class="tag t-cat" style="font-size:10px;margin-bottom:8px;display:inline-block">'+(tl[m.type]||m.type||'Message')+'</span>';
-      h+='<p style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:4px;white-space:pre-wrap">'+(m.message||'')+'</p>';
-      h+='</div>';
-    });
+  // === RECEIVED (collapsible) ===
+  h+='<div class="adm-card" style="margin-bottom:12px;cursor:pointer;'+(unreadCount>0?'border-left:3px solid var(--accent);background:rgba(200,168,124,.03);':'')+'" onclick="window._admMsgState.received=!window._admMsgState.received;admRender()">';
+  h+='<div style="display:flex;justify-content:space-between;align-items:center"><div style="font-size:14px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:8px">📥 Received <span style="font-size:11px;color:var(--text3);font-weight:400">'+received.length+' message'+(received.length!==1?'s':'')+'</span>';
+  if(unreadCount>0)h+='<span style="font-size:10px;padding:2px 8px;background:var(--accent);color:#1C1A17;border-radius:10px;font-weight:600">'+unreadCount+' new</span>';
+  h+='</div><span style="font-size:16px;color:var(--text3)">'+(window._admMsgState.received?'▾':'▸')+'</span></div></div>';
+  if(window._admMsgState.received){
+    if(!received.length){
+      h+='<div style="text-align:center;padding:20px;color:var(--text3);margin-bottom:16px;font-size:12px">No messages received yet.</div>';
+    }else{
+      received.forEach(function(m){
+        var tl={reply:'↩️ Reply',career:'Career',finance:'Finance',contract:'📋 Contract',bug:'🐛 Bug',suggestion:'💡 Suggestion',question:'❓ Question',feedback:'Feedback',progress:'Progress',other:'📎 Other'};
+        var d=m.date?new Date(m.date).toLocaleDateString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}):'';
+        var isUnread=!m.read;
+        h+='<div class="adm-card" style="margin-bottom:8px;'+(isUnread?'border-left:3px solid var(--accent);background:rgba(200,168,124,.03);':'')+'"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><div><span style="font-weight:600;font-size:13px">'+(m.user_name||'Unknown')+'</span> <span style="font-size:11px;color:var(--text3)">'+(m.user_email||'')+'</span>';
+        if(isUnread)h+=' <span style="font-size:9px;padding:1px 6px;background:var(--accent);color:#1C1A17;border-radius:3px;font-weight:600">NEW</span>';
+        h+='</div><span style="font-size:10px;color:var(--text3)">'+d+'</span></div>';
+        h+='<span class="tag t-cat" style="font-size:10px;margin-bottom:8px;display:inline-block">'+(tl[m.type]||m.type||'Message')+'</span>';
+        if(m.reply_to)h+='<div style="font-size:10px;color:var(--text3);margin-bottom:4px">↩️ In reply to message #'+m.reply_to+'</div>';
+        h+='<p style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:10px;white-space:pre-wrap">'+(m.message||'')+'</p>';
+        h+='<div style="display:flex;gap:8px;align-items:center">';
+        if(!m.read)h+='<button onclick="event.stopPropagation();admMarkRead(\''+m.id+'\','+(isSB?'true':'false')+')" style="font-size:11px;padding:6px 12px;border:1px solid var(--border);border-radius:6px;background:var(--bg3);color:var(--text3);cursor:pointer">✓ Mark Read</button>';
+        h+='</div></div>';
+      });
+    }
+  }
+
+  // === SENT (collapsible, closed by default) ===
+  h+='<div class="adm-card" style="margin-bottom:12px;cursor:pointer" onclick="window._admMsgState.sent=!window._admMsgState.sent;admRender()">';
+  h+='<div style="display:flex;justify-content:space-between;align-items:center"><div style="font-size:14px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:8px">📤 Sent <span style="font-size:11px;color:var(--text3);font-weight:400">'+sent.length+' message'+(sent.length!==1?'s':'')+'</span></div>';
+  h+='<span style="font-size:16px;color:var(--text3)">'+(window._admMsgState.sent?'▾':'▸')+'</span></div></div>';
+  if(window._admMsgState.sent){
+    if(!sent.length){
+      h+='<div style="text-align:center;padding:20px;color:var(--text3);margin-bottom:16px;font-size:12px">No messages sent yet.</div>';
+    }else{
+      sent.forEach(function(m){
+        var tl={feedback_request:'🙏 Feedback Request',announcement:'📢 Announcement',tip:'💡 Tip',welcome:'👋 Welcome',followup:'🔄 Follow-up'};
+        var d=m.date?new Date(m.date).toLocaleDateString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}):'';
+        var to=m.to_email==='__all__'?'📢 All Users':m.to_email;
+        var ra=m.user_read_at?new Date(m.user_read_at).toLocaleDateString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}):'';
+        var readBadge=m.user_read?' <span style="font-size:9px;padding:1px 6px;background:rgba(91,168,208,.12);color:#5ba8d0;border-radius:3px;font-weight:600">✓ READ'+(ra?' · '+ra:'')+'</span>':' <span style="font-size:9px;padding:1px 6px;background:rgba(196,77,86,.1);color:var(--red);border-radius:3px;font-weight:600">UNREAD</span>';
+        h+='<div class="adm-card" style="margin-bottom:8px;"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><div><span style="font-weight:600;font-size:13px">To: '+to+'</span>'+readBadge+'</div><span style="font-size:10px;color:var(--text3)">'+d+'</span></div>';
+        h+='<span class="tag t-cat" style="font-size:10px;margin-bottom:8px;display:inline-block">'+(tl[m.type]||m.type||'Message')+'</span>';
+        h+='<p style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:4px;white-space:pre-wrap">'+(m.message||'')+'</p>';
+        h+='</div>';
+      });
+    }
   }
   c.innerHTML=h;
 }

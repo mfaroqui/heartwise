@@ -11029,22 +11029,55 @@ function admRenderFeedback(c){
   h+='<textarea id="adm-msg-text" rows="3" placeholder="Write your message..." style="width:100%;font-size:12px;padding:10px 12px;border:1px solid var(--border);border-radius:8px;background:var(--bg3);color:var(--text);resize:vertical;margin-bottom:10px;box-sizing:border-box"></textarea>';
   h+='<button onclick="admSendMessage()" class="btn btn-a" style="padding:10px 20px">Send Message</button>';
   h+='</div>';
-  if(!msgs.length){h+='<div style="text-align:center;padding:40px;color:var(--text3)">\ud83d\udced No messages yet.</div>';c.innerHTML=h;return}
-  var unread=msgs.filter(function(m){return !m.read&&!m.from_admin}).length;
-  h+='<div style="font-size:11px;color:var(--text3);margin-bottom:12px">'+msgs.length+' messages \u00b7 '+unread+' unread</div>';
-  msgs.forEach(function(m){
-    var tl={career:'Career',finance:'Finance',contract:'\ud83d\udccb Contract',bug:'\ud83d\udc1b Bug',suggestion:'\ud83d\udca1 Suggestion',question:'\u2753 Question',feedback:'Feedback',progress:'Progress',other:'\ud83d\udcce Other'};
-    var d=m.date?new Date(m.date).toLocaleDateString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}):'';
-    var isUnread=!m.read&&!m.from_admin;
-    var readBadge='';if(m.from_admin){var ra=m.user_read_at?new Date(m.user_read_at).toLocaleDateString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}):'';readBadge=m.user_read?' <span style="font-size:9px;padding:1px 6px;background:rgba(91,168,208,.12);color:#5ba8d0;border-radius:3px;font-weight:600" title="'+(ra?'Read '+ra:'Read')+'">✓ READ'+(ra?' · '+ra:'')+'</span>':' <span style="font-size:9px;padding:1px 6px;background:rgba(196,77,86,.1);color:var(--red);border-radius:3px;font-weight:600">UNREAD</span>'}
-    h+='<div class="adm-card" style="'+(isUnread?'border-left:3px solid var(--accent);':'')+'"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><div><span style="font-weight:600;font-size:13px">'+(m.user_name||'Unknown')+'</span> <span style="font-size:11px;color:var(--text3)">'+(m.user_email||'')+'</span>'+(m.from_admin?' <span style="font-size:9px;padding:1px 6px;background:var(--accent);color:#1C1A17;border-radius:3px;font-weight:600">SENT</span>':'')+''+readBadge+'</div><span style="font-size:10px;color:var(--text3)">'+d+'</span></div>';
-    h+='<span class="tag t-cat" style="font-size:10px;margin-bottom:8px;display:inline-block">'+(tl[m.type]||m.type||'Msg')+'</span>';
-    h+='<p style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:10px;white-space:pre-wrap">'+(m.message||'')+'</p>';
-    (m.replies||[]).forEach(function(r){h+='<div style="margin-left:14px;padding:8px 12px;background:var(--bg3);border-radius:6px;margin-bottom:6px;border-left:2px solid var(--green)"><div style="font-size:10px;color:var(--green);font-weight:600;margin-bottom:2px">YOUR REPLY</div><p style="font-size:12px;color:var(--text2);line-height:1.5;margin:0">'+r.text+'</p></div>'});
-    h+='<div style="display:flex;gap:8px;align-items:center"><input type="text" id="adm-reply-'+m.id+'" placeholder="Reply..." style="flex:1;font-size:12px;padding:8px 12px;border:1px solid var(--border);border-radius:6px;background:var(--bg3);color:var(--text)"><button onclick="admReply(\''+m.id+'\','+(isSB?'true':'false')+')" class="btn btn-a btn-sm">Reply</button>';
-    if(!m.read)h+='<button onclick="admMarkRead(\''+m.id+'\','+(isSB?'true':'false')+')" style="font-size:10px;padding:5px 10px;border:1px solid var(--border);border-radius:4px;background:var(--bg3);color:var(--text3);cursor:pointer">\u2713</button>';
-    h+='</div></div>';
-  });c.innerHTML=h;
+
+  // Split messages into received (from users) and sent (from admin)
+  var received=msgs.filter(function(m){return !m.from_admin});
+  var sent=msgs.filter(function(m){return m.from_admin});
+  var unreadCount=received.filter(function(m){return !m.read}).length;
+
+  // === RECEIVED MESSAGES ===
+  h+='<div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:10px;display:flex;align-items:center;gap:8px">📥 Received from Users';
+  if(unreadCount>0)h+='<span style="font-size:10px;padding:2px 8px;background:var(--accent);color:#1C1A17;border-radius:10px;font-weight:600">'+unreadCount+' new</span>';
+  h+='</div>';
+  if(!received.length){
+    h+='<div class="adm-card" style="text-align:center;padding:24px;color:var(--text3);margin-bottom:20px">No messages received from users yet.</div>';
+  }else{
+    h+='<div style="margin-bottom:20px">';
+    received.forEach(function(m){
+      var tl={reply:'↩️ Reply',career:'Career',finance:'Finance',contract:'📋 Contract',bug:'🐛 Bug',suggestion:'💡 Suggestion',question:'❓ Question',feedback:'Feedback',progress:'Progress',other:'📎 Other'};
+      var d=m.date?new Date(m.date).toLocaleDateString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}):'';
+      var isUnread=!m.read;
+      h+='<div class="adm-card" style="margin-bottom:8px;'+(isUnread?'border-left:3px solid var(--accent);background:rgba(200,168,124,.03);':'')+'"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><div><span style="font-weight:600;font-size:13px">'+(m.user_name||'Unknown')+'</span> <span style="font-size:11px;color:var(--text3)">'+(m.user_email||'')+'</span>';
+      if(isUnread)h+=' <span style="font-size:9px;padding:1px 6px;background:var(--accent);color:#1C1A17;border-radius:3px;font-weight:600">NEW</span>';
+      h+='</div><span style="font-size:10px;color:var(--text3)">'+d+'</span></div>';
+      h+='<span class="tag t-cat" style="font-size:10px;margin-bottom:8px;display:inline-block">'+(tl[m.type]||m.type||'Message')+'</span>';
+      if(m.reply_to)h+='<div style="font-size:10px;color:var(--text3);margin-bottom:4px">↩️ In reply to message #'+m.reply_to+'</div>';
+      h+='<p style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:10px;white-space:pre-wrap">'+(m.message||'')+'</p>';
+      h+='<div style="display:flex;gap:8px;align-items:center">';
+      if(!m.read)h+='<button onclick="admMarkRead(\''+m.id+'\','+(isSB?'true':'false')+')" style="font-size:11px;padding:6px 12px;border:1px solid var(--border);border-radius:6px;background:var(--bg3);color:var(--text3);cursor:pointer">✓ Mark Read</button>';
+      h+='</div></div>';
+    });
+    h+='</div>';
+  }
+
+  // === SENT MESSAGES ===
+  h+='<div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:10px">📤 Sent by You</div>';
+  if(!sent.length){
+    h+='<div class="adm-card" style="text-align:center;padding:24px;color:var(--text3)">No messages sent yet.</div>';
+  }else{
+    sent.forEach(function(m){
+      var tl={feedback_request:'🙏 Feedback Request',announcement:'📢 Announcement',tip:'💡 Tip',welcome:'👋 Welcome',followup:'🔄 Follow-up'};
+      var d=m.date?new Date(m.date).toLocaleDateString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}):'';
+      var to=m.to_email==='__all__'?'📢 All Users':m.to_email;
+      var ra=m.user_read_at?new Date(m.user_read_at).toLocaleDateString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}):'';
+      var readBadge=m.user_read?' <span style="font-size:9px;padding:1px 6px;background:rgba(91,168,208,.12);color:#5ba8d0;border-radius:3px;font-weight:600">✓ READ'+(ra?' · '+ra:'')+'</span>':' <span style="font-size:9px;padding:1px 6px;background:rgba(196,77,86,.1);color:var(--red);border-radius:3px;font-weight:600">UNREAD</span>';
+      h+='<div class="adm-card" style="margin-bottom:8px;"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><div><span style="font-weight:600;font-size:13px">To: '+to+'</span>'+readBadge+'</div><span style="font-size:10px;color:var(--text3)">'+d+'</span></div>';
+      h+='<span class="tag t-cat" style="font-size:10px;margin-bottom:8px;display:inline-block">'+(tl[m.type]||m.type||'Message')+'</span>';
+      h+='<p style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:4px;white-space:pre-wrap">'+(m.message||'')+'</p>';
+      h+='</div>';
+    });
+  }
+  c.innerHTML=h;
 }
 async function admReply(id,isSB){var input=document.getElementById('adm-reply-'+id);if(!input||!input.value.trim())return;var r={text:input.value.trim(),date:new Date().toISOString()};if(isSB&&_supaClient){var msg=_sbMessages?_sbMessages.find(function(m){return m.id==id}):null;if(!msg)return;var rr=msg.replies||[];rr.push(r);await _supaClient.from('messages').update({replies:rr,read:true}).eq('id',id);msg.replies=rr;msg.read=true}else{var idx=parseInt(id);if(DB.messages&&DB.messages[idx]){if(!DB.messages[idx].replies)DB.messages[idx].replies=[];DB.messages[idx].replies.push(r);DB.messages[idx].read=true;saveDB()}}notify('Reply sent');admRender()}
 async function admMarkRead(id,isSB){if(isSB&&_supaClient){await _supaClient.from('messages').update({read:true}).eq('id',id);var msg=_sbMessages?_sbMessages.find(function(m){return m.id==id}):null;if(msg)msg.read=true}else{var idx=parseInt(id);if(DB.messages&&DB.messages[idx]){DB.messages[idx].read=true;saveDB()}}admRender()}

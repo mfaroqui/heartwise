@@ -11201,30 +11201,21 @@ async function adminMessageUser(email,name){
 async function loadMyNotifications(){
   if(!U||!U.email)return[];
   var notifs=[];
-  // Load via edge function (bypasses RLS)
+  // Load via edge function (bypasses RLS) with timeout
   try{
+    var controller=new AbortController();
+    var timeoutId=setTimeout(function(){controller.abort()},5000);
     var res=await fetch('https://kqyvfykbnboesskxovtw.supabase.co/functions/v1/user-messages',{
       method:'POST',
       headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY},
-      body:JSON.stringify({email:U.email})
+      body:JSON.stringify({email:U.email}),
+      signal:controller.signal
     });
+    clearTimeout(timeoutId);
     var data=await res.json();
     if(data.messages&&data.messages.length)notifs=data.messages;
   }catch(ex){console.warn('user-messages fetch failed:',ex)}
-  // Fallback: try direct Supabase query
-  if(!notifs.length&&_supaClient){
-    try{
-      var r1=await _supaClient.from('messages').select('*').eq('user_email',U.email).eq('type','notification').order('date',{ascending:false}).limit(20);
-      var r2=await _supaClient.from('messages').select('*').eq('to_email',U.email).eq('from_admin',true).order('date',{ascending:false}).limit(20);
-      var r3=await _supaClient.from('messages').select('*').eq('to_email','__all__').eq('from_admin',true).order('date',{ascending:false}).limit(20);
-      if(!r1.error&&r1.data)notifs=notifs.concat(r1.data);
-      if(!r2.error&&r2.data)notifs=notifs.concat(r2.data);
-      if(!r3.error&&r3.data)notifs=notifs.concat(r3.data);
-      var seen={};notifs=notifs.filter(function(n){if(!n.id||seen[n.id])return false;seen[n.id]=true;return true});
-      notifs.sort(function(a,b){return new Date(b.date)-new Date(a.date)});
-    }catch(ex2){}
-  }
-  // Fallback: local
+  // Fallback: local only (no Supabase direct queries — RLS blocks them)
   if(!notifs.length&&DB.messages){
     notifs=DB.messages.filter(function(n){
       return n.from_admin&&(n.to_email===U.email||n.to_email==='__all__');

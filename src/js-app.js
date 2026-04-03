@@ -1505,7 +1505,7 @@ function doSignup(e){
 
 function doLogout(){
   if(_supaClient){_supaClient.auth.signOut().catch(()=>{})}
-  U=null;localStorage.removeItem('hw_session');go('pg-landing');
+  U=null;localStorage.removeItem('hw_session');document.body.classList.remove('in-app');go('pg-landing');
 }
 
 function confirmDeleteAccount(){
@@ -1581,6 +1581,7 @@ async function doNewPassword(e){
 
 function enterApp(){
   go('main-app');
+  document.body.classList.add('in-app');
   if(!U.usage)U.usage={ai:0,credits:TIERS[U.tier]?.credits||0,month:new Date().getMonth()};
   if(U.usage.month!==new Date().getMonth()){U.usage.ai=0;U.usage.month=new Date().getMonth()}
   // Check trial expiration

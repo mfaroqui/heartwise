@@ -76,6 +76,7 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text);min-hei
 a{color:var(--accent);text-decoration:none;transition:color .2s}
 a:hover{color:var(--accent2)}
 .hidden{display:none!important}
+body.in-app #topbar,body.in-app #lp-mobile-tabs,body.in-app #sticky-cta{display:none!important}
 
 
 /* ===== LANDING PAGE TABS ===== */
@@ -8094,7 +8095,7 @@ function doSignup(e){
 
 function doLogout(){
   if(_supaClient){_supaClient.auth.signOut().catch(()=>{})}
-  U=null;localStorage.removeItem('hw_session');go('pg-landing');
+  U=null;localStorage.removeItem('hw_session');document.body.classList.remove('in-app');go('pg-landing');
 }
 
 function confirmDeleteAccount(){
@@ -8170,6 +8171,7 @@ async function doNewPassword(e){
 
 function enterApp(){
   go('main-app');
+  document.body.classList.add('in-app');
   if(!U.usage)U.usage={ai:0,credits:TIERS[U.tier]?.credits||0,month:new Date().getMonth()};
   if(U.usage.month!==new Date().getMonth()){U.usage.ai=0;U.usage.month=new Date().getMonth()}
   // Check trial expiration

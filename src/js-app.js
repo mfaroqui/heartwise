@@ -11494,10 +11494,11 @@ function renderMyMessages(notifs){
   }
 
   // Mark all unread messages as read via edge function (fire and forget)
-  var unreadIds=notifs.filter(function(n){return n.from_admin&&n.user_read===false&&n.id}).map(function(n){return n.id});
+  var unreadIds=notifs.filter(function(n){return n.from_admin&&n.user_read===false&&n.id&&!_isLocallyRead(n.id)}).map(function(n){return n.id});
   if(unreadIds.length){
     // Mark locally immediately so they don't show as new on re-render
     notifs.forEach(function(n){if(n.from_admin&&n.user_read===false){n.user_read=true;n.user_read_at=new Date().toISOString()}});
+    _addLocalReadIds(unreadIds);
     // Send to edge function
     try{fetch('https://kqyvfykbnboesskxovtw.supabase.co/functions/v1/user-messages',{
       method:'POST',
@@ -11505,6 +11506,9 @@ function renderMyMessages(notifs){
       body:JSON.stringify({action:'mark_read',messageIds:unreadIds})
     }).catch(function(){})}catch(e){}
   }
+  // Also mark any already-read messages locally (catch broadcasts already marked by server)
+  var allIds=notifs.filter(function(n){return n.id}).map(function(n){return n.id});
+  _addLocalReadIds(allIds);
 
   document.getElementById('modal-q-content').innerHTML=h;
   // Clear notification badge
@@ -11538,6 +11542,17 @@ async function sendInboxReply(idx){
   notify('Reply sent! ✓');
 }
 
+// === LOCAL READ TRACKING (handles __all__ broadcasts + RLS fallback) ===
+function _getLocalReadIds(){
+  try{var k='hw_read_msgs_'+(U&&U.email?U.email:'');var s=localStorage.getItem(k);return s?JSON.parse(s):[]}catch(e){return[]}
+}
+function _addLocalReadIds(ids){
+  try{var k='hw_read_msgs_'+(U&&U.email?U.email:'');var existing=_getLocalReadIds();var merged=[...new Set([...existing,...ids])];if(merged.length>200)merged=merged.slice(-200);localStorage.setItem(k,JSON.stringify(merged))}catch(e){}
+}
+function _isLocallyRead(id){
+  return _getLocalReadIds().indexOf(id)>=0;
+}
+
 // Check for unread notifications and show badge + popup
 async function checkNotifBadge(){
   if(!U||!U.email)return;
@@ -11553,6 +11568,7 @@ async function checkNotifBadge(){
     var data=await res.json();
     if(data.messages){
       var unread=data.messages.filter(function(m){
+        if(_isLocallyRead(m.id))return false;
         return (m.from_admin&&m.user_read===false)||(m.type==='notification'&&!m.read);
       });
       count=unread.length;
@@ -11563,7 +11579,7 @@ async function checkNotifBadge(){
   }
   // Fallback: local
   if(!count&&DB.messages){
-    count+=DB.messages.filter(function(m){return m.from_admin&&(m.to_email===U.email||m.to_email==='__all__')&&!m.user_read}).length;
+    count+=DB.messages.filter(function(m){return m.from_admin&&(m.to_email===U.email||m.to_email==='__all__')&&!m.user_read&&!_isLocallyRead(m.id)}).length;
   }
   var badge=document.getElementById('notif-badge');
   if(badge){

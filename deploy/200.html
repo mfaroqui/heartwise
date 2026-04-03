@@ -341,6 +341,7 @@ color:var(--text);background:var(--bg);
 
 /* Animations */
 @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slideDown{from{opacity:0;transform:translateY(-100%)}to{opacity:1;transform:translateY(0)}}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 @keyframes scaleIn{from{opacity:0;transform:scale(0.8)}to{opacity:1;transform:scale(1)}}
 @keyframes slideUp{from{opacity:0;transform:translateX(-50%) translateY(20px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
@@ -17934,10 +17935,11 @@ async function sendInboxReply(idx){
   notify('Reply sent!');
 }
 
-// Check for unread notifications and show badge
+// Check for unread notifications and show badge + popup
 async function checkNotifBadge(){
   if(!U||!U.email)return;
   var count=0;
+  var latestMsg='';
   if(_supaClient){
     try{
       // Count unread notifications
@@ -17945,13 +17947,13 @@ async function checkNotifBadge(){
         .eq('user_email',U.email).eq('type','notification').eq('read',false);
       if(!r1.error&&r1.data)count+=r1.data.length;
       // Count unread admin messages to this user
-      var r2=await _supaClient.from('messages').select('id',{count:'exact'})
+      var r2=await _supaClient.from('messages').select('id,message',{count:'exact'})
         .eq('to_email',U.email).eq('from_admin',true).eq('user_read',false);
-      if(!r2.error&&r2.data)count+=r2.data.length;
+      if(!r2.error&&r2.data){count+=r2.data.length;if(r2.data.length>0&&r2.data[0].message)latestMsg=r2.data[0].message}
       // Count unread broadcasts
-      var r3=await _supaClient.from('messages').select('id',{count:'exact'})
+      var r3=await _supaClient.from('messages').select('id,message',{count:'exact'})
         .eq('to_email','__all__').eq('from_admin',true).eq('user_read',false);
-      if(!r3.error&&r3.data)count+=r3.data.length;
+      if(!r3.error&&r3.data){count+=r3.data.length;if(r3.data.length>0&&!latestMsg&&r3.data[0].message)latestMsg=r3.data[0].message}
     }catch(ex){}
   }
   if(!count&&DB.notifications){
@@ -17962,8 +17964,29 @@ async function checkNotifBadge(){
   }
   var badge=document.getElementById('notif-badge');
   if(badge){
-    badge.style.display=count>0?'':'none';
+    badge.style.display=count>0?'flex':'none';
     badge.textContent=count>9?'9+':count;
+  }
+  // Show popup banner for unread messages on login
+  if(count>0&&!window._notifPopupShown){
+    window._notifPopupShown=true;
+    var preview=latestMsg?latestMsg.substring(0,80)+(latestMsg.length>80?'...':''):'';
+    var popup=document.createElement('div');
+    popup.id='notif-popup';
+    popup.style.cssText='position:fixed;top:0;left:0;right:0;z-index:9999;padding:14px 16px;background:linear-gradient(135deg,#2A2520,#1C1A17);border-bottom:2px solid var(--accent);box-shadow:0 4px 20px rgba(0,0,0,.4);animation:slideDown .3s ease;cursor:pointer;-webkit-tap-highlight-color:transparent';
+    popup.innerHTML='<div style="max-width:500px;margin:0 auto;display:flex;align-items:flex-start;gap:12px">'
+      +'<div style="font-size:20px;flex-shrink:0;margin-top:2px">💬</div>'
+      +'<div style="flex:1;min-width:0">'
+      +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"><span style="font-size:12px;font-weight:600;color:var(--accent)">New Message from Dr. Faroqui</span><span style="font-size:10px;color:var(--text3)">'+count+' unread</span></div>'
+      +(preview?'<div style="font-size:12px;color:var(--text2);line-height:1.5;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+preview+'</div>':'')
+      +'<div style="font-size:10px;color:var(--accent);margin-top:4px;font-weight:500">Tap to read →</div>'
+      +'</div>'
+      +'<button onclick="event.stopPropagation();document.getElementById(\'notif-popup\').remove()" style="background:none;border:none;color:var(--text3);font-size:18px;cursor:pointer;padding:0 4px;flex-shrink:0;line-height:1">✕</button>'
+      +'</div>';
+    popup.onclick=function(){popup.remove();navTo('scr-profile');setTimeout(function(){var el=document.querySelector('[onclick*=openInbox]');if(el)el.click()},300)};
+    document.body.appendChild(popup);
+    // Auto-dismiss after 8 seconds
+    setTimeout(function(){var p=document.getElementById('notif-popup');if(p)p.style.transition='opacity .3s';if(p)p.style.opacity='0';setTimeout(function(){var p2=document.getElementById('notif-popup');if(p2)p2.remove()},300)},8000);
   }
 }
 

@@ -11240,19 +11240,7 @@ async function showMyMessages(){
   
   var notifs=[];
   try{notifs=await loadMyNotifications()}catch(ex){console.error('loadMyNotifications error:',ex)}
-  // Also load contact message replies
   var contactReplies=[];
-  if(_supaClient){
-    try{
-      var{data}=await _supaClient.from('messages').select('*')
-        .eq('user_email',U.email)
-        .neq('type','notification')
-        .is('from_admin',null)
-        .order('date',{ascending:false})
-        .limit(20);
-      if(data)contactReplies=data.filter(function(m){return m.replies&&m.replies.length});
-    }catch(ex){}
-  }
 
   var typeLabels={feedback_request:'\ud83d\ude4f Feedback Request',announcement:'\ud83d\udce2 Announcement',tip:'\ud83d\udca1 Tip',welcome:'\ud83d\udc4b Welcome',followup:'\ud83d\udd04 Follow-up',notification:'\ud83d\udce9 Notification'};
   var h='<div style="margin-bottom:20px"><span class="serif" style="font-size:18px;font-weight:600">My Messages</span></div>';

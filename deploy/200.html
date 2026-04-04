@@ -18373,8 +18373,10 @@ async function checkNotifBadge(){
     badge.textContent=count>9?'9+':count;
   }
   // Show popup banner for unread messages on login
-  if(count>0&&!window._notifPopupShown){
-    window._notifPopupShown=true;
+  var latestMsgId = data.messages && data.messages.length > 0 ? data.messages[0].id : null;
+  var lastNotifId = localStorage.getItem('hw_last_notif_' + (U&&U.email?U.email:''));
+  if(count>0 && latestMsgId && latestMsgId !== lastNotifId){
+    localStorage.setItem('hw_last_notif_' + (U&&U.email?U.email:''), latestMsgId);
     var preview=latestMsg?latestMsg.substring(0,80)+(latestMsg.length>80?'...':''):'';
     var popup=document.createElement('div');
     popup.id='notif-popup';

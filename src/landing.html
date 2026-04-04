@@ -321,11 +321,17 @@
 
 <!-- Q1: Stage -->
 <div id="hook-q1">
-<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">1. Where are you currently in training?</div>
+<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">1. Where are you in your career?</div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
 <button onclick="hookQ(1,'student',this)" class="hook-opt" style="padding:16px;background:var(--bg2);border:2px solid var(--border);border-radius:12px;cursor:pointer;text-align:center;transition:all .25s">
 <div style="font-size:22px;margin-bottom:6px">🎓</div>
 <div style="font-size:13px;font-weight:600;color:var(--text)">Medical Student</div>
+<div style="font-size:9px;color:var(--text3);margin-top:2px">Currently in training</div>
+</button>
+<button onclick="hookQ(1,'applicant',this)" class="hook-opt" style="padding:16px;background:var(--bg2);border:2px solid var(--border);border-radius:12px;cursor:pointer;text-align:center;transition:all .25s">
+<div style="font-size:22px;margin-bottom:6px">📄</div>
+<div style="font-size:13px;font-weight:600;color:var(--text)">Graduate / Applicant</div>
+<div style="font-size:9px;color:var(--text3);margin-top:2px">Finished med school, applying</div>
 </button>
 <button onclick="hookQ(1,'resident',this)" class="hook-opt" style="padding:16px;background:var(--bg2);border:2px solid var(--border);border-radius:12px;cursor:pointer;text-align:center;transition:all .25s">
 <div style="font-size:22px;margin-bottom:6px">🏥</div>

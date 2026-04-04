@@ -690,6 +690,20 @@ function hookTimelinePreview(stage){
       10:{icon:'\uD83D\uDCB0',text:'Interview season for attending positions. Compare total compensation packages, not just base salary.'},
       11:{icon:'\uD83D\uDCB0',text:'Year-end: verify PSLF payment count. Negotiate your start date and sign-on bonus before the new year.'}
     },
+    applicant:{
+      0:{icon:'\uD83D\uDCCB',text:'New year — reassess your application strategy. What gaps can you close before the next cycle?'},
+      1:{icon:'\uD83D\uDD2C',text:'Research positions and observerships are your best tools right now. Apply aggressively this month.'},
+      2:{icon:'\u2708\uFE0F',text:'Away rotation and observership applications are opening. Apply early — competitive slots fill fast.'},
+      3:{icon:'\uD83D\uDCB0',text:'Tax deadline this month. Review loan deferment status and income-driven repayment options.'},
+      4:{icon:'\uD83D\uDCDD',text:'Lock in your LOR writers now. Give them 3-4 months of lead time for strong letters.'},
+      5:{icon:'\u270D\uFE0F',text:'Start revising your personal statement. Incorporate what you\u2019ve done since last cycle.'},
+      6:{icon:'\uD83D\uDD04',text:'Personal statement should be in active revision. ECFMG certification steps should be complete or in progress.'},
+      7:{icon:'\u23F0',text:'One month until ERAS opens. Your application should be nearly complete. Polish everything now.'},
+      8:{icon:'\uD83D\uDE80',text:'ERAS is open. Submit Day 1 for competitive specialties — late submissions are screened last.'},
+      9:{icon:'\uD83D\uDCE7',text:'Interview invitations are arriving. Respond within hours, be flexible with dates, and prepare for each program.'},
+      10:{icon:'\uD83C\uDF99\uFE0F',text:'Interview season is here. Research each program before your interview day. First impressions are everything.'},
+      11:{icon:'\uD83E\uDDD0',text:'Late interview season. Start drafting your rank list. Gather honest opinions from residents at programs you visited.'}
+    },
     attending:{
       0:{icon:'\uD83D\uDCC8',text:'New year \u2014 review your financial goals. Are you on track for retirement savings, loan payoff, and net worth targets?'},
       1:{icon:'\uD83D\uDCB0',text:'Compensation data from MGMA updates in Q1. Compare your total comp to the latest benchmarks.'},
@@ -714,6 +728,17 @@ function hookTimelinePreview(stage){
       {m:4,text:'Lock in LOR writers',icon:'\uD83D\uDCDD'},
       {m:5,text:'Start personal statement',icon:'\u270D\uFE0F'},
       {m:6,text:'Schedule Step 2 CK',icon:'\uD83D\uDCDA'},
+      {m:7,text:'Finalize ERAS application',icon:'\u23F0'},
+      {m:8,text:'ERAS opens \u2014 submit Day 1',icon:'\uD83D\uDE80'},
+      {m:9,text:'Interview season begins',icon:'\uD83C\uDF99\uFE0F'},
+      {m:1,text:'Rank list certification',icon:'\u2705'},
+      {m:2,text:'Match Week',icon:'\uD83C\uDF89'}
+    ],
+    applicant:[
+      {m:1,text:'Secure observerships / research positions',icon:'\uD83D\uDD2C'},
+      {m:3,text:'Tax filing deadline (Apr 15)',icon:'\uD83D\uDCB0'},
+      {m:4,text:'Lock in LOR writers',icon:'\uD83D\uDCDD'},
+      {m:5,text:'Start personal statement revision',icon:'\u270D\uFE0F'},
       {m:7,text:'Finalize ERAS application',icon:'\u23F0'},
       {m:8,text:'ERAS opens \u2014 submit Day 1',icon:'\uD83D\uDE80'},
       {m:9,text:'Interview season begins',icon:'\uD83C\uDF99\uFE0F'},
@@ -819,7 +844,7 @@ function hookQ(q,val,btn){
 
 function hookShowResults(){
   var s=hookA.stage,g=hookA.goal;
-  var labels={student:'Medical Students',resident:'Residents',fellow:'Fellows',attending:'Attending Physicians',pivot:'Physicians Exploring a Career Change'};
+  var labels={student:'Medical Students',applicant:'Graduates & Applicants',resident:'Residents',fellow:'Fellows',attending:'Attending Physicians',pivot:'Physicians Exploring a Career Change'};
   var el=document.getElementById('hook-label');if(el)el.textContent=labels[s]||'you';
   var G='#6abf4b',A='#c8a87c',W='#e8a838';
   // 3 tool recs per combo [icon,name,desc]
@@ -950,7 +975,8 @@ function hookShowResults(){
   };
 
   window._hookDemoData=D;
-  var key=s+'_'+g;
+  var demoStage=(s==='applicant')?'student':s;
+  var key=demoStage+'_'+g;
   var tList=T[key]||T['student_specialty'];
   var dList=D[key]||D['student_specialty'];
 
@@ -1887,7 +1913,7 @@ function initCareerProfile(){
 
 function getDefaultMilestones(stage){
   var ms=[];
-  if(stage==='student'||stage==='premed'){
+  if(stage==='student'||stage==='premed'||stage==='applicant'){
     ms=[
       {id:'step1',label:'Step 1 / Level 1 Completed',done:false},
       {id:'step2',label:'Step 2 CK / Level 2 Completed',done:false},
@@ -2024,7 +2050,7 @@ function getScoreActions(cp,scores){
   var bench=getPeerBenchmarks(cp);
 
   // ===== MEDICAL STUDENT =====
-  if(stage==='student'){
+  if(stage==='student'||stage==='applicant'){
     if(goal==='match'||goal==='specialty'){
       if(s2>0&&s2<bench.step2) actions.push({action:'Improve Step 2 CK from '+s2+' toward '+bench.step2+' (avg matched '+spec+')',gain:'+'+(Math.min(15,Math.ceil((bench.step2-s2)/2))),priority:'high'});
       else if(!s2) actions.push({action:'Complete Step 2 CK — most important score for match',gain:'+10 to +25',priority:'high'});
@@ -2410,7 +2436,7 @@ function showUpdateProfile(){
   var h='';
 
   // Stage selector
-  h+='<div class="fg"><label>Training Stage</label><select id="up-stage" onchange="updateProfileFields()"><option value="student"'+(stage==='student'?' selected':'')+'>Medical Student</option><option value="resident"'+(stage==='resident'?' selected':'')+'>Resident</option><option value="fellow"'+(stage==='fellow'?' selected':'')+'>Fellow</option><option value="attending"'+(stage==='attending'?' selected':'')+'>Attending</option></select></div>';
+  h+='<div class="fg"><label>Training Stage</label><select id="up-stage" onchange="updateProfileFields()"><option value="student"'+(stage==='student'?' selected':'')+'>Medical Student (In Training)</option><option value="applicant"'+(stage==='applicant'?' selected':'')+'>Graduate / Applicant</option><option value="resident"'+(stage==='resident'?' selected':'')+'>Resident</option><option value="fellow"'+(stage==='fellow'?' selected':'')+'>Fellow</option><option value="attending"'+(stage==='attending'?' selected':'')+'>Attending</option></select></div>';
 
   // Goal selector
   h+='<div class="fg"><label>Primary Career Goal</label><select id="up-goal" onchange="updateProfileFields()"><option value="">Select your focus</option>';
@@ -2442,7 +2468,7 @@ function updateProfileFields(){
   h+='<div class="fg"><label>Target / Current Specialty</label><input type="text" id="up-spec" value="'+(cp.specialty||'')+'" placeholder="e.g., Cardiology, Dermatology"></div>';
 
   // --- STUDENT-SPECIFIC ---
-  if(stage==='student'){
+  if(stage==='student'||stage==='applicant'){
     h+='<div style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin:16px 0 8px;padding-top:12px;border-top:1px solid var(--border)">Academic Profile</div>';
     h+='<div class="fg"><label>USMLE Step 1 / COMLEX Level 1</label><input type="text" id="up-step1" value="'+(cp.step1||'')+'" placeholder="e.g., Pass, 230"></div>';
     h+='<div class="fg"><label>USMLE Step 2 CK / COMLEX Level 2</label><input type="text" id="up-step2" value="'+(cp.step2||'')+'" placeholder="e.g., 252"><div style="font-size:9px;color:var(--text3);margin-top:3px">Most important score for match competitiveness</div></div>';
@@ -3372,7 +3398,7 @@ function renderHeroCard(){
   var recTool=getNextBestTool(cp,scores,toolsUsed);
 
   // Stage labels
-  var stageLabels={student:'Medical Student',resident:'Resident',fellow:'Fellow',attending:'Attending Physician'};
+  var stageLabels={student:'Medical Student',applicant:'Graduate / Applicant',resident:'Resident',fellow:'Fellow',attending:'Attending Physician'};
 
   var h='<div style="background:#111318;border-radius:18px;padding:24px 22px;color:#EDEBE7;position:relative;overflow:hidden">';
   h+='<div style="position:absolute;top:-30%;right:-10%;width:180px;height:180px;background:radial-gradient(circle,rgba(198,168,94,.08),transparent 60%);border-radius:50%"></div>';
@@ -3895,7 +3921,7 @@ function renderWeeklyFocus(){
   var month=now.getMonth(); // 0-indexed
 
   // Stage + goal based focus
-  if(stage==='student'||stage==='resident'){
+  if(stage==='student'||stage==='applicant'||stage==='resident'){
     if(goal==='match'||goal==='fellowship'){
       if(month>=4&&month<=6&&toolsUsed.indexOf('Match Probability Calculator')<0)
         focus={icon:'🏆',title:'Run the Match Probability Calculator',sub:'ERAS opens soon. Know exactly where you stand before you apply.',tool:'v14',urgency:'high'};
@@ -4022,13 +4048,13 @@ function renderUpcomingDeadlines(){
 
   var deadlines=[];
   // Universal deadlines based on academic calendar
-  if(stage==='student'||stage==='resident'){
+  if(stage==='student'||stage==='applicant'||stage==='resident'){
     if(month<=5) deadlines.push({date:'Jul '+year,label:'ERAS Opens — fellowship/residency applications',icon:'📋',months:6-month});
     if(month<=7) deadlines.push({date:'Sep '+year,label:'ERAS Submission Window — submit Day 1',icon:'🚀',months:8-month});
     if(month>=8||month<=1) deadlines.push({date:'Mar '+(month>=8?year+1:year),label:'Match Day',icon:'🎉',months:month>=8?(14-month):(2-month)});
     if(month<=3) deadlines.push({date:'Apr '+year,label:'SOAP / Scramble period',icon:'⚡',months:3-month});
   }
-  if(stage==='student'){
+  if(stage==='student'||stage==='applicant'){
     if(month<=5) deadlines.push({date:'Jun-Aug '+year,label:'Away rotation application period',icon:'🏥',months:Math.max(0,5-month)});
   }
   if(stage==='fellow'||stage==='attending'){
@@ -7683,6 +7709,14 @@ var QUIZ_RECS={
   'student_finance':     [{id:'v11',why:'See how specialty choice impacts lifetime wealth'},{id:'v8',why:'The 5 financial decisions worth millions'},{id:'v5',why:'Map your post-training financial trajectory'},{id:'v4',why:'Understand how RVU compensation actually works'}],
   'student_direction':   [{id:'v13',why:'Discover which specialties fit your personality and goals'},{id:'v14',why:'Check your competitiveness for each target specialty'},{id:'v17',why:'Observerships let you test-drive a specialty before committing'},{id:'v15',why:'Build a roadmap once you choose'},{id:'v11',why:'Compare financial trajectories side by side'}],
 
+  // GRADUATE / APPLICANT (finished med school, applying to residency/fellowship)
+  'applicant_specialty': [{id:'v13',why:'Reassess which specialties fit your profile and goals'},{id:'v14',why:'Check your competitiveness — some specialties are more IMG-friendly'},{id:'v17',why:'Observerships in a new specialty strengthen your application'},{id:'v11',why:'Compare financial trajectories across specialties'},{id:'v15',why:'Build a strategic roadmap for the next cycle'}],
+  'applicant_match':     [{id:'v14',why:'See your real match probability and exactly what to fix'},{id:'v17',why:'Observerships are your #1 way to get US clinical experience and LORs'},{id:'v16',why:'Practice the questions program directors will ask'},{id:'v9',why:'Get a strategic application review'},{id:'v15',why:'Build a month-by-month plan for the next match cycle'}],
+  'applicant_fellowship':[{id:'v14',why:'Check your competitiveness for your target fellowship'},{id:'v17',why:'Observerships at fellowship programs build critical connections'},{id:'v16',why:'Practice fellowship interview questions with honest feedback'},{id:'v7',why:'Maximize your research portfolio before applying'},{id:'v15',why:'Build a strategic fellowship application roadmap'}],
+  'applicant_contract':  [{id:'v12',why:'Know what to look for before you sign anything'},{id:'v3',why:'Compare offers systematically'},{id:'v5',why:'Plan your first 3 years of income strategically'},{id:'v8',why:'PSLF vs refinance — make this decision now'}],
+  'applicant_finance':   [{id:'v11',why:'Model your financial trajectory based on when you match'},{id:'v8',why:'Protect yourself financially during the gap'},{id:'v5',why:'Plan for the transition to earning'},{id:'v4',why:'Understand how compensation works in your target specialty'}],
+  'applicant_direction': [{id:'v13',why:'Discover which specialties actually fit where you are now'},{id:'v14',why:'Check competitiveness across multiple specialties'},{id:'v17',why:'Observerships let you explore before committing to a new direction'},{id:'v10',why:'Structured pivot analysis'},{id:'v11',why:'Compare financial trajectories across paths'}],
+
   // RESIDENT
   'resident_specialty':  [{id:'v13',why:'Find which specialties actually fit you'},{id:'v14',why:'Check how competitive you are for each option'},{id:'v17',why:'Observerships help you explore before switching specialties'},{id:'v11',why:'Compare the financial trajectory of each path'},{id:'v10',why:'Use the pivot engine if you\'re rethinking your direction'}],
   'resident_match':      [{id:'v14',why:'See your real match probability and what moves the needle'},{id:'v16',why:'Practice real interview questions with honest feedback'},{id:'v15',why:'Build your personalized roadmap'},{id:'v7',why:'Maximize research ROI with limited time'},{id:'v17',why:'Find observerships to strengthen your application'}],
@@ -7766,7 +7800,7 @@ function quizShowResults(){
   else urgMsg='<div style="padding:10px 14px;background:rgba(139,173,196,.08);border:1px solid rgba(139,173,196,.15);border-radius:8px;margin-bottom:14px;font-size:11px;color:var(--blue);display:flex;align-items:center;gap:8px"><span style="font-size:14px">🗺️</span> <span>Great time to explore. Browse these tools at your own pace — no pressure.</span></div>';
 
   // Stage labels for personalized intro
-  var stageLabels={student:'medical student',resident:'resident',fellow:'fellow',attending:'attending physician'};
+  var stageLabels={student:'medical student',applicant:'graduate applicant',resident:'resident',fellow:'fellow',attending:'attending physician'};
   var goalLabels={specialty:'choosing a specialty',match:'matching into residency',fellowship:'positioning for fellowship',contract:'negotiating a job offer',finance:'building income and financial leverage',direction:'considering a career change'};
   var stageLabel=stageLabels[quizAnswers.stage]||'physician';
   var goalLabel=goalLabels[quizAnswers.goal]||'your next move';
@@ -8987,7 +9021,7 @@ function renderProfile(){
   if(!U)return;
   document.getElementById('prof-av').textContent=U.name.charAt(0).toUpperCase();
   document.getElementById('prof-name').textContent=U.name;
-  const rl={premed:'Pre-Medical Student',student:'Medical Student',resident:'Resident',fellow:'Fellow',attending:'Attending Physician',switching:'Career Transition',admin:'Physician · Founder',other:'Member'};
+  const rl={premed:'Pre-Medical Student',student:'Medical Student',applicant:'Graduate / Applicant',resident:'Resident',fellow:'Fellow',attending:'Attending Physician',switching:'Career Transition',admin:'Physician · Founder',other:'Member'};
   document.getElementById('prof-role').textContent=rl[U.role]||'Member';
   const t=TIERS[U.tier]||TIERS.free;
   var toolsRun=(U.toolHistory||[]).length;
@@ -9340,6 +9374,30 @@ var GOAL_TEMPLATES={
       {label:'Month 3',goals:['Build a 1-month emergency fund','Map out your loan repayment strategy (PSLF vs refinance)','Understand your future contract compensation models (RVU, salary, hybrid)','Connect with a fee-only financial advisor for a one-time consultation']}
     ]
   },
+  applicant_match:{
+    title:'Match Cycle Prep',
+    months:[
+      {label:'Month 1',goals:['Audit your application honestly — identify the 2-3 biggest gaps','Secure observerships or research positions to fill those gaps','Get US clinical experience letters of recommendation lined up','Create a tiered program list (reach/target/safety) based on your profile']},
+      {label:'Month 2',goals:['Submit or advance a research project (case report, abstract, or QI)','Practice interview questions — use the Interview Practice Tool weekly','Get your personal statement reviewed by 3 people who matched','Connect with program coordinators at target programs']},
+      {label:'Month 3',goals:['Finalize personal statement (5+ revisions minimum)','Confirm all letter writers and provide them your updated CV','Complete ECFMG certification steps if applicable','Have a backup plan: preliminary positions, research years, or alternative paths']}
+    ]
+  },
+  applicant_finance:{
+    title:'Financial Bridge Plan',
+    months:[
+      {label:'Month 1',goals:['Calculate your monthly burn rate and runway','Apply for income-driven repayment or deferment on student loans','Create a bare-bones budget for the gap period','Explore paid research positions or clinical work to generate income']},
+      {label:'Month 2',goals:['Build or maintain a 3-month emergency fund','Review health insurance options (marketplace, COBRA, or institutional)','Understand how gap years affect PSLF qualifying payments','Track every dollar — financial discipline now pays off later']},
+      {label:'Month 3',goals:['Reassess your financial runway — adjust spending if needed','Plan for application costs: ERAS fees, travel, interview expenses','Set up automatic savings even if small','Connect with a fee-only financial advisor for a one-time consultation']}
+    ]
+  },
+  applicant_direction:{
+    title:'Career Direction',
+    months:[
+      {label:'Month 1',goals:['Diagnose why you didn\'t match or why you\'re reconsidering your path','Take the Specialty Fit Assessment with fresh eyes','Talk to 3 physicians in specialties you\'re considering','Assess your competitiveness across multiple specialties']},
+      {label:'Month 2',goals:['Test new directions through observerships or informational interviews','Calculate the financial impact of different paths','Get honest feedback from mentors about your strongest options','Narrow to 1-2 target specialties with a clear rationale']},
+      {label:'Month 3',goals:['Commit to a direction and build a 12-month action plan','Identify the specific gaps to close before the next cycle','Line up research, clinical experience, or training to strengthen your profile','Submit an Application Review to Dr. Faroqui for structured guidance']}
+    ]
+  },
   resident_match:{
     title:'Fellowship Positioning',
     months:[
@@ -9417,6 +9475,7 @@ var GOAL_TEMPLATES={
 // Fallback goals for combinations not explicitly defined
 var GOAL_DEFAULTS={
   student:{title:'Medical Student Goals',goals:['Set a clear career direction and target specialty','Start one research or scholarly project','Build relationships with 2-3 potential mentors','Create a financial plan for your remaining training']},
+  applicant:{title:'Graduate / Applicant Goals',goals:['Strengthen your application — research, LORs, and clinical experience','Secure observerships or research positions at target programs','Build a month-by-month plan for the next application cycle','Protect your finances during the gap period']},
   resident:{title:'Resident Goals',goals:['Advance your primary career objective this month','Complete one scholarly activity (abstract, case report, or QI project)','Strengthen a key mentor relationship','Review your financial plan — loans, insurance, savings']},
   fellow:{title:'Fellow Goals',goals:['Progress toward your first attending position','Submit or advance a research project','Network with 2 potential employers or collaborators','Finalize your post-fellowship financial strategy']},
   attending:{title:'Attending Physician Goals',goals:['Review and optimize your current contract terms','Advance one professional development goal','Check your financial trajectory — savings rate, investments, debt','Invest in one relationship that will matter in 5 years']},
@@ -14153,7 +14212,7 @@ function levGenAI(wfId,userInput){
   var spec='your specialty',stage='trainee';
   if(U&&U.careerProfile){
     spec=U.careerProfile.specialty||spec;
-    var sl={student:'medical student',resident:'resident',fellow:'fellow',attending:'attending'};
+    var sl={student:'medical student',applicant:'graduate applicant',resident:'resident',fellow:'fellow',attending:'attending'};
     stage=sl[U.careerProfile.stage]||stage;
   }
   var inp=userInput.substring(0,300);
@@ -14454,7 +14513,7 @@ function renderLeverage(){
     var goal=cp.concern||'';
     var tried=U.leverageTried||[];
     var recTools=[];var recText='';
-    if(stage==='student'){
+    if(stage==='student'||stage==='applicant'){
       recText='As a medical student, these tools will give you the biggest head start:';
       recTools=[{id:'lev-study',why:'Convert lectures into active recall — 75% retention vs 10% passive reading'},{id:'lev-simplify',why:'Master complex concepts at three levels of depth'},{id:'lev-research',why:'Walk into mentor meetings with research proposals ready'}];
     }else if(stage==='resident'){
@@ -14960,7 +15019,7 @@ function checkCompAlerts(){
   }
 
   // ALERT 5: Students/residents — expected attending salary context
-  if(stage==='student'||stage==='resident'){
+  if(stage==='student'||stage==='applicant'||stage==='resident'){
     if(spec){
       var bench3=getCompBenchmark(spec,ci.region||'','');
       if(bench3){
@@ -15071,7 +15130,7 @@ function renderCompIntelCard(){
   h+='</div>';
 
   // --- TRAINEE VIEW (students + residents) ---
-  if(stage==='student'||stage==='resident'){
+  if(stage==='student'||stage==='applicant'||stage==='resident'){
     if(bench){
       h+='<div style="padding:12px;background:var(--bg2);border-radius:10px;margin-bottom:10px">';
       h+='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Expected Attending Compensation: '+spec+'</div>';
@@ -15107,7 +15166,7 @@ function renderCompIntelCard(){
     var residencyYears={'internal medicine':3,'family medicine':3,'pediatrics':3,'emergency medicine':3,'surgery':5,'orthopedic surgery':5,'neurology':4,'dermatology':4,'radiology':5,'anesthesiology':4,'psychiatry':4,'urology':5};
     var specYears=residencyYears[spec.toLowerCase()]||3;
     var yearsLeft=Math.max(0,specYears-pgyNum);
-    if(stage==='student')yearsLeft=specYears+Math.max(0,4-pgyNum);
+    if(stage==='student'||stage==='applicant')yearsLeft=specYears+Math.max(0,4-pgyNum);
     if(yearsLeft>0&&bench){
       var stipendLost=yearsLeft*(bench.p50-(comp||65000));
       h+='<div style="padding:10px;background:rgba(198,168,94,.06);border:1px solid rgba(198,168,94,.12);border-radius:8px;font-size:12px;color:var(--text2)">';
@@ -17790,7 +17849,7 @@ function showMonthlyCheckin(){
   // Section 2: Updated numbers
   h+='<div style="margin-bottom:20px"><div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Updated Numbers (if changed)</div>';
   h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">';
-  if(stage==='student'||stage==='resident'){
+  if(stage==='student'||stage==='applicant'||stage==='resident'){
     h+='<div><label style="font-size:10px;color:var(--text3)">Publications</label><input type="number" id="mci-pubs" value="'+(cp.pubs||'')+'" placeholder="Total pubs" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:6px;background:var(--bg);color:var(--text);font-size:12px"></div>';
     h+='<div><label style="font-size:10px;color:var(--text3)">Conferences</label><input type="number" id="mci-conf" value="'+(cp.conferences||'')+'" placeholder="Presentations" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:6px;background:var(--bg);color:var(--text);font-size:12px"></div>';
   }
@@ -18120,7 +18179,7 @@ function generateQuarterlySnapshot(){
   var qIdx=Math.floor(now.getMonth()/3);
   var qLabel=qNames[qIdx]+' '+now.getFullYear();
   var qStart=new Date(now.getFullYear(),qIdx*3,1);
-  var sl={student:'Medical Student',resident:'Resident',fellow:'Fellow',attending:'Attending Physician'}[cp.stage]||'Physician';
+  var sl={student:'Medical Student',applicant:'Graduate / Applicant',resident:'Resident',fellow:'Fellow',attending:'Attending Physician'}[cp.stage]||'Physician';
   var spec=cp.specialty?(cp.specialty.charAt(0).toUpperCase()+cp.specialty.slice(1)):'';
   var scores=U.scoreHistory&&U.scoreHistory.length?U.scoreHistory[U.scoreHistory.length-1].scores:{};
   var prevScores=U.scoreHistory&&U.scoreHistory.length>1?U.scoreHistory[U.scoreHistory.length-2].scores:null;
@@ -18344,7 +18403,7 @@ function generateQuarterlySnapshot(){
 function generateMonthlyReport(){
   if(!U)return;var cp=U.careerProfile||{};var now=new Date();
   var monthName=now.toLocaleDateString('en-US',{month:'long',year:'numeric'});
-  var sl={student:'Medical Student',resident:'Resident',fellow:'Fellow',attending:'Attending Physician'}[cp.stage]||'Physician';
+  var sl={student:'Medical Student',applicant:'Graduate / Applicant',resident:'Resident',fellow:'Fellow',attending:'Attending Physician'}[cp.stage]||'Physician';
   var spec=cp.specialty?(cp.specialty.charAt(0).toUpperCase()+cp.specialty.slice(1)):'';
   var scores=U.scoreHistory&&U.scoreHistory.length?U.scoreHistory[U.scoreHistory.length-1].scores:{};
   var prev=U.scoreHistory&&U.scoreHistory.length>1?U.scoreHistory[U.scoreHistory.length-2].scores:null;

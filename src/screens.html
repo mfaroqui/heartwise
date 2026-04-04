@@ -385,11 +385,15 @@ Sign Out</button>
 
 <!-- Q1: Stage -->
 <div id="quiz-q1">
-<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">1. Where are you currently in training?</div>
+<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">1. Where are you in your career?</div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
 <button class="quiz-opt" onclick="quizPick(1,'student',this)" style="padding:12px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;text-align:center;cursor:pointer;transition:all .2s">
 <div style="font-size:18px;margin-bottom:4px">🎓</div>
-<div style="font-size:12px;font-weight:500;color:var(--text)">Medical Student</div>
+<div style="font-size:12px;font-weight:500;color:var(--text)">Student (In Training)</div>
+</button>
+<button class="quiz-opt" onclick="quizPick(1,'applicant',this)" style="padding:12px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;text-align:center;cursor:pointer;transition:all .2s">
+<div style="font-size:18px;margin-bottom:4px">📄</div>
+<div style="font-size:12px;font-weight:500;color:var(--text)">Graduate / Applicant</div>
 </button>
 <button class="quiz-opt" onclick="quizPick(1,'resident',this)" style="padding:12px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;text-align:center;cursor:pointer;transition:all .2s">
 <div style="font-size:18px;margin-bottom:4px">🏥</div>

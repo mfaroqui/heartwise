@@ -36,7 +36,7 @@ Deno.serve(async (req: Request) => {
 
       // ========== 1. GOAL TRACKER NUDGES ==========
       // Send on Mondays for core/elite users
-      if (dayOfWeek === 1 && (user.tier === "core" || user.tier === "elite" || user.tier === "admin")) {
+      if (dayOfWeek === 1 && (user.tier === "student" || user.tier === "core" || user.tier === "elite" || user.tier === "admin")) {
         const goalNudge = getGoalNudge(user);
         if (goalNudge) emails.push(goalNudge);
       }

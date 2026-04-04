@@ -784,17 +784,6 @@ Sign Out</button>
 </div>
 </div>
 <div class="sec" style="padding:16px 0">Choose Your Plan</div>
-<div class="plan"><div class="plan-n" style="color:var(--accent)">Student & IMG</div><div style="font-size:12px;color:var(--accent);margin-bottom:4px">For Medical Students & IMGs</div>
-<div id="student-price-display"><div class="plan-p">$9<span> /mo</span></div></div>
-<div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:12px">
-<span id="student-toggle-mo" style="font-size:11px;font-weight:600;color:var(--accent);cursor:pointer" onclick="toggleStudentBilling('monthly')">Monthly</span>
-<div onclick="toggleStudentBilling()" style="width:40px;height:22px;border-radius:11px;background:var(--accent);cursor:pointer;position:relative;transition:background .2s" id="student-billing-toggle">
-<div id="student-toggle-knob" style="width:18px;height:18px;border-radius:50%;background:#fff;position:absolute;top:2px;left:2px;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.2)"></div>
-</div>
-<span id="student-toggle-yr" style="font-size:11px;font-weight:500;color:var(--text3);cursor:pointer" onclick="toggleStudentBilling('annual')">Annual <span style="color:var(--green);font-weight:700">save $29</span></span>
-</div>
-<ul class="plan-f"><li>Unlimited career intelligence analyses</li><li>Full access to ALL 15+ framework tools</li><li>Progress tracking & goal setting</li><li>Match competitiveness & specialty fit</li><li>Observership database access</li></ul>
-<button class="btn btn-a btn-sm" id="student-subscribe-btn" onclick="subPlan('student')">Get Student — $9/mo</button></div>
 <div class="plan pop"><div class="plan-n" style="color:var(--accent)">Core</div><div style="font-size:12px;color:var(--accent);margin-bottom:4px">Most Popular — All Tools Unlocked</div>
 <div id="core-price-display"><div class="plan-p">$39<span> /mo</span></div></div>
 <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:12px">

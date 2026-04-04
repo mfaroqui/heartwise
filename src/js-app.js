@@ -1662,7 +1662,7 @@ function enterApp(){
     }
   }
   const b=document.getElementById('user-badge');
-  const bc={free:'b-free',core:'b-core',elite:'b-pro',admin:'b-admin'};
+  const bc={free:'b-free',student:'b-student',core:'b-core',elite:'b-pro',admin:'b-admin'};
   b.className='badge '+(bc[U.tier]||'b-free');
   b.textContent=U.tier==='admin'?'MENTOR':TIERS[U.tier]?.name?.toUpperCase()||'FREE';
   var welcomeEl=document.getElementById('welcome-msg');
@@ -1672,6 +1672,7 @@ function enterApp(){
   var topUpgrade=document.getElementById('topbar-upgrade');
   if(topUpgrade){
     if(U.tier==='free'||U.isTrial){topUpgrade.style.display='';topUpgrade.textContent='Subscribe';topUpgrade.onclick=function(){navTo('scr-profile');showUpgrade()}}
+    else if(U.tier==='student'){topUpgrade.style.display='';topUpgrade.textContent='Upgrade to Core';topUpgrade.onclick=function(){navTo('scr-profile');showUpgrade()}}
     else if(U.tier==='core'){topUpgrade.style.display='';topUpgrade.textContent='Upgrade to Mentorship';topUpgrade.onclick=function(){navTo('scr-profile');showUpgrade()}}
     else{topUpgrade.style.display='none'}
   }
@@ -1711,7 +1712,7 @@ function showUpgradeElements(){
   if(U.tier==='free'){
     stickyBar.classList.remove('hidden');
     document.body.classList.add('has-upgrade-bar');
-    document.getElementById('upgrade-bar-sub').textContent='Unlock unlimited career intelligence tools — Core $39/mo';
+    document.getElementById('upgrade-bar-sub').textContent='Unlock unlimited career intelligence tools — from $9/mo';
   } else {
     stickyBar.classList.add('hidden');
     document.body.classList.remove('has-upgrade-bar');
@@ -1730,7 +1731,7 @@ function applyBlurGate(resultsEl){
     +'<div class="hw-blur-icon">\ud83d\udd12</div>'
     +'<div class="hw-blur-title">Your analysis is ready</div>'
     +'<div class="hw-blur-sub">Upgrade to Core to see your full results, recommendations, and action plan.</div>'
-    +'<button class="hw-blur-cta" onclick="navTo(\'scr-profile\');showUpgrade();closeModal(\'modal-q\')">Unlock Full Results \u2014 $39/mo</button>'
+    +'<button class="hw-blur-cta" onclick="navTo(\'scr-profile\');showUpgrade();closeModal(\'modal-q\')">Unlock Full Results \u2014 from $9/mo</button>'
     +'</div></div>';
   return true;
 }
@@ -1750,7 +1751,7 @@ function hwGatePathway(pathwayHtml){
       +'<div style="font-size:24px;margin-bottom:8px">\ud83d\udd13</div>'
       +'<div style="font-size:14px;font-weight:600;color:var(--accent);margin-bottom:6px">Your Action Plan Is Ready</div>'
       +'<div style="font-size:12px;color:var(--text3);line-height:1.6;margin-bottom:14px;max-width:320px">Subscribe to unlock your personalized next steps, prioritized actions, and specific recommendations.</div>'
-      +'<button onclick="navTo(\'scr-profile\');showUpgrade()" style="font-size:13px;font-weight:600;padding:12px 28px;background:var(--accent);color:#1C1A17;border:none;border-radius:8px;cursor:pointer">Subscribe to Unlock \u2014 $39/mo</button>'
+      +'<button onclick="navTo(\'scr-profile\');showUpgrade()" style="font-size:13px;font-weight:600;padding:12px 28px;background:var(--accent);color:#1C1A17;border:none;border-radius:8px;cursor:pointer">Subscribe to Unlock \u2014 from $9/mo</button>'
       +'<div style="font-size:10px;color:var(--text3);margin-top:8px">Cancel anytime</div>'
       +'</div></div>';
   }
@@ -2216,7 +2217,7 @@ function renderDashboard(){
 
   // Peer Activity Card — show how many users in their specialty are active
   var peerEl=document.getElementById('dash-peer-activity');
-  if(peerEl&&cp.specialty&&(U.tier==='core'||U.tier==='elite'||U.tier==='admin')){
+  if(peerEl&&cp.specialty&&(U.tier==='student'||U.tier==='core'||U.tier==='elite'||U.tier==='admin')){
     var specName=cp.specialty.charAt(0).toUpperCase()+cp.specialty.slice(1);
     var userScore=scores.competitiveness||0;
     var pctile=userScore>=80?'top 15%':userScore>=65?'top 35%':userScore>=50?'top 55%':'building';
@@ -3214,7 +3215,7 @@ function renderHome(){
   renderHeroCard();
   // Check if Career Map is active (it handles most content itself)
   var cp=U.careerProfile||{};
-  var _hasPlan=U.tier==='core'||U.tier==='elite'||U.tier==='admin'||U.isTrial;
+  var _hasPlan=U.tier==='student'||U.tier==='core'||U.tier==='elite'||U.tier==='admin'||U.isTrial;
   var _hasRealProfile=cp.lastUpdated&&(cp.specialty||cp.step2||parseInt(cp.pubs)>0||parseInt(cp.comp)>5000);
   var _careerMapActive=_hasPlan&&_hasRealProfile&&typeof renderCareerMap==='function';
   // Trial banner
@@ -3292,7 +3293,7 @@ function renderHeroCard(){
   var cp=U.careerProfile||{};
   var hasRealProfile=cp.lastUpdated&&(cp.specialty||cp.step2||parseInt(cp.pubs)>0||parseInt(cp.comp)>5000);
   var name=U.name?'Dr. '+U.name.split(' ').pop():'';
-  var hasPlan=U.tier==='core'||U.tier==='elite'||U.tier==='admin'||U.isTrial;
+  var hasPlan=U.tier==='student'||U.tier==='core'||U.tier==='elite'||U.tier==='admin'||U.isTrial;
 
   // Time-based greeting
   var hour=new Date().getHours();
@@ -3444,7 +3445,7 @@ function renderScoreBreakdown(){
   var hasRealProfile=cp.lastUpdated&&(cp.specialty||cp.step2||parseInt(cp.pubs)>0||parseInt(cp.comp)>5000);
   if(!hasRealProfile){el.style.display='none';return}
 
-  var hasPlan=U.tier==='core'||U.tier==='elite'||U.tier==='admin'||U.isTrial;
+  var hasPlan=U.tier==='student'||U.tier==='core'||U.tier==='elite'||U.tier==='admin'||U.isTrial;
   if(!hasPlan){el.style.display='none';return}
 
   var scores=calcDashScores(cp);
@@ -3493,7 +3494,7 @@ function renderWelcomeQuickstart(){
   var el=document.getElementById('career-dashboard');
   if(!el||!U)return;
   el.style.display='';
-  var hasPlan=U.tier==='core'||U.tier==='elite'||U.tier==='admin'||U.isTrial;
+  var hasPlan=U.tier==='student'||U.tier==='core'||U.tier==='elite'||U.tier==='admin'||U.isTrial;
   var name=U.name?'Dr. '+U.name.split(' ').pop():'';
   var toolsUsed=(U.toolHistory||[]).length;
 
@@ -3575,7 +3576,7 @@ function renderNextStep(){
   // No real profile yet — the quickstart handles it, keep hero clean
   var hasRealProfile=cp.lastUpdated&&(cp.specialty||cp.step2||parseInt(cp.pubs)>0||parseInt(cp.comp)>5000);
   if(!hasRealProfile){
-    var _hasPlan2=U.tier==='core'||U.tier==='elite'||U.tier==='admin'||U.isTrial;
+    var _hasPlan2=U.tier==='student'||U.tier==='core'||U.tier==='elite'||U.tier==='admin'||U.isTrial;
     if(_hasPlan2){
       h='<p style="font-family:var(--font-serif);font-size:16px;color:#1C1A17;line-height:1.4;font-weight:600;margin:0">The career decisions you make now will compound for decades.</p>';
     }else{
@@ -7753,7 +7754,7 @@ function quizPick(q,val,btn){
 function quizShowResults(){
   var key=quizAnswers.stage+'_'+quizAnswers.goal;
   var recs=QUIZ_RECS[key]||QUIZ_RECS['resident_fellowship'];
-  var canAccess=U&&(U.tier==='core'||U.tier==='elite'||U.tier==='admin');
+  var canAccess=U&&(U.tier==='student'||U.tier==='core'||U.tier==='elite'||U.tier==='admin');
 
   // Build urgency message
   var urgMsg='';
@@ -7836,7 +7837,7 @@ function quizReset(){
 
 // ===== VAULT =====
 function renderVault(){
-  const canAccess=U.tier==='core'||U.tier==='elite'||U.tier==='admin';
+  const canAccess=U.tier==='student'||U.tier==='core'||U.tier==='elite'||U.tier==='admin';
 
   var VAULT_CATEGORIES=[
     {
@@ -9019,7 +9020,7 @@ function adminSwitchTier(tier){
   document.getElementById('nav-admin').style.display='';
   // Update badge and upgrade elements without full enterApp() navigation
   var b=document.getElementById('user-badge');
-  var bc={free:'b-free',core:'b-core',elite:'b-pro',admin:'b-admin'};
+  var bc={free:'b-free',student:'b-student',core:'b-core',elite:'b-pro',admin:'b-admin'};
   if(b){b.className='badge '+(bc[tier]||'b-free');b.textContent=tier==='admin'?'MENTOR':t.name.toUpperCase()||'FREE'}
   var upNudge=document.getElementById('home-upgrade-nudge');if(upNudge)upNudge.style.display=tier==='free'&&!U.isTrial?'':'none';
   var topUpgrade=document.getElementById('topbar-upgrade');
@@ -10351,6 +10352,8 @@ function ftCalc(){
 // ===== STRIPE CONFIG =====
 // Stripe Payment Links (no SDK needed)
 const STRIPE_PRICES={
+  student:'price_1TIVVHFnqN9jbLiU4shlBjq7',
+  student_annual:'price_1TIVXpFnqN9jbLiUV24moAHu',
   core:'price_1THHBxFnqN9jbLiUL7VqoQgw',
   core_annual:'price_1THHElFnqN9jbLiUhoxpf5dq',
   elite:'price_1THHFaFnqN9jbLiUPKJhkKyL',
@@ -10358,6 +10361,33 @@ const STRIPE_PRICES={
 };
 
 var _coreBillingAnnual=false;
+var _studentBillingAnnual=false;
+function toggleStudentBilling(force){
+  if(force==='monthly')_studentBillingAnnual=false;
+  else if(force==='annual')_studentBillingAnnual=true;
+  else _studentBillingAnnual=!_studentBillingAnnual;
+  var knob=document.getElementById('student-toggle-knob');
+  var moLabel=document.getElementById('student-toggle-mo');
+  var yrLabel=document.getElementById('student-toggle-yr');
+  var priceDisplay=document.getElementById('student-price-display');
+  var btn=document.getElementById('student-subscribe-btn');
+  if(knob)knob.style.left=_studentBillingAnnual?'20px':'2px';
+  if(moLabel){moLabel.style.color=_studentBillingAnnual?'var(--text3)':'var(--accent)';moLabel.style.fontWeight=_studentBillingAnnual?'500':'600'}
+  if(yrLabel){yrLabel.style.color=_studentBillingAnnual?'var(--accent)':'var(--text3)';yrLabel.style.fontWeight=_studentBillingAnnual?'600':'500'}
+  if(priceDisplay)priceDisplay.innerHTML=_studentBillingAnnual?'<div class="plan-p">$79<span> /year</span></div>':'<div class="plan-p">$9<span> /mo</span></div>';
+  if(btn){btn.textContent=_studentBillingAnnual?'Get Student — $79/year':'Get Student — $9/mo';btn.setAttribute('onclick',_studentBillingAnnual?"subPlan('student_annual')":"subPlan('student')")}
+  // Also update landing page toggle if present
+  var lKnob2=document.getElementById('lp-student-toggle-knob');
+  var lMo2=document.getElementById('lp-student-toggle-mo');
+  var lYr2=document.getElementById('lp-student-toggle-yr');
+  var lPrice2=document.getElementById('lp-student-price-display');
+  var lBtn2=document.getElementById('lp-student-subscribe-btn');
+  if(lKnob2)lKnob2.style.left=_studentBillingAnnual?'20px':'2px';
+  if(lMo2){lMo2.style.color=_studentBillingAnnual?'var(--text3)':'var(--accent)';lMo2.style.fontWeight=_studentBillingAnnual?'500':'600'}
+  if(lYr2){lYr2.style.color=_studentBillingAnnual?'var(--accent)':'var(--text3)';lYr2.style.fontWeight=_studentBillingAnnual?'600':'500'}
+  if(lPrice2)lPrice2.innerHTML=_studentBillingAnnual?'<div class="plan-p">$79<span> /year</span></div>':'<div class="plan-p">$9<span> /mo</span></div>';
+  if(lBtn2){lBtn2.textContent=_studentBillingAnnual?'Get Student — $79/year':'Get Student — $9/mo';lBtn2.setAttribute('onclick',_studentBillingAnnual?"planSignup('student_annual')":"planSignup('student')")}
+}
 function toggleCoreBilling(force){
   if(force==='monthly')_coreBillingAnnual=false;
   else if(force==='annual')_coreBillingAnnual=true;
@@ -10409,6 +10439,8 @@ function planSignup(plan){
   }
 }
 const STRIPE_LINKS={
+  student:'https://buy.stripe.com/aFa9ATb6sgLjajJemf4Ni04',
+  student_annual:'https://buy.stripe.com/7sY5kD5M852BdvV4LF4Ni05',
   core:'https://buy.stripe.com/aFa3cv0rO3Yx77x3HB4Ni03',
   core_annual:'https://buy.stripe.com/7sY7sL6Qcdz70J93HB4Ni02',
   elite:'https://buy.stripe.com/6oU28r3E00MlgI7gun4Ni01',
@@ -10425,7 +10457,11 @@ function startCheckout(plan){
 
 function subPlan(plan){
   if(!U){notify('Please sign in first.',1);return}
-  if(plan==='core'){
+  if(plan==='student'){
+    startCheckout('student');
+  }else if(plan==='student_annual'){
+    startCheckout('student_annual');
+  }else if(plan==='core'){
     startCheckout('core');
   }else if(plan==='core_annual'){
     startCheckout('core_annual');
@@ -10569,6 +10605,7 @@ function admRenderMetrics(){
     return;
   }
   var fr=users.filter(function(u){return !u.tier||u.tier==='free'}).length;
+  var st=users.filter(function(u){return u.tier==='student'}).length;
   var co=users.filter(function(u){return u.tier==='core'}).length;
   var el=users.filter(function(u){return u.tier==='elite'}).length;
   var tr=users.filter(function(u){return u.is_trial||u.isTrial}).length;
@@ -10576,9 +10613,10 @@ function admRenderMetrics(){
   var trExpired=tr-trActive;
   var ca=users.filter(function(u){return u.cancelled||u.status==='cancelled'}).length;
   // MRR: only count users who actually paid (have paid_at), exclude admin/trial/test
+  var paidStudent=users.filter(function(u){return u.tier==='student'&&u.paid_at&&!u.is_trial}).length;
   var paidCore=users.filter(function(u){return u.tier==='core'&&u.paid_at&&!u.is_trial}).length;
   var paidElite=users.filter(function(u){return u.tier==='elite'&&u.paid_at&&!u.is_trial}).length;
-  var mrr=paidCore*39+paidElite*199;
+  var mrr=paidStudent*9+paidCore*39+paidElite*199;
   var tai=0;users.forEach(function(u){if(u.usage&&u.usage.ai)tai+=u.usage.ai;if(u.ai_used)tai+=u.ai_used});
   var act=users.filter(function(u){var d=u.last_active||u.lastActive;return d&&(Date.now()-new Date(d).getTime())<30*86400000}).length;
   var m=document.getElementById('adm-metrics');
@@ -10590,6 +10628,7 @@ function admRenderMetrics(){
     '<div class="adm-metric"><div class="num">'+tai+'</div><div class="lbl">AI Questions</div></div>'+
     '<div class="adm-metric"><div class="num">'+qs.length+'</div><div class="lbl">Questions</div></div>'+
     '<div class="adm-metric"><div class="num" style="color:var(--text3)">'+fr+'</div><div class="lbl">Free</div></div>'+
+    '<div class="adm-metric"><div class="num" style="color:#4AADA0">'+st+'</div><div class="lbl">Student</div></div>'+
     '<div class="adm-metric"><div class="num" style="color:var(--accent)">'+co+'</div><div class="lbl">Core</div></div>'+
     '<div class="adm-metric"><div class="num" style="color:var(--green)">'+el+'</div><div class="lbl">Mentorship</div></div>'+
     '<div class="adm-metric"><div class="num" style="color:#5ba8d0">'+trActive+'</div><div class="lbl">Active Trials</div></div>'+
@@ -10625,14 +10664,16 @@ function admRenderDashboard(c){
   }
   var trActive=users.filter(function(u){var isTr=u.is_trial||u.isTrial;var te=u.trial_end||u.trialEnd;return isTr&&te&&new Date(te)>new Date()}).length;
   var trExpired=users.filter(function(u){var isTr=u.is_trial||u.isTrial;var te=u.trial_end||u.trialEnd;return (isTr&&te&&new Date(te)<=new Date())||(!isTr&&te&&(u.tier||'free')==='free')}).length;
+  var paidStudent2=users.filter(function(u){return u.tier==='student'&&!u.is_trial&&!u.isTrial}).length;
   var paidCore=users.filter(function(u){return u.tier==='core'&&!u.is_trial&&!u.isTrial}).length;
   var el=users.filter(function(u){return u.tier==='elite'}).length;
   var freeOnly=users.filter(function(u){var isTr=u.is_trial||u.isTrial;var te=u.trial_end||u.trialEnd;return (u.tier||'free')==='free'&&!te}).length;
-  var mrr=paidCore*39+el*199;
+  var mrr=paidStudent2*9+paidCore*39+el*199;
   h+='<div class="adm-card"><div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:10px">User Breakdown</div>';
   h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px 20px;font-size:13px;color:var(--text2)">';
   h+='<div>🟡 Trial (Active): <strong>'+trActive+'</strong></div>';
   h+='<div>🔴 Trial (Expired): <strong>'+trExpired+'</strong></div>';
+  h+='<div>🟢 Student: <strong>'+paidStudent2+'</strong></div>';
   h+='<div>🟢 Core (Paid): <strong>'+paidCore+'</strong></div>';
   h+='<div>🟢 Mentorship: <strong>'+el+'</strong></div>';
   h+='<div>⚪ Free: <strong>'+freeOnly+'</strong></div>';
@@ -10646,6 +10687,7 @@ function admRenderDashboard(c){
     var tagLabel,tagBg,tagColor;
     if(trialActive){tagLabel='TRIAL';tagBg='rgba(198,168,94,.12)';tagColor='var(--accent)'}
     else if(trialExpired){tagLabel='TRIAL EXPIRED';tagBg='rgba(196,77,86,.1)';tagColor='var(--red)'}
+    else if(u.tier==='student'&&!isTr){tagLabel='STUDENT';tagBg='rgba(74,173,160,.12)';tagColor='#4AADA0'}
     else if(u.tier==='core'&&!isTr){tagLabel='CORE';tagBg='rgba(92,184,154,.12)';tagColor='var(--green)'}
     else if(u.tier==='elite'){tagLabel='MENTORSHIP';tagBg='rgba(92,184,154,.12)';tagColor='var(--green)'}
     else{tagLabel='FREE';tagBg='var(--bg3)';tagColor='var(--text3)'}
@@ -10661,7 +10703,7 @@ function admRenderUsers(c){
   if(_admSelectedUser)return admRenderUserDetail(c);
   var users=admGetUsers();
   var h='<div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">';
-  h+='<select class="adm-filter" onchange="_admUserFilter.plan=this.value;admRender()"><option value="">All Plans</option><option value="free">Free</option><option value="trial_active">Trial (Active)</option><option value="trial_expired">Trial (Expired)</option><option value="core">Core (Paid)</option><option value="elite">Mentorship</option><option value="disabled">Disabled</option></select>';
+  h+='<select class="adm-filter" onchange="_admUserFilter.plan=this.value;admRender()"><option value="">All Plans</option><option value="free">Free</option><option value="trial_active">Trial (Active)</option><option value="trial_expired">Trial (Expired)</option><option value="student">Student</option><option value="core">Core (Paid)</option><option value="elite">Mentorship</option><option value="disabled">Disabled</option></select>';
   h+='<select class="adm-filter" onchange="_admUserFilter.stage=this.value;admRender()"><option value="">All Stages</option><option value="student">Student</option><option value="resident">Resident</option><option value="fellow">Fellow</option><option value="attending">Attending</option></select>';
   h+='<input class="adm-filter" type="text" placeholder="Search name/email..." oninput="_admUserFilter.search=this.value;admRender()" style="flex:1;min-width:150px" value="'+(_admUserFilter.search||'')+'">';
   h+='</div>';
@@ -10671,6 +10713,7 @@ function admRenderUsers(c){
       var isTr=u.is_trial||u.isTrial;var te=u.trial_end||u.trialEnd;var trialActive=isTr&&te&&new Date(te)>new Date();var trialExpired=(isTr&&te&&new Date(te)<=new Date())||(!isTr&&te&&(u.tier||'free')==='free');
       if(fp==='trial_active'&&!trialActive)return false;
       else if(fp==='trial_expired'&&!trialExpired)return false;
+      else if(fp==='student'&&u.tier!=='student')return false;
       else if(fp==='core'&&(u.tier!=='core'||isTr))return false;
       else if(fp==='elite'&&u.tier!=='elite')return false;
       else if(fp==='free'&&((u.tier||'free')!=='free'||trialExpired))return false;
@@ -10697,6 +10740,7 @@ function admRenderUsers(c){
     else if(trialActive){var tRem=new Date(te)-new Date();var tHrs=Math.floor(tRem/3600000);planLabel='TRIAL';planColor='var(--accent)';planBadge=' <span style="font-size:8px;padding:1px 5px;border-radius:4px;background:rgba(198,168,94,.12);color:var(--accent);font-weight:600">'+tHrs+'h left</span>'}
     else if(trialExpired){planLabel='TRIAL EXPIRED';planColor='var(--red)';planBadge=' <span style="font-size:8px;padding:1px 5px;border-radius:4px;background:rgba(196,77,86,.12);color:var(--red);font-weight:600">EXPIRED</span>'}
     else if(u.tier==='elite'){planLabel='MENTORSHIP';planColor='var(--green)'}
+    else if(u.tier==='student'&&!isTr){planLabel='STUDENT';planColor='#4AADA0';planBadge=' <span style="font-size:8px;padding:1px 5px;border-radius:4px;background:rgba(74,173,160,.12);color:#4AADA0;font-weight:600">PAID</span>'}
     else if(u.tier==='core'&&!isTr){planLabel='CORE';planColor='var(--accent)';planBadge=' <span style="font-size:8px;padding:1px 5px;border-radius:4px;background:rgba(92,184,154,.12);color:var(--green);font-weight:600">PAID</span>'}
     else{planLabel='FREE';planColor='var(--text3)'}
     h+='<td><span style="color:'+planColor+';font-weight:600">'+planLabel+'</span>'+planBadge+'</td>';
@@ -10735,7 +10779,7 @@ function admRenderUserDetail(c){
   h+='<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px">';
   h+='<div><div style="font-size:18px;font-weight:700;color:var(--text)">'+(u.name||'Unknown')+'</div>';
   h+='<div style="font-size:12px;color:var(--text3)">'+(u.email||'')+'</div></div>';
-  var tc=u.tier==='elite'?'var(--green)':u.tier==='core'?'var(--accent)':'var(--text3)';
+  var tc=u.tier==='elite'?'var(--green)':u.tier==='core'?'var(--accent)':u.tier==='student'?'#4AADA0':'var(--text3)';
   h+='<span style="color:'+tc+';font-weight:700;font-size:14px">'+_tierLabel(u.tier)+'</span></div>';
   // Trial status
   var isTrial=u.is_trial||u.isTrial;var trialEnd=u.trial_end||u.trialEnd;
@@ -10804,6 +10848,7 @@ function admRenderUserDetail(c){
   h+='<div style="display:flex;gap:8px;flex-wrap:wrap">';
   h+='<select id="adm-tier-'+u.id+'" style="font-size:12px;padding:8px 12px;border:1px solid var(--border);border-radius:6px;background:var(--bg3);color:var(--text)">';
   h+='<option value="free"'+((u.tier||'free')==='free'?' selected':'')+'>Free</option>';
+  h+='<option value="student"'+(u.tier==='student'?' selected':'')+'>Student</option>';
   h+='<option value="core"'+(u.tier==='core'?' selected':'')+'>Core</option>';
   h+='<option value="elite"'+(u.tier==='elite'?' selected':'')+'>Mentorship</option>';
   h+='<option value="admin"'+(u.tier==='admin'?' selected':'')+'>Admin</option></select>';
@@ -14955,7 +15000,7 @@ function checkCompAlerts(){
 function renderCompIntelCard(){
   var el=document.getElementById('comp-intel-card');
   if(!el||!U)return;
-  var hasPlan=U.tier==='core'||U.tier==='elite'||U.tier==='admin'||U.isTrial;
+  var hasPlan=U.tier==='student'||U.tier==='core'||U.tier==='elite'||U.tier==='admin'||U.isTrial;
   if(!hasPlan){el.style.display='none';return}
 
   var cp=U.careerProfile||{};
@@ -15284,7 +15329,7 @@ function saveCompSettings(){
 function renderCompProfile(){
   var el=document.getElementById('profile-comp-intel');
   if(!el||!U)return;
-  var hasPlan=U.tier==='core'||U.tier==='elite'||U.tier==='admin'||U.isTrial;
+  var hasPlan=U.tier==='student'||U.tier==='core'||U.tier==='elite'||U.tier==='admin'||U.isTrial;
   var stage=(U.careerProfile||{}).stage||'student';
   if(!hasPlan||!(stage==='attending'||stage==='fellow')){el.style.display='none';return}
 
@@ -16044,7 +16089,7 @@ function renderOutcomesOnProfile(){
   var el=document.getElementById('profile-outcomes');
   if(!el||!U)return;
   var outcomes=U.outcomes||[];
-  var hasPlan=U.tier==='core'||U.tier==='elite'||U.tier==='admin'||U.isTrial;
+  var hasPlan=U.tier==='student'||U.tier==='core'||U.tier==='elite'||U.tier==='admin'||U.isTrial;
   if(!hasPlan){el.style.display='none';return}
 
   el.style.display='';
@@ -17038,7 +17083,7 @@ function showPreDecisionCapture(toolId, toolName){
   // Don't show if they have a pre-decision pending
   if(window._djPreDecision)return false;
   // Only for paid users
-  var hasPlan=U.tier==='core'||U.tier==='elite'||U.tier==='admin'||U.isTrial;
+  var hasPlan=U.tier==='student'||U.tier==='core'||U.tier==='elite'||U.tier==='admin'||U.isTrial;
   if(!hasPlan)return false;
 
   var cp=U.careerProfile||{};
@@ -17262,7 +17307,7 @@ function renderDecisionContext(toolName){
 function renderDecisionJournalHome(){
   var el=document.getElementById('decision-journal-home');
   if(!el||!U)return;
-  var hasPlan=U.tier==='core'||U.tier==='elite'||U.tier==='admin'||U.isTrial;
+  var hasPlan=U.tier==='student'||U.tier==='core'||U.tier==='elite'||U.tier==='admin'||U.isTrial;
   if(!hasPlan){el.style.display='none';return}
   var decisions=U.decisions||[];
   var active=decisions.filter(function(d){return d.status==='active'});

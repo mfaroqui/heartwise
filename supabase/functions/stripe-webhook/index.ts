@@ -32,6 +32,8 @@ async function verifyStripeSignature(payload: string, sigHeader: string, secret:
 
 // Map Stripe price IDs to HeartWise tiers
 const PRICE_TO_TIER: Record<string, string> = {
+  "price_1TIVVHFnqN9jbLiU4shlBjq7": "student",
+  "price_1TIVXpFnqN9jbLiUV24moAHu": "student",
   "price_1THHBxFnqN9jbLiUL7VqoQgw": "core",
   "price_1THHElFnqN9jbLiUhoxpf5dq": "core",
   "price_1THHFaFnqN9jbLiUPKJhkKyL": "elite",
@@ -106,6 +108,7 @@ Deno.serve(async (req: Request) => {
         const amount = session.amount_total;
         if (amount >= 150000) tier = "elite";
         else if (amount >= 19000) tier = "elite";
+        else if (amount <= 1200) tier = "student";
         else tier = "core";
       }
       console.log("Determined tier:", tier);

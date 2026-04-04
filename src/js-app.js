@@ -1444,6 +1444,7 @@ async function doLogin(e){
             if(sd.lastCheckin){U.lastCheckin=sd.lastCheckin}
             if(sd.compIntel){U.compIntel=sd.compIntel}
             if(sd.outcomes&&sd.outcomes.length>0){U.outcomes=sd.outcomes}
+            if(sd.readMsgIds&&Array.isArray(sd.readMsgIds)){_addLocalReadIdsQuiet(sd.readMsgIds)}
             localStorage.setItem('hw_session',JSON.stringify(U));
             var udb=DB.users.find(function(u){return u.id===U.id});
             if(udb){udb.careerProfile=U.careerProfile;udb.scoreHistory=U.scoreHistory;udb.toolHistory=U.toolHistory;udb.milestones=U.milestones;saveDB()}
@@ -1474,7 +1475,7 @@ async function doLogin(e){
               var recoverUser={id:sp.id||'u'+DB.nextUserId++,name:sp.name||email.split('@')[0],email:email,pass:'__supabase__',role:sp.stage||'student',tier:sp.tier||'free',isTrial:sp.is_trial||false,trialEnd:sp.trial_end||null,institution:'',usage:{ai:0,credits:TIERS[sp.tier]?.credits||0,month:new Date().getMonth()}};
               DB.users.push(recoverUser);saveDB();
               U=recoverUser;localStorage.setItem('hw_session',JSON.stringify(U));
-              if(sp.session_data){var sd=typeof sp.session_data==='string'?JSON.parse(sp.session_data):sp.session_data;if(sd.careerProfile)U.careerProfile=sd.careerProfile;if(sd.toolHistory)U.toolHistory=sd.toolHistory;if(sd.scoreHistory)U.scoreHistory=sd.scoreHistory;if(sd.milestones)U.milestones=sd.milestones;if(sd.toolInputs)U.toolInputs=sd.toolInputs;localStorage.setItem('hw_session',JSON.stringify(U))}
+              if(sp.session_data){var sd=typeof sp.session_data==='string'?JSON.parse(sp.session_data):sp.session_data;if(sd.careerProfile)U.careerProfile=sd.careerProfile;if(sd.toolHistory)U.toolHistory=sd.toolHistory;if(sd.scoreHistory)U.scoreHistory=sd.scoreHistory;if(sd.milestones)U.milestones=sd.milestones;if(sd.toolInputs)U.toolInputs=sd.toolInputs;if(sd.readMsgIds&&Array.isArray(sd.readMsgIds)){_addLocalReadIdsQuiet(sd.readMsgIds)}localStorage.setItem('hw_session',JSON.stringify(U))}
               if(loginBtn){loginBtn.disabled=false;loginBtn.textContent=loginBtn.dataset.orig||'Sign In'}
               enterApp();notify('Welcome back! Your account has been recovered.');
               return;
@@ -1520,6 +1521,7 @@ async function doLogin(e){
       if(sd.lastCheckin){U.lastCheckin=sd.lastCheckin}
       if(sd.compIntel){U.compIntel=sd.compIntel}
       if(sd.outcomes&&sd.outcomes.length>0){U.outcomes=sd.outcomes}
+      if(sd.readMsgIds&&Array.isArray(sd.readMsgIds)){_addLocalReadIdsQuiet(sd.readMsgIds)}
       localStorage.setItem('hw_session',JSON.stringify(U));
       var udb=DB.users.find(function(u){return u.id===U.id});
       if(udb){udb.careerProfile=U.careerProfile;udb.scoreHistory=U.scoreHistory;udb.toolHistory=U.toolHistory;udb.milestones=U.milestones;saveDB()}
@@ -11645,10 +11647,36 @@ function _getLocalReadIds(){
   try{var k='hw_read_msgs_'+(U&&U.email?U.email:'');var s=localStorage.getItem(k);return s?JSON.parse(s):[]}catch(e){return[]}
 }
 function _addLocalReadIds(ids){
-  try{var k='hw_read_msgs_'+(U&&U.email?U.email:'');var existing=_getLocalReadIds();var merged=[...new Set([...existing,...ids])];if(merged.length>200)merged=merged.slice(-200);localStorage.setItem(k,JSON.stringify(merged))}catch(e){}
+  try{var k='hw_read_msgs_'+(U&&U.email?U.email:'');var existing=_getLocalReadIds();var merged=[...new Set([...existing,...ids])];if(merged.length>200)merged=merged.slice(-200);localStorage.setItem(k,JSON.stringify(merged));_syncReadIdsToSession(merged)}catch(e){}
 }
 function _isLocallyRead(id){
   return _getLocalReadIds().indexOf(id)>=0;
+}
+// Persist read IDs to session_data so they survive cache clears / device switches
+function _syncReadIdsToSession(ids){
+  try{
+    if(!U||!U.email||!_supaClient)return;
+    _supaClient.from('profiles').select('session_data').eq('email',U.email).limit(1).then(function(res){
+      if(!res.data||!res.data[0])return;
+      var sd=res.data[0].session_data||{};
+      if(typeof sd==='string')try{sd=JSON.parse(sd)}catch(e){sd={}}
+      sd.readMsgIds=ids;
+      _supaClient.from('profiles').update({session_data:sd}).eq('email',U.email).then(function(){});
+    });
+  }catch(e){}
+}
+// Restore read IDs from session_data on login
+function _restoreReadIdsFromSession(){
+  try{
+    var sd=U.sessionData||{};
+    if(typeof sd==='string')try{sd=JSON.parse(sd)}catch(e){sd={}}
+    if(sd.readMsgIds&&Array.isArray(sd.readMsgIds)){
+      _addLocalReadIdsQuiet(sd.readMsgIds);
+    }
+  }catch(e){}
+}
+function _addLocalReadIdsQuiet(ids){
+  try{var k='hw_read_msgs_'+(U&&U.email?U.email:'');var existing=_getLocalReadIds();var merged=[...new Set([...existing,...ids])];if(merged.length>200)merged=merged.slice(-200);localStorage.setItem(k,JSON.stringify(merged))}catch(e){}
 }
 
 // Check for unread notifications and show badge + popup
@@ -11667,6 +11695,8 @@ async function checkNotifBadge(){
     if(data.messages){
       var unread=data.messages.filter(function(m){
         if(_isLocallyRead(m.id))return false;
+        // For broadcast messages, only trust local read state (row-level user_read is shared)
+        if(m.to_email==='__all__')return m.from_admin;
         return (m.from_admin&&m.user_read===false)||(m.type==='notification'&&!m.read);
       });
       count=unread.length;

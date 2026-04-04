@@ -7750,6 +7750,53 @@ document.addEventListener('click',function(e){
 const SUPABASE_URL='https://kqyvfykbnboesskxovtw.supabase.co';
 const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtxeXZmeWtibmJvZXNza3hvdnR3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI0MTQ2MjMsImV4cCI6MjA4Nzk5MDYyM30.OknOG2sY9Z9a6SVwPpqA55oHwgZ5mnRyDwfLrTRFxn0';
 var _initialHash=(location.hash||'').replace('#','').toLowerCase();
+// === DEEP LINK SUPPORT ===
+var _deepLink=(function(){
+  try{
+    var p=new URLSearchParams(window.location.search);
+    var tool=p.get('tool');var page=p.get('page');
+    if(tool||page){
+      // Clean URL immediately
+      history.replaceState(null,'',window.location.pathname);
+      if(tool)return{type:'tool',id:tool.toLowerCase()};
+      if(page)return{type:'page',id:page.toLowerCase()};
+    }
+  }catch(e){}
+  // Also check sessionStorage for intent saved before login/signup
+  try{
+    var saved=sessionStorage.getItem('hw_deeplink');
+    if(saved){sessionStorage.removeItem('hw_deeplink');return JSON.parse(saved)}
+  }catch(e){}
+  return null;
+})();
+function _handleDeepLink(){
+  if(!_deepLink)return;
+  var dl=_deepLink;_deepLink=null;
+  if(dl.type==='tool'){
+    var id=dl.id;
+    if(id==='match'||id==='match-calculator'||id==='match-probability')id='v14';
+    if(id==='observership'||id==='observership-database'||id==='observerships')id='v17';
+    if(id==='contract'||id==='contract-review')id='v12';
+    if(id==='specialty'||id==='specialty-fit')id='v13';
+    if(id==='financial'||id==='financial-planner')id='v5';
+    if(id==='fellowship'||id==='fellowship-planner')id='v6';
+    if(id==='rvu'||id==='compensation')id='v4';
+    if(id==='debt'||id==='debt-strategy')id='v8';
+    if(id==='career-builder'||id==='strategy')id='v15';
+    if(id==='interview'||id==='mock-interview')id='v16';
+    if(id==='research'||id==='research-impact')id='v7';
+    if(id==='job-offer'||id==='job-comparison')id='v3';
+    if(id==='application-review')id='v9';
+    if(id==='career-transition')id='v10';
+    setTimeout(function(){openFrameworkById(id)},600);
+  }else if(dl.type==='page'){
+    var pg=dl.id;
+    if(pg==='pricing')setTimeout(function(){go('pg-landing');lpTab('pricing')},300);
+    else if(pg==='tools'||pg==='vault')setTimeout(function(){navTo('scr-vault')},600);
+    else if(pg==='profile')setTimeout(function(){navTo('scr-profile')},600);
+    else if(pg==='home')setTimeout(function(){navTo('scr-home')},600);
+  }
+}
 let _supaClient=null;
 try{_supaClient=supabase.createClient(SUPABASE_URL,SUPABASE_KEY)}catch(e){console.warn('Supabase init failed',e)}
 
@@ -7837,7 +7884,11 @@ window.onload=async function(){
     setTimeout(()=>{
       document.getElementById('splash').style.display='none';
       const s=localStorage.getItem('hw_session');
-      if(s){U=JSON.parse(s);handleCheckoutReturn();enterApp()}else{go('pg-landing')}
+      if(s){U=JSON.parse(s);handleCheckoutReturn();enterApp()}else{
+        // Save deep link for after login/signup
+        if(_deepLink)try{sessionStorage.setItem('hw_deeplink',JSON.stringify(_deepLink))}catch(e){}
+        go('pg-landing');
+      }
     },500);
   },1600);
 };
@@ -8261,6 +8312,8 @@ function enterApp(){
   if(U.isTrial&&U.trialEnd)startTrialCountdown();
   renderHome();
   navTo('scr-home');
+  // Handle deep links (?tool=v14, ?page=pricing, etc.)
+  _handleDeepLink();
   // Check for unread notifications
   checkNotifBadge();
   // Check achievements on app entry

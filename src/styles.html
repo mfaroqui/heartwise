@@ -28,6 +28,8 @@ a{color:var(--accent);text-decoration:none;transition:color .2s}
 a:hover{color:var(--accent2)}
 .hidden{display:none!important}
 body.in-app #topbar,body.in-app #lp-mobile-tabs,body.in-app #sticky-cta{display:none!important}
+#lp-mobile-tabs{display:none}
+#lp-mobile-tabs.lp-mob-hide{display:none!important}
 
 
 /* ===== LANDING PAGE TABS ===== */
@@ -75,7 +77,7 @@ color:var(--text);background:var(--bg);
   .topbar{padding:16px 20px}
   .topbar-links a.tb-link{display:none}
   .topbar-links .tb-cta{padding:8px 16px;font-size:10px}
-  #lp-mobile-tabs{display:flex!important}
+  #lp-mobile-tabs:not(.lp-mob-hide){display:flex!important}
   .hero-lux{padding-top:180px!important}
 }
 @media(max-width:380px){

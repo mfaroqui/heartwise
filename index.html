@@ -77,6 +77,8 @@ a{color:var(--accent);text-decoration:none;transition:color .2s}
 a:hover{color:var(--accent2)}
 .hidden{display:none!important}
 body.in-app #topbar,body.in-app #lp-mobile-tabs,body.in-app #sticky-cta{display:none!important}
+#lp-mobile-tabs{display:none}
+#lp-mobile-tabs.lp-mob-hide{display:none!important}
 
 
 /* ===== LANDING PAGE TABS ===== */
@@ -124,7 +126,7 @@ color:var(--text);background:var(--bg);
   .topbar{padding:16px 20px}
   .topbar-links a.tb-link{display:none}
   .topbar-links .tb-cta{padding:8px 16px;font-size:10px}
-  #lp-mobile-tabs{display:flex!important}
+  #lp-mobile-tabs:not(.lp-mob-hide){display:flex!important}
   .hero-lux{padding-top:180px!important}
 }
 @media(max-width:380px){
@@ -925,7 +927,7 @@ body.has-upgrade-bar #main-app{padding-bottom:70px}
 </nav>
 
 <!-- Mobile tab bar (visible ≤640px only) -->
-<div id="lp-mobile-tabs" style="display:none;position:fixed;top:68px;left:0;right:0;z-index:199;justify-content:center;gap:6px;padding:8px 12px;background:rgba(246,243,238,.97);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid rgba(26,26,26,.06)">
+<div id="lp-mobile-tabs" class="lp-mob-hide" style="position:fixed;top:68px;left:0;right:0;z-index:199;justify-content:center;gap:6px;padding:8px 12px;background:rgba(246,243,238,.97);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid rgba(26,26,26,.06)">
 <button class="lp-mtab lp-mtab-active" onclick="lpTab('home')" data-lptab="home" style="padding:7px 14px;font-size:11px;font-weight:600;border:1px solid rgba(198,168,94,.3);border-radius:20px;background:rgba(198,168,94,.12);color:#B89543;cursor:pointer;white-space:nowrap;transition:all .2s;font-family:var(--font-ui)">Home</button>
 <button class="lp-mtab" onclick="lpTab('tools')" data-lptab="tools" style="padding:7px 14px;font-size:11px;font-weight:500;border:1px solid var(--border);border-radius:20px;background:transparent;color:#4A4A4A;cursor:pointer;white-space:nowrap;transition:all .2s;font-family:var(--font-ui)">Questions</button>
 <button class="lp-mtab" onclick="lpTab('founder')" data-lptab="founder" style="padding:7px 14px;font-size:11px;font-weight:500;border:1px solid var(--border);border-radius:20px;background:transparent;color:#4A4A4A;cursor:pointer;white-space:nowrap;transition:all .2s;font-family:var(--font-ui)">Founder</button>
@@ -7724,7 +7726,7 @@ function go(id){
   if(tb)tb.style.display=(id==='pg-landing')?'':'none';
   // Hide mobile tabs when not on landing
   var mobTabs=document.getElementById('lp-mobile-tabs');
-  if(mobTabs)mobTabs.style.display=(id==='pg-landing')?'':'none';
+  if(mobTabs){if(id==='pg-landing'){mobTabs.classList.remove('lp-mob-hide')}else{mobTabs.classList.add('lp-mob-hide')}}
   // Hide sticky CTA when leaving landing
   var stk=document.getElementById('sticky-cta');
   if(stk&&id!=='pg-landing'){stk.style.transform='translateY(100%)';stk.style.display='none'}
@@ -7739,7 +7741,7 @@ function navTo(scr,btn){
   else{console.error('navTo: screen not found:',scr);return}
   // Hide landing topbar and mobile tabs
   var tb=document.getElementById('topbar');if(tb)tb.style.display='none';
-  var mobTabs=document.getElementById('lp-mobile-tabs');if(mobTabs)mobTabs.style.display='none';
+  var mobTabs=document.getElementById('lp-mobile-tabs');if(mobTabs)mobTabs.classList.add('lp-mob-hide');
   var stk=document.getElementById('sticky-cta');if(stk){stk.style.transform='translateY(100%)';stk.style.display='none'}
   if(btn){document.querySelectorAll('.ni').forEach(function(n){n.classList.remove('on')});btn.classList.add('on')}
   else{

@@ -1356,7 +1356,7 @@ function go(id){
   if(tb)tb.style.display=(id==='pg-landing')?'':'none';
   // Hide mobile tabs when not on landing
   var mobTabs=document.getElementById('lp-mobile-tabs');
-  if(mobTabs)mobTabs.style.display=(id==='pg-landing')?'':'none';
+  if(mobTabs){if(id==='pg-landing'){mobTabs.classList.remove('lp-mob-hide')}else{mobTabs.classList.add('lp-mob-hide')}}
   // Hide sticky CTA when leaving landing
   var stk=document.getElementById('sticky-cta');
   if(stk&&id!=='pg-landing'){stk.style.transform='translateY(100%)';stk.style.display='none'}
@@ -1371,7 +1371,7 @@ function navTo(scr,btn){
   else{console.error('navTo: screen not found:',scr);return}
   // Hide landing topbar and mobile tabs
   var tb=document.getElementById('topbar');if(tb)tb.style.display='none';
-  var mobTabs=document.getElementById('lp-mobile-tabs');if(mobTabs)mobTabs.style.display='none';
+  var mobTabs=document.getElementById('lp-mobile-tabs');if(mobTabs)mobTabs.classList.add('lp-mob-hide');
   var stk=document.getElementById('sticky-cta');if(stk){stk.style.transform='translateY(100%)';stk.style.display='none'}
   if(btn){document.querySelectorAll('.ni').forEach(function(n){n.classList.remove('on')});btn.classList.add('on')}
   else{

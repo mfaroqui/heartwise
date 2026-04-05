@@ -7893,7 +7893,7 @@ function renderVault(){
       title:'Measure Your Position',
       icon:'\ud83c\udfc6',
       goal:'Understand exactly where you stand \u2014 and where you need to improve.',
-      tools:['v14','v7']
+      tools:['v14','v7','v18']
     },
     {
       key:'model',

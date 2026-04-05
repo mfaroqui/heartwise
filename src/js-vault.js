@@ -2010,4 +2010,80 @@ v17:`<h3 class="serif">Observership Database</h3>
 
 <div style="text-align:center;margin-top:12px"><button onclick="showSavedScenarios('Observership Database')" style="background:none;border:none;color:var(--accent);font-size:11px;cursor:pointer;padding:6px 12px;opacity:.7;transition:opacity .15s" onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='.7'">📊 View Saved Scenarios</button></div>
 `
+,
+v18:`<h3 class="serif">What Should I Do Next?</h3>
+<p style="color:var(--text3);font-size:12px;margin-bottom:20px">Tell us where you are and how much time you have. We'll show you the highest-impact actions ranked by how much they move the needle.</p>
+
+<div style="padding:16px;background:var(--accent-dim);border:1px solid var(--border2);border-radius:12px;margin-bottom:16px">
+<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Your Profile</div>
+
+<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Target specialty</label>
+<select id="wsdn-spec" onchange="wsdnUpdate()" style="width:100%">
+<option value="">Select specialty...</option>
+<option value="im">Internal Medicine</option>
+<option value="fm">Family Medicine</option>
+<option value="peds">Pediatrics</option>
+<option value="em">Emergency Medicine</option>
+<option value="psych">Psychiatry</option>
+<option value="neuro">Neurology</option>
+<option value="surg">General Surgery</option>
+<option value="ortho">Orthopedic Surgery</option>
+<option value="uro">Urology</option>
+<option value="obgyn">OB/GYN</option>
+<option value="anes">Anesthesiology</option>
+<option value="rads">Radiology</option>
+<option value="path">Pathology</option>
+<option value="derm">Dermatology</option>
+<option value="ent">ENT / Otolaryngology</option>
+<option value="optho">Ophthalmology</option>
+<option value="pm">Physical Medicine & Rehab</option>
+<option value="cardiology">Cardiology (Fellowship)</option>
+<option value="gi">GI (Fellowship)</option>
+<option value="pulm_crit">Pulm/Crit Care (Fellowship)</option>
+<option value="heme_onc">Heme/Onc (Fellowship)</option>
+</select></div>
+
+<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">How many months until you apply?</label>
+<select id="wsdn-time" style="width:100%">
+<option value="">Select timeframe...</option>
+<option value="3">About 3 months</option>
+<option value="6">About 6 months</option>
+<option value="9">About 9 months</option>
+<option value="12">12+ months</option>
+</select></div>
+
+<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Step 2 CK Score (or estimated)</label>
+<input type="number" id="wsdn-step2" placeholder="e.g. 245" style="width:100%"></div>
+
+<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Total publications (including abstracts, posters)</label>
+<input type="number" id="wsdn-pubs" placeholder="e.g. 3" value="0" style="width:100%"></div>
+
+<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">First-author publications</label>
+<input type="number" id="wsdn-first" placeholder="e.g. 1" value="0" style="width:100%"></div>
+
+<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Months of US Clinical Experience (USCE)</label>
+<input type="number" id="wsdn-usce" placeholder="e.g. 3" value="0" style="width:100%"></div>
+
+<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Strong Letters of Recommendation</label>
+<select id="wsdn-lors" style="width:100%">
+<option value="0">None yet</option>
+<option value="1">1 letter</option>
+<option value="2">2 letters</option>
+<option value="3">3 letters</option>
+<option value="4">4+ letters</option>
+</select></div>
+
+<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Are you an IMG?</label>
+<select id="wsdn-img" style="width:100%">
+<option value="no">No — US MD/DO</option>
+<option value="usimg">Yes — US-IMG (Caribbean/international, US citizen)</option>
+<option value="nonusimg">Yes — Non-US IMG</option>
+</select></div>
+</div>
+
+<button onclick="wsdnAnalyze()" class="btn btn-a" style="width:100%;margin-bottom:12px">Show Me What to Focus On</button>
+<div id="wsdn-results"></div>
+
+<div style="text-align:center;margin-top:12px"><button onclick="showSavedScenarios('What Should I Do Next')" style="background:none;border:none;color:var(--accent);font-size:11px;cursor:pointer;padding:6px 12px;opacity:.7;transition:opacity .15s" onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='.7'">📊 View Saved Scenarios</button></div>
+`
 };

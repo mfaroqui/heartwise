@@ -320,5 +320,6 @@ const VAULT_ITEMS=[
 {id:'v10',title:'Career Transition Planner',desc:'Evaluate and plan specialty or practice changes with structured guidance',icon:'⚡',tier:'core'},
 {id:'v11',title:'Financial Projection Tool',desc:'Visualize long-term earnings, savings, and wealth across different career paths',icon:'💰',tier:'core'},
 {id:'v12',title:'Contract Review Tool',desc:'Analyze contract risk flags, benchmarks, and get negotiation scripts',icon:'📝',tier:'core'},
-{id:'v17',title:'Observership Database',desc:'Browse verified U.S. observership opportunities with strategic insights',icon:'🏥',tier:'core'}
+{id:'v17',title:'Observership Database',desc:'Browse verified U.S. observership opportunities with strategic insights',icon:'🏥',tier:'core'},
+{id:'v18',title:'What Should I Do Next?',desc:'Get a prioritized action plan based on your profile, gaps, and time left',icon:'🧭',tier:'core'}
 ];

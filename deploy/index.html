@@ -1223,6 +1223,18 @@ body.has-upgrade-bar #main-app{padding-bottom:70px}
 <p style="font-size:13px;color:var(--text3);margin-top:6px">3 questions. 60 seconds. A personalized starting point.</p>
 </div>
 
+<!-- Didn't Match CTA (landing page) -->
+<div onclick="document.getElementById('hook-signup-cta').scrollIntoView({behavior:'smooth'})" style="margin-bottom:20px;padding:14px 16px;background:linear-gradient(135deg,rgba(234,0,39,.04),rgba(198,168,94,.06));border:1px solid rgba(234,0,39,.15);border-radius:12px;cursor:pointer;transition:all .2s" onmouseenter="this.style.borderColor='rgba(234,0,39,.3)'" onmouseleave="this.style.borderColor='rgba(234,0,39,.15)'">
+<div style="display:flex;align-items:center;gap:10px">
+<div style="font-size:22px;flex-shrink:0">🔄</div>
+<div style="flex:1">
+<div style="font-size:13px;font-weight:700;color:var(--text)">Didn't match? Start your free trial.</div>
+<div style="font-size:11px;color:var(--text3);line-height:1.5">Diagnose what happened. Build your gap-year plan. Find observerships that lead to matches.</div>
+</div>
+<div style="font-size:14px;color:var(--accent)">→</div>
+</div>
+</div>
+
 <!-- Q1: Stage -->
 <div id="hook-q1">
 <div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">1. Where are you in your career?</div>
@@ -2439,6 +2451,20 @@ Sign Out</button>
 <div style="padding:12px 24px 0">
 <p style="font-size:15px;font-weight:600;color:var(--text);line-height:1.5;margin:0 0 4px">Tell us where you are — we'll show you exactly what to focus on.</p>
 <p style="font-size:13px;color:var(--text3);line-height:1.5;margin:0">Let's figure out what tools you need to achieve your goal.</p>
+</div>
+
+<!-- Didn't Match CTA -->
+<div id="didnt-match-cta" style="padding:16px 24px 0">
+<div onclick="startDidntMatchFlow()" style="background:linear-gradient(135deg,rgba(234,0,39,.04),rgba(198,168,94,.06));border:1px solid rgba(234,0,39,.15);border-radius:14px;padding:18px 20px;cursor:pointer;transition:all .2s" onmouseenter="this.style.borderColor='rgba(234,0,39,.3)'" onmouseleave="this.style.borderColor='rgba(234,0,39,.15)'">
+<div style="display:flex;align-items:center;gap:12px">
+<div style="font-size:28px;flex-shrink:0">🔄</div>
+<div style="flex:1">
+<div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:3px">Didn't match? Start here.</div>
+<div style="font-size:12px;color:var(--text3);line-height:1.5">We'll diagnose what happened, build your gap-year plan, and find observerships that lead to matches.</div>
+</div>
+<div style="font-size:16px;color:var(--accent)">→</div>
+</div>
+</div>
 </div>
 
 <!-- Toolkit Quiz -->
@@ -6729,6 +6755,11 @@ function hwPathway(position,actions,nextTool){
     h+='<div style="font-size:13px;font-weight:600;color:var(--text)">'+nextTool.title+'</div>';
     h+='<div style="font-size:11px;color:var(--text3);margin-top:2px">'+nextTool.why+'</div></div></div></div>';
   }
+  // Value anchoring
+  h+='<div style="display:flex;align-items:center;gap:6px;margin-top:14px;padding:10px 12px;background:rgba(139,173,196,.04);border-radius:8px;border:1px solid rgba(139,173,196,.1)">';
+  h+='<span style="font-size:12px;flex-shrink:0">📊</span>';
+  h+='<span style="font-size:10px;color:var(--text3);line-height:1.5">This analysis is based on real match data, MGMA benchmarks, and career outcomes from thousands of physicians. A comparable consultation typically costs $150\u2013$300.</span>';
+  h+='</div>';
   // Export buttons
   h+='<div style="display:flex;gap:8px;margin-top:14px">';
   h+='<button onclick="exportToolResult()" style="flex:1;padding:10px;font-size:11px;font-weight:600;color:var(--accent);background:rgba(198,168,94,.06);border:1px solid rgba(198,168,94,.2);border-radius:8px;cursor:pointer;transition:all .2s" onmouseenter="this.style.background=\'rgba(198,168,94,.12)\'" onmouseleave="this.style.background=\'rgba(198,168,94,.06)\'">📄 Save as PDF</button>';
@@ -14827,6 +14858,75 @@ function openFrameworkById(id){
   navTo('scr-vault');
   setTimeout(function(){openFramework(id)},200);
 }
+// ===== DIDN'T MATCH CRISIS FLOW =====
+function startDidntMatchFlow(){
+  // Set profile to applicant stage if not already
+  if(U&&U.careerProfile){
+    U.careerProfile.stage='applicant';
+  }
+  // Build a guided assessment screen
+  var el=document.getElementById('scr-frameworks');
+  if(!el)return;
+  var h='<div style="padding:24px;max-width:600px;margin:0 auto">';
+  h+='<div style="text-align:center;margin-bottom:24px">';
+  h+='<div style="font-size:32px;margin-bottom:8px">\ud83d\udd04</div>';
+  h+='<div style="font-size:18px;font-weight:700;color:var(--text);margin-bottom:6px">Let\u2019s Build Your Comeback Plan</div>';
+  h+='<div style="font-size:13px;color:var(--text3);line-height:1.6">Not matching doesn\u2019t define you. 33% of unmatched applicants had fixable gaps they never identified. Let\u2019s find yours.</div>';
+  h+='</div>';
+
+  // Step 1: Diagnose
+  h+='<div style="margin-bottom:16px;padding:18px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;cursor:pointer;transition:all .2s" onclick="openFramework(\'v14\')" onmouseenter="this.style.borderColor=\'var(--accent)\'" onmouseleave="this.style.borderColor=\'var(--border)\'">';
+  h+='<div style="display:flex;align-items:center;gap:12px">';
+  h+='<div style="width:36px;height:36px;border-radius:50%;background:rgba(234,0,39,.08);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:var(--red);flex-shrink:0">1</div>';
+  h+='<div style="flex:1"><div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:2px">\ud83c\udfaf Diagnose: What Went Wrong?</div>';
+  h+='<div style="font-size:12px;color:var(--text3);line-height:1.5">Run the Match Competitiveness Calculator to find your exact gaps \u2014 Step scores, research, clinical experience, LORs.</div></div>';
+  h+='<div style="font-size:16px;color:var(--accent)">\u2192</div></div></div>';
+
+  // Step 2: Find Observerships
+  h+='<div style="margin-bottom:16px;padding:18px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;cursor:pointer;transition:all .2s" onclick="openFramework(\'v17\')" onmouseenter="this.style.borderColor=\'var(--accent)\'" onmouseleave="this.style.borderColor=\'var(--border)\'">';
+  h+='<div style="display:flex;align-items:center;gap:12px">';
+  h+='<div style="width:36px;height:36px;border-radius:50%;background:rgba(198,168,94,.1);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:var(--accent);flex-shrink:0">2</div>';
+  h+='<div style="flex:1"><div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:2px">\ud83c\udfe5 Find Observerships & Clinical Experience</div>';
+  h+='<div style="font-size:12px;color:var(--text3);line-height:1.5">Search 65+ verified US observership programs. Get email templates, positioning strategy, and match success data.</div></div>';
+  h+='<div style="font-size:16px;color:var(--accent)">\u2192</div></div></div>';
+
+  // Step 3: Interview Prep
+  h+='<div style="margin-bottom:16px;padding:18px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;cursor:pointer;transition:all .2s" onclick="openFramework(\'v16\')" onmouseenter="this.style.borderColor=\'var(--accent)\'" onmouseleave="this.style.borderColor=\'var(--border)\'">';
+  h+='<div style="display:flex;align-items:center;gap:12px">';
+  h+='<div style="width:36px;height:36px;border-radius:50%;background:rgba(70,209,96,.08);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:var(--green);flex-shrink:0">3</div>';
+  h+='<div style="flex:1"><div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:2px">\ud83c\udf99\ufe0f Practice Interviews</div>';
+  h+='<div style="font-size:12px;color:var(--text3);line-height:1.5">Practice the exact questions program directors ask. Get honest feedback on your answers. Be sharper than last cycle.</div></div>';
+  h+='<div style="font-size:16px;color:var(--accent)">\u2192</div></div></div>';
+
+  // Step 4: Build Your Plan
+  h+='<div style="margin-bottom:16px;padding:18px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;cursor:pointer;transition:all .2s" onclick="openFramework(\'v15\')" onmouseenter="this.style.borderColor=\'var(--accent)\'" onmouseleave="this.style.borderColor=\'var(--border)\'">';
+  h+='<div style="display:flex;align-items:center;gap:12px">';
+  h+='<div style="width:36px;height:36px;border-radius:50%;background:rgba(139,173,196,.1);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:var(--blue);flex-shrink:0">4</div>';
+  h+='<div style="flex:1"><div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:2px">\ud83d\udcca Build Your Comeback Roadmap</div>';
+  h+='<div style="font-size:12px;color:var(--text3);line-height:1.5">Generate a month-by-month strategy for the next application cycle. Specific deadlines, specific actions.</div></div>';
+  h+='<div style="font-size:16px;color:var(--accent)">\u2192</div></div></div>';
+
+  // Step 5: Financial Bridge
+  h+='<div style="margin-bottom:16px;padding:18px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;cursor:pointer;transition:all .2s" onclick="openFramework(\'v8\')" onmouseenter="this.style.borderColor=\'var(--accent)\'" onmouseleave="this.style.borderColor=\'var(--border)\'">';
+  h+='<div style="display:flex;align-items:center;gap:12px">';
+  h+='<div style="width:36px;height:36px;border-radius:50%;background:rgba(198,168,94,.06);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:var(--text3);flex-shrink:0">5</div>';
+  h+='<div style="flex:1"><div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:2px">\ud83d\udcb0 Protect Your Finances</div>';
+  h+='<div style="font-size:12px;color:var(--text3);line-height:1.5">Loan deferment, income strategy, and a financial bridge plan for the gap year.</div></div>';
+  h+='<div style="font-size:16px;color:var(--accent)">\u2192</div></div></div>';
+
+  // Back button
+  h+='<div style="text-align:center;margin-top:8px">';
+  h+='<button onclick="navTo(\'scr-frameworks\')" style="font-size:12px;color:var(--text3);background:none;border:none;cursor:pointer;padding:8px 16px">← Back to all tools</button>';
+  h+='</div>';
+  h+='</div>';
+
+  // Store original content and show crisis flow
+  if(!window._frameworksOriginal)window._frameworksOriginal=el.innerHTML;
+  el.innerHTML=h;
+  navTo('scr-frameworks');
+  el.scrollTop=0;
+}
+
 function openFramework(id){
   // Merged tool redirects: v1→v14, v2→v12
   if(id==='v1')id='v14';

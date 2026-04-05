@@ -2524,6 +2524,10 @@ function updateProfileFields(){
 
   // --- RESIDENT-SPECIFIC ---
   if(stage==='resident'){
+    var resTrack=(cp.resTrack||'');
+    h+='<div style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin:16px 0 8px;padding-top:12px;border-top:1px solid var(--border)">Career Direction</div>';
+    h+='<div class="fg"><label>What\'s your next step after residency?</label><select id="up-restrack" onchange="updateProfileFields()"><option value="">Select</option><option value="fellowship"'+(cp.resTrack==='fellowship'?' selected':'')+'>Pursuing Fellowship</option><option value="practice"'+(cp.resTrack==='practice'?' selected':'')+'>Going into Practice (Attending)</option><option value="undecided"'+(cp.resTrack==='undecided'?' selected':'')+'>Still Deciding</option></select></div>';
+
     h+='<div style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin:16px 0 8px;padding-top:12px;border-top:1px solid var(--border)">Training Details</div>';
     h+='<div class="fg"><label>PGY Level</label><select id="up-pgy"><option value="">Select</option><option value="PGY1"'+(cp.pgy==='PGY1'?' selected':'')+'>PGY-1</option><option value="PGY2"'+(cp.pgy==='PGY2'?' selected':'')+'>PGY-2</option><option value="PGY3"'+(cp.pgy==='PGY3'?' selected':'')+'>PGY-3</option><option value="PGY4"'+(cp.pgy==='PGY4'?' selected':'')+'>PGY-4</option><option value="PGY5"'+(cp.pgy==='PGY5'?' selected':'')+'>PGY-5</option></select></div>';
     h+='<div class="fg"><label>USMLE Step 2 CK Score</label><input type="text" id="up-step2" value="'+(cp.step2||'')+'" placeholder="e.g., 256"></div>';
@@ -2536,12 +2540,20 @@ function updateProfileFields(){
     h+='<div class="fg"><label>Leadership Roles (chief, committee, QI lead)</label><input type="number" id="up-leadership" value="'+(cp.leadership||0)+'" min="0"></div>';
     h+='<div class="fg"><label>Letters of Recommendation Strength</label><select id="up-lor"><option value="">Select</option><option value="strong"'+(cp.lorStrength==='strong'?' selected':'')+'>Strong — PD, division chief, nationally known</option><option value="moderate"'+(cp.lorStrength==='moderate'?' selected':'')+'>Moderate — attending, good relationship</option><option value="weak"'+(cp.lorStrength==='weak'?' selected':'')+'>Still securing</option></select></div>';
 
-    if(goal==='match'||goal==='specialty'){
+    if(goal==='match'||goal==='specialty'||resTrack==='fellowship'){
       h+='<div style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin:16px 0 8px;padding-top:12px;border-top:1px solid var(--border)">Fellowship Strategy</div>';
       h+='<div class="fg"><label>Target Fellowship</label><input type="text" id="up-fellowship" value="'+(cp.fellowship||'')+'" placeholder="e.g., Cardiology, GI, Pulm/Crit"></div>';
       h+='<div class="fg"><label>Programs Planning to Apply</label><input type="number" id="up-programs" value="'+(cp.programs||'')+'" placeholder="e.g., 20"></div>';
     }
-    if(goal==='contract'||goal==='finance'){
+
+    if(resTrack==='practice'){
+      h+='<div style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin:16px 0 8px;padding-top:12px;border-top:1px solid var(--border)">Job Search Status</div>';
+      h+='<div class="fg"><label>Do you have job offers?</label><select id="up-hasoffers"><option value="">Select</option><option value="yes"'+(cp.hasOffers==='yes'?' selected':'')+'>Yes — evaluating offers</option><option value="searching"'+(cp.hasOffers==='searching'?' selected':'')+'>Actively searching</option><option value="not_yet"'+(cp.hasOffers==='not_yet'?' selected':'')+'>Not started yet</option></select></div>';
+      h+='<div class="fg"><label>Expected Attending Compensation</label><input type="text" id="up-comp" value="'+(cp.comp||'')+'" placeholder="e.g., $350,000"></div>';
+      h+='<div class="fg"><label>Student Loan Balance</label><input type="text" id="up-debt" value="'+(cp.debt||'')+'" placeholder="e.g., $280,000"></div>';
+      h+='<div class="fg"><label>Practice Setting Preference</label><select id="up-practice"><option value="">Select</option><option value="academic"'+(cp.practice==='academic'?' selected':'')+'>Academic</option><option value="employed"'+(cp.practice==='employed'?' selected':'')+'>Hospital Employed</option><option value="pp_partner"'+(cp.practice==='pp_partner'?' selected':'')+'>Private Practice</option><option value="unsure"'+(cp.practice==='unsure'?' selected':'')+'>Exploring Options</option></select></div>';
+    }
+    if(goal==='contract'||goal==='finance'||resTrack==='practice'){
       h+='<div style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin:16px 0 8px;padding-top:12px;border-top:1px solid var(--border)">Financial Snapshot</div>';
       h+='<div class="fg"><label>Current Resident Salary</label><input type="text" id="up-comp" value="'+(cp.comp||'')+'" placeholder="e.g., $65,000"></div>';
       h+='<div class="fg"><label>Student Loan Balance</label><input type="text" id="up-debt" value="'+(cp.debt||'')+'" placeholder="e.g., $280,000"></div>';
@@ -2640,6 +2652,8 @@ function saveUpdatedProfile(){
   cp.fellowship=gv('up-fellowship');
   cp.firstauthor=gi('up-firstauthor');
   cp.boards=gv('up-boards');
+  cp.resTrack=gv('up-restrack');
+  cp.hasOffers=gv('up-hasoffers');
   cp.offers=gi('up-offers');
   cp.practice=gv('up-practice');
   cp.comp=gv('up-comp');
@@ -3287,6 +3301,8 @@ function renderHome(){
   // Zone 2: Recommended tool (skip if Career Map is active — it has its own recommendations)
   if(!_careerMapActive)renderRecommendedTools();
   else{var _recEl=document.getElementById('home-recommended-tools');if(_recEl)_recEl.style.display='none'}
+  // Zone 2b: First Contract Playbook (for residents going to practice, fellows, early attendings)
+  if(typeof renderContractPlaybook==='function')renderContractPlaybook();
   // Hide Ask card if Career Map is active (it has Quick Actions)
   var _askCard=document.getElementById('home-ask-card');
   if(_askCard)_askCard.style.display=(_careerMapActive||(U.tier!=='elite'&&U.tier!=='admin'))?'none':'';
@@ -3721,14 +3737,25 @@ function getNextBestTool(cp,scores,usedTools){
       {name:'Career Strategy Builder',label:'Build Your Strategy',why:'Map out the dependencies between your goals so nothing falls through the cracks.'},
       {name:'Mock Interview Simulator',label:'Practice Interviews',why:'The honest debrief most people never get until it is too late.'}
     ],
-    resident:[
-      {name:'Match Competitiveness Calculator',label:'Run Match Calculator',why:'Know your real fellowship match probability before application season.'},
-      {name:'Match Competitiveness Calculator',label:'Check Competitiveness',why:'Score your competitiveness and see your real match probability.'},
-      {name:'Research Impact Calculator',label:'Run Research Calculator',why:'Maximize the impact of limited research time during residency.'},
-      {name:'Career Strategy Builder',label:'Build Your Strategy',why:'Connect the dots between your goals, timelines, and actions.'},
-      {name:'Financial Planner',label:'Model Your Finances',why:'Understand what your financial trajectory looks like over the next decade.'},
-      {name:'Mock Interview Simulator',label:'Practice Interviews',why:'Practice the hard questions before they are asked for real.'}
-    ],
+    resident:(function(){
+      var rt=(cp&&cp.resTrack)||'';
+      if(rt==='practice') return [
+        {name:'Contract Review Tool',label:'Review Your Contract',why:'Your first attending contract sets the financial trajectory for your entire career.'},
+        {name:'RVU Compensation & Offer Comparison',label:'Check Compensation',why:'Know your market value before you sit down at the negotiation table.'},
+        {name:'Contract & Offer Analyzer',label:'Compare Offers',why:'Side-by-side analysis that shows which offer actually wins over 5 years.'},
+        {name:'Financial Planner',label:'Plan Your Finances',why:'The financial decisions you make in year one determine your wealth at year 20.'},
+        {name:'Financial Planner',label:'Optimize Debt Strategy',why:'One wrong move on PSLF or refinancing can cost you six figures.'},
+        {name:'Mock Interview Simulator',label:'Practice Interviews',why:'Negotiate confidently with data, not hope.'}
+      ];
+      return [
+        {name:'Match Competitiveness Calculator',label:'Run Match Calculator',why:'Know your real fellowship match probability before application season.'},
+        {name:'Match Competitiveness Calculator',label:'Check Competitiveness',why:'Score your competitiveness and see your real match probability.'},
+        {name:'Research Impact Calculator',label:'Run Research Calculator',why:'Maximize the impact of limited research time during residency.'},
+        {name:'Career Strategy Builder',label:'Build Your Strategy',why:'Connect the dots between your goals, timelines, and actions.'},
+        {name:'Financial Planner',label:'Model Your Finances',why:'Understand what your financial trajectory looks like over the next decade.'},
+        {name:'Mock Interview Simulator',label:'Practice Interviews',why:'Practice the hard questions before they are asked for real.'}
+      ];
+    })(),
     fellow:[
       {name:'Contract Review Tool',label:'Review Your Contract',why:'Your first attending contract sets the financial trajectory for your entire career.'},
       {name:'RVU Compensation & Offer Comparison',label:'Check Compensation',why:'Know your market value before you sit down at the negotiation table.'},
@@ -3774,14 +3801,25 @@ function renderRecommendedTools(){
       {id:'v16',name:'Interview Practice Tool',icon:'🎙️',why:'Practice real specialty-specific questions',priority:5},
       {id:'v9',name:'Application Review Tool',icon:'📝',why:'Audit your application like a program director would',priority:6}
     ],
-    resident:[
-      {id:'v14',name:'Match Competitiveness Calculator',icon:'🏆',why:'Benchmark your fellowship competitiveness',priority:1},
-      {id:'v7',name:'Research Impact Calculator',icon:'⚖️',why:'Maximize your research portfolio before applications',priority:2},
-      {id:'v15',name:'Career Roadmap',icon:'🗺️',why:'Timeline your fellowship application strategy',priority:3},
-      {id:'v16',name:'Interview Practice Tool',icon:'🎙️',why:'Prepare for program-specific interview formats',priority:4},
-      {id:'v11',name:'Financial Planner',icon:'💵',why:'Start optimizing your loan strategy now',priority:5},
-      {id:'v11',name:'Financial Planner',icon:'📈',why:'Map your income trajectory post-training',priority:6}
-    ],
+    resident:(function(){
+      var rt=(U&&U.careerProfile&&U.careerProfile.resTrack)||'';
+      if(rt==='practice') return [
+        {id:'v12',name:'Contract Review Tool',icon:'📝',why:'Score your first attending contract before you sign',priority:1},
+        {id:'v4',name:'RVU Compensation Calculator',icon:'💰',why:'Know your market value before negotiating',priority:2},
+        {id:'v12',name:'Contract & Offer Analyzer',icon:'⚖️',why:'Compare offers side-by-side with clear winner',priority:3},
+        {id:'v11',name:'Financial Planner',icon:'📈',why:'Model your 30-year wealth trajectory',priority:4},
+        {id:'v16',name:'Interview Practice Tool',icon:'🎙️',why:'Practice negotiation conversations',priority:5},
+        {id:'v11',name:'Financial Planner',icon:'💵',why:'PSLF vs refinancing — see the real numbers',priority:6}
+      ];
+      return [
+        {id:'v14',name:'Match Competitiveness Calculator',icon:'🏆',why:'Benchmark your fellowship competitiveness',priority:1},
+        {id:'v7',name:'Research Impact Calculator',icon:'⚖️',why:'Maximize your research portfolio before applications',priority:2},
+        {id:'v15',name:'Career Roadmap',icon:'🗺️',why:'Timeline your fellowship application strategy',priority:3},
+        {id:'v16',name:'Interview Practice Tool',icon:'🎙️',why:'Prepare for program-specific interview formats',priority:4},
+        {id:'v11',name:'Financial Planner',icon:'💵',why:'Start optimizing your loan strategy now',priority:5},
+        {id:'v11',name:'Financial Planner',icon:'📈',why:'Map your income trajectory post-training',priority:6}
+      ];
+    })(),
     fellow:[
       {id:'v12',name:'Contract Review Tool',icon:'📝',why:'Score offers before you sign — most fellows leave money on the table',priority:1},
       {id:'v12',name:'Contract & Offer Analyzer',icon:'📊',why:'Compare multiple offers side-by-side with structured criteria',priority:2},
@@ -3858,6 +3896,51 @@ var IMG_SUCCESS_DATA=[
   {initials:'K.J.',country:'Nigeria',school:'University of Lagos',spec:'Internal Medicine',program:'Brookdale Hospital, Brooklyn NY',step2:231,usce:4,pubs:1,ysg:3,tip:'Applied to 80 programs strategically instead of 200 randomly. Quality over quantity saved money and time.'},
   {initials:'D.S.',country:'India',school:'Grant Medical College',spec:'Pathology',program:'Cleveland Clinic, OH',step2:248,usce:3,pubs:6,ysg:2,tip:'Pathology is underrated for IMGs. Less competitive than IM and the research opportunities are incredible.'}
 ];
+
+// ===== FIRST CONTRACT PLAYBOOK =====
+function renderContractPlaybook(){
+  var el=document.getElementById('home-contract-playbook');
+  if(!el||!U)return;
+  var cp=U.careerProfile||{};
+  var stage=cp.stage||'student';
+  var rt=cp.resTrack||'';
+  // Show for: residents going to practice, fellows, or early attendings
+  if(!((stage==='resident'&&rt==='practice')||(stage==='fellow')||(stage==='attending'&&parseInt(cp.yearsout||'99')<=2))){
+    el.style.display='none';return;
+  }
+  el.style.display='';
+  var toolsUsed=(U.toolHistory||[]).map(function(t){return t.tool});
+  var steps=[
+    {id:'v12',name:'Contract & Offer Analyzer',icon:'📄',desc:'Score your offer. Surface red flags. Get negotiation scripts.',done:toolsUsed.indexOf('Contract & Offer Analyzer')!==-1||toolsUsed.indexOf('Contract Review Tool')!==-1},
+    {id:'v4',name:'RVU Compensation Calculator',icon:'💰',desc:'Model your real compensation by volume and rate.',done:toolsUsed.indexOf('RVU Compensation Calculator')!==-1||toolsUsed.indexOf('RVU Compensation & Offer Comparison')!==-1},
+    {id:'v11',name:'Financial Planner',icon:'📈',desc:'See the 20-year wealth impact of this decision.',done:toolsUsed.indexOf('Financial Planner')!==-1}
+  ];
+  var completed=steps.filter(function(s){return s.done}).length;
+  var h='<div style="margin-bottom:16px">';
+  h+='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">';
+  h+='<div style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1.5px">✦ First Contract Playbook</div>';
+  h+='<div style="font-size:10px;color:var(--text3)">'+completed+'/3 complete</div>';
+  h+='</div>';
+  h+='<div style="height:3px;background:var(--bg3);border-radius:2px;margin-bottom:14px"><div style="height:100%;width:'+(completed/3*100)+'%;background:var(--accent);border-radius:2px;transition:width .4s"></div></div>';
+  steps.forEach(function(s,i){
+    var active=!s.done&&(i===0||steps[i-1].done);
+    h+='<div onclick="openFrameworkById(\''+s.id+'\')" style="display:flex;align-items:center;gap:14px;padding:14px 16px;'+(active?'background:rgba(198,168,94,.08);border:1px solid rgba(198,168,94,.2)':'background:var(--bg2);border:1px solid var(--border)')+';border-radius:12px;cursor:pointer;margin-bottom:8px;transition:all .15s;'+(s.done?'opacity:.6':'')+'" '+(active?'onmouseenter="this.style.background=\'rgba(198,168,94,.12)\'" onmouseleave="this.style.background=\'rgba(198,168,94,.08)\'"':'')+'>';
+    h+='<div style="width:32px;height:32px;border-radius:10px;'+(s.done?'background:var(--green);':'background:'+(active?'var(--accent)':'var(--bg3)'))+';display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:'+(s.done||active?'#1C1A17':'var(--text3)')+';flex-shrink:0">'+(s.done?'✓':(i+1))+'</div>';
+    h+='<div style="flex:1"><div style="font-size:13px;font-weight:600;color:var(--text)">'+s.name+'</div>';
+    h+='<div style="font-size:11px;color:var(--text3);margin-top:2px">'+s.desc+'</div></div>';
+    if(active) h+='<span style="font-size:12px;color:var(--accent);font-weight:600">Start →</span>';
+    h+='</div>';
+  });
+  if(completed===3){
+    h+='<div style="padding:14px;background:rgba(139,184,160,.06);border:1px solid rgba(139,184,160,.15);border-radius:12px;text-align:center;margin-top:4px">';
+    h+='<span style="font-size:16px">✓</span>';
+    h+='<div style="font-size:12px;font-weight:600;color:var(--green);margin-top:4px">Playbook Complete</div>';
+    h+='<div style="font-size:11px;color:var(--text3);margin-top:2px">You\'ve analyzed your contract, modeled compensation, and planned financially. Re-run any tool to update.</div>';
+    h+='</div>';
+  }
+  h+='</div>';
+  el.innerHTML=h;
+}
 
 function renderImgSuccessCards(){
   var el=document.getElementById('img-success-cards');

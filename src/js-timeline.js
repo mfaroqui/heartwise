@@ -1555,7 +1555,23 @@ function renderCareerMap() {
   // ========================================
   // COUNTDOWN — The visual star
   // ========================================
-  var nextCrit = deadlines.find(function(d) { return !d.isPast && (d.urgency === 'critical' || d.urgency === 'high'); });
+  // Fellowship countdown for residents pursuing fellowship
+  var countdownDeadline = null;
+  var countdownDays = null;
+  if (stage === 'resident' && cp.resTrack === 'fellowship') {
+    var now = new Date();
+    var erasMonth = 6; // July (0-indexed)
+    var erasDay = 1;
+    var erasYear = now.getMonth() >= erasMonth ? now.getFullYear() + 1 : now.getFullYear();
+    var erasDate = new Date(erasYear, erasMonth, erasDay);
+    var daysToEras = Math.ceil((erasDate - now) / (1000 * 60 * 60 * 24));
+    if (daysToEras > 0 && daysToEras < 365) {
+      countdownDeadline = { title: 'Fellowship ERAS Opens', desc: 'Time to finalize your application strategy', daysAway: daysToEras, urgency: daysToEras <= 30 ? 'high' : 'medium', isPast: false };
+    }
+  }
+  
+  // Use fellowship countdown if available, otherwise use existing deadlines
+  var nextCrit = countdownDeadline || deadlines.find(function(d) { return !d.isPast && (d.urgency === 'critical' || d.urgency === 'high'); });
   if (nextCrit) {
     var dCol = nextCrit.daysAway <= 14 ? '#B85C5C' : nextCrit.daysAway <= 30 ? '#C6A85E' : '#5E8B6F';
     h += '<div class="cm-card">';

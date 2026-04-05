@@ -94,7 +94,7 @@ function fypCalculate(){
   h+='<div style="color:var(--text3);font-size:11px;margin-top:4px">Total: $'+totalTaxAdv.toLocaleString()+'/yr</div>';
   h+='</div></div>';
   document.getElementById('fyp-results').innerHTML=h;
-  recordToolUse('3-Year Financial Planner',null,'Y3 Wealth: $'+Math.round(y3.netWealth/1000)+'K | Invested: $'+Math.round(y3.cumInvested/1000)+'K',{inputs:{Salary:'$'+salary.toLocaleString(),Debt:'$'+debt.toLocaleString(),Rate:(rate*100).toFixed(1)+'%',Expenses:'$'+expenses.toLocaleString(),PSLF:pslf||'N/A'},highlights:['Year 3 Net Wealth: $'+Math.round(y3.netWealth/1000)+'K','Total Invested: $'+Math.round(y3.cumInvested/1000)+'K','Remaining Debt: $'+Math.round(y3.remainDebt/1000)+'K']});
+  recordToolUse('Financial Planner',null,'Y3 Wealth: $'+Math.round(y3.netWealth/1000)+'K | Invested: $'+Math.round(y3.cumInvested/1000)+'K',{inputs:{Salary:'$'+salary.toLocaleString(),Debt:'$'+debt.toLocaleString(),Rate:(rate*100).toFixed(1)+'%',Expenses:'$'+expenses.toLocaleString(),PSLF:pslf||'N/A'},highlights:['Year 3 Net Wealth: $'+Math.round(y3.netWealth/1000)+'K','Total Invested: $'+Math.round(y3.cumInvested/1000)+'K','Remaining Debt: $'+Math.round(y3.remainDebt/1000)+'K']});
 }
 
 // ===== INCOME LEVERAGE PLAYBOOK (v8) =====
@@ -201,5 +201,5 @@ function ilpCalculate(){
     h+='</div>';
   }
   document.getElementById('ilp-results').innerHTML=h;
-  recordToolUse('Debt & Income Strategy Tool',score+'/'+maxScore,grade+' ('+scorePct+'%)',{inputs:{Salary:'$'+salary.toLocaleString(),Debt:'$'+debt.toLocaleString(),Employer:employer,Disability:disability,Spending:'$'+spending.toLocaleString(),'Tax-Advantaged':has401k,Advisor:hasAdvisor},highlights:['Score: '+score+'/'+maxScore+' ('+grade+')'].concat(wins).concat(flags)});
+  recordToolUse('Financial Planner',score+'/'+maxScore,grade+' ('+scorePct+'%)',{inputs:{Salary:'$'+salary.toLocaleString(),Debt:'$'+debt.toLocaleString(),Employer:employer,Disability:disability,Spending:'$'+spending.toLocaleString(),'Tax-Advantaged':has401k,Advisor:hasAdvisor},highlights:['Score: '+score+'/'+maxScore+' ('+grade+')'].concat(wins).concat(flags)});
 }

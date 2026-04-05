@@ -804,7 +804,7 @@ v12:`<div style="text-align:center;padding:28px 20px;margin:-20px -20px 24px;bac
 
 v11:`<div style="text-align:center;padding:28px 20px;margin:-20px -20px 24px;background:linear-gradient(160deg,rgba(200,168,124,.1),rgba(200,168,124,.03));border-radius:12px 12px 0 0;border-bottom:1px solid rgba(200,168,124,.15)">
 <div style="font-size:36px;margin-bottom:8px">\ud83d\udcb0</div>
-<h3 class="serif" style="font-size:22px;margin-bottom:4px">Financial Projection Tool</h3>
+<h3 class="serif" style="font-size:22px;margin-bottom:4px">Financial Planner</h3>
 <p style="font-size:12px;color:var(--text3);margin-bottom:4px">The $10 Million Decision Calculator</p>
 <p style="font-size:11px;color:var(--text3)">See how your specialty choice, fellowship, and practice type impact lifetime wealth.</p>
 </div>
@@ -1022,7 +1022,7 @@ v11:`<div style="text-align:center;padding:28px 20px;margin:-20px -20px 24px;bac
 <div id="ft-insights" style="margin-bottom:20px"></div>
 
 <p style="font-size:10px;color:var(--text3);line-height:1.6;font-style:italic;margin-top:16px">Based on MGMA 2024 compensation data. Assumes 7% annual investment return, 3% annual salary growth, and $250K starting student debt. This is a modeling tool \u2014 not financial advice. Consult a financial professional for personalized planning.</p>
-<div style="text-align:center;margin-top:8px"><button onclick="showSavedScenarios('Financial Projection Tool')" style="background:none;border:none;color:var(--accent);font-size:11px;cursor:pointer;padding:6px 12px;opacity:.7;transition:opacity .15s" onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='.7'">📊 View Saved Scenarios</button></div>
+<div style="text-align:center;margin-top:8px"><button onclick="showSavedScenarios('Financial Planner')" style="background:none;border:none;color:var(--accent);font-size:11px;cursor:pointer;padding:6px 12px;opacity:.7;transition:opacity .15s" onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='.7'">📊 View Saved Scenarios</button></div>
 </div>`
 ,
 v13:`<h3 class="serif">Specialty Fit Assessment</h3>

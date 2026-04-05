@@ -875,7 +875,7 @@ function hwGetSmartToolRecs(cp, scores, progress) {
     recs.push({ tool: 'v14', title: 'Match Competitiveness Calculator', reason: 'Your competitiveness score is ' + (scores.competitiveness || 0) + '. Use the ROI Simulator to find what moves your needle most.', urgency: 'high' });
   }
   if (weakest === 'financial') {
-    recs.push({ tool: 'v11', title: 'Financial Projection Tool', reason: 'Your financial score is the weakest. Model your 30-year trajectory and find the highest-impact changes.', urgency: 'high' });
+    recs.push({ tool: 'v11', title: 'Financial Planner', reason: 'Your financial score is the weakest. Model your 30-year trajectory and find the highest-impact changes.', urgency: 'high' });
   }
   if (weakest === 'readiness' && stage !== 'attending') {
     recs.push({ tool: 'v15', title: 'Career Roadmap Tool', reason: 'Your readiness score needs work. Build a step-by-step plan with dependencies and timelines.', urgency: 'high' });
@@ -1255,7 +1255,7 @@ var HW_HOW_TO = [
   // LOAN PAYOFF / DEBT
   { match: 'loan', steps: ['List all loans: balance, interest rate, servicer, and repayment plan for each', 'If at a qualifying employer, strongly consider PSLF over refinancing — run the numbers first', 'If NOT pursuing PSLF, refinance to the lowest rate possible (compare SoFi, Laurel Road, Earnest)', 'Avalanche method: pay minimums on all, put extra toward the highest interest rate loan', 'Every $1,000 extra per month toward a $300K loan at 6% saves ~$45K in total interest'], tool: 'v8' },
   // NET WORTH / EMERGENCY FUND
-  { match: 'emergency fund', steps: ['Target 3-6 months of essential expenses (rent, food, insurance, minimums on debt)', 'Keep it in a high-yield savings account (4-5% APY) — not invested in the market', 'Build this BEFORE aggressive debt payoff — unexpected expenses without a buffer create new debt', 'For dual-physician households, 3 months may be sufficient; single income, aim for 6'], tool: 'v5' },
+  { match: 'emergency fund', steps: ['Target 3-6 months of essential expenses (rent, food, insurance, minimums on debt)', 'Keep it in a high-yield savings account (4-5% APY) — not invested in the market', 'Build this BEFORE aggressive debt payoff — unexpected expenses without a buffer create new debt', 'For dual-physician households, 3 months may be sufficient; single income, aim for 6'], tool: 'v11' },
   // RESEARCH / PUBLISH
   { match: 'publish', steps: ['Start with a case report or retrospective chart review — these can be completed in 2-4 months', 'Approach faculty who are actively publishing and ask to join an existing project', 'Aim for journals in your target specialty — specialty-specific publications matter more than impact factor', 'Use a reference manager (Zotero, Mendeley) from day one — you will thank yourself later', 'Submit to 2-3 journals simultaneously if allowed, or have your backup journal ready before submitting'], tool: 'v7' },
   // LEADERSHIP
@@ -1401,7 +1401,7 @@ function hwGetMonthlyNudge(cp) {
       1: { text: resFell ? 'If applying to fellowship this fall, your research portfolio is being evaluated in 7 months. Every month counts.' : (resGrad ? 'Contract negotiation time. Do not accept the first offer. Run your offer through the Contract Review tool.' : 'Check your ITE results against last year. Any improvement is a positive signal for boards.'), icon: resFell ? '\u23F0' : '\uD83D\uDCDD', tool: resFell ? 'v7' : (resGrad ? 'v12' : null) },
       2: { text: resGrad ? 'If you have not signed a contract for July, you are running late. Accelerate your search and negotiate aggressively.' : 'March conferences are happening (ACC, AAMC). Submit abstracts to upcoming specialty meetings if you have not already.', icon: resGrad ? '\u26A0\uFE0F' : '\uD83C\uDFE5', tool: resGrad ? 'v12' : 'v7' },
       3: { text: resFell ? 'Start approaching potential LOR writers now. Faculty need months of lead time for fellowship letters.' : 'Tax deadline this month. Residents: deduct student loan interest and max out any employer 401k match.', icon: resFell ? '\uD83D\uDCDD' : '\uD83D\uDCB0', tool: resFell ? null : 'v8' },
-      4: { text: resFell ? 'Fellowship LOR requests should be in. Start outlining your personal statement. What is your academic narrative?' : 'Spring is a good time to assess your financial position. Run the 3-Year Financial Planner with updated numbers.', icon: resFell ? '\u270D\uFE0F' : '\uD83D\uDCC8', tool: resFell ? null : 'v5' },
+      4: { text: resFell ? 'Fellowship LOR requests should be in. Start outlining your personal statement. What is your academic narrative?' : 'Spring is a good time to assess your financial position. Run the Financial Planner with updated numbers.', icon: resFell ? '\u270D\uFE0F' : '\uD83D\uDCC8', tool: resFell ? null : 'v5' },
       5: { text: resFell ? 'Summer is personal statement and application polishing season. Have your research mentor review your CV.' : 'Halfway through the year. Check your procedure logs, case numbers, and any milestones you need for promotion.', icon: resFell ? '\uD83D\uDCDD' : '\uD83D\uDD04', tool: resFell ? 'v9' : null },
       6: { text: resFell ? 'Fellowship ERAS typically opens this month. Finalize your application materials NOW.' : 'July turnover: new interns arrive, responsibilities shift. A good month to take on a leadership or QI project.', icon: resFell ? '\uD83D\uDE80' : '\uD83E\uDD1D', tool: resFell ? 'v9' : null },
       7: { text: resFell ? 'Applications should be submitted or nearly ready. Last chance to add a publication or presentation before review.' : 'Mid-year assessment coming. Reflect on feedback from the first half and set goals for the rest of the year.', icon: resFell ? '\u23F0' : '\uD83C\uDFAF', tool: resFell ? 'v7' : null },
@@ -1973,7 +1973,7 @@ function hwSheetTimeline(cp, scores, spec) {
   if (th3.length) {
     var lastR = {};
     th3.forEach(function(t) { lastR[t.tool] = new Date(t.date); });
-    var retool3 = { 'Match Competitiveness Calculator': 30, 'RVU Compensation Calculator': 60, 'Contract Review Tool': 90, 'Financial Projection Tool': 90, 'Specialty Fit Assessment': 60, 'Research Impact Calculator': 45 };
+    var retool3 = { 'Match Competitiveness Calculator': 30, 'RVU Compensation Calculator': 60, 'Contract Review Tool': 90, 'Financial Planner': 90, 'Specialty Fit Assessment': 60, 'Research Impact Calculator': 45 };
     var stale3 = [];
     Object.keys(lastR).forEach(function(tool) { var rc = retool3[tool]; if (rc) { var ds3 = Math.floor((new Date() - lastR[tool]) / 86400000); if (ds3 >= rc) stale3.push({ tool: tool, daysSince: ds3, recommended: rc }); } });
     if (stale3.length) {
@@ -2048,7 +2048,7 @@ function hwGetKeyInsight(cp, scores, spec, deadlines) {
       return 'Your savings rate is the single strongest predictor of long-term wealth — stronger than income, investment returns, or specialty choice. <strong style="color:#C6A85E">Physicians who save 20%+ of gross income reach financial independence 10-15 years earlier</strong> than those who save less. At your income level, every 5% increase is worth $' + Math.round(comp * 0.05 / 1000) + 'K/year in saved capital.';
     }
     if (cp.considering === 'active' || (parseInt(cp.satisfaction) > 0 && parseInt(cp.satisfaction) <= 5)) {
-      return 'You\'re signaling that your current position isn\'t sustainable. <strong style="color:#C6A85E">Burnout doesn\'t fix itself — it compounds.</strong> The physicians who make successful transitions do it with a plan, not in a crisis. Use the Career Transition Planner to model the financial and professional impact of a change while you still have leverage.';
+      return 'You\'re signaling that your current position isn\'t sustainable. <strong style="color:#C6A85E">Burnout doesn\'t fix itself — it compounds.</strong> The physicians who make successful transitions do it with a plan, not in a crisis. Use the Specialty & Career Fit to model the financial and professional impact of a change while you still have leverage.';
     }
     if (debt === 0 && comp > 300000) {
       return 'Debt-free with a strong income — you\'re in the position most physicians dream about. <strong style="color:#C6A85E">Now is when the wealth-building accelerates.</strong> Max your tax-advantaged accounts, ensure your investment allocation matches your timeline, and make sure your estate plan is current. The next decade of compounding is worth millions.';

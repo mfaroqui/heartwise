@@ -145,14 +145,14 @@ function renderRerunReminders(){
   var rerunnable={
     'Fellowship Readiness Calculator':{days:30,reason:'Your readiness score may have changed with new experiences.',icon:'🎯'},
     'Contract Risk Scanner':{days:45,reason:'Re-scan if you\'ve received a revised offer or new contract.',icon:'📋'},
-    'Job Offer Comparison':{days:30,reason:'Compare again if you have new offers on the table.',icon:'⚖️'},
+    'Contract & Offer Analyzer':{days:30,reason:'Compare again if you have new offers on the table.',icon:'⚖️'},
     'RVU Compensation Modeler':{days:60,reason:'Market rates shift — make sure your comp is still competitive.',icon:'💰'},
-    '3-Year Financial Planner':{days:60,reason:'Update with actual income and expenses for a more accurate plan.',icon:'📅'},
+    'Financial Planner':{days:60,reason:'Update with actual income and expenses for a more accurate plan.',icon:'📅'},
     'Research Impact Calculator':{days:45,reason:'New publications or presentations? Recalculate your research score.',icon:'🔬'},
-    'Debt & Income Strategy':{days:60,reason:'Refresh with current debt balance and any income changes.',icon:'💵'},
+    'Financial Planner':{days:60,reason:'Refresh with current debt balance and any income changes.',icon:'💵'},
     'Match Competitiveness Calculator':{days:30,reason:'Re-run as you add publications, scores, or experiences.',icon:'🎯'},
     'Career Strategy Builder':{days:45,reason:'Your strategy should evolve as your situation changes.',icon:'🧭'},
-    'Financial Projection Tool':{days:90,reason:'Update with actual numbers for a more accurate 30-year view.',icon:'📈'},
+    'Financial Planner':{days:90,reason:'Update with actual numbers for a more accurate 30-year view.',icon:'📈'},
     'Specialty Fit Analyzer':{days:60,reason:'Your preferences may have shifted — worth re-checking.',icon:'🔍'},
     'Contract Review Tool':{days:45,reason:'Re-review if contract terms have been renegotiated.',icon:'📝'}
   };
@@ -206,30 +206,30 @@ function renderSeasonalCalendar(){
   var calendar={
     student:[
       {m:[0,1],season:'Match Prep Season',desc:'Final push before rank lists. Mock interviews and application polish.',tools:[{id:'v16',name:'Mock Interview Simulator',why:'Practice before real interviews'},{id:'v9',name:'Application Review',why:'Last chance to strengthen your app'}],icon:'🎯',urgent:true},
-      {m:[2],season:'Match Day',desc:'Results are in. Time to plan your next move — whether celebrating or scrambling.',tools:[{id:'v5',name:'3-Year Financial Planner',why:'Start planning your resident finances'},{id:'v15',name:'Career Strategy Builder',why:'Map your residency strategy'}],icon:'🎉',urgent:true},
-      {m:[3,4],season:'Post-Match Planning',desc:'Transition period. Set financial foundations before residency starts.',tools:[{id:'v8',name:'Debt & Income Strategy',why:'Get your loan strategy set before training'},{id:'v5',name:'3-Year Financial Planner',why:'Plan your resident budget'}],icon:'📋'},
+      {m:[2],season:'Match Day',desc:'Results are in. Time to plan your next move — whether celebrating or scrambling.',tools:[{id:'v11',name:'Financial Planner',why:'Start planning your resident finances'},{id:'v15',name:'Career Strategy Builder',why:'Map your residency strategy'}],icon:'🎉',urgent:true},
+      {m:[3,4],season:'Post-Match Planning',desc:'Transition period. Set financial foundations before residency starts.',tools:[{id:'v11',name:'Financial Planner',why:'Get your loan strategy set before training'},{id:'v11',name:'Financial Planner',why:'Plan your resident budget'}],icon:'📋'},
       {m:[5,6],season:'Away Rotation Season',desc:'Applications open for away rotations. Strategic program exposure.',tools:[{id:'v14',name:'Match Competitiveness Calculator',why:'Know where you stand before choosing aways'},{id:'v1',name:'Fellowship Readiness Calculator',why:'Assess your readiness'}],icon:'🏥'},
-      {m:[7,8],season:'ERAS Season',desc:'Applications are opening. Submit Day 1 for competitive specialties.',tools:[{id:'v6',name:'Fellowship Application Planner',why:'Month-by-month application plan'},{id:'v9',name:'Application Review',why:'Get your chances projection'}],icon:'🚀',urgent:true},
+      {m:[7,8],season:'ERAS Season',desc:'Applications are opening. Submit Day 1 for competitive specialties.',tools:[{id:'v15',name:'Career Roadmap',why:'Month-by-month application plan'},{id:'v9',name:'Application Review',why:'Get your chances projection'}],icon:'🚀',urgent:true},
       {m:[9,10],season:'Interview Season',desc:'Interviews are happening. Practice, prepare, and track your ranking.',tools:[{id:'v16',name:'Mock Interview Simulator',why:'Honest debrief on your performance'},{id:'v13',name:'Specialty Fit Analyzer',why:'Confirm your specialty choice'}],icon:'🗓️'},
-      {m:[11],season:'Rank List Finalization',desc:'Finalize your rank list. This decision shapes your next 3-7 years.',tools:[{id:'v3',name:'Job Offer Comparison',why:'Compare programs systematically'},{id:'v15',name:'Career Strategy Builder',why:'Think long-term about each option'}],icon:'📊'}
+      {m:[11],season:'Rank List Finalization',desc:'Finalize your rank list. This decision shapes your next 3-7 years.',tools:[{id:'v12',name:'Contract & Offer Analyzer',why:'Compare programs systematically'},{id:'v15',name:'Career Strategy Builder',why:'Think long-term about each option'}],icon:'📊'}
     ],
     resident:[
       {m:[0,1,2],season:'Fellowship App Prep',desc:'If applying for fellowship, now is the time to build your CV.',tools:[{id:'v1',name:'Fellowship Readiness Calculator',why:'Know your gaps before applying'},{id:'v7',name:'Research Impact Calculator',why:'Quantify your research profile'}],icon:'📚'},
-      {m:[3,4,5],season:'Research & Publication Push',desc:'Summer conferences approaching. Get abstracts submitted and papers finished.',tools:[{id:'v7',name:'Research Impact Calculator',why:'Track your research growth'},{id:'v6',name:'Fellowship Application Planner',why:'Timeline your application'}],icon:'🔬'},
+      {m:[3,4,5],season:'Research & Publication Push',desc:'Summer conferences approaching. Get abstracts submitted and papers finished.',tools:[{id:'v7',name:'Research Impact Calculator',why:'Track your research growth'},{id:'v15',name:'Career Roadmap',why:'Timeline your application'}],icon:'🔬'},
       {m:[6,7,8],season:'Fellowship Application Season',desc:'ERAS opens. Submit applications and prepare for interviews.',tools:[{id:'v9',name:'Application Review',why:'Chances projection'},{id:'v14',name:'Match Competitiveness Calculator',why:'Where do you stand?'}],icon:'🚀',urgent:true},
       {m:[9,10,11],season:'Contract & Job Search Season',desc:'Graduating residents: start reviewing contracts and negotiating.',tools:[{id:'v2',name:'Contract Risk Scanner',why:'Scan every offer for red flags'},{id:'v4',name:'RVU Compensation Modeler',why:'Is the pay actually competitive?'}],icon:'📝'}
     ],
     fellow:[
-      {m:[0,1,2],season:'Job Market Peak',desc:'Most attending positions open Q1. Start scanning and applying.',tools:[{id:'v3',name:'Job Offer Comparison',why:'Compare offers systematically'},{id:'v11',name:'Financial Projection Tool',why:'30-year view of each option'}],icon:'💼',urgent:true},
+      {m:[0,1,2],season:'Job Market Peak',desc:'Most attending positions open Q1. Start scanning and applying.',tools:[{id:'v12',name:'Contract & Offer Analyzer',why:'Compare offers systematically'},{id:'v11',name:'Financial Planner',why:'30-year view of each option'}],icon:'💼',urgent:true},
       {m:[3,4,5],season:'Contract Negotiation Season',desc:'Offers are coming in. Every term is negotiable.',tools:[{id:'v2',name:'Contract Risk Scanner',why:'Find the hidden risks'},{id:'v12',name:'Contract Review Tool',why:'Get negotiation scripts'},{id:'v4',name:'RVU Compensation Modeler',why:'Verify your comp is fair'}],icon:'📝',urgent:true},
-      {m:[6,7,8],season:'Transition Planning',desc:'Preparing for attending life. Financial setup is critical now.',tools:[{id:'v5',name:'3-Year Financial Planner',why:'Plan your first 3 attending years'},{id:'v8',name:'Debt & Income Strategy',why:'Optimize your loan strategy'}],icon:'🔄'},
-      {m:[9,10,11],season:'Early Opportunities',desc:'Some positions open early. Get ahead of the cycle.',tools:[{id:'v10',name:'Career Transition Planner',why:'Evaluate the risk vs. upside'},{id:'v15',name:'Career Strategy Builder',why:'Build your attending career strategy'}],icon:'🎯'}
+      {m:[6,7,8],season:'Transition Planning',desc:'Preparing for attending life. Financial setup is critical now.',tools:[{id:'v11',name:'Financial Planner',why:'Plan your first 3 attending years'},{id:'v11',name:'Financial Planner',why:'Optimize your loan strategy'}],icon:'🔄'},
+      {m:[9,10,11],season:'Early Opportunities',desc:'Some positions open early. Get ahead of the cycle.',tools:[{id:'v13',name:'Specialty & Career Fit',why:'Evaluate the risk vs. upside'},{id:'v15',name:'Career Strategy Builder',why:'Build your attending career strategy'}],icon:'🎯'}
     ],
     attending:[
-      {m:[0,1,2],season:'Annual Financial Review',desc:'New year — review your financial trajectory and tax strategy.',tools:[{id:'v11',name:'Financial Projection Tool',why:'Update your 30-year projection'},{id:'v8',name:'Debt & Income Strategy',why:'Optimize for this year'}],icon:'📊'},
+      {m:[0,1,2],season:'Annual Financial Review',desc:'New year — review your financial trajectory and tax strategy.',tools:[{id:'v11',name:'Financial Planner',why:'Update your 30-year projection'},{id:'v11',name:'Financial Planner',why:'Optimize for this year'}],icon:'📊'},
       {m:[3,4,5],season:'Contract Renewal Prep',desc:'Many contracts renew mid-year. Review before auto-renewal.',tools:[{id:'v2',name:'Contract Risk Scanner',why:'Re-scan your current contract'},{id:'v4',name:'RVU Compensation Modeler',why:'Are you still competitive?'}],icon:'📋'},
-      {m:[6,7,8],season:'Mid-Year Career Check',desc:'Good time to reassess: are you where you want to be?',tools:[{id:'v10',name:'Career Transition Planner',why:'Thinking about a change?'},{id:'v15',name:'Career Strategy Builder',why:'Refine your 5-year plan'}],icon:'🧭'},
-      {m:[9,10,11],season:'Market Assessment',desc:'Job market heats up. Know your worth even if you\'re staying.',tools:[{id:'v4',name:'RVU Compensation Modeler',why:'Check current market rates'},{id:'v3',name:'Job Offer Comparison',why:'Evaluate any new opportunities'}],icon:'💰'}
+      {m:[6,7,8],season:'Mid-Year Career Check',desc:'Good time to reassess: are you where you want to be?',tools:[{id:'v13',name:'Specialty & Career Fit',why:'Thinking about a change?'},{id:'v15',name:'Career Strategy Builder',why:'Refine your 5-year plan'}],icon:'🧭'},
+      {m:[9,10,11],season:'Market Assessment',desc:'Job market heats up. Know your worth even if you\'re staying.',tools:[{id:'v4',name:'RVU Compensation Modeler',why:'Check current market rates'},{id:'v12',name:'Contract & Offer Analyzer',why:'Evaluate any new opportunities'}],icon:'💰'}
     ]
   };
 

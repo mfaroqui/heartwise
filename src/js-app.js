@@ -281,7 +281,7 @@ function hwCollapseAll(container){
       setTimeout(function(){document.querySelectorAll('.fap-step').forEach(function(s){s.style.opacity='1';s.style.transform='translateX(0)'})},100);
       setTimeout(function(){document.querySelectorAll('.fap-tag').forEach(function(t){t.style.opacity='1'})},700);
     }else if(idx===6){
-      // All 15 Tools
+      // All 18 Tools
       var numEl=document.querySelector('.all17-number');
       if(numEl){numEl.style.opacity='1';numEl.style.transform='scale(1)'}
       setTimeout(function(){document.querySelectorAll('.all17-cat').forEach(function(c){c.style.opacity='1';c.style.transform='translateY(0)'})},200);
@@ -1860,7 +1860,7 @@ function updateTrialBanner(){
     if(typeof _supaClient!=='undefined'&&_supaClient){
       _supaClient.from('profiles').update({tier:'free',is_trial:false}).eq('email',U.email).then(function(){});
     }
-    el.innerHTML='<div style="display:flex;align-items:center;gap:12px"><span style="font-size:18px">⏰</span><div style="flex:1"><div style="font-size:13px;font-weight:600;color:var(--red)">Your guided access has ended</div><div style="font-size:11px;color:var(--text2);margin-top:2px">Subscribe now to unlock all 15 tools and build your complete strategy.</div></div><button class="btn btn-a btn-sm" onclick="navTo(\'scr-profile\');showUpgrade()" style="flex-shrink:0;width:auto">Subscribe →</button></div>';
+    el.innerHTML='<div style="display:flex;align-items:center;gap:12px"><span style="font-size:18px">⏰</span><div style="flex:1"><div style="font-size:13px;font-weight:600;color:var(--red)">Your guided access has ended</div><div style="font-size:11px;color:var(--text2);margin-top:2px">Subscribe now to unlock all 18 tools and build your complete strategy.</div></div><button class="btn btn-a btn-sm" onclick="navTo(\'scr-profile\');showUpgrade()" style="flex-shrink:0;width:auto">Subscribe →</button></div>';
     if(_trialInterval){clearInterval(_trialInterval);_trialInterval=null}
     enterApp();
     return;
@@ -1872,7 +1872,7 @@ function updateTrialBanner(){
   var urgencyBorder=hours<6?'rgba(196,77,86,.2)':hours<12?'rgba(198,168,94,.15)':'rgba(139,184,160,.2)';
   el.style.background=urgencyBg;
   el.style.borderColor=urgencyBorder;
-  el.innerHTML='<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap"><span style="font-size:18px">✦</span><div style="flex:1;min-width:180px"><div style="font-size:13px;font-weight:600;color:'+urgency+'">48-Hour Core Access — '+hours+'h '+mins+'m remaining</div><div style="font-size:11px;color:var(--text2);margin-top:2px">Explore your curated tools. Upgrade anytime for full access to all 15 tools.</div></div><button class="btn btn-a btn-sm" onclick="navTo(\'scr-profile\');showUpgrade()" style="flex-shrink:0;width:auto;padding:8px 18px">Unlock Everything →</button></div>';
+  el.innerHTML='<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap"><span style="font-size:18px">✦</span><div style="flex:1;min-width:180px"><div style="font-size:13px;font-weight:600;color:'+urgency+'">48-Hour Core Access — '+hours+'h '+mins+'m remaining</div><div style="font-size:11px;color:var(--text2);margin-top:2px">Explore your curated tools. Upgrade anytime for full access to all 18 tools.</div></div><button class="btn btn-a btn-sm" onclick="navTo(\'scr-profile\');showUpgrade()" style="flex-shrink:0;width:auto;padding:8px 18px">Unlock Everything →</button></div>';
 }
 
 // ===== CAREER DASHBOARD ENGINE =====
@@ -3364,7 +3364,7 @@ function renderHeroCard(){
       h+='<div onclick="navTo(\'scr-vault\')" style="display:flex;align-items:center;gap:14px;padding:12px 16px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:12px;cursor:pointer;margin-bottom:8px">';
       h+='<div style="width:32px;height:32px;border-radius:10px;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:rgba(237,235,231,.5);flex-shrink:0">2</div>';
       h+='<div style="flex:1"><div style="font-size:13px;font-weight:600;color:rgba(237,235,231,.6)">Run Your First Career Tool</div>';
-      h+='<div style="font-size:11px;color:rgba(237,235,231,.35)">15 tools for match strategy, contracts, compensation, and financial planning</div></div></div>';
+      h+='<div style="font-size:11px;color:rgba(237,235,231,.35)">18 tools for match strategy, contracts, compensation, and financial planning</div></div></div>';
 
       // Step 3: Track
       h+='<div style="display:flex;align-items:center;gap:14px;padding:12px 16px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:12px">';
@@ -8064,7 +8064,7 @@ function showTrialExpiredTeaser(){
 
   // CTA
   h+='<div style="margin-bottom:16px">';
-  h+='<button onclick="closeModal(\'modal-q\');navTo(\'scr-profile\');showUpgrade()" class="btn btn-a" style="width:100%;padding:14px 24px;font-size:14px;font-weight:600">Unlock All 15 Tools — $39/mo</button>';
+  h+='<button onclick="closeModal(\'modal-q\');navTo(\'scr-profile\');showUpgrade()" class="btn btn-a" style="width:100%;padding:14px 24px;font-size:14px;font-weight:600">Unlock All 18 Tools — $39/mo</button>';
   h+='</div>';
   h+='<div style="font-size:11px;color:var(--text3);margin-bottom:8px">Cancel anytime · Used by physicians at top programs</div>';
   h+='<button onclick="closeModal(\'modal-q\')" style="background:none;border:none;color:var(--text3);font-size:12px;cursor:pointer;padding:8px;text-decoration:underline">Continue with free access</button>';
@@ -8077,7 +8077,7 @@ function showTrialExpiredTeaser(){
 
 function showTrialLockedOverlay(id){
   var t=TRIAL_TEASERS[id];
-  if(!t)t={icon:'🔒',headline:'This tool is part of Core access.',teaser:'Upgrade to unlock all 15 tools and build your complete strategy.'};
+  if(!t)t={icon:'🔒',headline:'This tool is part of Core access.',teaser:'Upgrade to unlock all 18 tools and build your complete strategy.'};
   var item=VAULT_ITEMS.find(function(v){return v.id===id});
   var title=item?item.title:'Premium Tool';
   var html='<div style="display:flex;flex-direction:column;align-items:center;text-align:center;padding:40px 24px">';
@@ -8096,7 +8096,7 @@ function showTrialLockedOverlay(id){
   html+='<div style="font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--text3);margin-bottom:8px">🔒 '+title+'</div>';
   html+='<div style="font-size:11px;color:var(--text2);line-height:1.5">Available with <strong style="color:var(--accent)">Core</strong> or <strong style="color:var(--accent)">Mentorship</strong> access</div>';
   html+='</div>';
-  html+='<button onclick="closeModal(\'modal-q\');setTimeout(function(){navTo(\'scr-profile\');showUpgrade()},300)" class="btn btn-a" style="padding:12px 32px;font-size:13px">Unlock All 15 Tools →</button>';
+  html+='<button onclick="closeModal(\'modal-q\');setTimeout(function(){navTo(\'scr-profile\');showUpgrade()},300)" class="btn btn-a" style="padding:12px 32px;font-size:13px">Unlock All 18 Tools →</button>';
   html+='<p style="font-size:10px;color:var(--text3);margin-top:12px">Your guided access has '+(U.trialEnd?formatTrialRemaining():'tools')+'</p>';
   html+='</div>';
   document.getElementById('modal-q-content').innerHTML=html;

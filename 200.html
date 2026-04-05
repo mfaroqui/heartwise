@@ -3654,22 +3654,16 @@ const LEGACY_Q=[
 ];
 
 const VAULT_ITEMS=[
-{id:'v3',title:'Job Offer Comparison Tool',desc:'Compare multiple job offers side-by-side with structured decision criteria',icon:'📊',tier:'core'},
 {id:'v4',title:'RVU Compensation Calculator',desc:'Estimate income based on productivity, compensation model, and practice type',icon:'💰',tier:'core'},
-{id:'v5',title:'Early Career Income Planner',desc:'Map your expected income trajectory during your first 3 years after training',icon:'📈',tier:'core'},
-{id:'v6',title:'Fellowship Application Planner',desc:'Follow a month-by-month strategy from PGY-2 through match cycle',icon:'🗺️',tier:'core'},
 {id:'v7',title:'Research Impact Calculator',desc:'Assess the strength and relevance of your research portfolio',icon:'⚖️',tier:'core'},
-{id:'v8',title:'Debt & Income Strategy Tool',desc:'Compare loan repayment strategies including PSLF, refinancing, and tax impact',icon:'💵',tier:'core'},
-{id:'v13',title:'Specialty Fit Assessment',desc:'Find your ideal specialty or diagnose whether you are experiencing burnout, misfit, or practice model mismatch',icon:'🔬',tier:'core'},
-{id:'v14',title:'Match Competitiveness Calculator',desc:'Score your competitiveness, see your match probability, and find what moves the needle',icon:'🏆',tier:'core'},
-{id:'v15',title:'Career Roadmap Tool',desc:'Create a step-by-step plan to reach your desired specialty or career outcome',icon:'🗂️',tier:'core'},
-{id:'v16',title:'Interview Practice Tool',desc:'Practice specialty-specific interview questions with actionable feedback',icon:'🎙️',tier:'core'},
 {id:'v9',title:'Application Review Tool',desc:'Audit your full application using a structured, mentor-level evaluation framework',icon:'📝',tier:'core'},
-{id:'v10',title:'Career Transition Planner',desc:'Evaluate and plan specialty or practice changes with structured guidance',icon:'⚡',tier:'core'},
-{id:'v11',title:'Financial Projection Tool',desc:'Visualize long-term earnings, savings, and wealth across different career paths',icon:'💰',tier:'core'},
-{id:'v12',title:'Contract Review Tool',desc:'Analyze contract risk flags, benchmarks, and get negotiation scripts',icon:'📝',tier:'core'},
-{id:'v17',title:'Observership Database',desc:'Browse verified U.S. observership opportunities with strategic insights',icon:'🏥',tier:'core'},
-{id:'v18',title:'What Should I Do Next?',desc:'Get a prioritized action plan based on your profile, gaps, and time left',icon:'🧭',tier:'core'}
+{id:'v11',title:'Financial Planner',desc:'Plan your income, debts, and long-term financial future with integrated strategies',icon:'💰',tier:'core'},
+{id:'v12',title:'Contract & Offer Analyzer',desc:'Review contracts, compare offers, and get negotiation scripts',icon:'📝',tier:'core'},
+{id:'v13',title:'Specialty & Career Fit',desc:'Find your ideal specialty, evaluate transitions, and diagnose misfit or burnout',icon:'🔬',tier:'core'},
+{id:'v14',title:'Match Competitiveness Calculator',desc:'Score your competitiveness, see your match probability, and get your prioritized action plan',icon:'🏆',tier:'core'},
+{id:'v15',title:'Career Roadmap',desc:'Create a step-by-step plan to reach your specialty or career goal, including fellowship track',icon:'🗂️',tier:'core'},
+{id:'v16',title:'Interview Practice Tool',desc:'Practice specialty-specific interview questions with actionable feedback',icon:'🎙️',tier:'core'},
+{id:'v17',title:'Observership Database',desc:'Browse verified U.S. observership opportunities with strategic insights',icon:'🏥',tier:'core'}
 ];
 
 // ===== OBSERVERSHIP DATABASE =====
@@ -4950,70 +4944,6 @@ v2:`<h3 class="serif">Contract Risk Assessment</h3>
 <div style="text-align:center;margin-top:8px"><button onclick="showSavedScenarios('Contract Review Scorecard')" style="background:none;border:none;color:var(--accent);font-size:11px;cursor:pointer;padding:6px 12px;opacity:.7;transition:opacity .15s" onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='.7'">📊 View Saved Scenarios</button></div>
 </div>`,
 
-v3:`<h3 class="serif">Job Offer Comparison Tool</h3>
-<p style="color:var(--text3);font-size:12px;margin-bottom:20px">Input your two offers. We'll compare them honestly — no sugarcoating, just the trade-offs you need to see.</p>
-
-<div id="ocm-tool" style="font-size:13px">
-
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px">
-
-<!-- OFFER A -->
-<div style="padding:16px;background:var(--bg2);border:1px solid var(--border);border-radius:12px">
-<div style="font-size:13px;font-weight:600;color:var(--accent);margin-bottom:12px;text-align:center">Offer A</div>
-<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Employer / Label</label><input type="text" id="ocm-a-name" placeholder="e.g., Academic Medical Center" style="width:100%;box-sizing:border-box"></div>
-<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Base Salary ($)</label><input type="number" id="ocm-a-salary" placeholder="350000" style="width:100%;box-sizing:border-box"></div>
-<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Signing Bonus ($)</label><input type="number" id="ocm-a-sign" placeholder="0" style="width:100%;box-sizing:border-box"></div>
-<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">RVU Rate ($/wRVU)</label><input type="number" id="ocm-a-rvu" placeholder="55" step="0.5" style="width:100%;box-sizing:border-box"></div>
-<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Expected Annual wRVUs</label><input type="number" id="ocm-a-wrvus" placeholder="5000" style="width:100%;box-sizing:border-box"></div>
-<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Loan Repayment ($)</label><input type="number" id="ocm-a-loan" placeholder="0" style="width:100%;box-sizing:border-box"></div>
-<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Retirement Match (%)</label><input type="number" id="ocm-a-retire" placeholder="5" max="100" style="width:100%;box-sizing:border-box"></div>
-<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Call Days / Month</label><input type="number" id="ocm-a-call" placeholder="4" style="width:100%;box-sizing:border-box"></div>
-<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Call Type</label><select id="ocm-a-calltype" style="width:100%"><option value="none">No call</option><option value="phone">Phone only (home)</option><option value="home">Home call w/ occasional come-in</option><option value="home_backup">Home call + in-house backup</option><option value="inhouse">In-house (24hr)</option></select></div>
-<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Weekly Schedule</label><select id="ocm-a-schedule" style="width:100%"><option value="5day">5 days/week</option><option value="4day">4 days/week</option><option value="4.5day">4.5 days/week</option><option value="7on7off">7-on / 7-off</option><option value="shift">Shift-based (variable)</option><option value="other">Other</option></select></div>
-<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Avg Clinical Hours / Week</label><input type="number" id="ocm-a-hours" placeholder="45" style="width:100%;box-sizing:border-box"></div>
-<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Weekend Rounding</label><select id="ocm-a-weekend" style="width:100%"><option value="none">None</option><option value="1-2">1-2x / month</option><option value="eow">Every other weekend</option><option value="every">Every weekend</option></select></div>
-<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">PTO Days / Year</label><input type="number" id="ocm-a-pto" placeholder="20" style="width:100%;box-sizing:border-box"></div>
-<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">CME Days / Year</label><input type="number" id="ocm-a-cme" placeholder="5" style="width:100%;box-sizing:border-box"></div>
-<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Non-Compete (miles)</label><input type="number" id="ocm-a-noncomp" placeholder="0" style="width:100%;box-sizing:border-box"></div>
-<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Tail Coverage</label><select id="ocm-a-tail" style="width:100%"><option value="employer">Employer pays</option><option value="shared">Shared</option><option value="you">You pay</option><option value="none">Not included</option></select></div>
-<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Partnership Track?</label><select id="ocm-a-partner" style="width:100%"><option value="no">No</option><option value="yes">Yes</option></select></div>
-<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">PSLF Eligible?</label><select id="ocm-a-pslf" style="width:100%"><option value="no">No</option><option value="yes">Yes</option></select></div>
-<div class="fg"><label style="font-size:11px;color:var(--text3)">Location / Notes</label><input type="text" id="ocm-a-loc" placeholder="e.g., Houston, TX" style="width:100%;box-sizing:border-box"></div>
-</div>
-
-<!-- OFFER B -->
-<div style="padding:16px;background:var(--bg2);border:1px solid var(--border);border-radius:12px">
-<div style="font-size:13px;font-weight:600;color:var(--green);margin-bottom:12px;text-align:center">Offer B</div>
-<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Employer / Label</label><input type="text" id="ocm-b-name" placeholder="e.g., Private Group" style="width:100%;box-sizing:border-box"></div>
-<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Base Salary ($)</label><input type="number" id="ocm-b-salary" placeholder="500000" style="width:100%;box-sizing:border-box"></div>
-<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Signing Bonus ($)</label><input type="number" id="ocm-b-sign" placeholder="0" style="width:100%;box-sizing:border-box"></div>
-<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">RVU Rate ($/wRVU)</label><input type="number" id="ocm-b-rvu" placeholder="60" step="0.5" style="width:100%;box-sizing:border-box"></div>
-<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Expected Annual wRVUs</label><input type="number" id="ocm-b-wrvus" placeholder="6000" style="width:100%;box-sizing:border-box"></div>
-<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Loan Repayment ($)</label><input type="number" id="ocm-b-loan" placeholder="0" style="width:100%;box-sizing:border-box"></div>
-<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Retirement Match (%)</label><input type="number" id="ocm-b-retire" placeholder="3" max="100" style="width:100%;box-sizing:border-box"></div>
-<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Call Days / Month</label><input type="number" id="ocm-b-call" placeholder="6" style="width:100%;box-sizing:border-box"></div>
-<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Call Type</label><select id="ocm-b-calltype" style="width:100%"><option value="none">No call</option><option value="phone">Phone only (home)</option><option value="home">Home call w/ occasional come-in</option><option value="home_backup">Home call + in-house backup</option><option value="inhouse">In-house (24hr)</option></select></div>
-<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Weekly Schedule</label><select id="ocm-b-schedule" style="width:100%"><option value="5day">5 days/week</option><option value="4day">4 days/week</option><option value="4.5day">4.5 days/week</option><option value="7on7off">7-on / 7-off</option><option value="shift">Shift-based (variable)</option><option value="other">Other</option></select></div>
-<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Avg Clinical Hours / Week</label><input type="number" id="ocm-b-hours" placeholder="50" style="width:100%;box-sizing:border-box"></div>
-<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Weekend Rounding</label><select id="ocm-b-weekend" style="width:100%"><option value="none">None</option><option value="1-2">1-2x / month</option><option value="eow">Every other weekend</option><option value="every">Every weekend</option></select></div>
-<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">PTO Days / Year</label><input type="number" id="ocm-b-pto" placeholder="15" style="width:100%;box-sizing:border-box"></div>
-<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">CME Days / Year</label><input type="number" id="ocm-b-cme" placeholder="5" style="width:100%;box-sizing:border-box"></div>
-<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Non-Compete (miles)</label><input type="number" id="ocm-b-noncomp" placeholder="25" style="width:100%;box-sizing:border-box"></div>
-<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Tail Coverage</label><select id="ocm-b-tail" style="width:100%"><option value="employer">Employer pays</option><option value="shared">Shared</option><option value="you">You pay</option><option value="none">Not included</option></select></div>
-<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Partnership Track?</label><select id="ocm-b-partner" style="width:100%"><option value="no">No</option><option value="yes">Yes</option></select></div>
-<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">PSLF Eligible?</label><select id="ocm-b-pslf" style="width:100%"><option value="no">No</option><option value="yes">Yes</option></select></div>
-<div class="fg"><label style="font-size:11px;color:var(--text3)">Location / Notes</label><input type="text" id="ocm-b-loc" placeholder="e.g., Dallas, TX" style="width:100%;box-sizing:border-box"></div>
-</div>
-
-</div>
-
-<button onclick="ocmCompare()" class="btn btn-a" style="width:100%;padding:14px;margin-bottom:8px">Compare Offers →</button>
-<p style="font-size:10px;color:var(--text3);text-align:center;margin-bottom:20px">All data stays on your device. Nothing is sent to a server.</p>
-
-<div id="ocm-results"></div>
-<div style="text-align:center;margin-top:8px"><button onclick="showSavedScenarios('Job Offer Comparison Tool')" style="background:none;border:none;color:var(--accent);font-size:11px;cursor:pointer;padding:6px 12px;opacity:.7;transition:opacity .15s" onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='.7'">📊 View Saved Scenarios</button></div>
-</div>`,
-
 v4:`<h3>RVU Compensation Calculator</h3>
 <p style="color:var(--text3);font-size:12px;margin-bottom:20px">Model your actual take-home based on your contract structure. Adjust the inputs to see how volume changes your pay.</p>
 
@@ -5175,126 +5105,6 @@ v4:`<h3>RVU Compensation Calculator</h3>
 <div style="padding:16px;background:var(--bg2);border-radius:8px;margin-top:16px"><p style="font-size:12px;color:var(--text2);line-height:1.6;margin:0"><strong>Year 1 reality:</strong> Most new attendings don't hit median wRVUs in year 1. It takes 12-18 months to build a full panel. Make sure your guarantee period covers the ramp-up.</p></div>
 <p style="font-size:10px;color:var(--text3);margin-top:12px;font-style:italic">Source: MGMA DataDive Provider Compensation 2024. Figures are approximate medians and vary by region, practice type, and payer mix.</p>
 <div style="text-align:center;margin-top:8px"><button onclick="showSavedScenarios('RVU Compensation Calculator')" style="background:none;border:none;color:var(--accent);font-size:11px;cursor:pointer;padding:6px 12px;opacity:.7;transition:opacity .15s" onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='.7'">📊 View Saved Scenarios</button></div>`,
-
-v5:`<h3>Early Career Income Planner</h3>
-<p style="color:var(--text3);font-size:12px;margin-bottom:20px">The first 3 years after training determine your financial trajectory for the next 20. Enter your numbers for a personalized year-by-year plan.</p>
-
-<div style="font-size:13px">
-<div style="font-weight:600;color:var(--accent);margin-bottom:12px">Your Financial Details</div>
-
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
-<div class="fg"><label>Expected Attending Salary ($)</label><input type="number" id="fyp-salary" placeholder="e.g., 350000"></div>
-<div class="fg"><label>Student Loan Debt ($)</label><input type="number" id="fyp-debt" placeholder="e.g., 250000"></div>
-</div>
-
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
-<div class="fg"><label>Loan Interest Rate (%)</label><input type="number" id="fyp-rate" placeholder="e.g., 6.5" step="0.1"></div>
-<div class="fg"><label>Year 1 Living Expenses ($)</label><input type="number" id="fyp-expenses" placeholder="e.g., 100000"></div>
-</div>
-
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
-<div class="fg"><label>Annual Lifestyle Increase (%)</label><input type="number" id="fyp-inflate" placeholder="e.g., 10" step="1"></div>
-<div class="fg"><label>Employer 401k Match (%)</label><input type="number" id="fyp-match" placeholder="e.g., 3" step="0.5"></div>
-</div>
-
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
-<div class="fg"><label>PSLF Eligible?</label>
-<select id="fyp-pslf" style="width:100%">
-<option value="">Select...</option>
-<option value="yes">Yes</option>
-<option value="no">No</option>
-<option value="unsure">Not Sure</option>
-</select></div>
-<div class="fg"><label>Has Dependents?</label>
-<select id="fyp-dependents" style="width:100%">
-<option value="">Select...</option>
-<option value="yes">Yes</option>
-<option value="no">No</option>
-</select></div>
-</div>
-
-<button onclick="fypCalculate()" class="btn btn-a" style="width:100%;padding:14px;margin-bottom:8px">Calculate 3-Year Plan \u2192</button>
-<p style="font-size:10px;color:var(--text3);text-align:center;margin-bottom:16px">All calculations are performed locally. Nothing is stored or sent externally.</p>
-</div>
-
-<div id="fyp-results"></div>
-<p style="font-size:10px;color:var(--text3);margin-top:12px;font-style:italic">Sources: White Coat Investor, AAMC Debt Data 2024, IRS 2024 contribution limits.</p>
-<div style="text-align:center;margin-top:8px"><button onclick="showSavedScenarios('3-Year Financial Planner')" style="background:none;border:none;color:var(--accent);font-size:11px;cursor:pointer;padding:6px 12px;opacity:.7;transition:opacity .15s" onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='.7'">📊 View Saved Scenarios</button></div>`,
-
-v6:`<h3 class="serif">Fellowship Application Planner</h3>
-<p style="color:var(--text3);font-size:12px;margin-bottom:20px">Your personalized timeline to match day. Check off milestones as you complete them — progress is saved automatically.</p>
-
-<div id="fpr-tool" style="font-size:13px">
-
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px">
-<div class="fg"><label style="font-size:11px;color:var(--text3)">Target Specialty</label>
-<select id="fpr-spec" onchange="fprInit()" style="width:100%">
-<option value="">Select specialty...</option>
-<option value="cardiology">Cardiology</option>
-<option value="interventional">Interventional Cardiology</option>
-<option value="electrophysiology">Electrophysiology</option>
-<option value="heart_failure">Advanced Heart Failure & Transplant</option>
-<option value="gi">Gastroenterology</option>
-<option value="advanced_endoscopy">Advanced Endoscopy</option>
-<option value="transplant_hep">Transplant Hepatology</option>
-<option value="pulm_crit">Pulmonology / Critical Care</option>
-<option value="hemonc">Hematology / Oncology</option>
-<option value="rheum">Rheumatology</option>
-<option value="endo">Endocrinology</option>
-<option value="neph">Nephrology</option>
-<option value="id">Infectious Disease</option>
-<option value="allergy">Allergy / Immunology</option>
-<option value="sports">Sports Medicine</option>
-<option value="geri">Geriatrics</option>
-<option value="obesity">Obesity Medicine</option>
-<option value="pain">Pain Medicine</option>
-<option value="sleep">Sleep Medicine</option>
-<option value="hospice">Hospice & Palliative Medicine</option>
-<option value="neuro_phys">Clinical Neurophysiology</option>
-<option value="neonatal">Neonatal-Perinatal Medicine</option>
-<option value="mfm">Maternal-Fetal Medicine</option>
-<option value="ortho">Orthopedic Surgery</option>
-<option value="ctsx">Cardiothoracic Surgery</option>
-<option value="vasc">Vascular Surgery</option>
-<option value="surg_crit">Surgical Critical Care</option>
-<option value="ped_surg">Pediatric Surgery</option>
-<option value="surg_onc">Surgical Oncology</option>
-<option value="trauma">Trauma & Acute Care Surgery</option>
-<option value="colorectal">Colon & Rectal Surgery</option>
-<option value="hand">Hand Surgery</option>
-<option value="mis">Minimally Invasive Surgery</option>
-<option value="transplant_surg">Transplant Surgery</option>
-<option value="spine">Spine Surgery</option>
-<option value="other">Other</option>
-</select></div>
-<div class="fg"><label style="font-size:11px;color:var(--text3)">Months Until Match</label>
-<select id="fpr-months" onchange="fprInit()" style="width:100%">
-<option value="">Select timeline...</option>
-<option value="24">24+ months</option>
-<option value="18">18 months</option>
-<option value="12">12 months</option>
-<option value="6">6 months</option>
-<option value="3">3 months or less</option>
-</select></div>
-</div>
-
-<!-- Progress bar -->
-<div id="fpr-progress-wrap" style="display:none;margin-bottom:20px;padding:16px;background:var(--bg2);border:1px solid var(--border);border-radius:12px">
-<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-<div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:1px">Overall Progress</div>
-<div id="fpr-pct" style="font-size:14px;font-weight:700;color:var(--accent)">0%</div>
-</div>
-<div style="height:6px;background:var(--bg3);border-radius:3px;overflow:hidden"><div id="fpr-bar" style="height:100%;width:0%;border-radius:3px;transition:width .4s;background:var(--accent)"></div></div>
-<div id="fpr-stat" style="font-size:11px;color:var(--text3);margin-top:6px"></div>
-</div>
-
-<!-- Phases render here -->
-<div id="fpr-phases"></div>
-
-<!-- Interview Practice section renders here -->
-<div id="fpr-mock"></div>
-
-</div>`,
 
 v7:`<h3>Research Impact Calculator</h3>
 <p style="color:var(--text3);font-size:12px;margin-bottom:20px">Enter your current research portfolio. The calculator scores each item by application impact per time invested and shows how close you are to optimal.</p>
@@ -5466,33 +5276,6 @@ v7:`<h3>Research Impact Calculator</h3>
 <div style="text-align:center;margin-top:8px"><button onclick="showSavedScenarios('Research Impact Calculator')" style="background:none;border:none;color:var(--accent);font-size:11px;cursor:pointer;padding:6px 12px;opacity:.7;transition:opacity .15s" onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='.7'">📊 View Saved Scenarios</button></div>
 </div>`,
 
-v8:`<h3>Debt & Income Strategy Tool</h3>
-<p style="color:var(--text3);font-size:12px;margin-bottom:16px">Score yourself on the 5 financial decisions that matter most. Get personalized recommendations based on your actual situation.</p>
-<div style="font-size:13px">
-<div style="font-weight:600;color:var(--accent);margin-bottom:12px">Your Financial Situation</div>
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
-<div class="fg"><label>Annual Salary ($)</label><input type="number" id="ilp-salary" placeholder="e.g., 400000"></div>
-<div class="fg"><label>Student Loan Debt ($)</label><input type="number" id="ilp-debt" placeholder="e.g., 250000"></div>
-</div>
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
-<div class="fg"><label>Loan Interest Rate (%)</label><input type="number" id="ilp-rate" placeholder="6.5" step="0.1"></div>
-<div class="fg"><label>Employer Type</label><select id="ilp-employer" style="width:100%"><option value="">Select...</option><option value="nonprofit">Nonprofit / Academic</option><option value="government">Government / VA</option><option value="private">Private Practice</option><option value="employed">Hospital Employed (for-profit)</option></select></div>
-</div>
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
-<div class="fg"><label>Disability Insurance</label><select id="ilp-disability" style="width:100%"><option value="">Select...</option><option value="own_occ">Own-occupation, specialty-specific</option><option value="any_occ">Any-occupation policy</option><option value="none">None</option></select></div>
-<div class="fg"><label>Annual Spending ($)</label><input type="number" id="ilp-spending" placeholder="e.g., 120000"></div>
-</div>
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
-<div class="fg"><label>Tax-Advantaged Accounts</label><select id="ilp-401k" style="width:100%"><option value="">Select...</option><option value="maxed">Maxing 401k + Roth + HSA</option><option value="match">Only employer match</option><option value="none">Not contributing</option></select></div>
-<div class="fg"><label>Financial Advisor</label><select id="ilp-advisor" style="width:100%"><option value="">Select...</option><option value="feeonly">Fee-only fiduciary</option><option value="feebased">Fee-based</option><option value="commission">Commission-based</option><option value="none">No advisor</option></select></div>
-</div>
-<button onclick="ilpCalculate()" class="btn btn-a" style="width:100%;padding:14px;margin-bottom:8px">Analyze My Financial Leverage →</button>
-<p style="font-size:10px;color:var(--text3);text-align:center;margin-bottom:16px">All calculations are local. Nothing is stored or sent externally.</p>
-</div>
-<div id="ilp-results"></div>
-<p style="font-size:10px;color:var(--text3);margin-top:12px;font-style:italic">Sources: White Coat Investor, Council for Disability Awareness 2023, IRS 2024 limits.</p>
-<div style="text-align:center;margin-top:8px"><button onclick="showSavedScenarios('Debt & Income Strategy Tool')" style="background:none;border:none;color:var(--accent);font-size:11px;cursor:pointer;padding:6px 12px;opacity:.7;transition:opacity .15s" onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='.7'">📊 View Saved Scenarios</button></div>`,
-
 v16:`<h3 class="serif">Interview Practice Tool</h3>
 <p style="color:var(--text3);font-size:12px;margin-bottom:20px">Real interview questions. Real feedback. No sugarcoating. Select your situation and answer each question like you\u2019re sitting across from the program director or hiring committee.</p>
 
@@ -5639,123 +5422,6 @@ v9:`<h3>Application Review Tool</h3>
 <p style="font-size:13px;color:var(--text2);line-height:1.6">Your strategic audit has been sent to Dr. Faroqui. You'll receive a response within 7 business days.</p>
 </div>`,
 
-v10:`<h3>Career Transition Planner</h3>
-<p style="color:var(--text3);font-size:12px;margin-bottom:20px">Work through each step. Your answers are compiled into a report and sent directly to Dr. Faroqui for strategic review.</p>
-<div style="font-size:12px" id="pivot-form">
-
-<!-- STEP 1 -->
-<div style="margin-bottom:24px">
-<div style="font-size:13px;font-weight:600;color:var(--accent);margin-bottom:4px">Step 1: Diagnose the Dissatisfaction</div>
-<p style="font-size:11px;color:var(--text3);margin-bottom:14px;line-height:1.5">Before pivoting, identify what's actually wrong. Changing specialties when the real problem is a toxic workplace is expensive and unnecessary.</p>
-
-<div style="margin-bottom:14px">
-<label style="display:block;font-size:11px;color:var(--text3);margin-bottom:6px">What is the core issue?</label>
-<div id="pivot-cause" style="display:flex;flex-direction:column;gap:6px">
-<label style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;cursor:pointer" onclick="pivotSelect(this,'pivot-cause')"><input type="radio" name="pivot-cause" value="specialty" style="accent-color:var(--accent)"> <span>The specialty itself</span></label>
-<label style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;cursor:pointer" onclick="pivotSelect(this,'pivot-cause')"><input type="radio" name="pivot-cause" value="setting" style="accent-color:var(--accent)"> <span>The practice setting</span></label>
-<label style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;cursor:pointer" onclick="pivotSelect(this,'pivot-cause')"><input type="radio" name="pivot-cause" value="job" style="accent-color:var(--accent)"> <span>The specific job / employer</span></label>
-<label style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;cursor:pointer" onclick="pivotSelect(this,'pivot-cause')"><input type="radio" name="pivot-cause" value="burnout" style="accent-color:var(--accent)"> <span>Burnout</span></label>
-<label style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;cursor:pointer" onclick="pivotSelect(this,'pivot-cause')"><input type="radio" name="pivot-cause" value="other" style="accent-color:var(--accent)"> <span>Other</span></label>
-<div id="pivot-cause-other" class="hidden" style="margin-top:6px"><textarea id="pivot-cause-other-text" rows="2" placeholder="Describe your situation..." style="width:100%;font-family:inherit;font-size:12px;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);resize:vertical"></textarea></div>
-</div>
-<div id="pivot-cause-feedback" style="margin-top:8px"></div>
-</div>
-
-<div style="margin-bottom:14px"><label style="display:block;font-size:11px;color:var(--text3);margin-bottom:4px">What specifically do you dislike?</label><textarea id="pivot-1a" rows="3" placeholder="Be specific — what drains you, frustrates you, or feels wrong..." style="width:100%;font-family:inherit;font-size:12px;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);resize:vertical"></textarea></div>
-
-<div style="margin-bottom:14px"><label style="display:block;font-size:11px;color:var(--text3);margin-bottom:4px">Would the same specialty in a different setting fix it?</label><textarea id="pivot-1b" rows="2" placeholder="Think about the specialty vs. the environment..." style="width:100%;font-family:inherit;font-size:12px;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);resize:vertical"></textarea></div>
-
-<div style="margin-bottom:14px">
-<label style="display:block;font-size:11px;color:var(--text3);margin-bottom:6px">Are you burned out (temporary) or misaligned (structural)?</label>
-<div id="pivot-burnout" style="display:flex;flex-direction:column;gap:6px">
-<label style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;cursor:pointer" onclick="pivotSelect(this,'pivot-burnout')"><input type="radio" name="pivot-burnout" value="burnout" style="accent-color:var(--accent)"> <span>Burned out — I used to love this, now I'm exhausted</span></label>
-<label style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;cursor:pointer" onclick="pivotSelect(this,'pivot-burnout')"><input type="radio" name="pivot-burnout" value="misaligned" style="accent-color:var(--accent)"> <span>Misaligned — this was never the right fit</span></label>
-<label style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;cursor:pointer" onclick="pivotSelect(this,'pivot-burnout')"><input type="radio" name="pivot-burnout" value="unsure" style="accent-color:var(--accent)"> <span>Not sure — hard to tell right now</span></label>
-</div>
-<div id="pivot-burnout-feedback" style="margin-top:8px"></div>
-</div>
-</div>
-
-<!-- STEP 2 -->
-<div style="margin-bottom:24px">
-<div style="font-size:13px;font-weight:600;color:var(--accent);margin-bottom:4px">Step 2: Map the Options</div>
-<p style="font-size:11px;color:var(--text3);margin-bottom:14px;line-height:1.5">Rate each option 1-5 across four dimensions. Higher = better.</p>
-<div style="overflow-x:auto">
-<table style="width:100%;border-collapse:collapse;font-size:11px;min-width:340px">
-<thead><tr style="border-bottom:2px solid var(--border)">
-<th style="text-align:left;padding:8px 6px;color:var(--text3)">Option</th>
-<th style="text-align:center;padding:8px 4px;color:var(--text3);font-size:10px">Feasibility</th>
-<th style="text-align:center;padding:8px 4px;color:var(--text3);font-size:10px">Financial</th>
-<th style="text-align:center;padding:8px 4px;color:var(--text3);font-size:10px">Timeline</th>
-<th style="text-align:center;padding:8px 4px;color:var(--text3);font-size:10px">Satisfaction</th>
-<th style="text-align:center;padding:8px 4px;color:var(--accent);font-size:10px;font-weight:600">Avg</th>
-</tr></thead>
-<tbody>
-<tr style="border-bottom:1px solid var(--border)"><td style="padding:8px 6px"><span style="font-weight:500">Stay + Modify</span><br><span style="font-size:10px;color:var(--text3)">e.g. Same specialty, but switch from academic to private practice</span></td><td style="text-align:center;padding:4px"><select id="pv-stay-f" onchange="pivotCalcAvg()" style="width:44px;font-size:11px;padding:4px;border:1px solid var(--border);border-radius:4px;background:var(--bg2);color:var(--text)"><option value="">-</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td><td style="text-align:center;padding:4px"><select id="pv-stay-i" onchange="pivotCalcAvg()" style="width:44px;font-size:11px;padding:4px;border:1px solid var(--border);border-radius:4px;background:var(--bg2);color:var(--text)"><option value="">-</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td><td style="text-align:center;padding:4px"><select id="pv-stay-t" onchange="pivotCalcAvg()" style="width:44px;font-size:11px;padding:4px;border:1px solid var(--border);border-radius:4px;background:var(--bg2);color:var(--text)"><option value="">-</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td><td style="text-align:center;padding:4px"><select id="pv-stay-s" onchange="pivotCalcAvg()" style="width:44px;font-size:11px;padding:4px;border:1px solid var(--border);border-radius:4px;background:var(--bg2);color:var(--text)"><option value="">-</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td><td style="text-align:center;padding:4px;font-weight:600;color:var(--accent)" id="pv-stay-avg">\u2014</td></tr>
-<tr style="border-bottom:1px solid var(--border)"><td style="padding:8px 6px"><span style="font-weight:500">Adjacent Pivot</span><br><span style="font-size:10px;color:var(--text3)">e.g. Cardiologist → interventional cardiology or cardiac imaging</span></td><td style="text-align:center;padding:4px"><select id="pv-adj-f" onchange="pivotCalcAvg()" style="width:44px;font-size:11px;padding:4px;border:1px solid var(--border);border-radius:4px;background:var(--bg2);color:var(--text)"><option value="">-</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td><td style="text-align:center;padding:4px"><select id="pv-adj-i" onchange="pivotCalcAvg()" style="width:44px;font-size:11px;padding:4px;border:1px solid var(--border);border-radius:4px;background:var(--bg2);color:var(--text)"><option value="">-</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td><td style="text-align:center;padding:4px"><select id="pv-adj-t" onchange="pivotCalcAvg()" style="width:44px;font-size:11px;padding:4px;border:1px solid var(--border);border-radius:4px;background:var(--bg2);color:var(--text)"><option value="">-</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td><td style="text-align:center;padding:4px"><select id="pv-adj-s" onchange="pivotCalcAvg()" style="width:44px;font-size:11px;padding:4px;border:1px solid var(--border);border-radius:4px;background:var(--bg2);color:var(--text)"><option value="">-</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td><td style="text-align:center;padding:4px;font-weight:600;color:var(--accent)" id="pv-adj-avg">\u2014</td></tr>
-<tr style="border-bottom:1px solid var(--border)"><td style="padding:8px 6px"><span style="font-weight:500">Full Pivot</span><br><span style="font-size:10px;color:var(--text3)">e.g. Internal medicine → dermatology or leaving clinical medicine entirely</span></td><td style="text-align:center;padding:4px"><select id="pv-full-f" onchange="pivotCalcAvg()" style="width:44px;font-size:11px;padding:4px;border:1px solid var(--border);border-radius:4px;background:var(--bg2);color:var(--text)"><option value="">-</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td><td style="text-align:center;padding:4px"><select id="pv-full-i" onchange="pivotCalcAvg()" style="width:44px;font-size:11px;padding:4px;border:1px solid var(--border);border-radius:4px;background:var(--bg2);color:var(--text)"><option value="">-</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td><td style="text-align:center;padding:4px"><select id="pv-full-t" onchange="pivotCalcAvg()" style="width:44px;font-size:11px;padding:4px;border:1px solid var(--border);border-radius:4px;background:var(--bg2);color:var(--text)"><option value="">-</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td><td style="text-align:center;padding:4px"><select id="pv-full-s" onchange="pivotCalcAvg()" style="width:44px;font-size:11px;padding:4px;border:1px solid var(--border);border-radius:4px;background:var(--bg2);color:var(--text)"><option value="">-</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td><td style="text-align:center;padding:4px;font-weight:600;color:var(--accent)" id="pv-full-avg">\u2014</td></tr>
-<tr><td style="padding:8px 6px"><span style="font-weight:500">Hybrid</span><br><span style="font-size:10px;color:var(--text3)">e.g. Keep clinical 3 days/week + consulting, med-tech, or teaching on the side</span></td><td style="text-align:center;padding:4px"><select id="pv-hyb-f" onchange="pivotCalcAvg()" style="width:44px;font-size:11px;padding:4px;border:1px solid var(--border);border-radius:4px;background:var(--bg2);color:var(--text)"><option value="">-</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td><td style="text-align:center;padding:4px"><select id="pv-hyb-i" onchange="pivotCalcAvg()" style="width:44px;font-size:11px;padding:4px;border:1px solid var(--border);border-radius:4px;background:var(--bg2);color:var(--text)"><option value="">-</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td><td style="text-align:center;padding:4px"><select id="pv-hyb-t" onchange="pivotCalcAvg()" style="width:44px;font-size:11px;padding:4px;border:1px solid var(--border);border-radius:4px;background:var(--bg2);color:var(--text)"><option value="">-</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td><td style="text-align:center;padding:4px"><select id="pv-hyb-s" onchange="pivotCalcAvg()" style="width:44px;font-size:11px;padding:4px;border:1px solid var(--border);border-radius:4px;background:var(--bg2);color:var(--text)"><option value="">-</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td><td style="text-align:center;padding:4px;font-weight:600;color:var(--accent)" id="pv-hyb-avg">\u2014</td></tr>
-</tbody></table></div>
-<div id="pivot-recommendation" style="margin-top:10px"></div>
-</div>
-
-<!-- STEP 3 -->
-<div style="margin-bottom:24px">
-<div style="font-size:13px;font-weight:600;color:var(--accent);margin-bottom:4px">Step 3: Financial Reality Check</div>
-<p style="font-size:11px;color:var(--text3);margin-bottom:14px;line-height:1.5">Honest numbers only. This section protects you from emotional decisions.</p>
-<div style="margin-bottom:10px"><label style="display:block;font-size:11px;color:var(--text3);margin-bottom:4px">What's your current debt load and monthly obligations?</label><textarea id="pivot-3a" rows="2" placeholder="e.g. $280K student loans, $3,200/mo minimum payments, $1,800 rent..." style="width:100%;font-family:inherit;font-size:12px;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);resize:vertical"></textarea></div>
-<div style="margin-bottom:10px"><label style="display:block;font-size:11px;color:var(--text3);margin-bottom:4px">How long can you sustain reduced income during transition?</label><textarea id="pivot-3b" rows="2" placeholder="e.g. 6 months with current savings, partner income covers basics..." style="width:100%;font-family:inherit;font-size:12px;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);resize:vertical"></textarea></div>
-<div style="margin-bottom:10px"><label style="display:block;font-size:11px;color:var(--text3);margin-bottom:4px">Does the new path have comparable earning potential long-term?</label><textarea id="pivot-3c" rows="2" placeholder="Compare current vs. projected income at 5 and 10 years..." style="width:100%;font-family:inherit;font-size:12px;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);resize:vertical"></textarea></div>
-<div style="margin-bottom:14px">
-<label style="display:block;font-size:11px;color:var(--text3);margin-bottom:6px">Training Cost Calculator</label>
-<div style="padding:14px;background:var(--bg2);border-radius:8px;border:1px solid var(--border)">
-<div style="display:flex;gap:10px;margin-bottom:8px;flex-wrap:wrap">
-<div style="flex:1;min-width:130px"><label style="font-size:10px;color:var(--text3)">Additional training (years)</label><input type="number" id="pivot-train-yrs" value="0" min="0" max="10" step="1" oninput="pivotCalcTraining()" style="width:100%;font-size:12px;padding:8px;border:1px solid var(--border);border-radius:6px;background:var(--bg);color:var(--text);margin-top:4px"></div>
-<div style="flex:1;min-width:130px"><label style="font-size:10px;color:var(--text3)">Tuition / fees per year ($)</label><input type="number" id="pivot-train-cost" value="0" min="0" step="1000" oninput="pivotCalcTraining()" style="width:100%;font-size:12px;padding:8px;border:1px solid var(--border);border-radius:6px;background:var(--bg);color:var(--text);margin-top:4px"></div>
-</div>
-<div style="display:flex;gap:10px;margin-bottom:10px;flex-wrap:wrap">
-<div style="flex:1;min-width:130px"><label style="font-size:10px;color:var(--text3)">Lost salary per year ($)</label><input type="number" id="pivot-train-salary" value="0" min="0" step="5000" oninput="pivotCalcTraining()" style="width:100%;font-size:12px;padding:8px;border:1px solid var(--border);border-radius:6px;background:var(--bg);color:var(--text);margin-top:4px"></div>
-<div style="flex:1;min-width:130px"><label style="font-size:10px;color:var(--text3)">Stipend / income during ($)</label><input type="number" id="pivot-train-stipend" value="0" min="0" step="5000" oninput="pivotCalcTraining()" style="width:100%;font-size:12px;padding:8px;border:1px solid var(--border);border-radius:6px;background:var(--bg);color:var(--text);margin-top:4px"></div>
-</div>
-<div id="pivot-train-result" style="padding:10px;background:var(--bg);border-radius:6px;text-align:center"><span style="font-size:12px;color:var(--text3)">Enter values above to calculate total cost</span></div>
-</div></div>
-<div style="margin-bottom:10px"><label style="display:block;font-size:11px;color:var(--text3);margin-bottom:4px">Do you have 6-12 months of expenses saved?</label><textarea id="pivot-3d" rows="2" placeholder="Current emergency fund status..." style="width:100%;font-family:inherit;font-size:12px;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);resize:vertical"></textarea></div>
-</div>
-
-<!-- STEP 4 -->
-<div style="margin-bottom:24px">
-<div style="font-size:13px;font-weight:600;color:var(--accent);margin-bottom:4px">Step 4: Test Before Committing</div>
-<p style="font-size:11px;color:var(--text3);margin-bottom:14px;line-height:1.5">Check off the validation steps you've completed or plan to complete.</p>
-<div style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px">
-<label style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;cursor:pointer"><input type="checkbox" id="pv-check-1" style="accent-color:var(--accent)"> <span style="font-size:12px;color:var(--text2)">Shadow someone in the new role for a week</span></label>
-<label style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;cursor:pointer"><input type="checkbox" id="pv-check-2" style="accent-color:var(--accent)"> <span style="font-size:12px;color:var(--text2)">Informational interviews with 3+ people who made a similar pivot</span></label>
-<label style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;cursor:pointer"><input type="checkbox" id="pv-check-3" style="accent-color:var(--accent)"> <span style="font-size:12px;color:var(--text2)">Try a side project or moonlighting in the new area</span></label>
-<label style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;cursor:pointer"><input type="checkbox" id="pv-check-4" style="accent-color:var(--accent)"> <span style="font-size:12px;color:var(--text2)">Set a decision deadline (no analysis paralysis)</span></label>
-</div>
-<div style="margin-bottom:14px">
-<label style="display:block;font-size:12px;font-weight:500;color:var(--text);margin-bottom:8px">Key question: In 5 years, will you regret not trying?</label>
-<div style="display:flex;gap:8px">
-<label style="flex:1;display:flex;align-items:center;justify-content:center;gap:8px;padding:12px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;cursor:pointer;text-align:center" onclick="pivotSelect(this,'pivot-regret')"><input type="radio" name="pivot-regret" value="yes" style="accent-color:var(--accent)"> <span style="font-size:13px;font-weight:500">Yes</span></label>
-<label style="flex:1;display:flex;align-items:center;justify-content:center;gap:8px;padding:12px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;cursor:pointer;text-align:center" onclick="pivotSelect(this,'pivot-regret')"><input type="radio" name="pivot-regret" value="no" style="accent-color:var(--accent)"> <span style="font-size:13px;font-weight:500">No</span></label>
-</div>
-<div id="pivot-regret-feedback" style="margin-top:8px"></div>
-</div>
-</div>
-
-<div style="padding:14px;background:var(--bg2);border-radius:8px;margin-bottom:20px"><p style="font-size:12px;color:var(--text2);line-height:1.6;margin:0"><strong>Important:</strong> Do not make major career pivots while actively burned out. Stabilize first (therapy, time off, boundary changes), then evaluate with a clear mind.</p></div>
-
-<div style="padding-top:20px;border-top:1px solid var(--border)">
-<button class="btn btn-a" onclick="submitPivot()" style="width:100%;padding:14px">Submit Decision Engine Report \u2192</button>
-<p style="font-size:10px;color:var(--text3);margin-top:10px;text-align:center">Your complete report will be sent to Dr. Faroqui for strategic review.</p>
-</div>
-</div>
-
-<div id="pivot-success" class="hidden" style="text-align:center;padding:40px 20px">
-<div style="font-size:48px;margin-bottom:16px">\u2713</div>
-<h3 class="serif" style="font-size:20px;margin-bottom:8px">Report Submitted</h3>
-<p style="font-size:13px;color:var(--text2);line-height:1.6">Your Career Transition Planner report has been sent to Dr. Faroqui for review.</p>
-</div>
-<div style="text-align:center;margin-top:8px"><button onclick="showSavedScenarios('Career Transition Planner')" style="background:none;border:none;color:var(--accent);font-size:11px;cursor:pointer;padding:6px 12px;opacity:.7;transition:opacity .15s" onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='.7'">📊 View Saved Scenarios</button></div>`,
 v12:`<div style="text-align:center;padding:28px 20px;margin:-20px -20px 24px;background:linear-gradient(160deg,rgba(200,168,124,.1),rgba(200,168,124,.03));border-radius:12px 12px 0 0;border-bottom:1px solid rgba(200,168,124,.15)">
 <div style="font-size:36px;margin-bottom:8px">\ud83d\udcdd</div>
 <h3 class="serif" style="font-size:22px;margin-bottom:4px">Contract Review Tool</h3>
@@ -6691,82 +6357,6 @@ v17:`<h3 class="serif">Observership Database</h3>
 
 <div style="text-align:center;margin-top:12px"><button onclick="showSavedScenarios('Observership Database')" style="background:none;border:none;color:var(--accent);font-size:11px;cursor:pointer;padding:6px 12px;opacity:.7;transition:opacity .15s" onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='.7'">📊 View Saved Scenarios</button></div>
 `
-,
-v18:`<h3 class="serif">What Should I Do Next?</h3>
-<p style="color:var(--text3);font-size:12px;margin-bottom:20px">Tell us where you are and how much time you have. We'll show you the highest-impact actions ranked by how much they move the needle.</p>
-
-<div style="padding:16px;background:var(--accent-dim);border:1px solid var(--border2);border-radius:12px;margin-bottom:16px">
-<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Your Profile</div>
-
-<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Target specialty</label>
-<select id="wsdn-spec" onchange="wsdnUpdate()" style="width:100%">
-<option value="">Select specialty...</option>
-<option value="im">Internal Medicine</option>
-<option value="fm">Family Medicine</option>
-<option value="peds">Pediatrics</option>
-<option value="em">Emergency Medicine</option>
-<option value="psych">Psychiatry</option>
-<option value="neuro">Neurology</option>
-<option value="surg">General Surgery</option>
-<option value="ortho">Orthopedic Surgery</option>
-<option value="uro">Urology</option>
-<option value="obgyn">OB/GYN</option>
-<option value="anes">Anesthesiology</option>
-<option value="rads">Radiology</option>
-<option value="path">Pathology</option>
-<option value="derm">Dermatology</option>
-<option value="ent">ENT / Otolaryngology</option>
-<option value="optho">Ophthalmology</option>
-<option value="pm">Physical Medicine & Rehab</option>
-<option value="cardiology">Cardiology (Fellowship)</option>
-<option value="gi">GI (Fellowship)</option>
-<option value="pulm_crit">Pulm/Crit Care (Fellowship)</option>
-<option value="heme_onc">Heme/Onc (Fellowship)</option>
-</select></div>
-
-<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">How many months until you apply?</label>
-<select id="wsdn-time" style="width:100%">
-<option value="">Select timeframe...</option>
-<option value="3">About 3 months</option>
-<option value="6">About 6 months</option>
-<option value="9">About 9 months</option>
-<option value="12">12+ months</option>
-</select></div>
-
-<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Step 2 CK Score (or estimated)</label>
-<input type="number" id="wsdn-step2" placeholder="e.g. 245" style="width:100%"></div>
-
-<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Total publications (including abstracts, posters)</label>
-<input type="number" id="wsdn-pubs" placeholder="e.g. 3" value="0" style="width:100%"></div>
-
-<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">First-author publications</label>
-<input type="number" id="wsdn-first" placeholder="e.g. 1" value="0" style="width:100%"></div>
-
-<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Months of US Clinical Experience (USCE)</label>
-<input type="number" id="wsdn-usce" placeholder="e.g. 3" value="0" style="width:100%"></div>
-
-<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Strong Letters of Recommendation</label>
-<select id="wsdn-lors" style="width:100%">
-<option value="0">None yet</option>
-<option value="1">1 letter</option>
-<option value="2">2 letters</option>
-<option value="3">3 letters</option>
-<option value="4">4+ letters</option>
-</select></div>
-
-<div class="fg" style="margin-bottom:10px"><label style="font-size:11px;color:var(--text3)">Are you an IMG?</label>
-<select id="wsdn-img" style="width:100%">
-<option value="no">No — US MD/DO</option>
-<option value="usimg">Yes — US-IMG (Caribbean/international, US citizen)</option>
-<option value="nonusimg">Yes — Non-US IMG</option>
-</select></div>
-</div>
-
-<button onclick="wsdnAnalyze()" class="btn btn-a" style="width:100%;margin-bottom:12px">Show Me What to Focus On</button>
-<div id="wsdn-results"></div>
-
-<div style="text-align:center;margin-top:12px"><button onclick="showSavedScenarios('What Should I Do Next')" style="background:none;border:none;color:var(--accent);font-size:11px;cursor:pointer;padding:6px 12px;opacity:.7;transition:opacity .15s" onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='.7'">📊 View Saved Scenarios</button></div>
-`
 };
 
 // ===== GLOBAL CONSTANTS =====
@@ -6793,6 +6383,33 @@ function hwThinking(targetEl,steps,callback){
     else{i++;setTimeout(next,800)}
   }
   next();
+}
+
+// ===== TAB SWITCHING FOR MERGED TOOLS =====
+function toolTab(toolId, tabKey){
+  // Hide all panels for this tool
+  var panels = document.querySelectorAll('[id^="panel-' + toolId + '-"]');
+  panels.forEach(function(p){p.style.display='none'});
+  
+  // Show selected panel
+  var selectedPanel = document.getElementById('panel-' + toolId + '-' + tabKey);
+  if(selectedPanel) selectedPanel.style.display='';
+  
+  // Update button styles
+  var buttons = document.querySelectorAll('[id^="tab-' + toolId + '-"]');
+  buttons.forEach(function(b){
+    if(b.id === 'tab-' + toolId + '-' + tabKey){
+      b.style.background='var(--accent)';
+      b.style.color='#1C1A17';
+      b.style.borderColor='var(--accent)';
+      b.style.border='1px solid var(--accent)';
+    } else {
+      b.style.background='var(--card)';
+      b.style.color='var(--text2)';
+      b.style.borderColor='var(--border)';
+      b.style.border='1px solid var(--border)';
+    }
+  });
 }
 
 // ===== EXPERIENCE INJECTION PHRASES =====
@@ -14738,9 +14355,9 @@ function renderVault(){
 }
 // ===== 48-HOUR GUIDED ACCESS CONFIG =====
 var TRIAL_TOOLS={
-  full:['v3','v6','v14','v13','v17','v18'],
+  full:['v14','v13','v17'],
   partial:['v1','v15','v11'],
-  locked:['v4','v5','v7','v8','v9','v10','v12','v16']
+  locked:['v4','v7','v9','v12','v16']
 };
 function getTrialAccess(id){
   if(!U||!U.isTrial)return 'full';
@@ -14909,202 +14526,6 @@ var _toolStateCache={};  // Stores {html, scrollTop} per tool id
 
 function _saveToolState(toolId){
   if(!toolId)return;
-  var contentEl=document.getElementById('modal-q-content');
-  var modalInner=document.querySelector('#modal-q .modal');
-  if(contentEl){
-    // Remove the back button before saving so it doesn't stack
-    var bb=document.getElementById('tool-back-btn');if(bb)bb.remove();
-    _toolStateCache[toolId]={html:contentEl.innerHTML,scrollTop:modalInner?modalInner.scrollTop:0};
-  }
-}
-
-function _restoreToolState(toolId){
-  if(!toolId||!_toolStateCache[toolId])return false;
-  var cached=_toolStateCache[toolId];
-  var contentEl=document.getElementById('modal-q-content');
-  var modalInner=document.querySelector('#modal-q .modal');
-  if(contentEl){
-    contentEl.innerHTML=cached.html;
-    if(modalInner)setTimeout(function(){modalInner.scrollTop=cached.scrollTop},50);
-    return true;
-  }
-  return false;
-}
-
-function openFrameworkById(id){
-  navTo('scr-vault');
-  setTimeout(function(){openFramework(id)},200);
-}
-// ===== WHAT SHOULD I DO NEXT (v18) =====
-function wsdnUpdate(){}
-function wsdnAnalyze(){
-  var spec=document.getElementById('wsdn-spec').value;
-  var time=parseInt(document.getElementById('wsdn-time').value)||6;
-  var step2=parseInt(document.getElementById('wsdn-step2').value)||0;
-  var pubs=parseInt(document.getElementById('wsdn-pubs').value)||0;
-  var first=parseInt(document.getElementById('wsdn-first').value)||0;
-  var usce=parseInt(document.getElementById('wsdn-usce').value)||0;
-  var lors=parseInt(document.getElementById('wsdn-lors').value)||0;
-  var img=document.getElementById('wsdn-img').value;
-  var out=document.getElementById('wsdn-results');
-  if(!spec||!step2){out.innerHTML='<div style="padding:16px;text-align:center;color:var(--text3);font-size:12px">Please select a specialty and enter your Step 2 score.</div>';return}
-
-  // Specialty benchmarks (median matched applicant)
-  var benchmarks={
-    im:{step2:240,pubs:4,first:1,usce:3,lors:3,name:'Internal Medicine',competitive:false},
-    fm:{step2:230,pubs:2,first:0,usce:2,lors:3,name:'Family Medicine',competitive:false},
-    peds:{step2:235,pubs:3,first:1,usce:2,lors:3,name:'Pediatrics',competitive:false},
-    em:{step2:242,pubs:4,first:1,usce:3,lors:3,name:'Emergency Medicine',competitive:false},
-    psych:{step2:236,pubs:3,first:1,usce:2,lors:3,name:'Psychiatry',competitive:false},
-    neuro:{step2:238,pubs:4,first:1,usce:3,lors:3,name:'Neurology',competitive:false},
-    surg:{step2:248,pubs:6,first:2,usce:4,lors:3,name:'General Surgery',competitive:true},
-    ortho:{step2:256,pubs:10,first:3,usce:4,lors:4,name:'Orthopedic Surgery',competitive:true},
-    uro:{step2:252,pubs:8,first:2,usce:4,lors:4,name:'Urology',competitive:true},
-    obgyn:{step2:242,pubs:4,first:1,usce:3,lors:3,name:'OB/GYN',competitive:false},
-    anes:{step2:244,pubs:4,first:1,usce:3,lors:3,name:'Anesthesiology',competitive:false},
-    rads:{step2:252,pubs:6,first:2,usce:3,lors:3,name:'Radiology',competitive:true},
-    path:{step2:238,pubs:4,first:1,usce:2,lors:3,name:'Pathology',competitive:false},
-    derm:{step2:258,pubs:12,first:4,usce:4,lors:4,name:'Dermatology',competitive:true},
-    ent:{step2:254,pubs:8,first:3,usce:4,lors:4,name:'ENT',competitive:true},
-    optho:{step2:252,pubs:8,first:3,usce:4,lors:4,name:'Ophthalmology',competitive:true},
-    pm:{step2:236,pubs:3,first:1,usce:2,lors:3,name:'PM&R',competitive:false},
-    cardiology:{step2:250,pubs:8,first:2,usce:4,lors:3,name:'Cardiology',competitive:true},
-    gi:{step2:248,pubs:6,first:2,usce:3,lors:3,name:'GI',competitive:true},
-    pulm_crit:{step2:244,pubs:5,first:1,usce:3,lors:3,name:'Pulm/Crit',competitive:false},
-    heme_onc:{step2:248,pubs:7,first:2,usce:3,lors:3,name:'Heme/Onc',competitive:true}
-  };
-  var b=benchmarks[spec]||benchmarks.im;
-  var isIMG=img!=='no';
-
-  // Calculate gaps and potential actions with point impact
-  var actions=[];
-  var stepGap=b.step2-step2;
-  var pubGap=Math.max(0,b.pubs-pubs);
-  var firstGap=Math.max(0,b.first-first);
-  var usceGap=isIMG?Math.max(0,b.usce-usce):0;
-  var lorGap=Math.max(0,b.lors-lors);
-
-  // Score current competitiveness (0-100)
-  var stepScore=Math.min(25,Math.max(0,25-stepGap*1.5));
-  var pubScore=Math.min(25,pubs>=b.pubs?25:Math.round(25*(pubs/b.pubs)));
-  var usceScore=isIMG?Math.min(20,usce>=b.usce?20:Math.round(20*(usce/b.usce))):20;
-  var lorScore=Math.min(15,lors>=b.lors?15:Math.round(15*(lors/b.lors)));
-  var firstScore=Math.min(15,first>=b.first?15:Math.round(15*(first/Math.max(1,b.first))));
-  var total=stepScore+pubScore+usceScore+lorScore+firstScore;
-
-  // Generate prioritized actions
-  if(stepGap>10){
-    actions.push({action:'Improve Step 2 CK score',detail:'Your score of '+step2+' is '+stepGap+' points below the '+b.name+' median of '+b.step2+'. Consider retaking if >15 points below.',gain:Math.min(15,Math.round(stepGap*0.8)),time:3,priority:'critical',tool:'',icon:'\ud83d\udcda'});
-  }else if(stepGap>0){
-    actions.push({action:'Step 2 CK is close to target',detail:'Only '+stepGap+' points below median. Strengthen other areas to compensate.',gain:Math.round(stepGap*0.5),time:0,priority:'low',tool:'',icon:'\u2705'});
-  }
-
-  if(isIMG&&usceGap>0){
-    actions.push({action:'Get '+usceGap+' more month'+(usceGap>1?'s':'')+' of US Clinical Experience',detail:'USCE is the #1 differentiator for IMGs. Programs filter for it. Observerships and externships both count.',gain:Math.min(12,usceGap*4),time:Math.min(time,usceGap*1),priority:'critical',tool:'v17',icon:'\ud83c\udfe5'});
-  }
-
-  if(firstGap>0){
-    actions.push({action:'Publish '+firstGap+' first-author paper'+(firstGap>1?'s':''),detail:'First-author publications carry 3-5x more weight than co-authored work. Case reports count and take 2-3 months.',gain:Math.min(10,firstGap*5),time:Math.min(time,firstGap*2),priority:'high',tool:'v7',icon:'\ud83d\udd2c'});
-  }
-
-  if(pubGap>0&&pubGap>firstGap){
-    var extraPubs=pubGap-firstGap;
-    actions.push({action:'Add '+extraPubs+' more publication'+(extraPubs>1?'s':'')+' (co-author, abstracts, posters)',detail:'Abstracts and conference presentations are fastest. Submit to upcoming specialty conferences.',gain:Math.min(8,extraPubs*2),time:Math.min(time,Math.ceil(extraPubs*0.5)),priority:'medium',tool:'v7',icon:'\ud83d\udcdd'});
-  }
-
-  if(lorGap>0){
-    actions.push({action:'Secure '+lorGap+' more strong letter'+(lorGap>1?'s':''),detail:'LORs from attendings in your target specialty who know you well. Observerships and research mentors are ideal sources.',gain:Math.min(8,lorGap*3),time:Math.min(time,lorGap),priority:'high',tool:'v17',icon:'\ud83d\udce8'});
-  }
-
-  if(isIMG&&usce<2){
-    actions.push({action:'Prioritize hands-on externships over observerships',detail:'Many programs explicitly state observerships don\'t count as USCE. Externships (hands-on) carry significantly more weight.',gain:4,time:2,priority:'high',tool:'v17',icon:'\u26a0\ufe0f'});
-  }
-
-  if(time>=6){
-    actions.push({action:'Practice interview questions weekly',detail:'42% average score improvement with structured practice. Don\'t wait until interview season.',gain:5,time:1,priority:'medium',tool:'v16',icon:'\ud83c\udf99\ufe0f'});
-  }
-
-  if(time>=3){
-    actions.push({action:'Build a tiered program list (reach / target / safety)',detail:'Based on your competitiveness score of '+total+'/100, apply to '+(b.competitive?'25-40':'15-25')+' programs across all tiers.',gain:3,time:0.5,priority:'medium',tool:'v14',icon:'\ud83d\udccb'});
-  }
-
-  if(isIMG){
-    actions.push({action:'Network with program coordinators at target programs',detail:'Cold emails to coordinators and attendings at IMG-friendly programs. Personal connections still drive interview invites.',gain:4,time:1,priority:'medium',tool:'',icon:'\ud83e\udd1d'});
-  }
-
-  // Sort by gain (highest first)
-  actions.sort(function(a,b){return b.gain-a.gain});
-
-  // Render
-  var h='';
-
-  // Competitiveness summary
-  var outlook=total>=75?'Strong':total>=55?'Moderate':total>=35?'Developing':'Needs Work';
-  var outlookColor=total>=75?'var(--green)':total>=55?'var(--accent)':total>=35?'var(--accent)':'var(--red)';
-  h+='<div style="text-align:center;padding:24px;background:var(--bg2);border:1px solid var(--border);border-radius:14px;margin-bottom:16px">';
-  h+='<div style="font-size:9px;text-transform:uppercase;letter-spacing:1.5px;color:var(--text3);margin-bottom:6px">Current Competitiveness for '+b.name+'</div>';
-  h+='<div style="font-size:42px;font-weight:700;color:'+outlookColor+';font-family:var(--font-serif)">'+total+'<span style="font-size:16px;color:var(--text3)"> / 100</span></div>';
-  h+='<div style="font-size:13px;font-weight:600;color:'+outlookColor+';margin-top:4px">'+outlook+'</div>';
-  if(isIMG)h+='<div style="font-size:10px;color:var(--text3);margin-top:6px">IMG status factored in \u2014 USCE weighted more heavily</div>';
-  h+='</div>';
-
-  // Time context
-  h+='<div style="padding:14px;background:rgba(198,168,94,.04);border:1px solid rgba(198,168,94,.12);border-radius:10px;margin-bottom:16px;text-align:center">';
-  h+='<div style="font-size:12px;color:var(--text)"><strong>'+time+' months</strong> until application. Here\u2019s what moves the needle most:</div>';
-  h+='</div>';
-
-  // Prioritized actions
-  h+='<div style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:10px">Prioritized Actions (by Impact)</div>';
-  actions.forEach(function(a,i){
-    var feasible=a.time<=time;
-    var prioColor=a.priority==='critical'?'var(--red)':a.priority==='high'?'var(--accent)':'var(--text3)';
-    var gainColor=a.gain>=8?'var(--green)':a.gain>=4?'var(--accent)':'var(--text3)';
-    h+='<div style="padding:14px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;margin-bottom:8px'+(feasible?'':';opacity:.5')+'">';
-    h+='<div style="display:flex;align-items:flex-start;gap:10px">';
-    h+='<div style="font-size:18px;flex-shrink:0;margin-top:2px">'+a.icon+'</div>';
-    h+='<div style="flex:1">';
-    h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">';
-    h+='<div style="font-size:13px;font-weight:600;color:var(--text)">'+a.action+'</div>';
-    h+='<div style="flex-shrink:0;padding:3px 8px;border-radius:4px;background:rgba(106,191,75,.08);font-size:10px;font-weight:700;color:'+gainColor+'">+'+a.gain+' pts</div>';
-    h+='</div>';
-    h+='<div style="font-size:11px;color:var(--text3);line-height:1.5;margin-bottom:6px">'+a.detail+'</div>';
-    h+='<div style="display:flex;gap:8px;align-items:center">';
-    h+='<span style="font-size:9px;font-weight:600;color:'+prioColor+';text-transform:uppercase;letter-spacing:.5px">'+a.priority+'</span>';
-    if(a.time>0)h+='<span style="font-size:9px;color:var(--text3)">\u00b7 ~'+a.time+' month'+(a.time>1?'s':'')+'</span>';
-    if(!feasible)h+='<span style="font-size:9px;color:var(--red);font-weight:600">\u26a0 May not fit in '+time+' months</span>';
-    if(a.tool)h+='<span onclick="openFramework(\''+a.tool+'\')" style="font-size:9px;color:var(--accent);cursor:pointer;text-decoration:underline;margin-left:auto">\u2192 Open tool</span>';
-    h+='</div>';
-    h+='</div></div></div>';
-  });
-
-  // Potential score
-  var potentialGain=0;
-  actions.forEach(function(a){if(a.time<=time)potentialGain+=a.gain});
-  var potentialScore=Math.min(100,total+potentialGain);
-  h+='<div style="padding:16px;background:var(--bg2);border:1px solid rgba(198,168,94,.2);border-radius:10px;margin-top:12px;text-align:center">';
-  h+='<div style="font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--text3);margin-bottom:6px">If You Complete All Feasible Actions</div>';
-  h+='<div style="font-size:11px;color:var(--text)"><span style="font-size:20px;font-weight:700;color:var(--text3);font-family:var(--font-serif)">'+total+'</span> \u2192 <span style="font-size:20px;font-weight:700;color:var(--green);font-family:var(--font-serif)">'+potentialScore+'</span></div>';
-  h+='<div style="font-size:11px;color:var(--accent);margin-top:4px">+'+potentialGain+' points in '+time+' months</div>';
-  h+='</div>';
-
-  // Pathway
-  h+=hwGatePathway(hwPathway(
-    potentialScore>=75?'You have the time and the raw material. Execute the plan above in order and you\u2019ll be competitive.':
-    potentialScore>=55?'Doable but tight. Focus exclusively on the top 3 actions. Everything else is noise.':
-    'Be honest with yourself about the gap. Consider whether this is the right cycle or if an extra year of preparation gives you a real shot.',
-    [{text:actions[0]?actions[0].action+' \u2014 this has the highest ROI for your profile.':'Start with the Match Calculator for a detailed breakdown.',when:'this week'},
-     {text:actions[1]?actions[1].action:'Build your program list.',when:'this month'},
-     {text:'Re-run this tool monthly to track progress.',when:'every 30 days'}],
-    {id:'v14',icon:'\ud83c\udfaf',title:'Match Competitiveness Calculator',why:'Get a full breakdown with specialty-specific benchmarks and detailed scoring.'}
-  ));
-
-  out.innerHTML=h;
-  applyBlurGate(out);
-  recordToolUse('What Should I Do Next',total+'/100',outlook+' for '+b.name+' ('+time+'mo)',{inputs:{Specialty:b.name,Step2:step2,Pubs:pubs,FirstAuthor:first,USCE:usce+'mo',LORs:lors,IMG:img,Months:time},highlights:actions.slice(0,3).map(function(a){return a.action+' (+'+a.gain+'pts)'})});
-}
-
-// ===== DIDN'T MATCH CRISIS FLOW =====
-function startDidntMatchFlow(){
   // Set profile to applicant stage if not already
   if(U&&U.careerProfile){
     U.careerProfile.stage='applicant';

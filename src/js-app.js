@@ -24,6 +24,33 @@ function hwThinking(targetEl,steps,callback){
   next();
 }
 
+// ===== TAB SWITCHING FOR MERGED TOOLS =====
+function toolTab(toolId, tabKey){
+  // Hide all panels for this tool
+  var panels = document.querySelectorAll('[id^="panel-' + toolId + '-"]');
+  panels.forEach(function(p){p.style.display='none'});
+  
+  // Show selected panel
+  var selectedPanel = document.getElementById('panel-' + toolId + '-' + tabKey);
+  if(selectedPanel) selectedPanel.style.display='';
+  
+  // Update button styles
+  var buttons = document.querySelectorAll('[id^="tab-' + toolId + '-"]');
+  buttons.forEach(function(b){
+    if(b.id === 'tab-' + toolId + '-' + tabKey){
+      b.style.background='var(--accent)';
+      b.style.color='#1C1A17';
+      b.style.borderColor='var(--accent)';
+      b.style.border='1px solid var(--accent)';
+    } else {
+      b.style.background='var(--card)';
+      b.style.color='var(--text2)';
+      b.style.borderColor='var(--border)';
+      b.style.border='1px solid var(--border)';
+    }
+  });
+}
+
 // ===== EXPERIENCE INJECTION PHRASES =====
 var HW_EXP_LINES=[
   'I\u2019ve seen this play out many times.',
@@ -7967,9 +7994,9 @@ function renderVault(){
 }
 // ===== 48-HOUR GUIDED ACCESS CONFIG =====
 var TRIAL_TOOLS={
-  full:['v3','v6','v14','v13','v17','v18'],
+  full:['v14','v13','v17'],
   partial:['v1','v15','v11'],
-  locked:['v4','v5','v7','v8','v9','v10','v12','v16']
+  locked:['v4','v7','v9','v12','v16']
 };
 function getTrialAccess(id){
   if(!U||!U.isTrial)return 'full';
@@ -8138,202 +8165,6 @@ var _toolStateCache={};  // Stores {html, scrollTop} per tool id
 
 function _saveToolState(toolId){
   if(!toolId)return;
-  var contentEl=document.getElementById('modal-q-content');
-  var modalInner=document.querySelector('#modal-q .modal');
-  if(contentEl){
-    // Remove the back button before saving so it doesn't stack
-    var bb=document.getElementById('tool-back-btn');if(bb)bb.remove();
-    _toolStateCache[toolId]={html:contentEl.innerHTML,scrollTop:modalInner?modalInner.scrollTop:0};
-  }
-}
-
-function _restoreToolState(toolId){
-  if(!toolId||!_toolStateCache[toolId])return false;
-  var cached=_toolStateCache[toolId];
-  var contentEl=document.getElementById('modal-q-content');
-  var modalInner=document.querySelector('#modal-q .modal');
-  if(contentEl){
-    contentEl.innerHTML=cached.html;
-    if(modalInner)setTimeout(function(){modalInner.scrollTop=cached.scrollTop},50);
-    return true;
-  }
-  return false;
-}
-
-function openFrameworkById(id){
-  navTo('scr-vault');
-  setTimeout(function(){openFramework(id)},200);
-}
-// ===== WHAT SHOULD I DO NEXT (v18) =====
-function wsdnUpdate(){}
-function wsdnAnalyze(){
-  var spec=document.getElementById('wsdn-spec').value;
-  var time=parseInt(document.getElementById('wsdn-time').value)||6;
-  var step2=parseInt(document.getElementById('wsdn-step2').value)||0;
-  var pubs=parseInt(document.getElementById('wsdn-pubs').value)||0;
-  var first=parseInt(document.getElementById('wsdn-first').value)||0;
-  var usce=parseInt(document.getElementById('wsdn-usce').value)||0;
-  var lors=parseInt(document.getElementById('wsdn-lors').value)||0;
-  var img=document.getElementById('wsdn-img').value;
-  var out=document.getElementById('wsdn-results');
-  if(!spec||!step2){out.innerHTML='<div style="padding:16px;text-align:center;color:var(--text3);font-size:12px">Please select a specialty and enter your Step 2 score.</div>';return}
-
-  // Specialty benchmarks (median matched applicant)
-  var benchmarks={
-    im:{step2:240,pubs:4,first:1,usce:3,lors:3,name:'Internal Medicine',competitive:false},
-    fm:{step2:230,pubs:2,first:0,usce:2,lors:3,name:'Family Medicine',competitive:false},
-    peds:{step2:235,pubs:3,first:1,usce:2,lors:3,name:'Pediatrics',competitive:false},
-    em:{step2:242,pubs:4,first:1,usce:3,lors:3,name:'Emergency Medicine',competitive:false},
-    psych:{step2:236,pubs:3,first:1,usce:2,lors:3,name:'Psychiatry',competitive:false},
-    neuro:{step2:238,pubs:4,first:1,usce:3,lors:3,name:'Neurology',competitive:false},
-    surg:{step2:248,pubs:6,first:2,usce:4,lors:3,name:'General Surgery',competitive:true},
-    ortho:{step2:256,pubs:10,first:3,usce:4,lors:4,name:'Orthopedic Surgery',competitive:true},
-    uro:{step2:252,pubs:8,first:2,usce:4,lors:4,name:'Urology',competitive:true},
-    obgyn:{step2:242,pubs:4,first:1,usce:3,lors:3,name:'OB/GYN',competitive:false},
-    anes:{step2:244,pubs:4,first:1,usce:3,lors:3,name:'Anesthesiology',competitive:false},
-    rads:{step2:252,pubs:6,first:2,usce:3,lors:3,name:'Radiology',competitive:true},
-    path:{step2:238,pubs:4,first:1,usce:2,lors:3,name:'Pathology',competitive:false},
-    derm:{step2:258,pubs:12,first:4,usce:4,lors:4,name:'Dermatology',competitive:true},
-    ent:{step2:254,pubs:8,first:3,usce:4,lors:4,name:'ENT',competitive:true},
-    optho:{step2:252,pubs:8,first:3,usce:4,lors:4,name:'Ophthalmology',competitive:true},
-    pm:{step2:236,pubs:3,first:1,usce:2,lors:3,name:'PM&R',competitive:false},
-    cardiology:{step2:250,pubs:8,first:2,usce:4,lors:3,name:'Cardiology',competitive:true},
-    gi:{step2:248,pubs:6,first:2,usce:3,lors:3,name:'GI',competitive:true},
-    pulm_crit:{step2:244,pubs:5,first:1,usce:3,lors:3,name:'Pulm/Crit',competitive:false},
-    heme_onc:{step2:248,pubs:7,first:2,usce:3,lors:3,name:'Heme/Onc',competitive:true}
-  };
-  var b=benchmarks[spec]||benchmarks.im;
-  var isIMG=img!=='no';
-
-  // Calculate gaps and potential actions with point impact
-  var actions=[];
-  var stepGap=b.step2-step2;
-  var pubGap=Math.max(0,b.pubs-pubs);
-  var firstGap=Math.max(0,b.first-first);
-  var usceGap=isIMG?Math.max(0,b.usce-usce):0;
-  var lorGap=Math.max(0,b.lors-lors);
-
-  // Score current competitiveness (0-100)
-  var stepScore=Math.min(25,Math.max(0,25-stepGap*1.5));
-  var pubScore=Math.min(25,pubs>=b.pubs?25:Math.round(25*(pubs/b.pubs)));
-  var usceScore=isIMG?Math.min(20,usce>=b.usce?20:Math.round(20*(usce/b.usce))):20;
-  var lorScore=Math.min(15,lors>=b.lors?15:Math.round(15*(lors/b.lors)));
-  var firstScore=Math.min(15,first>=b.first?15:Math.round(15*(first/Math.max(1,b.first))));
-  var total=stepScore+pubScore+usceScore+lorScore+firstScore;
-
-  // Generate prioritized actions
-  if(stepGap>10){
-    actions.push({action:'Improve Step 2 CK score',detail:'Your score of '+step2+' is '+stepGap+' points below the '+b.name+' median of '+b.step2+'. Consider retaking if >15 points below.',gain:Math.min(15,Math.round(stepGap*0.8)),time:3,priority:'critical',tool:'',icon:'\ud83d\udcda'});
-  }else if(stepGap>0){
-    actions.push({action:'Step 2 CK is close to target',detail:'Only '+stepGap+' points below median. Strengthen other areas to compensate.',gain:Math.round(stepGap*0.5),time:0,priority:'low',tool:'',icon:'\u2705'});
-  }
-
-  if(isIMG&&usceGap>0){
-    actions.push({action:'Get '+usceGap+' more month'+(usceGap>1?'s':'')+' of US Clinical Experience',detail:'USCE is the #1 differentiator for IMGs. Programs filter for it. Observerships and externships both count.',gain:Math.min(12,usceGap*4),time:Math.min(time,usceGap*1),priority:'critical',tool:'v17',icon:'\ud83c\udfe5'});
-  }
-
-  if(firstGap>0){
-    actions.push({action:'Publish '+firstGap+' first-author paper'+(firstGap>1?'s':''),detail:'First-author publications carry 3-5x more weight than co-authored work. Case reports count and take 2-3 months.',gain:Math.min(10,firstGap*5),time:Math.min(time,firstGap*2),priority:'high',tool:'v7',icon:'\ud83d\udd2c'});
-  }
-
-  if(pubGap>0&&pubGap>firstGap){
-    var extraPubs=pubGap-firstGap;
-    actions.push({action:'Add '+extraPubs+' more publication'+(extraPubs>1?'s':'')+' (co-author, abstracts, posters)',detail:'Abstracts and conference presentations are fastest. Submit to upcoming specialty conferences.',gain:Math.min(8,extraPubs*2),time:Math.min(time,Math.ceil(extraPubs*0.5)),priority:'medium',tool:'v7',icon:'\ud83d\udcdd'});
-  }
-
-  if(lorGap>0){
-    actions.push({action:'Secure '+lorGap+' more strong letter'+(lorGap>1?'s':''),detail:'LORs from attendings in your target specialty who know you well. Observerships and research mentors are ideal sources.',gain:Math.min(8,lorGap*3),time:Math.min(time,lorGap),priority:'high',tool:'v17',icon:'\ud83d\udce8'});
-  }
-
-  if(isIMG&&usce<2){
-    actions.push({action:'Prioritize hands-on externships over observerships',detail:'Many programs explicitly state observerships don\'t count as USCE. Externships (hands-on) carry significantly more weight.',gain:4,time:2,priority:'high',tool:'v17',icon:'\u26a0\ufe0f'});
-  }
-
-  if(time>=6){
-    actions.push({action:'Practice interview questions weekly',detail:'42% average score improvement with structured practice. Don\'t wait until interview season.',gain:5,time:1,priority:'medium',tool:'v16',icon:'\ud83c\udf99\ufe0f'});
-  }
-
-  if(time>=3){
-    actions.push({action:'Build a tiered program list (reach / target / safety)',detail:'Based on your competitiveness score of '+total+'/100, apply to '+(b.competitive?'25-40':'15-25')+' programs across all tiers.',gain:3,time:0.5,priority:'medium',tool:'v14',icon:'\ud83d\udccb'});
-  }
-
-  if(isIMG){
-    actions.push({action:'Network with program coordinators at target programs',detail:'Cold emails to coordinators and attendings at IMG-friendly programs. Personal connections still drive interview invites.',gain:4,time:1,priority:'medium',tool:'',icon:'\ud83e\udd1d'});
-  }
-
-  // Sort by gain (highest first)
-  actions.sort(function(a,b){return b.gain-a.gain});
-
-  // Render
-  var h='';
-
-  // Competitiveness summary
-  var outlook=total>=75?'Strong':total>=55?'Moderate':total>=35?'Developing':'Needs Work';
-  var outlookColor=total>=75?'var(--green)':total>=55?'var(--accent)':total>=35?'var(--accent)':'var(--red)';
-  h+='<div style="text-align:center;padding:24px;background:var(--bg2);border:1px solid var(--border);border-radius:14px;margin-bottom:16px">';
-  h+='<div style="font-size:9px;text-transform:uppercase;letter-spacing:1.5px;color:var(--text3);margin-bottom:6px">Current Competitiveness for '+b.name+'</div>';
-  h+='<div style="font-size:42px;font-weight:700;color:'+outlookColor+';font-family:var(--font-serif)">'+total+'<span style="font-size:16px;color:var(--text3)"> / 100</span></div>';
-  h+='<div style="font-size:13px;font-weight:600;color:'+outlookColor+';margin-top:4px">'+outlook+'</div>';
-  if(isIMG)h+='<div style="font-size:10px;color:var(--text3);margin-top:6px">IMG status factored in \u2014 USCE weighted more heavily</div>';
-  h+='</div>';
-
-  // Time context
-  h+='<div style="padding:14px;background:rgba(198,168,94,.04);border:1px solid rgba(198,168,94,.12);border-radius:10px;margin-bottom:16px;text-align:center">';
-  h+='<div style="font-size:12px;color:var(--text)"><strong>'+time+' months</strong> until application. Here\u2019s what moves the needle most:</div>';
-  h+='</div>';
-
-  // Prioritized actions
-  h+='<div style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:10px">Prioritized Actions (by Impact)</div>';
-  actions.forEach(function(a,i){
-    var feasible=a.time<=time;
-    var prioColor=a.priority==='critical'?'var(--red)':a.priority==='high'?'var(--accent)':'var(--text3)';
-    var gainColor=a.gain>=8?'var(--green)':a.gain>=4?'var(--accent)':'var(--text3)';
-    h+='<div style="padding:14px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;margin-bottom:8px'+(feasible?'':';opacity:.5')+'">';
-    h+='<div style="display:flex;align-items:flex-start;gap:10px">';
-    h+='<div style="font-size:18px;flex-shrink:0;margin-top:2px">'+a.icon+'</div>';
-    h+='<div style="flex:1">';
-    h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">';
-    h+='<div style="font-size:13px;font-weight:600;color:var(--text)">'+a.action+'</div>';
-    h+='<div style="flex-shrink:0;padding:3px 8px;border-radius:4px;background:rgba(106,191,75,.08);font-size:10px;font-weight:700;color:'+gainColor+'">+'+a.gain+' pts</div>';
-    h+='</div>';
-    h+='<div style="font-size:11px;color:var(--text3);line-height:1.5;margin-bottom:6px">'+a.detail+'</div>';
-    h+='<div style="display:flex;gap:8px;align-items:center">';
-    h+='<span style="font-size:9px;font-weight:600;color:'+prioColor+';text-transform:uppercase;letter-spacing:.5px">'+a.priority+'</span>';
-    if(a.time>0)h+='<span style="font-size:9px;color:var(--text3)">\u00b7 ~'+a.time+' month'+(a.time>1?'s':'')+'</span>';
-    if(!feasible)h+='<span style="font-size:9px;color:var(--red);font-weight:600">\u26a0 May not fit in '+time+' months</span>';
-    if(a.tool)h+='<span onclick="openFramework(\''+a.tool+'\')" style="font-size:9px;color:var(--accent);cursor:pointer;text-decoration:underline;margin-left:auto">\u2192 Open tool</span>';
-    h+='</div>';
-    h+='</div></div></div>';
-  });
-
-  // Potential score
-  var potentialGain=0;
-  actions.forEach(function(a){if(a.time<=time)potentialGain+=a.gain});
-  var potentialScore=Math.min(100,total+potentialGain);
-  h+='<div style="padding:16px;background:var(--bg2);border:1px solid rgba(198,168,94,.2);border-radius:10px;margin-top:12px;text-align:center">';
-  h+='<div style="font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--text3);margin-bottom:6px">If You Complete All Feasible Actions</div>';
-  h+='<div style="font-size:11px;color:var(--text)"><span style="font-size:20px;font-weight:700;color:var(--text3);font-family:var(--font-serif)">'+total+'</span> \u2192 <span style="font-size:20px;font-weight:700;color:var(--green);font-family:var(--font-serif)">'+potentialScore+'</span></div>';
-  h+='<div style="font-size:11px;color:var(--accent);margin-top:4px">+'+potentialGain+' points in '+time+' months</div>';
-  h+='</div>';
-
-  // Pathway
-  h+=hwGatePathway(hwPathway(
-    potentialScore>=75?'You have the time and the raw material. Execute the plan above in order and you\u2019ll be competitive.':
-    potentialScore>=55?'Doable but tight. Focus exclusively on the top 3 actions. Everything else is noise.':
-    'Be honest with yourself about the gap. Consider whether this is the right cycle or if an extra year of preparation gives you a real shot.',
-    [{text:actions[0]?actions[0].action+' \u2014 this has the highest ROI for your profile.':'Start with the Match Calculator for a detailed breakdown.',when:'this week'},
-     {text:actions[1]?actions[1].action:'Build your program list.',when:'this month'},
-     {text:'Re-run this tool monthly to track progress.',when:'every 30 days'}],
-    {id:'v14',icon:'\ud83c\udfaf',title:'Match Competitiveness Calculator',why:'Get a full breakdown with specialty-specific benchmarks and detailed scoring.'}
-  ));
-
-  out.innerHTML=h;
-  applyBlurGate(out);
-  recordToolUse('What Should I Do Next',total+'/100',outlook+' for '+b.name+' ('+time+'mo)',{inputs:{Specialty:b.name,Step2:step2,Pubs:pubs,FirstAuthor:first,USCE:usce+'mo',LORs:lors,IMG:img,Months:time},highlights:actions.slice(0,3).map(function(a){return a.action+' (+'+a.gain+'pts)'})});
-}
-
-// ===== DIDN'T MATCH CRISIS FLOW =====
-function startDidntMatchFlow(){
   // Set profile to applicant stage if not already
   if(U&&U.careerProfile){
     U.careerProfile.stage='applicant';

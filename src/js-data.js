@@ -306,20 +306,14 @@ const LEGACY_Q=[
 ];
 
 const VAULT_ITEMS=[
-{id:'v3',title:'Job Offer Comparison Tool',desc:'Compare multiple job offers side-by-side with structured decision criteria',icon:'📊',tier:'core'},
 {id:'v4',title:'RVU Compensation Calculator',desc:'Estimate income based on productivity, compensation model, and practice type',icon:'💰',tier:'core'},
-{id:'v5',title:'Early Career Income Planner',desc:'Map your expected income trajectory during your first 3 years after training',icon:'📈',tier:'core'},
-{id:'v6',title:'Fellowship Application Planner',desc:'Follow a month-by-month strategy from PGY-2 through match cycle',icon:'🗺️',tier:'core'},
 {id:'v7',title:'Research Impact Calculator',desc:'Assess the strength and relevance of your research portfolio',icon:'⚖️',tier:'core'},
-{id:'v8',title:'Debt & Income Strategy Tool',desc:'Compare loan repayment strategies including PSLF, refinancing, and tax impact',icon:'💵',tier:'core'},
-{id:'v13',title:'Specialty Fit Assessment',desc:'Find your ideal specialty or diagnose whether you are experiencing burnout, misfit, or practice model mismatch',icon:'🔬',tier:'core'},
-{id:'v14',title:'Match Competitiveness Calculator',desc:'Score your competitiveness, see your match probability, and find what moves the needle',icon:'🏆',tier:'core'},
-{id:'v15',title:'Career Roadmap Tool',desc:'Create a step-by-step plan to reach your desired specialty or career outcome',icon:'🗂️',tier:'core'},
-{id:'v16',title:'Interview Practice Tool',desc:'Practice specialty-specific interview questions with actionable feedback',icon:'🎙️',tier:'core'},
 {id:'v9',title:'Application Review Tool',desc:'Audit your full application using a structured, mentor-level evaluation framework',icon:'📝',tier:'core'},
-{id:'v10',title:'Career Transition Planner',desc:'Evaluate and plan specialty or practice changes with structured guidance',icon:'⚡',tier:'core'},
-{id:'v11',title:'Financial Projection Tool',desc:'Visualize long-term earnings, savings, and wealth across different career paths',icon:'💰',tier:'core'},
-{id:'v12',title:'Contract Review Tool',desc:'Analyze contract risk flags, benchmarks, and get negotiation scripts',icon:'📝',tier:'core'},
-{id:'v17',title:'Observership Database',desc:'Browse verified U.S. observership opportunities with strategic insights',icon:'🏥',tier:'core'},
-{id:'v18',title:'What Should I Do Next?',desc:'Get a prioritized action plan based on your profile, gaps, and time left',icon:'🧭',tier:'core'}
+{id:'v11',title:'Financial Planner',desc:'Plan your income, debts, and long-term financial future with integrated strategies',icon:'💰',tier:'core'},
+{id:'v12',title:'Contract & Offer Analyzer',desc:'Review contracts, compare offers, and get negotiation scripts',icon:'📝',tier:'core'},
+{id:'v13',title:'Specialty & Career Fit',desc:'Find your ideal specialty, evaluate transitions, and diagnose misfit or burnout',icon:'🔬',tier:'core'},
+{id:'v14',title:'Match Competitiveness Calculator',desc:'Score your competitiveness, see your match probability, and get your prioritized action plan',icon:'🏆',tier:'core'},
+{id:'v15',title:'Career Roadmap',desc:'Create a step-by-step plan to reach your specialty or career goal, including fellowship track',icon:'🗂️',tier:'core'},
+{id:'v16',title:'Interview Practice Tool',desc:'Practice specialty-specific interview questions with actionable feedback',icon:'🎙️',tier:'core'},
+{id:'v17',title:'Observership Database',desc:'Browse verified U.S. observership opportunities with strategic insights',icon:'🏥',tier:'core'}
 ];

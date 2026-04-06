@@ -1907,8 +1907,7 @@ function hwQueueAssessment(toolName,toolId,previewHtml,fullPathwayHtml,keyInsigh
 
 // (hwQueuedPathway removed — assessment queue now handled inside hwGatePathway via hwSetAssessmentContext)
 
-// Split full tool results for paid users: show hero only, queue rest
-// Call this INSTEAD of setting innerHTML directly
+// Split full tool results for paid users: show minimal acknowledgment, queue everything
 function hwRenderWithQueue(targetEl,fullHtml,toolName,toolId,keyInsights,score,outlook){
   var el=typeof targetEl==='string'?document.getElementById(targetEl):targetEl;
   if(!el)return;
@@ -1919,38 +1918,47 @@ function hwRenderWithQueue(targetEl,fullHtml,toolName,toolId,keyInsights,score,o
     return;
   }
   
-  // Paid non-admin user: split at marker
-  var parts=fullHtml.split('<!-- HW_SPLIT -->');
-  if(parts.length<2){
-    // No split marker — show everything (backward compat)
-    el.innerHTML=fullHtml;
-    return;
+  // Paid non-admin user: show minimal acknowledgment, queue ALL content
+  var ack='<div style="text-align:center;padding:30px 20px;background:var(--bg2);border:1px solid var(--border);border-radius:14px;margin-bottom:16px">';
+  
+  // Score display if available
+  if(score){
+    var scoreNum=parseInt(score);
+    var scoreColor=scoreNum>=85?'#6abf4b':scoreNum>=65?'#c8a87c':scoreNum>=50?'#e8a33c':'#ef4444';
+    ack+='<div style="position:relative;width:90px;height:90px;margin:0 auto 12px">';
+    ack+='<svg viewBox="0 0 120 120" style="transform:rotate(-90deg)"><circle cx="60" cy="60" r="52" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="8"/><circle cx="60" cy="60" r="52" fill="none" stroke="'+scoreColor+'" stroke-width="8" stroke-dasharray="'+Math.round(scoreNum*3.27)+' 327" stroke-linecap="round"/></svg>';
+    ack+='<div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center"><div style="font-size:28px;font-weight:700;color:'+scoreColor+';font-family:var(--font-serif)">'+scoreNum+'</div><div style="font-size:9px;color:var(--text3)">/ 100</div></div>';
+    ack+='</div>';
   }
   
-  var heroHtml=parts[0];
-  var detailHtml=parts.slice(1).join('');
+  // One-line summary
+  if(outlook){
+    ack+='<div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:4px">'+outlook+'</div>';
+  }
+  ack+='<div style="font-size:12px;color:var(--text3)">'+toolName+'</div>';
+  ack+='</div>';
   
-  // Show hero + handoff message
-  var handoff='<div style="margin-top:18px;padding:20px;background:linear-gradient(160deg,var(--bg2),rgba(200,168,124,.03));border:1px solid var(--border2);border-radius:12px">';
-  handoff+='<div style="display:flex;align-items:flex-start;gap:14px">';
-  handoff+='<div style="font-size:28px;flex-shrink:0">📋</div>';
-  handoff+='<div>';
-  handoff+='<div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:6px">Dr. Faroqui is reviewing your full case</div>';
-  handoff+='<div style="font-size:13px;color:var(--text2);line-height:1.7;font-family:var(--font-serif)">I\u2019ve received your information and I\u2019m putting together a detailed assessment with personalized recommendations for your situation. You\u2019ll receive an email when your full analysis is ready.</div>';
-  handoff+='<div style="margin-top:12px;display:flex;align-items:center;gap:8px">';
-  handoff+='<div style="width:8px;height:8px;border-radius:50%;background:var(--accent);animation:pulse 2s infinite"></div>';
-  handoff+='<span style="font-size:11px;color:var(--text3)">Assessment in progress</span>';
-  handoff+='</div>';
-  handoff+='</div></div></div>';
+  // Handoff message
+  ack+='<div style="padding:20px;background:linear-gradient(160deg,var(--bg2),rgba(200,168,124,.03));border:1px solid var(--border2);border-radius:12px">';
+  ack+='<div style="display:flex;align-items:flex-start;gap:14px">';
+  ack+='<div style="font-size:28px;flex-shrink:0">📋</div>';
+  ack+='<div>';
+  ack+='<div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:6px">Case received</div>';
+  ack+='<div style="font-size:13px;color:var(--text2);line-height:1.7;font-family:var(--font-serif)">I\u2019ve received your information and I\u2019m putting together a detailed analysis with personalized recommendations for your situation. You\u2019ll receive an email when your full assessment is ready.</div>';
+  ack+='<div style="margin-top:12px;display:flex;align-items:center;gap:8px">';
+  ack+='<div style="width:8px;height:8px;border-radius:50%;background:var(--accent);animation:pulse 2s infinite"></div>';
+  ack+='<span style="font-size:11px;color:var(--text3)">Assessment in progress</span>';
+  ack+='</div>';
+  ack+='</div></div></div>';
   
-  el.innerHTML=heroHtml+handoff;
+  el.innerHTML=ack;
   
-  // Queue the full results for delayed delivery
+  // Queue ALL the results for delayed delivery
   hwQueueAssessment(
     toolName||'Assessment',
     toolId||'',
-    heroHtml+handoff,
-    detailHtml,
+    ack,
+    fullHtml,
     (keyInsights||[]).join(' | ')
   );
 }
@@ -5707,7 +5715,7 @@ function crsCalc(){
     h+='<div style="text-align:center;margin-top:12px;font-size:11px;color:var(--text3)">'+answered+' of '+total+' questions answered. Complete all for the most accurate score.</div>';
   }
 
-  document.getElementById('crs-results').innerHTML=h;
+  hwRenderWithQueue('crs-results',h,'Contract Review Scorecard','v12',null,pct+'',grade);
 
   // Lifetime Impact — red flags cost
   if(typeof hwLifetimeImpact==='function'&&reds.length>0){
@@ -6043,12 +6051,12 @@ function ocmCompare(){
   h+='</div>';
   h+='</div></div>';
 
-  document.getElementById('ocm-results').innerHTML=h;
-
   // Pathway
   var ocmDiff2=Math.round(Math.abs(cA.totalWithRetire-cB.totalWithRetire)/1000);
   hwSetAssessmentContext('Contract & Offer Analyzer','v12',['<strong>'+winner+' wins</strong> by $'+ocmDiff2+'K in true 10-year value.','Key factors driving the difference: compensation structure, benefits, and long-term financial trajectory.'+(unlessClause?' One important consideration: '+unlessClause+'.':'')],null,winner+' wins by $'+ocmDiff2+'K');
-  document.getElementById('ocm-results').innerHTML+=hwGatePathway(hwPathway('<strong>'+winner+' wins</strong> by $'+ocmDiff2+'K in true 10-year value. But money alone doesn\u2019t decide \u2014 factor in non-compete, call, and location.',[{text:'Run both contracts through Contract Review Tool for hidden clauses.',when:'this week'},{text:'Model both in the Financial Planner for 30-year compounding.',when:'this week'},{text:'Negotiate the weaker offer\u2019s terms up \u2014 you have leverage.',when:'before signing'}],{id:'v11',icon:'\ud83d\udcc8',title:'Financial Planner',why:'See how each offer compounds over 30 years.'}));
+  h+=hwGatePathway(hwPathway('<strong>'+winner+' wins</strong> by $'+ocmDiff2+'K in true 10-year value. But money alone doesn\u2019t decide \u2014 factor in non-compete, call, and location.',[{text:'Run both contracts through Contract Review Tool for hidden clauses.',when:'this week'},{text:'Model both in the Financial Planner for 30-year compounding.',when:'this week'},{text:'Negotiate the weaker offer\u2019s terms up \u2014 you have leverage.',when:'before signing'}],{id:'v11',icon:'\ud83d\udcc8',title:'Financial Planner',why:'See how each offer compounds over 30 years.'}));
+
+  hwRenderWithQueue('ocm-results',h,'Contract & Offer Analyzer','v12',null,null,winner+' wins by $'+ocmDiff2+'K');
 
   // Lifetime Impact — opportunity cost of choosing wrong offer
   if(typeof hwLifetimeImpact==='function'&&totalDiff>5000){
@@ -6268,7 +6276,7 @@ function _sfaRun(q1,q2,q3,q4,q5,q6){
   hwSetAssessmentContext('Specialty Fit Assessment','v13',['Your top match is <strong>'+top[0].name+'</strong> with a '+top[0].pct+'% fit score. '+top[1].name+' ('+top[1].pct+'%) is your second strongest match.','Based on your answers about patient interaction preferences, lifestyle priorities, and procedural interests, '+top[0].name+' aligns most closely with what you described.'],null,'Top: '+top[0].name);
   h+=hwGatePathway(hwPathway('I\u2019d tell you to pursue <strong>'+top[0].name+'</strong>. '+top[1].name+' is a reasonable backup, but your answers clearly favor the first. Stop browsing specialties and start testing this one in real life.',[{text:'Shadow or rotate in '+top[0].name+'. Two or three days of real exposure beats months of theorizing.',when:'this week'},{text:'Talk to a current PGY-3 or fellow. Not an attending. Trainees give you the unfiltered version.',when:'this month'},{text:'Check whether you\u2019re actually competitive before committing emotionally.',when:'this month'}],{id:'v14',icon:'\ud83c\udfaf',title:'Match Probability Calculator',why:'Find out if you\u2019re competitive for '+top[0].name+'. Passion without competitiveness is a dead end.'}));
 
-  document.getElementById('sfa-results').innerHTML=h;
+  hwRenderWithQueue('sfa-results',h,'Specialty Fit Assessment','v13',null,null,'Top: '+top[0].name);
   applyBlurGate(document.getElementById('sfa-results'));
   // Save scenario for compare
   var sfaInputs={'Patient Interaction':q1,'Procedural':q2,'Priority':q3,'Intellectual':q4,'Setting':q5,'Uncertainty':q6};
@@ -6587,7 +6595,7 @@ function _bmdRun(qs){
     pathActions,pathNxt
   ));
 
-  document.getElementById('bmd-results').innerHTML=h;
+  hwRenderWithQueue('bmd-results',h,'Burnout vs Misfit Diagnostic','v13',null,null,bmdPrimaryLabel);
   applyBlurGate(document.getElementById('bmd-results'));
 
   // Record tool use
@@ -7149,9 +7157,6 @@ function _mccRun(){
   // #1 action callout
   h+='<div style="padding:8px 12px;background:rgba(200,168,124,.08);border-radius:8px;font-size:11px;color:var(--text2)"><strong style="color:var(--accent)">#1 Action:</strong> '+heroAction+'</div>';
   h+='</div>';
-
-  // Split marker — everything above shows instantly, everything below queued for physician review
-  h+='<!-- HW_SPLIT -->';
 
   // Expand/Collapse all toggle
   h+='<div style="display:flex;justify-content:flex-end;gap:12px;margin-bottom:6px;padding:0 2px">';
@@ -8164,7 +8169,7 @@ function _csbRun(){
   h+='<div style="display:inline-block;padding:8px 20px;background:var(--accent);color:#1C1A17;border-radius:8px;font-size:12px;font-weight:600">Open Application Review \u2192</div>';
   h+='</div>';
 
-  document.getElementById('csb-results').innerHTML=h;
+  hwRenderWithQueue('csb-results',h,'Career Roadmap','v15',null,null,tName+' roadmap');
   applyBlurGate(document.getElementById('csb-results'));
 
   var csbInputs={'Stage':nowLabels[now]||now,'Target':tName,'Timeline':urgency==='1'?'This cycle':urgency+' year(s)'};
@@ -13043,7 +13048,7 @@ function fypCalculate(){
   hwSetAssessmentContext('3-Year Financial Projection','v11',[(y3.netWealth>=0?'Projected <strong>positive net worth by Year 3</strong>. You\u2019re ahead of most physicians at this stage.':'Still in the red at Year 3 with $'+Math.round(debt/1000)+'K debt. This is normal, but keep expenses flat.'),'Projected Year 3 net wealth: <strong>$'+Math.round(y3.netWealth/1000)+'K</strong>. Savings rate: '+yr1Save+'%.'],null,y3.netWealth>=0?'Positive by Year 3':'Building');
   h+=hwGatePathway(hwPathway(y3.netWealth>=0?'Positive net worth by Year 3 \u2014 ahead of most physicians.':'Still in the red at Year 3 \u2014 normal with $'+Math.round(debt/1000)+'K debt. Hold expenses flat.',[{text:'Set up 401k + backdoor Roth this week.',when:'this week'},{text:(pslf==='yes'?'Certify PSLF employment.':'Refinance your loans.')+' Free money.',when:'this week'},{text:'Automate savings at '+yr1Save+'%'+(yr1Save<20?' (push to 20%)':'')+' before lifestyle creep.',when:'this month'}],{id:'v11',icon:'\ud83d\udcb5',title:'Financial Planner',why:'Get a full financial health score \u2014 disability, tax strategy, advisor quality.'}));
 
-  document.getElementById('fyp-results').innerHTML=h;
+  hwRenderWithQueue('fyp-results',h,'3-Year Financial Projection','v11',null,null,(y3.netWealth>=0?'Positive':'Building')+' by Year 3');
 
   // Lifetime Impact — savings rate gap
   if(typeof hwLifetimeImpact==='function'&&yr1Save<20){
@@ -13226,7 +13231,7 @@ function ilpCalculate(){
      {text:debt>0?'Run a 30-year projection to see how debt payoff timing affects your net worth.':'Run a 30-year projection comparing your current savings rate vs 5% higher.',when:'this month'},
      {text:'Set a calendar reminder for quarterly financial review.',when:'this month'}],
     {id:'v11',icon:'\ud83d\udcc8',title:'Financial Planner',why:'See how today\u2019s decisions compound over 30 years. Small changes now become millions.'}));
-  document.getElementById('ilp-results').innerHTML=h;
+  hwRenderWithQueue('ilp-results',h,'Financial Health Score','v11',null,scorePct+'',fhGrade);
 
   // Lifetime Impact — financial gaps
   if(typeof hwLifetimeImpact==='function'&&scorePct<80){
@@ -14648,7 +14653,7 @@ function misGrade(){
   h+='</div>';
   h+='</div>';
 
-  document.getElementById('mis-feedback').innerHTML=h;
+  hwRenderWithQueue('mis-feedback',h,'Interview Practice Tool','v16',null,avgScore+'',avgScore>=80?'Ready':avgScore>=60?'Good Foundation':'Needs Work');
   applyBlurGate(document.getElementById('mis-feedback'));
   document.getElementById('mis-feedback').scrollIntoView({behavior:'smooth',block:'start'});
   // Record with resultData for saved scenarios

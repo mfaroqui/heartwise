@@ -8362,16 +8362,18 @@ function renderMyAssessmentsCard(){
   var card=document.getElementById('my-assessments-card');
   if(!card)return;
   
-  var total=_pendingAssessments.length;
-  var ready=_pendingAssessments.filter(function(a){return a.status==='delivered'}).length;
-  var pending=_pendingAssessments.filter(function(a){return a.status==='pending'}).length;
-  
-  if(total===0){card.style.display='none';return}
+  // Always show for paid non-admin users (they may have assessments)
+  var isPaid=U&&U.tier&&U.tier!=='free'&&U.tier!=='admin'&&!U.isTrial;
+  if(!isPaid){card.style.display='none';return}
   
   card.style.display='';
+  
+  var ready=_pendingAssessments.filter(function(a){return a.status==='delivered'}).length;
+  var pending=_pendingAssessments.filter(function(a){return a.status==='pending'}).length;
   var badge=document.getElementById('assessment-badge');
   if(badge){
     if(ready>0){badge.style.display='flex';badge.textContent=ready}
+    else if(pending>0){badge.style.display='flex';badge.textContent='⏳'}
     else{badge.style.display='none'}
   }
 }

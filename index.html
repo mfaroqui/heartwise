@@ -351,6 +351,7 @@ color:var(--text);background:var(--bg);
 @keyframes hookFadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 @keyframes slideInLeft{from{opacity:0;transform:translateX(-20px)}to{opacity:1;transform:translateX(0)}}
 @keyframes pulseGlow{0%,100%{box-shadow:0 0 0 0 rgba(198,168,94,.3)}50%{box-shadow:0 0 12px 4px rgba(198,168,94,.15)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 @keyframes drawLine{from{height:0}to{height:100%}}
 @keyframes countUp{from{transform:scale(.6);opacity:0}to{transform:scale(1);opacity:1}}
 .fade-in{animation:fadeUp .5s ease both}
@@ -8267,6 +8268,54 @@ function hwQueueAssessment(toolName,toolId,previewHtml,fullPathwayHtml,keyInsigh
 
 // (hwQueuedPathway removed — assessment queue now handled inside hwGatePathway via hwSetAssessmentContext)
 
+// Split full tool results for paid users: show hero only, queue rest
+// Call this INSTEAD of setting innerHTML directly
+function hwRenderWithQueue(targetEl,fullHtml,toolName,toolId,keyInsights,score,outlook){
+  var el=typeof targetEl==='string'?document.getElementById(targetEl):targetEl;
+  if(!el)return;
+  
+  // Admin, free, trial: show everything as-is
+  if(!U||U.tier==='free'||U.tier==='admin'||U.role==='admin'||U.isTrial){
+    el.innerHTML=fullHtml;
+    return;
+  }
+  
+  // Paid non-admin user: split at marker
+  var parts=fullHtml.split('<!-- HW_SPLIT -->');
+  if(parts.length<2){
+    // No split marker — show everything (backward compat)
+    el.innerHTML=fullHtml;
+    return;
+  }
+  
+  var heroHtml=parts[0];
+  var detailHtml=parts.slice(1).join('');
+  
+  // Show hero + handoff message
+  var handoff='<div style="margin-top:18px;padding:20px;background:linear-gradient(160deg,var(--bg2),rgba(200,168,124,.03));border:1px solid var(--border2);border-radius:12px">';
+  handoff+='<div style="display:flex;align-items:flex-start;gap:14px">';
+  handoff+='<div style="font-size:28px;flex-shrink:0">📋</div>';
+  handoff+='<div>';
+  handoff+='<div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:6px">Dr. Faroqui is reviewing your full case</div>';
+  handoff+='<div style="font-size:13px;color:var(--text2);line-height:1.7;font-family:var(--font-serif)">I\u2019ve received your information and I\u2019m putting together a detailed assessment with personalized recommendations for your situation. You\u2019ll receive an email when your full analysis is ready.</div>';
+  handoff+='<div style="margin-top:12px;display:flex;align-items:center;gap:8px">';
+  handoff+='<div style="width:8px;height:8px;border-radius:50%;background:var(--accent);animation:pulse 2s infinite"></div>';
+  handoff+='<span style="font-size:11px;color:var(--text3)">Assessment in progress</span>';
+  handoff+='</div>';
+  handoff+='</div></div></div>';
+  
+  el.innerHTML=heroHtml+handoff;
+  
+  // Queue the full results for delayed delivery
+  hwQueueAssessment(
+    toolName||'Assessment',
+    toolId||'',
+    heroHtml+handoff,
+    detailHtml,
+    (keyInsights||[]).join(' | ')
+  );
+}
+
 // Check for delivered assessments on login/page load
 function checkPendingAssessments(){
   if(!U||!U.email)return;
@@ -13439,6 +13488,9 @@ function _mccRun(){
   h+='<div style="padding:8px 12px;background:rgba(200,168,124,.08);border-radius:8px;font-size:11px;color:var(--text2)"><strong style="color:var(--accent)">#1 Action:</strong> '+heroAction+'</div>';
   h+='</div>';
 
+  // Split marker — everything above shows instantly, everything below queued for physician review
+  h+='<!-- HW_SPLIT -->';
+
   // Expand/Collapse all toggle
   h+='<div style="display:flex;justify-content:flex-end;gap:12px;margin-bottom:6px;padding:0 2px">';
   h+='<span onclick="hwExpandAll(this.closest(\'#mcc-results\'))" style="font-size:10px;color:var(--accent);cursor:pointer;opacity:.7">Expand all</span>';
@@ -13707,7 +13759,6 @@ function _mccRun(){
     mccActs.push({text:'Research each target program specifically \u2014 generic applications waste a strong profile.',when:'this month'});
   }
   mccActs.push({text:'Build your complete application timeline with deadlines and dependencies.',when:'this month'});
-  // Set assessment context for physician review queue
   var mccKeyInsights=[];
   mccKeyInsights.push('Your competitiveness score for '+sd.name+' is <strong>'+score+'/100</strong> ('+outlook+'). Overall match probability: <strong>'+matchProb+'%</strong>.');
   mccKeyInsights.push(fastestWin.split('.').slice(0,2).join('.')+'.');
@@ -13716,7 +13767,7 @@ function _mccRun(){
   h+=hwGatePathway(hwPathway(mccPos,mccActs,mccNxt));
 
   h+='<p style="font-size:10px;color:var(--text3);font-style:italic;margin-top:14px">Based on NRMP Charting Outcomes and specialty match data. Match probabilities are estimates based on aggregate data — individual outcomes depend on interview performance, program fit, geographic preferences, and intangible factors.</p>';
-  document.getElementById('mcc-results').innerHTML=h;
+  hwRenderWithQueue('mcc-results',h,'Match Probability Calculator','v14',mccKeyInsights,score+'/100',outlook);
   applyBlurGate(document.getElementById('mcc-results'));
   document.getElementById('mcc-results').scrollIntoView({behavior:'smooth',block:'start'});
   // Save scenario data for compare feature

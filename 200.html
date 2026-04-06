@@ -8402,12 +8402,32 @@ function viewDeliveredAssessments(){
   var notif=document.getElementById('hw-assessment-notif');
   if(notif)notif.remove();
   
-  // Show all assessments (delivered + pending + viewed)
-  var all=_pendingAssessments;
-  if(!all||!all.length){notify('No assessments yet.',0);return}
+  // Always fetch fresh data when user clicks
+  if(!U||!U.email){notify('Please log in first.',1);return}
   
-  var h='<div style="padding:4px 0">';
-  all.forEach(function(a){
+  // Show loading in modal immediately
+  var modal=document.getElementById('modal-q');
+  if(modal){
+    document.getElementById('modal-q-title').textContent='Assessments from Dr. Faroqui';
+    document.getElementById('modal-q-content').innerHTML='<div style="text-align:center;padding:40px;color:var(--text3)">Loading your assessments...</div>';
+    modal.style.display='flex';
+  }
+  
+  fetch(SUPABASE_URL+'/functions/v1/deliver-assessment',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY},
+    body:JSON.stringify({action:'check',email:U.email})
+  }).then(function(r){return r.json()}).then(function(d){
+    _pendingAssessments=d.assessments||[];
+    
+    if(!_pendingAssessments.length){
+      document.getElementById('modal-q-content').innerHTML='<div style="text-align:center;padding:40px;color:var(--text3)">No assessments yet. Run a tool to get started.</div>';
+      return;
+    }
+    
+    var all=_pendingAssessments;
+    var h='<div style="padding:4px 0">';
+    all.forEach(function(a){
     var date=new Date(a.created_at).toLocaleDateString('en-US',{month:'short',day:'numeric'});
     var isPending=a.status==='pending';
     var isReady=a.status==='delivered';
@@ -8446,16 +8466,12 @@ function viewDeliveredAssessments(){
   });
   h+='</div>';
   
-  var modal=document.getElementById('modal-q');
-  if(modal){
-    document.getElementById('modal-q-title').textContent='Assessments from Dr. Faroqui';
     document.getElementById('modal-q-content').innerHTML=h;
-    modal.style.display='flex';
-  }
-  
-  // Update badge
-  renderMyAssessmentsCard();
-  _assessmentNotifShown=false;
+    renderMyAssessmentsCard();
+    _assessmentNotifShown=false;
+  }).catch(function(e){
+    document.getElementById('modal-q-content').innerHTML='<div style="text-align:center;padding:40px;color:var(--red)">Failed to load assessments. Please try again.</div>';
+  });
 }
 
 // Admin: Render assessments queue tab

@@ -1758,6 +1758,8 @@ function enterApp(){
   try{checkWeeklyCoaching()}catch(e){console.error('WeeklyCoaching:',e)}
   // Request notification permission (non-blocking)
   try{requestNotifPermission()}catch(e){}
+  // Check for delivered assessments from Dr. Faroqui
+  try{checkPendingAssessments()}catch(e){console.error('AssessmentCheck:',e)}
   // Show upgrade elements based on tier
   showUpgradeElements();
   // Start onboarding tour for new users (after a short delay for rendering)
@@ -1798,9 +1800,29 @@ function applyBlurGate(resultsEl){
 
 // Gate the "What to do next" / Attending Note section for trial users
 // Trial users see results but must subscribe to see the action plan
+// Paid users: queue the full assessment for delayed physician review delivery
+var _hwAssessmentContext=null; // Set by tools before calling hwGatePathway
+function hwSetAssessmentContext(toolName,toolId,keyInsights,score,outlook){
+  _hwAssessmentContext={toolName:toolName,toolId:toolId,keyInsights:keyInsights||[],score:score||'',outlook:outlook||''};
+}
+
 function hwGatePathway(pathwayHtml){
-  // Paid users & admins: show everything
-  if(U&&U.tier&&U.tier!=='free'&&!U.isTrial)return pathwayHtml;
+  // Paid users & admins: queue for delayed delivery (except admin who sees instant)
+  if(U&&U.tier&&U.tier!=='free'&&!U.isTrial){
+    // Admin always sees everything instantly
+    if(U.role==='admin'||U.tier==='admin')return pathwayHtml;
+    
+    // Paid users: show instant preview, queue full assessment
+    if(_hwAssessmentContext){
+      var ctx=_hwAssessmentContext;
+      _hwAssessmentContext=null; // reset
+      var previewHtml=hwInstantPreview(ctx.toolName,ctx.keyInsights,ctx.score,ctx.outlook);
+      hwQueueAssessment(ctx.toolName,ctx.toolId,previewHtml,pathwayHtml,ctx.keyInsights?ctx.keyInsights.join(' | '):'');
+      return previewHtml;
+    }
+    // No context set — fall through to show full (backward compat)
+    return pathwayHtml;
+  }
   // Free users: already gated by applyBlurGate, but in case it leaks
   if(!U||U.tier==='free')return pathwayHtml;
   // Trial users: gate the pathway
@@ -1816,6 +1838,281 @@ function hwGatePathway(pathwayHtml){
       +'</div></div>';
   }
   return pathwayHtml;
+}
+
+// ===== PHYSICIAN REVIEW QUEUE SYSTEM =====
+// Splits tool results into instant preview + delayed full assessment
+// Full assessment delivered 18-24h later by Dr. Faroqui
+
+var _pendingAssessments=[];
+var _assessmentNotifShown=false;
+
+// Generate instant preview from tool results (2-3 key insights, no Attending Note)
+function hwInstantPreview(toolName,keyInsights,score,outlook){
+  var h='<div style="margin-top:20px;padding:20px;background:linear-gradient(160deg,var(--bg2),rgba(200,168,124,.03));border:1px solid var(--border2);border-radius:12px">';
+  h+='<div style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:14px">Initial Analysis</div>';
+  
+  // Score/outlook if available
+  if(score||outlook){
+    h+='<div style="display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap">';
+    if(score)h+='<div style="padding:8px 14px;background:var(--bg3);border-radius:8px;font-size:13px;color:var(--text)"><span style="color:var(--text3);font-size:10px;display:block;margin-bottom:2px">Score</span><strong>'+score+'</strong></div>';
+    if(outlook)h+='<div style="padding:8px 14px;background:var(--bg3);border-radius:8px;font-size:13px;color:var(--text)"><span style="color:var(--text3);font-size:10px;display:block;margin-bottom:2px">Assessment</span><strong>'+outlook+'</strong></div>';
+    h+='</div>';
+  }
+  
+  // Key insights (2-3 bullet points, human tone)
+  if(keyInsights&&keyInsights.length){
+    keyInsights.forEach(function(ins){
+      h+='<div style="font-size:13px;color:var(--text);line-height:1.7;margin-bottom:10px;padding-left:14px;border-left:2px solid rgba(200,168,124,.25);font-family:var(--font-serif)">'+ins+'</div>';
+    });
+  }
+  
+  // Handoff message
+  h+='<div style="margin-top:18px;padding:16px;background:rgba(198,168,94,.06);border:1px solid rgba(198,168,94,.15);border-radius:10px">';
+  h+='<div style="display:flex;align-items:flex-start;gap:12px">';
+  h+='<div style="font-size:20px;flex-shrink:0;margin-top:2px">📋</div>';
+  h+='<div>';
+  h+='<div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:4px">Dr. Faroqui will review your full case</div>';
+  h+='<div style="font-size:12px;color:var(--text2);line-height:1.6">Your detailed assessment with personalized recommendations, action steps, and strategic guidance will be delivered within 24 hours. You\u2019ll receive an email when it\u2019s ready.</div>';
+  h+='</div></div></div>';
+  
+  h+='</div>';
+  return h;
+}
+
+// Queue the full assessment for delayed delivery
+function hwQueueAssessment(toolName,toolId,previewHtml,fullPathwayHtml,keyInsightsText){
+  if(!U||!U.email)return;
+  
+  // Save to Supabase via edge function
+  fetch(SUPABASE_URL+'/functions/v1/deliver-assessment',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY},
+    body:JSON.stringify({
+      action:'queue',
+      user_email:U.email,
+      user_name:U.name||'',
+      tool_name:toolName,
+      tool_id:toolId||'',
+      preview_html:previewHtml,
+      preview_text:keyInsightsText||'',
+      full_html:fullPathwayHtml,
+      full_text:''
+    })
+  }).then(function(r){return r.json()}).then(function(d){
+    if(d.error)console.warn('Assessment queue error:',d.error);
+    else console.log('Assessment queued, delivers at:',d.deliver_at);
+  }).catch(function(e){console.warn('Assessment queue failed:',e)});
+}
+
+// (hwQueuedPathway removed — assessment queue now handled inside hwGatePathway via hwSetAssessmentContext)
+
+// Check for delivered assessments on login/page load
+function checkPendingAssessments(){
+  if(!U||!U.email)return;
+  
+  fetch(SUPABASE_URL+'/functions/v1/deliver-assessment',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY},
+    body:JSON.stringify({action:'check',email:U.email})
+  }).then(function(r){return r.json()}).then(function(d){
+    if(!d.assessments||!d.assessments.length)return;
+    _pendingAssessments=d.assessments;
+    
+    // Count delivered but not yet viewed
+    var ready=d.assessments.filter(function(a){return a.status==='delivered'});
+    if(ready.length>0&&!_assessmentNotifShown){
+      _assessmentNotifShown=true;
+      showAssessmentNotification(ready.length);
+    }
+    
+    // Update notification badge
+    updateAssessmentBadge(ready.length);
+  }).catch(function(e){console.warn('Assessment check failed:',e)});
+}
+
+// Show notification banner for delivered assessments
+function showAssessmentNotification(count){
+  // Remove existing notification if any
+  var existing=document.getElementById('hw-assessment-notif');
+  if(existing)existing.remove();
+  
+  var notif=document.createElement('div');
+  notif.id='hw-assessment-notif';
+  notif.style.cssText='position:fixed;top:0;left:0;right:0;z-index:10000;padding:14px 20px;background:linear-gradient(135deg,#1a1620,#2a2230);border-bottom:2px solid var(--accent);display:flex;align-items:center;justify-content:space-between;animation:slideDown .4s ease';
+  notif.innerHTML='<div style="display:flex;align-items:center;gap:12px">'
+    +'<div style="font-size:20px">📋</div>'
+    +'<div><div style="font-size:13px;font-weight:600;color:var(--accent)">Assessment'+( count>1?'s':'')+' Ready</div>'
+    +'<div style="font-size:12px;color:var(--text2)">Dr. Faroqui has reviewed your case'+(count>1?' ('+count+' assessments)':'')+'</div></div></div>'
+    +'<div style="display:flex;gap:8px">'
+    +'<button onclick="viewDeliveredAssessments()" style="padding:8px 16px;font-size:12px;font-weight:600;background:var(--accent);color:#1C1A17;border:none;border-radius:6px;cursor:pointer">View Now</button>'
+    +'<button onclick="this.parentElement.parentElement.remove()" style="padding:8px 12px;font-size:12px;background:none;border:1px solid var(--border);color:var(--text3);border-radius:6px;cursor:pointer">\u2715</button>'
+    +'</div>';
+  document.body.appendChild(notif);
+  
+  // Auto-dismiss after 15 seconds
+  setTimeout(function(){var el=document.getElementById('hw-assessment-notif');if(el)el.remove()},15000);
+}
+
+// Update badge count on profile/nav
+function updateAssessmentBadge(count){
+  var badge=document.getElementById('hw-assessment-badge');
+  if(!badge){
+    // Create badge on the sidebar or nav
+    var navItems=document.querySelectorAll('.nav-item, .sidebar-item');
+    // We'll add it to the profile section
+    var profileBtn=document.querySelector('[onclick*="scr-profile"]');
+    if(profileBtn&&count>0){
+      var b=document.createElement('span');
+      b.id='hw-assessment-badge';
+      b.style.cssText='display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;padding:0 5px;font-size:10px;font-weight:700;color:#1C1A17;background:var(--accent);border-radius:9px;margin-left:6px';
+      b.textContent=count;
+      profileBtn.appendChild(b);
+    }
+  }else{
+    if(count>0){badge.textContent=count;badge.style.display=''}
+    else badge.style.display='none';
+  }
+}
+
+// View delivered assessments — shows in a modal
+function viewDeliveredAssessments(){
+  // Remove notification banner
+  var notif=document.getElementById('hw-assessment-notif');
+  if(notif)notif.remove();
+  
+  var delivered=_pendingAssessments.filter(function(a){return a.status==='delivered'});
+  if(!delivered.length){notify('No assessments ready yet.',0);return}
+  
+  var h='<div style="padding:4px 0">';
+  delivered.forEach(function(a,i){
+    var date=new Date(a.created_at).toLocaleDateString('en-US',{month:'short',day:'numeric'});
+    h+='<div style="margin-bottom:16px;border:1px solid var(--border);border-radius:12px;overflow:hidden">';
+    h+='<div style="padding:14px 16px;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center">';
+    h+='<div><div style="font-size:13px;font-weight:600;color:var(--text)">'+a.tool_name+'</div>';
+    h+='<div style="font-size:10px;color:var(--text3);margin-top:2px">Submitted '+date+'</div></div>';
+    h+='<span style="font-size:9px;padding:3px 8px;background:rgba(106,191,75,.1);color:#6abf4b;border-radius:4px;font-weight:600">REVIEWED</span></div>';
+    h+='<div style="padding:16px" id="hw-assessment-'+a.id+'">'+a.full_html+'</div>';
+    h+='</div>';
+    
+    // Mark as viewed
+    fetch(SUPABASE_URL+'/functions/v1/deliver-assessment',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY},
+      body:JSON.stringify({action:'viewed',assessment_id:a.id})
+    }).catch(function(){});
+  });
+  h+='</div>';
+  
+  // Use existing modal system
+  var modal=document.getElementById('modal-q');
+  if(modal){
+    document.getElementById('modal-q-title').textContent='Your Assessment'+(delivered.length>1?'s':'')+' from Dr. Faroqui';
+    document.getElementById('modal-q-content').innerHTML=h;
+    modal.style.display='flex';
+  }
+  
+  // Update badge
+  updateAssessmentBadge(0);
+  _assessmentNotifShown=false;
+}
+
+// Admin: Render assessments queue tab
+function admRenderAssessments(c){
+  var h='<div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:12px">Pending Assessments</div>';
+  h+='<div id="adm-assessments-list"><div style="text-align:center;padding:20px;color:var(--text3)">Loading...</div></div>';
+  c.innerHTML=h;
+  
+  // Fetch from edge function
+  fetch(SUPABASE_URL+'/functions/v1/deliver-assessment',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY},
+    body:JSON.stringify({action:'list',admin_email:U.email})
+  }).then(function(r){return r.json()}).then(function(d){
+    var list=document.getElementById('adm-assessments-list');
+    if(!list)return;
+    if(!d.assessments||!d.assessments.length){
+      list.innerHTML='<div class="adm-card" style="text-align:center;color:var(--text3)">No assessments in queue</div>';
+      return;
+    }
+    
+    var ah='';
+    var pending=d.assessments.filter(function(a){return a.status==='pending'});
+    var delivered=d.assessments.filter(function(a){return a.status==='delivered'||a.status==='viewed'});
+    
+    if(pending.length){
+      ah+='<div style="font-size:12px;font-weight:600;color:var(--accent);margin-bottom:8px">Awaiting Delivery ('+pending.length+')</div>';
+      pending.forEach(function(a){
+        var created=new Date(a.created_at).toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'});
+        var deliverAt=new Date(a.deliver_at).toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'});
+        var timeLeft=Math.max(0,Math.round((new Date(a.deliver_at)-new Date())/(1000*60*60)));
+        ah+='<div class="adm-card" style="border-left:3px solid var(--accent)">';
+        ah+='<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">';
+        ah+='<div><div style="font-size:13px;font-weight:600;color:var(--text)">'+a.tool_name+'</div>';
+        ah+='<div style="font-size:11px;color:var(--text3)">'+( a.user_name||a.user_email)+'</div></div>';
+        ah+='<div style="text-align:right"><div style="font-size:10px;color:var(--text3)">Submitted '+created+'</div>';
+        ah+='<div style="font-size:10px;color:var(--accent)">Auto-delivers '+deliverAt+' (~'+timeLeft+'h)</div></div></div>';
+        ah+='<div style="display:flex;gap:8px">';
+        ah+='<button onclick="admDeliverAssessment(\''+a.id+'\')" style="padding:6px 14px;font-size:11px;font-weight:600;background:var(--accent);color:#1C1A17;border:none;border-radius:6px;cursor:pointer">Deliver Now</button>';
+        ah+='<button onclick="admPreviewAssessment(\''+a.id+'\')" style="padding:6px 14px;font-size:11px;background:none;border:1px solid var(--border);color:var(--text2);border-radius:6px;cursor:pointer">Preview</button>';
+        ah+='</div></div>';
+      });
+    }
+    
+    if(delivered.length){
+      ah+='<div style="font-size:12px;font-weight:600;color:var(--green);margin:16px 0 8px">Delivered ('+delivered.length+')</div>';
+      delivered.forEach(function(a){
+        var deliveredDate=a.delivered_at?new Date(a.delivered_at).toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}):'—';
+        ah+='<div class="adm-card" style="border-left:3px solid var(--green);opacity:.7">';
+        ah+='<div style="display:flex;justify-content:space-between;align-items:center">';
+        ah+='<div><span style="font-size:12px;color:var(--text)">'+a.tool_name+'</span> <span style="font-size:11px;color:var(--text3)">— '+(a.user_name||a.user_email)+'</span></div>';
+        ah+='<div style="font-size:10px;color:var(--text3)">'+deliveredDate+(a.admin_delivered?' (manual)':' (auto)')+(a.status==='viewed'?' · <span style="color:var(--green)">Viewed</span>':'')+'</div>';
+        ah+='</div></div>';
+      });
+    }
+    
+    list.innerHTML=ah;
+  }).catch(function(e){
+    var list=document.getElementById('adm-assessments-list');
+    if(list)list.innerHTML='<div class="adm-card" style="color:var(--red)">Failed to load: '+e.message+'</div>';
+  });
+}
+
+// Admin: deliver assessment manually
+function admDeliverAssessment(assessmentId){
+  if(!confirm('Deliver this assessment to the user now?'))return;
+  
+  fetch(SUPABASE_URL+'/functions/v1/deliver-assessment',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY},
+    body:JSON.stringify({action:'deliver',assessment_id:assessmentId,admin_email:U.email})
+  }).then(function(r){return r.json()}).then(function(d){
+    if(d.error){notify('Error: '+d.error,1);return}
+    notify('Assessment delivered! User will receive an email. \u2705');
+    admRenderAssessments(document.getElementById('admin-content'));
+  }).catch(function(e){notify('Delivery failed: '+e.message,1)});
+}
+
+// Admin: preview assessment content
+function admPreviewAssessment(assessmentId){
+  var a=null;
+  // Find from loaded data
+  fetch(SUPABASE_URL+'/functions/v1/deliver-assessment',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY},
+    body:JSON.stringify({action:'list',admin_email:U.email})
+  }).then(function(r){return r.json()}).then(function(d){
+    if(!d.assessments)return;
+    a=d.assessments.find(function(x){return x.id===assessmentId});
+    if(!a){notify('Assessment not found',1);return}
+    var modal=document.getElementById('modal-q');
+    if(modal){
+      document.getElementById('modal-q-title').textContent='Preview: '+a.tool_name+' — '+(a.user_name||a.user_email);
+      document.getElementById('modal-q-content').innerHTML='<div style="margin-bottom:16px"><div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;margin-bottom:8px">Instant Preview (shown to user)</div>'+a.preview_html+'</div>'
+        +'<div style="border-top:2px solid var(--accent);padding-top:16px;margin-top:16px"><div style="font-size:11px;font-weight:600;color:var(--green);text-transform:uppercase;margin-bottom:8px">Full Assessment (delivered later)</div>'+a.full_html+'</div>';
+      modal.style.display='flex';
+    }
+  }).catch(function(){notify('Failed to load preview',1)});
 }
 
 // ===== RENDER HOME =====
@@ -5331,6 +5628,7 @@ function crsCalc(){
   if(reds.length>1)crsAct.push({text:'Fix '+reds[1].cat+': '+reds[1].text,when:'this week'});
   else if(yellows.length)crsAct.push({text:'Negotiate '+yellows[0].cat+': '+yellows[0].text,when:'before signing'});
   crsAct.push({text:'Run your compensation through the RVU Calculator.',when:'this week'});
+  hwSetAssessmentContext('Contract Review Scorecard','v12',['Your contract scored <strong>'+pct+'%</strong> ('+grade+'). '+(reds.length?reds.length+' red flag'+(reds.length>1?'s':'')+' identified that need attention before signing.':'No major red flags found.'),'Your contract has '+(yellows.length+reds.length)+' items worth addressing'+(exposure>0?' with an estimated financial exposure of $'+(exposure/1000).toFixed(0)+'K+':'')+'.'+(reds.length>0?' The most critical issue: '+reds[0].cat.toLowerCase()+'.':'')],pct+'%',grade);
   h+=hwGatePathway(hwPathway(crsPos,crsAct,{id:'v4',icon:'\ud83d\udcb0',title:'RVU Compensation Calculator',why:'Verify whether this contract\u2019s compensation is actually competitive for your specialty and volume.'}));
 
   // Completion indicator
@@ -5678,6 +5976,7 @@ function ocmCompare(){
 
   // Pathway
   var ocmDiff2=Math.round(Math.abs(cA.totalWithRetire-cB.totalWithRetire)/1000);
+  hwSetAssessmentContext('Contract & Offer Analyzer','v12',['<strong>'+winner+' wins</strong> by $'+ocmDiff2+'K in true 10-year value.','Key factors driving the difference: compensation structure, benefits, and long-term financial trajectory.'+(unlessClause?' One important consideration: '+unlessClause+'.':'')],null,winner+' wins by $'+ocmDiff2+'K');
   document.getElementById('ocm-results').innerHTML+=hwGatePathway(hwPathway('<strong>'+winner+' wins</strong> by $'+ocmDiff2+'K in true 10-year value. But money alone doesn\u2019t decide \u2014 factor in non-compete, call, and location.',[{text:'Run both contracts through Contract Review Tool for hidden clauses.',when:'this week'},{text:'Model both in the Financial Planner for 30-year compounding.',when:'this week'},{text:'Negotiate the weaker offer\u2019s terms up \u2014 you have leverage.',when:'before signing'}],{id:'v11',icon:'\ud83d\udcc8',title:'Financial Planner',why:'See how each offer compounds over 30 years.'}));
 
   // Lifetime Impact — opportunity cost of choosing wrong offer
@@ -5895,6 +6194,7 @@ function _sfaRun(q1,q2,q3,q4,q5,q6){
   h+=hwSection('Why These Would Be Wrong For You',bottom.length+' mismatches',sec,false);
 
   // Pathway
+  hwSetAssessmentContext('Specialty Fit Assessment','v13',['Your top match is <strong>'+top[0].name+'</strong> with a '+top[0].pct+'% fit score. '+top[1].name+' ('+top[1].pct+'%) is your second strongest match.','Based on your answers about patient interaction preferences, lifestyle priorities, and procedural interests, '+top[0].name+' aligns most closely with what you described.'],null,'Top: '+top[0].name);
   h+=hwGatePathway(hwPathway('I\u2019d tell you to pursue <strong>'+top[0].name+'</strong>. '+top[1].name+' is a reasonable backup, but your answers clearly favor the first. Stop browsing specialties and start testing this one in real life.',[{text:'Shadow or rotate in '+top[0].name+'. Two or three days of real exposure beats months of theorizing.',when:'this week'},{text:'Talk to a current PGY-3 or fellow. Not an attending. Trainees give you the unfiltered version.',when:'this month'},{text:'Check whether you\u2019re actually competitive before committing emotionally.',when:'this month'}],{id:'v14',icon:'\ud83c\udfaf',title:'Match Probability Calculator',why:'Find out if you\u2019re competitive for '+top[0].name+'. Passion without competitiveness is a dead end.'}));
 
   document.getElementById('sfa-results').innerHTML=h;
@@ -6024,6 +6324,7 @@ function _bmdRun(qs){
     hOk+='<div style="font-size:22px;font-weight:600;color:var(--text);font-family:var(--font-serif);margin-bottom:8px">\u2705 No Significant Issues Detected</div>';
     hOk+='<div style="font-size:12px;color:var(--text3);line-height:1.6;max-width:420px;margin:0 auto">Your answers do not indicate significant burnout, specialty misfit, or practice model mismatch. That is genuinely good news. If something still feels off, it may be worth revisiting in 3-6 months when you have more data points.</div>';
     hOk+='</div>';
+    hwSetAssessmentContext('Burnout vs Misfit Diagnostic','v13',['No significant burnout or career misfit signals detected in your responses.','If something prompted you to take this assessment, keep paying attention to that instinct. Trends over time matter more than a single snapshot.'],null,'No Significant Issues');
     hOk+=hwGatePathway(hwPathway('Your situation looks stable. If you are here because something feels slightly off, pay attention to that instinct but do not overreact to it. Come back in a few months and retake this. Trends matter more than snapshots.',[{text:'Write down specifically what prompted you to take this assessment. If you cannot name it precisely, the feeling may pass.',when:'today'},{text:'Revisit this diagnostic in 3 months. If the same concerns persist, they deserve attention.',when:'3 months'}],{id:'v13',icon:'\ud83e\uddec',title:'Specialty Fit Assessment',why:'While you are here, confirm your specialty is still the right one. Preferences evolve.'}));
     document.getElementById('bmd-results').innerHTML=hOk;
     applyBlurGate(document.getElementById('bmd-results'));
@@ -6204,6 +6505,8 @@ function _bmdRun(qs){
     pathNxt={id:'v12',icon:'\u2696\ufe0f',title:'Contract & Offer Analyzer',why:'Compare different practice models systematically before deciding.'};
   }
 
+  var bmdPrimaryLabel=primary==='burnout'?'Burnout':primary==='misfit'?'Career Misfit':'Practice Model Issue';
+  hwSetAssessmentContext('Burnout vs Misfit Diagnostic','v13',['Your primary signal is <strong>'+bmdPrimaryLabel+'</strong> ('+Math.max(bPct,mPct,pPct)+'%).'+(primary==='burnout'?' This suggests an environment issue, not a career crisis. Most physicians who feel this way recover when they change their environment.':primary==='misfit'?' The pattern in your responses suggests a structural mismatch between who you are and your current specialty.':' You appear to be in the right specialty but the wrong practice structure. This is the most common and most fixable pattern.')],null,bmdPrimaryLabel+' ('+severity+')');
   h+=hwGatePathway(hwPathway(
     primary==='burnout'
       ?'This is not a career crisis. This is an environment crisis. <strong>Do not make a permanent decision based on a temporary situation.</strong> Most physicians who feel this way recover fully when they change their environment, not their career.'
@@ -7044,6 +7347,12 @@ function _mccRun(){
     mccActs.push({text:'Research each target program specifically \u2014 generic applications waste a strong profile.',when:'this month'});
   }
   mccActs.push({text:'Build your complete application timeline with deadlines and dependencies.',when:'this month'});
+  // Set assessment context for physician review queue
+  var mccKeyInsights=[];
+  mccKeyInsights.push('Your competitiveness score for '+sd.name+' is <strong>'+score+'/100</strong> ('+outlook+'). Overall match probability: <strong>'+matchProb+'%</strong>.');
+  mccKeyInsights.push(fastestWin.split('.').slice(0,2).join('.')+'.');
+  if(needle.sims.length>0)mccKeyInsights.push('There is a path to gain <strong>+'+needle.combined.delta+' points</strong>. Your fastest move: '+needle.sims[0].label.toLowerCase()+'.');
+  hwSetAssessmentContext('Match Probability Calculator','v14',mccKeyInsights,score+'/100',outlook);
   h+=hwGatePathway(hwPathway(mccPos,mccActs,mccNxt));
 
   h+='<p style="font-size:10px;color:var(--text3);font-style:italic;margin-top:14px">Based on NRMP Charting Outcomes and specialty match data. Match probabilities are estimates based on aggregate data — individual outcomes depend on interview performance, program fit, geographic preferences, and intangible factors.</p>';
@@ -7773,6 +8082,7 @@ function _csbRun(){
     h+='</div></div>';
   }
 
+  hwSetAssessmentContext('Career Roadmap','v15',['Your personalized '+tName+' roadmap has been created with <strong>'+phases.length+' phases</strong>.'+(warnings.length?' I\u2019ve flagged '+warnings.length+' area'+(warnings.length>1?'s':'')+' that need immediate attention.':''),csbActs.length>0?'Your most important first step: '+csbActs[0].text:''],null,tName+' roadmap ('+phases.length+' phases)');
   h+=hwGatePathway(hwPathway(csbPos,csbActs,csbNxt));
 
   h+='<div onclick="openFramework(\'v9\')" style="margin-top:14px;padding:14px;background:var(--accent-dim);border:1px solid rgba(198,168,94,.15);border-radius:10px;text-align:center;cursor:pointer;transition:all .2s" onmouseenter="this.style.borderColor=\'rgba(198,168,94,.4)\'" onmouseleave="this.style.borderColor=\'rgba(198,168,94,.15)\'">';
@@ -9133,6 +9443,7 @@ function _frcRun(){
   frcAct.push({text:total>=60?'Practice interview answers \u2014 a strong app means nothing if you can\u2019t sell it.':'Build your research portfolio \u2014 even one first-author paper changes your profile.',when:total>=60?'this month':'next 3 months'});
   var frcNxt=total>=70?{id:'v16',icon:'\ud83c\udf99\ufe0f',title:'Interview Practice Tool',why:'Your app is competitive \u2014 now prepare to sell it.'}:rawScores[0]<=2?{id:'v7',icon:'\u2696\ufe0f',title:'Research Impact Calculator',why:'Research is your biggest gap. See which pubs move the needle most.'}:{id:'v14',icon:'\ud83c\udfaf',title:'Match Probability Calculator',why:'Get a full competitiveness score to see where you stand.'};
   var frcPwEl=document.getElementById('frc-pathway');
+  hwSetAssessmentContext('Match Competitiveness Calculator','v14',['Your readiness score is <strong>'+total+'/100</strong> ('+gl+').'+(sData?' For '+sData.name+'.':''),gaps.length>0?'Your most impactful area to improve: <strong>'+gaps[0].cat+'</strong> (weight: '+gaps[0].weight+'%).':'Strong across all dimensions.'],total+'/100',gl);
   if(frcPwEl)frcPwEl.innerHTML=hwGatePathway(hwPathway(frcPos,frcAct,frcNxt));
 
   // Lifetime Impact — fellowship vs general practice earnings gap
@@ -10295,6 +10606,7 @@ function ciCalc(){
   ciActs.push({text:'Model both scenarios in the Financial Planner to see the 30-year compounding impact.',when:'this week'});
   var ciNxt=salPts<22?{id:'v4',icon:'\ud83d\udcb0',title:'RVU Compensation Calculator',why:'Verify whether this RVU rate is actually competitive for your specialty and volume.'}
     :{id:'v11',icon:'\ud83d\udcc8',title:'Financial Planner',why:'See how this contract compounds over 30 years. Small differences now become millions.'};
+  hwSetAssessmentContext('Contract Review Tool','v12',['Your contract scores <strong>'+score+'/100</strong> ('+scoreLabel+'). '+(flags.length?flags.length+' red flag'+(flags.length>1?'s':'')+' identified.':'No major red flags.'),recs.length>0?recs[0]:'Contract terms look solid overall.'],score+'/100',scoreLabel);
   out.innerHTML+=hwGatePathway(hwPathway(ciPos,ciActs,ciNxt));
 
   // Lifetime Impact — contract risk exposure
@@ -10554,6 +10866,7 @@ function ftCalc(){
       {text:'If you have competing offers, run them through the Contract Review Tool for hidden financial risks.',when:'this week'},
       {text:'Build a 3-year cash flow plan \u2014 the 30-year view is the destination, but the first 3 years determine if you get there.',when:'this month'}
     ];
+    hwSetAssessmentContext('Financial Planner','v11',['Comparing '+scenarios.length+' scenarios, <strong>'+bestSc.label+'</strong> wins by $'+(diff/1000000).toFixed(1)+'M in projected 30-year net worth.','Beyond the numbers, consider lifestyle sustainability, burnout risk, and whether you can maintain the workload for 25+ years.'],null,bestSc.label+' wins by $'+(diff/1000000).toFixed(1)+'M');
     insEl.innerHTML+=hwGatePathway(hwPathway(ftPos,ftActs,{id:'v11',icon:'\ud83d\udcc5',title:'Financial Planner',why:'Turn this 30-year vision into a concrete month-by-month plan for your first 3 years.'}));
   }else{
     insEl.innerHTML=debtSection;
@@ -10861,6 +11174,7 @@ function admRender(){
   if(curAdminTab==='dashboard')admRenderDashboard(c);
   else if(curAdminTab==='users')admRenderUsers(c);
   else if(curAdminTab==='queue')admRenderQueue(c);
+  else if(curAdminTab==='assessments')admRenderAssessments(c);
   else if(curAdminTab==='feedback')admRenderFeedback(c);
   else if(curAdminTab==='analytics')admRenderAnalytics(c);
   else if(curAdminTab==='cancellations')admRenderCancellations(c);
@@ -12475,6 +12789,7 @@ function rvuUpdate(){
       document.getElementById('rvu-scenarios').insertAdjacentHTML('afterend', negotiateHtml);
 
       // Pathway
+      hwSetAssessmentContext('RVU Compensation Calculator','v4',['Your estimated total compensation is <strong>$'+Math.round(total).toLocaleString()+'</strong>.',(diffFromMgma<-20000?'This is significantly below the MGMA median for your specialty. There is room to negotiate.':diffFromMgma<0?'You are below the MGMA median by $'+Math.abs(Math.round(diffFromMgma)).toLocaleString()+'. This gap is negotiable.':'You are above the MGMA median. Compensation is strong.')],null,diffFromMgma<0?'Below MGMA':'Above MGMA');
       var rvuPw=hwGatePathway(hwPathway(diffFromMgma<-20000?'You\u2019re significantly underpaid. Negotiate before signing.':diffFromMgma<0?'Below market \u2014 negotiable.':'Compensation is strong. Focus on contract terms.',[{text:diffFromMgma<0?'Counter with a specific per-wRVU rate increase.':'Review non-compete, tail coverage, and call terms.',when:'this week'},{text:'Pull MGMA data for your exact specialty and region.',when:'this week'},{text:'Run the full contract through Contract Review.',when:'before signing'}],diffFromMgma<0?{id:'v12',icon:'\u2696\ufe0f',title:'Contract & Offer Analyzer',why:'Compare against other offers to strengthen your position.'}:{id:'v12',icon:'\ud83d\udcdd',title:'Contract Review Tool',why:'Comp looks good \u2014 make sure the contract terms don\u2019t have hidden costs.'}));
       document.getElementById('rvu-scenarios').insertAdjacentHTML('afterend', rvuPw);
       // Lifetime Impact
@@ -12638,6 +12953,7 @@ function fypCalculate(){
   h+=criticalDecision;
 
   // Pathway
+  hwSetAssessmentContext('3-Year Financial Projection','v11',[(y3.netWealth>=0?'Projected <strong>positive net worth by Year 3</strong>. You\u2019re ahead of most physicians at this stage.':'Still in the red at Year 3 with $'+Math.round(debt/1000)+'K debt. This is normal, but keep expenses flat.'),'Projected Year 3 net wealth: <strong>$'+Math.round(y3.netWealth/1000)+'K</strong>. Savings rate: '+yr1Save+'%.'],null,y3.netWealth>=0?'Positive by Year 3':'Building');
   h+=hwGatePathway(hwPathway(y3.netWealth>=0?'Positive net worth by Year 3 \u2014 ahead of most physicians.':'Still in the red at Year 3 \u2014 normal with $'+Math.round(debt/1000)+'K debt. Hold expenses flat.',[{text:'Set up 401k + backdoor Roth this week.',when:'this week'},{text:(pslf==='yes'?'Certify PSLF employment.':'Refinance your loans.')+' Free money.',when:'this week'},{text:'Automate savings at '+yr1Save+'%'+(yr1Save<20?' (push to 20%)':'')+' before lifestyle creep.',when:'this month'}],{id:'v11',icon:'\ud83d\udcb5',title:'Financial Planner',why:'Get a full financial health score \u2014 disability, tax strategy, advisor quality.'}));
 
   document.getElementById('fyp-results').innerHTML=h;
@@ -12816,6 +13132,8 @@ function ilpCalculate(){
   h+='</div>';
 
   // hwPathway
+  var fhGrade=scorePct>=80?'Strong':scorePct>=60?'Moderate':'Needs Attention';
+  hwSetAssessmentContext('Financial Health Score','v11',['Your financial health score is <strong>'+scorePct+'%</strong> ('+fhGrade+').',topPriority.split('.').slice(0,2).join('.')+'.'],scorePct+'%',fhGrade);
   h+=hwGatePathway(hwPathway(scorePct>=80?'I\u2019ve seen what separates physicians who build wealth from those who don\u2019t. Your financial fundamentals are strong. Shift focus to optimizing, not just saving.':scorePct>=60?'Solid start but you have gaps. Fix the top action item above before anything else.':'This is one of those situations where acting now versus next quarter makes a real difference. Critical financial gaps. The priority moves above are in order. Do them this month, not next quarter.',
     [{text:topPriority.split('.')[0]+'.',when:'this week'},
      {text:debt>0?'Run a 30-year projection to see how debt payoff timing affects your net worth.':'Run a 30-year projection comparing your current savings rate vs 5% higher.',when:'this month'},
@@ -13205,6 +13523,7 @@ function roiUpdate(){
       var roiNxt=pct>=80?{id:'v16',icon:'\ud83c\udf99\ufe0f',title:'Interview Practice Tool',why:'Your research is strong — now practice selling it in interviews.'}
         :pct>=50?{id:'v14',icon:'\ud83c\udfc6',title:'Match Probability Calculator',why:'See how this research score combines with your other stats for a real match probability.'}
         :{id:'v14',icon:'\ud83c\udfc6',title:'Match Competitiveness Calculator',why:'Research is one factor. See your full competitiveness score and what moves the needle.'};
+      hwSetAssessmentContext('Research Impact Calculator','v7',['Your research profile scores <strong>'+pct+'%</strong>.'+(firstAuthor<1?' No first-author papers detected. This is your highest-impact gap.':''),roiPos.split('.').slice(0,2).join('.')+'.'],pct+'%',pct>=80?'Strong':pct>=50?'Building':'Needs Work');
       linkEl.innerHTML=hwGatePathway(hwPathway(roiPos,roiActs,roiNxt));
     }else{
       linkEl.innerHTML='';
@@ -14232,6 +14551,7 @@ function misGrade(){
   var misNxt=avgScore>=70?{id:'v14',icon:'\ud83d\udcca',title:'Match Competitiveness Calculator',why:'Interviews are one piece. See your full competitiveness score and what moves the needle.'}
     :avgScore>=40?{id:'v15',icon:'\ud83d\uddfa\ufe0f',title:'Career Roadmap Tool',why:'Build a complete timeline — interviews are late-stage. Make sure everything else is on track.'}
     :{id:'v14',icon:'\ud83c\udfc6',title:'Match Probability Calculator',why:'Check your overall competitiveness — interview skills matter more when your stats are borderline.'};
+  hwSetAssessmentContext('Interview Practice Tool','v16',['Your interview readiness score is <strong>'+avgScore+'/100</strong>.'+(totalRed>0?' '+totalRed+' red flag'+(totalRed>1?'s':'')+' identified in your responses that could hurt you in a real interview.':''),avgScore>=80?'Your answers show the specificity and structure that program directors remember.':avgScore>=60?'Solid instincts, but you\u2019re leaving points on the table. Targeted practice will close the gap.':'Your answers need significant work before real interviews. Focus on rewriting your weakest responses.'],avgScore+'/100',avgScore>=80?'Ready':avgScore>=60?'Good Foundation':'Needs Work');
   h+=hwGatePathway(hwPathway(misPos,misActs,misNxt));
 
   // Retake button

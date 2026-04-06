@@ -1964,7 +1964,11 @@ function checkPendingAssessments(){
     headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY},
     body:JSON.stringify({action:'check',email:U.email})
   }).then(function(r){return r.json()}).then(function(d){
-    if(!d.assessments||!d.assessments.length)return;
+    if(!d.assessments||!d.assessments.length){
+      _pendingAssessments=[];
+      renderMyAssessmentsCard();
+      return;
+    }
     _pendingAssessments=d.assessments;
     
     // Count delivered but not yet viewed
@@ -1974,14 +1978,32 @@ function checkPendingAssessments(){
       showAssessmentNotification(ready.length);
     }
     
-    // Update notification badge
-    updateAssessmentBadge(ready.length);
+    // Update profile card + badge
+    renderMyAssessmentsCard();
   }).catch(function(e){console.warn('Assessment check failed:',e)});
+}
+
+// Render the "My Assessments" card on profile
+function renderMyAssessmentsCard(){
+  var card=document.getElementById('my-assessments-card');
+  if(!card)return;
+  
+  var total=_pendingAssessments.length;
+  var ready=_pendingAssessments.filter(function(a){return a.status==='delivered'}).length;
+  var pending=_pendingAssessments.filter(function(a){return a.status==='pending'}).length;
+  
+  if(total===0){card.style.display='none';return}
+  
+  card.style.display='';
+  var badge=document.getElementById('assessment-badge');
+  if(badge){
+    if(ready>0){badge.style.display='flex';badge.textContent=ready}
+    else{badge.style.display='none'}
+  }
 }
 
 // Show notification banner for delivered assessments
 function showAssessmentNotification(count){
-  // Remove existing notification if any
   var existing=document.getElementById('hw-assessment-notif');
   if(existing)existing.remove();
   
@@ -1990,7 +2012,7 @@ function showAssessmentNotification(count){
   notif.style.cssText='position:fixed;top:0;left:0;right:0;z-index:10000;padding:14px 20px;background:linear-gradient(135deg,#1a1620,#2a2230);border-bottom:2px solid var(--accent);display:flex;align-items:center;justify-content:space-between;animation:slideDown .4s ease';
   notif.innerHTML='<div style="display:flex;align-items:center;gap:12px">'
     +'<div style="font-size:20px">📋</div>'
-    +'<div><div style="font-size:13px;font-weight:600;color:var(--accent)">Assessment'+( count>1?'s':'')+' Ready</div>'
+    +'<div><div style="font-size:13px;font-weight:600;color:var(--accent)">Assessment'+(count>1?'s':'')+' Ready</div>'
     +'<div style="font-size:12px;color:var(--text2)">Dr. Faroqui has reviewed your case'+(count>1?' ('+count+' assessments)':'')+'</div></div></div>'
     +'<div style="display:flex;gap:8px">'
     +'<button onclick="viewDeliveredAssessments()" style="padding:8px 16px;font-size:12px;font-weight:600;background:var(--accent);color:#1C1A17;border:none;border-radius:6px;cursor:pointer">View Now</button>'
@@ -1998,80 +2020,77 @@ function showAssessmentNotification(count){
     +'</div>';
   document.body.appendChild(notif);
   
-  // Auto-dismiss after 15 seconds
   setTimeout(function(){var el=document.getElementById('hw-assessment-notif');if(el)el.remove()},15000);
-}
-
-// Update badge count on profile/nav
-function updateAssessmentBadge(count){
-  var badge=document.getElementById('hw-assessment-badge');
-  if(!badge){
-    // Create badge on the sidebar or nav
-    var navItems=document.querySelectorAll('.nav-item, .sidebar-item');
-    // We'll add it to the profile section
-    var profileBtn=document.querySelector('[onclick*="scr-profile"]');
-    if(profileBtn&&count>0){
-      var b=document.createElement('span');
-      b.id='hw-assessment-badge';
-      b.style.cssText='display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;padding:0 5px;font-size:10px;font-weight:700;color:#1C1A17;background:var(--accent);border-radius:9px;margin-left:6px';
-      b.textContent=count;
-      profileBtn.appendChild(b);
-    }
-  }else{
-    if(count>0){badge.textContent=count;badge.style.display=''}
-    else badge.style.display='none';
-  }
 }
 
 // View delivered assessments — shows in a modal
 function viewDeliveredAssessments(){
-  // Remove notification banner
   var notif=document.getElementById('hw-assessment-notif');
   if(notif)notif.remove();
   
-  var delivered=_pendingAssessments.filter(function(a){return a.status==='delivered'});
-  if(!delivered.length){notify('No assessments ready yet.',0);return}
+  // Show all assessments (delivered + pending + viewed)
+  var all=_pendingAssessments;
+  if(!all||!all.length){notify('No assessments yet.',0);return}
   
   var h='<div style="padding:4px 0">';
-  delivered.forEach(function(a,i){
+  all.forEach(function(a){
     var date=new Date(a.created_at).toLocaleDateString('en-US',{month:'short',day:'numeric'});
-    h+='<div style="margin-bottom:16px;border:1px solid var(--border);border-radius:12px;overflow:hidden">';
+    var isPending=a.status==='pending';
+    var isReady=a.status==='delivered';
+    var isViewed=a.status==='viewed';
+    
+    h+='<div style="margin-bottom:16px;border:1px solid var(--border);border-radius:12px;overflow:hidden'+(isPending?';opacity:.7':'')+'">';
     h+='<div style="padding:14px 16px;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center">';
     h+='<div><div style="font-size:13px;font-weight:600;color:var(--text)">'+a.tool_name+'</div>';
     h+='<div style="font-size:10px;color:var(--text3);margin-top:2px">Submitted '+date+'</div></div>';
-    h+='<span style="font-size:9px;padding:3px 8px;background:rgba(106,191,75,.1);color:#6abf4b;border-radius:4px;font-weight:600">REVIEWED</span></div>';
-    h+='<div style="padding:16px" id="hw-assessment-'+a.id+'">'+a.full_html+'</div>';
+    
+    if(isPending){
+      h+='<span style="font-size:9px;padding:3px 8px;background:rgba(198,168,94,.1);color:var(--accent);border-radius:4px;font-weight:600">IN REVIEW</span>';
+    }else if(isReady){
+      h+='<span style="font-size:9px;padding:3px 8px;background:rgba(106,191,75,.1);color:#6abf4b;border-radius:4px;font-weight:600">NEW</span>';
+    }else{
+      h+='<span style="font-size:9px;padding:3px 8px;background:var(--bg3);color:var(--text3);border-radius:4px;font-weight:600">REVIEWED</span>';
+    }
     h+='</div>';
     
-    // Mark as viewed
-    fetch(SUPABASE_URL+'/functions/v1/deliver-assessment',{
-      method:'POST',
-      headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY},
-      body:JSON.stringify({action:'viewed',assessment_id:a.id})
-    }).catch(function(){});
+    if(isPending){
+      h+='<div style="padding:16px;text-align:center;color:var(--text3);font-size:12px"><div style="display:flex;align-items:center;justify-content:center;gap:8px"><div style="width:8px;height:8px;border-radius:50%;background:var(--accent);animation:pulse 2s infinite"></div>Dr. Faroqui is reviewing your case</div></div>';
+    }else{
+      h+='<div style="padding:16px">'+a.full_html+'</div>';
+      
+      // Mark as viewed
+      if(isReady){
+        fetch(SUPABASE_URL+'/functions/v1/deliver-assessment',{
+          method:'POST',
+          headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY},
+          body:JSON.stringify({action:'viewed',assessment_id:a.id})
+        }).catch(function(){});
+        a.status='viewed';
+      }
+    }
+    h+='</div>';
   });
   h+='</div>';
   
-  // Use existing modal system
   var modal=document.getElementById('modal-q');
   if(modal){
-    document.getElementById('modal-q-title').textContent='Your Assessment'+(delivered.length>1?'s':'')+' from Dr. Faroqui';
+    document.getElementById('modal-q-title').textContent='Assessments from Dr. Faroqui';
     document.getElementById('modal-q-content').innerHTML=h;
     modal.style.display='flex';
   }
   
   // Update badge
-  updateAssessmentBadge(0);
+  renderMyAssessmentsCard();
   _assessmentNotifShown=false;
 }
 
 // Admin: Render assessments queue tab
+var _admAssessments=null;
 function admRenderAssessments(c){
-  var h='<div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:12px">Pending Assessments</div>';
+  var h='<div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:12px">Physician Review Queue</div>';
   h+='<div id="adm-assessments-list"><div style="text-align:center;padding:20px;color:var(--text3)">Loading...</div></div>';
   c.innerHTML=h;
   
-  // Fetch from edge function
   fetch(SUPABASE_URL+'/functions/v1/deliver-assessment',{
     method:'POST',
     headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY},
@@ -2079,30 +2098,38 @@ function admRenderAssessments(c){
   }).then(function(r){return r.json()}).then(function(d){
     var list=document.getElementById('adm-assessments-list');
     if(!list)return;
-    if(!d.assessments||!d.assessments.length){
+    _admAssessments=d.assessments||[];
+    if(!_admAssessments.length){
       list.innerHTML='<div class="adm-card" style="text-align:center;color:var(--text3)">No assessments in queue</div>';
       return;
     }
     
     var ah='';
-    var pending=d.assessments.filter(function(a){return a.status==='pending'});
-    var delivered=d.assessments.filter(function(a){return a.status==='delivered'||a.status==='viewed'});
+    var pending=_admAssessments.filter(function(a){return a.status==='pending'});
+    var delivered=_admAssessments.filter(function(a){return a.status==='delivered'||a.status==='viewed'});
     
     if(pending.length){
       ah+='<div style="font-size:12px;font-weight:600;color:var(--accent);margin-bottom:8px">Awaiting Delivery ('+pending.length+')</div>';
-      pending.forEach(function(a){
+      pending.forEach(function(a,i){
         var created=new Date(a.created_at).toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'});
         var deliverAt=new Date(a.deliver_at).toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'});
         var timeLeft=Math.max(0,Math.round((new Date(a.deliver_at)-new Date())/(1000*60*60)));
         ah+='<div class="adm-card" style="border-left:3px solid var(--accent)">';
         ah+='<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">';
         ah+='<div><div style="font-size:13px;font-weight:600;color:var(--text)">'+a.tool_name+'</div>';
-        ah+='<div style="font-size:11px;color:var(--text3)">'+( a.user_name||a.user_email)+'</div></div>';
+        ah+='<div style="font-size:11px;color:var(--text3)">'+(a.user_name||a.user_email)+'</div></div>';
         ah+='<div style="text-align:right"><div style="font-size:10px;color:var(--text3)">Submitted '+created+'</div>';
         ah+='<div style="font-size:10px;color:var(--accent)">Auto-delivers '+deliverAt+' (~'+timeLeft+'h)</div></div></div>';
+        
+        // Inline preview toggle
+        ah+='<div id="adm-preview-'+i+'" style="display:none;margin:8px 0;padding:12px;background:var(--bg);border:1px solid var(--border);border-radius:8px;max-height:400px;overflow-y:auto;font-size:12px">';
+        ah+='<div style="margin-bottom:12px"><div style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;margin-bottom:6px">What User Sees Now</div>'+( a.preview_html||'<em>No preview</em>')+'</div>';
+        ah+='<div style="border-top:2px solid var(--accent);padding-top:12px"><div style="font-size:10px;font-weight:600;color:var(--green);text-transform:uppercase;margin-bottom:6px">Full Assessment (will be delivered)</div>'+(a.full_html||'<em>No content</em>')+'</div>';
+        ah+='</div>';
+        
         ah+='<div style="display:flex;gap:8px">';
         ah+='<button onclick="admDeliverAssessment(\''+a.id+'\')" style="padding:6px 14px;font-size:11px;font-weight:600;background:var(--accent);color:#1C1A17;border:none;border-radius:6px;cursor:pointer">Deliver Now</button>';
-        ah+='<button onclick="admPreviewAssessment(\''+a.id+'\')" style="padding:6px 14px;font-size:11px;background:none;border:1px solid var(--border);color:var(--text2);border-radius:6px;cursor:pointer">Preview</button>';
+        ah+='<button onclick="var p=document.getElementById(\'adm-preview-'+i+'\');p.style.display=p.style.display===\'none\'?\'\':\'none\'" style="padding:6px 14px;font-size:11px;background:none;border:1px solid var(--border);color:var(--text2);border-radius:6px;cursor:pointer">Preview</button>';
         ah+='</div></div>';
       });
     }
@@ -2110,11 +2137,11 @@ function admRenderAssessments(c){
     if(delivered.length){
       ah+='<div style="font-size:12px;font-weight:600;color:var(--green);margin:16px 0 8px">Delivered ('+delivered.length+')</div>';
       delivered.forEach(function(a){
-        var deliveredDate=a.delivered_at?new Date(a.delivered_at).toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}):'—';
+        var deliveredDate=a.delivered_at?new Date(a.delivered_at).toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}):'\u2014';
         ah+='<div class="adm-card" style="border-left:3px solid var(--green);opacity:.7">';
         ah+='<div style="display:flex;justify-content:space-between;align-items:center">';
-        ah+='<div><span style="font-size:12px;color:var(--text)">'+a.tool_name+'</span> <span style="font-size:11px;color:var(--text3)">— '+(a.user_name||a.user_email)+'</span></div>';
-        ah+='<div style="font-size:10px;color:var(--text3)">'+deliveredDate+(a.admin_delivered?' (manual)':' (auto)')+(a.status==='viewed'?' · <span style="color:var(--green)">Viewed</span>':'')+'</div>';
+        ah+='<div><span style="font-size:12px;color:var(--text)">'+a.tool_name+'</span> <span style="font-size:11px;color:var(--text3)">\u2014 '+(a.user_name||a.user_email)+'</span></div>';
+        ah+='<div style="font-size:10px;color:var(--text3)">'+deliveredDate+(a.admin_delivered?' (manual)':' (auto)')+(a.status==='viewed'?' \u00b7 <span style="color:var(--green)">Viewed</span>':'')+'</div>';
         ah+='</div></div>';
       });
     }
@@ -2128,7 +2155,7 @@ function admRenderAssessments(c){
 
 // Admin: deliver assessment manually
 function admDeliverAssessment(assessmentId){
-  if(!confirm('Deliver this assessment to the user now?'))return;
+  if(!confirm('Deliver this assessment to the user now? They will receive an email.'))return;
   
   fetch(SUPABASE_URL+'/functions/v1/deliver-assessment',{
     method:'POST',
@@ -2139,28 +2166,6 @@ function admDeliverAssessment(assessmentId){
     notify('Assessment delivered! User will receive an email. \u2705');
     admRenderAssessments(document.getElementById('admin-content'));
   }).catch(function(e){notify('Delivery failed: '+e.message,1)});
-}
-
-// Admin: preview assessment content
-function admPreviewAssessment(assessmentId){
-  var a=null;
-  // Find from loaded data
-  fetch(SUPABASE_URL+'/functions/v1/deliver-assessment',{
-    method:'POST',
-    headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY},
-    body:JSON.stringify({action:'list',admin_email:U.email})
-  }).then(function(r){return r.json()}).then(function(d){
-    if(!d.assessments)return;
-    a=d.assessments.find(function(x){return x.id===assessmentId});
-    if(!a){notify('Assessment not found',1);return}
-    var modal=document.getElementById('modal-q');
-    if(modal){
-      document.getElementById('modal-q-title').textContent='Preview: '+a.tool_name+' — '+(a.user_name||a.user_email);
-      document.getElementById('modal-q-content').innerHTML='<div style="margin-bottom:16px"><div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;margin-bottom:8px">Instant Preview (shown to user)</div>'+a.preview_html+'</div>'
-        +'<div style="border-top:2px solid var(--accent);padding-top:16px;margin-top:16px"><div style="font-size:11px;font-weight:600;color:var(--green);text-transform:uppercase;margin-bottom:8px">Full Assessment (delivered later)</div>'+a.full_html+'</div>';
-      modal.style.display='flex';
-    }
-  }).catch(function(){notify('Failed to load preview',1)});
 }
 
 // ===== RENDER HOME =====
@@ -9559,6 +9564,8 @@ function renderProfile(){
   try{renderDecisionPatterns()}catch(e){console.error('DecisionPatterns:',e)}
   try{renderOutcomesOnProfile()}catch(e){console.error('OutcomesProfile:',e)}
   try{renderCompProfile()}catch(e){console.error('CompProfile:',e)}
+  // Render assessments card
+  try{renderMyAssessmentsCard()}catch(e){console.error('AssessmentsCard:',e)}
   // Show admin tier switcher
   var sw=document.getElementById('admin-tier-switcher');
   if(sw){sw.classList.toggle('hidden',U.email.toLowerCase()!==AE.toLowerCase())}
@@ -11154,6 +11161,15 @@ async function admLoadData(){
   }catch(e){console.warn('Admin data load:',e)}
   // Parse session_data JSON strings
   if(_sbProfiles&&_sbProfiles.length){_sbProfiles.forEach(function(u){if(u.session_data&&typeof u.session_data==='string'){try{u.session_data=JSON.parse(u.session_data)}catch(e){}}});}
+  // Load pending assessments for admin dashboard
+  try{
+    var aResp=await fetch(SUPABASE_URL+'/functions/v1/deliver-assessment',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY},
+      body:JSON.stringify({action:'list',admin_email:U.email})
+    });
+    if(aResp.ok){var aData=await aResp.json();_admAssessments=aData.assessments||[]}
+  }catch(e){console.warn('Assessment load:',e)}
   try{admRenderMetrics();admRender()}catch(e){console.error('Admin render:',e);c.innerHTML='<div style="padding:40px;text-align:center;color:#c44d56">Render error. Check console.</div>'}
   // Auto-expire trials on admin load
   admRunExpireTrials(true);
@@ -11239,8 +11255,11 @@ function admRenderDashboard(c){
   var pending=qs.filter(function(q){return q.status==='pending'||q.status==='answered'});
   var unread=msgs.filter(function(m){return !m.read&&!m.from_admin});
   var h='<div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:12px">Overview</div>';
-  if(pending.length||unread.length){
+  // Check for pending assessments to review
+  var _admPendingCount=_admAssessments?_admAssessments.filter(function(a){return a.status==='pending'}).length:0;
+  if(pending.length||unread.length||_admPendingCount){
     h+='<div class="adm-card" style="border-left:3px solid var(--accent)">';
+    if(_admPendingCount)h+='<div onclick="curAdminTab=\'assessments\';admRender()" style="font-size:13px;color:#e8a33c;margin-bottom:4px;cursor:pointer">📋 '+_admPendingCount+' assessment'+(_admPendingCount>1?'s':'')+' awaiting your review →</div>';
     if(pending.length)h+='<div onclick="curAdminTab=\'queue\';admRender()" style="font-size:13px;color:var(--accent);margin-bottom:4px;cursor:pointer">⚡ '+pending.length+' question'+(pending.length>1?'s':'')+' awaiting review →</div>';
     if(unread.length)h+='<div onclick="curAdminTab=\'feedback\';admRender()" style="font-size:13px;color:#5ba8d0;cursor:pointer">💬 '+unread.length+' unread message'+(unread.length>1?'s':'')+' →</div>';
     h+='</div>';

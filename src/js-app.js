@@ -2030,15 +2030,14 @@ function viewDeliveredAssessments(){
   var notif=document.getElementById('hw-assessment-notif');
   if(notif)notif.remove();
   
-  // Always fetch fresh data when user clicks
   if(!U||!U.email){notify('Please log in first.',1);return}
   
   // Show loading in modal immediately
   var modal=document.getElementById('modal-q');
-  if(modal){
-    document.getElementById('modal-q-title').textContent='Assessments from Dr. Faroqui';
-    document.getElementById('modal-q-content').innerHTML='<div style="text-align:center;padding:40px;color:var(--text3)">Loading your assessments...</div>';
-    modal.style.display='flex';
+  var content=document.getElementById('modal-q-content');
+  if(modal&&content){
+    content.innerHTML='<div style="font-size:16px;font-weight:600;color:var(--text);margin-bottom:16px;font-family:var(--font-serif)">Assessments from Dr. Faroqui</div><div style="text-align:center;padding:30px;color:var(--text3)">Loading...</div>';
+    modal.classList.remove('hidden');
   }
   
   fetch(SUPABASE_URL+'/functions/v1/deliver-assessment',{
@@ -2049,12 +2048,13 @@ function viewDeliveredAssessments(){
     _pendingAssessments=d.assessments||[];
     
     if(!_pendingAssessments.length){
-      document.getElementById('modal-q-content').innerHTML='<div style="text-align:center;padding:40px;color:var(--text3)">No assessments yet. Run a tool to get started.</div>';
+      if(content)content.innerHTML='<div style="font-size:16px;font-weight:600;color:var(--text);margin-bottom:16px;font-family:var(--font-serif)">Assessments from Dr. Faroqui</div><div style="text-align:center;padding:30px;color:var(--text3)">No assessments yet. Run a tool to get started.</div>';
       return;
     }
     
     var all=_pendingAssessments;
-    var h='<div style="padding:4px 0">';
+    var h='<div style="font-size:16px;font-weight:600;color:var(--text);margin-bottom:16px;font-family:var(--font-serif)">Assessments from Dr. Faroqui</div>';
+    h+='<div style="padding:4px 0">';
     all.forEach(function(a){
     var date=new Date(a.created_at).toLocaleDateString('en-US',{month:'short',day:'numeric'});
     var isPending=a.status==='pending';
@@ -2094,11 +2094,11 @@ function viewDeliveredAssessments(){
   });
   h+='</div>';
   
-    document.getElementById('modal-q-content').innerHTML=h;
+    if(content)content.innerHTML=h;
     renderMyAssessmentsCard();
     _assessmentNotifShown=false;
   }).catch(function(e){
-    document.getElementById('modal-q-content').innerHTML='<div style="text-align:center;padding:40px;color:var(--red)">Failed to load assessments. Please try again.</div>';
+    if(content)content.innerHTML='<div style="text-align:center;padding:40px;color:var(--red)">Failed to load assessments. Please try again.</div>';
   });
 }
 

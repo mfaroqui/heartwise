@@ -1884,6 +1884,13 @@ function hwInstantPreview(toolName,keyInsights,score,outlook){
 function hwQueueAssessment(toolName,toolId,previewHtml,fullPathwayHtml,keyInsightsText){
   if(!U||!U.email)return;
   
+  // Strip "Dr. Faroqui will review" handoff block from full HTML — it's only for the instant preview, not the delivered assessment
+  var cleanHtml=fullPathwayHtml;
+  // Remove the handoff box (contains "Dr. Faroqui will review your full case")
+  cleanHtml=cleanHtml.replace(/<div[^>]*>[\s\S]*?Dr\. Faroqui will review your full case[\s\S]*?<\/div><\/div><\/div>/g,'');
+  // Also remove the "Initial Analysis" preview block that gets baked in
+  cleanHtml=cleanHtml.replace(/<div[^>]*>[\s\S]*?Initial Analysis[\s\S]*?Assessment in progress[\s\S]*?<\/div><\/div><\/div>/g,'');
+  
   // Save to Supabase via edge function
   fetch(SUPABASE_URL+'/functions/v1/deliver-assessment',{
     method:'POST',
@@ -1896,7 +1903,7 @@ function hwQueueAssessment(toolName,toolId,previewHtml,fullPathwayHtml,keyInsigh
       tool_id:toolId||'',
       preview_html:previewHtml,
       preview_text:keyInsightsText||'',
-      full_html:fullPathwayHtml,
+      full_html:cleanHtml,
       full_text:''
     })
   }).then(function(r){return r.json()}).then(function(d){
@@ -2149,19 +2156,26 @@ function viewDeliveredAssessments(){
     }
     
     var all=_pendingAssessments;
-    var h='<div style="font-size:16px;font-weight:600;color:var(--text);margin-bottom:16px;font-family:var(--font-serif)">Assessments from Dr. Faroqui</div>';
-    h+='<div style="padding:4px 0">';
-    all.forEach(function(a){
-    var date=new Date(a.created_at).toLocaleDateString('en-US',{month:'short',day:'numeric'});
+    var h='<div style="font-size:16px;font-weight:600;color:var(--text);margin-bottom:4px;font-family:var(--font-serif)">Assessments from Dr. Faroqui</div>';
+    h+='<div style="font-size:11px;color:var(--text3);margin-bottom:20px">'+all.length+' assessment'+(all.length>1?'s':'')+' — tap to expand</div>';
+    
+    all.forEach(function(a,idx){
+    var date=new Date(a.created_at).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
     var isPending=a.status==='pending';
     var isReady=a.status==='delivered';
     var isViewed=a.status==='viewed';
+    var secId='hw-assess-'+idx;
     
-    h+='<div style="margin-bottom:16px;border:1px solid var(--border);border-radius:12px;overflow:hidden'+(isPending?';opacity:.7':'')+'">';
-    h+='<div style="padding:14px 16px;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center">';
-    h+='<div><div style="font-size:13px;font-weight:600;color:var(--text)">'+a.tool_name+'</div>';
-    h+='<div style="font-size:10px;color:var(--text3);margin-top:2px">Submitted '+date+'</div></div>';
+    h+='<div style="margin-bottom:10px;border:1px solid '+(isReady?'rgba(106,191,75,.3)':'var(--border)')+';border-radius:12px;overflow:hidden'+(isPending?';opacity:.7':'')+'">';
     
+    // Accordion header — always visible, clickable
+    h+='<div onclick="'+(isPending?'':'hwToggleAssessment(\''+secId+'\')')+'" style="padding:14px 16px;background:var(--bg2);display:flex;justify-content:space-between;align-items:center;'+(isPending?'':'cursor:pointer;-webkit-tap-highlight-color:transparent')+'">';
+    h+='<div style="display:flex;align-items:center;gap:12px;flex:1;min-width:0">';
+    h+='<div style="font-size:20px;flex-shrink:0">'+(isPending?'⏳':isReady?'🆕':'📋')+'</div>';
+    h+='<div style="min-width:0"><div style="font-size:13px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+a.tool_name+'</div>';
+    h+='<div style="font-size:10px;color:var(--text3);margin-top:2px">'+date+'</div></div></div>';
+    
+    h+='<div style="display:flex;align-items:center;gap:8px;flex-shrink:0">';
     if(isPending){
       h+='<span style="font-size:9px;padding:3px 8px;background:rgba(198,168,94,.1);color:var(--accent);border-radius:4px;font-weight:600">IN REVIEW</span>';
     }else if(isReady){
@@ -2169,14 +2183,18 @@ function viewDeliveredAssessments(){
     }else{
       h+='<span style="font-size:9px;padding:3px 8px;background:var(--bg3);color:var(--text3);border-radius:4px;font-weight:600">REVIEWED</span>';
     }
-    h+='</div>';
+    if(!isPending)h+='<span id="'+secId+'-arrow" style="font-size:9px;color:var(--text3);transition:transform .2s;display:inline-block;transform:rotate(0deg)">▶</span>';
+    h+='</div></div>';
     
+    // Accordion body — hidden by default, toggled on click
     if(isPending){
-      h+='<div style="padding:16px;text-align:center;color:var(--text3);font-size:12px"><div style="display:flex;align-items:center;justify-content:center;gap:8px"><div style="width:8px;height:8px;border-radius:50%;background:var(--accent);animation:pulse 2s infinite"></div>Dr. Faroqui is reviewing your case</div></div>';
+      h+='<div style="padding:16px;text-align:center;color:var(--text3);font-size:12px;border-top:1px solid var(--border)"><div style="display:flex;align-items:center;justify-content:center;gap:8px"><div style="width:8px;height:8px;border-radius:50%;background:var(--accent);animation:pulse 2s infinite"></div>Dr. Faroqui is reviewing your case</div></div>';
     }else{
-      h+='<div style="padding:16px">'+a.full_html+'</div>';
+      h+='<div id="'+secId+'" style="display:none;border-top:1px solid var(--border)">';
+      h+='<div style="padding:16px;max-height:60vh;overflow-y:auto">'+a.full_html+'</div>';
+      h+='</div>';
       
-      // Mark as viewed
+      // Mark as viewed on first open
       if(isReady){
         fetch(SUPABASE_URL+'/functions/v1/deliver-assessment',{
           method:'POST',
@@ -2188,7 +2206,6 @@ function viewDeliveredAssessments(){
     }
     h+='</div>';
   });
-  h+='</div>';
   
     if(content)content.innerHTML=h;
     renderMyAssessmentsCard();
@@ -2198,6 +2215,15 @@ function viewDeliveredAssessments(){
   });
 }
 
+// Toggle assessment accordion section
+function hwToggleAssessment(secId){
+  var sec=document.getElementById(secId);
+  var arrow=document.getElementById(secId+'-arrow');
+  if(!sec)return;
+  var isOpen=sec.style.display!=='none';
+  sec.style.display=isOpen?'none':'block';
+  if(arrow)arrow.style.transform=isOpen?'rotate(0deg)':'rotate(90deg)';
+}
 // Admin: Render assessments queue tab
 var _admAssessments=null;
 function admRenderAssessments(c){

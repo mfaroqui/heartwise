@@ -1907,6 +1907,94 @@ function hwQueueAssessment(toolName,toolId,previewHtml,fullPathwayHtml,keyInsigh
 
 // (hwQueuedPathway removed — assessment queue now handled inside hwGatePathway via hwSetAssessmentContext)
 
+// Check if paid user should see live calculator results (returns true if results should be hidden)
+function hwShouldQueueLive(){
+  if(!U||U.tier==='free'||U.tier==='admin'||U.role==='admin'||U.isTrial)return false;
+  return true; // paid non-admin: hide live results
+}
+
+// For live calculators: show submit button instead of live results
+// Call this once when the tool opens; it hides the result container and shows submit prompt
+var _hwLiveToolSubmitted={};
+function hwLiveToolGate(resultElIds,toolName,toolId){
+  if(!hwShouldQueueLive())return; // admin/free/trial: do nothing, live calc works normally
+  
+  // Support single string or array of element IDs
+  var ids=typeof resultElIds==='string'?[resultElIds]:resultElIds;
+  var lastEl=null;
+  
+  ids.forEach(function(rid){
+    var el=document.getElementById(rid);
+    if(el){el.style.display='none';lastEl=el}
+  });
+  
+  // Also hide the chart area for Financial Planner
+  if(toolId==='v11'){
+    var chartLabel=document.querySelector('#modal-q [style*="30-Year Wealth"]');
+    // Hide chart, legend, summary by finding them
+    ['ft-chart','ft-legend','ft-summary'].forEach(function(cid){
+      var cel=document.getElementById(cid);
+      if(cel){cel.style.display='none';if(cel.parentElement&&cid==='ft-chart')cel.parentElement.style.display='none'}
+    });
+  }
+  
+  if(!lastEl)return;
+  if(_hwLiveToolSubmitted[toolId])return;
+  
+  var existingPrompt=document.getElementById('hw-submit-'+toolId);
+  if(existingPrompt)existingPrompt.remove();
+  
+  var prompt=document.createElement('div');
+  prompt.id='hw-submit-'+toolId;
+  prompt.style.cssText='margin-top:16px;padding:20px;background:linear-gradient(160deg,var(--bg2),rgba(200,168,124,.03));border:1px solid var(--border2);border-radius:12px;text-align:center';
+  prompt.innerHTML='<div style="font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:14px;font-family:var(--font-serif)">Enter your information above, then submit for Dr. Faroqui\u2019s personalized review.</div>'
+    +'<button onclick="hwSubmitLiveTool(\''+ids.join(',')+'\',\''+toolName.replace(/'/g,"\\'")+'\',\''+toolId+'\')" style="padding:12px 28px;font-size:13px;font-weight:600;background:var(--accent);color:#1C1A17;border:none;border-radius:8px;cursor:pointer;transition:all .2s">Submit for Review</button>';
+  lastEl.parentNode.insertBefore(prompt,lastEl.nextSibling);
+}
+
+// When user clicks submit on a live calculator tool
+function hwSubmitLiveTool(resultElIdsStr,toolName,toolId){
+  var ids=resultElIdsStr.split(',');
+  
+  // Temporarily show results to capture HTML
+  var fullHtml='';
+  ids.forEach(function(rid){
+    var el=document.getElementById(rid);
+    if(el){el.style.display='';fullHtml+=el.innerHTML;el.style.display='none'}
+  });
+  
+  // Also capture chart + summary for financial planner
+  if(toolId==='v11'){
+    ['ft-summary'].forEach(function(cid){
+      var cel=document.getElementById(cid);
+      if(cel){cel.style.display='';fullHtml+=cel.innerHTML;cel.style.display='none'}
+    });
+  }
+  
+  if(!fullHtml||fullHtml.trim().length<50){
+    notify('Please fill in your information first.',1);
+    return;
+  }
+  
+  _hwLiveToolSubmitted[toolId]=true;
+  
+  var prompt=document.getElementById('hw-submit-'+toolId);
+  if(prompt){
+    prompt.innerHTML='<div style="display:flex;align-items:flex-start;gap:14px;text-align:left">'
+      +'<div style="font-size:28px;flex-shrink:0">\ud83d\udccb</div>'
+      +'<div>'
+      +'<div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:6px">Case received</div>'
+      +'<div style="font-size:13px;color:var(--text2);line-height:1.7;font-family:var(--font-serif)">I\u2019ve received your information and I\u2019m putting together a detailed analysis with personalized recommendations for your situation. You\u2019ll receive an email when your full assessment is ready.</div>'
+      +'<div style="margin-top:12px;display:flex;align-items:center;gap:8px">'
+      +'<div style="width:8px;height:8px;border-radius:50%;background:var(--accent);animation:pulse 2s infinite"></div>'
+      +'<span style="font-size:11px;color:var(--text3)">Assessment in progress</span>'
+      +'</div></div></div>';
+  }
+  
+  hwQueueAssessment(toolName,toolId,prompt?prompt.outerHTML:'',fullHtml,'');
+  notify('Submitted for Dr. Faroqui\u2019s review \u2705');
+}
+
 // Split full tool results for paid users: show minimal acknowledgment, queue everything
 function hwRenderWithQueue(targetEl,fullHtml,toolName,toolId,keyInsights,score,outlook){
   var el=typeof targetEl==='string'?document.getElementById(targetEl):targetEl;
@@ -8754,11 +8842,11 @@ function openFramework(id){
   // Scroll modal to top
   var modalInner=document.querySelector('#modal-q .modal');
   if(modalInner)modalInner.scrollTop=0;
-  if(id==='v1')setTimeout(function(){frcUpdate();_frcRestoreCoachingState()},50);
-  if(id==='v4')setTimeout(function(){rvuModelChange();rvuUpdate()},50);
-  if(id==='v7')setTimeout(roiUpdate,50);
-  if(id==='v11')setTimeout(ftInit,50);
-  if(id==='v12')setTimeout(ciInit,50);
+  if(id==='v1')setTimeout(function(){hwLiveToolGate('frc-pathway','Match Competitiveness Calculator','v1');frcUpdate();_frcRestoreCoachingState()},50);
+  if(id==='v4')setTimeout(function(){hwLiveToolGate('rvu-scenarios','RVU Compensation Calculator','v4');rvuModelChange();rvuUpdate()},50);
+  if(id==='v7')setTimeout(function(){hwLiveToolGate('roi-results','Research Impact Calculator','v7');roiUpdate()},50);
+  if(id==='v11')setTimeout(function(){hwLiveToolGate(['ft-insights'],'Financial Planner','v11');ftInit()},50);
+  if(id==='v12')setTimeout(function(){hwLiveToolGate('ci-output','Contract Review Tool','v12');ciInit()},50);
   if(id==='v16')setTimeout(misInit,50);
   if(id==='v17')setTimeout(obsInit,50);
   // Auto-fill tool intakes from career baseline

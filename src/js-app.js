@@ -1318,6 +1318,16 @@ window.onload=async function(){
       document.getElementById('splash').style.display='none';
       const s=localStorage.getItem('hw_session');
       if(s){U=JSON.parse(s);handleCheckoutReturn();enterApp()}else{
+        // Allow v14 (Match Competitiveness) to open free without login
+        if(_deepLink&&_deepLink.type==='tool'){
+          var _dlId=_deepLink.id;
+          if(_dlId==='match'||_dlId==='match-calculator'||_dlId==='match-probability'||_dlId==='v14'){
+            go('pg-landing');
+            setTimeout(function(){openFramework('v14')},800);
+            _deepLink=null;
+            return;
+          }
+        }
         // Save deep link for after login/signup
         if(_deepLink)try{sessionStorage.setItem('hw_deeplink',JSON.stringify(_deepLink))}catch(e){}
         go('pg-landing');
@@ -7557,10 +7567,20 @@ function _mccRun(){
   var mccHighlights=[outlook+' — '+score+'/100','Overall match: '+matchProb+'%','Top-tier: '+topProb+'% | Mid-tier: '+midProb+'% | Community: '+commProb+'%'];
   factors.forEach(function(f){if(f.pts<f.max*0.4) mccHighlights.push(''+f.name+': '+f.pts+'/'+f.max)});
   recordToolUse('Match Probability Calculator',score,outlook+' for '+sd.name,{inputs:mccInputs,highlights:mccHighlights});
+  // Show signup CTA for non-logged-in users after results
+  if(!U){
+    var cta=document.createElement('div');
+    cta.style.cssText='margin:20px 0;padding:24px;background:linear-gradient(160deg,rgba(200,168,124,.08),rgba(139,184,160,.06));border:1px solid rgba(198,168,94,.25);border-radius:14px;text-align:center';
+    cta.innerHTML='<div style="font-size:15px;font-weight:600;color:var(--text);margin-bottom:8px;font-family:var(--font-serif)">Want to save your results and track progress?</div>'
+      +'<div style="font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:14px">Create a free account to save your competitiveness profile, get personalized recommendations, and access 9 more physician-built career tools.</div>'
+      +'<button onclick="document.getElementById(\'modal-q\').classList.add(\'hidden\');go(\'pg-onboard\')" style="padding:12px 28px;font-size:13px;font-weight:600;background:var(--accent);color:#1C1A17;border:none;border-radius:8px;cursor:pointer">Start Free 48-Hour Trial →</button>';
+    var resEl=document.getElementById('mcc-results');
+    if(resEl)resEl.appendChild(cta);
+  }
 }
 
 function mccSaveProfile(){
-  if(!U)return;
+  if(!U){document.getElementById('modal-q').classList.add('hidden');go('pg-onboard');return}
   var mode=document.getElementById('mcc-mode').value||'residency';
   var isFellowship=mode==='fellowship';
   var profile={
@@ -8834,8 +8854,11 @@ function openFramework(id){
   if(id==='v8')id='v11';
   if(id==='v10')id='v13';
   if(id==='v18')id='v14';
-  // Trial access gating
-  if(U&&U.isTrial&&U.tier!=='admin'){
+  // v14 (Match Competitiveness) is free — no auth or trial gate
+  // All other tools require login
+  if(id!=='v14'&&!U){go('pg-login');return}
+  // Trial access gating (skip for v14)
+  if(id!=='v14'&&U&&U.isTrial&&U.tier!=='admin'){
     var access=getTrialAccess(id);
     if(access==='locked'){showTrialLockedOverlay(id);return}
   }

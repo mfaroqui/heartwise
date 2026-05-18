@@ -12624,12 +12624,16 @@ function obToStep3(){
   const pass=document.getElementById('ob-pass').value;
   if(!name||!email||!pass){notify('Fill in name, email, and password.',1);return}
   if(pass.length<8){notify('Password must be at least 8 characters.',1);return}
-  if(DB.users.find(u=>u.email.toLowerCase()===email.toLowerCase())){notify('Email already registered. Sign in instead.',1);return}
+  // Disable button to prevent double-submit
+  var btn=document.getElementById('ob-submit-btn');
+  if(btn){btn.disabled=true;btn.textContent='Creating account...';btn.style.opacity='.6';btn.style.pointerEvents='none'}
+  if(DB.users.find(u=>u.email.toLowerCase()===email.toLowerCase())){notify('Email already registered. Sign in instead.',1);if(btn){btn.disabled=false;btn.textContent='Create My Account →';btn.style.opacity='';btn.style.pointerEvents=''}return}
   // Check Supabase for existing account (catches cross-device reuse)
   if(_supaClient){
     _supaClient.from('profiles').select('email,trial_end').eq('email',email.toLowerCase()).then(function(res){
       if(res.data&&res.data.length>0){
         notify('An account with this email already exists. Please sign in.',1);
+        if(btn){btn.disabled=false;btn.textContent='Create My Account →';btn.style.opacity='';btn.style.pointerEvents=''}
         go('pg-login');
         return;
       }

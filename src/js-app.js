@@ -12755,7 +12755,7 @@ async function obComplete(){
   if(existingUser){
     // User exists locally — log them in directly instead of showing error
     U=existingUser;localStorage.setItem('hw_session',JSON.stringify(U));
-    if(loginBtn){loginBtn.disabled=false;loginBtn.textContent=loginBtn.dataset.orig||'Sign In'}enterApp();
+    if(typeof loginBtn!=="undefined"&&loginBtn){loginBtn.disabled=false;loginBtn.textContent=loginBtn.dataset.orig||'Sign In'}enterApp();
     notify('Welcome back! Signed you in.');
     return;
   }
@@ -12788,7 +12788,7 @@ async function obComplete(){
     U=user;localStorage.setItem('hw_session',JSON.stringify(U));
     trialHistory.push({email:p.email.toLowerCase(),date:new Date().toISOString(),blocked:true});
     localStorage.setItem('hw_trial_history',JSON.stringify(trialHistory));
-    if(loginBtn){loginBtn.disabled=false;loginBtn.textContent=loginBtn.dataset.orig||'Sign In'}enterApp();showDisc();
+    if(typeof loginBtn!=="undefined"&&loginBtn){loginBtn.disabled=false;loginBtn.textContent=loginBtn.dataset.orig||'Sign In'}enterApp();showDisc();
     notify('Welcome! 🎉 You have Early Access — all tools are free. Help us improve by sharing feedback.');
     return;
   }
@@ -12821,7 +12821,7 @@ async function obComplete(){
   var trialHistory=JSON.parse(localStorage.getItem('hw_trial_history')||'[]');
   trialHistory.push({email:p.email.toLowerCase(),date:new Date().toISOString()});
   localStorage.setItem('hw_trial_history',JSON.stringify(trialHistory));
-  if(loginBtn){loginBtn.disabled=false;loginBtn.textContent=loginBtn.dataset.orig||'Sign In'}enterApp();showDisc();
+  if(typeof loginBtn!=='undefined'&&loginBtn){loginBtn.disabled=false;loginBtn.textContent=loginBtn.dataset.orig||'Sign In'}enterApp();showDisc();
   // Email: welcome for new signups
   try{if(typeof hwEmailWelcome==='function')hwEmailWelcome(user)}catch(e){}
   // Show strategic report as welcome modal after entering app

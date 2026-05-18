@@ -19126,31 +19126,8 @@ async function obComplete(){
     notify('Welcome back! Signed you in.');
     return;
   }
-  // 1b. Check if email already exists in Supabase (prevents re-trial from different device)
-  if(typeof _supaClient!=='undefined'&&_supaClient){
-    try{
-      var sbCheck=await _supaClient.from('profiles').select('id,email,tier,trial_end,name').eq('email',p.email.toLowerCase()).limit(1);
-      if(!sbCheck.error&&sbCheck.data&&sbCheck.data.length>0){
-        var existing=sbCheck.data[0];
-        if(existing.trial_end||existing.tier!=='free'){
-          // Account exists in Supabase — try to sign them in
-          try{
-            var signIn=await _supaClient.auth.signInWithPassword({email:p.email.toLowerCase(),password:p.pass});
-            if(!signIn.error){
-              var recUser={id:existing.id,name:existing.name||p.name,email:p.email.toLowerCase(),pass:'__supabase__',role:'student',tier:existing.tier||'free',isTrial:!!existing.trial_end,trialEnd:existing.trial_end,institution:'',usage:{ai:0,credits:0,month:new Date().getMonth()}};
-              DB.users.push(recUser);saveDB();U=recUser;localStorage.setItem('hw_session',JSON.stringify(U));
-              if(loginBtn){loginBtn.disabled=false;loginBtn.textContent=loginBtn.dataset.orig||'Sign In'}enterApp();
-              notify('Welcome back! Signed you in.');
-              return;
-            }
-          }catch(se){}
-          notify('An account with this email already exists. Please sign in.',1);
-          go('pg-login');
-          return;
-        }
-      }
-    }catch(e){console.warn('Supabase trial check:',e)}
-  }
+  // 1b. EARLY ACCESS: Skip Supabase duplicate check (obToStep3 already checked)
+  // The double-check caused race conditions with async profile creation
   // 2. Check if this device already used a trial (localStorage fingerprint)
   var trialHistory=JSON.parse(localStorage.getItem('hw_trial_history')||'[]');
   var deviceTrialUsed=localStorage.getItem('hw_trial_used');

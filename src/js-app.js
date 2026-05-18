@@ -1828,8 +1828,8 @@ function hwGatePathway(pathwayHtml){
       +'<div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;background:rgba(28,26,23,.85);border-radius:12px;border:1px solid rgba(198,168,94,.2)">'
       +'<div style="font-size:24px;margin-bottom:8px">\ud83d\udd13</div>'
       +'<div style="font-size:14px;font-weight:600;color:var(--accent);margin-bottom:6px">Your Action Plan Is Ready</div>'
-      +'<div style="font-size:12px;color:var(--text3);line-height:1.6;margin-bottom:14px;max-width:320px">Subscribe to unlock your personalized next steps, prioritized actions, and specific recommendations.</div>'
-      +'<button onclick="navTo(\'scr-profile\');showUpgrade()" style="font-size:13px;font-weight:600;padding:12px 28px;background:var(--accent);color:#1C1A17;border:none;border-radius:8px;cursor:pointer">Subscribe to Unlock \u2014 from $9/mo</button>'
+      +'<div style="font-size:12px;color:var(--text3);line-height:1.6;margin-bottom:14px;max-width:320px">All tools are free during Early Access. Set up your profile to see personalized next steps and recommendations.</div>'
+      +'<button onclick="navTo(\'scr-profile\');showUpgrade()" style="font-size:13px;font-weight:600;padding:12px 28px;background:var(--accent);color:#1C1A17;border:none;border-radius:8px;cursor:pointer">View Your Tools →</button>'
       +'<div style="font-size:10px;color:var(--text3);margin-top:8px">Cancel anytime</div>'
       +'</div></div>';
   }
@@ -2407,7 +2407,7 @@ function updateTrialBanner(){
     if(typeof _supaClient!=='undefined'&&_supaClient){
       _supaClient.from('profiles').update({tier:'free',is_trial:false}).eq('email',U.email).then(function(){});
     }
-    el.innerHTML='<div style="display:flex;align-items:center;gap:12px"><span style="font-size:18px">⏰</span><div style="flex:1"><div style="font-size:13px;font-weight:600;color:var(--red)">Your guided access has ended</div><div style="font-size:11px;color:var(--text2);margin-top:2px">Subscribe now to unlock all 10 tools and build your complete strategy.</div></div><button class="btn btn-a btn-sm" onclick="navTo(\'scr-profile\');showUpgrade()" style="flex-shrink:0;width:auto">Subscribe →</button></div>';
+    el.innerHTML='<div style="display:flex;align-items:center;gap:12px"><span style="font-size:18px">⏰</span><div style="flex:1"><div style="font-size:13px;font-weight:600;color:var(--red)">Welcome to HeartWise</div><div style="font-size:11px;color:var(--text2);margin-top:2px">All tools are free during Early Access.</div></div><button class="btn btn-a btn-sm" onclick="navTo(\'scr-profile\');showUpgrade()" style="flex-shrink:0;width:auto">Explore Tools →</button></div>';
     if(_trialInterval){clearInterval(_trialInterval);_trialInterval=null}
     enterApp();
     return;
@@ -2419,7 +2419,7 @@ function updateTrialBanner(){
   var urgencyBorder=hours<6?'rgba(196,77,86,.2)':hours<12?'rgba(198,168,94,.15)':'rgba(139,184,160,.2)';
   el.style.background=urgencyBg;
   el.style.borderColor=urgencyBorder;
-  el.innerHTML='<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap"><span style="font-size:18px">✦</span><div style="flex:1;min-width:180px"><div style="font-size:13px;font-weight:600;color:'+urgency+'">48-Hour Core Access — '+hours+'h '+mins+'m remaining</div><div style="font-size:11px;color:var(--text2);margin-top:2px">Explore your curated tools. Upgrade anytime for full access to all 10 tools.</div></div><button class="btn btn-a btn-sm" onclick="navTo(\'scr-profile\');showUpgrade()" style="flex-shrink:0;width:auto;padding:8px 18px">Unlock Everything →</button></div>';
+  el.innerHTML='<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap"><span style="font-size:18px">✦</span><div style="flex:1;min-width:180px"><div style="font-size:13px;font-weight:600;color:'+urgency+'">48-Hour Core Access — '+hours+'h '+mins+'m remaining</div><div style="font-size:11px;color:var(--text2);margin-top:2px">Explore your curated tools. Upgrade anytime for full access to all 10 tools.</div></div><button class="btn btn-a btn-sm" onclick="navTo(\'scr-profile\');showUpgrade()" style="flex-shrink:0;width:auto;padding:8px 18px">Explore Tools →</button></div>';
 }
 
 // ===== CAREER DASHBOARD ENGINE =====
@@ -7596,7 +7596,7 @@ function _mccRun(){
     cta.style.cssText='margin:20px 0;padding:24px;background:linear-gradient(160deg,rgba(200,168,124,.08),rgba(139,184,160,.06));border:1px solid rgba(198,168,94,.25);border-radius:14px;text-align:center';
     cta.innerHTML='<div style="font-size:15px;font-weight:600;color:var(--text);margin-bottom:8px;font-family:var(--font-serif)">Want to save your results and track progress?</div>'
       +'<div style="font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:14px">Create a free account to save your competitiveness profile, get personalized recommendations, and access 9 more physician-built career tools.</div>'
-      +'<button onclick="document.getElementById(\'modal-q\').classList.add(\'hidden\');go(\'pg-onboard\')" style="padding:12px 28px;font-size:13px;font-weight:600;background:var(--accent);color:#1C1A17;border:none;border-radius:8px;cursor:pointer">Start Free 48-Hour Trial →</button>';
+      +'<button onclick="document.getElementById(\'modal-q\').classList.add(\'hidden\');go(\'pg-onboard\')" style="padding:12px 28px;font-size:13px;font-weight:600;background:var(--accent);color:#1C1A17;border:none;border-radius:8px;cursor:pointer">Get Started Free →</button>';
     var resEl=document.getElementById('mcc-results');
     if(resEl)resEl.appendChild(cta);
   }
@@ -8487,7 +8487,7 @@ function quizShowResults(){
     if(U&&U.isTrial&&!locked){
       if(trialAccess==='full') html+='<span style="font-size:8px;padding:2px 6px;border-radius:100px;background:var(--green-dim);color:var(--green);font-weight:600;letter-spacing:.5px">INCLUDED</span>';
       else if(trialAccess==='partial') html+='<span style="font-size:8px;padding:2px 6px;border-radius:100px;background:var(--accent-dim);color:var(--accent);font-weight:600;letter-spacing:.5px">PREVIEW</span>';
-      else if(trialAccess==='locked') html+='<span style="font-size:8px;padding:2px 6px;border-radius:100px;background:var(--bg3);color:var(--text3);font-weight:600;letter-spacing:.5px">UPGRADE</span>';
+      else if(false) html+='<span style="font-size:8px;padding:2px 6px;border-radius:100px;background:var(--bg3);color:var(--text3);font-weight:600;letter-spacing:.5px">UPGRADE</span>';
     }
     if(locked) html+='<span style="font-size:12px">🔒</span>';
     html+='</div>';
@@ -8585,7 +8585,7 @@ function renderVault(){
     const locked=!canAccess||mentOnly;
     // Trial access badges
     var trialAccess=U&&U.isTrial?getTrialAccess(v.id):null;
-    var trialLocked=U&&U.isTrial&&trialAccess==='locked';
+    var trialLocked=false; // EARLY ACCESS: never lock tools
     var onclick;
     if(locked&&mentOnly&&canAccess){
       onclick='onclick="previewEliteFramework(\''+v.id+'\')"';
@@ -8601,10 +8601,10 @@ function renderVault(){
     if(U&&U.isTrial&&!locked){
       if(trialAccess==='full') trialBadge=' <span style="font-size:8px;padding:2px 6px;border-radius:100px;background:var(--green-dim);color:var(--green);font-weight:600;letter-spacing:.5px;vertical-align:middle">INCLUDED</span>';
       else if(trialAccess==='partial') trialBadge=' <span style="font-size:8px;padding:2px 6px;border-radius:100px;background:var(--accent-dim);color:var(--accent);font-weight:600;letter-spacing:.5px;vertical-align:middle">PREVIEW</span>';
-      else if(trialAccess==='locked') trialBadge=' <span style="font-size:8px;padding:2px 6px;border-radius:100px;background:var(--bg3);color:var(--text3);font-weight:600;letter-spacing:.5px;vertical-align:middle">UPGRADE</span>';
+      else if(false) trialBadge=' <span style="font-size:8px;padding:2px 6px;border-radius:100px;background:var(--bg3);color:var(--text3);font-weight:600;letter-spacing:.5px;vertical-align:middle">UPGRADE</span>';
     }
-    var lockIcon=locked?'\ud83d\udd12':trialLocked?'\ud83d\udd12':'\ud83d\udcc4';
-    return '<div class="vault-card '+(locked||trialLocked?'':'unlocked')+'" '+onclick+'><div class="v-icon">'+v.icon+'</div><div class="v-info"><h3>'+v.title+tierBadge+trialBadge+'</h3><p>'+v.desc+'</p></div><div class="v-lock">'+lockIcon+'</div></div>';
+    var lockIcon=locked?'\ud83d\udd12':false?'\ud83d\udd12':'\ud83d\udcc4';
+    return '<div class="vault-card '+(locked||false?'':'unlocked')+'" '+onclick+'><div class="v-icon">'+v.icon+'</div><div class="v-info"><h3>'+v.title+tierBadge+trialBadge+'</h3><p>'+v.desc+'</p></div><div class="v-lock">'+lockIcon+'</div></div>';
   }
 
   var h='';
@@ -8702,7 +8702,7 @@ function showTrialExpiredTeaser(){
   
   // Header
   h+='<div style="font-size:40px;margin-bottom:16px">✦</div>';
-  h+='<div style="font-family:var(--font-serif);font-size:20px;font-weight:600;color:var(--text);margin-bottom:6px">Your 48-Hour Access Has Ended</div>';
+  h+='<div style="font-family:var(--font-serif);font-size:20px;font-weight:600;color:var(--text);margin-bottom:6px">Welcome to HeartWise</div>';
   h+='<div style="font-size:13px;color:var(--text2);margin-bottom:24px;line-height:1.6">But everything you built is still here.</div>';
 
   // What they accomplished
@@ -8726,7 +8726,7 @@ function showTrialExpiredTeaser(){
 
   // CTA
   h+='<div style="margin-bottom:16px">';
-  h+='<button onclick="closeModal(\'modal-q\');navTo(\'scr-profile\');showUpgrade()" class="btn btn-a" style="width:100%;padding:14px 24px;font-size:14px;font-weight:600">Unlock All 10 Tools — $39/mo</button>';
+  h+='<button onclick="closeModal(\'modal-q\');navTo(\'scr-profile\');showUpgrade()" class="btn btn-a" style="width:100%;padding:14px 24px;font-size:14px;font-weight:600">Get Started Free</button>';
   h+='</div>';
   h+='<div style="font-size:11px;color:var(--text3);margin-bottom:8px">Cancel anytime · Used by physicians at top programs</div>';
   h+='<button onclick="closeModal(\'modal-q\')" style="background:none;border:none;color:var(--text3);font-size:12px;cursor:pointer;padding:8px;text-decoration:underline">Continue with free access</button>';
@@ -8786,7 +8786,7 @@ function injectPartialOverlay(id){
     banner.id='trial-partial-banner';
     banner.style.cssText='padding:14px 16px;background:linear-gradient(135deg,rgba(198,168,94,.08),rgba(198,168,94,.03));border:1px solid rgba(198,168,94,.15);border-radius:10px;margin-bottom:16px';
     banner.innerHTML='<div style="display:flex;align-items:flex-start;gap:12px"><span style="font-size:18px;flex-shrink:0">✦</span><div style="flex:1">'
-      +'<div style="font-size:12px;font-weight:600;color:var(--accent);margin-bottom:4px">48-Hour Guided Access</div>'
+      +'<div style="font-size:12px;font-weight:600;color:var(--accent);margin-bottom:4px">Early Access</div>'
       +'<div style="font-size:11px;color:var(--text2);line-height:1.5;margin-bottom:6px"><strong>Included:</strong> '+cfg.shown+'</div>'
       +'<div style="font-size:11px;color:var(--text3);line-height:1.5"><strong>🔒 Locked:</strong> '+cfg.locked+'</div>'
       +'<button onclick="closeModal(\'modal-q\');setTimeout(function(){navTo(\'scr-profile\');showUpgrade()},300)" style="margin-top:8px;font-size:10px;font-weight:600;color:var(--accent);background:none;border:1px solid rgba(198,168,94,.2);border-radius:6px;padding:5px 14px;cursor:pointer;transition:all .2s">Unlock Full Access →</button>'
@@ -19471,7 +19471,7 @@ function obsInit(){
     var bannerEl=document.createElement('div');
     bannerEl.id='obs-trial-banner';
     bannerEl.style.cssText='padding:12px 16px;background:linear-gradient(135deg,rgba(198,168,94,.1),rgba(198,168,94,.05));border:1px solid rgba(198,168,94,.2);border-radius:10px;margin-bottom:14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap';
-    bannerEl.innerHTML='<span style="font-size:16px">✦</span><div style="flex:1;min-width:200px"><div style="font-size:12px;font-weight:600;color:var(--accent)">Trial Preview — Showing Top 5 Results</div><div style="font-size:11px;color:var(--text3);margin-top:2px">Subscribe to unlock all '+OBS_PROGRAMS.length+' programs, comparison tools, strategy planner, and email templates.</div></div><button onclick="closeModal(\'modal-q\');setTimeout(function(){navTo(\'scr-profile\');showUpgrade()},300)" style="padding:8px 18px;background:var(--accent);color:#1C1A17;border:none;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;flex-shrink:0">Unlock Full Access</button>';
+    bannerEl.innerHTML='<span style="font-size:16px">✦</span><div style="flex:1;min-width:200px"><div style="font-size:12px;font-weight:600;color:var(--accent)">Showing Top 5 Results</div><div style="font-size:11px;color:var(--text3);margin-top:2px">Explore all '+OBS_PROGRAMS.length+' programs, comparison tools, strategy planner, and email templates.</div></div><button onclick="closeModal(\'modal-q\');setTimeout(function(){navTo(\'scr-profile\');showUpgrade()},300)" style="padding:8px 18px;background:var(--accent);color:#1C1A17;border:none;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;flex-shrink:0">Unlock Full Access</button>';
     var container=specSel.closest('.modal')||specSel.parentElement.parentElement.parentElement;
     var tabBar=document.getElementById('obs-tab-find');
     if(tabBar&&tabBar.parentElement){tabBar.parentElement.parentElement.insertBefore(bannerEl,tabBar.parentElement)}
@@ -19536,7 +19536,7 @@ function obsTab(tab){
       lockMsg+='<div style="font-size:36px;margin-bottom:12px">'+(tab==='compare'?'⚖️':'🎯')+'</div>';
       lockMsg+='<div style="font-size:16px;font-weight:600;color:var(--text);font-family:var(--font-serif);margin-bottom:8px">'+(tab==='compare'?'Compare Programs Side-by-Side':'Personalized Strategy Plan')+'</div>';
       lockMsg+='<div style="font-size:12px;color:var(--text3);line-height:1.6;max-width:320px;margin:0 auto 16px">'+(tab==='compare'?'Stack up to 3 programs across 10 metrics — ROI, cost, IMG friendliness, LOR potential, visa support, and more.':'Get a custom observership strategy with ranked programs, email templates, timeline, and budget — built for your profile.')+'</div>';
-      lockMsg+='<button onclick="closeModal(\'modal-q\');setTimeout(function(){navTo(\'scr-profile\');showUpgrade()},300)" style="padding:12px 28px;background:var(--accent);color:#1C1A17;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer">Subscribe to Unlock — $39/mo</button>';
+      lockMsg+='<button onclick="closeModal(\'modal-q\');setTimeout(function(){navTo(\'scr-profile\');showUpgrade()},300)" style="padding:12px 28px;background:var(--accent);color:#1C1A17;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer">Get Started Free</button>';
       lockMsg+='<div style="font-size:10px;color:var(--text3);margin-top:8px">Available with Core or Mentorship access</div>';
       lockMsg+='</div>';
       // Show lock in the appropriate panel
@@ -19662,7 +19662,7 @@ function obsRenderCard(p,expanded,isTrial){
       h+='<div style="text-align:center;padding:12px">';
       h+='<div style="font-size:11px;font-weight:600;color:var(--accent);margin-bottom:4px">🔒 Full Details Locked</div>';
       h+='<div style="font-size:10px;color:rgba(237,235,231,.6);margin-bottom:8px">Insider tips, requirements, application links & email templates</div>';
-      h+='<button onclick="event.stopPropagation();closeModal(\'modal-q\');setTimeout(function(){navTo(\'scr-profile\');showUpgrade()},300)" style="padding:8px 20px;background:var(--accent);color:#1C1A17;border:none;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer">Subscribe to Unlock</button>';
+      h+='<button onclick="event.stopPropagation();closeModal(\'modal-q\');setTimeout(function(){navTo(\'scr-profile\');showUpgrade()},300)" style="padding:8px 20px;background:var(--accent);color:#1C1A17;border:none;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer">Explore Tools</button>';
       h+='</div></div></div>';
       // Similar Programs (also shown for trial — keeps them browsing)
       var similar=obsFindSimilar(p,3);

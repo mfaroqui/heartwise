@@ -12630,7 +12630,9 @@ function obToStep3(){
   if(DB.users.find(u=>u.email.toLowerCase()===email.toLowerCase())){notify('Email already registered. Sign in instead.',1);if(btn){btn.disabled=false;btn.textContent='Create My Account →';btn.style.opacity='';btn.style.pointerEvents=''}return}
   // Check Supabase for existing account (catches cross-device reuse)
   if(_supaClient){
+    var _obTimeout=setTimeout(function(){obFinishStep3(name,email,pass)},5000); // 5s timeout fallback
     _supaClient.from('profiles').select('email,trial_end').eq('email',email.toLowerCase()).then(function(res){
+      clearTimeout(_obTimeout);
       if(res.data&&res.data.length>0){
         notify('An account with this email already exists. Please sign in.',1);
         if(btn){btn.disabled=false;btn.textContent='Create My Account →';btn.style.opacity='';btn.style.pointerEvents=''}
@@ -12638,7 +12640,7 @@ function obToStep3(){
         return;
       }
       obFinishStep3(name,email,pass);
-    }).catch(function(){obFinishStep3(name,email,pass)});
+    }).catch(function(){clearTimeout(_obTimeout);obFinishStep3(name,email,pass)});
   }else{
     obFinishStep3(name,email,pass);
   }
@@ -12744,6 +12746,8 @@ function genReport(){
   setTimeout(()=>{document.querySelectorAll('.mb-fill').forEach(b=>{const w=b.style.width;b.style.width='0%';setTimeout(()=>b.style.width=w,50)})},100);
 }
 async function obComplete(){
+  var btn=document.getElementById('ob-submit-btn');
+  try{
   const p=obProfile;
   // === TRIAL ABUSE PREVENTION ===
   // 1. Check if email already used (local)
@@ -12858,7 +12862,13 @@ async function obComplete(){
       }
     }
   },800);
-  notify('Welcome! Your 48-hour Core access is now active. ✦');
+  notify('Welcome! Your Early Access is now active. ✦');
+  }catch(err){
+    console.error('obComplete error:',err);
+    var btn2=document.getElementById('ob-submit-btn');
+    if(btn2){btn2.disabled=false;btn2.textContent='Create My Account →';btn2.style.opacity='';btn2.style.pointerEvents=''}
+    notify('Something went wrong. Please try again.',1);
+  }
 }
 
 // Strip sensitive fields from profile data before storing

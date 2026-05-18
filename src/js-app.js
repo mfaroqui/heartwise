@@ -11208,11 +11208,60 @@ async function captureLeadEmail(){
 }
 
 function planSignup(plan){
+  // EARLY ACCESS: waitlist for mentorship and intensive
+  if(plan==='elite'||plan==='intensive'){
+    showWaitlistModal(plan);
+    return;
+  }
   if(U){
     subPlan(plan);
   }else{
     sessionStorage.setItem('hw_pending_plan',plan);
     go('pg-onboard');
+  }
+}
+
+// Waitlist modal for Mentorship & Strategic Intensive
+function showWaitlistModal(plan){
+  var planName=plan==='elite'?'Mentorship':'Strategic Intensive';
+  var prefillEmail=(U&&U.email)?U.email:'';
+  var prefillName=(U&&U.name)?U.name:'';
+  var h='<div style="padding:28px;max-width:420px;margin:0 auto;text-align:center">';
+  h+='<div style="font-size:28px;margin-bottom:12px">✦</div>';
+  h+='<div style="font-family:var(--font-serif);font-size:20px;font-weight:600;color:var(--text);margin-bottom:8px">Join the '+planName+' Waitlist</div>';
+  h+='<p style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:24px">We\'ll notify you when '+planName+' enrollment opens. Early waitlist members get priority access and a founding member discount.</p>';
+  h+='<input type="text" id="wl-name" value="'+prefillName.replace(/"/g,'&quot;')+'" placeholder="Your name" style="width:100%;padding:12px 14px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-size:13px;margin-bottom:10px;box-sizing:border-box">';
+  h+='<input type="email" id="wl-email" value="'+prefillEmail.replace(/"/g,'&quot;')+'" placeholder="Your email" style="width:100%;padding:12px 14px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-size:13px;margin-bottom:16px;box-sizing:border-box">';
+  h+='<button onclick="submitWaitlist(\''+plan+'\')" class="btn btn-a" style="width:100%;max-width:none">Join Waitlist</button>';
+  h+='<p style="font-size:11px;color:var(--text3);margin-top:10px">No spam. Just a notification when it\'s ready.</p>';
+  h+='</div>';
+  var modal=document.getElementById('modal-q');
+  var content=document.getElementById('modal-q-content');
+  if(modal&&content){content.innerHTML=h;modal.classList.remove('hidden')}
+}
+
+function submitWaitlist(plan){
+  var name=(document.getElementById('wl-name').value||'').trim();
+  var email=(document.getElementById('wl-email').value||'').trim();
+  if(!email||email.indexOf('@')===-1){notify('Please enter a valid email.',1);return}
+  var planName=plan==='elite'?'Mentorship':'Strategic Intensive';
+  // Save to Supabase
+  if(typeof _supaClient!=='undefined'&&_supaClient){
+    _supaClient.from('profiles').upsert({email:email.toLowerCase(),name:name||email.split('@')[0],waitlist_plan:plan,waitlist_date:new Date().toISOString()},{onConflict:'email'}).then(function(){});
+  }
+  // Also store locally
+  var wl=JSON.parse(localStorage.getItem('hw_waitlist')||'[]');
+  wl.push({plan:plan,email:email,name:name,date:new Date().toISOString()});
+  localStorage.setItem('hw_waitlist',JSON.stringify(wl));
+  // Show confirmation
+  var content=document.getElementById('modal-q-content');
+  if(content){
+    content.innerHTML='<div style="padding:40px;text-align:center">'
+      +'<div style="font-size:36px;margin-bottom:16px">✓</div>'
+      +'<div style="font-family:var(--font-serif);font-size:20px;font-weight:600;color:var(--text);margin-bottom:8px">You\'re on the list!</div>'
+      +'<p style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:20px">We\'ll email you at <strong>'+email+'</strong> when '+planName+' enrollment opens. In the meantime, all Core tools are free — give them a try.</p>'
+      +'<button onclick="closeModal(\'modal-q\');'+(U?'':'go(\'pg-onboard\')')+'" class="btn btn-a" style="max-width:240px;margin:0 auto">'+(U?'Got it':'Get Started Free')+'</button>'
+      +'</div>';
   }
 }
 const STRIPE_LINKS={

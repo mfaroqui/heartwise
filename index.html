@@ -1555,33 +1555,6 @@ body.has-upgrade-bar #main-app{padding-bottom:70px}
 <div style="font-size:12px;color:var(--text2)">Built by a practicing interventional cardiologist who&#8217;s been through every stage of training</div>
 </div>
 
-<!-- FINANCIAL IMPACT — PRE-PRICING -->
-<div class="reveal" style="background:#F6F3EE;border-radius:var(--r3);padding:72px 32px 64px;margin-bottom:48px;max-width:600px;margin-left:auto;margin-right:auto">
-<p style="font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:600;color:#1A1A1A;text-align:center;line-height:1.35;margin-bottom:56px;letter-spacing:.2px">Strategic decisions in medicine carry<br>real financial impact.</p>
-
-<div style="max-width:360px;margin:0 auto">
-<div style="text-align:center;padding:28px 0;border-bottom:1px solid rgba(198,167,94,.25)">
-<div style="font-family:'Cormorant Garamond',serif;font-size:44px;font-weight:600;color:#1A1A1A;letter-spacing:-.5px;line-height:1">$1,000+</div>
-<div style="font-size:13px;color:#4A4A4A;font-weight:300;margin-top:8px;letter-spacing:.3px">Coffee each year</div>
-</div>
-
-<div style="text-align:center;padding:28px 0;border-bottom:1px solid rgba(198,167,94,.25)">
-<div style="font-family:'Cormorant Garamond',serif;font-size:44px;font-weight:600;color:#1A1A1A;letter-spacing:-.5px;line-height:1">$1,500 – $3,000</div>
-<div style="font-size:13px;color:#4A4A4A;font-weight:300;margin-top:8px;letter-spacing:.3px">Board examinations</div>
-</div>
-
-<div style="text-align:center;padding:28px 0">
-<div style="font-family:'Cormorant Garamond',serif;font-size:44px;font-weight:600;color:#1A1A1A;letter-spacing:-.5px;line-height:1">$50,000+</div>
-<div style="font-size:13px;color:#4A4A4A;font-weight:300;margin-top:8px;letter-spacing:.3px">One poorly structured contract</div>
-</div>
-</div>
-
-<div style="width:48px;height:1px;background:#C6A75E;margin:40px auto;opacity:.5"></div>
-
-<p style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;color:#1A1A1A;text-align:center;line-height:1.4;margin-bottom:14px;letter-spacing:.2px">The right insight at the right moment<br>can be far more valuable.</p>
-<p style="font-size:14px;color:#4A4A4A;text-align:center;font-weight:300;line-height:1.7;letter-spacing:.01em;max-width:420px;margin:0 auto">HeartWise provides practical career guidance grounded in real experience in medicine.</p>
-</div>
-
 <div class="reveal" style="max-width:500px;margin:0 auto">
 
 <!-- Future Pricing Preview -->
@@ -1658,6 +1631,35 @@ body.has-upgrade-bar #main-app{padding-bottom:70px}
 </div>
 
 </div>
+
+<!-- FINANCIAL IMPACT — moved below free plans -->
+<div class="reveal" style="background:#F6F3EE;border-radius:var(--r3);padding:56px 32px 48px;margin-top:40px;max-width:600px;margin-left:auto;margin-right:auto">
+<p style="font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:600;color:#1A1A1A;text-align:center;line-height:1.35;margin-bottom:40px;letter-spacing:.2px">Strategic decisions in medicine carry<br>real financial impact.</p>
+
+<div style="max-width:360px;margin:0 auto">
+<div style="text-align:center;padding:24px 0;border-bottom:1px solid rgba(198,167,94,.25)">
+<div style="font-family:'Cormorant Garamond',serif;font-size:40px;font-weight:600;color:#1A1A1A;letter-spacing:-.5px;line-height:1">$1,000+</div>
+<div style="font-size:13px;color:#4A4A4A;font-weight:300;margin-top:8px;letter-spacing:.3px">Coffee each year</div>
+</div>
+
+<div style="text-align:center;padding:24px 0;border-bottom:1px solid rgba(198,167,94,.25)">
+<div style="font-family:'Cormorant Garamond',serif;font-size:40px;font-weight:600;color:#1A1A1A;letter-spacing:-.5px;line-height:1">$1,500 – $3,000</div>
+<div style="font-size:13px;color:#4A4A4A;font-weight:300;margin-top:8px;letter-spacing:.3px">Board examinations</div>
+</div>
+
+<div style="text-align:center;padding:24px 0">
+<div style="font-family:'Cormorant Garamond',serif;font-size:40px;font-weight:600;color:#1A1A1A;letter-spacing:-.5px;line-height:1">$50,000+</div>
+<div style="font-size:13px;color:#4A4A4A;font-weight:300;margin-top:8px;letter-spacing:.3px">One poorly structured contract</div>
+</div>
+</div>
+
+<div style="width:48px;height:1px;background:#C6A75E;margin:32px auto;opacity:.5"></div>
+
+<p style="font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;color:#1A1A1A;text-align:center;line-height:1.4;margin-bottom:12px;letter-spacing:.2px">The right insight at the right moment<br>can be far more valuable.</p>
+<p style="font-size:14px;color:#4A4A4A;text-align:center;font-weight:300;line-height:1.7;max-width:420px;margin:0 auto 24px">HeartWise provides practical career guidance grounded in real experience in medicine.</p>
+<div style="text-align:center"><button class="btn btn-a" onclick="go('pg-onboard')" style="max-width:260px;margin:0 auto">Get Started Free →</button></div>
+</div>
+
 </div>
 
 </div>
@@ -17580,11 +17582,60 @@ async function captureLeadEmail(){
 }
 
 function planSignup(plan){
+  // EARLY ACCESS: waitlist for mentorship and intensive
+  if(plan==='elite'||plan==='intensive'){
+    showWaitlistModal(plan);
+    return;
+  }
   if(U){
     subPlan(plan);
   }else{
     sessionStorage.setItem('hw_pending_plan',plan);
     go('pg-onboard');
+  }
+}
+
+// Waitlist modal for Mentorship & Strategic Intensive
+function showWaitlistModal(plan){
+  var planName=plan==='elite'?'Mentorship':'Strategic Intensive';
+  var prefillEmail=(U&&U.email)?U.email:'';
+  var prefillName=(U&&U.name)?U.name:'';
+  var h='<div style="padding:28px;max-width:420px;margin:0 auto;text-align:center">';
+  h+='<div style="font-size:28px;margin-bottom:12px">✦</div>';
+  h+='<div style="font-family:var(--font-serif);font-size:20px;font-weight:600;color:var(--text);margin-bottom:8px">Join the '+planName+' Waitlist</div>';
+  h+='<p style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:24px">We\'ll notify you when '+planName+' enrollment opens. Early waitlist members get priority access and a founding member discount.</p>';
+  h+='<input type="text" id="wl-name" value="'+prefillName.replace(/"/g,'&quot;')+'" placeholder="Your name" style="width:100%;padding:12px 14px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-size:13px;margin-bottom:10px;box-sizing:border-box">';
+  h+='<input type="email" id="wl-email" value="'+prefillEmail.replace(/"/g,'&quot;')+'" placeholder="Your email" style="width:100%;padding:12px 14px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-size:13px;margin-bottom:16px;box-sizing:border-box">';
+  h+='<button onclick="submitWaitlist(\''+plan+'\')" class="btn btn-a" style="width:100%;max-width:none">Join Waitlist</button>';
+  h+='<p style="font-size:11px;color:var(--text3);margin-top:10px">No spam. Just a notification when it\'s ready.</p>';
+  h+='</div>';
+  var modal=document.getElementById('modal-q');
+  var content=document.getElementById('modal-q-content');
+  if(modal&&content){content.innerHTML=h;modal.classList.remove('hidden')}
+}
+
+function submitWaitlist(plan){
+  var name=(document.getElementById('wl-name').value||'').trim();
+  var email=(document.getElementById('wl-email').value||'').trim();
+  if(!email||email.indexOf('@')===-1){notify('Please enter a valid email.',1);return}
+  var planName=plan==='elite'?'Mentorship':'Strategic Intensive';
+  // Save to Supabase
+  if(typeof _supaClient!=='undefined'&&_supaClient){
+    _supaClient.from('profiles').upsert({email:email.toLowerCase(),name:name||email.split('@')[0],waitlist_plan:plan,waitlist_date:new Date().toISOString()},{onConflict:'email'}).then(function(){});
+  }
+  // Also store locally
+  var wl=JSON.parse(localStorage.getItem('hw_waitlist')||'[]');
+  wl.push({plan:plan,email:email,name:name,date:new Date().toISOString()});
+  localStorage.setItem('hw_waitlist',JSON.stringify(wl));
+  // Show confirmation
+  var content=document.getElementById('modal-q-content');
+  if(content){
+    content.innerHTML='<div style="padding:40px;text-align:center">'
+      +'<div style="font-size:36px;margin-bottom:16px">✓</div>'
+      +'<div style="font-family:var(--font-serif);font-size:20px;font-weight:600;color:var(--text);margin-bottom:8px">You\'re on the list!</div>'
+      +'<p style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:20px">We\'ll email you at <strong>'+email+'</strong> when '+planName+' enrollment opens. In the meantime, all Core tools are free — give them a try.</p>'
+      +'<button onclick="closeModal(\'modal-q\');'+(U?'':'go(\'pg-onboard\')')+'" class="btn btn-a" style="max-width:240px;margin:0 auto">'+(U?'Got it':'Get Started Free')+'</button>'
+      +'</div>';
   }
 }
 const STRIPE_LINKS={

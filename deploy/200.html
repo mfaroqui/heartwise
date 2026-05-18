@@ -7833,31 +7833,28 @@ async function doLogin(e){
         let user=DB.users.find(u=>u.email.toLowerCase()===email);
         if(!user){
           const isAdmin=email===AE.toLowerCase();
-          user={id:isAdmin?'admin':'u'+DB.nextUserId++,name:sbUser.user_metadata?.name||email.split('@')[0],email,pass:'__supabase__',role:isAdmin?'admin':'student',tier:isAdmin?'admin':'free',institution:'',usage:{ai:0,credits:isAdmin?999:0,month:new Date().getMonth()}};
+          user={id:isAdmin?'admin':'u'+DB.nextUserId++,name:sbUser.user_metadata?.name||email.split('@')[0],email,pass:'__supabase__',role:isAdmin?'admin':'student',tier:isAdmin?'admin':'core',institution:'',usage:{ai:0,credits:isAdmin?999:0,month:new Date().getMonth()}}; // EARLY ACCESS: new users get core
           DB.users.push(user);saveDB();
         }
         // Ensure admin tier is always set for admin email
         if(email===AE.toLowerCase()&&user.tier!=='admin'){user.tier='admin';user.role='admin';saveDB()}
         // Sync trial status from Supabase profile
+        // EARLY ACCESS: auto-upgrade free users to core, disable trial expiration
         try{
           var prof=await _supaClient.from('profiles').select('tier,is_trial,trial_end').eq('email',email).limit(1);
           if(!prof.error&&prof.data&&prof.data.length>0){
             var sp=prof.data[0];
-            if(sp.trial_end){
-              var now=new Date(),end=new Date(sp.trial_end);
-              if(now>=end&&(sp.is_trial||user.isTrial)){
-                user.tier='free';user.isTrial=false;
-                await _supaClient.from('profiles').update({tier:'free',is_trial:false}).eq('email',email);
-                saveDB();
-              }else if(sp.is_trial){
-                user.tier='core';user.isTrial=true;user.trialEnd=sp.trial_end;
-                // Fix old trials that were created with elite tier
-                if(sp.tier==='elite'){await _supaClient.from('profiles').update({tier:'core'}).eq('email',email)}
-              }
+            // Auto-upgrade free users to core during early access
+            if(sp.tier==='free'||user.tier==='free'){
+              user.tier='core';user.isTrial=false;
+              await _supaClient.from('profiles').update({tier:'core',is_trial:false}).eq('email',email);
+              saveDB();
             }
-            if(sp.tier&&!sp.is_trial&&sp.tier!=='free'){user.tier=sp.tier;user.isTrial=false}
+            if(sp.tier&&sp.tier!=='free'){user.tier=sp.tier;user.isTrial=false}
           }
-        }catch(ex2){console.warn('Trial sync:',ex2)}
+        }catch(ex2){console.warn('Profile sync:',ex2)}
+        // Also upgrade locally if still free
+        if(user.tier==='free'&&user.email.toLowerCase()!==AE.toLowerCase()){user.tier='core';user.isTrial=false;saveDB()}
         U=user;if(!U.usage)U.usage={ai:0,credits:TIERS[U.tier]?.credits||0,month:new Date().getMonth()};
         localStorage.setItem('hw_session',JSON.stringify(U));
         // Restore session data from Supabase (career profile, tool history, etc.)
@@ -7982,7 +7979,7 @@ function doSignup(e){
   const role=document.getElementById('s-role').value;
   const inst=document.getElementById('s-inst').value.trim();
   if(DB.users.find(u=>u.email.toLowerCase()===email)){notify('Email already registered',1);return}
-  const user={id:'u'+DB.nextUserId++,name,email,pass,role,tier:'free',institution:inst,usage:{ai:0,credits:0,month:new Date().getMonth()},emailVerified:false};
+  const user={id:'u'+DB.nextUserId++,name,email,pass,role,tier:'core',institution:inst,usage:{ai:0,credits:0,month:new Date().getMonth()},emailVerified:false}; // EARLY ACCESS: all signups get core
   DB.users.push(user);saveDB();
   // Send verification email via Supabase
   if(_supaClient){
@@ -8085,7 +8082,8 @@ function enterApp(){
   document.body.classList.add('in-app');
   if(!U.usage)U.usage={ai:0,credits:TIERS[U.tier]?.credits||0,month:new Date().getMonth()};
   if(U.usage.month!==new Date().getMonth()){U.usage.ai=0;U.usage.month=new Date().getMonth()}
-  // Check trial expiration
+  // EARLY ACCESS: trial expiration disabled
+  /*
   if(U.isTrial&&U.trialEnd){
     const now=new Date();const end=new Date(U.trialEnd);
     if(now>=end){
@@ -8098,7 +8096,9 @@ function enterApp(){
       setTimeout(function(){showTrialExpiredTeaser()},800);
     }
   }
-  // Also show teaser for previously expired trial users returning
+  */
+  // EARLY ACCESS: skip previously-expired trial teaser
+  /*
   if(!U.isTrial&&U.trialEnd&&U.tier==='free'){
     var shownKey='hw_teaser_'+U.id+'_'+new Date().toDateString();
     if(!sessionStorage.getItem(shownKey)){
@@ -8106,6 +8106,7 @@ function enterApp(){
       setTimeout(function(){showTrialExpiredTeaser()},800);
     }
   }
+  */
   const b=document.getElementById('user-badge');
   const bc={free:'b-free',student:'b-student',core:'b-core',elite:'b-pro',admin:'b-admin'};
   b.className='badge '+(bc[U.tier]||'b-free');
@@ -8116,10 +8117,8 @@ function enterApp(){
   var navAsk=document.getElementById('nav-ask');if(navAsk)navAsk.style.display=(U.tier==='elite'||U.tier==='admin')?'':'none';
   var topUpgrade=document.getElementById('topbar-upgrade');
   if(topUpgrade){
-    if(U.tier==='free'||U.isTrial){topUpgrade.style.display='';topUpgrade.textContent='Subscribe';topUpgrade.onclick=function(){navTo('scr-profile');showUpgrade()}}
-    else if(U.tier==='student'){topUpgrade.style.display='';topUpgrade.textContent='Upgrade to Core';topUpgrade.onclick=function(){navTo('scr-profile');showUpgrade()}}
-    else if(U.tier==='core'){topUpgrade.style.display='';topUpgrade.textContent='Upgrade to Mentorship';topUpgrade.onclick=function(){navTo('scr-profile');showUpgrade()}}
-    else{topUpgrade.style.display='none'}
+    // EARLY ACCESS: hide upgrade button for everyone
+    topUpgrade.style.display='none';
   }
   // Show leverage upsell for core users only
   // leverage-upsell removed from home screen layout
@@ -8129,8 +8128,8 @@ function enterApp(){
     sessionStorage.removeItem('hw_pending_plan');
     setTimeout(()=>subPlan(pendingPlan),500);
   }
-  // Start trial countdown if active
-  if(U.isTrial&&U.trialEnd)startTrialCountdown();
+  // EARLY ACCESS: trial countdown disabled
+  // if(U.isTrial&&U.trialEnd)startTrialCountdown();
   renderHome();
   navTo('scr-home');
   // Handle deep links (?tool=v14, ?page=pricing, etc.)
@@ -8149,38 +8148,24 @@ function enterApp(){
   showUpgradeElements();
   // Start onboarding tour for new users (after a short delay for rendering)
   if(shouldShowTour())setTimeout(startTour,800);
+  // Email: monthly digest + reengagement ping (non-blocking)
+  try{if(typeof hwEmailMonthlyDigest==='function')hwEmailMonthlyDigest(U)}catch(e){}
+  try{if(typeof hwEmailReengagement==='function')hwEmailReengagement(U)}catch(e){}
+  try{if(typeof hwEmailDeadlineReminder==='function')hwEmailDeadlineReminder(U)}catch(e){}
 }
 
 // ===== UPGRADE ELEMENTS =====
 function showUpgradeElements(){
   var stickyBar=document.getElementById('upgrade-sticky-bar');
   if(!stickyBar)return;
-
-  if(U.tier==='free'){
-    stickyBar.classList.remove('hidden');
-    document.body.classList.add('has-upgrade-bar');
-    document.getElementById('upgrade-bar-sub').textContent='Unlock unlimited career intelligence tools — from $9/mo';
-  } else {
-    stickyBar.classList.add('hidden');
-    document.body.classList.remove('has-upgrade-bar');
-  }
+  // EARLY ACCESS: hide upgrade bar for everyone
+  stickyBar.classList.add('hidden');
+  document.body.classList.remove('has-upgrade-bar');
 }
 
-// Blur gate: wraps tool results for free users with a blurred preview + CTA overlay
+// Blur gate: EARLY ACCESS — disabled, all results visible
 function applyBlurGate(resultsEl){
-  if(!U||U.tier!=='free')return false;
-  if(!resultsEl||!resultsEl.innerHTML)return false;
-
-  var content=resultsEl.innerHTML;
-  resultsEl.innerHTML='<div class="hw-blur-gate">'
-    +'<div class="hw-blur-content">'+content+'</div>'
-    +'<div class="hw-blur-overlay">'
-    +'<div class="hw-blur-icon">\ud83d\udd12</div>'
-    +'<div class="hw-blur-title">Your analysis is ready</div>'
-    +'<div class="hw-blur-sub">Upgrade to Core to see your full results, recommendations, and action plan.</div>'
-    +'<button class="hw-blur-cta" onclick="navTo(\'scr-profile\');showUpgrade();closeModal(\'modal-q\')">Unlock Full Results \u2014 from $9/mo</button>'
-    +'</div></div>';
-  return true;
+  return false; // EARLY ACCESS: never blur
 }
 
 // Gate the "What to do next" / Attending Note section for trial users
@@ -8209,8 +8194,9 @@ function hwGatePathway(pathwayHtml){
     return pathwayHtml;
   }
   // Free users: already gated by applyBlurGate, but in case it leaks
-  if(!U||U.tier==='free')return pathwayHtml;
-  // Trial users: gate the pathway
+  // EARLY ACCESS: no tier gating on pathway
+  if(!U)return pathwayHtml;
+  /* Trial gate disabled for early access
   if(U.isTrial){
     return '<div style="position:relative;margin-top:20px">'
       +'<div style="filter:blur(6px);pointer-events:none;user-select:none;opacity:.5">'+pathwayHtml+'</div>'
@@ -8222,6 +8208,7 @@ function hwGatePathway(pathwayHtml){
       +'<div style="font-size:10px;color:var(--text3);margin-top:8px">Cancel anytime</div>'
       +'</div></div>';
   }
+  */
   return pathwayHtml;
 }
 
@@ -8744,6 +8731,39 @@ function setDailyQuote(){
 
 // ===== TRIAL COUNTDOWN =====
 var _trialInterval=null;
+// EARLY ACCESS BANNER — replaces trial countdown banner
+function renderEarlyAccessBanner(){
+  if(!U||U.tier==='admin')return;
+  var dismissKey='hw_ea_banner_dismissed';
+  if(sessionStorage.getItem(dismissKey))return;
+  var existing=document.getElementById('early-access-banner');
+  if(existing)return;
+  var container=document.getElementById('trial-countdown-banner');
+  if(!container){
+    // Create a banner element if trial banner doesn't exist
+    container=document.createElement('div');
+    container.id='early-access-banner';
+    var homeEl=document.getElementById('scr-home');
+    if(homeEl)homeEl.insertBefore(container,homeEl.firstChild);
+  }else{
+    container.id='early-access-banner';
+  }
+  container.style.display='';
+  container.style.padding='12px 18px';
+  container.style.margin='0 0 16px 0';
+  container.style.background='rgba(198,168,94,.08)';
+  container.style.border='1px solid rgba(198,168,94,.15)';
+  container.style.borderRadius='12px';
+  container.innerHTML='<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">'
+    +'<span style="font-size:16px">✦</span>'
+    +'<div style="flex:1;min-width:180px">'
+    +'<div style="font-size:13px;font-weight:600;color:var(--accent)">Early Access — All Tools Free</div>'
+    +'<div style="font-size:11px;color:var(--text2);margin-top:2px">Help us build the best career platform for physicians. Your feedback shapes what we build next.</div>'
+    +'</div>'
+    +'<button onclick="this.closest(\'#early-access-banner\').style.display=\'none\';sessionStorage.setItem(\'hw_ea_banner_dismissed\',\'1\')" style="flex-shrink:0;background:none;border:1px solid rgba(198,168,94,.25);color:var(--accent);font-size:11px;font-weight:600;padding:6px 14px;border-radius:8px;cursor:pointer">Got it</button>'
+    +'</div>';
+}
+
 function startTrialCountdown(){
   if(_trialInterval)clearInterval(_trialInterval);
   updateTrialBanner();
@@ -9864,7 +9884,7 @@ var COACHING_TOOLS={
 function injectCoachingOptin(toolName){
   var config=COACHING_TOOLS[toolName];
   if(!config)return;
-  if(!U||U.tier==='free')return;
+  if(!U)return; // EARLY ACCESS: removed tier==='free' check
   // Check if already opted in for this tool
   var alreadyActive=U.coaching&&U.coaching[config.key]&&U.coaching[config.key].enabled;
   // Find the modal content area and append
@@ -9952,6 +9972,8 @@ function recordToolUse(toolName,score,summary,resultData){
   try{checkAchievements()}catch(e){console.error('Achievements:',e)}
   // Prompt decision capture for paid users
   try{if(typeof promptDecisionCapture==='function')promptDecisionCapture(toolName,score,summary,resultData)}catch(e){console.error('DecisionPrompt:',e)}
+  // Email: notify on first tool run
+  try{if(typeof hwEmailToolComplete==='function')hwEmailToolComplete(U,toolName,score)}catch(e){}
 }
 
 // ===== SHARED PROFILE DATA LAYER =====
@@ -10167,10 +10189,12 @@ function renderHome(){
   var _hasPlan=U.tier==='student'||U.tier==='core'||U.tier==='elite'||U.tier==='admin'||U.isTrial;
   var _hasRealProfile=cp.lastUpdated&&(cp.specialty||cp.step2||parseInt(cp.pubs)>0||parseInt(cp.comp)>5000);
   var _careerMapActive=_hasPlan&&_hasRealProfile&&typeof renderCareerMap==='function';
-  // Trial banner
+  // EARLY ACCESS banner (replaces trial banner)
   var trialBanner=document.getElementById('trial-countdown-banner');
-  if(trialBanner)trialBanner.style.display=U.isTrial&&U.trialEnd?'':'none';
-  if(U.isTrial&&U.trialEnd)updateTrialBanner();
+  if(trialBanner){
+    trialBanner.style.display='none'; // Hide old trial banner
+  }
+  renderEarlyAccessBanner();
   // Score change notification (only shows when there IS a change)
   try{renderScoreChange()}catch(e){console.error('ScoreChange:',e)}
   // Zone 2: Recommended tool (skip if Career Map is active — it has its own recommendations)
@@ -10241,6 +10265,11 @@ function renderHeroCard(){
   var el=document.getElementById('home-hero-card');
   if(!el||!U)return;
   initCareerProfile();
+  // Try Match Dashboard for students/residents/IMGs first
+  if(typeof renderMatchDashboard==='function'){
+    var dashRendered=renderMatchDashboard();
+    if(dashRendered)return;
+  }
   var cp=U.careerProfile||{};
   var hasRealProfile=cp.lastUpdated&&(cp.specialty||cp.step2||parseInt(cp.pubs)>0||parseInt(cp.comp)>5000);
   var name=U.name?'Dr. '+U.name.split(' ').pop():'';
@@ -10875,15 +10904,9 @@ function renderImgSuccessCards(){
 function renderUpgradeNudge(){
   var el=document.getElementById('home-upgrade-nudge');
   if(!el||!U)return;
-  // Don't show for paid users or trial users (they have the trial banner)
-  if(U.tier!=='free'||U.isTrial){el.style.display='none';return}
-  el.style.display='';
-  el.innerHTML='<div style="background:#fff;border:1px solid rgba(198,168,94,.25);border-radius:14px;padding:16px 18px;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.04);transition:all .2s" onclick="navTo(\'scr-profile\');showUpgrade()" onmouseenter="this.style.boxShadow=\'0 6px 16px rgba(0,0,0,.08)\'" onmouseleave="this.style.boxShadow=\'0 2px 6px rgba(0,0,0,.04)\'">'
-    +'<div style="display:flex;align-items:center;gap:12px">'
-    +'<span style="font-size:20px">⚡</span>'
-    +'<div><div style="font-size:13px;font-weight:600;color:#C6A85E">Upgrade to Core</div>'
-    +'<div style="font-size:11px;color:#5C564F">Unlimited career intelligence tools — $39/mo</div></div>'
-    +'</div></div>';
+  // EARLY ACCESS: always hide upgrade nudge
+  el.style.display='none';
+  return;
 }
 
 // Toggle detailed analytics section
@@ -10975,7 +10998,7 @@ function renderWeeklyFocus(){
 function renderToolProgress(){
   var el=document.getElementById('tool-progress');
   if(!el||!U)return;
-  if(U.tier==='free'&&!U.isTrial){el.style.display='none';return}
+  // EARLY ACCESS: show for all users
   var cp=U.careerProfile||{};
 
   var toolsUsed=[];
@@ -11425,8 +11448,8 @@ function showQuestion(id){
     h+='<div style="font-size:11px;font-weight:600;color:var(--green);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">\ud83e\uddd1\u200d\u2695\ufe0f Doctor\'s Review</div>';
     h+='<p style="font-size:14px;color:var(--text2);line-height:1.7">'+q.reviewNote+'</p></div>';
   }
-  // Upgrade prompt for free users
-  if(U&&U.tier==='free'){
+  // EARLY ACCESS: upgrade prompt disabled
+  if(false&&U&&U.tier==='free'){
     h+='<div style="margin-top:20px;padding:18px;border-radius:var(--r2);background:linear-gradient(135deg,var(--accent-dim),rgba(198,168,94,.06));border:1px solid rgba(198,168,94,.15)">';
     h+='<div style="font-size:14px;font-weight:600;color:var(--accent);margin-bottom:6px">⚡ Want more structured guidance?</div>';
     h+='<p style="font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.5">Upgrade to Core for unlimited strategic assessments, financial modeling tools, and scenario simulations.</p>';
@@ -11492,7 +11515,7 @@ function submitQ(){
   if(!level){notify('Select your training level',1);return}
   if(!cat){notify('Select a category',1);return}
   if(!core||core.length<10){notify('Enter your core question (min 10 chars)',1);return}
-  if(U.tier==='free'){notify('Subscribe to access career intelligence tools.',1);return}
+  // EARLY ACCESS: free tier gate removed
   const anon=document.getElementById('q-anon-tog').classList.contains('on');
   const wantsReview=document.getElementById('q-review-tog').classList.contains('on');
   const context=document.getElementById('q-context').value.trim();
@@ -15275,10 +15298,10 @@ function openFramework(id){
   if(id==='v17')setTimeout(obsInit,50);
   // Auto-fill tool intakes from career baseline
   setTimeout(function(){autoFillToolFromProfile(id)},60);
-  // Inject partial-access banner for trial users
-  if(U&&U.isTrial&&U.tier!=='admin'&&getTrialAccess(id)==='partial'){
-    injectPartialOverlay(id);
-  }
+  // EARLY ACCESS: partial-access overlay disabled
+  // if(U&&U.isTrial&&U.tier!=='admin'&&getTrialAccess(id)==='partial'){
+  //   injectPartialOverlay(id);
+  // }
 }
 
 // Auto-fill tool inputs from the user's saved career baseline profile
@@ -16089,8 +16112,14 @@ function renderProfile(){
   var scoreEl=document.getElementById('ps-score');if(scoreEl)scoreEl.textContent=lastScore;
   var streak=0;if(U.loginDays&&U.loginDays.length){var today=new Date().toISOString().split('T')[0];var days=U.loginDays.slice().sort().reverse();for(var si=0;si<days.length;si++){var expected=new Date(Date.now()-si*86400000).toISOString().split('T')[0];if(days[si]===expected)streak++;else break}}
   var streakEl=document.getElementById('ps-streak');if(streakEl)streakEl.textContent=streak;
-  document.getElementById('prof-plan-label').textContent=t.name+(U.tier==='free'?'':' \u2022 Active');
-  document.getElementById('prof-plan-label').style.color=U.tier==='free'?'var(--text3)':'var(--accent)';
+  // EARLY ACCESS: show "Early Access" plan label for all non-admin users
+  if(U.tier==='admin'){
+    document.getElementById('prof-plan-label').textContent=t.name+' \u2022 Active';
+    document.getElementById('prof-plan-label').style.color='var(--accent)';
+  }else{
+    document.getElementById('prof-plan-label').textContent='\ud83c\udf89 Early Access \u2022 All Tools Free';
+    document.getElementById('prof-plan-label').style.color='var(--accent)';
+  }
   renderProgressDashboard();
   renderToolResultsSummary();
   renderGoalTracker();
@@ -16119,12 +16148,11 @@ function adminSwitchTier(tier){
   var b=document.getElementById('user-badge');
   var bc={free:'b-free',student:'b-student',core:'b-core',elite:'b-pro',admin:'b-admin'};
   if(b){b.className='badge '+(bc[tier]||'b-free');b.textContent=tier==='admin'?'MENTOR':t.name.toUpperCase()||'FREE'}
-  var upNudge=document.getElementById('home-upgrade-nudge');if(upNudge)upNudge.style.display=tier==='free'&&!U.isTrial?'':'none';
+  var upNudge=document.getElementById('home-upgrade-nudge');if(upNudge)upNudge.style.display='none'; // EARLY ACCESS
   var topUpgrade=document.getElementById('topbar-upgrade');
   if(topUpgrade){
-    if(tier==='free'){topUpgrade.style.display='';topUpgrade.textContent='Subscribe'}
-    else if(tier==='core'){topUpgrade.style.display='';topUpgrade.textContent='Upgrade to Mentorship'}
-    else{topUpgrade.style.display='none'}
+    // EARLY ACCESS: hide all upgrade buttons
+    topUpgrade.style.display='none';
   }
   showUpgradeElements();
   renderHome();
@@ -19081,11 +19109,11 @@ async function obComplete(){
     // Device already used a trial — create account but as free tier, no trial
     const roleMap={premed:'student',student:'student',resident:'resident',fellow:'fellow',attending:'attending',switching:'other'};
     const reportSnapshot=captureReportData(p);
-    const user={id:'u'+DB.nextUserId++,name:p.name,email:p.email.toLowerCase(),pass:p.pass,role:roleMap[p.stage]||'student',tier:'free',isTrial:false,institution:p.inst,usage:{ai:0,credits:0,month:new Date().getMonth()},profile:safeProfileData(p),signupDate:new Date().toISOString(),report:reportSnapshot,notes:[],trialUsedOnDevice:true};
+    const user={id:'u'+DB.nextUserId++,name:p.name,email:p.email.toLowerCase(),pass:p.pass,role:roleMap[p.stage]||'student',tier:'core',isTrial:false,institution:p.inst,usage:{ai:0,credits:0,month:new Date().getMonth()},profile:safeProfileData(p),signupDate:new Date().toISOString(),report:reportSnapshot,notes:[],trialUsedOnDevice:true}; // EARLY ACCESS: core instead of free
     DB.users.push(user);saveDB();
     var _profilePayload2={
       user_id:user.id,name:p.name,email:p.email.toLowerCase(),role:roleMap[p.stage]||'student',
-      tier:'free',institution:p.inst||'',stage:p.stage,specialty:p.spec||'',goal:p.goal||'',
+      tier:'core',institution:p.inst||'',stage:p.stage,specialty:p.spec||'',goal:p.goal||'', // EARLY ACCESS
       score:reportSnapshot.score,grade:reportSnapshot.grade,
       strengths:reportSnapshot.strengths,gaps:reportSnapshot.gaps,
       profile_data:safeProfileData(p)
@@ -19102,24 +19130,21 @@ async function obComplete(){
     trialHistory.push({email:p.email.toLowerCase(),date:new Date().toISOString(),blocked:true});
     localStorage.setItem('hw_trial_history',JSON.stringify(trialHistory));
     if(loginBtn){loginBtn.disabled=false;loginBtn.textContent=loginBtn.dataset.orig||'Sign In'}enterApp();showDisc();
-    notify('Welcome! Guided access was previously used on this device. You\'ve been signed up on the free Explorer plan. Subscribe to unlock all tools.',1);
+    notify('Welcome! 🎉 You have Early Access — all tools are free. Help us improve by sharing feedback.');
     return;
   }
-  // 3. Normal first-time trial
-  // Create user with trial
-  const roleMap={premed:'student',student:'student',resident:'resident',fellow:'fellow',attending:'attending',switching:'other'};
-  const trialEnd=new Date();trialEnd.setHours(trialEnd.getHours()+48);
+  // 3. EARLY ACCESS — full core access, no trial
+  const roleMap2={premed:'student',student:'student',resident:'resident',fellow:'fellow',attending:'attending',switching:'other'};
   // Capture report snapshot
   const reportSnapshot=captureReportData(p);
-  const user={id:'u'+DB.nextUserId++,name:p.name,email:p.email.toLowerCase(),pass:p.pass,role:roleMap[p.stage]||'student',tier:'core',trialEnd:trialEnd.toISOString(),isTrial:true,institution:p.inst,usage:{ai:0,credits:0,month:new Date().getMonth()},profile:safeProfileData(p),signupDate:new Date().toISOString(),report:reportSnapshot,notes:[]};
+  const user={id:'u'+DB.nextUserId++,name:p.name,email:p.email.toLowerCase(),pass:p.pass,role:roleMap2[p.stage]||'student',tier:'core',isTrial:false,institution:p.inst,usage:{ai:0,credits:0,month:new Date().getMonth()},profile:safeProfileData(p),signupDate:new Date().toISOString(),report:reportSnapshot,notes:[]};
   DB.users.push(user);saveDB();
   // Sync to Supabase — client-side first, server-side fallback
   var _profilePayload={
-    user_id:user.id,name:p.name,email:p.email.toLowerCase(),role:roleMap[p.stage]||'student',
-    tier:'core',is_trial:true,institution:p.inst||'',stage:p.stage,specialty:p.spec||'',goal:p.goal||'',
+    user_id:user.id,name:p.name,email:p.email.toLowerCase(),role:roleMap2[p.stage]||'student',
+    tier:'core',is_trial:false,institution:p.inst||'',stage:p.stage,specialty:p.spec||'',goal:p.goal||'',
     score:reportSnapshot.score,grade:reportSnapshot.grade,
     strengths:reportSnapshot.strengths,gaps:reportSnapshot.gaps,
-    trial_end:trialEnd.toISOString(),
     profile_data:safeProfileData(p)
   };
   if(_supaClient){
@@ -19138,6 +19163,8 @@ async function obComplete(){
   trialHistory.push({email:p.email.toLowerCase(),date:new Date().toISOString()});
   localStorage.setItem('hw_trial_history',JSON.stringify(trialHistory));
   if(loginBtn){loginBtn.disabled=false;loginBtn.textContent=loginBtn.dataset.orig||'Sign In'}enterApp();showDisc();
+  // Email: welcome for new signups
+  try{if(typeof hwEmailWelcome==='function')hwEmailWelcome(user)}catch(e){}
   // Show strategic report as welcome modal after entering app
   setTimeout(function(){
     var reportHtml=document.getElementById('ob-report');
@@ -21816,7 +21843,7 @@ function submitCheckin(){
 // ===== "YOUR STATUS" — WHAT CHANGED FEED =====
 function renderWhatsChanged(){
   var el=document.getElementById('whats-changed');if(!el||!U)return;
-  if(U.tier==='free'&&!U.isTrial){el.style.display='none';return}
+  // EARLY ACCESS: show for all users
   var now=new Date();var items=[];var cp=U.careerProfile||{};var stage=cp.stage||'student';
   if(U.weeklyGoals&&U.weeklyGoals.length){var cur=U.weeklyGoals[U.weeklyGoals.length-1];if(cur.status==='active')items.push({icon:'🎯',text:'This week: <strong>'+cur.goal+'</strong>'})}
   var lc=U.lastCheckin?new Date(U.lastCheckin):null;
@@ -25564,9 +25591,8 @@ var _tourSteps=[
 
 function shouldShowTour(){
   if(!U)return false;
-  // Only show for trial users or paid subscribers (not free, not admin)
+  // EARLY ACCESS: show tour for all new users
   if(U.tier==='admin')return false;
-  if(U.tier==='free'&&!U.isTrial)return false;
   // Check if already completed
   if(localStorage.getItem('hw_tour_done'))return false;
   // Don't show if user has already explored significantly
@@ -28630,6 +28656,1422 @@ function hwGetKeyInsight(cp, scores, spec, deadlines) {
 
   return null;
 }
+
+// ===== MATCH DASHBOARD — Student-Focused Homepage =====
+// Replaces the generic hero card for students/residents/IMGs with a
+// persistent, actionable dashboard centered on matching.
+// Depends on: U, U.toolHistory, U.careerProfile, mccResidencyData,
+//   mccFellowshipData, openFramework(), showUpdateProfile()
+
+function renderMatchDashboard(){
+  var el=document.getElementById('home-hero-card');
+  if(!el||!U)return false;
+  var stage=U.role||U.stage||(U.careerProfile||{}).stage||'student';
+  // Only render for pre-attending stages
+  if(['attending','admin'].indexOf(stage)!==-1)return false;
+
+  var cp=U.careerProfile||{};
+  var hist=(U.toolHistory||[]);
+  var matchHist=hist.filter(function(t){return t.tool==='Match Probability Calculator'});
+  var hasProfile=cp.lastUpdated&&(cp.specialty||cp.step2);
+  var name=U.name?'Dr. '+U.name.split(' ').pop():'';
+  var hour=new Date().getHours();
+  var greeting=hour<12?'Good morning':hour<18?'Good afternoon':'Good evening';
+
+  var h='<div style="background:#111318;border-radius:18px;padding:24px 22px;color:#EDEBE7;position:relative;overflow:hidden">';
+  h+='<div style="position:absolute;top:-30%;right:-10%;width:200px;height:200px;background:radial-gradient(circle,rgba(198,168,94,.12),transparent 60%);border-radius:50%"></div>';
+  h+='<div style="position:relative">';
+
+  // ─── NO PROFILE YET ───
+  if(!hasProfile){
+    h+='<div style="font-family:var(--font-serif);font-size:20px;font-weight:600;line-height:1.3;margin-bottom:6px">';
+    h+=name?greeting+', '+name+'.':greeting+'. Welcome to HeartWise.';
+    h+='</div>';
+    h+='<div style="font-size:13px;color:rgba(237,235,231,.65);line-height:1.6;margin-bottom:20px">Set up your career profile to get a personalized Match Dashboard with your score, benchmarks, and monthly action plan.</div>';
+    h+='<div onclick="showUpdateProfile()" style="display:flex;align-items:center;gap:14px;padding:14px 16px;background:rgba(198,168,94,.08);border:1px solid rgba(198,168,94,.2);border-radius:12px;cursor:pointer;transition:all .15s" onmouseenter="this.style.background=\'rgba(198,168,94,.12)\'" onmouseleave="this.style.background=\'rgba(198,168,94,.08)\'">';
+    h+='<div style="width:32px;height:32px;border-radius:10px;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#1C1A17;flex-shrink:0">1</div>';
+    h+='<div style="flex:1"><div style="font-size:13px;font-weight:600;color:#EDEBE7">Set Up Your Career Profile</div>';
+    h+='<div style="font-size:11px;color:rgba(237,235,231,.5)">2 minutes — unlocks your Match Dashboard</div></div>';
+    h+='<span style="font-size:12px;color:var(--accent);font-weight:600">Start →</span></div>';
+    h+='</div></div>';
+    el.innerHTML=h;
+    return true;
+  }
+
+  // ─── HAS PROFILE — FULL DASHBOARD ───
+  var lastMatch=matchHist.length>0?matchHist[matchHist.length-1]:null;
+  var firstMatch=matchHist.length>0?matchHist[0]:null;
+  var lastScore=lastMatch?_dashParseScore(lastMatch.score):null;
+  var firstScore=firstMatch?_dashParseScore(firstMatch.score):null;
+  var delta=(lastScore!==null&&firstScore!==null&&matchHist.length>1)?lastScore-firstScore:null;
+
+  var specKey=cp.specialty||'';
+  var sdName=specKey;
+  // Try to get benchmark data
+  var sd=null;
+  if(typeof mccResidencyData!=='undefined'){
+    // Search by value or key
+    for(var k in mccResidencyData){if(mccResidencyData[k].name===specKey||k===specKey){sd=mccResidencyData[k];break}}
+  }
+
+  // ─── SECTION 1: Score Summary ───
+  h+='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">';
+  h+='<div>';
+  h+='<div style="font-family:var(--font-serif);font-size:17px;font-weight:600;color:#EDEBE7;line-height:1.3">'+(name?greeting+', '+name:greeting)+'</div>';
+  h+='<div style="font-size:11px;color:rgba(237,235,231,.5);margin-top:2px">'+(cp.specialty||'Undecided')+' · '+(stage.charAt(0).toUpperCase()+stage.slice(1))+'</div>';
+  h+='</div>';
+
+  // Score ring
+  if(lastScore!==null){
+    var sc=lastScore;
+    var ringColor=sc>=75?'#5E8B6F':sc>=55?'#C6A85E':'#B85C5C';
+    var circ=2*Math.PI*30;
+    var offset=circ-(sc/100)*circ;
+    h+='<div style="position:relative;width:72px;height:72px;flex-shrink:0">';
+    h+='<svg viewBox="0 0 72 72" style="transform:rotate(-90deg)"><circle cx="36" cy="36" r="30" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="5"/><circle cx="36" cy="36" r="30" fill="none" stroke="'+ringColor+'" stroke-width="5" stroke-dasharray="'+Math.round(sc*circ/100)+' '+Math.round(circ)+'" stroke-linecap="round"/></svg>';
+    h+='<div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center"><div style="font-size:22px;font-weight:700;color:'+ringColor+';font-family:var(--font-serif)">'+sc+'</div><div style="font-size:8px;color:rgba(237,235,231,.4)">MATCH</div></div>';
+    h+='</div>';
+  }else{
+    h+='<div onclick="openFramework(\'v14\')" style="width:72px;height:72px;flex-shrink:0;border-radius:50%;border:2px dashed rgba(198,168,94,.3);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:border-color .2s" onmouseenter="this.style.borderColor=\'rgba(198,168,94,.6)\'" onmouseleave="this.style.borderColor=\'rgba(198,168,94,.3)\'">';
+    h+='<div style="text-align:center"><div style="font-size:9px;color:var(--accent);font-weight:600">RUN</div><div style="font-size:8px;color:rgba(237,235,231,.4)">MATCH</div></div></div>';
+  }
+  h+='</div>';
+
+  // Delta line
+  if(delta!==null&&delta!==0){
+    var dColor=delta>0?'#5E8B6F':'#B85C5C';
+    var dSign=delta>0?'+':'';
+    h+='<div style="font-size:11px;color:'+dColor+';margin-bottom:14px">'+dSign+delta+' points since first run ('+(matchHist.length)+' runs)</div>';
+  }else if(lastScore!==null){
+    h+='<div style="font-size:11px;color:rgba(237,235,231,.4);margin-bottom:14px">Run again after making improvements to track your progress</div>';
+  }
+
+  // ─── SECTION 2: This Month's Actions ───
+  var actions=_dashGetActions(cp,stage,hist,sd);
+  if(actions.length>0){
+    h+='<div style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px;padding-top:14px;border-top:1px solid rgba(255,255,255,.06)">This Month</div>';
+    U.dashActions=U.dashActions||{};
+    for(var i=0;i<Math.min(actions.length,3);i++){
+      var a=actions[i];
+      var done=U.dashActions[a.id]||false;
+      h+='<div style="display:flex;align-items:flex-start;gap:12px;padding:10px 14px;background:'+(done?'rgba(94,139,111,.06)':'rgba(255,255,255,.03)')+';border:1px solid '+(done?'rgba(94,139,111,.15)':'rgba(255,255,255,.06)')+';border-radius:10px;margin-bottom:6px;'+(done?'opacity:.6':'')+'">';
+      // Checkbox
+      h+='<div onclick="toggleDashAction(\''+a.id+'\');event.stopPropagation()" style="width:22px;height:22px;flex-shrink:0;border-radius:6px;border:1.5px solid '+(done?'#5E8B6F':'rgba(198,168,94,.4)')+';display:flex;align-items:center;justify-content:center;cursor:pointer;background:'+(done?'rgba(94,139,111,.15)':'none')+';margin-top:1px">';
+      if(done)h+='<span style="color:#5E8B6F;font-size:12px;font-weight:700">✓</span>';
+      h+='</div>';
+      // Content
+      h+='<div style="flex:1;min-width:0">';
+      h+='<div style="font-size:13px;font-weight:600;color:#EDEBE7;'+(done?'text-decoration:line-through':'')+'">'+a.title+'</div>';
+      h+='<div style="font-size:11px;color:rgba(237,235,231,.45);line-height:1.5;margin-top:2px">'+a.why+'</div>';
+      h+='</div>';
+      if(a.tool&&!done){
+        h+='<div onclick="openFramework(\''+a.tool+'\')" style="flex-shrink:0;font-size:10px;font-weight:600;color:var(--accent);cursor:pointer;padding:4px 0;white-space:nowrap">Run →</div>';
+      }
+      h+='</div>';
+    }
+  }
+
+  // ─── SECTION 3: Peer Benchmarks ───
+  if(sd&&cp.step2){
+    h+='<div style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1.5px;margin:16px 0 10px;padding-top:14px;border-top:1px solid rgba(255,255,255,.06)">How You Compare</div>';
+    var benchmarks=_dashBenchmarks(cp,sd);
+    h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">';
+    for(var b=0;b<benchmarks.length;b++){
+      var bm=benchmarks[b];
+      var bmColor=bm.status==='ahead'?'#5E8B6F':bm.status==='close'?'#C6A85E':'#B85C5C';
+      var bmIcon=bm.status==='ahead'?'✓':bm.status==='close'?'~':'⚠';
+      h+='<div style="padding:10px 12px;background:rgba(255,255,255,.03);border-radius:8px;border:1px solid rgba(255,255,255,.04)">';
+      h+='<div style="font-size:10px;color:rgba(237,235,231,.45);margin-bottom:4px">'+bm.label+'</div>';
+      h+='<div style="display:flex;align-items:baseline;gap:6px">';
+      h+='<span style="font-size:16px;font-weight:700;color:'+bmColor+'">'+bm.yours+'</span>';
+      h+='<span style="font-size:10px;color:rgba(237,235,231,.35)">/ '+bm.benchmark+' avg</span>';
+      h+='</div></div>';
+    }
+    h+='</div>';
+  }
+
+  // ─── SECTION 4: Progress Timeline (sparkline) ───
+  if(matchHist.length>=2){
+    var scores=matchHist.map(function(m){return _dashParseScore(m.score)}).filter(function(s){return s!==null});
+    if(scores.length>=2){
+      h+='<div style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1.5px;margin:16px 0 10px;padding-top:14px;border-top:1px solid rgba(255,255,255,.06)">Score Trend</div>';
+      h+=_dashSparkline(scores,260,40);
+    }
+  }
+
+  // ─── SECTION 5: Next Step ───
+  var nextTool=_dashNextStep(cp,hist);
+  if(nextTool){
+    h+='<div onclick="openFramework(\''+nextTool.id+'\')" style="margin-top:14px;padding:14px 16px;background:rgba(198,168,94,.08);border:1px solid rgba(198,168,94,.15);border-radius:12px;cursor:pointer;transition:all .15s" onmouseenter="this.style.background=\'rgba(198,168,94,.12)\'" onmouseleave="this.style.background=\'rgba(198,168,94,.08)\'">';
+    h+='<div style="display:flex;align-items:center;gap:10px">';
+    h+='<span style="font-size:14px">→</span>';
+    h+='<div style="flex:1"><div style="font-size:12px;font-weight:600;color:var(--accent)">Next: '+nextTool.label+'</div>';
+    h+='<div style="font-size:11px;color:rgba(237,235,231,.5);margin-top:2px">'+nextTool.why+'</div></div></div></div>';
+  }
+
+  // ─── SECTION 6: Re-run prompt ───
+  if(lastMatch){
+    var daysSince=Math.floor((Date.now()-new Date(lastMatch.date).getTime())/86400000);
+    if(daysSince>=14){
+      h+='<div onclick="openFramework(\'v14\')" style="margin-top:10px;padding:12px 16px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:10px;cursor:pointer;text-align:center">';
+      h+='<div style="font-size:11px;color:rgba(237,235,231,.5)">You last ran Match Calculator <strong style="color:#EDEBE7">'+daysSince+' days ago</strong> (score: '+lastScore+'). Has anything changed?</div>';
+      h+='<div style="font-size:11px;color:var(--accent);font-weight:600;margin-top:4px">Re-run to see your updated score →</div></div>';
+    }
+  }
+
+  h+='</div></div>';
+  el.innerHTML=h;
+  return true;
+}
+
+// ===== CHECKBOX FOR MONTHLY ACTIONS =====
+function toggleDashAction(id){
+  if(!U)return;
+  U.dashActions=U.dashActions||{};
+  U.dashActions[id]=!U.dashActions[id];
+  localStorage.setItem('hw_session',JSON.stringify(U));
+  renderHome();
+}
+
+// ===== PARSE SCORE FROM MIXED FORMATS =====
+function _dashParseScore(v){
+  if(typeof v==='number')return v;
+  if(!v)return null;
+  var n=parseInt(String(v).replace(/[^0-9]/g,''));
+  return isNaN(n)?null:n;
+}
+
+// ===== GENERATE MONTHLY ACTIONS =====
+function _dashGetActions(cp,stage,hist,sd){
+  var actions=[];
+  var toolsUsed=hist.map(function(t){return t.tool});
+  var hasMatch=toolsUsed.indexOf('Match Probability Calculator')!==-1;
+  var hasSpecFit=toolsUsed.indexOf('Specialty Fit Assessment')!==-1;
+  var hasResearch=toolsUsed.indexOf('Research Impact Calculator')!==-1;
+  var hasRoadmap=toolsUsed.indexOf('Career Roadmap Tool')!==-1;
+
+  // Profile gaps
+  var step2=parseInt(cp.step2)||0;
+  var pubs=parseInt(cp.pubs)||0;
+  var firstAuthor=parseInt(cp.firstAuthor)||0;
+  var lorStr=cp.lorStrength||'';
+  var isImg=stage==='img'||cp.img;
+  var usce=cp.usce||'';
+  var spec=cp.specialty||'';
+
+  // Benchmark thresholds (from specialty data or generic)
+  var avgStep=sd?sd.avgStep:235;
+  var avgPubs=sd?(sd.avgPubs||3):3;
+
+  // No specialty chosen yet
+  if(!spec){
+    actions.push({id:'pick-specialty',title:'Choose a Target Specialty',why:'Everything else — your research strategy, your applications, your timeline — depends on this decision.',tool:'v13'});
+  }
+
+  // Haven't run Match Calculator
+  if(!hasMatch){
+    actions.push({id:'first-match',title:'Run the Match Calculator',why:'Get your baseline score and see exactly where you stand against other applicants.',tool:'v14'});
+  }
+
+  // LOR weakness
+  if(!lorStr||lorStr==='none'||lorStr==='weak'){
+    actions.push({id:'lors',title:'Lock Down Your LOR Writers',why:'Strong letters take months to develop. Start the relationship now, not 2 weeks before the deadline.'});
+  }
+
+  // Step 2 below average
+  if(step2>0&&step2<avgStep){
+    actions.push({id:'step2',title:'Improve Your Step 2 CK Score',why:'Your score ('+step2+') is below the matched average ('+(avgStep)+') for '+(spec||'your specialty')+'.'});
+  }
+
+  // Low publications
+  if(pubs<avgPubs){
+    actions.push({id:'research',title:'Start a Research Project',why:'You have '+pubs+' publication'+(pubs!==1?'s':'')+'. The benchmark for '+(spec||'competitive specialties')+' is '+avgPubs+'+ publications.',tool:'v7'});
+  }
+
+  // IMG without USCE
+  if(isImg&&(!usce||usce==='none'||usce==='0')){
+    actions.push({id:'usce',title:'Apply for US Clinical Experience',why:'Without USCE, programs will screen you out before reading your application.',tool:'v17'});
+  }
+
+  // Haven't built a roadmap
+  if(hasMatch&&!hasRoadmap){
+    actions.push({id:'roadmap',title:'Build Your Career Roadmap',why:'Turn your match score into a month-by-month action plan with real deadlines.',tool:'v15'});
+  }
+
+  // No Step 2 score entered
+  if(!step2&&stage!=='attending'){
+    actions.push({id:'schedule-step2',title:'Schedule Step 2 CK',why:'Programs screen on this score. The sooner you take it, the sooner you can strengthen weak areas.'});
+  }
+
+  return actions;
+}
+
+// ===== PEER BENCHMARKS =====
+function _dashBenchmarks(cp,sd){
+  var benchmarks=[];
+  var step2=parseInt(cp.step2)||0;
+  var pubs=parseInt(cp.pubs)||0;
+
+  if(step2>0&&sd.avgStep){
+    var diff=step2-sd.avgStep;
+    benchmarks.push({label:'Step 2 CK',yours:String(step2),benchmark:String(sd.avgStep),status:diff>=5?'ahead':diff>=-5?'close':'behind'});
+  }
+  if(sd.avgPubs!==undefined){
+    var pubDiff=pubs-(sd.avgPubs||3);
+    benchmarks.push({label:'Publications',yours:String(pubs),benchmark:String(sd.avgPubs||3),status:pubDiff>=0?'ahead':pubDiff>=-1?'close':'behind'});
+  }
+  if(sd.compLevel){
+    var compLabels={low:'Low',moderate:'Moderate',high:'High',very_high:'Very High'};
+    benchmarks.push({label:'Competition',yours:compLabels[sd.compLevel]||sd.compLevel,benchmark:'—',status:sd.compLevel==='low'?'ahead':sd.compLevel==='moderate'?'close':'behind'});
+  }
+  if(sd.positions&&sd.applicants){
+    var ratio=Math.round(sd.applicants/sd.positions*10)/10;
+    benchmarks.push({label:'Applicants/Spot',yours:ratio+'x',benchmark:'—',status:ratio<2?'ahead':ratio<4?'close':'behind'});
+  }
+  return benchmarks;
+}
+
+// ===== SVG SPARKLINE =====
+function _dashSparkline(scores,w,h){
+  if(!scores||scores.length<2)return '';
+  var min=Math.min.apply(null,scores);
+  var max=Math.max.apply(null,scores);
+  var range=max-min||1;
+  var pad=4;
+  var points=[];
+  for(var i=0;i<scores.length;i++){
+    var x=pad+(i/(scores.length-1))*(w-2*pad);
+    var y=pad+((max-scores[i])/range)*(h-2*pad);
+    points.push(Math.round(x)+','+Math.round(y));
+  }
+  var svg='<svg viewBox="0 0 '+w+' '+(h+20)+'" style="width:100%;max-width:'+w+'px;height:auto;display:block;margin:0 auto">';
+  // Line
+  svg+='<polyline points="'+points.join(' ')+'" fill="none" stroke="#C6A85E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>';
+  // Dots + labels
+  for(var j=0;j<scores.length;j++){
+    var pt=points[j].split(',');
+    var px=parseFloat(pt[0]),py=parseFloat(pt[1]);
+    svg+='<circle cx="'+px+'" cy="'+py+'" r="3" fill="#C6A85E"/>';
+    // Label every point if <=7, else first+last
+    if(scores.length<=7||j===0||j===scores.length-1){
+      svg+='<text x="'+px+'" y="'+(h+14)+'" fill="rgba(237,235,231,.45)" font-size="9" text-anchor="middle">'+scores[j]+'</text>';
+    }
+  }
+  svg+='</svg>';
+  return svg;
+}
+
+// ===== NEXT STEP RECOMMENDATION =====
+function _dashNextStep(cp,hist){
+  var toolsUsed=hist.map(function(t){return t.tool});
+  var hasMatch=toolsUsed.indexOf('Match Probability Calculator')!==-1;
+  var hasResearch=toolsUsed.indexOf('Research Impact Calculator')!==-1;
+  var hasSpecFit=toolsUsed.indexOf('Specialty Fit Assessment')!==-1;
+  var hasRoadmap=toolsUsed.indexOf('Career Roadmap Tool')!==-1;
+  var hasFinancial=toolsUsed.indexOf('Financial Planner')!==-1;
+  var spec=cp.specialty||'';
+  var pubs=parseInt(cp.pubs)||0;
+
+  if(!spec&&!hasSpecFit)return{id:'v13',label:'Specialty Fit Assessment',why:'Find the specialty that fits your priorities and strengths.'};
+  if(!hasMatch)return{id:'v14',label:'Match Calculator',why:'Get your competitiveness score and see where you stand.'};
+  if(pubs<3&&!hasResearch)return{id:'v7',label:'Research Impact Calculator',why:'Your research is your biggest gap. Get a specific improvement plan.'};
+  if(!hasRoadmap)return{id:'v15',label:'Career Roadmap',why:'Build a month-by-month action plan with real deadlines.'};
+  if(!hasFinancial)return{id:'v11',label:'Financial Planner',why:'Plan your finances alongside your career — debt strategy, PSLF, savings.'};
+  // Default: re-run match
+  return{id:'v14',label:'Match Calculator',why:'Re-run to track your progress as you strengthen your profile.'};
+}
+
+// ===== PROGRESS TRACKING & SCORE COMPARISON =====
+// Renders progress cards, sparklines, score timelines, and "what changed" diffs.
+// Depends on: U.toolHistory, openFramework(), localStorage
+
+var PROGRESS_TOOL_MAP = {
+  'Match Probability Calculator': 'v14',
+  'Specialty Fit Assessment': 'v13',
+  'Research Impact Calculator': 'v7',
+  'Financial Planner': 'v11',
+  'Career Roadmap Tool': 'v15',
+  'Contract & Offer Analyzer': 'v12',
+  'RVU Compensation Calculator': 'v4',
+  'Application Review': 'v9',
+  'Interview Practice': 'v16',
+  'Observership Finder': 'v17'
+};
+
+var PROGRESS_TOOL_SHORT = {
+  'Match Probability Calculator': 'Match Calculator',
+  'Specialty Fit Assessment': 'Specialty Fit',
+  'Research Impact Calculator': 'Research Impact',
+  'Financial Planner': 'Financial Planner',
+  'Career Roadmap Tool': 'Career Roadmap',
+  'Contract & Offer Analyzer': 'Contract Analyzer',
+  'RVU Compensation Calculator': 'RVU Calculator',
+  'Application Review': 'App Review',
+  'Interview Practice': 'Interview Prep',
+  'Observership Finder': 'Observership Finder'
+};
+
+var PROGRESS_INPUT_LABELS = {
+  step2: 'Step 2 CK',
+  pubs: 'Publications',
+  research: 'Research Experience',
+  lors: 'Letters of Recommendation',
+  lor: 'LOR Strength',
+  usce: 'US Clinical Experience',
+  yog: 'Year of Graduation',
+  step1: 'Step 1',
+  visaRequired: 'Visa Required',
+  imgStatus: 'IMG Status',
+  specialty: 'Specialty',
+  publications: 'Publications',
+  totalPubs: 'Total Publications',
+  firstAuthor: 'First-Author Papers',
+  presentations: 'Presentations',
+  salary: 'Salary',
+  rvu: 'RVU Target',
+  programCount: 'Programs Applied',
+  connections: 'Connections',
+  volunteerMonths: 'Volunteer Months'
+};
+
+// ===== HELPER: Parse numeric score from mixed formats =====
+function _progParseNum(v) {
+  if (typeof v === 'number') return v;
+  if (!v) return null;
+  var n = parseFloat(String(v).replace(/[^0-9.\-]/g, ''));
+  return isNaN(n) ? null : n;
+}
+
+// ===== HELPER: Format date nicely =====
+function _progFmtDate(isoStr) {
+  if (!isoStr) return '—';
+  var d = new Date(isoStr);
+  if (isNaN(d.getTime())) return '—';
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+}
+
+// ===== HELPER: Days between date and now =====
+function _progDaysAgo(isoStr) {
+  if (!isoStr) return 0;
+  var d = new Date(isoStr);
+  if (isNaN(d.getTime())) return 0;
+  return Math.floor((Date.now() - d.getTime()) / 86400000);
+}
+
+// ===== 5. getToolRunStats(toolName) =====
+function getToolRunStats(toolName) {
+  var hist = (U && U.toolHistory) ? U.toolHistory : [];
+  var runs = hist.filter(function(t) { return t.tool === toolName; });
+  if (!runs.length) return null;
+
+  var scored = runs.filter(function(r) { return _progParseNum(r.score) !== null; });
+  var allScores = scored.map(function(r) { return _progParseNum(r.score); });
+
+  var firstRun = runs[0];
+  var lastRun = runs[runs.length - 1];
+  var firstScore = scored.length ? _progParseNum(scored[0].score) : null;
+  var bestScore = allScores.length ? Math.max.apply(null, allScores) : null;
+  var lastScore = scored.length ? _progParseNum(scored[scored.length - 1].score) : null;
+
+  return {
+    totalRuns: runs.length,
+    firstRun: { score: firstRun.score, date: firstRun.date },
+    lastRun: { score: lastRun.score, date: lastRun.date, data: lastRun.data || null },
+    bestScore: bestScore,
+    delta: (bestScore !== null && firstScore !== null) ? bestScore - firstScore : null,
+    daysSinceLastRun: _progDaysAgo(lastRun.date),
+    allScores: allScores,
+    allRuns: runs
+  };
+}
+
+// ===== 1. renderProgressCard(targetEl) =====
+function renderProgressCard(targetEl) {
+  var el = typeof targetEl === 'string' ? document.getElementById(targetEl) : targetEl;
+  if (!el) return;
+
+  var hist = (U && U.toolHistory) ? U.toolHistory : [];
+  var h = '';
+
+  h += '<div style="padding:24px;background:#111318;border:1px solid rgba(198,168,94,.15);border-radius:14px">';
+  h += '<div style="font-family:var(--font-serif);font-size:16px;font-weight:600;color:#C6A85E;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:20px">Your Progress</div>';
+
+  var toolNames = Object.keys(PROGRESS_TOOL_MAP);
+  var anyRun = false;
+
+  toolNames.forEach(function(fullName) {
+    var toolId = PROGRESS_TOOL_MAP[fullName];
+    var shortName = PROGRESS_TOOL_SHORT[fullName] || fullName;
+    var stats = getToolRunStats(fullName);
+
+    h += '<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.06)">';
+
+    if (stats) {
+      anyRun = true;
+      var lastScore = stats.lastRun.score;
+      var numScore = _progParseNum(lastScore);
+      var delta = stats.delta;
+
+      // Tool name
+      h += '<div style="flex:1;min-width:0">';
+      h += '<div style="font-size:13px;font-weight:600;color:#E8E1D8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + shortName + '</div>';
+      h += '<div style="font-size:10px;color:rgba(255,255,255,.35)">' + stats.totalRuns + ' run' + (stats.totalRuns > 1 ? 's' : '') + '</div>';
+      h += '</div>';
+
+      // Score display
+      if (numScore !== null) {
+        // Progress bar for 0-100 scale scores
+        var pct = Math.min(100, Math.max(0, numScore));
+        h += '<div style="width:80px;flex-shrink:0">';
+        h += '<div style="font-size:13px;font-weight:700;color:#C6A85E;margin-bottom:3px">' + lastScore + '</div>';
+        h += '<div style="height:4px;background:rgba(255,255,255,.08);border-radius:2px;overflow:hidden">';
+        h += '<div style="height:100%;width:' + pct + '%;background:linear-gradient(90deg,#C6A85E,#D4B96E);border-radius:2px"></div>';
+        h += '</div></div>';
+      } else {
+        // Non-numeric score (e.g. "IM (91% fit)")
+        h += '<div style="font-size:12px;font-weight:600;color:#C6A85E;flex-shrink:0;max-width:120px;text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + (lastScore || 'Done') + '</div>';
+      }
+
+      // Delta badge
+      if (delta !== null && stats.totalRuns > 1) {
+        var deltaColor = delta > 0 ? '#5E8B6F' : delta < 0 ? '#B85C5C' : 'rgba(255,255,255,.35)';
+        var deltaSign = delta > 0 ? '+' : '';
+        h += '<div style="font-size:11px;font-weight:600;color:' + deltaColor + ';min-width:48px;text-align:right">' + deltaSign + delta.toFixed(0) + '</div>';
+      } else {
+        h += '<div style="min-width:48px"></div>';
+      }
+    } else {
+      // Not yet run
+      h += '<div style="flex:1;font-size:13px;color:rgba(255,255,255,.3)">' + shortName + '</div>';
+      h += '<div style="flex-shrink:0"><span onclick="openFramework(\'' + toolId + '\')" style="font-size:11px;color:#C6A85E;cursor:pointer;padding:4px 12px;border:1px solid rgba(198,168,94,.25);border-radius:6px;transition:all .15s" onmouseenter="this.style.background=\'rgba(198,168,94,.12)\'" onmouseleave="this.style.background=\'transparent\'">Run now →</span></div>';
+      h += '<div style="min-width:48px"></div>';
+    }
+
+    h += '</div>';
+  });
+
+  // Summary footer
+  var totalRuns = hist.length;
+  var lastActive = hist.length ? _progFmtDate(hist[hist.length - 1].date) : '—';
+  var uniqueTools = [];
+  hist.forEach(function(t) { if (uniqueTools.indexOf(t.tool) < 0) uniqueTools.push(t.tool); });
+
+  h += '<div style="display:flex;justify-content:space-between;margin-top:16px;padding-top:12px;border-top:1px solid rgba(255,255,255,.06)">';
+  h += '<div style="font-size:10px;color:rgba(255,255,255,.35)">Last active: ' + lastActive + '</div>';
+  h += '<div style="font-size:10px;color:rgba(255,255,255,.35)">Total runs: ' + totalRuns + ' · ' + uniqueTools.length + ' tool' + (uniqueTools.length !== 1 ? 's' : '') + '</div>';
+  h += '</div>';
+
+  h += '</div>';
+  el.innerHTML = h;
+}
+
+// ===== 2. renderScoreTimeline(targetEl) =====
+function renderScoreTimeline(targetEl) {
+  var el = typeof targetEl === 'string' ? document.getElementById(targetEl) : targetEl;
+  if (!el) return;
+
+  var stats = getToolRunStats('Match Probability Calculator');
+  if (!stats || stats.allScores.length < 2) {
+    el.innerHTML = '<div style="padding:20px;background:#111318;border:1px solid rgba(198,168,94,.15);border-radius:14px;text-align:center;color:rgba(255,255,255,.35);font-size:12px">Run the Match Calculator at least twice to see your score timeline.</div>';
+    return;
+  }
+
+  var runs = stats.allRuns.filter(function(r) { return _progParseNum(r.score) !== null; });
+  var scores = runs.map(function(r) { return _progParseNum(r.score); });
+  var dates = runs.map(function(r) { return r.date; });
+
+  var minS = Math.min.apply(null, scores);
+  var maxS = Math.max.apply(null, scores);
+  var range = maxS - minS || 1;
+  var padBottom = 10;
+
+  // SVG dimensions
+  var svgW = 280;
+  var svgH = 80;
+  var plotH = svgH - padBottom;
+  var marginL = 5;
+  var marginR = 5;
+  var plotW = svgW - marginL - marginR;
+
+  // Calculate points
+  var pts = scores.map(function(s, i) {
+    var x = marginL + (scores.length === 1 ? plotW / 2 : (i / (scores.length - 1)) * plotW);
+    var y = 4 + (plotH - 8) - ((s - minS) / range) * (plotH - 8);
+    return { x: x, y: y, score: s };
+  });
+
+  var polyline = pts.map(function(p) { return p.x + ',' + p.y; }).join(' ');
+
+  // Build SVG
+  var svg = '<svg width="100%" viewBox="0 0 ' + svgW + ' ' + svgH + '" style="display:block;max-width:100%">';
+  // Line
+  svg += '<polyline points="' + polyline + '" fill="none" stroke="#C6A85E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>';
+  // Area fill (subtle)
+  var areaPath = 'M' + pts[0].x + ',' + pts[0].y;
+  pts.forEach(function(p, i) { if (i > 0) areaPath += ' L' + p.x + ',' + p.y; });
+  areaPath += ' L' + pts[pts.length - 1].x + ',' + plotH + ' L' + pts[0].x + ',' + plotH + ' Z';
+  svg += '<path d="' + areaPath + '" fill="url(#progGrad)" opacity="0.25"/>';
+  svg += '<defs><linearGradient id="progGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#C6A85E"/><stop offset="100%" stop-color="#C6A85E" stop-opacity="0"/></linearGradient></defs>';
+  // Data points
+  pts.forEach(function(p) {
+    svg += '<circle cx="' + p.x + '" cy="' + p.y + '" r="3.5" fill="#111318" stroke="#C6A85E" stroke-width="2"/>';
+  });
+  svg += '</svg>';
+
+  // Score labels below chart
+  var labels = '';
+  pts.forEach(function(p, i) {
+    var left = (p.x / svgW) * 100;
+    var dateStr = new Date(dates[i]).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    labels += '<div style="position:absolute;left:' + left + '%;transform:translateX(-50%);text-align:center;white-space:nowrap">';
+    labels += '<div style="font-size:12px;font-weight:700;color:#E8E1D8">' + p.score + '</div>';
+    labels += '<div style="font-size:9px;color:rgba(255,255,255,.35)">' + dateStr + '</div>';
+    labels += '</div>';
+  });
+
+  var totalDelta = scores[scores.length - 1] - scores[0];
+  var deltaColor = totalDelta > 0 ? '#5E8B6F' : totalDelta < 0 ? '#B85C5C' : 'rgba(255,255,255,.35)';
+  var deltaSign = totalDelta > 0 ? '+' : '';
+
+  var h = '<div style="padding:20px 24px;background:#111318;border:1px solid rgba(198,168,94,.15);border-radius:14px">';
+  h += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">';
+  h += '<div style="font-family:var(--font-serif);font-size:13px;font-weight:600;color:#C6A85E;text-transform:uppercase;letter-spacing:1.2px">Match Score Over Time</div>';
+  h += '<div style="font-size:12px;font-weight:700;color:' + deltaColor + '">' + deltaSign + totalDelta.toFixed(0) + ' from start</div>';
+  h += '</div>';
+  h += '<div style="margin-bottom:8px">' + svg + '</div>';
+  h += '<div style="position:relative;height:32px;margin-top:4px">' + labels + '</div>';
+  h += '</div>';
+
+  el.innerHTML = h;
+}
+
+// ===== 3. renderWhatChanged(targetEl) =====
+
+function compareToolRuns(current, previous) {
+  if (!current || !previous) return [];
+  var changes = [];
+  var allKeys = {};
+  var k;
+  for (k in current) { if (current.hasOwnProperty(k)) allKeys[k] = true; }
+  for (k in previous) { if (previous.hasOwnProperty(k)) allKeys[k] = true; }
+
+  Object.keys(allKeys).forEach(function(key) {
+    var curVal = current[key];
+    var prevVal = previous[key];
+    if (String(curVal) !== String(prevVal)) {
+      var label = PROGRESS_INPUT_LABELS[key] || key;
+      var curNum = _progParseNum(curVal);
+      var prevNum = _progParseNum(prevVal);
+      var numDelta = (curNum !== null && prevNum !== null) ? curNum - prevNum : null;
+      changes.push({
+        field: label,
+        from: prevVal,
+        to: curVal,
+        numDelta: numDelta
+      });
+    }
+  });
+
+  return changes;
+}
+
+function renderWhatChanged(targetEl) {
+  var el = typeof targetEl === 'string' ? document.getElementById(targetEl) : targetEl;
+  if (!el) return;
+
+  // Find the most recently used tool with ≥2 runs that have input data
+  var hist = (U && U.toolHistory) ? U.toolHistory : [];
+  if (hist.length < 2) {
+    el.innerHTML = '';
+    return;
+  }
+
+  // Work backwards to find the latest tool with comparable data
+  var latest = hist[hist.length - 1];
+  var toolRuns = hist.filter(function(t) { return t.tool === latest.tool; });
+  if (toolRuns.length < 2) {
+    el.innerHTML = '';
+    return;
+  }
+
+  var currentRun = toolRuns[toolRuns.length - 1];
+  var previousRun = toolRuns[toolRuns.length - 2];
+  var currentInputs = (currentRun.data && currentRun.data.inputs) ? currentRun.data.inputs : null;
+  var previousInputs = (previousRun.data && previousRun.data.inputs) ? previousRun.data.inputs : null;
+
+  var curScore = _progParseNum(currentRun.score);
+  var prevScore = _progParseNum(previousRun.score);
+  var scoreDelta = (curScore !== null && prevScore !== null) ? curScore - prevScore : null;
+
+  // If no inputs to compare and no score change, nothing to show
+  if (!currentInputs && !previousInputs && scoreDelta === null) {
+    el.innerHTML = '';
+    return;
+  }
+
+  var changes = (currentInputs && previousInputs) ? compareToolRuns(currentInputs, previousInputs) : [];
+  var shortName = PROGRESS_TOOL_SHORT[latest.tool] || latest.tool;
+
+  var h = '<div style="padding:20px 24px;background:#111318;border:1px solid rgba(198,168,94,.15);border-radius:14px">';
+  h += '<div style="font-family:var(--font-serif);font-size:13px;font-weight:600;color:#C6A85E;text-transform:uppercase;letter-spacing:1.2px;margin-bottom:14px">What Changed Since Last Run</div>';
+
+  // Score delta
+  if (scoreDelta !== null) {
+    var scoreColor = scoreDelta > 0 ? '#5E8B6F' : scoreDelta < 0 ? '#B85C5C' : 'rgba(255,255,255,.5)';
+    var scoreSign = scoreDelta > 0 ? '+' : '';
+    h += '<div style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:rgba(255,255,255,.03);border-radius:10px;margin-bottom:12px">';
+    h += '<div style="font-size:12px;color:rgba(255,255,255,.5)">Score:</div>';
+    h += '<div style="font-size:14px;color:#E8E1D8">' + previousRun.score + ' → <strong style="color:' + scoreColor + '">' + currentRun.score + '</strong></div>';
+    h += '<div style="font-size:13px;font-weight:700;color:' + scoreColor + ';margin-left:auto">(' + scoreSign + scoreDelta.toFixed(0) + ')</div>';
+    h += '</div>';
+  }
+
+  // Input changes
+  if (changes.length) {
+    // Sort: biggest numeric improvements first
+    changes.sort(function(a, b) {
+      var aD = a.numDelta !== null ? Math.abs(a.numDelta) : 0;
+      var bD = b.numDelta !== null ? Math.abs(b.numDelta) : 0;
+      return bD - aD;
+    });
+
+    var improvements = changes.filter(function(c) { return c.numDelta !== null && c.numDelta > 0; });
+    var declines = changes.filter(function(c) { return c.numDelta !== null && c.numDelta < 0; });
+    var otherChanges = changes.filter(function(c) { return c.numDelta === null || c.numDelta === 0; });
+
+    if (improvements.length) {
+      h += '<div style="font-size:10px;font-weight:600;color:#5E8B6F;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Improvements</div>';
+      improvements.forEach(function(c) {
+        h += '<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.04)">';
+        h += '<div style="font-size:12px;color:rgba(255,255,255,.5);flex:1">' + c.field + '</div>';
+        h += '<div style="font-size:12px;color:#E8E1D8">' + c.from + ' → ' + c.to + '</div>';
+        h += '<div style="font-size:11px;font-weight:600;color:#5E8B6F;min-width:36px;text-align:right">+' + c.numDelta + '</div>';
+        h += '</div>';
+      });
+    }
+
+    if (declines.length) {
+      h += '<div style="font-size:10px;font-weight:600;color:#B85C5C;text-transform:uppercase;letter-spacing:1px;margin:10px 0 8px">Declined</div>';
+      declines.forEach(function(c) {
+        h += '<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.04)">';
+        h += '<div style="font-size:12px;color:rgba(255,255,255,.5);flex:1">' + c.field + '</div>';
+        h += '<div style="font-size:12px;color:#E8E1D8">' + c.from + ' → ' + c.to + '</div>';
+        h += '<div style="font-size:11px;font-weight:600;color:#B85C5C;min-width:36px;text-align:right">' + c.numDelta + '</div>';
+        h += '</div>';
+      });
+    }
+
+    if (otherChanges.length) {
+      h += '<div style="font-size:10px;font-weight:600;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:1px;margin:10px 0 8px">Other Changes</div>';
+      otherChanges.forEach(function(c) {
+        h += '<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.04)">';
+        h += '<div style="font-size:12px;color:rgba(255,255,255,.5);flex:1">' + c.field + '</div>';
+        h += '<div style="font-size:12px;color:#E8E1D8">' + (c.from || '—') + ' → ' + (c.to || '—') + '</div>';
+        h += '</div>';
+      });
+    }
+
+    // Insight narrative
+    if (scoreDelta !== null && scoreDelta > 0 && improvements.length) {
+      var biggest = improvements[0];
+      h += '<div style="margin-top:14px;padding:12px 14px;background:rgba(94,139,111,.06);border:1px solid rgba(94,139,111,.15);border-radius:10px">';
+      h += '<div style="font-size:12px;color:#E8E1D8;line-height:1.6;font-family:var(--font-serif)">';
+      h += '💡 Improving <strong style="color:#5E8B6F">' + biggest.field + '</strong> ';
+      h += '(' + biggest.from + ' → ' + biggest.to + ') ';
+      if (scoreDelta) {
+        h += 'helped move your score <strong style="color:#5E8B6F">+' + scoreDelta.toFixed(0) + ' points</strong>. ';
+      }
+      h += 'Keep building on what\u2019s working.';
+      h += '</div></div>';
+    } else if (scoreDelta !== null && scoreDelta < 0 && declines.length) {
+      var biggestDrop = declines[0];
+      h += '<div style="margin-top:14px;padding:12px 14px;background:rgba(184,92,92,.06);border:1px solid rgba(184,92,92,.15);border-radius:10px">';
+      h += '<div style="font-size:12px;color:#E8E1D8;line-height:1.6;font-family:var(--font-serif)">';
+      h += '⚠️ Your score dipped <strong style="color:#B85C5C">' + scoreDelta.toFixed(0) + ' points</strong>. ';
+      h += 'The change in <strong>' + biggestDrop.field + '</strong> may have contributed. ';
+      h += 'Review your inputs carefully — small corrections can recover lost ground.';
+      h += '</div></div>';
+    }
+  } else if (scoreDelta !== null && changes.length === 0) {
+    // Score changed but we don't have input diffs
+    h += '<div style="margin-top:8px;padding:10px 14px;background:rgba(255,255,255,.03);border-radius:8px">';
+    h += '<div style="font-size:11px;color:rgba(255,255,255,.4);font-style:italic">Input details not available for comparison. Run the tool again to start tracking changes.</div>';
+    h += '</div>';
+  }
+
+  h += '</div>';
+  el.innerHTML = h;
+}
+
+// ===== 4. renderReRunPrompt(toolId, targetEl) =====
+function renderReRunPrompt(toolId, targetEl) {
+  var el = typeof targetEl === 'string' ? document.getElementById(targetEl) : targetEl;
+  if (!el) return;
+
+  // Reverse-lookup tool name from ID
+  var toolName = null;
+  var shortName = null;
+  Object.keys(PROGRESS_TOOL_MAP).forEach(function(name) {
+    if (PROGRESS_TOOL_MAP[name] === toolId) {
+      toolName = name;
+      shortName = PROGRESS_TOOL_SHORT[name] || name;
+    }
+  });
+
+  if (!toolName) { el.innerHTML = ''; return; }
+
+  var stats = getToolRunStats(toolName);
+  if (!stats) { el.innerHTML = ''; return; }
+
+  var days = stats.daysSinceLastRun;
+  var lastScore = stats.lastRun.score;
+  var h = '';
+
+  h += '<div style="padding:16px 20px;background:linear-gradient(160deg,#111318,rgba(198,168,94,.04));border:1px solid rgba(198,168,94,.15);border-radius:12px;display:flex;align-items:center;gap:14px">';
+  h += '<div style="font-size:22px;flex-shrink:0">📊</div>';
+  h += '<div style="flex:1">';
+  h += '<div style="font-size:13px;color:#E8E1D8;line-height:1.5">';
+  h += 'You last ran <strong style="color:#C6A85E">' + shortName + '</strong> ';
+
+  if (days === 0) {
+    h += 'today';
+  } else if (days === 1) {
+    h += 'yesterday';
+  } else {
+    h += '<strong>' + days + ' days ago</strong>';
+  }
+
+  if (lastScore) h += ' (score: <strong style="color:#C6A85E">' + lastScore + '</strong>)';
+  h += '.</div>';
+
+  if (days > 7) {
+    h += '<div style="font-size:11px;color:rgba(255,255,255,.4);margin-top:2px">Has anything changed? Re-run to see your updated score.</div>';
+  }
+
+  h += '</div>';
+  h += '<div onclick="openFramework(\'' + toolId + '\')" style="flex-shrink:0;padding:8px 16px;background:#C6A85E;color:#111318;font-size:11px;font-weight:700;border-radius:8px;cursor:pointer;transition:opacity .15s;white-space:nowrap" onmouseenter="this.style.opacity=\'0.85\'" onmouseleave="this.style.opacity=\'1\'">Re-Run →</div>';
+  h += '</div>';
+
+  el.innerHTML = h;
+}
+
+// ===== TOOL FLOW CONNECTIONS =====
+// Adds "What to Do Next" cards after every tool result.
+// Loaded AFTER js-app.js. Does NOT modify existing files.
+// Uses MutationObserver to detect tool completions and inject flow cards.
+
+var HW_TOOL_FLOWS = {
+  'v14': {
+    next: [
+      {id:'v7', label:'Research Impact Calculator', why:'Your research score affects 20% of your match probability. Get a specific research strategy.'},
+      {id:'v15', label:'Career Roadmap', why:'Turn your match score into a month-by-month action plan.'},
+      {id:'v9', label:'Application Review', why:'Get your personal statement and LOR strategy reviewed.'}
+    ]
+  },
+  'v7': {
+    next: [
+      {id:'v14', label:'Match Calculator', why:'See how your research improvements move your match probability.'},
+      {id:'v15', label:'Career Roadmap', why:'Build a timeline that includes your research milestones.'}
+    ]
+  },
+  'v13': {
+    next: [
+      {id:'v14', label:'Match Calculator', why:'Now check your competitiveness for your top specialty.'},
+      {id:'v15', label:'Career Roadmap', why:'Map out the path to your chosen specialty.'}
+    ]
+  },
+  'v15': {
+    next: [
+      {id:'v14', label:'Match Calculator', why:'Track your competitiveness as you execute your roadmap.'},
+      {id:'v11', label:'Financial Planner', why:'Plan the financial side of your career transition.'}
+    ]
+  },
+  'v11': {
+    next: [
+      {id:'v12', label:'Contract Analyzer', why:'Make sure your next contract aligns with your financial plan.'},
+      {id:'v4', label:'RVU Calculator', why:'Understand your compensation structure.'}
+    ]
+  },
+  'v12': {
+    next: [
+      {id:'v4', label:'RVU Calculator', why:'Compare your RVU rate against national benchmarks.'},
+      {id:'v11', label:'Financial Planner', why:'See how this contract affects your long-term wealth.'}
+    ]
+  },
+  'v4': {
+    next: [
+      {id:'v12', label:'Contract Analyzer', why:'Analyze your full contract terms, not just compensation.'},
+      {id:'v11', label:'Financial Planner', why:'Model your long-term financial trajectory.'}
+    ]
+  },
+  'v9': {
+    next: [
+      {id:'v14', label:'Match Calculator', why:'See your updated match probability with improvements.'},
+      {id:'v16', label:'Interview Practice', why:'Prepare for the interviews your application will earn you.'}
+    ]
+  },
+  'v16': {
+    next: [
+      {id:'v14', label:'Match Calculator', why:'Check your overall competitiveness one more time.'},
+      {id:'v13', label:'Specialty Fit', why:'Make sure you are interviewing at the right programs.'}
+    ]
+  },
+  'v17': {
+    next: [
+      {id:'v14', label:'Match Calculator', why:'See how US clinical experience will boost your match odds.'},
+      {id:'v7', label:'Research Impact', why:'Strengthen your research profile while observing.'}
+    ]
+  }
+};
+
+// Map result container IDs → tool IDs
+// These are the elements that get populated when a tool finishes
+var HW_FLOW_RESULT_ELS = {
+  'mcc-results':    'v14',
+  'crs-results':    'v12',
+  'ocm-results':    'v12',
+  'sfa-results':    'v13',
+  'bmd-results':    'v13',
+  'csb-results':    'v15',
+  'fyp-results':    'v11',
+  'ilp-results':    'v11',
+  'frc-results':    'v14',
+  'frc-pathway':    'v14',
+  'roi-results':    'v7',
+  'ci-output':      'v12',
+  'mis-feedback':   'v16',
+  'obs-results':    'v17',
+  'obs-plan-results':'v17',
+  'rvu-scenarios':  'v4'
+};
+
+// ===== RENDER: Flow Card =====
+function renderToolFlowCard(toolId, targetEl) {
+  var flow = HW_TOOL_FLOWS[toolId];
+  if (!flow || !flow.next || !flow.next.length) return;
+  if (!targetEl) return;
+  // Don't double-inject
+  if (targetEl.getAttribute('data-flows-injected')) return;
+  targetEl.setAttribute('data-flows-injected', '1');
+
+  var wrapper = document.createElement('div');
+  wrapper.className = 'hw-flow-card';
+  wrapper.setAttribute('data-flow-tool', toolId);
+
+  var h = '';
+  // Divider + header
+  h += '<div style="margin-top:28px;padding-top:24px;border-top:2px solid rgba(198,168,94,.3)">';
+  h += '<div style="font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent,#C6A85E);margin-bottom:16px">What to Do Next</div>';
+
+  // Next-tool cards
+  flow.next.forEach(function(item) {
+    h += '<div onclick="openFramework(\'' + item.id + '\')" style="';
+    h += 'display:flex;align-items:flex-start;gap:14px;';
+    h += 'padding:16px 18px;margin-bottom:10px;';
+    h += 'background:var(--bg2,#fff);border:1px solid var(--border,#E8E1D8);border-radius:12px;';
+    h += 'cursor:pointer;transition:all .2s;';
+    h += '" ';
+    h += 'onmouseenter="this.style.borderColor=\'rgba(198,168,94,.5)\';this.style.boxShadow=\'0 4px 12px rgba(0,0,0,.06)\'" ';
+    h += 'onmouseleave="this.style.borderColor=\'var(--border,#E8E1D8)\';this.style.boxShadow=\'none\'">';
+
+    // Arrow icon
+    h += '<div style="flex-shrink:0;width:32px;height:32px;border-radius:8px;background:rgba(198,168,94,.08);display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--accent,#C6A85E)">→</div>';
+
+    // Text
+    h += '<div style="flex:1;min-width:0">';
+    h += '<div style="font-size:13px;font-weight:600;color:var(--text,#1C1A17);margin-bottom:3px">' + item.label + '</div>';
+    h += '<div style="font-size:12px;color:var(--text2,#8A8478);line-height:1.5;font-family:var(--font-serif,Georgia,serif)">' + item.why + '</div>';
+    h += '</div>';
+
+    h += '</div>';
+  });
+
+  // Feedback row
+  h += renderToolFeedback(toolId);
+
+  h += '</div>'; // close wrapper div
+
+  wrapper.innerHTML = h;
+  targetEl.appendChild(wrapper);
+}
+
+// ===== RENDER: Feedback =====
+function renderToolFeedback(toolId) {
+  var fbId = 'hw-fb-' + toolId + '-' + Date.now();
+  var h = '';
+  h += '<div id="' + fbId + '" style="margin-top:16px;padding-top:14px;border-top:1px solid var(--border,#E8E1D8);display:flex;align-items:center;gap:10px">';
+  h += '<span style="font-size:11px;color:var(--text3,#AAA5A0)">Was this helpful?</span>';
+
+  // Thumbs up
+  h += '<button onclick="hwRecordFeedback(\'' + toolId + '\',true,\'' + fbId + '\')" style="';
+  h += 'border:none;background:none;font-size:18px;cursor:pointer;padding:4px 8px;border-radius:6px;transition:background .15s;';
+  h += '" onmouseenter="this.style.background=\'rgba(198,168,94,.1)\'" onmouseleave="this.style.background=\'none\'"';
+  h += ' title="Yes">👍</button>';
+
+  // Thumbs down
+  h += '<button onclick="hwRecordFeedback(\'' + toolId + '\',false,\'' + fbId + '\')" style="';
+  h += 'border:none;background:none;font-size:18px;cursor:pointer;padding:4px 8px;border-radius:6px;transition:background .15s;';
+  h += '" onmouseenter="this.style.background=\'rgba(198,168,94,.1)\'" onmouseleave="this.style.background=\'none\'"';
+  h += ' title="No">👎</button>';
+
+  h += '</div>';
+  return h;
+}
+
+// ===== RECORD FEEDBACK =====
+function hwRecordFeedback(toolId, helpful, fbElId) {
+  // Store in user object
+  if (typeof U !== 'undefined' && U) {
+    if (!U.toolFeedback) U.toolFeedback = {};
+    U.toolFeedback[toolId] = { helpful: helpful, date: new Date().toISOString() };
+    // Persist if save function exists
+    if (typeof saveProfile === 'function') {
+      try { saveProfile(); } catch(e) {}
+    }
+  }
+  // Show confirmation
+  var el = document.getElementById(fbElId);
+  if (el) {
+    el.innerHTML = '<div style="font-size:12px;color:var(--accent,#C6A85E);display:flex;align-items:center;gap:6px">'
+      + '<span>✓</span><span>Thanks for the feedback!</span></div>';
+    // Fade after 3 seconds
+    setTimeout(function() {
+      el.style.transition = 'opacity .5s';
+      el.style.opacity = '0.4';
+    }, 3000);
+  }
+}
+
+// ===== AUTO-DETECTION via MutationObserver =====
+// Watches for tool result containers getting populated and injects flow cards
+
+var _hwFlowsActive = false;
+var _hwFlowDebounce = {};
+
+function hwFlowsInit() {
+  if (_hwFlowsActive) return;
+  _hwFlowsActive = true;
+
+  // Target: the modal that holds all tool content
+  var modalContent = document.getElementById('modal-q-content');
+  var mainApp = document.getElementById('main-app');
+
+  var targets = [];
+  if (modalContent) targets.push(modalContent);
+  if (mainApp) targets.push(mainApp);
+
+  // Fallback: observe body if modal not yet in DOM
+  if (!targets.length) targets.push(document.body);
+
+  var observer = new MutationObserver(function(mutations) {
+    // Batch — only scan once per animation frame
+    if (_hwFlowDebounce._raf) return;
+    _hwFlowDebounce._raf = requestAnimationFrame(function() {
+      _hwFlowDebounce._raf = null;
+      hwScanForResults();
+    });
+  });
+
+  targets.forEach(function(target) {
+    observer.observe(target, { childList: true, subtree: true });
+  });
+
+  // Also do an initial scan
+  setTimeout(hwScanForResults, 1000);
+}
+
+function hwScanForResults() {
+  var ids = Object.keys(HW_FLOW_RESULT_ELS);
+  for (var i = 0; i < ids.length; i++) {
+    var elId = ids[i];
+    var toolId = HW_FLOW_RESULT_ELS[elId];
+    var el = document.getElementById(elId);
+    if (!el) continue;
+    // Must have visible content (not empty, not hidden)
+    if (!el.innerHTML || el.innerHTML.length < 50) continue;
+    if (el.style.display === 'none') continue;
+    if (el.offsetParent === null) continue;
+    // Don't inject if already done
+    if (el.getAttribute('data-flows-injected')) continue;
+    // Don't inject into blurred/gated content
+    if (el.querySelector('.blur-gate-overlay')) continue;
+    // Don't inject if result is just a loading/queued state
+    if (el.innerHTML.indexOf('Assessment in progress') !== -1) continue;
+    if (el.innerHTML.indexOf('putting together') !== -1) continue;
+
+    renderToolFlowCard(toolId, el);
+  }
+}
+
+// ===== HOOK: openFramework override =====
+// When a user navigates to a new tool, clear flow-injected flags
+// so returning to a tool can re-inject if needed
+(function() {
+  var _origOpen = typeof openFramework === 'function' ? openFramework : null;
+  if (!_origOpen) {
+    // If openFramework isn't defined yet, try again after load
+    var _retries = 0;
+    var _waitForOpen = setInterval(function() {
+      _retries++;
+      if (typeof openFramework === 'function' && openFramework !== hwWrappedOpenFramework) {
+        _origOpen = openFramework;
+        openFramework = hwWrappedOpenFramework;
+        clearInterval(_waitForOpen);
+      }
+      if (_retries > 40) clearInterval(_waitForOpen); // give up after 20s
+    }, 500);
+  } else {
+    openFramework = hwWrappedOpenFramework;
+  }
+
+  function hwWrappedOpenFramework(id) {
+    // Clear injection flags so flow cards appear fresh on re-runs
+    var els = document.querySelectorAll('[data-flows-injected]');
+    for (var j = 0; j < els.length; j++) {
+      els[j].removeAttribute('data-flows-injected');
+      // Remove old flow cards
+      var oldCards = els[j].querySelectorAll('.hw-flow-card');
+      for (var k = 0; k < oldCards.length; k++) {
+        oldCards[k].parentNode.removeChild(oldCards[k]);
+      }
+    }
+    // Call original
+    if (_origOpen) _origOpen.call(this, id);
+  }
+})();
+
+// ===== BOOT =====
+// Start observing once DOM is ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', hwFlowsInit);
+} else {
+  // Small delay to let js-app.js finish initializing
+  setTimeout(hwFlowsInit, 500);
+}
+
+// ============================================================================
+// HeartWise Email System — Client-Side Triggers
+// Calls Supabase Edge Functions to send transactional emails via Resend
+//
+// This file handles WHEN to trigger emails. The actual email rendering and
+// delivery happens server-side in the Supabase Edge Function (send-email).
+//
+// Email types:
+//   welcome        — after signup, stage-specific onboarding
+//   tool_complete   — first time running a specific tool
+//   monthly_digest  — once per month on first visit
+//   reengagement    — activity ping for dormant user detection
+//   deadline_reminder — upcoming career deadlines within 30 days
+//
+// Frequency cap: max 1 email per type per user per day, max 3 emails/week total
+// ============================================================================
+
+var HW_EMAIL_ENDPOINT = 'https://kqyvfykbnboesskxovtw.supabase.co/functions/v1/send-email';
+
+// ===== RATE LIMITING & DUPLICATE PREVENTION =====
+
+// Returns a localStorage key for rate limiting
+function _hwEmailKey(type, email) {
+  return 'hw_email_' + type + '_' + (email || '').toLowerCase().replace(/[^a-z0-9]/g, '_');
+}
+
+// Check if this email type was already sent today for this user
+function _hwEmailSentToday(type, email) {
+  var key = _hwEmailKey(type, email);
+  var last = localStorage.getItem(key);
+  if (!last) return false;
+  var lastDate = new Date(parseInt(last, 10));
+  var now = new Date();
+  return lastDate.getFullYear() === now.getFullYear() &&
+         lastDate.getMonth() === now.getMonth() &&
+         lastDate.getDate() === now.getDate();
+}
+
+// Mark this email type as sent today
+function _hwEmailMarkSent(type, email) {
+  var key = _hwEmailKey(type, email);
+  localStorage.setItem(key, String(Date.now()));
+}
+
+// Weekly cap: max 3 emails total per user per rolling 7-day window
+function _hwEmailWeeklyCap(email) {
+  var capKey = 'hw_email_log_' + (email || '').toLowerCase().replace(/[^a-z0-9]/g, '_');
+  var raw = localStorage.getItem(capKey);
+  var log = [];
+  if (raw) {
+    try { log = JSON.parse(raw); } catch (e) { log = []; }
+  }
+  var weekAgo = Date.now() - 7 * 86400000;
+  // Prune old entries
+  log = log.filter(function(ts) { return ts > weekAgo; });
+  localStorage.setItem(capKey, JSON.stringify(log));
+  return log.length >= 3; // true = at capacity
+}
+
+// Record an email send in the weekly log
+function _hwEmailLogSend(email) {
+  var capKey = 'hw_email_log_' + (email || '').toLowerCase().replace(/[^a-z0-9]/g, '_');
+  var raw = localStorage.getItem(capKey);
+  var log = [];
+  if (raw) {
+    try { log = JSON.parse(raw); } catch (e) { log = []; }
+  }
+  var weekAgo = Date.now() - 7 * 86400000;
+  log = log.filter(function(ts) { return ts > weekAgo; });
+  log.push(Date.now());
+  localStorage.setItem(capKey, JSON.stringify(log));
+}
+
+// Combined rate-limit check: returns true if sending is blocked
+function _hwEmailBlocked(type, email) {
+  if (!email) return true;
+  if (_hwEmailSentToday(type, email)) return true;
+  if (_hwEmailWeeklyCap(email)) return true;
+  return false;
+}
+
+
+// ===== EMAIL TRIGGERS =====
+
+// 1. Welcome email — called once after signup/onboarding
+function hwEmailWelcome(user) {
+  if (!user || !user.email) return;
+  // Only send once ever
+  var onceKey = 'hw_email_welcome_sent_' + user.email.toLowerCase();
+  if (localStorage.getItem(onceKey)) return;
+
+  hwSendEmail({
+    type: 'welcome',
+    to: user.email,
+    name: user.name || user.email.split('@')[0],
+    stage: (user.careerProfile && user.careerProfile.stage) || user.role || 'student',
+    specialty: (user.careerProfile && user.careerProfile.specialty) || '',
+    pgy: (user.careerProfile && user.careerProfile.pgy) || '',
+    goal: (user.careerProfile && user.careerProfile.goal) || ''
+  });
+  localStorage.setItem(onceKey, '1');
+}
+
+
+// 2. Tool completion email — called after first time running a tool
+function hwEmailToolComplete(user, toolName, score) {
+  if (!user || !user.email || !toolName) return;
+
+  // Only trigger on first-ever run of this specific tool
+  var history = (user.toolHistory || []).filter(function(t) { return t.tool === toolName; });
+  if (history.length > 1) return; // Already ran before
+
+  // Per-tool once-ever check
+  var toolKey = 'hw_email_tool_' + toolName.replace(/[^a-zA-Z0-9]/g, '_') + '_' + user.email.toLowerCase();
+  if (localStorage.getItem(toolKey)) return;
+
+  if (_hwEmailBlocked('tool_complete', user.email)) return;
+
+  hwSendEmail({
+    type: 'tool_complete',
+    to: user.email,
+    name: user.name || user.email.split('@')[0],
+    toolName: toolName,
+    score: score || null,
+    stage: (user.careerProfile && user.careerProfile.stage) || user.role || 'student'
+  });
+
+  localStorage.setItem(toolKey, '1');
+  _hwEmailMarkSent('tool_complete', user.email);
+  _hwEmailLogSend(user.email);
+}
+
+
+// 3. Re-engagement ping — called on each login to record activity
+//    The edge function uses this data to decide if/when to send re-engagement emails
+//    to users who STOP logging in (14+ days inactive)
+function hwEmailReengagement(user) {
+  if (!user || !user.email) return;
+
+  // Only ping once per day
+  if (_hwEmailSentToday('activity_ping', user.email)) return;
+
+  var lastActive = user.lastActive || user.lastLogin;
+  var daysSince = 0;
+  if (lastActive) {
+    daysSince = Math.floor((Date.now() - new Date(lastActive).getTime()) / 86400000);
+  }
+
+  // Always send the ping (no weekly cap for pings — they're silent server-side tracking)
+  hwSendEmail({
+    type: 'activity_ping',
+    to: user.email,
+    name: user.name || user.email.split('@')[0],
+    daysSinceActive: daysSince,
+    stage: (user.careerProfile && user.careerProfile.stage) || user.role || 'student',
+    specialty: (user.careerProfile && user.careerProfile.specialty) || ''
+  });
+
+  _hwEmailMarkSent('activity_ping', user.email);
+}
+
+
+// 4. Monthly progress digest — called from renderHome on first visit of the month
+function hwEmailMonthlyDigest(user) {
+  if (!user || !user.email) return;
+
+  var now = new Date();
+  var monthKey = 'hw_digest_' + user.email.toLowerCase() + '_' + now.getFullYear() + '-' + (now.getMonth() + 1);
+  if (localStorage.getItem(monthKey)) return; // Already sent this month
+
+  if (_hwEmailBlocked('monthly_digest', user.email)) return;
+
+  // Gather stats
+  var toolRuns = (user.toolHistory || []).length;
+  var toolNames = [];
+  var seen = {};
+  (user.toolHistory || []).forEach(function(t) {
+    if (!seen[t.tool]) { toolNames.push(t.tool); seen[t.tool] = true; }
+  });
+
+  var lastMatchScore = null;
+  var matchHistory = (user.toolHistory || []).filter(function(t) {
+    return t.tool === 'Match Probability Calculator';
+  });
+  if (matchHistory.length > 0) {
+    lastMatchScore = matchHistory[matchHistory.length - 1].score;
+  }
+
+  var cp = user.careerProfile || {};
+
+  // Get upcoming deadlines count (next 30 days)
+  var upcomingDeadlines = 0;
+  if (typeof hwGetDeadlines === 'function' && cp.stage) {
+    try {
+      var deadlines = hwGetDeadlines(cp);
+      upcomingDeadlines = deadlines.filter(function(d) {
+        return d.daysAway >= 0 && d.daysAway <= 30;
+      }).length;
+    } catch (e) { /* ignore */ }
+  }
+
+  hwSendEmail({
+    type: 'monthly_digest',
+    to: user.email,
+    name: user.name || user.email.split('@')[0],
+    stage: cp.stage || user.role || 'student',
+    specialty: cp.specialty || '',
+    pgy: cp.pgy || '',
+    toolRuns: toolRuns,
+    toolsUsed: toolNames.slice(0, 5), // top 5 unique tools
+    lastMatchScore: lastMatchScore,
+    upcomingDeadlines: upcomingDeadlines,
+    month: now.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
+  });
+
+  localStorage.setItem(monthKey, '1');
+  _hwEmailMarkSent('monthly_digest', user.email);
+  _hwEmailLogSend(user.email);
+}
+
+
+// 5. Deadline reminder — called from renderHome, checks for deadlines within 30 days
+//    Sends at most one deadline reminder per week
+function hwEmailDeadlineReminder(user) {
+  if (!user || !user.email) return;
+
+  var cp = user.careerProfile || {};
+  if (!cp.stage) return; // No career profile yet
+
+  // Only check once per week
+  var weekKey = 'hw_email_deadline_week_' + user.email.toLowerCase();
+  var lastCheck = localStorage.getItem(weekKey);
+  if (lastCheck && (Date.now() - parseInt(lastCheck, 10)) < 7 * 86400000) return;
+
+  if (_hwEmailBlocked('deadline_reminder', user.email)) return;
+
+  // Requires hwGetDeadlines from js-timeline.js
+  if (typeof hwGetDeadlines !== 'function') return;
+
+  var deadlines;
+  try {
+    deadlines = hwGetDeadlines(cp);
+  } catch (e) { return; }
+
+  // Find critical/high deadlines within 30 days
+  var urgent = deadlines.filter(function(d) {
+    return d.daysAway >= 0 && d.daysAway <= 30 &&
+           (d.urgency === 'critical' || d.urgency === 'high');
+  });
+
+  if (urgent.length === 0) return;
+
+  // Send top 3 most urgent
+  var topDeadlines = urgent.slice(0, 3).map(function(d) {
+    return {
+      title: d.title,
+      daysAway: d.daysAway,
+      urgency: d.urgency,
+      desc: d.desc,
+      category: d.category
+    };
+  });
+
+  hwSendEmail({
+    type: 'deadline_reminder',
+    to: user.email,
+    name: user.name || user.email.split('@')[0],
+    stage: cp.stage,
+    specialty: cp.specialty || '',
+    pgy: cp.pgy || '',
+    deadlines: topDeadlines
+  });
+
+  localStorage.setItem(weekKey, String(Date.now()));
+  _hwEmailMarkSent('deadline_reminder', user.email);
+  _hwEmailLogSend(user.email);
+}
+
+
+// ===== CORE SEND FUNCTION =====
+
+function hwSendEmail(payload) {
+  if (!payload || !payload.to) return;
+
+  // Don't send emails to admin/test accounts
+  var blocked = ['mfaroqui@gmail.com', 'mfaroqui.llc@gmail.com'];
+  if (blocked.indexOf(payload.to.toLowerCase()) !== -1) return;
+
+  // Add timestamp
+  payload.sentAt = new Date().toISOString();
+
+  fetch(HW_EMAIL_ENDPOINT, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'apikey': SUPABASE_KEY // Uses the global SUPABASE_KEY from js-app.js
+    },
+    body: JSON.stringify(payload)
+  }).then(function(resp) {
+    if (!resp.ok) {
+      console.warn('HeartWise email API returned ' + resp.status);
+    }
+  }).catch(function(e) {
+    console.warn('HeartWise email send failed:', e);
+  });
+}
+
+
+// ===== INTEGRATION HOOKS =====
+// Call these from the appropriate places in js-app.js:
+//
+//   After signup/onboarding complete:
+//     hwEmailWelcome(U);
+//
+//   After a tool finishes (in the tool result handler):
+//     hwEmailToolComplete(U, toolName, score);
+//
+//   In renderHome() near the top:
+//     if (U) {
+//       hwEmailReengagement(U);
+//       hwEmailMonthlyDigest(U);
+//       hwEmailDeadlineReminder(U);
+//     }
 
 
 </script>

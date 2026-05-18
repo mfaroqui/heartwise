@@ -1,0 +1,1270 @@
+<!-- ===== MAIN APP ===== -->
+<div id="main-app" class="hidden">
+
+<!-- App Top Bar -->
+<div id="app-topbar" style="position:sticky;top:0;z-index:90;display:flex;align-items:center;justify-content:space-between;padding:10px 20px;background:var(--bg);border-bottom:1px solid var(--border)">
+<div style="display:flex;align-items:center;gap:8px;cursor:pointer" onclick="navTo('scr-home')">
+<div class="logo-mark" style="width:24px;height:24px"><svg style="width:16px;height:16px"><use href="#i-heart"/></svg></div>
+<span style="font-family:var(--font-serif);font-size:15px;font-weight:600;color:var(--text);letter-spacing:.3px">HeartWise</span>
+</div>
+<div style="display:flex;align-items:center;gap:8px">
+<button id="topbar-upgrade" onclick="navTo('scr-profile');showUpgrade()" style="display:none;padding:6px 14px;font-size:11px;font-weight:600;color:#0a0a0f;background:var(--accent);border:none;border-radius:8px;cursor:pointer;letter-spacing:.3px">Subscribe</button>
+<button onclick="doLogout()" style="display:flex;align-items:center;gap:6px;padding:6px 14px;font-size:11px;font-weight:600;color:var(--text3);background:var(--bg2);border:1px solid var(--border);border-radius:8px;cursor:pointer;transition:all .2s;letter-spacing:.3px" onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--accent)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text3)'">
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+Sign Out</button>
+</div>
+</div>
+
+<!-- NAV -->
+<nav class="nav" id="main-nav">
+<button class="ni on" data-scr="scr-home" onclick="navTo('scr-home',this)"><svg><use href="#i-home"/></svg>Home</button>
+<button class="ni" data-scr="scr-vault" onclick="navTo('scr-vault',this)"><svg><use href="#i-lock"/></svg>Career Tools</button>
+<button class="ni" id="nav-ask" data-scr="scr-ask" onclick="navTo('scr-ask',this)"><svg><use href="#i-plus"/></svg>Ask</button>
+<button class="ni" data-scr="scr-archive" onclick="navTo('scr-archive',this)"><svg><use href="#i-archive"/></svg>Insights</button>
+<button class="ni" data-scr="scr-profile" onclick="navTo('scr-profile',this)"><svg><use href="#i-user"/></svg>Profile</button>
+<button class="ni" data-scr="scr-admin" id="nav-admin" style="display:none" onclick="openAdmin()"><svg><use href="#i-settings"/></svg>Admin</button>
+</nav>
+
+<!-- HOME SCREEN -->
+<div id="scr-home" class="scr on" role="main" aria-label="Dashboard">
+<div class="hdr hdr-home">
+<div class="hdr-t serif">HeartWise</div>
+<span id="user-badge" class="badge b-free">FREE</span>
+</div>
+
+<!-- ===== ZONE 1: HERO — Welcome + Score + Direction ===== -->
+<div style="padding:18px 24px 0">
+<div id="home-hero-card"></div>
+</div>
+
+<!-- Cost of Inaction / Day 1 Stakes — RIGHT AFTER HERO for maximum visibility -->
+<div style="padding:8px 24px 0">
+<div id="cost-of-inaction" style="display:none;margin-bottom:12px"></div>
+</div>
+
+<!-- Trial Countdown Banner -->
+<div id="trial-countdown-banner" style="margin:12px 24px 0;padding:14px 18px;border-radius:14px;border:1px solid rgba(198,168,94,.25);background:rgba(198,168,94,.08);display:none"></div>
+
+<!-- Score Change Banner -->
+<div id="score-change-banner" style="display:none;margin:12px 24px 0;padding:14px 18px;border-radius:14px;border:1px solid rgba(106,191,75,.2);background:rgba(106,191,75,.06);cursor:pointer" onclick="this.style.display='none'">
+<div style="display:flex;align-items:center;gap:10px">
+<span style="font-size:20px" id="score-change-icon">📈</span>
+<div style="flex:1">
+<div id="score-change-text" style="font-size:13px;font-weight:600;color:var(--text)"></div>
+<div id="score-change-sub" style="font-size:11px;color:var(--text3);margin-top:2px"></div>
+</div>
+<span style="font-size:10px;color:var(--text3)">✕</span>
+</div>
+</div>
+
+<!-- Hidden holders for backward compat -->
+<div id="career-dashboard" style="display:none"><div id="home-score-card"></div><div id="dash-score-refresh" style="display:none"></div></div>
+
+<!-- ===== ZONE 2: YOUR TWO ACTIONS ===== -->
+<!-- Ask a Question — prominent -->
+<div id="home-ask-card" style="padding:14px 24px 0">
+<div onclick="navTo('scr-ask')" style="display:flex;align-items:center;gap:12px;padding:14px 18px;background:#fff;border:1px solid #E8E1D8;border-radius:14px;cursor:pointer;transition:all .2s;box-shadow:0 2px 6px rgba(0,0,0,.04)" onmouseenter="this.style.borderColor='#C6A85E';this.style.boxShadow='0 6px 16px rgba(0,0,0,.08)'" onmouseleave="this.style.borderColor='#E8E1D8';this.style.boxShadow='0 2px 6px rgba(0,0,0,.04)'">
+<span style="font-size:18px">🧠</span>
+<div style="flex:1;font-size:13px;color:#8A8278">Ask any career, financial, or clinical question…</div>
+<span style="font-size:12px;font-weight:600;color:#C6A85E">Ask →</span>
+</div>
+</div>
+
+<!-- Primary Tool Recommendation -->
+<div id="home-recommended-tools" style="padding:14px 24px 0;display:none"></div>
+
+<!-- First Contract Playbook (for residents going to practice, fellows, early attendings) -->
+<div id="home-contract-playbook" style="padding:14px 24px 0;display:none"></div>
+
+<!-- IMG Success Stories (shown for IMG users) -->
+<div id="img-success-cards" style="padding:14px 24px 0;display:none"></div>
+
+<!-- ===== ZONE 3: ACTIVE ALERTS (only when actionable) ===== -->
+<div style="padding:0 24px">
+<div id="monthly-progress-report" style="display:none;margin-bottom:12px"></div>
+<div id="comp-intel-card" style="display:none;margin:12px 0"></div>
+<div id="tripwire-alerts" style="display:none;margin-bottom:12px"></div>
+<div id="revisit-prompts" style="display:none;margin-bottom:12px"></div>
+<div id="upcoming-deadlines" style="display:none;margin-bottom:12px"></div>
+</div>
+
+<!-- ===== ZONE 4: YOUR PROGRESS ===== -->
+<div style="padding:0 24px">
+<!-- Score breakdown with labels -->
+<div id="home-score-breakdown" style="display:none;margin-bottom:12px"></div>
+<!-- Tool progress / history -->
+<div id="tool-progress" style="margin-bottom:12px;display:none"></div>
+<!-- Decision journal -->
+<div id="decision-journal-home" style="display:none;margin-bottom:12px"></div>
+</div>
+
+<!-- ===== ZONE 5: PLAN & EXPLORE ===== -->
+<div style="padding:0 24px">
+<div id="weekly-focus" style="display:none;margin-bottom:12px"></div>
+<div id="monthly-checkin-trigger" style="display:none;margin-bottom:12px"></div>
+<div id="seasonal-calendar" style="display:none;margin-bottom:12px"></div>
+<div id="quarterly-snapshot-btn" style="display:none;margin-bottom:12px"></div>
+<div id="peer-benchmark-card" style="display:none;margin-bottom:12px"></div>
+</div>
+
+<!-- ===== DEEPER ANALYTICS (collapsible) ===== -->
+<div style="padding:0 24px">
+<div id="dash-detail-toggle" style="display:none;margin-bottom:12px">
+<div onclick="toggleDashDetails()" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:14px 20px;background:#111318;border-radius:14px;cursor:pointer;font-size:12px;color:#EDEBE7;font-weight:600;letter-spacing:.3px;transition:opacity .15s;position:relative;overflow:hidden" onmouseenter="this.style.opacity='0.9'" onmouseleave="this.style.opacity='1'">
+<span style="position:relative">📈</span>
+<span style="position:relative"><span id="dash-detail-arrow">▸</span> Detailed Analytics — Graph, Benchmarks, Milestones</span>
+</div>
+</div>
+<div id="dash-details" style="display:none">
+<div id="dash-peer-activity" style="display:none;margin-bottom:12px"></div>
+<div id="dash-graph-wrap" style="background:#fff;border:1px solid #E8E1D8;border-radius:14px;padding:16px;margin-bottom:12px;display:none;box-shadow:0 2px 6px rgba(0,0,0,.04)">
+<div style="font-size:10px;font-weight:600;color:#C6A85E;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Progress Over Time</div>
+<div id="dash-graph" style="height:140px;position:relative"></div>
+</div>
+<div id="dash-actions" style="background:#fff;border:1px solid #E8E1D8;border-radius:14px;padding:16px;margin-bottom:12px;display:none;box-shadow:0 2px 6px rgba(0,0,0,.04)">
+<div style="font-size:10px;font-weight:600;color:#C6A85E;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">🎯 Actions That Increase Your Score</div>
+<div id="dash-action-list"></div>
+</div>
+<div id="dash-benchmark" style="background:#fff;border:1px solid #E8E1D8;border-radius:14px;padding:16px;margin-bottom:12px;display:none;box-shadow:0 2px 6px rgba(0,0,0,.04)">
+<div style="font-size:10px;font-weight:600;color:#C6A85E;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">📈 Peer Benchmarking</div>
+<div id="dash-bench-list"></div>
+</div>
+<div id="dash-milestones" style="background:#fff;border:1px solid #E8E1D8;border-radius:14px;padding:16px;margin-bottom:12px;display:none;box-shadow:0 2px 6px rgba(0,0,0,.04)">
+<div style="font-size:10px;font-weight:600;color:#C6A85E;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">✅ Career Milestones</div>
+<div id="dash-milestone-list"></div>
+</div>
+<div id="dash-history" style="background:#fff;border:1px solid #E8E1D8;border-radius:14px;padding:16px;margin-bottom:12px;display:none;box-shadow:0 2px 6px rgba(0,0,0,.04)">
+<div style="font-size:10px;font-weight:600;color:#C6A85E;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">📋 Your Strategy History</div>
+<div id="dash-history-list"></div>
+</div>
+<div id="dash-reassess" style="text-align:center;margin-bottom:12px;display:none">
+<div id="dash-last-updated" style="font-size:10px;color:#8A8278;margin-bottom:6px"></div>
+</div>
+</div>
+</div>
+
+<!-- ===== SINGLE UPGRADE NUDGE (contextual) ===== -->
+<div id="home-upgrade-nudge" style="padding:0 24px 16px;display:none"></div>
+
+<!-- Disclaimer -->
+<div style="padding:24px 24px 100px">
+<div style="border-top:1px solid #E8E1D8;padding-top:20px">
+<p style="font-size:10px;color:#8A8278;line-height:1.7;text-align:center;max-width:380px;margin:0 auto">HeartWise provides structured educational strategy. It does not provide medical, legal, financial, or tax advice. AI outputs are frameworks, not personalized recommendations. Users should consult appropriate professionals for individualized decisions.</p>
+<p style="font-size:10px;color:#8A8278;text-align:center;margin-top:10px">© 2026 HeartWise Mentor LLC. All rights reserved.</p>
+</div>
+</div>
+
+<!-- Update Profile Modal -->
+<div id="modal-update-profile" class="hidden" style="position:fixed;top:0;left:0;right:0;bottom:0;z-index:300;background:rgba(0,0,0,.5);display:flex;align-items:flex-start;justify-content:center;padding:24px;padding-top:max(24px,env(safe-area-inset-top,0px));overflow-y:auto;-webkit-overflow-scrolling:touch">
+<div style="background:#F5F1EB;border-radius:18px;max-width:480px;width:100%;max-height:calc(100dvh - 48px);overflow-y:auto;padding:28px 24px;box-shadow:0 16px 48px rgba(0,0,0,.15);margin:auto 0">
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+<div style="font-size:16px;font-weight:600;color:#1C1A17;font-family:var(--font-serif)">Update Career Profile</div>
+<button onclick="document.getElementById('modal-update-profile').classList.add('hidden')" style="background:none;border:none;color:#8A8278;font-size:20px;cursor:pointer;padding:4px">✕</button>
+</div>
+<div id="update-profile-fields"></div>
+<div style="margin-top:16px">
+<button onclick="saveUpdatedProfile()" style="width:100%;padding:14px;background:#C6A85E;color:#1C1A17;border:none;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer">Save & Recalculate</button>
+</div>
+</div>
+</div>
+
+</div>
+<!-- ASK SCREEN (Structured Intake) -->
+<div id="scr-ask" class="scr">
+<div class="hdr"><div class="hdr-t serif" style="font-size:20px">Ask HeartWise</div></div>
+<div style="padding:24px 24px 100px">
+
+<!-- Quick Prompts for new users -->
+<div id="ask-quick-prompts" style="margin-bottom:20px">
+<div style="font-size:10px;font-weight:700;color:#C6A85E;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:12px">Not sure what to ask? Try one of these:</div>
+<div style="display:flex;flex-direction:column;gap:8px">
+<div onclick="askFillPrompt('How competitive am I for cardiology fellowship with my current profile?','career','fellowship')" style="display:flex;align-items:center;gap:10px;padding:12px 14px;background:#fff;border:1px solid #E8E1D8;border-radius:12px;cursor:pointer;transition:all .2s" onmouseenter="this.style.borderColor='#C6A85E'" onmouseleave="this.style.borderColor='#E8E1D8'">
+<span style="font-size:16px">🎯</span><div style="flex:1;font-size:12px;color:#5C564F">How competitive am I for cardiology fellowship?</div><span style="font-size:11px;color:#C6A85E">→</span></div>
+<div onclick="askFillPrompt('I have two job offers — hospital employed at $520K vs private practice at $450K with partnership track. How do I decide?','contract','')" style="display:flex;align-items:center;gap:10px;padding:12px 14px;background:#fff;border:1px solid #E8E1D8;border-radius:12px;cursor:pointer;transition:all .2s" onmouseenter="this.style.borderColor='#C6A85E'" onmouseleave="this.style.borderColor='#E8E1D8'">
+<span style="font-size:16px">📋</span><div style="flex:1;font-size:12px;color:#5C564F">Hospital employed vs private practice — how do I decide?</div><span style="font-size:11px;color:#C6A85E">→</span></div>
+<div onclick="askFillPrompt('Should I refinance my $340K in loans or stay on PSLF? Finishing fellowship next year.','finance','')" style="display:flex;align-items:center;gap:10px;padding:12px 14px;background:#fff;border:1px solid #E8E1D8;border-radius:12px;cursor:pointer;transition:all .2s" onmouseenter="this.style.borderColor='#C6A85E'" onmouseleave="this.style.borderColor='#E8E1D8'">
+<span style="font-size:16px">💰</span><div style="flex:1;font-size:12px;color:#5C564F">Should I refinance my loans or stay on PSLF?</div><span style="font-size:11px;color:#C6A85E">→</span></div>
+<div onclick="askFillPrompt('I am feeling burnt out in PGY-3. How do I know if it is the specialty or just training fatigue?','wellness','')" style="display:flex;align-items:center;gap:10px;padding:12px 14px;background:#fff;border:1px solid #E8E1D8;border-radius:12px;cursor:pointer;transition:all .2s" onmouseenter="this.style.borderColor='#C6A85E'" onmouseleave="this.style.borderColor='#E8E1D8'">
+<span style="font-size:16px">🧠</span><div style="flex:1;font-size:12px;color:#5C564F">Burnt out in PGY-3 — is it the specialty or training?</div><span style="font-size:11px;color:#C6A85E">→</span></div>
+</div>
+<div style="font-size:10px;color:#8A8278;margin-top:10px;text-align:center">Or scroll down to write your own question ↓</div>
+</div>
+
+<div class="review-banner" id="review-banner">
+<div class="icon">📋</div>
+<div class="info">
+<h4>Physician Reviews</h4>
+<p>Reviews are limited weekly. Not all submissions are selected. Strategic priority given to high-leverage questions.</p>
+</div>
+</div>
+
+<div class="intake-grid">
+<div class="fg"><label>Training Level *</label>
+<select id="q-level" required>
+<option value="">Select</option>
+<option value="MS1-MS2">MS1-MS2</option>
+<option value="MS3-MS4">MS3-MS4</option>
+<option value="PGY-1">PGY-1</option>
+<option value="PGY-2">PGY-2</option>
+<option value="PGY-3">PGY-3</option>
+<option value="Fellow">Fellow</option>
+<option value="Attending">Attending</option>
+</select></div>
+<div class="fg"><label>Intended Specialty *</label>
+<select id="q-spec">
+<option value="">Select</option>
+<optgroup label="Internal Medicine">
+<option value="Internal Medicine - Outpatient">Internal Medicine — Outpatient / Primary Care</option>
+<option value="Internal Medicine - Hospitalist">Internal Medicine — Hospitalist</option>
+</optgroup>
+<optgroup label="Internal Medicine Subspecialties">
+<option value="Cardiology">Cardiology</option>
+<option value="Interventional Cardiology">Interventional Cardiology</option>
+<option value="Electrophysiology">Electrophysiology</option>
+<option value="Heart Failure">Heart Failure / Transplant</option>
+<option value="Gastroenterology">Gastroenterology</option>
+<option value="Pulmonology">Pulmonology / Critical Care</option>
+<option value="Nephrology">Nephrology</option>
+<option value="Hematology/Oncology">Hematology / Oncology</option>
+<option value="Endocrinology">Endocrinology</option>
+<option value="Rheumatology">Rheumatology</option>
+<option value="Infectious Disease">Infectious Disease</option>
+<option value="Allergy/Immunology">Allergy / Immunology</option>
+<option value="Geriatrics">Geriatrics</option>
+<option value="Hospice/Palliative">Hospice / Palliative Medicine</option>
+<option value="Sleep Medicine">Sleep Medicine</option>
+<option value="Transplant Hepatology">Transplant Hepatology</option>
+<option value="Advanced Endoscopy">Advanced Endoscopy</option>
+</optgroup>
+<optgroup label="Surgical Specialties">
+<option value="General Surgery">General Surgery</option>
+<option value="Cardiothoracic Surgery">Cardiothoracic Surgery</option>
+<option value="Vascular Surgery">Vascular Surgery</option>
+<option value="Orthopedic Surgery">Orthopedic Surgery</option>
+<option value="Neurosurgery">Neurosurgery</option>
+<option value="Plastic Surgery">Plastic Surgery</option>
+<option value="Urology">Urology</option>
+<option value="Otolaryngology">Otolaryngology (ENT)</option>
+<option value="Ophthalmology">Ophthalmology</option>
+<option value="Colorectal Surgery">Colorectal Surgery</option>
+<option value="Trauma Surgery">Trauma / Acute Care Surgery</option>
+<option value="Transplant Surgery">Transplant Surgery</option>
+<option value="Surgical Oncology">Surgical Oncology</option>
+<option value="Thoracic Surgery Integrated">Thoracic Surgery (Integrated)</option>
+<option value="Pediatric Surgery">Pediatric Surgery</option>
+<option value="Spine Surgery">Spine Surgery</option>
+<option value="Hand Surgery">Hand Surgery</option>
+<option value="Minimally Invasive Surgery">Minimally Invasive Surgery</option>
+<option value="Surgical Critical Care">Surgical Critical Care</option>
+</optgroup>
+<optgroup label="Other Specialties">
+<option value="Emergency Medicine">Emergency Medicine</option>
+<option value="Anesthesiology">Anesthesiology</option>
+<option value="Radiology">Radiology</option>
+<option value="Interventional Radiology">Interventional Radiology</option>
+<option value="Pathology">Pathology</option>
+<option value="Dermatology">Dermatology</option>
+<option value="Neurology">Neurology</option>
+<option value="Psychiatry">Psychiatry</option>
+<option value="Physical Medicine">Physical Medicine & Rehabilitation</option>
+<option value="Family Medicine">Family Medicine</option>
+<option value="Pediatrics">Pediatrics</option>
+<option value="OB/GYN">Obstetrics & Gynecology</option>
+<option value="Radiation Oncology">Radiation Oncology</option>
+<option value="Nuclear Medicine">Nuclear Medicine</option>
+<option value="Preventive Medicine">Preventive Medicine</option>
+<option value="Sports Medicine">Sports Medicine</option>
+<option value="Pain Medicine">Pain Medicine</option>
+<option value="Critical Care">Critical Care Medicine</option>
+<option value="Clinical Neurophysiology">Clinical Neurophysiology</option>
+<option value="Neonatal-Perinatal Medicine">Neonatal-Perinatal Medicine</option>
+<option value="Maternal-Fetal Medicine">Maternal-Fetal Medicine</option>
+</optgroup>
+<option value="Other">Other</option>
+<option value="Undecided">Undecided</option>
+</select></div>
+</div>
+
+<div class="intake-grid">
+<div class="fg"><label>Timeline</label>
+<select id="q-timeline">
+<option value="">Select</option>
+<option value="Immediate (0-3mo)">Immediate (0-3mo)</option>
+<option value="Near-term (3-12mo)">Near-term (3-12mo)</option>
+<option value="Medium (1-2yr)">Medium (1-2yr)</option>
+<option value="Long-term (2+yr)">Long-term (2+yr)</option>
+</select></div>
+<div class="fg"><label>Category *</label>
+<select id="q-cat" required onchange="toggleFinance()">
+<option value="">Select</option>
+<option value="career">Career Strategy</option>
+<option value="fellowship">Fellowship Positioning</option>
+<option value="contract">Contract Negotiation</option>
+<option value="finance">Income & Financial Leverage</option>
+<option value="clinical">Clinical Education</option>
+<option value="productivity">Productivity Systems</option>
+<option value="wellness">Performance Sustainability</option>
+</select></div>
+</div>
+
+<div class="fg" id="q-finance-box" style="display:none">
+<label>Financial Snapshot (optional)</label>
+<textarea id="q-finance" rows="2" placeholder="e.g., $280K loans, PGY-2 salary $65K, no investments yet..."></textarea>
+</div>
+
+<div class="fg">
+<label>Core Question (one sentence) *</label>
+<input type="text" id="q-core" placeholder="What is the single most important thing you need answered?" required>
+</div>
+
+<div class="fg">
+<label>What constraints are you facing?</label>
+<textarea id="q-constraints" rows="2" placeholder="Time, geography, financial, academic..."></textarea>
+</div>
+
+<div class="fg">
+<label>What have you tried?</label>
+<textarea id="q-tried" rows="2" placeholder="Approaches, resources, conversations..."></textarea>
+</div>
+
+<div class="fg">
+<label>Additional Context (optional)</label>
+<textarea id="q-context" rows="3" placeholder="Any extra details that would help..."></textarea>
+</div>
+
+<div style="display:flex;align-items:center;gap:12px;padding:12px 0;margin-bottom:12px">
+<button class="tog" id="q-review-tog" onclick="togReview()"></button>
+<div><div style="font-size:13px;font-weight:500">Request Doctor Review</div><div style="font-size:11px;color:var(--text3)">Available with Mentorship plan.</div></div>
+</div>
+
+<div style="display:flex;align-items:center;gap:12px;padding:0 0 20px">
+<button class="tog" id="q-anon-tog" onclick="this.classList.toggle('on')"></button>
+<span style="font-size:13px">Submit anonymously</span>
+</div>
+
+<button class="btn btn-a" onclick="submitQ()">Submit for Strategic Analysis</button>
+</div>
+</div>
+
+<!-- ARCHIVE SCREEN -->
+<div id="scr-archive" class="scr">
+<div class="hdr"><div class="hdr-t serif" style="font-size:20px">Insights</div></div>
+<div class="sbar"><svg><use href="#i-search"/></svg><input type="text" id="search-input" placeholder="Search insights..." oninput="filterArchive()"></div>
+<div class="fc">
+<button class="chip on" onclick="setFilter('all',this)">All</button>
+<button class="chip" onclick="setFilter('career',this)">Career</button>
+<button class="chip" onclick="setFilter('fellowship',this)">Fellowship</button>
+<button class="chip" onclick="setFilter('contract',this)">Contract</button>
+<button class="chip" onclick="setFilter('finance',this)">Finance</button>
+<button class="chip" onclick="setFilter('clinical',this)">Clinical</button>
+<button class="chip" onclick="setFilter('wellness',this)">Wellness</button>
+</div>
+<div class="sec">This Week's Insights</div>
+<div id="archive-featured" class="pad"></div>
+<div class="sec">All Reviewed Questions</div>
+<div id="archive-list" class="pad"></div>
+</div>
+
+<!-- VAULT SCREEN -->
+<div id="scr-vault" class="scr">
+<div class="hdr">
+<div class="hdr-t serif" style="font-size:20px">Career Tools</div>
+<span class="tag" style="background:var(--accent-dim);color:var(--accent)">HIGH PERFORMER+</span>
+</div>
+<div style="padding:12px 24px 0">
+<p style="font-size:15px;font-weight:600;color:var(--text);line-height:1.5;margin:0 0 4px">Tell us where you are — we'll show you exactly what to focus on.</p>
+<p style="font-size:13px;color:var(--text3);line-height:1.5;margin:0">Let's figure out what tools you need to achieve your goal.</p>
+</div>
+
+<!-- Didn't Match CTA -->
+<div id="didnt-match-cta" style="display:none"></div>
+
+<!-- Toolkit Quiz -->
+<div id="vault-quiz" style="padding:20px 24px 0">
+<div style="background:#fff;border:1px solid #E8E1D8;border-radius:14px;padding:24px;position:relative;overflow:hidden">
+<div style="position:absolute;top:-40%;right:-20%;width:160px;height:160px;background:radial-gradient(circle,rgba(198,168,94,.06),transparent 70%);border-radius:50%"></div>
+<div style="position:relative">
+<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+<span style="font-size:20px">🧭</span>
+<div style="font-size:15px;font-weight:700;color:var(--text);line-height:1.4">Answer 3 quick questions and we'll recommend the tools that match your stage and goals.</div>
+</div>
+
+<!-- Q1: Stage -->
+<div id="quiz-q1">
+<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">1. Where are you in your career?</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+<button class="quiz-opt" onclick="quizPick(1,'student',this)" style="padding:12px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;text-align:center;cursor:pointer;transition:all .2s">
+<div style="font-size:18px;margin-bottom:4px">🎓</div>
+<div style="font-size:12px;font-weight:500;color:var(--text)">Student (In Training)</div>
+</button>
+<button class="quiz-opt" onclick="quizPick(1,'applicant',this)" style="padding:12px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;text-align:center;cursor:pointer;transition:all .2s">
+<div style="font-size:18px;margin-bottom:4px">📄</div>
+<div style="font-size:12px;font-weight:500;color:var(--text)">Graduate / Applicant</div>
+</button>
+<button class="quiz-opt" onclick="quizPick(1,'resident',this)" style="padding:12px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;text-align:center;cursor:pointer;transition:all .2s">
+<div style="font-size:18px;margin-bottom:4px">🏥</div>
+<div style="font-size:12px;font-weight:500;color:var(--text)">Resident</div>
+</button>
+<button class="quiz-opt" onclick="quizPick(1,'fellow',this)" style="padding:12px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;text-align:center;cursor:pointer;transition:all .2s">
+<div style="font-size:18px;margin-bottom:4px">🫀</div>
+<div style="font-size:12px;font-weight:500;color:var(--text)">Fellow</div>
+</button>
+<button class="quiz-opt" onclick="quizPick(1,'attending',this)" style="padding:12px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;text-align:center;cursor:pointer;transition:all .2s">
+<div style="font-size:18px;margin-bottom:4px">⚕️</div>
+<div style="font-size:12px;font-weight:500;color:var(--text)">Attending</div>
+</button>
+</div>
+</div>
+
+<!-- Q2: Decision (hidden until Q1 answered) -->
+<div id="quiz-q2" class="hidden" style="margin-top:18px">
+<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">2. What decision are you trying to make right now?</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+<button class="quiz-opt" onclick="quizPick(2,'specialty',this)" style="padding:12px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;text-align:center;cursor:pointer;transition:all .2s">
+<div style="font-size:18px;margin-bottom:4px">🧬</div>
+<div style="font-size:12px;font-weight:500;color:var(--text)">Choosing a Specialty</div>
+</button>
+<button class="quiz-opt" onclick="quizPick(2,'match',this)" style="padding:12px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;text-align:center;cursor:pointer;transition:all .2s">
+<div style="font-size:18px;margin-bottom:4px">🎯</div>
+<div style="font-size:12px;font-weight:500;color:var(--text)">Matching Residency</div>
+</button>
+<button class="quiz-opt" onclick="quizPick(2,'fellowship',this)" style="padding:12px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;text-align:center;cursor:pointer;transition:all .2s">
+<div style="font-size:18px;margin-bottom:4px">🏆</div>
+<div style="font-size:12px;font-weight:500;color:var(--text)">Positioning for Fellowship</div>
+</button>
+<button class="quiz-opt" onclick="quizPick(2,'contract',this)" style="padding:12px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;text-align:center;cursor:pointer;transition:all .2s">
+<div style="font-size:18px;margin-bottom:4px">📋</div>
+<div style="font-size:12px;font-weight:500;color:var(--text)">Negotiating a Job Offer</div>
+</button>
+<button class="quiz-opt" onclick="quizPick(2,'finance',this)" style="padding:12px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;text-align:center;cursor:pointer;transition:all .2s">
+<div style="font-size:18px;margin-bottom:4px">💰</div>
+<div style="font-size:12px;font-weight:500;color:var(--text)">Improving Income & Leverage</div>
+</button>
+<button class="quiz-opt" onclick="quizPick(2,'direction',this)" style="padding:12px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;text-align:center;cursor:pointer;transition:all .2s">
+<div style="font-size:18px;margin-bottom:4px">🔄</div>
+<div style="font-size:12px;font-weight:500;color:var(--text)">Considering a Career Change</div>
+</button>
+</div>
+</div>
+
+<!-- Q3: Urgency (hidden until Q2 answered) -->
+<div id="quiz-q3" class="hidden" style="margin-top:18px">
+<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">3. How urgent is this decision?</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+<button class="quiz-opt" onclick="quizPick(3,'now',this)" style="padding:12px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;text-align:center;cursor:pointer;transition:all .2s">
+<div style="font-size:16px;margin-bottom:4px">🔥</div>
+<div style="font-size:11px;font-weight:500;color:var(--text)">Within 3 months</div>
+</button>
+<button class="quiz-opt" onclick="quizPick(3,'soon',this)" style="padding:12px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;text-align:center;cursor:pointer;transition:all .2s">
+<div style="font-size:16px;margin-bottom:4px">📅</div>
+<div style="font-size:11px;font-weight:500;color:var(--text)">Within 12 months</div>
+</button>
+<button class="quiz-opt" onclick="quizPick(3,'later',this)" style="padding:12px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;text-align:center;cursor:pointer;transition:all .2s">
+<div style="font-size:16px;margin-bottom:4px">🗓️</div>
+<div style="font-size:11px;font-weight:500;color:var(--text)">Within 3 years</div>
+</button>
+<button class="quiz-opt" onclick="quizPick(3,'exploring',this)" style="padding:12px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;text-align:center;cursor:pointer;transition:all .2s">
+<div style="font-size:16px;margin-bottom:4px">🗺️</div>
+<div style="font-size:11px;font-weight:500;color:var(--text)">Just exploring</div>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- Quiz Results (hidden until quiz complete) -->
+<div id="vault-quiz-results" class="hidden" style="padding:16px 24px 0">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px">✦ Your Personalized Toolkit</div>
+<button onclick="quizReset()" style="font-size:10px;color:var(--text3);background:none;border:1px solid var(--border);border-radius:6px;padding:4px 10px;cursor:pointer">Retake Quiz</button>
+</div>
+<div id="vault-quiz-recs"></div>
+</div>
+
+<!-- All Frameworks -->
+<div id="vault-categories" class="pad" style="padding-top:16px"></div>
+</div>
+
+<!-- PROFILE SCREEN -->
+<div id="scr-profile" class="scr">
+<div class="hdr"><div class="hdr-t serif" style="font-size:20px">Profile</div></div>
+<div style="padding:24px 24px 100px">
+
+<div style="text-align:center;margin-bottom:24px">
+<div id="prof-av" style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:600;color:#0a0a0f;margin:0 auto 14px">M</div>
+<div id="prof-name" class="serif" style="font-size:20px;font-weight:600">User</div>
+<div id="prof-role" style="color:var(--text3);font-size:13px;margin-top:4px">Medical Student</div>
+</div>
+
+<div class="prof-stats" id="prof-stats-bar">
+<div class="prof-stat"><div class="n" id="ps-tools">0</div><div class="l">Tools Run</div></div>
+<div class="prof-stat"><div class="n" id="ps-score">—</div><div class="l">Last Score</div></div>
+<div class="prof-stat"><div class="n" id="ps-streak">0</div><div class="l">Day Streak</div></div>
+</div>
+
+<div style="margin-bottom:12px">
+<div class="card" style="cursor:pointer;padding:16px 20px" onclick="showMyQ()">
+<div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:14px">📋 My Questions</span><span style="color:var(--text3)">›</span></div>
+</div>
+</div>
+
+<div style="margin-bottom:12px">
+<div class="card" style="cursor:pointer;padding:16px 20px" onclick="showMyReport()">
+<div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:14px">📊 My Strategic Report</span><span style="color:var(--text3)">›</span></div>
+</div>
+</div>
+
+<!-- Tool Results Summary -->
+<div id="tool-results-summary" style="margin-bottom:12px"></div>
+
+<div style="margin-bottom:12px">
+<div class="card" style="cursor:pointer;padding:16px 20px;position:relative" onclick="showMyMessages()">
+<div style="display:flex;justify-content:space-between;align-items:center">
+<span style="font-size:14px">💬 Messages from Dr. Faroqui</span>
+<span style="display:flex;align-items:center;gap:8px">
+<span id="notif-badge" style="display:none;background:var(--red);color:#fff;font-size:10px;font-weight:700;min-width:18px;height:18px;border-radius:9px;display:none;align-items:center;justify-content:center;padding:0 5px"></span>
+<span style="color:var(--text3)">›</span>
+</span>
+</div>
+</div>
+</div>
+
+<!-- My Assessments from Dr. Faroqui -->
+<div id="my-assessments-card" style="display:none;margin-bottom:12px">
+<div class="card" style="cursor:pointer;padding:16px 20px" onclick="viewDeliveredAssessments()">
+<div style="display:flex;justify-content:space-between;align-items:center">
+<span style="font-size:14px">📋 My Assessments</span>
+<span style="display:flex;align-items:center;gap:8px">
+<span id="assessment-badge" style="display:none;background:var(--accent);color:#1C1A17;font-size:10px;font-weight:700;min-width:18px;height:18px;border-radius:9px;display:flex;align-items:center;justify-content:center;padding:0 5px"></span>
+<span style="color:var(--text3)">›</span>
+</span>
+</div>
+</div>
+</div>
+
+<!-- Progress Dashboard -->
+<div id="progress-dashboard" style="margin-bottom:16px"></div>
+
+<!-- Decision Journal Timeline -->
+<div id="decision-timeline" style="display:none;margin-bottom:16px"></div>
+
+<!-- Decision Patterns -->
+<div id="decision-patterns" style="display:none;margin-bottom:16px"></div>
+
+<!-- Outcomes / Achievements -->
+<div id="profile-outcomes" style="display:none;margin-bottom:16px"></div>
+
+<!-- Compensation Tracker -->
+<div id="profile-comp-intel" style="display:none;margin-bottom:16px"></div>
+
+<!-- Goal Tracker (Core + Mentorship) -->
+<div id="goal-tracker" style="display:none"></div>
+
+<!-- Achievements -->
+<div id="prof-achievements" style="display:none;margin-bottom:12px"></div>
+
+<div style="margin-bottom:12px">
+<div class="card" style="cursor:pointer;padding:16px 20px" onclick="toggleAccountSettings()">
+<div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:14px">👤 Account Settings</span><span style="color:var(--text3)">›</span></div>
+</div>
+</div>
+
+<!-- Account Settings -->
+<div id="account-settings" class="hidden" style="margin-bottom:12px">
+<div class="card" style="padding:20px">
+<div style="font-size:13px;font-weight:600;margin-bottom:16px">Account Settings</div>
+<form onsubmit="saveAccountSettings(event)">
+<div class="fg"><label>Display Name</label><input type="text" id="acc-name" placeholder="Your name"></div>
+<div class="fg"><label>Email</label><input type="email" id="acc-email" placeholder="you@example.com"></div>
+<div class="fg"><label>New Password <span style="font-weight:300;color:var(--text3)">(leave blank to keep current)</span></label><input type="password" id="acc-pass" placeholder="••••••••" minlength="8"></div>
+<div class="fg"><label>Confirm New Password</label><input type="password" id="acc-pass2" placeholder="••••••••" minlength="8"></div>
+<button type="submit" class="btn btn-a" style="margin-top:8px">Save Changes</button>
+</form>
+</div>
+</div>
+
+<div style="margin-bottom:12px">
+<div class="card" style="cursor:pointer;padding:16px 20px" onclick="showUpgrade()">
+<div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:14px">⚡ Subscription</span><span id="prof-plan-label" style="font-size:12px;color:var(--accent)">Free</span></div>
+</div>
+</div>
+
+<div style="margin-bottom:12px">
+<div class="card" style="cursor:pointer;padding:16px 20px" onclick="toggleNotifSettings()">
+<div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:14px">🔔 Notifications</span><span style="color:var(--text3)">›</span></div>
+</div>
+</div>
+
+<!-- Notification Settings -->
+<div id="notif-settings" class="hidden" style="margin-bottom:12px">
+<div class="card" style="padding:20px">
+<div style="font-size:13px;font-weight:600;margin-bottom:16px">Email Notifications</div>
+<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)">
+<div><div style="font-size:13px">Doctor Review Published</div><div style="font-size:11px;color:var(--text3)">When your question gets a doctor review</div></div>
+<button class="tog on" onclick="this.classList.toggle('on')"></button>
+</div>
+<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)">
+<div><div style="font-size:13px">Weekly Archive Digest</div><div style="font-size:11px;color:var(--text3)">Top reviewed questions each week</div></div>
+<button class="tog on" onclick="this.classList.toggle('on')"></button>
+</div>
+<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)">
+<div><div style="font-size:13px">New Template Available</div><div style="font-size:11px;color:var(--text3)">When new vault templates are added</div></div>
+<button class="tog" onclick="this.classList.toggle('on')"></button>
+</div>
+<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0">
+<div><div style="font-size:13px">Group Q&A Reminders</div><div style="font-size:11px;color:var(--text3)">Upcoming live sessions (Pro+ only)</div></div>
+<button class="tog on" onclick="this.classList.toggle('on')"></button>
+</div>
+<div style="font-size:11px;color:var(--text3);margin-top:12px;padding-top:12px;border-top:1px solid var(--border)">Email notifications will be sent to your registered email. Real-time delivery requires backend integration.</div>
+</div>
+</div>
+
+<div style="margin-bottom:12px">
+<div class="card" style="cursor:pointer;padding:16px 20px" onclick="toggleContactForm()">
+<div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:14px">💬 Contact / Report Issue</span><span style="color:var(--text3)">›</span></div>
+</div>
+</div>
+
+<!-- Contact Form -->
+<div id="contact-form" class="hidden" style="margin-bottom:12px">
+<div class="card" style="padding:20px">
+
+<!-- Ask HeartWise AI Section -->
+<div style="margin-bottom:16px;padding:16px;background:#fff;border:1px solid #E8E1D8;border-radius:12px;cursor:pointer" onclick="toggleContactForm();navTo('scr-ask')">
+<div style="display:flex;align-items:center;gap:12px">
+<span style="font-size:24px">🧠</span>
+<div>
+<div style="font-size:14px;font-weight:600;color:var(--accent);margin-bottom:3px">Ask HeartWise AI</div>
+<div style="font-size:12px;color:var(--text2);line-height:1.5">Get an immediate, structured response to any career, financial, or clinical question using our AI-powered strategy engine.</div>
+</div>
+<span style="color:var(--accent);font-size:16px;flex-shrink:0">→</span>
+</div>
+</div>
+
+<div style="font-size:13px;font-weight:600;margin-bottom:12px">Send a Message</div>
+<form onsubmit="sendContactMessage(event)">
+<div class="fg">
+<label style="margin-bottom:6px;display:block;font-size:11px;color:var(--text3)">Choose a category</label>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px" id="contact-type-cards">
+<label style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--bg2);border:2px solid var(--accent);border-radius:8px;cursor:pointer" onclick="selectContactCat(this)">
+<input type="radio" name="contact-cat" value="bug" checked style="display:none">
+<span style="font-size:12px">🐛 Bug Report</span>
+</label>
+<label style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--bg2);border:2px solid var(--border);border-radius:8px;cursor:pointer" onclick="selectContactCat(this)">
+<input type="radio" name="contact-cat" value="feedback" style="display:none">
+<span style="font-size:12px">📝 Feedback</span>
+</label>
+<label style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--bg2);border:2px solid var(--border);border-radius:8px;cursor:pointer" onclick="selectContactCat(this)">
+<input type="radio" name="contact-cat" value="suggestion" style="display:none">
+<span style="font-size:12px">💡 Suggestion</span>
+</label>
+<label style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--bg2);border:2px solid var(--border);border-radius:8px;cursor:pointer" onclick="selectContactCat(this)">
+<input type="radio" name="contact-cat" value="other" style="display:none">
+<span style="font-size:12px">📎 Other</span>
+</label>
+</div>
+<div style="margin-top:8px">
+<div style="font-size:9px;color:var(--accent);font-weight:500;letter-spacing:.4px;margin-bottom:6px">PHYSICIAN REVIEW · 1 CREDIT</div>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px">
+<label style="display:flex;align-items:center;justify-content:center;padding:8px 6px;background:var(--bg2);border:2px solid var(--border);border-radius:8px;cursor:pointer;text-align:center" onclick="selectContactCat(this)">
+<input type="radio" name="contact-cat" value="career" style="display:none">
+<span style="font-size:11px">🎯 Career</span>
+</label>
+<label style="display:flex;align-items:center;justify-content:center;padding:8px 6px;background:var(--bg2);border:2px solid var(--border);border-radius:8px;cursor:pointer;text-align:center" onclick="selectContactCat(this)">
+<input type="radio" name="contact-cat" value="finance" style="display:none">
+<span style="font-size:11px">💰 Finance</span>
+</label>
+<label style="display:flex;align-items:center;justify-content:center;padding:8px 6px;background:var(--bg2);border:2px solid var(--border);border-radius:8px;cursor:pointer;text-align:center" onclick="selectContactCat(this)">
+<input type="radio" name="contact-cat" value="contract" style="display:none">
+<span style="font-size:11px">📋 Contract</span>
+</label>
+</div>
+</div>
+</div>
+<div class="fg" style="margin-top:12px"><label>Message *</label><textarea id="contact-msg" rows="3" placeholder="Describe the issue or share your thoughts..." required style="width:100%;resize:vertical;font-family:inherit;font-size:13px;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text)"></textarea></div>
+<button type="submit" class="btn btn-a" style="margin-top:8px">Send Message</button>
+</form>
+</div>
+</div>
+
+<!-- About HeartWise Section -->
+<div style="margin-top:8px;margin-bottom:4px">
+<div style="font-size:9px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:1.5px;padding:0 4px 8px">About HeartWise</div>
+</div>
+
+<div style="margin-bottom:12px">
+<div class="card" style="cursor:pointer;padding:16px 20px" onclick="toggleFounderBio()">
+<div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:14px">👨‍⚕️ Meet the Founder</span><span style="color:var(--text3)">›</span></div>
+</div>
+</div>
+
+<!-- Founder Bio (collapsible) -->
+<div id="founder-bio" class="hidden" style="margin-bottom:12px">
+<div class="card" style="padding:28px;text-align:center">
+<img src="founder.jpg" alt="Dr. Mouzam Faroqui" onerror="this.style.display='none'" style="width:100px;height:100px;border-radius:50%;object-fit:cover;object-position:center center;margin:0 auto 16px;display:block;border:3px solid rgba(198,168,94,.25);box-shadow:0 4px 20px rgba(0,0,0,.1)">
+<div class="serif" style="font-size:20px;font-weight:600;margin-bottom:4px">Mouzam Faroqui, MD, FACC</div>
+<div style="font-size:12px;color:var(--accent);font-weight:500;letter-spacing:.5px;margin-bottom:16px">Interventional Cardiologist · Founder of HeartWise</div>
+<div style="display:flex;flex-direction:column;align-items:center;gap:5px;margin-bottom:16px">
+<span style="font-size:11px;color:var(--text3)">🗽 NYC-Trained Physician</span>
+<span style="font-size:11px;color:var(--text3)">🏥 Former Chief Resident / Fellow</span>
+<span style="font-size:11px;color:var(--text3)">📍 Interventional Cardiologist — Houston, TX</span>
+<span style="font-size:11px;color:var(--text3)">📊 Over a decade of mentorship experience</span>
+</div>
+</div>
+<div class="card" style="padding:24px;margin-top:10px">
+<div style="font-size:11px;font-weight:500;color:var(--accent);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:14px">The Journey</div>
+<p style="font-size:12px;color:var(--text2);line-height:1.7;font-weight:300;margin-bottom:12px">I went through every stage of training: medical school, residency, chief resident, cardiology fellowship, chief fellow, interventional fellowship, and now attending practice.</p>
+<p style="font-size:12px;color:var(--text2);line-height:1.7;font-weight:300;margin-bottom:12px">At every step, the biggest decisions weren't clinical — they were career decisions. What specialty to choose. How competitive I actually was. Which opportunities mattered. What contracts were worth signing. How to think about money early.</p>
+<p style="font-size:12px;color:var(--text2);line-height:1.7;font-weight:300;margin-bottom:12px">Most of the time, I was guessing — or relying on fragmented advice from people who meant well but didn't have the full picture.</p>
+<p style="font-size:12px;color:var(--text);line-height:1.7;font-weight:500;margin-bottom:12px">HeartWise was built to fix that.</p>
+<p style="font-size:12px;color:var(--text2);line-height:1.7;font-weight:300;margin-bottom:0">Every tool is based on real decisions I've made, physicians I've mentored, or mistakes I've watched others make. This isn't generic advice — it's a system to help you think clearly when it actually matters.</p>
+</div>
+<div class="card" style="padding:24px;margin-top:10px">
+<div style="font-size:11px;font-weight:500;color:var(--accent);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:16px">Training & Education</div>
+<div style="border-left:2px solid var(--border);padding-left:16px;margin-left:6px">
+<div style="margin-bottom:16px;position:relative">
+<div style="position:absolute;left:-23px;top:2px;width:10px;height:10px;border-radius:50%;background:var(--accent)"></div>
+<div style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:2px">New York-Presbyterian Brooklyn Methodist Hospital</div>
+<div style="font-size:11px;color:var(--accent);font-weight:400;margin-bottom:1px">Weill Cornell Medicine</div>
+<div style="font-size:10px;color:var(--text3)">Internal Medicine Residency → Chief Resident</div>
+</div>
+<div style="margin-bottom:16px;position:relative">
+<div style="position:absolute;left:-23px;top:2px;width:10px;height:10px;border-radius:50%;background:var(--accent)"></div>
+<div style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:2px">New York-Presbyterian Brooklyn Methodist Hospital</div>
+<div style="font-size:11px;color:var(--accent);font-weight:400;margin-bottom:1px">Weill Cornell Medicine</div>
+<div style="font-size:10px;color:var(--text3)">Cardiology Fellowship → Chief Cardiology Fellow</div>
+</div>
+<div style="position:relative">
+<div style="position:absolute;left:-23px;top:2px;width:10px;height:10px;border-radius:50%;background:var(--accent);box-shadow:0 0 6px rgba(198,168,94,.4)"></div>
+<div style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:2px">Deborah Heart and Lung Center</div>
+<div style="font-size:11px;color:var(--accent);font-weight:400;margin-bottom:1px">Sidney Kimmel Medical College at Thomas Jefferson University</div>
+<div style="font-size:10px;color:var(--text3)">Interventional Cardiology Fellowship → Chief Interventional Cardiology Fellow</div>
+</div>
+</div>
+</div>
+</div>
+
+<div style="margin-bottom:12px">
+<div class="card" style="cursor:pointer;padding:16px 20px" onclick="showDisc()">
+<div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:14px">⚕️ Disclaimer</span><span style="color:var(--text3)">›</span></div>
+</div>
+</div>
+
+<div style="margin-bottom:12px">
+<div class="card" style="cursor:pointer;padding:16px 20px" onclick="navTo('scr-legal')">
+<div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:14px">📄 Terms, Privacy & Legal</span><span style="color:var(--text3)">›</span></div>
+</div>
+</div>
+
+<div style="margin-bottom:12px">
+<div class="card" style="cursor:pointer;padding:16px 20px" onclick="restartTour()">
+<div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:14px">🗺️ Replay Guided Tour</span><span style="color:var(--text3)">›</span></div>
+</div>
+</div>
+
+<div style="margin-bottom:24px">
+<div class="card" style="cursor:pointer;padding:16px 20px" onclick="doLogout()">
+<div style="color:var(--red);font-size:14px">Sign Out</div>
+</div>
+</div>
+
+<div style="margin-bottom:24px">
+<div class="card" style="cursor:pointer;padding:16px 20px" onclick="confirmDeleteAccount()">
+<div style="color:var(--text3);font-size:12px">Delete My Account</div>
+</div>
+</div>
+
+<!-- Admin Tier Switcher (only visible to admin) -->
+<div id="admin-tier-switcher" class="hidden" style="margin-bottom:20px">
+<div class="card" style="padding:20px;border-color:#E8E1D8">
+<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">🔧 Admin — Test As Tier</div>
+<p style="font-size:11px;color:var(--text3);margin-bottom:14px;line-height:1.5">Switch your view to simulate what each plan looks like. Admin features stay accessible.</p>
+<div style="display:flex;gap:8px;flex-wrap:wrap">
+<button class="btn btn-sm" onclick="adminSwitchTier('free')" style="font-size:11px;padding:8px 14px;border:1px solid var(--border);border-radius:6px;color:var(--text3)">Explorer</button>
+<button class="btn btn-sm" onclick="adminSwitchTier('core')" style="font-size:11px;padding:8px 14px;border:1px solid var(--accent);border-radius:6px;color:var(--accent)">Core</button>
+<button class="btn btn-sm" onclick="adminSwitchTier('elite')" style="font-size:11px;padding:8px 14px;border:1px solid var(--accent2);border-radius:6px;color:var(--accent2)">Mentorship</button>
+<button class="btn btn-sm" onclick="adminSwitchTier('admin')" style="font-size:11px;padding:8px 14px;border:1px solid var(--green);border-radius:6px;color:var(--green)">Admin (Reset)</button>
+</div>
+<div id="admin-tier-note" style="font-size:10px;color:var(--text3);margin-top:10px"></div>
+</div>
+</div>
+
+<div id="upgrade-section" class="hidden">
+<div id="sub-manage" class="hidden" style="margin-bottom:16px">
+<div class="card" style="padding:20px;border-color:#E8E1D8">
+<div style="font-size:13px;font-weight:600;margin-bottom:12px">Current Subscription</div>
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+<span style="font-size:14px;font-weight:600;color:var(--accent)" id="sub-plan-name">Free</span>
+<span style="font-size:12px;color:var(--text3)" id="sub-status">Active</span>
+</div>
+<div style="font-size:12px;color:var(--text3);margin-bottom:4px" id="sub-renew">No billing</div>
+<div style="font-size:12px;color:var(--text3);margin-bottom:12px" id="sub-usage-summary"></div>
+<div style="display:flex;gap:8px">
+<button class="btn btn-g btn-sm" onclick="openStripeBilling()">Manage Billing</button>
+<button class="btn btn-sm" style="background:transparent;color:var(--red);border:1px solid var(--red)" onclick="openStripeBilling()">Cancel Subscription</button>
+</div>
+</div>
+</div>
+<div class="sec" style="padding:16px 0">Choose Your Plan</div>
+<div class="plan"><div class="plan-n" style="color:var(--accent)">Medical Student</div><div style="font-size:12px;color:var(--accent);margin-bottom:4px">For Students & Trainees</div>
+<div id="student-price-display"><div class="plan-p">$9<span> /mo</span></div></div>
+<div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:12px">
+<span id="student-toggle-mo" style="font-size:11px;font-weight:600;color:var(--accent);cursor:pointer" onclick="toggleStudentBilling('monthly')">Monthly</span>
+<div onclick="toggleStudentBilling()" style="width:40px;height:22px;border-radius:11px;background:var(--accent);cursor:pointer;position:relative;transition:background .2s" id="student-billing-toggle">
+<div id="student-toggle-knob" style="width:18px;height:18px;border-radius:50%;background:#fff;position:absolute;top:2px;left:2px;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.2)"></div>
+</div>
+<span id="student-toggle-yr" style="font-size:11px;font-weight:500;color:var(--text3);cursor:pointer" onclick="toggleStudentBilling('annual')">Annual <span style="color:var(--green);font-weight:700">save $29</span></span>
+</div>
+<ul class="plan-f"><li>Unlimited career intelligence analyses</li><li>Full access to all 10 career decision tools</li><li>Progress tracking & goal setting</li><li>Match competitiveness & specialty fit</li><li>Observership database access</li></ul>
+<button class="btn btn-a btn-sm" id="student-subscribe-btn" onclick="subPlan('student')">Get Student — $9/mo</button></div>
+<div class="plan pop"><div class="plan-n" style="color:var(--accent)">Core</div><div style="font-size:12px;color:var(--accent);margin-bottom:4px">Most Popular — All Tools Unlocked</div>
+<div id="core-price-display"><div class="plan-p">$39<span> /mo</span></div></div>
+<div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:12px">
+<span id="core-toggle-mo" style="font-size:11px;font-weight:600;color:var(--accent);cursor:pointer" onclick="toggleCoreBilling('monthly')">Monthly</span>
+<div onclick="toggleCoreBilling()" style="width:40px;height:22px;border-radius:11px;background:var(--accent);cursor:pointer;position:relative;transition:background .2s" id="core-billing-toggle">
+<div id="core-toggle-knob" style="width:18px;height:18px;border-radius:50%;background:#fff;position:absolute;top:2px;left:2px;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.2)"></div>
+</div>
+<span id="core-toggle-yr" style="font-size:11px;font-weight:500;color:var(--text3);cursor:pointer" onclick="toggleCoreBilling('annual')">Annual <span style="color:var(--green);font-weight:700">save over $100</span></span>
+</div>
+<ul class="plan-f"><li>Unlimited career intelligence analyses</li><li>Full access to all 10 career decision tools</li><li>Progress tracking &amp; goal setting</li><li>Career and financial modeling tools</li><li>Scenario simulations</li><li>Full strategy archive</li></ul>
+<button class="btn btn-a btn-sm" id="core-subscribe-btn" onclick="subPlan('core')">Get Core — $39/mo</button></div>
+<div class="plan ft"><div class="plan-n" style="color:var(--accent2)">Mentorship</div><div style="font-size:12px;color:var(--accent2);margin-bottom:4px">Limited Enrollment</div><div class="plan-p">$199<span> /mo</span></div><ul class="plan-f"><li>Everything in Core</li><li>Direct messaging with Dr. Faroqui</li><li>Physician review of your career questions</li><li>Priority responses for complex decisions</li><li>Personalized strategic guidance</li></ul><p style="font-size:10px;color:var(--text3);margin-bottom:12px">The complete platform plus direct physician access.</p><button class="btn btn-a btn-sm" onclick="subPlan('elite')">Apply for Mentorship</button></div>
+
+<div class="plan"><div class="plan-n" style="color:var(--accent)">Strategic Intensive</div><div style="font-size:12px;color:var(--accent);margin-bottom:4px">One-Time · Limited Availability</div><div class="plan-p">$1,500</div><ul class="plan-f"><li>Structured intake &amp; questionnaire</li><li>30-60 min strategy session with Dr. Faroqui</li><li>CV or offer review</li><li>Written execution roadmap</li><li>14-day follow-up window</li></ul><p style="font-size:10px;color:var(--text3);margin-bottom:12px">For the decisions that define your trajectory — match strategy, contract terms, career pivots.</p><button class="btn btn-a btn-sm" onclick="subPlan('intensive')">Request Intensive</button></div>
+</div>
+
+</div>
+</div>
+
+<!-- LEGAL SCREEN -->
+<div id="scr-legal" class="scr">
+<div class="hdr"><button class="hdr-back" onclick="navTo('scr-profile')">← Back</button><div class="hdr-t serif" style="font-size:18px">Legal</div></div>
+<div style="padding:20px 24px 40px;font-size:13px;color:var(--text2);line-height:1.8">
+
+<!-- Terms of Service -->
+<div style="margin-bottom:36px">
+<h2 style="font-family:var(--font-serif);font-size:20px;font-weight:600;color:var(--text);margin-bottom:4px">Terms of Service</h2>
+<p style="font-size:11px;color:var(--text3);margin-bottom:16px">Last updated: March 29, 2026</p>
+
+<p>By accessing or using HeartWise ("the Platform"), operated by HeartWise Mentor LLC ("Company," "we," "us," or "our"), you ("User," "you," or "your") agree to be bound by these Terms of Service ("Terms"). If you do not agree, do not use the Platform.</p>
+
+<h3 style="font-size:14px;font-weight:600;color:var(--text);margin:20px 0 8px">1. Nature of the Service</h3>
+<p>HeartWise is an <strong>educational career intelligence platform</strong> designed for physicians, medical students, residents, and fellows. The Platform provides structured decision-making tools, career analytics, financial modeling frameworks, and AI-assisted strategic guidance. HeartWise is not a medical practice, staffing agency, recruiting firm, financial advisory service, or law firm.</p>
+
+<h3 style="font-size:14px;font-weight:600;color:var(--text);margin:20px 0 8px">2. Not Professional Advice</h3>
+<p>HeartWise <strong>does not provide medical, legal, financial, tax, or investment advice</strong>. All content, tools, AI-generated responses, and frameworks are for <strong>educational and informational purposes only</strong>. You should consult qualified professionals — including physicians, attorneys, financial advisors, and tax professionals — for individualized guidance specific to your situation.</p>
+<p style="margin-top:8px">AI-generated outputs are computational frameworks, not personalized recommendations. They may contain inaccuracies, errors, or outdated information. You are solely responsible for independently verifying any information before acting on it. <strong>HeartWise Mentor LLC expressly disclaims all responsibility for any decisions made, actions taken, or outcomes experienced based on Platform outputs.</strong></p>
+
+<h3 style="font-size:14px;font-weight:600;color:var(--text);margin:20px 0 8px">3. No Doctor-Patient Relationship</h3>
+<p>Use of the Platform does not create a doctor-patient relationship between you and HeartWise Mentor LLC, its founder Dr. Mouzam Faroqui, or any reviewing physician associated with the Platform. Physician-reviewed content represents professional opinion within an educational context and does <strong>not</strong> constitute clinical advice, diagnosis, treatment recommendation, or a standard of care.</p>
+
+<h3 style="font-size:14px;font-weight:600;color:var(--text);margin:20px 0 8px">4. Eligibility</h3>
+<p>You must be at least 18 years of age to use HeartWise. By creating an account, you represent and warrant that you are at least 18 years old, that the information you provide is accurate and complete, and that you have the legal capacity to enter into these Terms.</p>
+
+<h3 style="font-size:14px;font-weight:600;color:var(--text);margin:20px 0 8px">5. Account Responsibility</h3>
+<p>You are responsible for maintaining the confidentiality of your account credentials and for all activity that occurs under your account. You agree to notify us immediately of any unauthorized access or use. HeartWise Mentor LLC is not liable for losses arising from unauthorized use of your account. One account per individual; accounts are non-transferable.</p>
+
+<h3 style="font-size:14px;font-weight:600;color:var(--text);margin:20px 0 8px">6. Acceptable Use</h3>
+<p>You agree not to:</p>
+<ul style="margin:8px 0;padding-left:20px">
+<li>Use the Platform for any unlawful purpose</li>
+<li>Attempt to reverse-engineer, decompile, copy, or redistribute the tools, algorithms, scoring models, or content</li>
+<li>Share your account credentials with others or allow access by unauthorized users</li>
+<li>Submit false, misleading, defamatory, or harmful content</li>
+<li>Use automated systems, bots, or scrapers to extract data from the Platform</li>
+<li>Interfere with or disrupt the Platform's infrastructure, security, or other users' access</li>
+<li>Use Platform outputs to develop competing products or services</li>
+</ul>
+<p style="margin-top:8px">Violation of these terms may result in immediate account suspension or termination without refund.</p>
+
+<h3 style="font-size:14px;font-weight:600;color:var(--text);margin:20px 0 8px">7. Subscriptions &amp; Payments</h3>
+<p>Paid plans are billed on a recurring basis (monthly or annually, depending on the plan selected). You authorize HeartWise Mentor LLC to charge your payment method at the applicable rate until you cancel. You may cancel at any time; cancellation takes effect at the end of the current billing period. <strong>No refunds</strong> are provided for partial billing periods.</p>
+<p style="margin-top:8px">The 48-hour trial provides full Core-tier access at no charge and requires no credit card. Trial access expires automatically after 48 hours. Pricing is subject to change; existing subscribers will be notified at least 30 days before any price increase takes effect on their account.</p>
+
+<h3 style="font-size:14px;font-weight:600;color:var(--text);margin:20px 0 8px">8. User-Generated Content</h3>
+<p>By submitting questions, career data, or other content to the Platform, you grant HeartWise Mentor LLC a non-exclusive, royalty-free, worldwide license to use, process, and store that content for the purpose of providing and improving the Service. We may use de-identified, aggregated data for research, analytics, and platform improvement. You retain ownership of your original content.</p>
+
+<h3 style="font-size:14px;font-weight:600;color:var(--text);margin:20px 0 8px">9. Intellectual Property</h3>
+<p>All content, tools, scoring frameworks, algorithms, branding, design, and other intellectual property on HeartWise are the exclusive property of HeartWise Mentor LLC. You may not reproduce, distribute, modify, or create derivative works without explicit written permission. "HeartWise" and "HeartWise Mentor" are trademarks of HeartWise Mentor LLC.</p>
+
+<h3 style="font-size:14px;font-weight:600;color:var(--text);margin:20px 0 8px">10. Third-Party Services</h3>
+<p>The Platform integrates with third-party services including Stripe (payments), Supabase (data storage), Vercel (hosting), and AI providers. Your use of these services is subject to their respective terms and privacy policies. HeartWise Mentor LLC is not responsible for the availability, accuracy, or practices of third-party services.</p>
+
+<h3 style="font-size:14px;font-weight:600;color:var(--text);margin:20px 0 8px">11. Disclaimer of Warranties</h3>
+<p>The Platform is provided <strong>"AS IS"</strong> and <strong>"AS AVAILABLE"</strong> without warranties of any kind, whether express, implied, or statutory, including but not limited to implied warranties of merchantability, fitness for a particular purpose, accuracy, and non-infringement. We do not warrant that the Platform will be uninterrupted, error-free, or free of harmful components.</p>
+
+<h3 style="font-size:14px;font-weight:600;color:var(--text);margin:20px 0 8px">12. Limitation of Liability</h3>
+<p>To the maximum extent permitted by law, HeartWise Mentor LLC, its founders, officers, employees, agents, and affiliates shall not be liable for any direct, indirect, incidental, special, consequential, or punitive damages arising from or related to your use of or inability to use the Platform. This includes, without limitation, damages arising from career decisions, financial outcomes, match results, contract negotiations, salary discussions, clinical decisions, or reliance on any information provided through the Platform.</p>
+<p style="margin-top:8px">In no event shall our total liability exceed the amount you paid to HeartWise Mentor LLC in the twelve (12) months preceding the claim.</p>
+
+<h3 style="font-size:14px;font-weight:600;color:var(--text);margin:20px 0 8px">13. Indemnification</h3>
+<p>You agree to indemnify, defend, and hold harmless HeartWise Mentor LLC, its founder, officers, employees, and agents from and against any claims, liabilities, damages, losses, costs, or expenses (including reasonable attorneys' fees) arising from: (a) your use of the Platform; (b) your violation of these Terms; (c) your violation of any third-party rights; or (d) any decisions you make based on information obtained through the Platform.</p>
+
+<h3 style="font-size:14px;font-weight:600;color:var(--text);margin:20px 0 8px">14. Assumption of Risk &amp; No Reliance</h3>
+<p>You expressly acknowledge and agree that:</p>
+<ul style="margin:8px 0;padding-left:20px">
+<li>All career, financial, clinical, and contractual decisions you make are <strong>your sole responsibility</strong>, regardless of any information, scores, projections, frameworks, or recommendations provided by the Platform.</li>
+<li>HeartWise outputs — including competitiveness scores, match probability estimates, compensation benchmarks, contract analysis, financial projections, and career recommendations — are <strong>educational tools, not directives</strong>. They are based on generalized data and algorithms that may not reflect your specific circumstances.</li>
+<li>You will <strong>not rely</strong> on any Platform output as the sole or primary basis for any significant career, financial, medical, or legal decision.</li>
+<li>HeartWise Mentor LLC bears <strong>zero liability</strong> for any outcome — positive or negative — resulting from decisions you make after using the Platform, including but not limited to: match results, employment decisions, contract terms, salary negotiations, specialty choices, financial investments, clinical practice decisions, or career transitions.</li>
+<li>You assume <strong>all risk</strong> associated with your use of the Platform and any actions taken based on its outputs.</li>
+</ul>
+<p style="margin-top:8px">This section survives termination of your account and these Terms.</p>
+
+<h3 style="font-size:14px;font-weight:600;color:var(--text);margin:20px 0 8px">15. Termination</h3>
+<p>We reserve the right to suspend or terminate your account at any time, with or without cause, with or without notice. Upon termination, your right to use the Platform ceases immediately. Sections regarding Intellectual Property, Limitation of Liability, Indemnification, Disclaimer of Warranties, and Governing Law survive termination. You may delete your account at any time from your Profile settings.</p>
+
+<h3 style="font-size:14px;font-weight:600;color:var(--text);margin:20px 0 8px">16. Dispute Resolution</h3>
+<p>Any dispute arising from or relating to these Terms or the Platform shall first be attempted to be resolved through good-faith informal negotiation. If unresolved after 30 days, either party may pursue resolution. You agree that any legal action shall be brought exclusively in the state or federal courts located in Harris County, Texas, and you consent to the personal jurisdiction of such courts.</p>
+<p style="margin-top:8px"><strong>Class Action Waiver:</strong> You agree that any disputes will be resolved on an individual basis and that you waive any right to participate in a class action, class arbitration, or representative proceeding.</p>
+
+<h3 style="font-size:14px;font-weight:600;color:var(--text);margin:20px 0 8px">17. Governing Law</h3>
+<p>These Terms are governed by and construed in accordance with the laws of the State of Texas, United States, without regard to its conflict of law principles.</p>
+
+<h3 style="font-size:14px;font-weight:600;color:var(--text);margin:20px 0 8px">18. Severability</h3>
+<p>If any provision of these Terms is found to be unenforceable or invalid, that provision shall be limited or eliminated to the minimum extent necessary, and the remaining provisions shall continue in full force and effect.</p>
+
+<h3 style="font-size:14px;font-weight:600;color:var(--text);margin:20px 0 8px">19. Entire Agreement</h3>
+<p>These Terms, together with our Privacy Policy and Disclaimer, constitute the entire agreement between you and HeartWise Mentor LLC regarding the Platform and supersede all prior agreements, understandings, and communications.</p>
+
+<h3 style="font-size:14px;font-weight:600;color:var(--text);margin:20px 0 8px">20. Changes to Terms</h3>
+<p>We may update these Terms at any time by posting the revised version on the Platform. Material changes will be communicated via email or in-app notification at least 15 days before taking effect. Your continued use of the Platform after changes become effective constitutes acceptance of the revised Terms.</p>
+
+<h3 style="font-size:14px;font-weight:600;color:var(--text);margin:20px 0 8px">21. Contact</h3>
+<p>For questions about these Terms, contact us at <a href="mailto:heartwisementor@gmail.com" style="color:var(--accent)">heartwisementor@gmail.com</a>.</p>
+</div>
+
+<!-- Privacy Policy -->
+<div style="margin-bottom:36px">
+<h2 style="font-family:var(--font-serif);font-size:20px;font-weight:600;color:var(--text);margin-bottom:4px">Privacy Policy</h2>
+<p style="font-size:11px;color:var(--text3);margin-bottom:16px">Last updated: March 29, 2026</p>
+
+<h3 style="font-size:14px;font-weight:600;color:var(--text);margin:20px 0 8px">1. Information We Collect</h3>
+<p><strong>Account Information:</strong> Name, email address, training stage, specialty, institution, and career goals provided during registration.</p>
+<p style="margin-top:8px"><strong>Usage Data:</strong> Questions submitted, tools used, responses received, and interaction patterns within the Platform.</p>
+<p style="margin-top:8px"><strong>Technical Data:</strong> Browser type, device information, and general location (country/region) for service optimization.</p>
+
+<h3 style="font-size:14px;font-weight:600;color:var(--text);margin:20px 0 8px">2. How We Use Your Information</h3>
+<ul style="margin:8px 0;padding-left:20px">
+<li>To provide and personalize the HeartWise service</li>
+<li>To generate AI-powered strategic guidance tailored to your profile</li>
+<li>To facilitate physician review of submitted questions</li>
+<li>To process payments and manage subscriptions</li>
+<li>To send important service updates and notifications</li>
+<li>To improve the Platform through aggregated, anonymized analytics</li>
+</ul>
+
+<h3 style="font-size:14px;font-weight:600;color:var(--text);margin:20px 0 8px">3. Data Storage & Security</h3>
+<p>Your data is stored securely using Supabase (hosted on AWS infrastructure) with encryption in transit and at rest. We implement industry-standard security measures to protect your information. However, no system is 100% secure, and we cannot guarantee absolute security.</p>
+
+<h3 style="font-size:14px;font-weight:600;color:var(--text);margin:20px 0 8px">4. Data Sharing</h3>
+<p>We <strong>do not sell your personal data</strong>. We may share information with:</p>
+<ul style="margin:8px 0;padding-left:20px">
+<li><strong>Service Providers:</strong> Payment processing (Stripe), authentication (Supabase), and hosting (Vercel) — only as necessary to operate the Platform</li>
+<li><strong>Reviewing Physicians:</strong> Questions submitted for physician review are shared with our medical review team in a de-identified or limited-identification format</li>
+<li><strong>Legal Requirements:</strong> When required by law, court order, or to protect the rights and safety of HeartWise or its users</li>
+</ul>
+
+<h3 style="font-size:14px;font-weight:600;color:var(--text);margin:20px 0 8px">5. Your Rights</h3>
+<p>You may:</p>
+<ul style="margin:8px 0;padding-left:20px">
+<li>Access and update your personal information through your profile settings</li>
+<li>Request deletion of your account and associated data</li>
+<li>Opt out of non-essential communications</li>
+<li>Export your data upon request</li>
+</ul>
+
+<h3 style="font-size:14px;font-weight:600;color:var(--text);margin:20px 0 8px">6. Cookies & Local Storage</h3>
+<p>HeartWise uses browser local storage to maintain your session, preferences, and cached data for performance. We do not use third-party tracking cookies. Analytics, if implemented, use anonymized, aggregated data only.</p>
+
+<h3 style="font-size:14px;font-weight:600;color:var(--text);margin:20px 0 8px">7. Children's Privacy</h3>
+<p>HeartWise is not intended for individuals under 18 years of age. We do not knowingly collect information from minors.</p>
+
+<h3 style="font-size:14px;font-weight:600;color:var(--text);margin:20px 0 8px">8. Changes to This Policy</h3>
+<p>We may update this Privacy Policy periodically. We will notify you of material changes via email or in-app notification. Continued use constitutes acceptance of updated terms.</p>
+</div>
+
+<!-- Disclaimer -->
+<div style="margin-bottom:36px">
+<h2 style="font-family:var(--font-serif);font-size:20px;font-weight:600;color:var(--text);margin-bottom:4px">Disclaimer</h2>
+<p style="font-size:11px;color:var(--text3);margin-bottom:16px">Last updated: March 29, 2026</p>
+
+<div style="padding:16px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;margin-bottom:16px">
+<p style="font-weight:600;color:var(--accent);margin-bottom:8px;font-size:14px">Educational Purpose Only</p>
+<p>HeartWise is an educational mentorship platform. All content — including AI-generated responses, interactive tools, financial models, competitiveness calculators, contract analysis frameworks, and career strategy builders — is provided for <strong>informational and educational purposes only</strong>.</p>
+</div>
+
+<p><strong>No Doctor-Patient Relationship:</strong> Use of HeartWise does not create a doctor-patient relationship between you and any physician associated with the Platform, including Dr. Mouzam Faroqui or any reviewing physician.</p>
+
+<p style="margin-top:12px"><strong>No Guarantee of Outcomes:</strong> Career decisions, financial outcomes, match results, contract negotiations, and salary discussions are inherently uncertain. HeartWise provides frameworks for thinking — not guarantees of results. Past data and benchmarks (including MGMA, match rate, and compensation data) are approximations and may not reflect your specific circumstances. <strong>You bear sole responsibility for all decisions you make. HeartWise Mentor LLC accepts no liability whatsoever for outcomes resulting from your use of the Platform.</strong></p>
+
+<p style="margin-top:12px"><strong>AI Limitations:</strong> AI-generated content may contain errors, outdated information, or biases. All AI outputs should be verified independently and used as starting points for discussion with qualified professionals — not as final answers.</p>
+
+<p style="margin-top:12px"><strong>Financial Information:</strong> Compensation data, RVU benchmarks, financial projections, and salary comparisons are estimates based on publicly available survey data. Your actual compensation will depend on your specific contract, location, practice type, and negotiation. Always consult a financial advisor and physician contract attorney for personalized guidance.</p>
+
+<p style="margin-top:12px"><strong>Third-Party Data:</strong> HeartWise references data from MGMA, AAMC, NRMP, and other public sources. We do not guarantee the accuracy or completeness of third-party data. Referenced data is current as of the dates noted and may change.</p>
+</div>
+
+<!-- Contact -->
+<div style="margin-bottom:20px">
+<h2 style="font-family:var(--font-serif);font-size:20px;font-weight:600;color:var(--text);margin-bottom:12px">Contact</h2>
+<p>For questions about these policies, account deletion requests, or data inquiries:</p>
+<p style="margin-top:12px"><strong>HeartWise Mentor LLC</strong></p>
+<p style="margin-top:4px"><strong>Email:</strong> <a href="mailto:heartwisementor@gmail.com" style="color:var(--accent)">heartwisementor@gmail.com</a></p>
+<p style="margin-top:4px"><strong>Founded by:</strong> Mouzam Faroqui, MD, FACC</p>
+<p style="margin-top:4px"><strong>Location:</strong> Houston, Texas</p>
+</div>
+
+</div>
+</div>
+
+<!-- STRATEGIC LEVERAGE SCREEN (Mentorship only) -->
+<div id="scr-leverage" class="scr">
+<div class="hdr">
+<div class="hdr-t serif" style="font-size:22px">Strategic Leverage</div>
+<span class="tag" style="background:linear-gradient(135deg,var(--accent2),var(--accent));color:#0a0a0f;font-weight:700">MENTORSHIP</span>
+</div>
+
+<!-- Hero -->
+<div id="lev-hero" style="padding:20px 24px 0">
+<div style="background:linear-gradient(160deg,#111318,#1a1d24);border-radius:16px;padding:32px 28px;position:relative;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,.12)">
+<div style="position:absolute;top:-30%;right:-15%;width:180px;height:180px;background:radial-gradient(circle,rgba(198,168,94,.15),transparent 65%);border-radius:50%"></div>
+<div style="position:absolute;bottom:-20%;left:-10%;width:140px;height:140px;background:radial-gradient(circle,rgba(198,168,94,.08),transparent 60%);border-radius:50%"></div>
+<div style="position:relative">
+<div style="font-size:10px;font-weight:700;color:#C6A85E;text-transform:uppercase;letter-spacing:2px;margin-bottom:12px">THE UNFAIR ADVANTAGE</div>
+<div style="font-family:var(--font-serif);font-size:24px;font-weight:700;color:#f0ece6;margin-bottom:14px;line-height:1.3">AI is coming to medicine.<br>The top 1% are already using it.</div>
+<p style="font-size:14px;color:rgba(240,236,230,.7);line-height:1.7;margin:0 0 6px">Within 5 years, every physician will use AI daily. The ones who learn to leverage it <em>now</em> — for research, career strategy, clinical reasoning, and productivity — won't just keep up. <strong style="color:#f0ece6">They'll be unreachable.</strong></p>
+<p style="font-size:13px;color:rgba(240,236,230,.5);line-height:1.6;margin:0">These are the 10 tools they'll be using. This is your head start.</p>
+</div>
+</div>
+</div>
+
+<!-- Personalized Recommendation (populated by JS) -->
+<div id="lev-personal-rec" style="display:none;padding:16px 24px 0">
+<div style="background:linear-gradient(160deg,rgba(198,168,94,.06),rgba(198,168,94,.02));border:1px solid rgba(198,168,94,.15);border-radius:14px;padding:20px">
+<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+<span style="font-size:16px">🎯</span>
+<div style="font-size:13px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.5px">Recommended for you</div>
+</div>
+<div id="lev-personal-rec-text" style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:14px"></div>
+<div id="lev-personal-rec-tools" style="display:flex;flex-direction:column;gap:8px"></div>
+</div>
+</div>
+
+<!-- Progress Bar -->
+<div id="lev-progress-bar" style="padding:16px 24px 0">
+<div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+<div>
+<span style="font-size:12px;font-weight:700;color:var(--text)">Your Leverage Score</span>
+<span id="lev-progress-level" style="font-size:10px;font-weight:600;color:var(--text3);margin-left:8px">BEGINNER</span>
+</div>
+<span id="lev-progress-count" style="font-size:13px;font-weight:700;color:var(--accent)">0 / 10</span>
+</div>
+<div style="height:8px;background:var(--bg3);border-radius:4px;overflow:hidden"><div id="lev-progress-fill" style="height:100%;width:0%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:4px;transition:width .4s"></div></div>
+<div id="lev-progress-msg" style="font-size:11px;color:var(--text3);margin-top:8px">Complete all 10 tools to unlock your full competitive edge.</div>
+</div>
+</div>
+
+<!-- Leverage Score Quiz (collapsed by default — optional) -->
+<div id="lev-quiz-section" style="padding:16px 24px 0">
+<div style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:20px;position:relative">
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;cursor:pointer" onclick="levToggleQuiz()">
+<div style="display:flex;align-items:center;gap:10px">
+<span style="font-size:20px">📊</span>
+<div>
+<div style="font-size:14px;font-weight:600;color:var(--text)">How AI-Ready Are You?</div>
+<div style="font-size:12px;color:var(--text3)">Optional — 5 quick questions to benchmark yourself</div>
+</div>
+</div>
+<div style="display:flex;align-items:center;gap:10px">
+<div id="lev-score-badge" style="display:none;padding:4px 12px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:.5px"></div>
+<span id="lev-quiz-arrow" style="color:var(--text3);font-size:16px;transition:transform .2s">›</span>
+</div>
+</div>
+
+<div id="lev-quiz-body" style="display:none;margin-top:16px;padding-top:16px;border-top:1px solid var(--border)">
+<div id="lev-quiz-questions">
+<div class="lev-q" style="padding:10px 0;border-bottom:1px solid var(--border)">
+<div style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:8px">1. Do you use intelligent tools to accelerate studying?</div>
+<div style="display:flex;gap:6px;flex-wrap:wrap">
+<button class="lev-opt" onclick="levQuizPick(0,'never',this)">Never</button>
+<button class="lev-opt" onclick="levQuizPick(0,'rarely',this)">Rarely</button>
+<button class="lev-opt" onclick="levQuizPick(0,'sometimes',this)">Sometimes</button>
+<button class="lev-opt" onclick="levQuizPick(0,'daily',this)">Daily</button>
+</div>
+</div>
+<div class="lev-q" style="padding:10px 0;border-bottom:1px solid var(--border)">
+<div style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:8px">2. Do you use intelligent tools for research and literature review?</div>
+<div style="display:flex;gap:6px;flex-wrap:wrap">
+<button class="lev-opt" onclick="levQuizPick(1,'never',this)">Never</button>
+<button class="lev-opt" onclick="levQuizPick(1,'rarely',this)">Rarely</button>
+<button class="lev-opt" onclick="levQuizPick(1,'sometimes',this)">Sometimes</button>
+<button class="lev-opt" onclick="levQuizPick(1,'daily',this)">Daily</button>
+</div>
+</div>
+<div class="lev-q" style="padding:10px 0;border-bottom:1px solid var(--border)">
+<div style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:8px">3. Do you use intelligent tools for career planning and strategy?</div>
+<div style="display:flex;gap:6px;flex-wrap:wrap">
+<button class="lev-opt" onclick="levQuizPick(2,'never',this)">Never</button>
+<button class="lev-opt" onclick="levQuizPick(2,'rarely',this)">Rarely</button>
+<button class="lev-opt" onclick="levQuizPick(2,'sometimes',this)">Sometimes</button>
+<button class="lev-opt" onclick="levQuizPick(2,'daily',this)">Daily</button>
+</div>
+</div>
+<div class="lev-q" style="padding:10px 0;border-bottom:1px solid var(--border)">
+<div style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:8px">4. Do you use intelligent tools for networking and outreach?</div>
+<div style="display:flex;gap:6px;flex-wrap:wrap">
+<button class="lev-opt" onclick="levQuizPick(3,'never',this)">Never</button>
+<button class="lev-opt" onclick="levQuizPick(3,'rarely',this)">Rarely</button>
+<button class="lev-opt" onclick="levQuizPick(3,'sometimes',this)">Sometimes</button>
+<button class="lev-opt" onclick="levQuizPick(3,'daily',this)">Daily</button>
+</div>
+</div>
+<div class="lev-q" style="padding:10px 0">
+<div style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:8px">5. Do you use intelligent tools for productivity and content creation?</div>
+<div style="display:flex;gap:6px;flex-wrap:wrap">
+<button class="lev-opt" onclick="levQuizPick(4,'never',this)">Never</button>
+<button class="lev-opt" onclick="levQuizPick(4,'rarely',this)">Rarely</button>
+<button class="lev-opt" onclick="levQuizPick(4,'sometimes',this)">Sometimes</button>
+<button class="lev-opt" onclick="levQuizPick(4,'daily',this)">Daily</button>
+</div>
+</div>
+</div>
+
+<!-- Score Result -->
+<div id="lev-score-result" style="display:none;margin-top:16px;padding:20px;background:rgba(198,168,94,.04);border:1px solid #E8E1D8;border-radius:12px;text-align:center">
+<div style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--text3);margin-bottom:6px">Your Leverage Score</div>
+<div id="lev-score-num" style="font-size:48px;font-weight:700;font-family:var(--font-serif);color:var(--accent)">0</div>
+<div id="lev-score-max" style="font-size:12px;color:var(--text3);margin-bottom:4px">out of 100</div>
+<div id="lev-score-label" style="font-size:15px;font-weight:600;margin-bottom:10px"></div>
+<div id="lev-score-desc" style="font-size:13px;color:var(--text2);line-height:1.6"></div>
+<div id="lev-score-recs" style="margin-top:14px;text-align:left"></div>
+<div id="lev-score-history" style="margin-top:12px;font-size:11px;color:var(--text3)"></div>
+<button onclick="levResetQuiz()" style="margin-top:12px;font-size:11px;color:var(--accent);background:none;border:1px solid rgba(198,168,94,.20);border-radius:8px;padding:6px 16px;cursor:pointer">Retake Assessment</button>
+</div>
+</div>
+</div>
+
+<!-- Category Filter -->
+<div id="lev-filter-section" style="padding:16px 24px 0">
+<div id="lev-filters" style="display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;-webkit-overflow-scrolling:touch">
+<button class="lev-filter on" onclick="levFilter('all',this)">All</button>
+<button class="lev-filter" onclick="levFilter('learning',this)">📖 Learning</button>
+<button class="lev-filter" onclick="levFilter('research',this)">🔬 Research</button>
+<button class="lev-filter" onclick="levFilter('career',this)">🎯 Career</button>
+<button class="lev-filter" onclick="levFilter('productivity',this)">🚀 Productivity</button>
+</div>
+</div>
+
+<!-- Workflow Cards -->
+<div id="lev-workflows" style="padding:12px 24px 100px">
+<div id="lev-workflow-list"></div>
+</div>
+
+<!-- Gate for non-elite users (shown/hidden by renderLeverage) -->
+<div id="lev-gate" style="display:none;padding:24px 24px 40px">
+<div style="background:linear-gradient(160deg,#111318,#1a1d24);border-radius:16px;padding:28px 24px;margin-bottom:20px;position:relative;overflow:hidden">
+<div style="position:absolute;top:-30%;right:-15%;width:160px;height:160px;background:radial-gradient(circle,rgba(198,168,94,.12),transparent 65%);border-radius:50%"></div>
+<div style="position:relative;text-align:center">
+<div style="font-size:10px;font-weight:700;color:#C6A85E;text-transform:uppercase;letter-spacing:2px;margin-bottom:10px">MENTORSHIP EXCLUSIVE</div>
+<div style="font-family:var(--font-serif);font-size:20px;font-weight:700;color:#f0ece6;margin-bottom:10px;line-height:1.3">10 AI-Powered Tools.<br>The Competitive Edge You're Missing.</div>
+<p style="font-size:13px;color:rgba(240,236,230,.6);line-height:1.6;margin:0">The top 1% of physicians are already using AI strategically. These tools put you in that group.</p>
+</div>
+</div>
+<div style="margin-bottom:20px">
+<div style="font-size:10px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:14px;padding-left:4px">WHAT'S INSIDE</div>
+<div style="display:flex;align-items:flex-start;gap:12px;padding:14px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;margin-bottom:8px;opacity:0.85"><div style="font-size:22px;flex-shrink:0;margin-top:2px">🎯</div><div style="flex:1"><div style="font-size:14px;font-weight:600;color:var(--text)">Study Accelerator</div><div style="font-size:12px;color:var(--text3);line-height:1.5;margin-top:2px">Convert any material into active recall in minutes.</div></div><div style="flex-shrink:0;padding:4px 10px;border-radius:6px;background:rgba(198,168,94,.08);border:1px solid #E8E1D8;font-size:10px;font-weight:600;color:var(--accent);white-space:nowrap">🔒 Mentorship</div></div>
+<div style="display:flex;align-items:flex-start;gap:12px;padding:14px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;margin-bottom:8px;opacity:0.85"><div style="font-size:22px;flex-shrink:0;margin-top:2px">🧠</div><div style="flex:1"><div style="font-size:14px;font-weight:600;color:var(--text)">Concept Simplifier</div><div style="font-size:12px;color:var(--text3);line-height:1.5;margin-top:2px">Understand any topic at three levels of depth.</div></div><div style="flex-shrink:0;padding:4px 10px;border-radius:6px;background:rgba(198,168,94,.08);border:1px solid #E8E1D8;font-size:10px;font-weight:600;color:var(--accent);white-space:nowrap">🔒 Mentorship</div></div>
+<div style="display:flex;align-items:flex-start;gap:12px;padding:14px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;margin-bottom:8px;opacity:0.85"><div style="font-size:22px;flex-shrink:0;margin-top:2px">🧑‍⚕️</div><div style="flex:1"><div style="font-size:14px;font-weight:600;color:var(--text)">Case Simulator</div><div style="font-size:12px;color:var(--text3);line-height:1.5;margin-top:2px">Practice clinical reasoning with realistic cases.</div></div><div style="flex-shrink:0;padding:4px 10px;border-radius:6px;background:rgba(198,168,94,.08);border:1px solid #E8E1D8;font-size:10px;font-weight:600;color:var(--accent);white-space:nowrap">🔒 Mentorship</div></div>
+<div style="display:flex;align-items:flex-start;gap:12px;padding:14px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;margin-bottom:8px;opacity:0.85"><div style="font-size:22px;flex-shrink:0;margin-top:2px">🔬</div><div style="flex:1"><div style="font-size:14px;font-weight:600;color:var(--text)">Research Idea Generator</div><div style="font-size:12px;color:var(--text3);line-height:1.5;margin-top:2px">Walk into mentor meetings with proposals, not empty hands.</div></div><div style="flex-shrink:0;padding:4px 10px;border-radius:6px;background:rgba(198,168,94,.08);border:1px solid #E8E1D8;font-size:10px;font-weight:600;color:var(--accent);white-space:nowrap">🔒 Mentorship</div></div>
+<div style="display:flex;align-items:flex-start;gap:12px;padding:14px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;margin-bottom:8px;opacity:0.85"><div style="font-size:22px;flex-shrink:0;margin-top:2px">📚</div><div style="flex:1"><div style="font-size:14px;font-weight:600;color:var(--text)">Literature Synthesizer</div><div style="font-size:12px;color:var(--text3);line-height:1.5;margin-top:2px">Know the key trials on any topic in minutes.</div></div><div style="flex-shrink:0;padding:4px 10px;border-radius:6px;background:rgba(198,168,94,.08);border:1px solid #E8E1D8;font-size:10px;font-weight:600;color:var(--accent);white-space:nowrap">🔒 Mentorship</div></div>
+<div style="display:flex;align-items:flex-start;gap:12px;padding:14px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;margin-bottom:8px;opacity:0.85"><div style="font-size:22px;flex-shrink:0;margin-top:2px">🏆</div><div style="flex:1"><div style="font-size:14px;font-weight:600;color:var(--text)">Career Roadmap</div><div style="font-size:12px;color:var(--text3);line-height:1.5;margin-top:2px">Build a strategic plan to match into your target fellowship.</div></div><div style="flex-shrink:0;padding:4px 10px;border-radius:6px;background:rgba(198,168,94,.08);border:1px solid #E8E1D8;font-size:10px;font-weight:600;color:var(--accent);white-space:nowrap">🔒 Mentorship</div></div>
+<div style="display:flex;align-items:flex-start;gap:12px;padding:14px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;margin-bottom:8px;opacity:0.85"><div style="font-size:22px;flex-shrink:0;margin-top:2px">🤝</div><div style="flex:1"><div style="font-size:14px;font-weight:600;color:var(--text)">Networking Strategist</div><div style="font-size:12px;color:var(--text3);line-height:1.5;margin-top:2px">Build strategic relationships, not random contacts.</div></div><div style="flex-shrink:0;padding:4px 10px;border-radius:6px;background:rgba(198,168,94,.08);border:1px solid #E8E1D8;font-size:10px;font-weight:600;color:var(--accent);white-space:nowrap">🔒 Mentorship</div></div>
+<div style="display:flex;align-items:flex-start;gap:12px;padding:14px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;margin-bottom:8px;opacity:0.85"><div style="font-size:22px;flex-shrink:0;margin-top:2px">🚀</div><div style="flex:1"><div style="font-size:14px;font-weight:600;color:var(--text)">Productivity Multiplier</div><div style="font-size:12px;color:var(--text3);line-height:1.5;margin-top:2px">Automate the work that doesn't need your clinical judgment.</div></div><div style="flex-shrink:0;padding:4px 10px;border-radius:6px;background:rgba(198,168,94,.08);border:1px solid #E8E1D8;font-size:10px;font-weight:600;color:var(--accent);white-space:nowrap">🔒 Mentorship</div></div>
+<div style="display:flex;align-items:flex-start;gap:12px;padding:14px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;margin-bottom:8px;opacity:0.85"><div style="font-size:22px;flex-shrink:0;margin-top:2px">📊</div><div style="flex:1"><div style="font-size:14px;font-weight:600;color:var(--text)">Career Path Modeler</div><div style="font-size:12px;color:var(--text3);line-height:1.5;margin-top:2px">Make career decisions with data, not assumptions.</div></div><div style="flex-shrink:0;padding:4px 10px;border-radius:6px;background:rgba(198,168,94,.08);border:1px solid #E8E1D8;font-size:10px;font-weight:600;color:var(--accent);white-space:nowrap">🔒 Mentorship</div></div>
+<div style="display:flex;align-items:flex-start;gap:12px;padding:14px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;margin-bottom:8px;opacity:0.85"><div style="font-size:22px;flex-shrink:0;margin-top:2px">🌟</div><div style="flex:1"><div style="font-size:14px;font-weight:600;color:var(--text)">Personal Brand Builder</div><div style="font-size:12px;color:var(--text3);line-height:1.5;margin-top:2px">Start building your professional platform during training.</div></div><div style="flex-shrink:0;padding:4px 10px;border-radius:6px;background:rgba(198,168,94,.08);border:1px solid #E8E1D8;font-size:10px;font-weight:600;color:var(--accent);white-space:nowrap">🔒 Mentorship</div></div>
+<div style="text-align:center;padding:28px 0 8px">
+<p style="font-size:14px;color:var(--text);font-weight:600;line-height:1.5;margin-bottom:4px;max-width:340px;margin-left:auto;margin-right:auto">Stop falling behind while you decide.</p>
+<p style="font-size:12px;color:var(--text3);line-height:1.5;margin-bottom:16px;max-width:340px;margin-left:auto;margin-right:auto">Join the physicians who are building leverage now — not later.</p>
+<button class="btn btn-a" onclick="navTo('scr-profile');showUpgrade()" style="max-width:280px;margin:0 auto;padding:14px 32px;font-size:15px">Unlock All 10 Tools →</button>
+<div style="margin-top:10px"><button style="font-size:12px;color:var(--text3);background:none;border:none;cursor:pointer;padding:8px" onclick="navTo('scr-vault')">Browse Free Career Tools</button></div>
+</div>
+</div>
+
+</div>
+</div>
+
+<!-- ADMIN - full screen overlay outside main-app -->
+</div>
+
+<div id="admin-overlay" style="display:none;position:fixed;inset:0;z-index:9000;background:var(--bg);overflow-y:auto">
+<div style="max-width:900px;margin:0 auto;padding:20px 24px 100px">
+
+<!-- Header -->
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+<div style="display:flex;align-items:center;gap:10px">
+<div style="font-family:var(--font-serif);font-size:22px;font-weight:600;color:var(--text)">Admin</div>
+<span style="padding:3px 10px;border-radius:6px;font-size:10px;font-weight:700;letter-spacing:.5px;background:rgba(100,149,237,.15);color:var(--blue)">FOUNDER</span>
+</div>
+<button onclick="closeAdmin()" style="font-size:13px;color:var(--text3);background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:8px 16px;cursor:pointer;font-weight:600">✕ Close</button>
+</div>
+
+<!-- Tier Switcher (persists across all tiers) -->
+<div style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;margin-bottom:16px;flex-wrap:wrap">
+<span style="font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:1px">Test As:</span>
+<button onclick="adminSwitchTier('free')" id="ts-free" class="tier-sw">Free</button>
+<button onclick="adminSwitchTier('core')" id="ts-core" class="tier-sw">Core</button>
+<button onclick="adminSwitchTier('elite')" id="ts-elite" class="tier-sw">Mentorship</button>
+<button onclick="adminSwitchTier('admin')" id="ts-admin" class="tier-sw">Admin</button>
+<span id="ts-current" style="font-size:11px;color:var(--accent);margin-left:auto"></span>
+</div>
+
+<!-- Trial Simulator -->
+<div id="adm-trial-sim" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:rgba(198,168,94,.04);border:1px solid rgba(198,168,94,.12);border-radius:10px;margin-bottom:16px;flex-wrap:wrap">
+<span style="font-size:10px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px">🧪 Trial Test:</span>
+<button onclick="admSimulateTrial()" class="tier-sw" style="border-color:var(--accent);color:var(--accent)">Simulate 48h Guided Access</button>
+<button onclick="admExitSimulation()" class="tier-sw" style="border-color:var(--red);color:var(--red)">Exit Simulation</button>
+<button onclick="admRunExpireTrials(false)" class="tier-sw" style="border-color:var(--green);color:var(--green)">Run Expire Trials</button>
+<span style="font-size:10px;color:var(--text3);margin-left:auto">Experience exactly what trial users see</span>
+</div>
+
+<!-- Quick Metrics -->
+<div id="adm-metrics" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:20px"></div>
+
+<!-- Tabs -->
+<div style="display:flex;gap:6px;overflow-x:auto;padding-bottom:12px;border-bottom:1px solid var(--border);margin-bottom:16px">
+<button class="atab on" onclick="adminTab('dashboard',this)">Dashboard</button>
+<button class="atab" onclick="adminTab('users',this)">Users</button>
+<button class="atab" onclick="adminTab('queue',this)">Queue</button>
+<button class="atab" onclick="adminTab('assessments',this)">Assessments</button>
+<button class="atab" onclick="adminTab('feedback',this)">Messages</button>
+<button class="atab" onclick="adminTab('analytics',this)">Analytics</button>
+<button class="atab" onclick="adminTab('cancellations',this)">Cancellations</button>
+<button class="atab" onclick="adminTab('toolactivity',this)">Tool Activity</button>
+<button class="atab" onclick="adminTab('outcomes',this)">Outcomes</button>
+<button class="atab" onclick="adminTab('cases',this)">Cases</button>
+</div>
+
+<!-- Content -->
+<div id="admin-content">
+<div style="text-align:center;padding:40px;color:var(--text3)">Loading...</div>
+</div>
+
+</div>
+</div>
+
+<!-- Sticky Upgrade Bar (Free users) -->
+<div id="upgrade-sticky-bar" class="hidden" style="position:fixed;bottom:0;left:0;right:0;z-index:900;background:#111318;border-top:1px solid rgba(255,255,255,.06);padding:12px 20px;display:flex;align-items:center;justify-content:center;gap:14px">
+<div style="display:flex;align-items:center;gap:10px;flex:1;max-width:600px">
+<span style="font-size:18px">🔓</span>
+<div style="flex:1">
+<div style="font-size:13px;font-weight:600;color:#fff">Unlock all 10 career tools</div>
+<div style="font-size:11px;color:rgba(255,255,255,.5)" id="upgrade-bar-sub">Core — $39/mo or $350/year</div>
+</div>
+<button onclick="navTo('scr-profile');showUpgrade()" style="padding:10px 22px;font-size:12px;font-weight:700;background:var(--accent);color:#111318;border:none;border-radius:8px;cursor:pointer;white-space:nowrap;letter-spacing:.3px">Upgrade Now</button>
+</div>
+</div>
+
+

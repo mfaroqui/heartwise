@@ -1458,31 +1458,28 @@ async function doLogin(e){
         let user=DB.users.find(u=>u.email.toLowerCase()===email);
         if(!user){
           const isAdmin=email===AE.toLowerCase();
-          user={id:isAdmin?'admin':'u'+DB.nextUserId++,name:sbUser.user_metadata?.name||email.split('@')[0],email,pass:'__supabase__',role:isAdmin?'admin':'student',tier:isAdmin?'admin':'free',institution:'',usage:{ai:0,credits:isAdmin?999:0,month:new Date().getMonth()}};
+          user={id:isAdmin?'admin':'u'+DB.nextUserId++,name:sbUser.user_metadata?.name||email.split('@')[0],email,pass:'__supabase__',role:isAdmin?'admin':'student',tier:isAdmin?'admin':'core',institution:'',usage:{ai:0,credits:isAdmin?999:0,month:new Date().getMonth()}}; // EARLY ACCESS: new users get core
           DB.users.push(user);saveDB();
         }
         // Ensure admin tier is always set for admin email
         if(email===AE.toLowerCase()&&user.tier!=='admin'){user.tier='admin';user.role='admin';saveDB()}
         // Sync trial status from Supabase profile
+        // EARLY ACCESS: auto-upgrade free users to core, disable trial expiration
         try{
           var prof=await _supaClient.from('profiles').select('tier,is_trial,trial_end').eq('email',email).limit(1);
           if(!prof.error&&prof.data&&prof.data.length>0){
             var sp=prof.data[0];
-            if(sp.trial_end){
-              var now=new Date(),end=new Date(sp.trial_end);
-              if(now>=end&&(sp.is_trial||user.isTrial)){
-                user.tier='free';user.isTrial=false;
-                await _supaClient.from('profiles').update({tier:'free',is_trial:false}).eq('email',email);
-                saveDB();
-              }else if(sp.is_trial){
-                user.tier='core';user.isTrial=true;user.trialEnd=sp.trial_end;
-                // Fix old trials that were created with elite tier
-                if(sp.tier==='elite'){await _supaClient.from('profiles').update({tier:'core'}).eq('email',email)}
-              }
+            // Auto-upgrade free users to core during early access
+            if(sp.tier==='free'||user.tier==='free'){
+              user.tier='core';user.isTrial=false;
+              await _supaClient.from('profiles').update({tier:'core',is_trial:false}).eq('email',email);
+              saveDB();
             }
-            if(sp.tier&&!sp.is_trial&&sp.tier!=='free'){user.tier=sp.tier;user.isTrial=false}
+            if(sp.tier&&sp.tier!=='free'){user.tier=sp.tier;user.isTrial=false}
           }
-        }catch(ex2){console.warn('Trial sync:',ex2)}
+        }catch(ex2){console.warn('Profile sync:',ex2)}
+        // Also upgrade locally if still free
+        if(user.tier==='free'&&user.email.toLowerCase()!==AE.toLowerCase()){user.tier='core';user.isTrial=false;saveDB()}
         U=user;if(!U.usage)U.usage={ai:0,credits:TIERS[U.tier]?.credits||0,month:new Date().getMonth()};
         localStorage.setItem('hw_session',JSON.stringify(U));
         // Restore session data from Supabase (career profile, tool history, etc.)
@@ -1607,7 +1604,7 @@ function doSignup(e){
   const role=document.getElementById('s-role').value;
   const inst=document.getElementById('s-inst').value.trim();
   if(DB.users.find(u=>u.email.toLowerCase()===email)){notify('Email already registered',1);return}
-  const user={id:'u'+DB.nextUserId++,name,email,pass,role,tier:'free',institution:inst,usage:{ai:0,credits:0,month:new Date().getMonth()},emailVerified:false};
+  const user={id:'u'+DB.nextUserId++,name,email,pass,role,tier:'core',institution:inst,usage:{ai:0,credits:0,month:new Date().getMonth()},emailVerified:false}; // EARLY ACCESS: all signups get core
   DB.users.push(user);saveDB();
   // Send verification email via Supabase
   if(_supaClient){
@@ -1710,7 +1707,8 @@ function enterApp(){
   document.body.classList.add('in-app');
   if(!U.usage)U.usage={ai:0,credits:TIERS[U.tier]?.credits||0,month:new Date().getMonth()};
   if(U.usage.month!==new Date().getMonth()){U.usage.ai=0;U.usage.month=new Date().getMonth()}
-  // Check trial expiration
+  // EARLY ACCESS: trial expiration disabled
+  /*
   if(U.isTrial&&U.trialEnd){
     const now=new Date();const end=new Date(U.trialEnd);
     if(now>=end){
@@ -1723,7 +1721,9 @@ function enterApp(){
       setTimeout(function(){showTrialExpiredTeaser()},800);
     }
   }
-  // Also show teaser for previously expired trial users returning
+  */
+  // EARLY ACCESS: skip previously-expired trial teaser
+  /*
   if(!U.isTrial&&U.trialEnd&&U.tier==='free'){
     var shownKey='hw_teaser_'+U.id+'_'+new Date().toDateString();
     if(!sessionStorage.getItem(shownKey)){
@@ -1731,6 +1731,7 @@ function enterApp(){
       setTimeout(function(){showTrialExpiredTeaser()},800);
     }
   }
+  */
   const b=document.getElementById('user-badge');
   const bc={free:'b-free',student:'b-student',core:'b-core',elite:'b-pro',admin:'b-admin'};
   b.className='badge '+(bc[U.tier]||'b-free');
@@ -1741,10 +1742,8 @@ function enterApp(){
   var navAsk=document.getElementById('nav-ask');if(navAsk)navAsk.style.display=(U.tier==='elite'||U.tier==='admin')?'':'none';
   var topUpgrade=document.getElementById('topbar-upgrade');
   if(topUpgrade){
-    if(U.tier==='free'||U.isTrial){topUpgrade.style.display='';topUpgrade.textContent='Subscribe';topUpgrade.onclick=function(){navTo('scr-profile');showUpgrade()}}
-    else if(U.tier==='student'){topUpgrade.style.display='';topUpgrade.textContent='Upgrade to Core';topUpgrade.onclick=function(){navTo('scr-profile');showUpgrade()}}
-    else if(U.tier==='core'){topUpgrade.style.display='';topUpgrade.textContent='Upgrade to Mentorship';topUpgrade.onclick=function(){navTo('scr-profile');showUpgrade()}}
-    else{topUpgrade.style.display='none'}
+    // EARLY ACCESS: hide upgrade button for everyone
+    topUpgrade.style.display='none';
   }
   // Show leverage upsell for core users only
   // leverage-upsell removed from home screen layout
@@ -1754,8 +1753,8 @@ function enterApp(){
     sessionStorage.removeItem('hw_pending_plan');
     setTimeout(()=>subPlan(pendingPlan),500);
   }
-  // Start trial countdown if active
-  if(U.isTrial&&U.trialEnd)startTrialCountdown();
+  // EARLY ACCESS: trial countdown disabled
+  // if(U.isTrial&&U.trialEnd)startTrialCountdown();
   renderHome();
   navTo('scr-home');
   // Handle deep links (?tool=v14, ?page=pricing, etc.)
@@ -1774,38 +1773,24 @@ function enterApp(){
   showUpgradeElements();
   // Start onboarding tour for new users (after a short delay for rendering)
   if(shouldShowTour())setTimeout(startTour,800);
+  // Email: monthly digest + reengagement ping (non-blocking)
+  try{if(typeof hwEmailMonthlyDigest==='function')hwEmailMonthlyDigest(U)}catch(e){}
+  try{if(typeof hwEmailReengagement==='function')hwEmailReengagement(U)}catch(e){}
+  try{if(typeof hwEmailDeadlineReminder==='function')hwEmailDeadlineReminder(U)}catch(e){}
 }
 
 // ===== UPGRADE ELEMENTS =====
 function showUpgradeElements(){
   var stickyBar=document.getElementById('upgrade-sticky-bar');
   if(!stickyBar)return;
-
-  if(U.tier==='free'){
-    stickyBar.classList.remove('hidden');
-    document.body.classList.add('has-upgrade-bar');
-    document.getElementById('upgrade-bar-sub').textContent='Unlock unlimited career intelligence tools — from $9/mo';
-  } else {
-    stickyBar.classList.add('hidden');
-    document.body.classList.remove('has-upgrade-bar');
-  }
+  // EARLY ACCESS: hide upgrade bar for everyone
+  stickyBar.classList.add('hidden');
+  document.body.classList.remove('has-upgrade-bar');
 }
 
-// Blur gate: wraps tool results for free users with a blurred preview + CTA overlay
+// Blur gate: EARLY ACCESS — disabled, all results visible
 function applyBlurGate(resultsEl){
-  if(!U||U.tier!=='free')return false;
-  if(!resultsEl||!resultsEl.innerHTML)return false;
-
-  var content=resultsEl.innerHTML;
-  resultsEl.innerHTML='<div class="hw-blur-gate">'
-    +'<div class="hw-blur-content">'+content+'</div>'
-    +'<div class="hw-blur-overlay">'
-    +'<div class="hw-blur-icon">\ud83d\udd12</div>'
-    +'<div class="hw-blur-title">Your analysis is ready</div>'
-    +'<div class="hw-blur-sub">Upgrade to Core to see your full results, recommendations, and action plan.</div>'
-    +'<button class="hw-blur-cta" onclick="navTo(\'scr-profile\');showUpgrade();closeModal(\'modal-q\')">Unlock Full Results \u2014 from $9/mo</button>'
-    +'</div></div>';
-  return true;
+  return false; // EARLY ACCESS: never blur
 }
 
 // Gate the "What to do next" / Attending Note section for trial users
@@ -1834,8 +1819,9 @@ function hwGatePathway(pathwayHtml){
     return pathwayHtml;
   }
   // Free users: already gated by applyBlurGate, but in case it leaks
-  if(!U||U.tier==='free')return pathwayHtml;
-  // Trial users: gate the pathway
+  // EARLY ACCESS: no tier gating on pathway
+  if(!U)return pathwayHtml;
+  /* Trial gate disabled for early access
   if(U.isTrial){
     return '<div style="position:relative;margin-top:20px">'
       +'<div style="filter:blur(6px);pointer-events:none;user-select:none;opacity:.5">'+pathwayHtml+'</div>'
@@ -1847,6 +1833,7 @@ function hwGatePathway(pathwayHtml){
       +'<div style="font-size:10px;color:var(--text3);margin-top:8px">Cancel anytime</div>'
       +'</div></div>';
   }
+  */
   return pathwayHtml;
 }
 
@@ -2369,6 +2356,39 @@ function setDailyQuote(){
 
 // ===== TRIAL COUNTDOWN =====
 var _trialInterval=null;
+// EARLY ACCESS BANNER — replaces trial countdown banner
+function renderEarlyAccessBanner(){
+  if(!U||U.tier==='admin')return;
+  var dismissKey='hw_ea_banner_dismissed';
+  if(sessionStorage.getItem(dismissKey))return;
+  var existing=document.getElementById('early-access-banner');
+  if(existing)return;
+  var container=document.getElementById('trial-countdown-banner');
+  if(!container){
+    // Create a banner element if trial banner doesn't exist
+    container=document.createElement('div');
+    container.id='early-access-banner';
+    var homeEl=document.getElementById('scr-home');
+    if(homeEl)homeEl.insertBefore(container,homeEl.firstChild);
+  }else{
+    container.id='early-access-banner';
+  }
+  container.style.display='';
+  container.style.padding='12px 18px';
+  container.style.margin='0 0 16px 0';
+  container.style.background='rgba(198,168,94,.08)';
+  container.style.border='1px solid rgba(198,168,94,.15)';
+  container.style.borderRadius='12px';
+  container.innerHTML='<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">'
+    +'<span style="font-size:16px">✦</span>'
+    +'<div style="flex:1;min-width:180px">'
+    +'<div style="font-size:13px;font-weight:600;color:var(--accent)">Early Access — All Tools Free</div>'
+    +'<div style="font-size:11px;color:var(--text2);margin-top:2px">Help us build the best career platform for physicians. Your feedback shapes what we build next.</div>'
+    +'</div>'
+    +'<button onclick="this.closest(\'#early-access-banner\').style.display=\'none\';sessionStorage.setItem(\'hw_ea_banner_dismissed\',\'1\')" style="flex-shrink:0;background:none;border:1px solid rgba(198,168,94,.25);color:var(--accent);font-size:11px;font-weight:600;padding:6px 14px;border-radius:8px;cursor:pointer">Got it</button>'
+    +'</div>';
+}
+
 function startTrialCountdown(){
   if(_trialInterval)clearInterval(_trialInterval);
   updateTrialBanner();
@@ -3489,7 +3509,7 @@ var COACHING_TOOLS={
 function injectCoachingOptin(toolName){
   var config=COACHING_TOOLS[toolName];
   if(!config)return;
-  if(!U||U.tier==='free')return;
+  if(!U)return; // EARLY ACCESS: removed tier==='free' check
   // Check if already opted in for this tool
   var alreadyActive=U.coaching&&U.coaching[config.key]&&U.coaching[config.key].enabled;
   // Find the modal content area and append
@@ -3577,6 +3597,8 @@ function recordToolUse(toolName,score,summary,resultData){
   try{checkAchievements()}catch(e){console.error('Achievements:',e)}
   // Prompt decision capture for paid users
   try{if(typeof promptDecisionCapture==='function')promptDecisionCapture(toolName,score,summary,resultData)}catch(e){console.error('DecisionPrompt:',e)}
+  // Email: notify on first tool run
+  try{if(typeof hwEmailToolComplete==='function')hwEmailToolComplete(U,toolName,score)}catch(e){}
 }
 
 // ===== SHARED PROFILE DATA LAYER =====
@@ -3792,10 +3814,12 @@ function renderHome(){
   var _hasPlan=U.tier==='student'||U.tier==='core'||U.tier==='elite'||U.tier==='admin'||U.isTrial;
   var _hasRealProfile=cp.lastUpdated&&(cp.specialty||cp.step2||parseInt(cp.pubs)>0||parseInt(cp.comp)>5000);
   var _careerMapActive=_hasPlan&&_hasRealProfile&&typeof renderCareerMap==='function';
-  // Trial banner
+  // EARLY ACCESS banner (replaces trial banner)
   var trialBanner=document.getElementById('trial-countdown-banner');
-  if(trialBanner)trialBanner.style.display=U.isTrial&&U.trialEnd?'':'none';
-  if(U.isTrial&&U.trialEnd)updateTrialBanner();
+  if(trialBanner){
+    trialBanner.style.display='none'; // Hide old trial banner
+  }
+  renderEarlyAccessBanner();
   // Score change notification (only shows when there IS a change)
   try{renderScoreChange()}catch(e){console.error('ScoreChange:',e)}
   // Zone 2: Recommended tool (skip if Career Map is active — it has its own recommendations)
@@ -3866,6 +3890,11 @@ function renderHeroCard(){
   var el=document.getElementById('home-hero-card');
   if(!el||!U)return;
   initCareerProfile();
+  // Try Match Dashboard for students/residents/IMGs first
+  if(typeof renderMatchDashboard==='function'){
+    var dashRendered=renderMatchDashboard();
+    if(dashRendered)return;
+  }
   var cp=U.careerProfile||{};
   var hasRealProfile=cp.lastUpdated&&(cp.specialty||cp.step2||parseInt(cp.pubs)>0||parseInt(cp.comp)>5000);
   var name=U.name?'Dr. '+U.name.split(' ').pop():'';
@@ -4500,15 +4529,9 @@ function renderImgSuccessCards(){
 function renderUpgradeNudge(){
   var el=document.getElementById('home-upgrade-nudge');
   if(!el||!U)return;
-  // Don't show for paid users or trial users (they have the trial banner)
-  if(U.tier!=='free'||U.isTrial){el.style.display='none';return}
-  el.style.display='';
-  el.innerHTML='<div style="background:#fff;border:1px solid rgba(198,168,94,.25);border-radius:14px;padding:16px 18px;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.04);transition:all .2s" onclick="navTo(\'scr-profile\');showUpgrade()" onmouseenter="this.style.boxShadow=\'0 6px 16px rgba(0,0,0,.08)\'" onmouseleave="this.style.boxShadow=\'0 2px 6px rgba(0,0,0,.04)\'">'
-    +'<div style="display:flex;align-items:center;gap:12px">'
-    +'<span style="font-size:20px">⚡</span>'
-    +'<div><div style="font-size:13px;font-weight:600;color:#C6A85E">Upgrade to Core</div>'
-    +'<div style="font-size:11px;color:#5C564F">Unlimited career intelligence tools — $39/mo</div></div>'
-    +'</div></div>';
+  // EARLY ACCESS: always hide upgrade nudge
+  el.style.display='none';
+  return;
 }
 
 // Toggle detailed analytics section
@@ -4600,7 +4623,7 @@ function renderWeeklyFocus(){
 function renderToolProgress(){
   var el=document.getElementById('tool-progress');
   if(!el||!U)return;
-  if(U.tier==='free'&&!U.isTrial){el.style.display='none';return}
+  // EARLY ACCESS: show for all users
   var cp=U.careerProfile||{};
 
   var toolsUsed=[];
@@ -5050,8 +5073,8 @@ function showQuestion(id){
     h+='<div style="font-size:11px;font-weight:600;color:var(--green);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">\ud83e\uddd1\u200d\u2695\ufe0f Doctor\'s Review</div>';
     h+='<p style="font-size:14px;color:var(--text2);line-height:1.7">'+q.reviewNote+'</p></div>';
   }
-  // Upgrade prompt for free users
-  if(U&&U.tier==='free'){
+  // EARLY ACCESS: upgrade prompt disabled
+  if(false&&U&&U.tier==='free'){
     h+='<div style="margin-top:20px;padding:18px;border-radius:var(--r2);background:linear-gradient(135deg,var(--accent-dim),rgba(198,168,94,.06));border:1px solid rgba(198,168,94,.15)">';
     h+='<div style="font-size:14px;font-weight:600;color:var(--accent);margin-bottom:6px">⚡ Want more structured guidance?</div>';
     h+='<p style="font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.5">Upgrade to Core for unlimited strategic assessments, financial modeling tools, and scenario simulations.</p>';
@@ -5117,7 +5140,7 @@ function submitQ(){
   if(!level){notify('Select your training level',1);return}
   if(!cat){notify('Select a category',1);return}
   if(!core||core.length<10){notify('Enter your core question (min 10 chars)',1);return}
-  if(U.tier==='free'){notify('Subscribe to access career intelligence tools.',1);return}
+  // EARLY ACCESS: free tier gate removed
   const anon=document.getElementById('q-anon-tog').classList.contains('on');
   const wantsReview=document.getElementById('q-review-tog').classList.contains('on');
   const context=document.getElementById('q-context').value.trim();
@@ -8900,10 +8923,10 @@ function openFramework(id){
   if(id==='v17')setTimeout(obsInit,50);
   // Auto-fill tool intakes from career baseline
   setTimeout(function(){autoFillToolFromProfile(id)},60);
-  // Inject partial-access banner for trial users
-  if(U&&U.isTrial&&U.tier!=='admin'&&getTrialAccess(id)==='partial'){
-    injectPartialOverlay(id);
-  }
+  // EARLY ACCESS: partial-access overlay disabled
+  // if(U&&U.isTrial&&U.tier!=='admin'&&getTrialAccess(id)==='partial'){
+  //   injectPartialOverlay(id);
+  // }
 }
 
 // Auto-fill tool inputs from the user's saved career baseline profile
@@ -9714,8 +9737,14 @@ function renderProfile(){
   var scoreEl=document.getElementById('ps-score');if(scoreEl)scoreEl.textContent=lastScore;
   var streak=0;if(U.loginDays&&U.loginDays.length){var today=new Date().toISOString().split('T')[0];var days=U.loginDays.slice().sort().reverse();for(var si=0;si<days.length;si++){var expected=new Date(Date.now()-si*86400000).toISOString().split('T')[0];if(days[si]===expected)streak++;else break}}
   var streakEl=document.getElementById('ps-streak');if(streakEl)streakEl.textContent=streak;
-  document.getElementById('prof-plan-label').textContent=t.name+(U.tier==='free'?'':' \u2022 Active');
-  document.getElementById('prof-plan-label').style.color=U.tier==='free'?'var(--text3)':'var(--accent)';
+  // EARLY ACCESS: show "Early Access" plan label for all non-admin users
+  if(U.tier==='admin'){
+    document.getElementById('prof-plan-label').textContent=t.name+' \u2022 Active';
+    document.getElementById('prof-plan-label').style.color='var(--accent)';
+  }else{
+    document.getElementById('prof-plan-label').textContent='\ud83c\udf89 Early Access \u2022 All Tools Free';
+    document.getElementById('prof-plan-label').style.color='var(--accent)';
+  }
   renderProgressDashboard();
   renderToolResultsSummary();
   renderGoalTracker();
@@ -9744,12 +9773,11 @@ function adminSwitchTier(tier){
   var b=document.getElementById('user-badge');
   var bc={free:'b-free',student:'b-student',core:'b-core',elite:'b-pro',admin:'b-admin'};
   if(b){b.className='badge '+(bc[tier]||'b-free');b.textContent=tier==='admin'?'MENTOR':t.name.toUpperCase()||'FREE'}
-  var upNudge=document.getElementById('home-upgrade-nudge');if(upNudge)upNudge.style.display=tier==='free'&&!U.isTrial?'':'none';
+  var upNudge=document.getElementById('home-upgrade-nudge');if(upNudge)upNudge.style.display='none'; // EARLY ACCESS
   var topUpgrade=document.getElementById('topbar-upgrade');
   if(topUpgrade){
-    if(tier==='free'){topUpgrade.style.display='';topUpgrade.textContent='Subscribe'}
-    else if(tier==='core'){topUpgrade.style.display='';topUpgrade.textContent='Upgrade to Mentorship'}
-    else{topUpgrade.style.display='none'}
+    // EARLY ACCESS: hide all upgrade buttons
+    topUpgrade.style.display='none';
   }
   showUpgradeElements();
   renderHome();
@@ -12706,11 +12734,11 @@ async function obComplete(){
     // Device already used a trial — create account but as free tier, no trial
     const roleMap={premed:'student',student:'student',resident:'resident',fellow:'fellow',attending:'attending',switching:'other'};
     const reportSnapshot=captureReportData(p);
-    const user={id:'u'+DB.nextUserId++,name:p.name,email:p.email.toLowerCase(),pass:p.pass,role:roleMap[p.stage]||'student',tier:'free',isTrial:false,institution:p.inst,usage:{ai:0,credits:0,month:new Date().getMonth()},profile:safeProfileData(p),signupDate:new Date().toISOString(),report:reportSnapshot,notes:[],trialUsedOnDevice:true};
+    const user={id:'u'+DB.nextUserId++,name:p.name,email:p.email.toLowerCase(),pass:p.pass,role:roleMap[p.stage]||'student',tier:'core',isTrial:false,institution:p.inst,usage:{ai:0,credits:0,month:new Date().getMonth()},profile:safeProfileData(p),signupDate:new Date().toISOString(),report:reportSnapshot,notes:[],trialUsedOnDevice:true}; // EARLY ACCESS: core instead of free
     DB.users.push(user);saveDB();
     var _profilePayload2={
       user_id:user.id,name:p.name,email:p.email.toLowerCase(),role:roleMap[p.stage]||'student',
-      tier:'free',institution:p.inst||'',stage:p.stage,specialty:p.spec||'',goal:p.goal||'',
+      tier:'core',institution:p.inst||'',stage:p.stage,specialty:p.spec||'',goal:p.goal||'', // EARLY ACCESS
       score:reportSnapshot.score,grade:reportSnapshot.grade,
       strengths:reportSnapshot.strengths,gaps:reportSnapshot.gaps,
       profile_data:safeProfileData(p)
@@ -12727,24 +12755,21 @@ async function obComplete(){
     trialHistory.push({email:p.email.toLowerCase(),date:new Date().toISOString(),blocked:true});
     localStorage.setItem('hw_trial_history',JSON.stringify(trialHistory));
     if(loginBtn){loginBtn.disabled=false;loginBtn.textContent=loginBtn.dataset.orig||'Sign In'}enterApp();showDisc();
-    notify('Welcome! Guided access was previously used on this device. You\'ve been signed up on the free Explorer plan. Subscribe to unlock all tools.',1);
+    notify('Welcome! 🎉 You have Early Access — all tools are free. Help us improve by sharing feedback.');
     return;
   }
-  // 3. Normal first-time trial
-  // Create user with trial
-  const roleMap={premed:'student',student:'student',resident:'resident',fellow:'fellow',attending:'attending',switching:'other'};
-  const trialEnd=new Date();trialEnd.setHours(trialEnd.getHours()+48);
+  // 3. EARLY ACCESS — full core access, no trial
+  const roleMap2={premed:'student',student:'student',resident:'resident',fellow:'fellow',attending:'attending',switching:'other'};
   // Capture report snapshot
   const reportSnapshot=captureReportData(p);
-  const user={id:'u'+DB.nextUserId++,name:p.name,email:p.email.toLowerCase(),pass:p.pass,role:roleMap[p.stage]||'student',tier:'core',trialEnd:trialEnd.toISOString(),isTrial:true,institution:p.inst,usage:{ai:0,credits:0,month:new Date().getMonth()},profile:safeProfileData(p),signupDate:new Date().toISOString(),report:reportSnapshot,notes:[]};
+  const user={id:'u'+DB.nextUserId++,name:p.name,email:p.email.toLowerCase(),pass:p.pass,role:roleMap2[p.stage]||'student',tier:'core',isTrial:false,institution:p.inst,usage:{ai:0,credits:0,month:new Date().getMonth()},profile:safeProfileData(p),signupDate:new Date().toISOString(),report:reportSnapshot,notes:[]};
   DB.users.push(user);saveDB();
   // Sync to Supabase — client-side first, server-side fallback
   var _profilePayload={
-    user_id:user.id,name:p.name,email:p.email.toLowerCase(),role:roleMap[p.stage]||'student',
-    tier:'core',is_trial:true,institution:p.inst||'',stage:p.stage,specialty:p.spec||'',goal:p.goal||'',
+    user_id:user.id,name:p.name,email:p.email.toLowerCase(),role:roleMap2[p.stage]||'student',
+    tier:'core',is_trial:false,institution:p.inst||'',stage:p.stage,specialty:p.spec||'',goal:p.goal||'',
     score:reportSnapshot.score,grade:reportSnapshot.grade,
     strengths:reportSnapshot.strengths,gaps:reportSnapshot.gaps,
-    trial_end:trialEnd.toISOString(),
     profile_data:safeProfileData(p)
   };
   if(_supaClient){
@@ -12763,6 +12788,8 @@ async function obComplete(){
   trialHistory.push({email:p.email.toLowerCase(),date:new Date().toISOString()});
   localStorage.setItem('hw_trial_history',JSON.stringify(trialHistory));
   if(loginBtn){loginBtn.disabled=false;loginBtn.textContent=loginBtn.dataset.orig||'Sign In'}enterApp();showDisc();
+  // Email: welcome for new signups
+  try{if(typeof hwEmailWelcome==='function')hwEmailWelcome(user)}catch(e){}
   // Show strategic report as welcome modal after entering app
   setTimeout(function(){
     var reportHtml=document.getElementById('ob-report');
@@ -15441,7 +15468,7 @@ function submitCheckin(){
 // ===== "YOUR STATUS" — WHAT CHANGED FEED =====
 function renderWhatsChanged(){
   var el=document.getElementById('whats-changed');if(!el||!U)return;
-  if(U.tier==='free'&&!U.isTrial){el.style.display='none';return}
+  // EARLY ACCESS: show for all users
   var now=new Date();var items=[];var cp=U.careerProfile||{};var stage=cp.stage||'student';
   if(U.weeklyGoals&&U.weeklyGoals.length){var cur=U.weeklyGoals[U.weeklyGoals.length-1];if(cur.status==='active')items.push({icon:'🎯',text:'This week: <strong>'+cur.goal+'</strong>'})}
   var lc=U.lastCheckin?new Date(U.lastCheckin):null;
@@ -19189,9 +19216,8 @@ var _tourSteps=[
 
 function shouldShowTour(){
   if(!U)return false;
-  // Only show for trial users or paid subscribers (not free, not admin)
+  // EARLY ACCESS: show tour for all new users
   if(U.tier==='admin')return false;
-  if(U.tier==='free'&&!U.isTrial)return false;
   // Check if already completed
   if(localStorage.getItem('hw_tour_done'))return false;
   // Don't show if user has already explored significantly

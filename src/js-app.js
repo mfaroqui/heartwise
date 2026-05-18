@@ -10501,19 +10501,15 @@ function openStripeBilling(){
 }
 
 function showUpgrade(){
+  // EARLY ACCESS: hide upgrade section entirely, show Early Access status instead
   var sec=document.getElementById('upgrade-section');
+  if(!sec)return;
   sec.classList.remove('hidden');
-  // Update subscription management display
-  if(U&&U.tier!=='free'&&U.tier!=='admin'){
-    const m=document.getElementById('sub-manage');m.classList.remove('hidden');
-    const t=TIERS[U.tier];
-    document.getElementById('sub-plan-name').textContent=t.name;
-    document.getElementById('sub-status').textContent='Active';
-    const renew=U.tier==='elite'?'Renews monthly':'Renews monthly';
-    document.getElementById('sub-renew').textContent=renew+' \u2022 Auto-renewal on';
-    document.getElementById('sub-usage-summary').textContent='Unlimited career intelligence analyses'+(U.tier==='elite'||U.tier==='admin'?' + direct physician access':'');
-  }else{document.getElementById('sub-manage').classList.add('hidden')}
-  setTimeout(function(){sec.scrollIntoView({behavior:'smooth',block:'start'})},100);
+  sec.innerHTML='<div style="padding:24px;text-align:center;border-radius:var(--r2);background:var(--accent-dim);border:1px solid rgba(198,168,94,.15)">'
+    +'<div style="font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:8px">✦ Early Access ✦</div>'
+    +'<div style="font-family:var(--font-serif);font-size:18px;font-weight:600;color:var(--text);margin-bottom:6px">You Have Full Access</div>'
+    +'<p style="font-size:13px;color:var(--text2);line-height:1.6;max-width:400px;margin:0 auto">All 10 career tools are free during Early Access. When paid plans launch, early users get a founding member discount.</p>'
+    +'</div>';
 }
 function toggleNotifSettings(){document.getElementById('notif-settings').classList.toggle('hidden')}
 
